@@ -1,5 +1,6 @@
 <template>
   <view class="content">
+    <van-cell title="单元格" value="内容" />
     <dayTable style="width: 100%;"></dayTable>
   </view>
 </template>
@@ -23,10 +24,6 @@ export default {
 
 <style>
 .content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .logo {
