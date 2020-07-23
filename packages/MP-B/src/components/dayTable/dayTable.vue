@@ -29,7 +29,7 @@
         <view
           v-for="(item, index) in meetingList"
           :key="index"
-          :style="item.style"
+          :style="item.style + item.$config.style"
           class="meeting_a"
           @click="showDetail(index, $event)"
           @longtap="longTapWithEdit($event, item)"
@@ -79,7 +79,7 @@
           </view>
           <view class="create_content_box">
             <view class="meeting_content">
-              {{ createMeet.startTime }} - {{ createMeet.endTime }}
+              {{ createMeet.startTime }}:{{ createMeet.endTime }}
             </view>
             <text class="meeting_content">{{ createMeet.meetingName }}</text>
           </view>
@@ -96,18 +96,18 @@
 </template>
 
 <script>
-import { scheduleTableUtil } from './dayTable.util.js';
-import moment from 'moment';
-import { mapState, mapMutations } from 'vuex';
-let timeOutEvent = 0;
-let scrollYtop = 0;
-let hidID = -1;
+import { scheduleTableUtil } from './dayTable.util.js'
+import moment from 'moment'
+import { mapState, mapMutations } from 'vuex'
+let timeOutEvent = 0
+let scrollYtop = 0
+let hidID = -1
 
 /* 测试数据1 start */
-const curDay = moment();
+const curDay = moment()
 
 function vibrate() {
-  uni.vibrateShort();
+  uni.vibrateShort()
 }
 
 export default {
@@ -117,7 +117,7 @@ export default {
     // uMinute: Number, //表格单元时长
     // showMin: Number, //显示单元时长
     defaultChooseLong: Number, //默认点击所占时长
-    scrollHeight: String
+    scrollHeight: String,
   },
   data() {
     return {
@@ -141,8 +141,8 @@ export default {
       timeId: -1,
       isToday: 0,
       meetingDetail: '',
-      editMeet: false // 编辑会话中
-    };
+      editMeet: false, // 编辑会话中
+    }
   },
   //如果将chooseDate放入vuex 监听可使用下面方法
   // watch: {
@@ -163,114 +163,114 @@ export default {
 
   // },
   created() {
-    this.unitHeight = parseInt(this.hourHeight / 4) || 16; //16px
-    this.unitMinute = parseInt(this.uMinute) || 15; //15分钟
-    this.showMinute = parseInt(this.showMin) || 60; //60分钟
-    this.defaultChoose = parseInt(this.defaultChooseLong / 15) || 4; //60分钟
-    this.minMute = parseInt(this.showMin) || 1;
+    this.unitHeight = parseInt(this.hourHeight / 4) || 16 //16px
+    this.unitMinute = parseInt(this.uMinute) || 15 //15分钟
+    this.showMinute = parseInt(this.showMin) || 60 //60分钟
+    this.defaultChoose = parseInt(this.defaultChooseLong / 15) || 4 //60分钟
+    this.minMute = parseInt(this.showMin) || 1
 
-    this.minRatio = this.showMinute / this.unitMinute; // 4 一个显示的时间段分几块
-    this.minAll = 1440 / this.unitMinute; // 96 (1400 = 24*60)
-    this.scrollTop = this.unitHeight * 36; // 默认9点开始
+    this.minRatio = this.showMinute / this.unitMinute // 4 一个显示的时间段分几块
+    this.minAll = 1440 / this.unitMinute // 96 (1400 = 24*60)
+    this.scrollTop = this.unitHeight * 36 // 默认9点开始
 
-    this.getDefaultTable();
-    this.getMeetingList();
-    this.isTodayFun(this.chooseDate);
+    this.getDefaultTable()
+    this.getMeetingList()
+    this.isTodayFun(this.chooseDate)
   },
   watch: {
     createMeet(newVal) {
-      console.log(newVal);
-    }
+      console.log(newVal)
+    },
   },
   methods: {
     showError(message) {
       uni.showToast({
         title: message,
         icon: 'none',
-        duration: 2000
-      });
+        duration: 2000,
+      })
     },
     scroll(e) {
       //手机端区别手指滚动和点击操作
-      clearTimeout(timeOutEvent);
-      scrollYtop = e.detail.scrollTop;
+      clearTimeout(timeOutEvent)
+      scrollYtop = e.detail.scrollTop
     },
     //判断是否为今天
     isTodayFun(d) {
-      let isToday;
-      let td = new Date();
-      td = new Date(td.getFullYear(), td.getMonth(), td.getDate());
-      let od = new Date(d);
-      od = new Date(od.getFullYear(), od.getMonth(), od.getDate());
-      let xc = od - td;
-      let result = '';
+      let isToday
+      let td = new Date()
+      td = new Date(td.getFullYear(), td.getMonth(), td.getDate())
+      let od = new Date(d)
+      od = new Date(od.getFullYear(), od.getMonth(), od.getDate())
+      let xc = od - td
+      let result = ''
       if (xc < 0) {
-        isToday = -1;
+        isToday = -1
       } else if (xc == 0) {
-        isToday = 0;
+        isToday = 0
       } else {
-        isToday = 1;
+        isToday = 1
       }
-      this.isToday = isToday;
+      this.isToday = isToday
 
-      console.log(this.isToday);
+      console.log(this.isToday)
       if (this.isToday == 0) {
-        this.getTimeNow();
+        this.getTimeNow()
       }
     },
     //获取当前时间imeNow
     getTimeNow() {
-      let self = this;
-      let hidId = -1;
-      let nowDate = new Date();
-      let hour = nowDate.getHours(); //获取当前小时数(0-23)
-      let min = nowDate.getMinutes(); //获取当前分钟数(0-59)
-      let top = (hour * self.minRatio + min / self.unitMinute) * self.unitHeight - 1;
-      let timeLine = 'top:' + top + 'px;';
-      let text = nowDate.toString().substring(15, 21);
+      let self = this
+      let hidId = -1
+      let nowDate = new Date()
+      let hour = nowDate.getHours() //获取当前小时数(0-23)
+      let min = nowDate.getMinutes() //获取当前分钟数(0-59)
+      let top = (hour * self.minRatio + min / self.unitMinute) * self.unitHeight - 1
+      let timeLine = 'top:' + top + 'px;'
+      let text = nowDate.toString().substring(15, 21)
       //是否隐藏上下时间线
       if (min < 15) {
-        hidId = hour * self.minRatio;
+        hidId = hour * self.minRatio
       } else if (min > 45) {
-        hidId = (hour + 1) * self.minRatio;
+        hidId = (hour + 1) * self.minRatio
       }
-      self.nowLine = timeLine;
+      self.nowLine = timeLine
       self.nowTime = {
         line: timeLine,
-        text: text
-      };
-      if (hidId > -1) {
-        self.defaultList[hidId].hidClass = 'font-size:0;';
+        text: text,
       }
-      hidID = hidId;
-      let timeId = hour * self.minRatio + Math.floor(min / self.unitMinute);
+      if (hidId > -1) {
+        self.defaultList[hidId].hidClass = 'font-size:0;'
+      }
+      hidID = hidId
+      let timeId = hour * self.minRatio + Math.floor(min / self.unitMinute)
 
-      self.timeId = timeId;
-      this.scrollTop = timeId * this.unitHeight - 50;
+      self.timeId = timeId
+      this.scrollTop = timeId * this.unitHeight - 50
     },
     //获取表格默认数据
     getDefaultTable() {
-      let self = this;
+      let self = this
       let list = [],
-        rat = this.minRatio;
+        rat = this.minRatio
       for (let i = 0; i <= this.minAll; i++) {
         let time = '',
-          timeClass = '';
-        let hour = Math.floor(i / rat);
-        hour = hour < 10 ? '0' + hour : hour;
+          timeClass = ''
+        let hour = Math.floor(i / rat)
+        hour = hour < 10 ? '0' + hour : hour
 
         if (i % rat === 0) {
-          time = hour + ':00';
-          timeClass = 'hasTime'; // 整点添加类名
+          time = hour + ':00'
+          timeClass = 'hasTime' // 整点添加类名
         } else {
-          time = hour + ':' + (i % rat) * self.unitMinute;
+          time = hour + ':' + (i % rat) * self.unitMinute
         }
         list.push({
           trClass: timeClass,
-          timeTitle: time
-        });
+          timeTitle: time,
+        })
       }
-      this.defaultList = list;
+      this.defaultList = list
     },
     //整理会议列表数据
     getMeetingList() {
@@ -280,99 +280,74 @@ export default {
           // startTime: '2020-07-22 10:00:00',
           // endTime: '2020-07-22 11:15:00',
           startTimeStamp: 1595383200000,
-          endTimeStamp: 1595387700000
+          endTimeStamp: 1595387700000,
         },
         {
           meetingName: '测试',
           startTimeStamp: 1595386800000,
-          endTimeStamp: 1595388600000
-        }
-      ];
+          endTimeStamp: 1595388600000,
+        },
+      ]
 
       let doctorList = [
         {
-          time: {
-            startMTime: curDay
-              .clone()
-              .hours(9)
-              .minutes(0)
-              .startOf('minutes'),
-            endMTime: curDay
-              .clone()
-              .hours(9)
-              .minutes(59)
-              .startOf('minutes')
-          },
-          doctorId_1: {
+          1: {
             list: [
               {
-               patientName: '第一行第一个预约 offset: 0 unit: 3',
-                startTimestamp: curDay
-                  .clone()
-                  .hours(9)
-                  .minutes(0)
-                  .startOf('minutes')
-                  .valueOf(),
-                endTimestamp: curDay
-                  .clone()
-                  .hours(10)
-                  .minutes(39)
-                  .endOf('minutes')
-                  .valueOf()
+                meetingName: '1',
+                // startTime: '2020-07-22 10:00:00',
+                startTimeStamp: 1595383200000,
+                endTimeStamp: 1595387700000,
               },
               {
-                patientName: '第一行第二个预约 offset: 2 unit: 3',
-                startTimestamp: curDay
-                  .clone()
-                  .hours(9)
-                  .minutes(0)
-                  .startOf('minutes')
-                  .valueOf(),
-                endTimestamp: curDay
-                  .clone()
-                  .hours(9)
-                  .minutes(19)
-                  .endOf('minutes')
-                  .valueOf()
+                meetingName: '2',
+                startTimeStamp: 1595385900000,
+                endTimeStamp: 1595388600000,
               },
               {
-                patientName: '第一行第三个预约 offset: 1 unit: 3',
-                startTimestamp: curDay
-                  .clone()
-                  .hours(9)
-                  .minutes(10)
-                  .startOf('minutes')
-                  .valueOf(),
-                endTimestamp: curDay
-                  .clone()
-                  .hours(9)
-                  .minutes(29)
-                  .endOf('minutes')
-                  .valueOf()
-              }
-            ]
-          }
-        }
-      ];
+                meetingName: '3',
+                startTimeStamp: 1595386800000,
+                endTimeStamp: 1595388600000,
+              },
 
-      scheduleTableUtil.getUnitAndOffset(doctorList);
+              {
+                meetingName: '333',
+                startTimeStamp: 1595427300000,
+                endTimeStamp: 1595429100000,
+              },
+              {
+                meetingName: '4444',
+                startTimeStamp: 1595428200000,
+                endTimeStamp: 1595430900000,
+              },
+              {
+                meetingName: '555',
+                startTimeStamp: 1595431800000,
+                endTimeStamp: 1595433600000,
+              },
+            ],
+          },
+        },
+      ]
 
-      let list = [];
+      doctorList = scheduleTableUtil.getUnitAndOffset(doctorList)
+
+      meetingList = doctorList[0][1].list
+
+      let list = []
       for (let i = 0; i < meetingList.length; i++) {
-        let startTime = moment(meetingList[i].startTimeStamp).format('YYYY-MM-DD HH:mm');
-        let endTime = moment(meetingList[i].endTimeStamp).format('YYYY-MM-DD HH:mm');
+        let startTime = moment(meetingList[i].startTimeStamp).format('YYYY-MM-DD HH:mm')
+        let endTime = moment(meetingList[i].endTimeStamp).format('YYYY-MM-DD HH:mm')
+        let start = startTime.substring(11, 16).split(':')
+        let end = endTime.substring(11, 16).split(':')
 
-        console.log(startTime, endTime);
-        let start = startTime.substring(11, 16).split(':');
-        let end = endTime.substring(11, 16).split(':');
+        let st = parseInt(start[0] * this.minRatio) + parseInt(start[1] / this.unitMinute)
+        let ed = parseInt(end[0] * this.minRatio) + parseInt(end[1] / this.unitMinute)
 
-        let st = parseInt(start[0] * this.minRatio) + parseInt(start[1] / this.unitMinute);
-        let ed = parseInt(end[0] * this.minRatio) + parseInt(end[1] / this.unitMinute);
-
-        let height = 'height:' + (ed - st) * this.unitHeight + 'px;';
-        let top = 'top:' + st * this.unitHeight + 'px;';
-        let isFlex = '';
-        let bgClass = 'blurBg';
+        let height = 'height:' + (ed - st) * this.unitHeight + 'px;'
+        let top = 'top:' + st * this.unitHeight + 'px;'
+        let isFlex = ''
+        let bgClass = 'blurBg'
         // if ((ed - st) < 2) {
         //   isFlex = "isFlex "
         // }
@@ -382,120 +357,121 @@ export default {
           style: height + top,
           meetingName: meetingList[i].meetingName,
           time: startTime + '-' + endTime,
+          time: startTime.substring(11, 16) + ':' + endTime.substring(11, 16),
           isFlex: isFlex,
           startId: st,
           endId: ed,
           bgClass: bgClass,
-          ...meetingList[i]
-        });
+          ...meetingList[i],
+        })
       }
-      this.meetingList = list;
+      this.meetingList = list
     },
     //点击会议列表
     showDetail(index, e) {
       if (this.editMeet) {
-        this.editMeet = false;
-        return;
+        this.editMeet = false
+        return
       }
 
-      this.scrollTop = scrollYtop;
+      this.scrollTop = scrollYtop
 
       if (!!this.isCreate) {
-        this.isCreate = false;
-        this.createMeet = '';
-        return;
+        this.isCreate = false
+        this.createMeet = ''
+        return
       }
       if (this.meetingDetail != '' && this.meetingDetail.index == index) {
-        this.meetingDetail = '';
-        return;
+        this.meetingDetail = ''
+        return
       }
-      let y = e.touches[0].clientY;
+      let y = e.touches[0].clientY
       let newShow = this.meetingList[index],
         detailClass = '',
-        style = '';
+        style = ''
       if (y > 300) {
-        detailClass = 'meeting_detail_top';
-        style = 'top:' + (newShow.top - 112) + 'px;';
+        detailClass = 'meeting_detail_top'
+        style = 'top:' + (newShow.top - 112) + 'px;'
       } else {
-        detailClass = 'meeting_detail_bottom';
-        style = 'top:' + (newShow.endId * this.unitHeight + 12) + 'px;';
+        detailClass = 'meeting_detail_bottom'
+        style = 'top:' + (newShow.endId * this.unitHeight + 12) + 'px;'
       }
       this.meetingDetail = {
         index: index,
         class: detailClass,
         style: style,
         meetingName: newShow.meetingName,
-        time: newShow.time
-      };
+        time: newShow.time,
+      }
     },
 
     //是否隐藏时间
     isHidTime(id) {
-      let timeId = this.timeId;
+      let timeId = this.timeId
       if (id == timeId || id == timeId + 1) {
-        return true;
+        return true
       } else {
-        return false;
+        return false
       }
     },
     //会议是否冲突
     hasMeeting(idSt, idEnd) {
-      let hasMeeting = this.meetingList.some(function(item) {
+      let hasMeeting = this.meetingList.some(function (item) {
         return (
           (idSt > item.startId - 0.1 && idSt < item.endId) ||
           (idEnd > item.startId && idEnd < item.endId + 0.1) ||
           (idSt < item.startId && idEnd > item.endId)
-        );
-      });
-      return hasMeeting;
+        )
+      })
+      return hasMeeting
     },
     //判断是否为过去时间
     isOldtime(startId, touchid) {
-      let nowDate = new Date();
-      let timeNowId = nowDate.getHours() * 4 + Math.ceil(nowDate.getMinutes() / 15);
+      let nowDate = new Date()
+      let timeNowId = nowDate.getHours() * 4 + Math.ceil(nowDate.getMinutes() / 15)
       if (touchid < timeNowId) {
-        return -1; //过去时间不能预定
+        return -1 //过去时间不能预定
       } else {
         if (startId < timeNowId) {
-          return timeNowId; //开始时间为timeNowId
+          return timeNowId //开始时间为timeNowId
         }
-        return 0; //开始时间不变
+        return 0 //开始时间不变
       }
     },
     //创建会议渲染
     createMeeting() {
-      let self = this;
-      let id = parseInt(this.startId);
+      let self = this
+      let id = parseInt(this.startId)
       let top = '',
         stId = 0,
         endId = 0,
-        height = '';
-      let startTime = '';
-      let endTime = '';
+        height = ''
+      let startTime = ''
+      let endTime = ''
       if (id < 2) {
-        id = 2;
+        id = 2
       } else if (id > 89) {
         // endId = 96;
-        id = 90;
-        stId = 88;
+        id = 90
+        stId = 88
       } else {
-        stId = id - 2;
+        stId = id - 2
         // endId = id + 6;
       }
 
       //当前建会判断；
       if (this.isToday === 0) {
-        let isOld = this.isOldtime(stId, id);
+        let isOld = this.isOldtime(stId, id)
         if (isOld === -1) {
-          this.showError('过去时间不可预订');
-          timeOutEvent = 1;
-          return;
+          this.showError('过去时间不可预订')
+          timeOutEvent = 1
+          return
         } else if (isOld > 0) {
-          stId = isOld;
-          id = stId + 2;
+          stId = isOld
+          id = stId + 2
         }
       }
-      endId = stId + this.defaultChoose;
+      endId = stId + this.defaultChoose
       // let test = this.defaultChoose - 1.9;
       // this.meetingList.forEach(function(item) {
       // 	if (id - item.endId < 2.1 && id - item.endId > -0.1) {
@@ -509,15 +485,15 @@ export default {
       // 	}
       // });
 
-      top = stId * self.unitHeight;
-      startTime = self.defaultList[stId].timeTitle;
-      endTime = self.defaultList[endId].timeTitle;
-      height = self.unitHeight * (endId - stId);
+      top = stId * self.unitHeight
+      startTime = self.defaultList[stId].timeTitle
+      endTime = self.defaultList[endId].timeTitle
+      height = self.unitHeight * (endId - stId)
       let startTimeShow = startTime,
-        endTimeShow = endTime;
+        endTimeShow = endTime
 
       if (!!self.isHidTime(stId) && self.isToday == 0) {
-        startTimeShow = '';
+        startTimeShow = ''
       }
 
       let meeting = {
@@ -534,103 +510,103 @@ export default {
         startTime: startTime,
         endTime: endTime,
         startTimeShow: startTimeShow,
-        endTimeShow: endTimeShow
-      };
+        endTimeShow: endTimeShow,
+      }
 
-      this.isCreate = true;
-      this.createMeet = meeting;
-      this.startTop = top;
+      this.isCreate = true
+      this.createMeet = meeting
+      this.startTop = top
     },
     //点击开始
     touchSt(e) {
-      console.log(e);
+      console.log(e)
 
-      this.scrollTop = scrollYtop;
-      let self = this;
+      this.scrollTop = scrollYtop
+      let self = this
       if (e.target.offsetLeft < 50) {
-        return;
+        return
       }
       if (this.meetingDetail != '') {
-        this.meetingDetail = '';
-        return;
+        this.meetingDetail = ''
+        return
       }
-      let item = e.target.offsetTop / self.unitHeight;
-      self.startId = item;
-      clearTimeout(timeOutEvent);
+      let item = e.target.offsetTop / self.unitHeight
+      self.startId = item
+      clearTimeout(timeOutEvent)
       if (self.isToday == -1) {
-        this.showError('过去时间不可预订');
-        timeOutEvent = 1;
-        return;
+        this.showError('过去时间不可预订')
+        timeOutEvent = 1
+        return
       }
-      timeOutEvent = setTimeout(function() {
+      timeOutEvent = setTimeout(function () {
         //长按要执行的内容
-        timeOutEvent = 0;
+        timeOutEvent = 0
         //显示方块
-        self.startY = e.touches[0].clientY;
+        self.startY = e.touches[0].clientY
         if (!!self.isCreate) {
-          self.isCreate = false;
-          self.createMeet = '';
-          return;
+          self.isCreate = false
+          self.createMeet = ''
+          return
         }
-        self.createMeeting();
-      }, 50); //设置定时如果点击创会30-60之间，长按创会则设置300-600之间
+        self.createMeeting()
+      }, 50) //设置定时如果点击创会30-60之间，长按创会则设置300-600之间
     },
     touchEn() {
-      let self = this;
-      clearTimeout(timeOutEvent); //清除定时器
+      let self = this
+      clearTimeout(timeOutEvent) //清除定时器
       if (timeOutEvent == 0) {
         //创建会议
-        this.isScroll = true;
+        this.isScroll = true
         let idSt = self.createMeet.idSt,
-          endId = self.createMeet.idEnd;
+          endId = self.createMeet.idEnd
         if (!!this.hasMeeting(idSt, endId)) {
-          this.showError('会议冲突');
-          self.isCreate = false;
-          self.createMeet = '';
-          return;
+          this.showError('会议冲突')
+          self.isCreate = false
+          self.createMeet = ''
+          return
         }
-        timeOutEvent = 1;
+        timeOutEvent = 1
       }
     },
     //上边框滑动开始
     moveTopStart(id, e) {
-      this.scrollTop = scrollYtop;
-      this.topId = parseInt(id);
-      this.startY = e.touches[0].clientY;
+      this.scrollTop = scrollYtop
+      this.topId = parseInt(id)
+      this.startY = e.touches[0].clientY
     },
     //上边框滑动中
     moveTopm(e) {
-      let self = this;
-      let startY = self.startY;
-      let topId = parseInt(self.topId);
+      let self = this
+      let startY = self.startY
+      let topId = parseInt(self.topId)
       //移动会议方块
-      let y = e.touches[0].clientY;
-      let nid = Math.floor((y - startY) / self.unitHeight); //移动单元格个数
+      let y = e.touches[0].clientY
+      let nid = Math.floor((y - startY) / self.unitHeight) //移动单元格个数
 
       let stId = topId + nid,
-        endId = self.createMeet.idEnd;
-      let top = topId * self.unitHeight + (y - startY); //top值
-      let trueTextTop = stId * self.unitHeight - top; //字体样式
-      let height = (endId - topId) * self.unitHeight - (y - startY); //会议高度
+        endId = self.createMeet.idEnd
+      let top = topId * self.unitHeight + (y - startY) //top值
+      let trueTextTop = stId * self.unitHeight - top //字体样式
+      let height = (endId - topId) * self.unitHeight - (y - startY) //会议高度
 
       if (height < self.minMute * self.unitHeight || height > self.unitHeight * 16) {
         //订会时间不小于15分钟或者不大于4个小时
-        return;
+        return
       }
-      let startTime = self.defaultList[stId].timeTitle;
-      let endTime = self.defaultList[endId].timeTitle;
+      let startTime = self.defaultList[stId].timeTitle
+      let endTime = self.defaultList[endId].timeTitle
 
       let startTimeShow = startTime,
-        endTimeShow = endTime;
+        endTimeShow = endTime
       if (self.isToday == 0) {
         if (!!self.isHidTime(stId)) {
-          startTimeShow = '';
+          startTimeShow = ''
         }
         if (!!self.isHidTime(endId)) {
-          endTimeShow = '';
+          endTimeShow = ''
         }
       }
-      let isFlex = '';
+      let isFlex = ''
       // if ((height) < self.unitHeight * 2) {
       //   isFlex = "isFlex"
       // }
@@ -643,10 +619,10 @@ export default {
       // }
       //不得超过当前时间
       if (self.isToday == 0 && stId < this.timeId + 1) {
-        return;
+        return
       }
       if ((y - startY) % self.unitHeight === 0 || (startY - y) % self.unitHeight === 0) {
-        vibrate();
+        vibrate()
         let meeting = {
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + height + 'px;',
@@ -660,11 +636,11 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = meeting;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = meeting
       } else {
-        let len = endId - stId; //会议时常所占单元格
+        let len = endId - stId //会议时常所占单元格
         let meeting2 = {
           isFlex: isFlex,
           trueStyle: 'top:' + trueTextTop + 'px;height:' + len * self.unitHeight + 'px;',
@@ -678,18 +654,18 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = meeting2;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = meeting2
       }
     },
     //上边框滑动结束
     moveTopEnd() {
-      let self = this;
-      vibrate();
-      let meeting = self.createMeet;
+      let self = this
+      vibrate()
+      let meeting = self.createMeet
       // let trueHeight = (meeting.idEnd-meeting.idSt) * self.unitHeight;
-      let trueHeight = meeting.length * self.unitHeight;
+      let trueHeight = meeting.length * self.unitHeight
       // if (self.isToday == 0) {
       //   //如果是今天需判断是否当前时间之前
       //   let isOld = this.isOldtime(meeting.idSt, meeting.idSt);
@@ -707,18 +683,18 @@ export default {
       //   return;
       // }
       if (trueHeight > meeting.height) {
-        let top = meeting.idSt * self.unitHeight;
-        let style = 'top:' + top + 'px;height:' + trueHeight + 'px;';
-        let startTime = self.defaultList[meeting.idSt].timeTitle;
-        let endTime = self.defaultList[meeting.idEnd].timeTitle;
+        let top = meeting.idSt * self.unitHeight
+        let style = 'top:' + top + 'px;height:' + trueHeight + 'px;'
+        let startTime = self.defaultList[meeting.idSt].timeTitle
+        let endTime = self.defaultList[meeting.idEnd].timeTitle
         let startTimeShow = startTime,
-          endTimeShow = endTime;
+          endTimeShow = endTime
         if (self.isToday == 0) {
           if (!!self.isHidTime(meeting.idSt)) {
-            startTimeShow = '';
+            startTimeShow = ''
           }
           if (!!self.isHidTime(meeting.idEnd)) {
-            endTimeShow = '';
+            endTimeShow = ''
           }
         }
         let NewcreateMeet = {
@@ -734,50 +710,50 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = NewcreateMeet;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = NewcreateMeet
       }
     },
     //拉下边框下移开始
     moveBottomStart(id, e) {
-      this.scrollTop = scrollYtop;
-      this.bottomId = parseInt(id);
-      this.endY = e.touches[0].clientY;
+      this.scrollTop = scrollYtop
+      this.bottomId = parseInt(id)
+      this.endY = e.touches[0].clientY
     },
     //拉下边框下移中
     moveBottomm(e) {
-      let self = this;
-      let endY = self.endY;
-      let defaultId = parseInt(self.bottomId);
+      let self = this
+      let endY = self.endY
+      let defaultId = parseInt(self.bottomId)
       //移动会议方块
-      let y = e.touches[0].clientY;
-      let nid = Math.ceil((y - endY) / self.unitHeight);
-      let top = self.createMeet.top;
-      let height = y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight;
+      let y = e.touches[0].clientY
+      let nid = Math.ceil((y - endY) / self.unitHeight)
+      let top = self.createMeet.top
+      let height = y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight
       //到最小单元格不允许移动 或者是超过4个小时
       if (height < self.minMute * self.unitHeight || height > self.unitHeight * 16) {
-        return;
+        return
       }
 
-      let startTime = self.defaultList[self.createMeet.idSt].timeTitle;
-      let endTime = self.defaultList[defaultId + nid].timeTitle;
+      let startTime = self.defaultList[self.createMeet.idSt].timeTitle
+      let endTime = self.defaultList[defaultId + nid].timeTitle
       let startTimeShow = startTime,
-        endTimeShow = endTime;
+        endTimeShow = endTime
       if (self.isToday == 0) {
         if (!!self.isHidTime(self.createMeet.idSt)) {
-          startTimeShow = '';
+          startTimeShow = ''
         }
         if (!!self.isHidTime(defaultId + nid)) {
-          endTimeShow = '';
+          endTimeShow = ''
         }
       }
-      let isFlex = '';
+      let isFlex = ''
       // if ((height) < self.unitHeight * 2) {
       //   isFlex = "isFlex"
       // }
       //该判断功能暂定
-      let end = defaultId + nid;
+      let end = defaultId + nid
       // let hasMeeting = this.meetingList.some(function(item) {
       // 	return end > item.startId + 0.1 && self.createMeet.idSt < item.startId;
       // });
@@ -785,7 +761,7 @@ export default {
       // 	return;
       // }
       if ((y - endY) % self.unitHeight === 0 || (endY - y) % self.unitHeight === 0) {
-        vibrate();
+        vibrate()
         let meeting = {
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + height + 'px;',
@@ -799,11 +775,11 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = meeting;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = meeting
       } else {
-        let len = end - self.createMeet.idSt;
+        let len = end - self.createMeet.idSt
         let meeting2 = {
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + len * self.unitHeight + 'px;',
@@ -817,17 +793,17 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = meeting2;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = meeting2
       }
     },
     //拉下边框下移结束
     moveBottomEnd(e) {
-      let self = this;
-      vibrate();
-      let meeting = self.createMeet;
-      let trueHeight = meeting.length * self.unitHeight;
+      let self = this
+      vibrate()
+      let meeting = self.createMeet
+      let trueHeight = meeting.length * self.unitHeight
       // if (!!this.hasMeeting(meeting.idSt, meeting.idEnd)) {
       //   this.showError("会议冲突")
       //   self.isCreate = false;
@@ -835,18 +811,18 @@ export default {
       //   return;
       // }
       if (trueHeight > meeting.height) {
-        let style = 'top:' + meeting.top + 'px;height:' + trueHeight + 'px;';
-        let startTime = self.defaultList[meeting.idSt].timeTitle;
-        let endTime = self.defaultList[meeting.idEnd].timeTitle;
+        let style = 'top:' + meeting.top + 'px;height:' + trueHeight + 'px;'
+        let startTime = self.defaultList[meeting.idSt].timeTitle
+        let endTime = self.defaultList[meeting.idEnd].timeTitle
 
         let startTimeShow = startTime,
-          endTimeShow = endTime;
+          endTimeShow = endTime
         if (self.isToday == 0) {
           if (!!self.isHidTime(meeting.idSt)) {
-            startTimeShow = '';
+            startTimeShow = ''
           }
           if (!!self.isHidTime(meeting.idEnd)) {
-            endTimeShow = '';
+            endTimeShow = ''
           }
         }
         let NewcreateMeet = {
@@ -862,41 +838,41 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = NewcreateMeet;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = NewcreateMeet
       }
     },
     //点击创建的会议开始
     touchMeetingStart(e) {
-      let self = this;
-      self.scrollTop = scrollYtop;
-      self.meetingTouchStartY = e.touches[0].clientY;
-      self.meetingTouchStartOff = e.currentTarget.offsetTop;
-      self.meetingTouchIdSt = self.createMeet.idSt;
-      self.isScroll = false;
+      let self = this
+      self.scrollTop = scrollYtop
+      self.meetingTouchStartY = e.touches[0].clientY
+      self.meetingTouchStartOff = e.currentTarget.offsetTop
+      self.meetingTouchIdSt = self.createMeet.idSt
+      self.isScroll = false
     },
     //点击创建的会议移动中
     touchMeetingMove(e) {
-      let self = this;
-      let y = e.touches[0].clientY;
-      let ny = y - self.meetingTouchStartY; //移动相对位移
-      let nid = Math.floor(ny / self.unitHeight); //移动的单元格个数
+      let self = this
+      let y = e.touches[0].clientY
+      let ny = y - self.meetingTouchStartY //移动相对位移
+      let nid = Math.floor(ny / self.unitHeight) //移动的单元格个数
 
-      let meeting = self.createMeet;
-      let top = meeting.top + ny; //top值
+      let meeting = self.createMeet
+      let top = meeting.top + ny //top值
 
-      let idSt = self.meetingTouchIdSt + nid;
-      let idEnd = idSt + meeting.length;
+      let idSt = self.meetingTouchIdSt + nid
+      let idEnd = idSt + meeting.length
 
       if (idSt < 0) {
-        return;
+        return
       } else if (idEnd > this.minAll) {
-        return;
+        return
       }
       //不能超过时间线之前
       if (self.isToday == 0 && idSt < this.timeId + 1) {
-        return;
+        return
       }
       // let hasMeeting = this.meetingList.some(function(item) {
       // 	return idSt < item.endId - 0.1 && idEnd > item.endId || idEnd > item.startId - 0.1 && idSt < item.startId;
@@ -904,19 +880,19 @@ export default {
       // if (!!hasMeeting) {
       // 	return;
       // }
-      let startTime = self.defaultList[idSt].timeTitle;
-      let endTime = self.defaultList[idEnd].timeTitle;
+      let startTime = self.defaultList[idSt].timeTitle
+      let endTime = self.defaultList[idEnd].timeTitle
       let startTimeShow = startTime,
-        endTimeShow = endTime;
+        endTimeShow = endTime
       if (self.isToday == 0) {
         if (!!self.isHidTime(idSt)) {
-          startTimeShow = '';
+          startTimeShow = ''
         }
         if (!!self.isHidTime(idEnd)) {
-          endTimeShow = '';
+          endTimeShow = ''
         }
       }
-      let trueTextTop = idSt * self.unitHeight - top;
+      let trueTextTop = idSt * self.unitHeight - top
 
       let NewcreateMeet = {
         isFlex: meeting.isFlex,
@@ -931,33 +907,33 @@ export default {
         startTime: startTime,
         endTime: endTime,
         startTimeShow: startTimeShow,
-        endTimeShow: endTimeShow
-      };
-      self.createMeet = NewcreateMeet;
+        endTimeShow: endTimeShow,
+      }
+      self.createMeet = NewcreateMeet
       if (trueTextTop == 0) {
-        vibrate();
+        vibrate()
       }
     },
     //点击创建的会议移动结束
     touchMeetingEnd(e) {
-      this.isScroll = true;
-      let self = this;
-      let y = e.currentTarget.offsetTop;
-      let absY = Math.abs(y - self.meetingTouchStartOff);
+      this.isScroll = true
+      let self = this
+      let y = e.currentTarget.offsetTop
+      let absY = Math.abs(y - self.meetingTouchStartOff)
       if (absY == 0) {
         //后期即为点击会议事件
-        this.showError('预订功能敬请期待');
+        this.showError('预订功能敬请期待')
         let params = {
           startTime: this.chooseDate + ' ' + self.createMeet.startTime + ':00',
-          endTime: this.chooseDate + ' ' + self.createMeet.endTime + ':00'
-        };
-        self.$emit('bookMeeting', params);
-        return;
+          endTime: this.chooseDate + ' ' + self.createMeet.endTime + ':00',
+        }
+        self.$emit('bookMeeting', params)
+        return
       }
       //拖动会议单元格修正
-      vibrate();
-      let meeting = self.createMeet;
-      let trueTop = meeting.idSt * self.unitHeight;
+      vibrate()
+      let meeting = self.createMeet
+      let trueTop = meeting.idSt * self.unitHeight
       // if (self.isToday == 0) {
       //   //如果是今天需判断是否当前时间之前
       //   let isOld = this.isOldtime(meeting.idSt, meeting.idSt);
@@ -975,17 +951,17 @@ export default {
       // 	return;
       // }
       if (trueTop != meeting.top) {
-        let style = 'top:' + trueTop + 'px;height:' + meeting.height + 'px;';
+        let style = 'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
         let startTime = self.defaultList[meeting.idSt].timeTitle,
-          endTime = self.defaultList[meeting.idEnd].timeTitle;
+          endTime = self.defaultList[meeting.idEnd].timeTitle
         let startTimeShow = startTime,
-          endTimeShow = endTime;
+          endTimeShow = endTime
         if (self.isToday == 0) {
           if (!!self.isHidTime(meeting.idSt)) {
-            startTimeShow = '';
+            startTimeShow = ''
           }
           if (!!self.isHidTime(meeting.idEnd)) {
-            endTimeShow = '';
+            endTimeShow = ''
           }
         }
         let NewcreateMeet = {
@@ -1001,19 +977,19 @@ export default {
           startTime: startTime,
           endTime: endTime,
           startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow
-        };
-        self.createMeet = NewcreateMeet;
+          endTimeShow: endTimeShow,
+        }
+        self.createMeet = NewcreateMeet
       }
     },
 
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
-      console.log(meetInfo);
-      const { startTimeStamp, endTimeStamp, style, endId, startId, top } = meetInfo;
-      const startTime = moment(startTimeStamp).format('HH:mm');
-      const endTime = moment(endTimeStamp).format('HH:mm');
-      const height = (endId - startId) * this.unitHeight;
+      console.log(meetInfo)
+      const { startTimeStamp, endTimeStamp, style, endId, startId, top } = meetInfo
+      const startTime = moment(startTimeStamp).format('HH:mm')
+      const endTime = moment(endTimeStamp).format('HH:mm')
+      const height = (endId - startId) * this.unitHeight
 
       // 格式化成编辑卡片的数据
       const meeting = {
@@ -1028,16 +1004,16 @@ export default {
         length: endId - startId,
         time: `${startTime}:${endTime}`,
         trueStyle: 'top:0;height:' + height + 'px;',
-        ...meetInfo
-      };
+        ...meetInfo,
+      }
 
-      this.isCreate = true;
-      this.createMeet = meeting;
-      this.startTop = top;
-      this.editMeet = true;
-    }
-  }
-};
+      this.isCreate = true
+      this.createMeet = meeting
+      this.startTop = top
+      this.editMeet = true
+    },
+  },
+}
 </script>
 
 <style lang="scss">
@@ -1213,7 +1189,7 @@ $borderColor: #ddd;
       height: 63px;
       position: absolute;
       border-radius: 3px;
-      background-color: #3788c8;
+      background-color: rgba(32, 141, 5, 0.7);
       z-index: 990;
       font-size: $timeSize;
 

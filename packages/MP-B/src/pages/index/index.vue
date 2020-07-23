@@ -1,27 +1,24 @@
 <template>
   <view class="content">
-    <image class="logo" src="/static/logo.png"></image>
-    <view>
-      <text class="title">{{ title }}123</text>
-    </view>
+    <dayTable style="width: 100%;"></dayTable>
   </view>
 </template>
 
 <script>
-import dayTable from '../../components/dayTable/dayTable.vue';
+import dayTable from '../../components/dayTable/dayTable.vue'
 
 export default {
   data() {
     return {
       title: 'Hello',
-    };
+    }
   },
   onLoad() {},
   methods: {},
   components: {
-    dayTable
-  }
-};
+    dayTable,
+  },
+}
 </script>
 
 <style>
