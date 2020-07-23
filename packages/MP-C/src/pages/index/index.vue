@@ -1,7 +1,5 @@
 <template>
-  <view class="content">
-    <van-cell title="单元格" value="内容" />
-  </view>
+  <view class="content"> </view>
 </template>
 
 <script>
