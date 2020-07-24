@@ -1,6 +1,6 @@
 <template>
   <view class="date">
-    <view class="head">
+    <!-- <view class="head">
       <view class="icon" @click="switch_month_week('prev', true)"
         ><text class="iconfont icon-fanhui"
       /></view>
@@ -8,12 +8,12 @@
       <view class="icon" @click="switch_month_week('next', true)"
         ><text class="iconfont next icon-fanhui"
       /></view>
-    </view>
+    </view> -->
     <view class="date_dl">
       <view class="dd" v-for="(item, index) in week" :key="index">{{ item }}</view>
     </view>
     <swiper
-      :style="{ height: (retract ? 2 * 80 : (week_list.length + 1) * 80) + 'rpx' }"
+      :style="{ height: (retract ? 1 * 80 : week_list.length * 80) + 'rpx' }"
       :current="current"
       circular
       @change="change_date"
@@ -37,9 +37,6 @@
             <view v-show="vo.dot && (vo.type == 'month' || retract)" class="dot"></view>
           </view>
         </view>
-        <view @click="open" class="retract icon"
-          ><text class="iconfont next icon-fanhui" :class="[retract ? '' : 'retract_icon']"
-        /></view>
       </swiper-item>
       <swiper-item>
         <view
@@ -60,9 +57,6 @@
             <view v-show="vo.dot && (vo.type == 'month' || retract)" class="dot"></view>
           </view>
         </view>
-        <view @click="open" class="retract icon"
-          ><text class="iconfont next icon-fanhui" :class="[retract ? '' : 'retract_icon']"
-        /></view>
       </swiper-item>
       <swiper-item>
         <view
@@ -83,11 +77,12 @@
             <view v-show="vo.dot && (vo.type == 'month' || retract)" class="dot"></view>
           </view>
         </view>
-        <view @click="open" class="retract icon"
-          ><text class="iconfont next icon-fanhui" :class="[retract ? '' : 'retract_icon']"
-        /></view>
       </swiper-item>
     </swiper>
+    <view @click="open" class="retract icon">
+      <!-- <text class="iconfont next icon-fanhui" :class="[retract ? '' : 'retract_icon']" /> -->
+      ^
+    </view>
   </view>
 </template>
 
@@ -101,7 +96,7 @@ export default {
     dot_lists: {
       type: Array,
       default: () => {
-        return [];
+        return []
       },
     },
   },
@@ -130,87 +125,88 @@ export default {
       dot_list: [],
       current: 1,
       date: '',
-    };
+    }
   },
   watch: {
     value(value) {
-      this.get_date(this.date_parse(value));
+      this.get_date(this.date_parse(value))
     },
 
     dot_lists: {
       immediate: true,
       handler(value) {
-        this.dot_list = value;
+        this.dot_list = value
       },
     },
   },
   computed: {
     week_list_prev_co() {
-      return this.retract ? this.week_list_prev_week : this.week_list_prev;
+      return this.retract ? this.week_list_prev_week : this.week_list_prev
     },
     week_list_next_co() {
-      return this.retract ? this.week_list_next_week : this.week_list_next;
+      return this.retract ? this.week_list_next_week : this.week_list_next
     },
   },
   created() {
-    this.init();
+    this.init()
   },
   methods: {
     change() {
       let value = {
         fulldate: this.date.replace(/-(\d)(?!\d)/g, '-0$1'),
-      };
+      }
 
-      this.$emit('change', value);
+      this.$emit('change', value)
     },
     init() {
-      console.log(this.value);
+      console.log(this.value)
       if (this.value) {
-        this.get_date(this.date_parse(this.value));
+        this.get_date(this.date_parse(this.value))
       } else {
-        this.get_date();
+        this.get_date()
       }
 
-      this.doc_list_update();
-      this.update_month();
+      this.doc_list_update()
+      this.update_month()
     },
     open() {
-      this.retract = !this.retract;
-      this.get_date(this.nowTime);
-      this.set_to_day('week_list_prev');
-      this.set_to_day('week_list_next');
+      this.retract = !this.retract
+      this.get_date(this.nowTime)
+      this.set_to_day('week_list_prev')
+      this.set_to_day('week_list_next')
 
-      this.change_week();
+      this.change_week()
 
       if (this.retract) {
-        this.update_swiper_item('week');
+        this.update_swiper_item('week')
       } else {
-        this.update_swiper_item('month');
+        this.update_swiper_item('month')
       }
-      this.set_doc_lists_update();
+      this.set_doc_lists_update()
+      this.$emit('collapseChange', this.retract)
     },
     change_week() {
       if (this.to_week_index < this.week_list.length - 1) {
-        this.to_next_week_index = this.to_week_index + 1;
-        this.week_list_next_week = this.week_list;
+        this.to_next_week_index = this.to_week_index + 1
+        this.week_list_next_week = this.week_list
       } else {
-        this.to_next_week_index = 0;
-        this.week_list_next_week = this.week_list_next;
+        this.to_next_week_index = 0
+        this.week_list_next_week = this.week_list_next
       }
 
       if (this.to_week_index == 0) {
-        this.update_month();
+        this.update_month()
 
         // if(){
-        let next_day = this.week_list_prev[this.week_list_prev.length - 1][6].day;
+        let next_day = this.week_list_prev[this.week_list_prev.length - 1][6].day
 
         // }
-        this.to_prev_week_index = this.week_list_prev.length - 1 - Math.ceil(next_day / 7);
+        this.to_prev_week_index = this.week_list_prev.length - 1 - Math.ceil(next_day / 7)
 
-        this.week_list_prev_week = JSON.parse(JSON.stringify(this.week_list_prev));
+        this.week_list_prev_week = JSON.parse(JSON.stringify(this.week_list_prev))
       } else {
-        this.to_prev_week_index = this.to_week_index - 1;
-        this.week_list_prev_week = this.week_list;
+        this.to_prev_week_index = this.to_week_index - 1
+        this.week_list_prev_week = this.week_list
       }
 
       // if(this.current == 1){
@@ -228,101 +224,101 @@ export default {
       // }
     },
     change_date_week(type) {
-      let week_list = this.week_list;
-      let to_week_index = this.to_week_index;
+      let week_list = this.week_list
+      let to_week_index = this.to_week_index
       if (type == 'prev') {
-        this.to_week_index = this.to_prev_week_index;
-        this.to_prev_week_index = this.to_next_week_index;
-        this.to_next_week_index = to_week_index;
+        this.to_week_index = this.to_prev_week_index
+        this.to_prev_week_index = this.to_next_week_index
+        this.to_next_week_index = to_week_index
 
-        this.week_list = this.week_list_prev_week;
-        this.week_list_prev_week = this.week_list_next_week;
-        this.week_list_next_week = week_list;
+        this.week_list = this.week_list_prev_week
+        this.week_list_prev_week = this.week_list_next_week
+        this.week_list_next_week = week_list
       } else if (type == 'next') {
-        this.to_week_index = this.to_next_week_index;
-        this.to_next_week_index = this.to_prev_week_index;
-        this.to_prev_week_index = to_week_index;
+        this.to_week_index = this.to_next_week_index
+        this.to_next_week_index = this.to_prev_week_index
+        this.to_prev_week_index = to_week_index
 
-        this.week_list = this.week_list_next_week;
-        this.week_list_next_week = this.week_list_prev_week;
-        this.week_list_prev_week = week_list;
+        this.week_list = this.week_list_next_week
+        this.week_list_next_week = this.week_list_prev_week
+        this.week_list_prev_week = week_list
       }
 
-      this.set_to_day_all();
+      this.set_to_day_all()
     },
     change_date_month(type) {
-      let week_list = this.week_list;
+      let week_list = this.week_list
       if (type == 'prev') {
-        this.week_list = this.week_list_prev;
-        this.week_list_prev = this.week_list_next;
-        this.week_list_next = week_list;
+        this.week_list = this.week_list_prev
+        this.week_list_prev = this.week_list_next
+        this.week_list_next = week_list
       } else if (type == 'next') {
-        this.week_list = this.week_list_next;
-        this.week_list_next = this.week_list_prev;
-        this.week_list_prev = week_list;
+        this.week_list = this.week_list_next
+        this.week_list_next = this.week_list_prev
+        this.week_list_prev = week_list
       }
     },
     change_date(e) {
-      let primary_current = this.current;
-      let current = e.detail.current;
+      let primary_current = this.current
+      let current = e.detail.current
 
-      this.current = current;
+      this.current = current
 
       if (primary_current - current == -1 || primary_current - current == 2) {
         if (this.retract) {
-          this.switch_month_week('next');
-          this.change_week();
+          this.switch_month_week('next')
+          this.change_week()
           if (primary_current - current == -1 && current != 1) {
-            this.change_date_week('prev');
+            this.change_date_week('prev')
           } else if (primary_current - current == 2) {
-            this.change_date_week('next');
+            this.change_date_week('next')
           }
         } else {
-          this.get_date(this.get_month('next'));
-          this.update_month();
+          this.get_date(this.get_month('next'))
+          this.update_month()
           if (primary_current - current == -1 && current != 1) {
-            this.change_date_month('prev');
+            this.change_date_month('prev')
           } else if (primary_current - current == 2) {
-            this.change_date_month('next');
+            this.change_date_month('next')
           }
         }
       } else {
         if (this.retract) {
-          this.switch_month_week('prev');
-          this.change_week();
+          this.switch_month_week('prev')
+          this.change_week()
           if (primary_current - current == 1 && current != 1) {
-            this.change_date_week('next');
+            this.change_date_week('next')
           } else if (primary_current - current == -2) {
-            this.change_date_week('prev');
+            this.change_date_week('prev')
           }
         } else {
-          this.get_date(this.get_month('prev'));
-          this.update_month();
+          this.get_date(this.get_month('prev'))
+          this.update_month()
           if (primary_current - current == 1 && current != 1) {
-            this.change_date_month('next');
+            this.change_date_month('next')
           } else if (primary_current - current == -2) {
-            this.change_date_month('prev');
+            this.change_date_month('prev')
           }
         }
       }
 
-      this.set_to_day_all();
-      this.set_doc_lists_update();
-      this.change();
+      this.set_to_day_all()
+      this.set_doc_lists_update()
+      this.change()
     },
     update_month() {
-      this.get_date(this.get_month('prev'), 'prev');
-      this.get_date(this.get_month('next'), 'next');
+      this.get_date(this.get_month('prev'), 'prev')
+      this.get_date(this.get_month('next'), 'next')
     },
     set_doc_lists_update() {
-      this.doc_list_update('week_list');
-      this.doc_list_update('week_list_prev');
-      this.doc_list_update('week_list_next');
-      this.doc_list_update('week_list_prev_week');
-      this.doc_list_update('week_list_next_week');
+      this.doc_list_update('week_list')
+      this.doc_list_update('week_list_prev')
+      this.doc_list_update('week_list_next')
+      this.doc_list_update('week_list_prev_week')
+      this.doc_list_update('week_list_next_week')
     },
     doc_list_update(week_list = 'week_list') {
-      let list = [];
+      let list = []
 
       this[week_list].map((item, index) => {
         list.push(
@@ -331,161 +327,161 @@ export default {
               this.dot_list.indexOf(vo.date) > -1 ||
               this.dot_list.indexOf(vo.date.replace(/-(\d)(?!\d)/g, '-0$1')) > -1
             ) {
-              vo.dot = true;
+              vo.dot = true
             } else {
-              vo.dot = false;
+              vo.dot = false
             }
-            return { ...vo };
+            return { ...vo }
           }),
-        );
-      });
-      this[week_list] = list;
+        )
+      })
+      this[week_list] = list
     },
     set_to_day(type) {
-      let list = [];
+      let list = []
 
       this[type].map((item, index) => {
         list.push(
           item.map((vo, key) => {
             if (vo.date == `${this.date}`) {
-              vo.today = true;
+              vo.today = true
             } else {
-              vo.today = false;
+              vo.today = false
             }
-            return { ...vo };
+            return { ...vo }
           }),
-        );
-      });
-      this[type] = list;
+        )
+      })
+      this[type] = list
     },
     item_click(item, item_index = -1) {
       if (!this.retract && item.type !== 'month') {
-        return false;
+        return false
       }
-      this.date = item.date;
+      this.date = item.date
       if (item.type == 'month') {
-        this.nowDay = item.day;
-        if (item_index >= 0) this.to_week_index = item_index;
+        this.nowDay = item.day
+        if (item_index >= 0) this.to_week_index = item_index
       } else if (this.retract) {
-        this.nowDay = item.day;
+        this.nowDay = item.day
       }
 
-      this.set_to_day_all(item_index);
+      this.set_to_day_all(item_index)
 
-      this.nowTime = this.date_parse(`${item.date}`);
-      this.change();
-      this.set_doc_lists_update();
+      this.nowTime = this.date_parse(`${item.date}`)
+      this.change()
+      this.set_doc_lists_update()
     },
     set_to_day_all(item_index) {
-      this.set_to_day('week_list');
-      this.set_to_day('week_list_prev');
-      this.set_to_day('week_list_next');
-      this.set_to_day('week_list_prev_week');
-      this.set_to_day('week_list_next_week');
+      this.set_to_day('week_list')
+      this.set_to_day('week_list_prev')
+      this.set_to_day('week_list_next')
+      this.set_to_day('week_list_prev_week')
+      this.set_to_day('week_list_next_week')
     },
     get_month(type) {
-      let nowMonth = this.nowMonth;
-      let nowYear = this.nowYear;
-      let nowDay = this.nowDay;
+      let nowMonth = this.nowMonth
+      let nowYear = this.nowYear
+      let nowDay = this.nowDay
 
       if (type == 'prev') {
         if (nowMonth == 1) {
-          nowMonth = 12;
-          nowYear = nowYear - 1;
+          nowMonth = 12
+          nowYear = nowYear - 1
         } else {
-          nowMonth--;
+          nowMonth--
         }
       } else if (type == 'next') {
         if (nowMonth == 12) {
-          nowMonth = 1;
-          nowYear = nowYear + 1;
+          nowMonth = 1
+          nowYear = nowYear + 1
         } else {
-          nowMonth++;
+          nowMonth++
         }
       }
 
-      let days = this.get_month_days(nowMonth, nowYear);
+      let days = this.get_month_days(nowMonth, nowYear)
       if (nowDay > days) {
-        nowDay = days;
+        nowDay = days
       }
 
-      return this.date_parse(`${nowYear}-${nowMonth}-${nowDay}`);
+      return this.date_parse(`${nowYear}-${nowMonth}-${nowDay}`)
     },
 
     date_parse(str) {
-      return Date.parse(str.replace(/-(\d)(?!\d)/g, '-0$1'));
+      return Date.parse(str.replace(/-(\d)(?!\d)/g, '-0$1'))
     },
     switch_month_week(type = 'next', update_week = false) {
       if (this.retract) {
         if (type == 'prev') {
-          this.get_date(this.nowTime - 86400 * 7 * 1000);
+          this.get_date(this.nowTime - 86400 * 7 * 1000)
         } else if (type == 'next') {
-          this.get_date(this.nowTime + 86401 * 7 * 1000);
+          this.get_date(this.nowTime + 86401 * 7 * 1000)
         }
         if (update_week) {
-          this.update_swiper_item('week');
-          this.set_doc_lists_update();
+          this.update_swiper_item('week')
+          this.set_doc_lists_update()
         }
       } else {
-        this.get_date(this.get_month(type));
-        this.update_swiper_item('month');
+        this.get_date(this.get_month(type))
+        this.update_swiper_item('month')
       }
-      this.doc_list_update();
+      this.doc_list_update()
 
-      this.set_to_day_all();
+      this.set_to_day_all()
 
       if (update_week) {
-        this.change();
+        this.change()
       }
     },
     update_swiper_item(type = 'month') {
       if (type == 'month') {
         if (this.current == 0) {
-          this.change_date_month('next');
+          this.change_date_month('next')
         } else if (this.current == 2) {
-          this.change_date_month('prev');
+          this.change_date_month('prev')
         }
       } else if (type == 'week') {
         if (this.current == 0) {
-          this.change_date_week('next');
+          this.change_date_week('next')
         } else if (this.current == 2) {
-          this.change_date_week('prev');
+          this.change_date_week('prev')
         }
       }
     },
     next() {
-      this.get_date(this.next_date);
+      this.get_date(this.next_date)
     },
     get_date(value = '', type = 'same') {
-      let date = new Date();
+      let date = new Date()
       if (value) {
-        date = new Date(value);
+        date = new Date(value)
       }
       let nowMonth = date.getMonth() + 1,
         nowYear = date.getFullYear(),
         nowDay = date.getDate(),
         nowTime = date.getTime(),
-        nowWeek = date.getDay();
+        nowWeek = date.getDay()
 
-      let days = this.get_month_days(nowMonth, nowYear);
-      let start_date = new Date(nowYear, nowMonth - 1, 1);
-      let end_date = new Date(nowYear, nowMonth - 1, days);
-      let prev_date = new Date(start_date.getTime() - 1);
-      let prev_date_days = prev_date.getDate();
-      let next_date = new Date(end_date.getTime() + 86401 * 1000);
-      let next_date_days = next_date.getDate();
-      let start_week = start_date.getDay();
-      let date_arrs = [];
+      let days = this.get_month_days(nowMonth, nowYear)
+      let start_date = new Date(nowYear, nowMonth - 1, 1)
+      let end_date = new Date(nowYear, nowMonth - 1, days)
+      let prev_date = new Date(start_date.getTime() - 1)
+      let prev_date_days = prev_date.getDate()
+      let next_date = new Date(end_date.getTime() + 86401 * 1000)
+      let next_date_days = next_date.getDate()
+      let start_week = start_date.getDay()
+      let date_arrs = []
 
-      let week_list = [];
-      let count_days = 35;
+      let week_list = []
+      let count_days = 35
 
       for (let i = prev_date_days - start_week + 1; i <= prev_date_days; i++) {
         date_arrs.push({
           day: i,
           type: 'prev',
           date: `${prev_date.getFullYear()}-${prev_date.getMonth() + 1}-${i}`,
-        });
+        })
       }
 
       for (let i = 1; i <= days; i++) {
@@ -494,10 +490,10 @@ export default {
           type: 'month',
           today: i == nowDay ? true : false,
           date: `${nowYear}-${nowMonth}-${i}`,
-        });
+        })
 
         if (i == nowDay && type == 'same') {
-          this.date = `${nowYear}-${nowMonth}-${i}`;
+          this.date = `${nowYear}-${nowMonth}-${i}`
         }
       }
       if (this.debug)
@@ -506,67 +502,67 @@ export default {
           date,
           this.date,
           `${next_date.getFullYear()}-${next_date.getMonth() + 1}-${next_date.getDate()}`,
-        );
-      let date_arrs_length = date_arrs.length;
+        )
+      let date_arrs_length = date_arrs.length
 
       // if(date_arrs_length > 35){
-      count_days = 42;
+      count_days = 42
       // }
       for (let i = 1; i <= count_days - date_arrs_length; i++) {
         date_arrs.push({
           day: i,
           type: 'next',
           date: `${next_date.getFullYear()}-${next_date.getMonth() + 1}-${i}`,
-        });
+        })
       }
 
       for (let i = 0; i < date_arrs.length / 7; i++) {
-        let arr = [];
+        let arr = []
         for (let j = 0; j < 7; j++) {
           if (date_arrs[i * 7 + j].today) {
             if (type == 'same') {
-              this.to_week_index = i;
+              this.to_week_index = i
             }
           }
-          arr.push(date_arrs[i * 7 + j]);
+          arr.push(date_arrs[i * 7 + j])
         }
-        week_list.push(arr);
+        week_list.push(arr)
       }
 
       if (type == 'same') {
-        this.week_list = week_list;
-        this.nowYear = nowYear;
-        this.nowMonth = nowMonth;
-        this.nowDay = nowDay;
-        this.nowTime = nowTime;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.prev_date = prev_date;
-        this.next_date = next_date;
+        this.week_list = week_list
+        this.nowYear = nowYear
+        this.nowMonth = nowMonth
+        this.nowDay = nowDay
+        this.nowTime = nowTime
+        this.start_date = start_date
+        this.end_date = end_date
+        this.prev_date = prev_date
+        this.next_date = next_date
       } else if (type == 'prev') {
-        this.week_list_prev = week_list;
+        this.week_list_prev = week_list
       } else if (type == 'next') {
-        this.week_list_next = week_list;
+        this.week_list_next = week_list
       }
     },
     get_month_days(nowMonth, nowYear) {
-      let month_arr = [1, 3, 5, 7, 8, 10, 12];
-      let days = 0;
+      let month_arr = [1, 3, 5, 7, 8, 10, 12]
+      let days = 0
       if (nowMonth == 2) {
         if (nowYear % 4 == 0) {
-          days = 29;
+          days = 29
         } else {
-          days = 28;
+          days = 28
         }
       } else if (month_arr.indexOf(nowMonth) >= 0) {
-        days = 31;
+        days = 31
       } else {
-        days = 30;
+        days = 30
       }
-      return days;
+      return days
     },
   },
-};
+}
 </script>
 
 <style>
@@ -605,7 +601,7 @@ $color_border: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 80rpx;
+  height: 30rpx;
   .iconfont {
     transform: rotate(270deg);
     &.retract_icon {

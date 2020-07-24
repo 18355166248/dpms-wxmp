@@ -34,7 +34,7 @@
           @click="showDetail(index, $event)"
           @longtap="longTapWithEdit($event, item)"
         >
-          <view class="create_content_box">
+          <view class="create_content_box meetCard">
             <view class="meeting_content_time">{{ item.time }}</view>
             <view class="meeting_content_name">{{ item.meetingName }}</view>
           </view>
@@ -497,10 +497,11 @@ export default {
       }
 
       let meeting = {
+        ...this.createMeet,
         isFlex: '',
         trueStyle: 'top:0;height:' + height + 'px;',
         style: 'top:' + top + 'px;height:' + height + 'px;',
-        meetingName: '再次点击新建日程',
+        // meetingName: '再次点击新建日程',
         time: startTime + ' - ' + endTime,
         length: endId - stId,
         idSt: stId,
@@ -624,10 +625,11 @@ export default {
       if ((y - startY) % self.unitHeight === 0 || (startY - y) % self.unitHeight === 0) {
         vibrate()
         let meeting = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + height + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: stId,
           idEnd: endId,
           length: height / self.unitHeight,
@@ -642,10 +644,11 @@ export default {
       } else {
         let len = endId - stId //会议时常所占单元格
         let meeting2 = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:' + trueTextTop + 'px;height:' + len * self.unitHeight + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: stId,
           idEnd: endId,
           length: len,
@@ -763,10 +766,11 @@ export default {
       if ((y - endY) % self.unitHeight === 0 || (endY - y) % self.unitHeight === 0) {
         vibrate()
         let meeting = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + height + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: self.createMeet.idSt,
           idEnd: end,
           length: height / self.unitHeight,
@@ -781,10 +785,11 @@ export default {
       } else {
         let len = end - self.createMeet.idSt
         let meeting2 = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + len * self.unitHeight + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: self.createMeet.idSt,
           idEnd: end,
           length: len,
@@ -1026,9 +1031,28 @@ $borderColor: #ddd;
   overflow: hidden;
 }
 
+.meetCard {
+  position: relative;
+  padding-left: 3px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-left: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #48bc59;
+  }
+}
+
 .dayTable {
-  border-top: 1px solid $borderColor;
+  box-sizing: border-box;
   width: 100%;
+  height: 100%;
   background-color: #ffffff;
 }
 
@@ -1037,7 +1061,7 @@ $borderColor: #ddd;
 }
 
 .calendar_body {
-  height: 100vh;
+  height: 100%;
   width: calc(100vw - 8px);
   position: relative;
   overflow-x: hidden;
@@ -1102,10 +1126,9 @@ $borderColor: #ddd;
       right: 0px;
       position: absolute;
       cursor: pointer;
-      border-radius: 4px;
-      border: 1px solid #ccc;
       background-color: #fff;
-      box-sizing: border-box;
+      border-radius: 4px;
+      overflow: hidden;
     }
 
     .meeting_detail {
@@ -1195,7 +1218,7 @@ $borderColor: #ddd;
 
       .meeting_content {
         color: #ffffff;
-        margin-left: 5px;
+        margin-left: 7px;
         // line-height: 100%;
       }
 
