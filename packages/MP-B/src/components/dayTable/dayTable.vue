@@ -75,7 +75,9 @@
 
           <view :style="createMeet.trueStyle" class="meeting_left_time">
             <view class="left_Time_show">{{ createMeet.startTimeShow }}</view>
-            <view class="left_Time_show endTimeText">{{ createMeet.endTimeShow }}</view>
+            <view class="left_Time_show endTimeText">{{
+              createMeet.endTimeShow
+            }}</view>
           </view>
           <view class="create_content_box">
             <view class="meeting_content">
@@ -213,7 +215,6 @@ export default {
       }
       this.isToday = isToday
 
-      console.log(this.isToday)
       if (this.isToday == 0) {
         this.getTimeNow()
       }
@@ -225,7 +226,8 @@ export default {
       let nowDate = new Date()
       let hour = nowDate.getHours() //获取当前小时数(0-23)
       let min = nowDate.getMinutes() //获取当前分钟数(0-59)
-      let top = (hour * self.minRatio + min / self.unitMinute) * self.unitHeight - 1
+      let top =
+        (hour * self.minRatio + min / self.unitMinute) * self.unitHeight - 1
       let timeLine = 'top:' + top + 'px;'
       let text = nowDate.toString().substring(15, 21)
       //是否隐藏上下时间线
@@ -336,13 +338,20 @@ export default {
 
       let list = []
       for (let i = 0; i < meetingList.length; i++) {
-        let startTime = moment(meetingList[i].startTimeStamp).format('YYYY-MM-DD HH:mm')
-        let endTime = moment(meetingList[i].endTimeStamp).format('YYYY-MM-DD HH:mm')
+        let startTime = moment(meetingList[i].startTimeStamp).format(
+          'YYYY-MM-DD HH:mm',
+        )
+        let endTime = moment(meetingList[i].endTimeStamp).format(
+          'YYYY-MM-DD HH:mm',
+        )
         let start = startTime.substring(11, 16).split(':')
         let end = endTime.substring(11, 16).split(':')
 
-        let st = parseInt(start[0] * this.minRatio) + parseInt(start[1] / this.unitMinute)
-        let ed = parseInt(end[0] * this.minRatio) + parseInt(end[1] / this.unitMinute)
+        let st =
+          parseInt(start[0] * this.minRatio) +
+          parseInt(start[1] / this.unitMinute)
+        let ed =
+          parseInt(end[0] * this.minRatio) + parseInt(end[1] / this.unitMinute)
 
         let height = 'height:' + (ed - st) * this.unitHeight + 'px;'
         let top = 'top:' + st * this.unitHeight + 'px;'
@@ -428,7 +437,8 @@ export default {
     //判断是否为过去时间
     isOldtime(startId, touchid) {
       let nowDate = new Date()
-      let timeNowId = nowDate.getHours() * 4 + Math.ceil(nowDate.getMinutes() / 15)
+      let timeNowId =
+        nowDate.getHours() * 4 + Math.ceil(nowDate.getMinutes() / 15)
       if (touchid < timeNowId) {
         return -1 //过去时间不能预定
       } else {
@@ -590,7 +600,10 @@ export default {
       let trueTextTop = stId * self.unitHeight - top //字体样式
       let height = (endId - topId) * self.unitHeight - (y - startY) //会议高度
 
-      if (height < self.minMute * self.unitHeight || height > self.unitHeight * 16) {
+      if (
+        height < self.minMute * self.unitHeight ||
+        height > self.unitHeight * 16
+      ) {
         //订会时间不小于15分钟或者不大于4个小时
         return
       }
@@ -622,7 +635,10 @@ export default {
       if (self.isToday == 0 && stId < this.timeId + 1) {
         return
       }
-      if ((y - startY) % self.unitHeight === 0 || (startY - y) % self.unitHeight === 0) {
+      if (
+        (y - startY) % self.unitHeight === 0 ||
+        (startY - y) % self.unitHeight === 0
+      ) {
         vibrate()
         let meeting = {
           ...this.createMeet,
@@ -646,7 +662,8 @@ export default {
         let meeting2 = {
           ...this.createMeet,
           isFlex: isFlex,
-          trueStyle: 'top:' + trueTextTop + 'px;height:' + len * self.unitHeight + 'px;',
+          trueStyle:
+            'top:' + trueTextTop + 'px;height:' + len * self.unitHeight + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
           // meetingName: '再次点击新建日程',
           idSt: stId,
@@ -733,9 +750,13 @@ export default {
       let y = e.touches[0].clientY
       let nid = Math.ceil((y - endY) / self.unitHeight)
       let top = self.createMeet.top
-      let height = y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight
+      let height =
+        y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight
       //到最小单元格不允许移动 或者是超过4个小时
-      if (height < self.minMute * self.unitHeight || height > self.unitHeight * 16) {
+      if (
+        height < self.minMute * self.unitHeight ||
+        height > self.unitHeight * 16
+      ) {
         return
       }
 
@@ -763,7 +784,10 @@ export default {
       // if (!!hasMeeting) {
       // 	return;
       // }
-      if ((y - endY) % self.unitHeight === 0 || (endY - y) % self.unitHeight === 0) {
+      if (
+        (y - endY) % self.unitHeight === 0 ||
+        (endY - y) % self.unitHeight === 0
+      ) {
         vibrate()
         let meeting = {
           ...this.createMeet,
@@ -991,7 +1015,14 @@ export default {
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
       console.log(meetInfo)
-      const { startTimeStamp, endTimeStamp, style, endId, startId, top } = meetInfo
+      const {
+        startTimeStamp,
+        endTimeStamp,
+        style,
+        endId,
+        startId,
+        top,
+      } = meetInfo
       const startTime = moment(startTimeStamp).format('HH:mm')
       const endTime = moment(endTimeStamp).format('HH:mm')
       const height = (endId - startId) * this.unitHeight

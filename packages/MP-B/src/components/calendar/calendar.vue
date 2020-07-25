@@ -10,7 +10,9 @@
       /></view>
     </view> -->
     <view class="date_dl">
-      <view class="dd" v-for="(item, index) in week" :key="index">{{ item }}</view>
+      <view class="dd" v-for="(item, index) in week" :key="index">{{
+        item
+      }}</view>
     </view>
     <swiper
       :style="{ height: (retract ? 1 * 80 : week_list.length * 80) + 'rpx' }"
@@ -25,7 +27,12 @@
           v-for="(item, index) in week_list_prev_co"
           :key="index"
         >
-          <view class="dd" @click="item_click(vo, index, key)" v-for="(vo, key) in item" :key="key">
+          <view
+            class="dd"
+            @click="item_click(vo, index, key)"
+            v-for="(vo, key) in item"
+            :key="key"
+          >
             <view
               class="num"
               :class="[
@@ -34,7 +41,10 @@
               ]"
               >{{ vo.day }}</view
             >
-            <view v-show="vo.dot && (vo.type == 'month' || retract)" class="dot"></view>
+            <view
+              v-show="vo.dot && (vo.type == 'month' || retract)"
+              class="dot"
+            ></view>
           </view>
         </view>
       </swiper-item>
@@ -45,7 +55,12 @@
           v-for="(item, index) in week_list"
           :key="index"
         >
-          <view class="dd" @click="item_click(vo, index, key)" v-for="(vo, key) in item" :key="key">
+          <view
+            class="dd"
+            @click="item_click(vo, index, key)"
+            v-for="(vo, key) in item"
+            :key="key"
+          >
             <view
               class="num"
               :class="[
@@ -54,7 +69,10 @@
               ]"
               >{{ vo.day }}</view
             >
-            <view v-show="vo.dot && (vo.type == 'month' || retract)" class="dot"></view>
+            <view
+              v-show="vo.dot && (vo.type == 'month' || retract)"
+              class="dot"
+            ></view>
           </view>
         </view>
       </swiper-item>
@@ -65,7 +83,12 @@
           v-for="(item, index) in week_list_next_co"
           :key="index"
         >
-          <view class="dd" @click="item_click(vo, index, key)" v-for="(vo, key) in item" :key="key">
+          <view
+            class="dd"
+            @click="item_click(vo, index, key)"
+            v-for="(vo, key) in item"
+            :key="key"
+          >
             <view
               class="num"
               :class="[
@@ -74,14 +97,20 @@
               ]"
               >{{ vo.day }}</view
             >
-            <view v-show="vo.dot && (vo.type == 'month' || retract)" class="dot"></view>
+            <view
+              v-show="vo.dot && (vo.type == 'month' || retract)"
+              class="dot"
+            ></view>
           </view>
         </view>
       </swiper-item>
     </swiper>
     <view @click="open" class="retract icon">
-      <!-- <text class="iconfont next icon-fanhui" :class="[retract ? '' : 'retract_icon']" /> -->
-      ^
+      <text
+        class="iconfont"
+        :class="[retract ? 'icon-arrow-down-30' : 'icon-arrow-up-30']"
+      />
+      <!-- ^ -->
     </view>
   </view>
 </template>
@@ -198,12 +227,16 @@ export default {
         this.update_month()
 
         // if(){
-        let next_day = this.week_list_prev[this.week_list_prev.length - 1][6].day
+        let next_day = this.week_list_prev[this.week_list_prev.length - 1][6]
+          .day
 
         // }
-        this.to_prev_week_index = this.week_list_prev.length - 1 - Math.ceil(next_day / 7)
+        this.to_prev_week_index =
+          this.week_list_prev.length - 1 - Math.ceil(next_day / 7)
 
-        this.week_list_prev_week = JSON.parse(JSON.stringify(this.week_list_prev))
+        this.week_list_prev_week = JSON.parse(
+          JSON.stringify(this.week_list_prev),
+        )
       } else {
         this.to_prev_week_index = this.to_week_index - 1
         this.week_list_prev_week = this.week_list
@@ -325,7 +358,8 @@ export default {
           item.map((vo, key) => {
             if (
               this.dot_list.indexOf(vo.date) > -1 ||
-              this.dot_list.indexOf(vo.date.replace(/-(\d)(?!\d)/g, '-0$1')) > -1
+              this.dot_list.indexOf(vo.date.replace(/-(\d)(?!\d)/g, '-0$1')) >
+                -1
             ) {
               vo.dot = true
             } else {
@@ -501,7 +535,9 @@ export default {
           value,
           date,
           this.date,
-          `${next_date.getFullYear()}-${next_date.getMonth() + 1}-${next_date.getDate()}`,
+          `${next_date.getFullYear()}-${
+            next_date.getMonth() + 1
+          }-${next_date.getDate()}`,
         )
       let date_arrs_length = date_arrs.length
 
@@ -570,7 +606,7 @@ export default {
 </style>
 
 <style lang="scss">
-$color: #007aff;
+$color: $common-color;
 $color_disabled: #f1f1f1;
 $color_standard: #333;
 $color_border: #f5f5f5;
@@ -602,12 +638,12 @@ $color_border: #f5f5f5;
   justify-content: center;
   align-items: center;
   height: 30rpx;
-  .iconfont {
-    transform: rotate(270deg);
-    &.retract_icon {
-      transform: rotate(90deg);
-    }
-  }
+  // .iconfont {
+  //   transform: rotate(270deg);
+  //   &.retract_icon {
+  //     transform: rotate(90deg);
+  //   }
+  // }
 }
 .date_dl {
   display: flex;
