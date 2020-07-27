@@ -120,6 +120,7 @@ export default {
     // showMin: Number, //显示单元时长
     defaultChooseLong: Number, //默认点击所占时长
     scrollHeight: String,
+    apptList: Array,
   },
   data() {
     return {
@@ -176,12 +177,17 @@ export default {
     this.scrollTop = this.unitHeight * 36 // 默认9点开始
 
     this.getDefaultTable()
-    this.getMeetingList()
+    Array.isArray(this.apptList) &&
+      this.apptList.length > 0 &&
+      this.getMeetingList()
     this.isTodayFun(this.chooseDate)
   },
   watch: {
-    createMeet(newVal) {
-      console.log(newVal)
+    createMeet(newVal) {},
+    apptList(newVal) {
+      Array.isArray(this.apptList) &&
+        this.apptList.length > 0 &&
+        this.getMeetingList()
     },
   },
   methods: {
@@ -276,65 +282,11 @@ export default {
     },
     //整理会议列表数据
     getMeetingList() {
-      let meetingList = [
-        {
-          meetingName: '会议测试测试测试测试测试测试gggggggggggddddd',
-          // startTime: '2020-07-22 10:00:00',
-          // endTime: '2020-07-22 11:15:00',
-          startTimeStamp: 1595383200000,
-          endTimeStamp: 1595387700000,
-        },
-        {
-          meetingName: '测试',
-          startTimeStamp: 1595386800000,
-          endTimeStamp: 1595388600000,
-        },
-      ]
+      let meetingList = JSON.parse(JSON.stringify(this.apptList))
 
-      let doctorList = [
-        {
-          1: {
-            list: [
-              {
-                meetingName: '1',
-                // startTime: '2020-07-22 10:00:00',
-                startTimeStamp: 1595383200000,
-                endTimeStamp: 1595387700000,
-              },
-              {
-                meetingName: '2',
-                startTimeStamp: 1595385900000,
-                endTimeStamp: 1595388600000,
-              },
-              {
-                meetingName: '3',
-                startTimeStamp: 1595386800000,
-                endTimeStamp: 1595388600000,
-              },
+      meetingList = scheduleTableUtil.getUnitAndOffset(meetingList)
 
-              {
-                meetingName: '333',
-                startTimeStamp: 1595427300000,
-                endTimeStamp: 1595429100000,
-              },
-              {
-                meetingName: '4444',
-                startTimeStamp: 1595428200000,
-                endTimeStamp: 1595430900000,
-              },
-              {
-                meetingName: '555',
-                startTimeStamp: 1595431800000,
-                endTimeStamp: 1595433600000,
-              },
-            ],
-          },
-        },
-      ]
-
-      doctorList = scheduleTableUtil.getUnitAndOffset(doctorList)
-
-      meetingList = doctorList[0][1].list
+      meetingList = meetingList[0][1].list
 
       let list = []
       for (let i = 0; i < meetingList.length; i++) {

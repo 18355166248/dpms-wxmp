@@ -188,7 +188,6 @@ export default {
       this.$emit('change', value)
     },
     init() {
-      console.log(this.value)
       if (this.value) {
         this.get_date(this.date_parse(this.value))
       } else {
