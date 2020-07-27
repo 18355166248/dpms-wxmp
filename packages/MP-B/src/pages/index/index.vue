@@ -1,8 +1,12 @@
 <template>
   <view class="apptView">
-    <dpmsDrawer maskClose ref="dpmsDrawer" width="320" />
+    <!-- <dpmsDrawer maskClose ref="dpmsDrawer" width="320" />
 
-    <calendar @collapseChange="collapseChange" />
+    <calendar
+      :value="date"
+      @collapseChange="collapseChange"
+      @change="changeCalendar"
+    />
 
     <view class="apptCardInfo">
       <view class="topGray"></view>
@@ -32,14 +36,15 @@
         width: '100%',
         height: retract ? 'calc(100% - 284rpx)' : 'calc(100% - 724rpx)',
       }"
-    />
+      :apptList="list"
+      :chooseDateProp="date"
+    /> -->
+    <dpmsUserinfo />
   </view>
 </template>
 
 <script>
-// import dayTable from '../../components/dayTable/dayTable.vue'
-// import calendar from '../../components/calendar/calendar.vue'
-// import zzxCalendar from '../../components/zzx-calendar/zzx-calendar.vue'
+import moment from 'moment'
 
 export default {
   data() {
@@ -47,9 +52,81 @@ export default {
       title: 'Hello',
       retract: true, // 日历展开: false 收缩: true
       showSearch: false, // 搜索患者
+      list: [
+        {
+          1: {
+            list: [
+              {
+                meetingName: '1',
+                // startTime: '2020-07-22 10:00:00',
+                startTimeStamp: 1595642400000,
+                endTimeStamp: 1595646000000,
+              },
+              {
+                meetingName: '2',
+                startTimeStamp: 1595638800000,
+                endTimeStamp: 1595645100000,
+              },
+              {
+                meetingName: '3',
+                startTimeStamp: 1595646900000,
+                endTimeStamp: 1595651400000,
+              },
+            ],
+          },
+        },
+      ],
+      date: moment().format('YYYY-MM-DD'),
     }
   },
   onLoad() {},
+  watch: {
+    date(newVal) {
+      if (newVal !== moment().format('YYYY-MM-DD')) {
+        this.list = [
+          {
+            1: {
+              list: [
+                {
+                  meetingName: '1',
+                  // startTime: '2020-07-22 10:00:00',
+                  startTimeStamp: 1595565000000,
+                  endTimeStamp: 1595572200000,
+                },
+              ],
+            },
+          },
+        ]
+
+        return
+      }
+
+      this.list = [
+        {
+          1: {
+            list: [
+              {
+                meetingName: '1',
+                // startTime: '2020-07-22 10:00:00',
+                startTimeStamp: 1595642400000,
+                endTimeStamp: 1595646000000,
+              },
+              {
+                meetingName: '2',
+                startTimeStamp: 1595638800000,
+                endTimeStamp: 1595645100000,
+              },
+              {
+                meetingName: '3',
+                startTimeStamp: 1595646900000,
+                endTimeStamp: 1595651400000,
+              },
+            ],
+          },
+        },
+      ]
+    },
+  },
   methods: {
     collapseChange(val) {
       this.retract = val
@@ -66,11 +143,10 @@ export default {
     openDrawer() {
       this.$refs.dpmsDrawer.open()
     },
+    changeCalendar({ fulldate }) {
+      this.date = fulldate
+    },
   },
-  // components: {
-  //   dayTable,
-  //   calendar,
-  // },
 }
 </script>
 
