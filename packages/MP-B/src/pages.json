@@ -4,7 +4,8 @@
     {
       "path": "pages/login/index",
       "style": {
-        "navigationBarTitleText": "uni-app"
+        "navigationBarTitleText": "uni-app",
+        "disableScroll": true
       }
     }
   ],
