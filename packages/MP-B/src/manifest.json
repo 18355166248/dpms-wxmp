@@ -51,7 +51,11 @@
       "sdkConfigs": {
         /* SDK配置 */
       }
-    }
+    },
+    "optimization": {
+      "subPackages": true
+    },
+    "runmode": "liberate" // 开启分包优化后，必须配置资源释放模式
   },
   "quickapp": {
     /* 快应用特有相关 */

@@ -58,6 +58,8 @@ export default {
         ? moment(value.dt).format(this.formatValue)
         : value.f3
       this.pickerValue = pickerValue
+
+      this.$emit('input', value.dt)
     },
   },
   components: {
