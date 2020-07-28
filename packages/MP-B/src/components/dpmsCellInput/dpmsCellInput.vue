@@ -4,6 +4,7 @@
       type="text"
       :value="value"
       @input="onChange"
+      placeholder-class="input-placeholder"
       :placeholder="placeholder"
     />
   </dpmsCell>
@@ -35,4 +36,10 @@ export default {
 }
 </script>
 
-<style></style>
+<style>
+.input-placeholder {
+  font-size: 34rpx;
+  font-weight: 400;
+  color: rgba(0, 0, 0, 0.25);
+}
+</style>

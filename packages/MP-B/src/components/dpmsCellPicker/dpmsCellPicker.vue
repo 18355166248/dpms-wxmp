@@ -5,6 +5,7 @@
     :value="selectValue"
     @change="onChange"
     :mode="mode"
+    :end="end"
   >
     <dpmsCell
       :title="title"
@@ -42,6 +43,7 @@ export default {
       type: Boolean,
       required: false,
     },
+    end: String,
   },
   data() {
     return {

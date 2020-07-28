@@ -23,7 +23,11 @@ export default function MeScroll(options, isScrollBody) {
   setTimeout(function () {
     // 待主线程执行完毕再执行,避免new MeScroll未初始化,在回调获取不到mescroll的实例
     // 自动触发下拉刷新 (只有配置了down的callback才自动触发下拉刷新)
-    if ((me.optDown.use || me.optDown.native) && me.optDown.auto && hasDownCallback) {
+    if (
+      (me.optDown.use || me.optDown.native) &&
+      me.optDown.auto &&
+      hasDownCallback
+    ) {
       if (me.optDown.autoShowLoading) {
         me.triggerDownScroll() // 显示下拉进度,执行下拉回调
       } else {
@@ -34,7 +38,10 @@ export default function MeScroll(options, isScrollBody) {
     if (!me.isUpAutoLoad) {
       // 部分小程序(头条小程序)emit是异步, 会导致isUpAutoLoad判断有误, 先延时确保先执行down的callback,再执行up的callback
       setTimeout(function () {
-        me.optUp.use && me.optUp.auto && !me.isUpAutoLoad && me.triggerUpScroll()
+        me.optUp.use &&
+          me.optUp.auto &&
+          !me.isUpAutoLoad &&
+          me.triggerUpScroll()
       }, 100)
     }
   }, 30) // 需让me.optDown.inited和me.optUp.inited先执行
@@ -162,7 +169,8 @@ MeScroll.prototype.initDownScroll = function () {
   let me = this
   // 配置参数
   me.optDown = me.options.down || {}
-  if (!me.optDown.textColor && me.hasColor(me.optDown.bgColor)) me.optDown.textColor = '#fff' // 当bgColor有值且textColor未设置,则textColor默认白色
+  if (!me.optDown.textColor && me.hasColor(me.optDown.bgColor))
+    me.optDown.textColor = '#fff' // 当bgColor有值且textColor未设置,则textColor默认白色
   me.extendDownScroll(me.optDown)
 
   // 如果是mescroll-body且配置了native,则禁止自定义的下拉刷新
@@ -214,7 +222,8 @@ MeScroll.prototype.touchmoveEvent = function (e) {
     moveY > 0 &&
     ((me.isScrollBody && scrollTop <= 0) ||
       (!me.isScrollBody &&
-        (scrollTop <= 0 || (scrollTop <= me.optDown.startTop && scrollTop === me.startTop))))
+        (scrollTop <= 0 ||
+          (scrollTop <= me.optDown.startTop && scrollTop === me.startTop))))
   ) {
     // 可下拉的条件
     if (
@@ -426,7 +435,8 @@ MeScroll.prototype.initUpScroll = function () {
   let me = this
   // 配置参数
   me.optUp = me.options.up || { use: false }
-  if (!me.optUp.textColor && me.hasColor(me.optUp.bgColor)) me.optUp.textColor = '#fff' // 当bgColor有值且textColor未设置,则textColor默认白色
+  if (!me.optUp.textColor && me.hasColor(me.optUp.bgColor))
+    me.optUp.textColor = '#fff' // 当bgColor有值且textColor未设置,则textColor默认白色
   me.extendUpScroll(me.optUp)
 
   if (me.optUp.use === false) return // 配置不使用上拉加载时,则不初始化上拉布局
@@ -595,7 +605,8 @@ MeScroll.prototype.setPageSize = function (size) {
  */
 MeScroll.prototype.endByPage = function (dataSize, totalPage, systime) {
   let hasNext
-  if (this.optUp.use && totalPage != null) hasNext = this.optUp.page.num < totalPage // 是否还有下一页
+  if (this.optUp.use && totalPage != null)
+    hasNext = this.optUp.page.num < totalPage // 是否还有下一页
   this.endSuccess(dataSize, hasNext, systime)
 }
 
@@ -689,12 +700,16 @@ MeScroll.prototype.endErr = function (errDistance) {
 
 /* 显示空布局 */
 MeScroll.prototype.showEmpty = function () {
-  this.optUp.empty.use && this.optUp.empty.onShow && this.optUp.empty.onShow(true)
+  this.optUp.empty.use &&
+    this.optUp.empty.onShow &&
+    this.optUp.empty.onShow(true)
 }
 
 /* 移除空布局 */
 MeScroll.prototype.removeEmpty = function () {
-  this.optUp.empty.use && this.optUp.empty.onShow && this.optUp.empty.onShow(false)
+  this.optUp.empty.use &&
+    this.optUp.empty.onShow &&
+    this.optUp.empty.onShow(false)
 }
 
 /* 显示回到顶部的按钮 */

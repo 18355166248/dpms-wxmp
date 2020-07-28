@@ -37,7 +37,12 @@ if (window && !window.$mescrollRenderInit) {
           // 只有touch在mescroll的view上面,才禁止bounce
           var el = e.target
           var isMescrollTouch = false
-          while (el && el.tagName && el.tagName !== 'UNI-PAGE-BODY' && el.tagName != 'BODY') {
+          while (
+            el &&
+            el.tagName &&
+            el.tagName !== 'UNI-PAGE-BODY' &&
+            el.tagName != 'BODY'
+          ) {
             var cls = el.classList
             if (cls && cls.contains('mescroll-render-touch')) {
               isMescrollTouch = true
@@ -46,7 +51,8 @@ if (window && !window.$mescrollRenderInit) {
             el = el.parentNode // 继续检查其父元素
           }
           // 禁止bounce (不会对swiper和iOS侧滑返回造成影响)
-          if (isMescrollTouch && e.cancelable && !e.defaultPrevented) e.preventDefault()
+          if (isMescrollTouch && e.cancelable && !e.defaultPrevented)
+            e.preventDefault()
         }
       }
     },

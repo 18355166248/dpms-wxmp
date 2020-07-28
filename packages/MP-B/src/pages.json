@@ -17,19 +17,12 @@
     {
       "path": "pages/login/login",
       "style": {
-        "navigationBarTitleText": "登录"
-      }
-    },
-    // pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-    {
-      "path": "pages/index/index",
-      "style": {
-        "navigationBarTitleText": "uni-app",
+        "navigationStyle": "custom",
         "disableScroll": true
       }
     },
     {
-      "path": "pages/myProfile/index",
+      "path": "pages/myProfile/myProfile",
       "style": {
         "navigationBarTitleText": "我的资料"
       }
@@ -39,11 +32,7 @@
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "uni-app",
     "navigationBarBackgroundColor": "#5CBB89",
-    "backgroundColor": "#F8F8F8",
-    "usingComponents": {
-      "van-cell-group": "./wxcomponents/vant-weapp/cell-group/index",
-      "van-cell": "./wxcomponents/vant-weapp/cell/index"
-    }
+    "backgroundColor": "#F8F8F8"
   },
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {

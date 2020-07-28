@@ -39,6 +39,12 @@ page {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-arrow-up::before {
+  content: '\e7ed';
+}
+.icon-arrow-down::before {
+  content: '\e7ee';
+}
 .icon-arrow-up-30::before {
   content: '\e602';
 }
@@ -76,6 +82,15 @@ page {
   content: '\e8ef';
 }
 
+.icon-institutions::before {
+  content: '\e625';
+}
+.icon-password::before {
+  content: '\e626';
+}
+.icon-user::before {
+  content: '\e627';
+}
 .tc {
   text-align: center;
 }
