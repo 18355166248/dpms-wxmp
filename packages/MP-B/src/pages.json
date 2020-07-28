@@ -22,7 +22,7 @@
       }
     },
     {
-      "path": "pages/myProfile/index",
+      "path": "pages/myProfile/myProfile",
       "style": {
         "navigationBarTitleText": "我的资料"
       }
