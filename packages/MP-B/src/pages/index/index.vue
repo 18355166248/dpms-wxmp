@@ -57,6 +57,11 @@
           v-model="form.tel"
         />
         <dpmsCellPicker title="护士" isLink />
+        <dpmsCellTimePicker
+          required
+          title="预约开始时间"
+          v-model="form.startTime"
+        />
         <button @click="submit">提交</button>
       </dpmsForm>
     </scroll-view>
