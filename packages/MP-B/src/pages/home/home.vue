@@ -84,7 +84,7 @@ export default {
   methods: {
     login() {
       uni.navigateTo({
-        url: '/pages/login/login',
+        url: '/pages/login/index',
       })
     },
     getPatient() {

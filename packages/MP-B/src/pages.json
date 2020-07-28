@@ -40,15 +40,7 @@
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "uni-app",
     "navigationBarBackgroundColor": "#5CBB89",
-    "backgroundColor": "#F8F8F8",
-    "usingComponents": {
-      "van-cell-group": "./wxcomponents/vant-weapp/cell-group/index",
-      "van-cell": "./wxcomponents/vant-weapp/cell/index",
-      "van-field": "./wxcomponents/vant-weapp/field/index",
-      "van-button": "./wxcomponents/vant-weapp/button/index",
-      "van-collapse": "./wxcomponents/vant-weapp/collapse/index",
-      "van-collapse-item": "./wxcomponents/vant-weapp/collapse-item/index"
-    }
+    "backgroundColor": "#F8F8F8"
   },
   "lazyCodeLoading": "requiredComponents",
   "tabBar": {

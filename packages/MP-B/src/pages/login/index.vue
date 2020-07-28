@@ -5,25 +5,32 @@
       <view class="login">
         <label>
           <text class="iconfont icon-institutions" />
-          <input placeholder="请输入会员名" v-model="loginForm.memberCode" />
+          <input
+            placeholder="请输入会员名"
+            placeholder-style="color:rgba(0,0,0,0.25)"
+            v-model="loginForm.memberCode"
+          />
         </label>
         <label>
           <text class="iconfont icon-user" />
-          <input placeholder="请输入用户名" v-model="loginForm.username" />
+          <input
+            placeholder="请输入用户名"
+            placeholder-style="color:rgba(0,0,0,0.25)"
+            v-model="loginForm.username"
+          />
         </label>
         <label>
           <text class="iconfont icon-password" />
           <input
             password
             placeholder="请输入密码"
+            placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.username"
           />
         </label>
-        <div style="margin: 16px;">
-          <van-button round block type="info" @click="onSubmit"
-            >登录</van-button
-          >
-        </div>
+        <view class="submit">
+          <button type="default" @click="onSubmit">登 录</button>
+        </view>
       </view>
 
       <selectMedicalInstitution
@@ -40,7 +47,7 @@ export default {
   data() {
     return {
       loginForm: {
-        memberCode: 'Hello',
+        memberCode: '',
         username: '',
         password: '',
       },
@@ -84,6 +91,15 @@ export default {
     }
     input {
       width: 100%;
+    }
+    .submit {
+      margin-top: 92rpx;
+      button {
+        height: 100rpx;
+        background: #5cbb89;
+        font-size: 40rpx;
+        color: #fff;
+      }
     }
   }
 }

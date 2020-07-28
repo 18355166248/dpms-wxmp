@@ -1,31 +1,23 @@
 // 定义store的key常量
 const STORAGE_KEY = {
   // 访问token
-  TOKEN: 'token',
-  // 用户openId
-  OPEN_ID: 'openId',
-  // 用户小程序信息
-  USER_INFO: 'USER_INFO',
+  ACCESS_TOKEN: 'access_token',
+  // 机构信息
+  MEDICALINSTITUTION: 'medicalInstitution',
+  // 用户信息
+  STAFF: 'staff',
 }
 
-/** 微信本地store */
-class Storage {
-  // 设置本地缓存key，data
-  static setStorageData(key, data) {
-    wx.setStorageSync(key, data)
-  }
-
-  // 获取本地缓存的key
-  static getStorageData(key) {
-    return wx.getStorageSync(key)
-  }
-
-  // 删除本地缓存的key
-  static removeStorageData(key) {
-    wx.removeStorageSync(key)
-  }
-}
-
-// 导出store api
-export default Storage
 export { STORAGE_KEY }
+
+export function setStorage(key, value) {
+  uni.setStorageSync(key, value)
+}
+
+export function getStorage(key) {
+  return uni.getStorageSync(key)
+}
+
+export function removeStorage(key) {
+  uni.removeStorageSync(key)
+}

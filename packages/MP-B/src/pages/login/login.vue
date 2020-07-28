@@ -8,8 +8,7 @@
 <script>
 import authAPI from '@/APIS/auth/auth.api'
 import systemAPI from '@/APIS/system.api'
-import { setStorage } from '@/APIS/utils'
-
+import { setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   methods: {
     login() {
@@ -22,16 +21,10 @@ export default {
         })
         .then((res) => {
           console.log('res:', res)
-          const {
-            access_token,
-            refresh_token,
-            medicalInstitution,
-            staff,
-          } = res.data
-          setStorage('access_token', access_token)
-          setStorage('refresh_token', refresh_token)
-          setStorage('medicalInstitution', medicalInstitution)
-          setStorage('staff', staff)
+          const { access_token, medicalInstitution, staff } = res.data
+          setStorage(STORAGE_KEY.ACCESS_TOKEN, access_token)
+          setStorage(STORAGE_KEY.MEDICALINSTITUTION, medicalInstitution)
+          setStorage(STORAGE_KEY.STAFF, staff)
         })
     },
     getEnums() {

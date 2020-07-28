@@ -1,7 +1,8 @@
 import qs from 'qs'
 import { CC_HTTP_ENUMS } from '@arctic/tools'
 import EnvConfig from '../config'
-import { getStorage, omitUndefinedAndNullValue, removeStorage } from './utils'
+import { omitUndefinedAndNullValue } from '@/utils/utils'
+import { getStorage, removeStorage, STORAGE_KEY } from '@/utils/storage'
 
 // 微信小程序
 const Fly = require('flyio/dist/npm/wx')
@@ -176,11 +177,10 @@ httper.interceptors.response.use(
       response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value
     ) {
       removeStorage('access_token')
-      removeStorage('refresh_token')
       removeStorage('medicalInstitution')
       removeStorage('staff')
 
-      uni.navigateTo({
+      uni.reLaunch({
         url: '/pages/login/login',
       })
     } else {
