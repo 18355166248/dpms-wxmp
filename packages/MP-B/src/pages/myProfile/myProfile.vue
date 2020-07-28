@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dpmsForm ref="myProfileForm" :rules="rules">
+    <dpmsForm ref="myProfileForm" :model="form" :rules="rules">
       <dpmsCellInput
         required
         title="姓名"
@@ -25,8 +25,8 @@
       />
       <dpmsCellInput
         required
-        title="联系电话"
-        placeholder="请输入联系电话"
+        title="手机号"
+        placeholder="请输入手机号"
         v-model="form.phone"
       />
       <dpmsCellPicker
@@ -34,7 +34,7 @@
         title="岗位"
         placeholder="请选择岗位"
         v-model="form.job"
-        :list="job"
+        :list="jobs"
         listKey="job"
         isLink
       />
@@ -48,6 +48,7 @@
 
 <script>
 import moment from 'moment'
+import AsyncValidator from 'async-validator'
 
 console.log(moment().format('YYYY-MM-DD'))
 
@@ -56,40 +57,52 @@ export default {
     return {
       form: {
         name: '',
+        sex: '',
         date: '',
         phone: '',
         job: '',
       },
       rules: {
-        name: {
-          required: true,
-          message: '请输入姓名',
-          min: 0,
-          max: 50,
-        },
+        name: [
+          {
+            required: true,
+            message: '请输入姓名',
+          },
+          {
+            min: 1,
+            max: 30,
+            message: '姓名长度为1-30个字',
+          },
+        ],
         sex: {
           required: true,
           message: '请选择性别',
         },
+        phone: {
+          required: true,
+          message: '请输入手机号',
+        },
+        job: {
+          required: true,
+          message: '请选择岗位',
+        },
       },
       endDate: moment().format('YYYY-MM-DD'),
       sexs: ['男', '女'],
-      job: ['医生', '护士', '洁牙师'],
+      jobs: ['医生', '护士', '洁牙师'],
     }
   },
   methods: {
     saveMyProfile() {
       this.$refs.myProfileForm.validate((err, fileds) => {
-        console.log(err, fileds)
+        console.log(err, '*******', fileds)
+        console.log('&&&', this.form)
         if (err) {
           this.show(err[0]?.message)
+          return
         }
         //成功执行
       })
-
-      console.log(this.form)
-      // console.log(this.$refs.nameInput.inputValue + '\n' + this.$refs.phoneInput.inputValue)
-      // console.log(this.$refs.sexPicker)
     },
   },
 }
