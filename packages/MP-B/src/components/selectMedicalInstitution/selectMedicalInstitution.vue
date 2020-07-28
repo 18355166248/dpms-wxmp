@@ -74,6 +74,10 @@ export default {
       type: String,
       default: '请选择诊所',
     },
+    disList: {
+      type: Array,
+      default: [],
+    },
     openAll: {
       //默认展开
       type: Boolean,
@@ -99,7 +103,6 @@ export default {
     hide() {
       this.showTree = false
     },
-    getTreeList() {},
     //扁平化树结构
     renderTreeList(list = [], rank = 0, parentId = [], parents = []) {
       list.forEach((item) => {

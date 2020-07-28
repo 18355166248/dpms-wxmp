@@ -6,6 +6,8 @@ const STORAGE_KEY = {
   MEDICALINSTITUTION: 'medicalInstitution',
   // 用户信息
   STAFF: 'staff',
+  // 枚举值
+  ENUMS: 'enums',
 }
 
 export { STORAGE_KEY }

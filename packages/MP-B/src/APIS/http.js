@@ -42,7 +42,7 @@ httper.interceptors.request.use((request) => {
     // token
     (request) => {
       if (!request?.isNoNeedAuth) {
-        const token = getStorage('access_token')
+        const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
         if (token) {
           request.headers['Authorization'] = `Bearer ${token}`
         }
@@ -53,9 +53,9 @@ httper.interceptors.request.use((request) => {
 
     // 默认参数
     (request) => {
-      const staff = getStorage('staff')
+      const staff = getStorage(STORAGE_KEY.STAFF)
 
-      const medicalInstitution = getStorage('medicalInstitution')
+      const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
       console.log('staff:', staff)
       console.log('medicalInstitution:', medicalInstitution)
       // 默认参数
@@ -176,9 +176,9 @@ httper.interceptors.response.use(
     if (
       response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value
     ) {
-      removeStorage('access_token')
-      removeStorage('medicalInstitution')
-      removeStorage('staff')
+      removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+      removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
+      removeStorage(STORAGE_KEY.STAFF)
 
       uni.reLaunch({
         url: '/pages/login/login',
