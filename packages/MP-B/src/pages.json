@@ -4,6 +4,7 @@
     {
       "path": "pages/login/index",
       "style": {
+        "navigationStyle": "custom",
         "navigationBarTitleText": "uni-app",
         "disableScroll": true
       }
