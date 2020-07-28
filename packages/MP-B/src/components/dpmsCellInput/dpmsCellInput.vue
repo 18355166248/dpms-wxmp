@@ -1,5 +1,5 @@
 <template>
-  <dpmsCell :title="title">
+  <dpmsCell :title="title" :required="required" :isLink="isLink">
     <input
       type="text"
       :value="value"
@@ -13,8 +13,19 @@
 export default {
   props: {
     value: String,
-    title: String,
     placeholder: String,
+    title: {
+      type: String,
+      required: true,
+    },
+    required: {
+      type: Boolean,
+      required: false,
+    },
+    isLink: {
+      type: Boolean,
+      required: false,
+    },
   },
   methods: {
     onChange(e) {
