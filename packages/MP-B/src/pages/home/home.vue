@@ -15,7 +15,9 @@
       :up="upOption"
       textLoading=""
     >
-      <button type="primary" plain="true" @click="getPatient">请求患者列表</button>
+      <button type="primary" plain="true" @click="getPatient">
+        请求患者列表
+      </button>
 
       <button type="primary" plain="true" @click="login">login</button>
     </mescroll-body>

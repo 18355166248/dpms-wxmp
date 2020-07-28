@@ -13,7 +13,9 @@
       <view class="upwarp-tip">{{ mOption.textLoading }}</view>
     </view>
     <!-- 无数据 -->
-    <view v-if="isUpNoMore" class="upwarp-nodata">{{ mOption.textNoMore }}</view>
+    <view v-if="isUpNoMore" class="upwarp-nodata">{{
+      mOption.textNoMore
+    }}</view>
   </view>
 </template>
 

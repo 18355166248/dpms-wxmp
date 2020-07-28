@@ -11,9 +11,13 @@ import MescrollEmpty from '@/components/mescroll-uni/components/mescroll-empty.v
     :class="{ 'empty-fixed': option.fixed }"
     :style="{ 'z-index': option.zIndex, top: option.top }"
   >
-    <view> <image v-if="icon" class="empty-icon" :src="icon" mode="widthFix" /> </view>
+    <view>
+      <image v-if="icon" class="empty-icon" :src="icon" mode="widthFix" />
+    </view>
     <view v-if="tip" class="empty-tip">{{ tip }}</view>
-    <view v-if="option.btnText" class="empty-btn" @click="emptyClick">{{ option.btnText }}</view>
+    <view v-if="option.btnText" class="empty-btn" @click="emptyClick">{{
+      option.btnText
+    }}</view>
   </view>
 </template>
 
@@ -34,11 +38,15 @@ export default {
   computed: {
     // 图标
     icon() {
-      return this.option.icon == null ? GlobalOption.up.empty.icon : this.option.icon // 此处不使用短路求值, 用于支持传空串不显示图标
+      return this.option.icon == null
+        ? GlobalOption.up.empty.icon
+        : this.option.icon // 此处不使用短路求值, 用于支持传空串不显示图标
     },
     // 文本提示
     tip() {
-      return this.option.tip == null ? GlobalOption.up.empty.tip : this.option.tip // 此处不使用短路求值, 用于支持传空串不显示文本提示
+      return this.option.tip == null
+        ? GlobalOption.up.empty.tip
+        : this.option.tip // 此处不使用短路求值, 用于支持传空串不显示文本提示
     },
   },
   methods: {
