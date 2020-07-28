@@ -8,7 +8,7 @@
   >
     <dpmsCell
       :title="title"
-      required
+      :required="required"
       isLink
       :placeholder="placeholder"
       :value="pickerValue"
@@ -21,7 +21,7 @@ export default {
   props: {
     mode: {
       type: String,
-      default: 'selector',
+      default: 'selector', // selector, multiSelector, time, date, region
     },
     list: {
       type: Array,
@@ -29,8 +29,19 @@ export default {
     },
     value: [String, Number],
     listKey: String,
-    title: String,
     placeholder: String,
+    required: {
+      type: Boolean,
+      required: false,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+    isLink: {
+      type: Boolean,
+      required: false,
+    },
   },
   data() {
     return {
@@ -50,7 +61,7 @@ export default {
   methods: {
     onChange(e) {
       console.log(e)
-      let index = Number(e.detail.value)
+      let index = e.detail.value
       let value = index
       let pickerValue = value
 

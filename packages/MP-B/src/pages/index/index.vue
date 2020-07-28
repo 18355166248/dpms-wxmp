@@ -41,7 +41,7 @@
     /> -->
     <scroll-view scroll-y class="h100">
       <dpmsCellPicker
-        mode="time"
+        mode="region"
         :list="multiArray"
         v-model="form.doctor"
         listKey="name"
@@ -54,9 +54,7 @@
         placeholder="请输入联系电话"
         v-model="form.nurse"
       />
-      <dpmsCell title="护士">
-        <input />
-      </dpmsCell>
+      <dpmsCellPicker title="护士" isLink />
       <button @click="submit">提交</button>
     </scroll-view>
   </view>
