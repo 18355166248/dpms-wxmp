@@ -1,33 +1,44 @@
 <template>
   <div>
-    <formItem title="姓名" isRequired v-model="form.name"></formItem>
-    <formItem
-      title="性别"
-      isArrowRight
-      isRequired
-      inputType="picker"
-      :pickerArray="sex"
-      mode="selector"
-      v-model="form.sex"
-    ></formItem>
-    <formItem
-      title="出生日期"
-      isArrowRight
-      inputType="picker"
-      mode="date"
-      :endDate="endDate"
-      v-model="form.date"
-    ></formItem>
-    <formItem title="手机号" isRequired v-model="form.phone"></formItem>
-    <formItem
-      title="岗位"
-      isArrowRight
-      isRequired
-      inputType="picker"
-      mode="selector"
-      :pickerArray="job"
-      v-model="form.job"
-    ></formItem>
+    <dpmsForm ref="myProfileForm" :rules="rules">
+      <dpmsCellInput
+        required
+        title="姓名"
+        placeholder="请输入姓名"
+        v-model="form.name"
+      />
+      <dpmsCellPicker
+        required
+        title="性别"
+        placeholder="请选择性别"
+        v-model="form.sex"
+        :list="sexs"
+        listKey="sex"
+        isLink
+      />
+      <dpmsCellPicker
+        title="出生日期"
+        placeholder="请选择出生日期"
+        v-model="form.date"
+        mode="date"
+        :end="endDate"
+      />
+      <dpmsCellInput
+        required
+        title="联系电话"
+        placeholder="请输入联系电话"
+        v-model="form.phone"
+      />
+      <dpmsCellPicker
+        required
+        title="岗位"
+        placeholder="请选择岗位"
+        v-model="form.job"
+        :list="job"
+        listKey="job"
+        isLink
+      />
+    </dpmsForm>
 
     <button @click="saveMyProfile">
       保存
@@ -36,7 +47,6 @@
 </template>
 
 <script>
-import formItem from '../../components/formItem/formItem'
 import moment from 'moment'
 
 console.log(moment().format('YYYY-MM-DD'))
@@ -46,21 +56,37 @@ export default {
     return {
       form: {
         name: '',
-        sex: '',
         date: '',
         phone: '',
         job: '',
       },
+      rules: {
+        name: {
+          required: true,
+          message: '请输入姓名',
+          min: 0,
+          max: 50,
+        },
+        sex: {
+          required: true,
+          message: '请选择性别',
+        },
+      },
       endDate: moment().format('YYYY-MM-DD'),
-      sex: ['男', '女'],
+      sexs: ['男', '女'],
       job: ['医生', '护士', '洁牙师'],
     }
   },
-  components: {
-    formItem,
-  },
   methods: {
     saveMyProfile() {
+      this.$refs.myProfileForm.validate((err, fileds) => {
+        console.log(err, fileds)
+        if (err) {
+          this.show(err[0]?.message)
+        }
+        //成功执行
+      })
+
       console.log(this.form)
       // console.log(this.$refs.nameInput.inputValue + '\n' + this.$refs.phoneInput.inputValue)
       // console.log(this.$refs.sexPicker)
