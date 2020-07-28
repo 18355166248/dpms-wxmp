@@ -6,6 +6,10 @@ export function getStorage(key) {
   return uni.getStorageSync(key)
 }
 
+export function removeStorage(key) {
+  uni.removeStorageSync(key)
+}
+
 /**
  * @desc 移除对象中有空值的属性 空值包含 undefined null
  * @param object

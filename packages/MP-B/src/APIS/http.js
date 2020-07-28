@@ -1,7 +1,7 @@
 import qs from 'qs'
 import { CC_HTTP_ENUMS } from '@arctic/tools'
 import EnvConfig from '../config'
-import { getStorage, omitUndefinedAndNullValue } from './utils'
+import { getStorage, omitUndefinedAndNullValue, removeStorage } from './utils'
 
 // 微信小程序
 const Fly = require('flyio/dist/npm/wx')
@@ -24,9 +24,12 @@ httper.interceptors.request.use((request) => {
     // 连接指定后端人员调试
     (request) => {
       if (EnvConfig.useServerUrlRedirection?.open) {
-        const pathname = request.url.replace(request.baseURL, '').replace(/^\//, '')
+        const pathname = request.url
+          .replace(request.baseURL, '')
+          .replace(/^\//, '')
         const rootPath = pathname.split('/')[0]
-        const redirecttedBaseURL = EnvConfig.useServerUrlRedirection.pathMap[rootPath]
+        const redirecttedBaseURL =
+          EnvConfig.useServerUrlRedirection.pathMap[rootPath]
 
         if (redirecttedBaseURL) {
           request.baseURL = redirecttedBaseURL
@@ -123,10 +126,16 @@ httper.interceptors.request.use((request) => {
 
       request.body = omitUndefinedAndNullValue(newBody)
 
-      if (request.method === 'POST' || request.method === 'PUT' || request.method === 'DELETE') {
+      if (
+        request.method === 'POST' ||
+        request.method === 'PUT' ||
+        request.method === 'DELETE'
+      ) {
         //   小程序不支持 formData
 
-        if (request.headers['Content-Type'].indexOf('application/json') !== -1) {
+        if (
+          request.headers['Content-Type'].indexOf('application/json') !== -1
+        ) {
           request.headers = {
             'Content-Type': 'application/json; charset=utf-8',
             ...request.headers,
@@ -143,7 +152,9 @@ httper.interceptors.request.use((request) => {
     },
   ]
 
-  requestInterceptors.forEach((requestInterceptor) => requestInterceptor(request))
+  requestInterceptors.forEach((requestInterceptor) =>
+    requestInterceptor(request),
+  )
 
   return request
 })
@@ -161,37 +172,27 @@ httper.interceptors.response.use(
       title: response?.data?.msg || response?.data?.message || '数据请求失败',
     })
 
-    console.log(CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value)
+    if (
+      response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value
+    ) {
+      removeStorage('access_token')
+      removeStorage('refresh_token')
+      removeStorage('medicalInstitution')
+      removeStorage('staff')
 
-    if (response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value) {
-      this.lock() //锁定响应拦截器，
-
-      return newHttper
-        .get('institution/oidc/token', { refresh_token: getStorage('refresh_token') })
-        .then(
-          (res) => {
-            console.log('res:', res)
-            const { access_token, refresh_token } = res.data
-
-            setStorage('access_token', access_token)
-            setStorage('refresh_token', refresh_token)
-
-            return httper.request(response.request)
-          },
-          (err) => {
-            uni.navigateTo({
-              url: '/pages/login/login',
-            })
-          },
-        )
-        .finally(() => {
-          this.unlock() //解锁后，会继续发起请求队列中的任务
-        })
+      uni.navigateTo({
+        url: '/pages/login/login',
+      })
     } else {
       return Promise.reject(response.data)
     }
   },
   function (err) {
+    uni.showToast({
+      icon: 'none',
+      title: err?.data?.msg || err?.data?.message || '数据请求失败',
+    })
+
     return Promise.reject(err)
   },
 )
