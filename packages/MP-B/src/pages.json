@@ -26,8 +26,35 @@
       "style": {
         "navigationBarTitleText": "我的资料"
       }
+    },
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
     }
   ],
+  "subPackages": [
+    {
+      "root": "baseSubpackages/",
+      "name": "base",
+      "pages": [
+        {
+          "path": "apptForm/apptForm"
+        },
+        {
+          "path": "apptForm/staffList"
+        }
+      ]
+    }
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["base"]
+    }
+  },
   "globalStyle": {
     "navigationBarTextStyle": "white",
     "navigationBarTitleText": "uni-app",

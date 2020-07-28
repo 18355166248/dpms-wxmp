@@ -41,26 +41,82 @@
     /> -->
     <scroll-view scroll-y class="h100">
       <dpmsForm ref="dpmsForm" :rules="rules">
-        <dpmsCellPicker
-          required
-          mode="region"
-          :list="multiArray"
-          v-model="form.doctor"
-          listKey="name"
-          title="医生"
-          placeholder="请选择医生"
-        />
-
-        <dpmsCellInput
-          title="联系电话"
-          placeholder="请输入联系电话"
-          v-model="form.tel"
-        />
-        <dpmsCellPicker title="护士" isLink />
         <dpmsCellTimePicker
           required
           title="预约开始时间"
           v-model="form.startTime"
+        />
+        <dpmsCellInput
+          title="持续时间"
+          placeholder="请输入持续时间"
+          v-model="form.duration"
+        />
+        <dpmsCellPicker
+          required
+          :list="multiArray"
+          v-model="form.doctor"
+          listKey="visType"
+          title="就诊类型"
+          placeholder="请选择就诊类型"
+        />
+        <dpmsCellPicker
+          required
+          :list="multiArray"
+          v-model="form.doctor"
+          listKey="staffName"
+          title="医生"
+          placeholder="请选择医生"
+        />
+        <dpmsCellPicker
+          title="诊所"
+          :value="form.medicalInstitutionSimpleCode"
+        />
+        <dpmsCellPicker
+          required
+          mode="multiple"
+          :list="multiArray"
+          v-model="form.help"
+          listKey="staffName"
+          title="助理"
+          placeholder="请选择助理"
+        />
+        <dpmsCellPicker
+          required
+          mode="multiple"
+          :list="multiArray"
+          v-model="form.nurse"
+          listKey="staffName"
+          title="护士"
+          placeholder="请选择护士"
+        />
+        <dpmsCellPicker
+          required
+          :list="multiArray"
+          v-model="form.dentalHygienist"
+          listKey="staffName"
+          title="洁牙师"
+          placeholder="请选择洁牙师"
+        />
+        <dpmsCellPicker
+          required
+          :list="multiArray"
+          v-model="form.consultant"
+          listKey="staffName"
+          title="咨询师"
+          placeholder="请选择咨询师"
+        />
+        <dpmsCellPicker
+          required
+          :list="multiArray"
+          v-model="form.institutionConsultingRoomId"
+          listKey="institutionConsultingRoomName"
+          title="诊室"
+          placeholder="请选择诊室"
+        />
+        <dpmsCell
+          title="诊所"
+          :value="form.medicalInstitutionSimpleCode"
+          isLink
         />
         <button @click="submit">提交</button>
       </dpmsForm>
@@ -144,7 +200,7 @@ export default {
           },
         ],
       ],
-      form: {},
+      form: { duration: 30 },
       pickerIndex: undefined,
       rules: {
         doctor: {
@@ -226,9 +282,6 @@ export default {
       this.date = fulldate
     },
 
-    bindChangeModel(e) {
-      this.$set(this.form, 'doctor', this.pickerArray[e.detail.value].name)
-    },
     submit() {
       this.$refs.dpmsForm.validate((err, fileds) => {
         console.log(err, fileds)

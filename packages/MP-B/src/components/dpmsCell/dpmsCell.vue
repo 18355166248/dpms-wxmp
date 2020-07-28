@@ -3,7 +3,7 @@
     <div :class="['dpms-cell__title', required ? 'required' : '']">
       {{ title }}
     </div>
-    <div class="dpms-cell__value">
+    <div class="dpms-cell__value text-ellipsis">
       <text
         class="dpms-cell-placeholder"
         v-if="placeholder && (!value && value !== 0)"
@@ -72,6 +72,7 @@ export default {
     text-align: right;
     color: rgba(0, 0, 0, 0.5);
     padding-right: 10rpx;
+    overflow: hidden;
 
     .dpms-cell-placeholder {
       color: rgba(0, 0, 0, 0.25);
