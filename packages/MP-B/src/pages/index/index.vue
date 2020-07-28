@@ -40,28 +40,32 @@
       :chooseDateProp="date"
     /> -->
     <scroll-view scroll-y class="h100">
-      <dpmsCellPicker
-        mode="region"
-        :list="multiArray"
-        v-model="form.doctor"
-        listKey="name"
-        title="医生"
-        placeholder="请选择医生"
-      />
+      <dpmsForm ref="dpmsForm" :rules="rules">
+        <dpmsCellPicker
+          required
+          mode="region"
+          :list="multiArray"
+          v-model="form.doctor"
+          listKey="name"
+          title="医生"
+          placeholder="请选择医生"
+        />
 
-      <dpmsCellInput
-        title="联系电话"
-        placeholder="请输入联系电话"
-        v-model="form.nurse"
-      />
-      <dpmsCellPicker title="护士" isLink />
-      <button @click="submit">提交</button>
+        <dpmsCellInput
+          title="联系电话"
+          placeholder="请输入联系电话"
+          v-model="form.tel"
+        />
+        <dpmsCellPicker title="护士" isLink />
+        <button @click="submit">提交</button>
+      </dpmsForm>
     </scroll-view>
   </view>
 </template>
 
 <script>
 import moment from 'moment'
+import AsyncValidator from 'async-validator'
 
 export default {
   data() {
@@ -137,6 +141,16 @@ export default {
       ],
       form: {},
       pickerIndex: undefined,
+      rules: {
+        doctor: {
+          required: true,
+          message: '请输入医生',
+        },
+        tel: {
+          required: true,
+          message: '请输入手机号',
+        },
+      },
     }
   },
   onLoad() {},
@@ -211,7 +225,9 @@ export default {
       this.$set(this.form, 'doctor', this.pickerArray[e.detail.value].name)
     },
     submit() {
-      console.log(this.form)
+      this.$refs.dpmsForm.validate((err, fileds) => {
+        console.log(err, fileds)
+      })
     },
   },
 }
