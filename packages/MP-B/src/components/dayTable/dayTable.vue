@@ -34,7 +34,7 @@
           @click="showDetail(index, $event)"
           @longtap="longTapWithEdit($event, item)"
         >
-          <view class="create_content_box">
+          <view class="create_content_box meetCard">
             <view class="meeting_content_time">{{ item.time }}</view>
             <view class="meeting_content_name">{{ item.meetingName }}</view>
           </view>
@@ -75,7 +75,9 @@
 
           <view :style="createMeet.trueStyle" class="meeting_left_time">
             <view class="left_Time_show">{{ createMeet.startTimeShow }}</view>
-            <view class="left_Time_show endTimeText">{{ createMeet.endTimeShow }}</view>
+            <view class="left_Time_show endTimeText">{{
+              createMeet.endTimeShow
+            }}</view>
           </view>
           <view class="create_content_box">
             <view class="meeting_content">
@@ -118,6 +120,7 @@ export default {
     // showMin: Number, //显示单元时长
     defaultChooseLong: Number, //默认点击所占时长
     scrollHeight: String,
+    apptList: Array,
   },
   data() {
     return {
@@ -174,12 +177,17 @@ export default {
     this.scrollTop = this.unitHeight * 36 // 默认9点开始
 
     this.getDefaultTable()
-    this.getMeetingList()
+    Array.isArray(this.apptList) &&
+      this.apptList.length > 0 &&
+      this.getMeetingList()
     this.isTodayFun(this.chooseDate)
   },
   watch: {
-    createMeet(newVal) {
-      console.log(newVal)
+    createMeet(newVal) {},
+    apptList(newVal) {
+      Array.isArray(this.apptList) &&
+        this.apptList.length > 0 &&
+        this.getMeetingList()
     },
   },
   methods: {
@@ -213,7 +221,6 @@ export default {
       }
       this.isToday = isToday
 
-      console.log(this.isToday)
       if (this.isToday == 0) {
         this.getTimeNow()
       }
@@ -225,7 +232,8 @@ export default {
       let nowDate = new Date()
       let hour = nowDate.getHours() //获取当前小时数(0-23)
       let min = nowDate.getMinutes() //获取当前分钟数(0-59)
-      let top = (hour * self.minRatio + min / self.unitMinute) * self.unitHeight - 1
+      let top =
+        (hour * self.minRatio + min / self.unitMinute) * self.unitHeight - 1
       let timeLine = 'top:' + top + 'px;'
       let text = nowDate.toString().substring(15, 21)
       //是否隐藏上下时间线
@@ -274,75 +282,28 @@ export default {
     },
     //整理会议列表数据
     getMeetingList() {
-      let meetingList = [
-        {
-          meetingName: '会议测试测试测试测试测试测试gggggggggggddddd',
-          // startTime: '2020-07-22 10:00:00',
-          // endTime: '2020-07-22 11:15:00',
-          startTimeStamp: 1595383200000,
-          endTimeStamp: 1595387700000,
-        },
-        {
-          meetingName: '测试',
-          startTimeStamp: 1595386800000,
-          endTimeStamp: 1595388600000,
-        },
-      ]
+      let meetingList = JSON.parse(JSON.stringify(this.apptList))
 
-      let doctorList = [
-        {
-          1: {
-            list: [
-              {
-                meetingName: '1',
-                // startTime: '2020-07-22 10:00:00',
-                startTimeStamp: 1595383200000,
-                endTimeStamp: 1595387700000,
-              },
-              {
-                meetingName: '2',
-                startTimeStamp: 1595385900000,
-                endTimeStamp: 1595388600000,
-              },
-              {
-                meetingName: '3',
-                startTimeStamp: 1595386800000,
-                endTimeStamp: 1595388600000,
-              },
+      meetingList = scheduleTableUtil.getUnitAndOffset(meetingList)
 
-              {
-                meetingName: '333',
-                startTimeStamp: 1595427300000,
-                endTimeStamp: 1595429100000,
-              },
-              {
-                meetingName: '4444',
-                startTimeStamp: 1595428200000,
-                endTimeStamp: 1595430900000,
-              },
-              {
-                meetingName: '555',
-                startTimeStamp: 1595431800000,
-                endTimeStamp: 1595433600000,
-              },
-            ],
-          },
-        },
-      ]
-
-      doctorList = scheduleTableUtil.getUnitAndOffset(doctorList)
-
-      meetingList = doctorList[0][1].list
+      meetingList = meetingList[0][1].list
 
       let list = []
       for (let i = 0; i < meetingList.length; i++) {
-        let startTime = moment(meetingList[i].startTimeStamp).format('YYYY-MM-DD HH:mm')
-        let endTime = moment(meetingList[i].endTimeStamp).format('YYYY-MM-DD HH:mm')
+        let startTime = moment(meetingList[i].startTimeStamp).format(
+          'YYYY-MM-DD HH:mm',
+        )
+        let endTime = moment(meetingList[i].endTimeStamp).format(
+          'YYYY-MM-DD HH:mm',
+        )
         let start = startTime.substring(11, 16).split(':')
         let end = endTime.substring(11, 16).split(':')
 
-        let st = parseInt(start[0] * this.minRatio) + parseInt(start[1] / this.unitMinute)
-        let ed = parseInt(end[0] * this.minRatio) + parseInt(end[1] / this.unitMinute)
+        let st =
+          parseInt(start[0] * this.minRatio) +
+          parseInt(start[1] / this.unitMinute)
+        let ed =
+          parseInt(end[0] * this.minRatio) + parseInt(end[1] / this.unitMinute)
 
         let height = 'height:' + (ed - st) * this.unitHeight + 'px;'
         let top = 'top:' + st * this.unitHeight + 'px;'
@@ -428,7 +389,8 @@ export default {
     //判断是否为过去时间
     isOldtime(startId, touchid) {
       let nowDate = new Date()
-      let timeNowId = nowDate.getHours() * 4 + Math.ceil(nowDate.getMinutes() / 15)
+      let timeNowId =
+        nowDate.getHours() * 4 + Math.ceil(nowDate.getMinutes() / 15)
       if (touchid < timeNowId) {
         return -1 //过去时间不能预定
       } else {
@@ -497,10 +459,11 @@ export default {
       }
 
       let meeting = {
+        ...this.createMeet,
         isFlex: '',
         trueStyle: 'top:0;height:' + height + 'px;',
         style: 'top:' + top + 'px;height:' + height + 'px;',
-        meetingName: '再次点击新建日程',
+        // meetingName: '再次点击新建日程',
         time: startTime + ' - ' + endTime,
         length: endId - stId,
         idSt: stId,
@@ -589,7 +552,10 @@ export default {
       let trueTextTop = stId * self.unitHeight - top //字体样式
       let height = (endId - topId) * self.unitHeight - (y - startY) //会议高度
 
-      if (height < self.minMute * self.unitHeight || height > self.unitHeight * 16) {
+      if (
+        height < self.minMute * self.unitHeight ||
+        height > self.unitHeight * 16
+      ) {
         //订会时间不小于15分钟或者不大于4个小时
         return
       }
@@ -621,13 +587,17 @@ export default {
       if (self.isToday == 0 && stId < this.timeId + 1) {
         return
       }
-      if ((y - startY) % self.unitHeight === 0 || (startY - y) % self.unitHeight === 0) {
+      if (
+        (y - startY) % self.unitHeight === 0 ||
+        (startY - y) % self.unitHeight === 0
+      ) {
         vibrate()
         let meeting = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + height + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: stId,
           idEnd: endId,
           length: height / self.unitHeight,
@@ -642,10 +612,12 @@ export default {
       } else {
         let len = endId - stId //会议时常所占单元格
         let meeting2 = {
+          ...this.createMeet,
           isFlex: isFlex,
-          trueStyle: 'top:' + trueTextTop + 'px;height:' + len * self.unitHeight + 'px;',
+          trueStyle:
+            'top:' + trueTextTop + 'px;height:' + len * self.unitHeight + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: stId,
           idEnd: endId,
           length: len,
@@ -730,9 +702,13 @@ export default {
       let y = e.touches[0].clientY
       let nid = Math.ceil((y - endY) / self.unitHeight)
       let top = self.createMeet.top
-      let height = y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight
+      let height =
+        y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight
       //到最小单元格不允许移动 或者是超过4个小时
-      if (height < self.minMute * self.unitHeight || height > self.unitHeight * 16) {
+      if (
+        height < self.minMute * self.unitHeight ||
+        height > self.unitHeight * 16
+      ) {
         return
       }
 
@@ -760,13 +736,17 @@ export default {
       // if (!!hasMeeting) {
       // 	return;
       // }
-      if ((y - endY) % self.unitHeight === 0 || (endY - y) % self.unitHeight === 0) {
+      if (
+        (y - endY) % self.unitHeight === 0 ||
+        (endY - y) % self.unitHeight === 0
+      ) {
         vibrate()
         let meeting = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + height + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: self.createMeet.idSt,
           idEnd: end,
           length: height / self.unitHeight,
@@ -781,10 +761,11 @@ export default {
       } else {
         let len = end - self.createMeet.idSt
         let meeting2 = {
+          ...this.createMeet,
           isFlex: isFlex,
           trueStyle: 'top:0px;height:' + len * self.unitHeight + 'px;',
           style: 'top:' + top + 'px;height:' + height + 'px;',
-          meetingName: '再次点击新建日程',
+          // meetingName: '再次点击新建日程',
           idSt: self.createMeet.idSt,
           idEnd: end,
           length: len,
@@ -986,7 +967,14 @@ export default {
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
       console.log(meetInfo)
-      const { startTimeStamp, endTimeStamp, style, endId, startId, top } = meetInfo
+      const {
+        startTimeStamp,
+        endTimeStamp,
+        style,
+        endId,
+        startId,
+        top,
+      } = meetInfo
       const startTime = moment(startTimeStamp).format('HH:mm')
       const endTime = moment(endTimeStamp).format('HH:mm')
       const height = (endId - startId) * this.unitHeight
@@ -1026,9 +1014,28 @@ $borderColor: #ddd;
   overflow: hidden;
 }
 
+.meetCard {
+  position: relative;
+  padding-left: 3px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  border-left: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 100%;
+    left: 0;
+    top: 0;
+    background-color: #48bc59;
+  }
+}
+
 .dayTable {
-  border-top: 1px solid $borderColor;
+  box-sizing: border-box;
   width: 100%;
+  height: 100%;
   background-color: #ffffff;
 }
 
@@ -1037,7 +1044,7 @@ $borderColor: #ddd;
 }
 
 .calendar_body {
-  height: 100vh;
+  height: 100%;
   width: calc(100vw - 8px);
   position: relative;
   overflow-x: hidden;
@@ -1102,10 +1109,9 @@ $borderColor: #ddd;
       right: 0px;
       position: absolute;
       cursor: pointer;
-      border-radius: 4px;
-      border: 1px solid #ccc;
       background-color: #fff;
-      box-sizing: border-box;
+      border-radius: 4px;
+      overflow: hidden;
     }
 
     .meeting_detail {
@@ -1195,7 +1201,7 @@ $borderColor: #ddd;
 
       .meeting_content {
         color: #ffffff;
-        margin-left: 5px;
+        margin-left: 7px;
         // line-height: 100%;
       }
 

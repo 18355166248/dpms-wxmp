@@ -24,14 +24,21 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "uni-app"
+        "navigationBarTitleText": "uni-app",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/myProfile/index",
+      "style": {
+        "navigationBarTitleText": "我的资料"
       }
     }
   ],
   "globalStyle": {
-    "navigationBarTextStyle": "black",
+    "navigationBarTextStyle": "white",
     "navigationBarTitleText": "uni-app",
-    "navigationBarBackgroundColor": "#F8F8F8",
+    "navigationBarBackgroundColor": "#5CBB89",
     "backgroundColor": "#F8F8F8",
     "usingComponents": {
       "van-cell-group": "./wxcomponents/vant-weapp/cell-group/index",

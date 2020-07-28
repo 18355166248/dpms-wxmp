@@ -1,44 +1,262 @@
 <template>
-  <view class="content">
-    <van-cell title="单元格" value="内容" />
-    <dayTable style="width: 100%;"></dayTable>
+  <view class="apptView">
+    <!-- <dpmsDrawer maskClose ref="dpmsDrawer" width="320" />
+
+    <calendar
+      :value="date"
+      @collapseChange="collapseChange"
+      @change="changeCalendar"
+    />
+
+    <view class="apptCardInfo">
+      <view class="topGray"></view>
+      <view v-if="showSearch">
+        <dpmsSearch
+          showCancel
+          @cancel="cancel"
+          @change="change"
+          @search="search"
+        />
+      </view>
+      <view v-else class="curCardInfo">
+        <view>医生: 张医生</view>
+        <view class="rightCardInfo">
+          <span class="iconfont icon-search" @click="showSearch = true" />
+          <span class="iconfont icon-menu" @click="openDrawer" />
+        </view>
+      </view>
+    </view>
+
+    <view v-if="showSearch">
+      <view class="tc mt-20">请输入姓名/拼音/联系电话查找患者预约记录</view>
+    </view>
+    <dayTable
+      :class="showSearch ? 'hidden' : ''"
+      :style="{
+        width: '100%',
+        height: retract ? 'calc(100% - 284rpx)' : 'calc(100% - 724rpx)',
+      }"
+      :apptList="list"
+      :chooseDateProp="date"
+    /> -->
+    <scroll-view scroll-y class="h100">
+      <dpmsCellPicker
+        mode="region"
+        :list="multiArray"
+        v-model="form.doctor"
+        listKey="name"
+        title="医生"
+        placeholder="请选择医生"
+      />
+
+      <dpmsCellInput
+        title="联系电话"
+        placeholder="请输入联系电话"
+        v-model="form.nurse"
+      />
+      <dpmsCellPicker title="护士" isLink />
+      <button @click="submit">提交</button>
+    </scroll-view>
   </view>
 </template>
 
 <script>
-import dayTable from '../../components/dayTable/dayTable.vue'
+import moment from 'moment'
 
 export default {
   data() {
     return {
       title: 'Hello',
+      retract: true, // 日历展开: false 收缩: true
+      showSearch: false, // 搜索患者
+      list: [
+        {
+          1: {
+            list: [
+              {
+                meetingName: '1',
+                // startTime: '2020-07-22 10:00:00',
+                startTimeStamp: 1595642400000,
+                endTimeStamp: 1595646000000,
+              },
+              {
+                meetingName: '2',
+                startTimeStamp: 1595638800000,
+                endTimeStamp: 1595645100000,
+              },
+              {
+                meetingName: '3',
+                startTimeStamp: 1595646900000,
+                endTimeStamp: 1595651400000,
+              },
+            ],
+          },
+        },
+      ],
+      date: moment().format('YYYY-MM-DD'),
+
+      pickerArray: [
+        {
+          id: 0,
+          name: '美国',
+        },
+        {
+          id: 1,
+          name: '中国',
+        },
+        {
+          id: 2,
+          name: '巴西',
+        },
+        {
+          id: 3,
+          name: '日本',
+        },
+      ],
+      multiArray: [
+        [
+          {
+            id: 0,
+            name: '美国',
+          },
+          {
+            id: 1,
+            name: '中国',
+          },
+        ],
+        [
+          {
+            id: 3,
+            name: '洛杉矶',
+          },
+          {
+            id: 4,
+            name: '程度',
+          },
+        ],
+      ],
+      form: {},
+      pickerIndex: undefined,
     }
   },
   onLoad() {},
-  methods: {},
-  components: {
-    dayTable,
+  watch: {
+    date(newVal) {
+      if (newVal !== moment().format('YYYY-MM-DD')) {
+        this.list = [
+          {
+            1: {
+              list: [
+                {
+                  meetingName: '1',
+                  // startTime: '2020-07-22 10:00:00',
+                  startTimeStamp: 1595565000000,
+                  endTimeStamp: 1595572200000,
+                },
+              ],
+            },
+          },
+        ]
+
+        return
+      }
+
+      this.list = [
+        {
+          1: {
+            list: [
+              {
+                meetingName: '1',
+                // startTime: '2020-07-22 10:00:00',
+                startTimeStamp: 1595642400000,
+                endTimeStamp: 1595646000000,
+              },
+              {
+                meetingName: '2',
+                startTimeStamp: 1595638800000,
+                endTimeStamp: 1595645100000,
+              },
+              {
+                meetingName: '3',
+                startTimeStamp: 1595646900000,
+                endTimeStamp: 1595651400000,
+              },
+            ],
+          },
+        },
+      ]
+    },
+  },
+  methods: {
+    collapseChange(val) {
+      this.retract = val
+    },
+    cancel() {
+      this.showSearch = false
+    },
+    search(value) {
+      console.log('search', value)
+    },
+    change(value) {
+      console.log('change', value)
+    },
+    openDrawer() {
+      this.$refs.dpmsDrawer.open()
+    },
+    changeCalendar({ fulldate }) {
+      this.date = fulldate
+    },
+
+    bindChangeModel(e) {
+      this.$set(this.form, 'doctor', this.pickerArray[e.detail.value].name)
+    },
+    submit() {
+      console.log(this.form)
+    },
   },
 }
 </script>
 
-<style>
-.content {
+<style lang="scss" scoped>
+page {
+  width: 100%;
+  height: 100%;
 }
-
-.logo {
-  height: 200rpx;
-  width: 200rpx;
-  margin: 200rpx auto 50rpx auto;
-}
-
-.text-area {
+.apptView {
+  width: 100%;
+  height: 100%;
   display: flex;
-  justify-content: center;
-}
+  flex-direction: column;
+  overflow: hidden;
+  .apptCardInfo {
+    position: relative;
+    z-index: 1;
+    .topGray {
+      width: 100%;
+      height: 16rpx;
+      background-color: #f2f3f5;
+    }
+    .curCardInfo {
+      box-sizing: border-box;
+      padding: 0 8px;
+      font-size: 26rpx;
+      width: 100%;
+      height: 55rpx;
+      line-height: 55rpx;
+      box-shadow: 0 5rpx 8rpx #00000033;
+      display: flex;
+      justify-content: space-between;
 
-.title {
-  font-size: 36rpx;
-  color: #8f8f94;
+      .rightCardInfo {
+        span:first-child {
+          font-size: 32rpx;
+          margin-right: 10rpx;
+        }
+        span:last-child {
+          font-size: 30rpx;
+        }
+      }
+    }
+  }
 }
 </style>
