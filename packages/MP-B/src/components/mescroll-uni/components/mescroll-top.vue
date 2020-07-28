@@ -73,7 +73,8 @@ export default {
 }
 
 /* 适配 iPhoneX */
-@supports (bottom: constant(safe-area-inset-bottom)) or (bottom: env(safe-area-inset-bottom)) {
+@supports (bottom: constant(safe-area-inset-bottom)) or
+  (bottom: env(safe-area-inset-bottom)) {
   .mescroll-totop-safearea {
     margin-bottom: calc(
       var(--window-bottom) + constant(safe-area-inset-bottom)

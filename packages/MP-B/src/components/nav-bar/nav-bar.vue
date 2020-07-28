@@ -1,5 +1,8 @@
 <template>
-  <view class="nav-bar" :style="{ 'background-color': backgroundColor, height: navHeight }">
+  <view
+    class="nav-bar"
+    :style="{ 'background-color': backgroundColor, height: navHeight }"
+  >
     <view
       class="navbar-action-wrap"
       :style="{ top: navTop, height: capsuleHeight, lineHeight: capsuleHeight }"
