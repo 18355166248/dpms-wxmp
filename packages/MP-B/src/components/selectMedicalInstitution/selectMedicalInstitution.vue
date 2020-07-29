@@ -23,16 +23,22 @@
                 open: item.open,
               }"
             >
-              <view class="tki-tree-label" @tap="treeItemSelect(item, index)">
-                <text v-if="item.source.type === 1" class="icon icon-zhi"
-                  >直</text
+              <view
+                class="tki-tree-label"
+                :class="{ disabled: !disList.includes(item.id) }"
+                @tap="treeItemSelect(item, index)"
+              >
+                <text
+                  v-if="item.source.institutionChainType === 4"
+                  class="icon icon-jia"
+                  >加</text
                 >
-                <text v-else class="icon icon-jia">加</text>
+                <text v-else class="icon icon-zhi">直</text>
                 {{ item.name }}
               </view>
               <view
                 v-if="!item.lastRank"
-                @tap.stop="treeItemTap(item, index)"
+                @tap="treeItemTap(item, index)"
                 class="tki-tree-icon"
               >
                 <text
@@ -198,9 +204,11 @@ export default {
       })
     },
     treeItemSelect(item, index) {
-      // 点击选项时触发
-      this.$emit('confirm', item)
-      this.hide()
+      if (this.disList.includes(item.id)) {
+        // 点击选项时触发
+        this.$emit('confirm', item)
+        this.hide()
+      }
     },
     initTree(range = this.range) {
       this.treeList = []

@@ -1,13 +1,13 @@
 <template>
-  <view
-    class="nav-bar"
-    :style="{ 'background-color': backgroundColor, height: navHeight }"
-  >
+  <view class="nav-bar" :style="{ height: navHeight + 'px' }">
     <view
       class="navbar-action-wrap"
       :style="{ top: navTop, height: capsuleHeight, lineHeight: capsuleHeight }"
     >
-      <view>南京遇的诊所</view>
+      <view
+        ><text class="iconfont icon-menu fz-34 mr-20"></text
+        ><text class="fz-34">南京遇的诊所</text></view
+      >
     </view>
   </view>
 </template>
@@ -52,6 +52,7 @@ export default {
   z-index: 10000;
   flex-shrink: 0;
   overflow: hidden;
+  color: #fff;
 }
 /* components/navbar/index.wxss */
 

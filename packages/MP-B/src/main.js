@@ -4,7 +4,7 @@ import { toastUtil, flyUtil, commonUtil } from 'mpcommon'
 
 Vue.config.productionTip = false
 
-Vue.prototype = Object.assign(Vue.prototype, commonUtil, toastUtil, { flyUtil })
+Vue.prototype.$utils = { commonUtil, toastUtil, flyUtil }
 
 App.mpType = 'app'
 
