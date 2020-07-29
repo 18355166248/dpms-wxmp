@@ -81,7 +81,7 @@ export default {
     getMedicalInstitution() {
       this.validate((errors) => {
         if (errors) {
-          this.show(errors[0].message)
+          this.$utils.show(errors[0].message)
           return
         }
         let institutionListPromise = systemAPI.getInstitutionList({
