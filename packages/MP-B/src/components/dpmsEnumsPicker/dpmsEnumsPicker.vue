@@ -44,6 +44,7 @@ export default {
   },
   watch: {
     value(newVal) {
+      this.pickerValue = newVal
       this.selectValue = newVal
         ? this.list.findIndex((v) => v.value === newVal)
         : 0
