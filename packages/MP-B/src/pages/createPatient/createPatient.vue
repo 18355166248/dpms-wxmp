@@ -111,7 +111,6 @@
 <script>
 import moment from 'moment'
 import AsyncValidator from 'async-validator'
-import formButton from '../../components/formButton/formButton'
 
 export default {
   data() {
@@ -178,9 +177,6 @@ export default {
         },
       },
     }
-  },
-  components: {
-    formButton,
   },
   methods: {
     bindDateChange: function (e) {
