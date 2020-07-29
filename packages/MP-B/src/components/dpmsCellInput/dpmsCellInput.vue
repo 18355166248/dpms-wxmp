@@ -1,12 +1,16 @@
 <template>
   <dpmsCell :title="title" :required="required" :isLink="isLink">
     <input
-      type="text"
+      :type="type"
       :value="value"
       @input="onChange"
+      @blur="onBlur"
       placeholder-class="input-placeholder"
       :placeholder="placeholder"
     />
+    <template v-slot:right-icon>
+      <slot name="inputRight" />
+    </template>
   </dpmsCell>
 </template>
 
@@ -27,16 +31,23 @@ export default {
       type: Boolean,
       required: false,
     },
+    type: {
+      type: String,
+      default: 'text',
+    },
   },
   methods: {
     onChange(e) {
       this.$emit('input', e.detail.value)
     },
+    onBlur(e) {
+      this.$emit('blur', e.detail.value)
+    },
   },
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .input-placeholder {
   font-size: 34rpx;
   font-weight: 400;

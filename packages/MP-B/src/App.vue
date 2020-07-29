@@ -13,6 +13,8 @@ export default {
 </script>
 
 <style>
+@import url('mpcommon/css/common.css');
+
 /*每个页面公共css */
 page {
   height: 100%;
@@ -39,6 +41,12 @@ page {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-arrow-up::before {
+  content: '\e7ed';
+}
+.icon-arrow-down::before {
+  content: '\e7ee';
+}
 .icon-arrow-up-30::before {
   content: '\e602';
 }
@@ -57,7 +65,15 @@ page {
 .icon-arrow-right::before {
   content: '\e7eb';
 }
-
+.icon-institutions::before {
+  content: '\e625';
+}
+.icon-password::before {
+  content: '\e626';
+}
+.icon-user::before {
+  content: '\e627';
+}
 .tc {
   text-align: center;
 }

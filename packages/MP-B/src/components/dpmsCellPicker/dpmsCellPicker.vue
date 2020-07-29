@@ -5,6 +5,7 @@
     :value="selectValue"
     @change="onChange"
     :mode="mode"
+    :end="end"
   >
     <dpmsCell
       :title="title"
@@ -42,6 +43,7 @@ export default {
       type: Boolean,
       required: false,
     },
+    end: String,
   },
   data() {
     return {
@@ -60,7 +62,6 @@ export default {
   },
   methods: {
     onChange(e) {
-      console.log(e)
       let index = e.detail.value
       let value = index
       let pickerValue = value
@@ -68,7 +69,7 @@ export default {
       if (this.listKey) {
         if (this.mode === 'selector') {
           value = this.list[index]
-          pickerValue = value
+          pickerValue = value[this.listKey]
         }
 
         if (this.mode === 'multiSelector') {
