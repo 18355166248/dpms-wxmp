@@ -28,6 +28,18 @@
       }
     },
     {
+      "path": "pages/createPatient/createPatient",
+      "style": {
+        "navigationBarTitleText": "新建患者"
+      }
+    },
+    {
+      "path": "pages/personas/personas",
+      "style": {
+        "navigationBarTitleText": "用户画像"
+      }
+    },
+    {
       "path": "pages/index/index",
       "style": {
         "navigationStyle": "custom",
