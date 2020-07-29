@@ -46,8 +46,6 @@
 
 <script>
 import moment from 'moment'
-import AsyncValidator from 'async-validator'
-import { CCEnumUtil } from '@arctic/tools/es'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import institutionAPI from '@/APIS/institution/institution.api'
 
