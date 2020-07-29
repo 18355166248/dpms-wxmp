@@ -43,6 +43,13 @@ export default {
       required: false,
     },
   },
+  watch: {
+    value(newVal) {
+      if (this.value && this.mode === 'date') {
+        this.pickerValue = newVal
+      }
+    },
+  },
   data() {
     return {
       selectValue: 0,
