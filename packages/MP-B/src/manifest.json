@@ -57,11 +57,9 @@
     },
     "runmode": "liberate" // 开启分包优化后，必须配置资源释放模式
   },
-  "quickapp": {
-    /* 快应用特有相关 */
-  },
+  "quickapp": {},
   "mp-weixin": {
-    /* 微信小程序特有相关 */ "appid": "wxb5ad95a20af4cbc5",
+    "appid": "wxb5ad95a20af4cbc5",
     "setting": {
       "urlCheck": false
     },

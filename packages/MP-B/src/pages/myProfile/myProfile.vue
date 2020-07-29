@@ -42,7 +42,7 @@
     </dpmsForm>
 
     <div class="mt-56">
-      <formButton @click="saveMyProfile"></formButton>
+      <dpmsButton @click="saveMyProfile"></dpmsButton>
     </div>
   </div>
 </template>
@@ -53,7 +53,6 @@ import AsyncValidator from 'async-validator'
 import { CCEnumUtil } from '@arctic/tools/es'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import institutionAPI from '@/APIS/institution/institution.api'
-import formButton from '../../components/formButton/formButton'
 
 console.log(moment().format('YYYY-MM-DD'))
 
@@ -97,9 +96,7 @@ export default {
       POSITION_ENUMS: [],
     }
   },
-  components: {
-    formButton,
-  },
+  components: {},
   methods: {
     saveMyProfile() {
       this.$refs.myProfileForm.validate((err, fileds) => {
