@@ -93,6 +93,9 @@
   height: 100%;
   line-height: 1.2;
 }
+.tki-tree-label.disabled {
+  color: rgba(0, 0, 0, 0.25);
+}
 
 .tki-tree-label .icon {
   border-radius: 50%;
