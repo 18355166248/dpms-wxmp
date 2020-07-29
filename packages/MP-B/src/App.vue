@@ -23,13 +23,13 @@ page {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_wj5zo7d0u1f.eot');
-  src: url('//at.alicdn.com/t/font_1965288_wj5zo7d0u1f.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_mo8tdg5u62.eot');
+  src: url('//at.alicdn.com/t/font_1965288_mo8tdg5u62.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_wj5zo7d0u1f.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_wj5zo7d0u1f.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_wj5zo7d0u1f.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_wj5zo7d0u1f.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_mo8tdg5u62.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_mo8tdg5u62.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_mo8tdg5u62.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_mo8tdg5u62.svg#iconfont') format('svg');
 }
 /*********在线字体代码end*********/
 
@@ -54,7 +54,7 @@ page {
   content: '\e618';
 }
 .icon-menu::before {
-  content: '\e608';
+  content: '\e7f4';
 }
 .icon-search::before {
   content: '\e636';
@@ -65,6 +65,25 @@ page {
 .icon-arrow-right::before {
   content: '\e7eb';
 }
+.icon-plus::before {
+  content: '\e8fe';
+}
+.icon-medicine-chest::before {
+  content: '\e863';
+}
+.icon-eye::before {
+  content: '\e869';
+}
+.icon-clock::before {
+  content: '\e848';
+}
+.icon-patient::before {
+  content: '\e607';
+}
+.icon-search::before {
+  content: '\e8ef';
+}
+
 .icon-institutions::before {
   content: '\e625';
 }
@@ -107,6 +126,14 @@ page {
   .mr-#{$i} {
     margin-right: $i + rpx;
   }
+  .mh-#{$i} {
+    margin-left: $i + rpx;
+    margin-right: $i + rpx;
+  }
+  .mv-#{$i} {
+    margin-top: $i + rpx;
+    margin-bottom: $i + rpx;
+  }
 
   .p-#{$i} {
     padding: $i + rpx;
@@ -123,9 +150,24 @@ page {
   .pr-#{$i} {
     padding-right: $i + rpx;
   }
+  .pv-#{$i} {
+    padding-top: $i + rpx;
+    padding-bottom: $i + rpx;
+  }
+  .ph-#{$i} {
+    padding-left: $i + rpx;
+    padding-right: $i + rpx;
+  }
 
   .fz-#{$i} {
     font-size: $i + rpx;
+  }
+
+  .c-white {
+    color: #fff;
+  }
+  .c-black {
+    color: #000;
   }
 }
 </style>
