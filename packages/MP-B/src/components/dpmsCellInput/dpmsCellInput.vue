@@ -5,7 +5,7 @@
       :value="value"
       @input="onChange"
       @blur="onBlur"
-      placeholder-class="input-placeholder"
+      placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
       :placeholder="placeholder"
     />
     <template v-slot:right-icon>
@@ -46,11 +46,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.input-placeholder {
-  font-size: 34rpx;
-  font-weight: 400;
-  color: rgba(0, 0, 0, 0.25);
-}
-</style>
