@@ -1,10 +1,12 @@
 <template>
   <button @click="clickButton">
-    保存
+    {{ text }}
   </button>
 </template>
 <script>
 export default {
+  name: 'dpmsButton',
+  props: { text: { type: String } },
   methods: {
     clickButton() {
       this.$emit('click')
