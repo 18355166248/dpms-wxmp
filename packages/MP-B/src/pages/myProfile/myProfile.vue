@@ -105,7 +105,7 @@ export default {
         delete this.form.belongsMedicalInstitutionDTO
         delete this.form.workMedicalInstitutionList
         if (err) {
-          this.show(err[0]?.message)
+          this.$utils.show(err[0]?.message)
           return
         }
         //成功执行

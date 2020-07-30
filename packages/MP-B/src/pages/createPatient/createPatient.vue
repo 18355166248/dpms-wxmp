@@ -198,7 +198,7 @@ export default {
       this.$refs.createPatientForm.validate((err, fileds) => {
         console.log(err, fileds)
         if (err) {
-          this.show(err[0]?.message)
+          this.$utils.show(err[0]?.message)
         }
         //成功执行
       })
