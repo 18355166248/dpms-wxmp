@@ -18,5 +18,11 @@
       "van-cell": "./wxcomponents/vant-weapp/cell/index"
     }
   },
-  "lazyCodeLoading": "requiredComponents"
+  "lazyCodeLoading": "requiredComponents",
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+    }
+  }
 }

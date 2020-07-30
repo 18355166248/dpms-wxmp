@@ -47,17 +47,13 @@
 </template>
 
 <script>
-import formButton from '../../components/formButton/formButton'
-
 export default {
   data() {
     return {
       checkedPersonas: [],
     }
   },
-  components: {
-    formButton,
-  },
+  components: {},
   onshow() {},
   methods: {
     checkboxChange: function (e) {

@@ -93,5 +93,11 @@
         "text": "我的"
       }
     ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+    }
   }
 }
