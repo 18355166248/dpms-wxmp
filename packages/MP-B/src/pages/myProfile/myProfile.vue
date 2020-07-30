@@ -91,7 +91,7 @@ export default {
         delete this.form.workMedicalInstitutionList
         delete this.form.birthday
         if (err) {
-          this.show(err[0]?.message)
+          this.$utils.show(err[0]?.message)
           return
         }
         //成功执行
