@@ -63,6 +63,7 @@
     "mpcommon": "1.0.0"
   },
   "devDependencies": {
+    "@arctic/tools": "git+https://oauth2:3g7zqTDbk5PFG9s32fFf@gitlab.medcloud.cn/pub/arctic-tools.git",
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
     "@dcloudio/types": "*",
