@@ -41,8 +41,8 @@
       />
     </dpmsForm>
 
-    <div class="mt-56">
-      <dpmsButton @click="saveMyProfile" text="保存" />
+    <div class="pt-56 pb-82">
+      <dpmsButton @click="saveMyProfile" text="保存" type="primary" />
     </div>
   </div>
 </template>
