@@ -41,7 +41,6 @@
     "test:mp-weixin": "cross-env UNI_PLATFORM=mp-weixin jest -i"
   },
   "dependencies": {
-    "@arctic/tools": "git+https://oauth2:3g7zqTDbk5PFG9s32fFf@gitlab.medcloud.cn/pub/arctic-tools.git",
     "@dcloudio/uni-app-plus": "^2.0.0-28320200727001",
     "@dcloudio/uni-h5": "^2.0.0-28320200727001",
     "@dcloudio/uni-helper-json": "*",
@@ -64,6 +63,7 @@
     "mpcommon": "1.0.0"
   },
   "devDependencies": {
+    "@arctic/tools": "git+https://oauth2:3g7zqTDbk5PFG9s32fFf@gitlab.medcloud.cn/pub/arctic-tools.git",
     "@commitlint/cli": "^9.1.1",
     "@commitlint/config-conventional": "^9.1.1",
     "@dcloudio/types": "*",

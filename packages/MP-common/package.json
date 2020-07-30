@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "@arctic/tools": "git+https://oauth2:3g7zqTDbk5PFG9s32fFf@gitlab.medcloud.cn/pub/arctic-tools.git"
   }
 }
