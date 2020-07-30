@@ -1,25 +1,24 @@
 <template>
-  <div>
+  <div class="page-bg">
     <dpmsForm ref="myProfileForm" :model="form" :rules="rules">
       <dpmsCellInput
         required
         title="姓名"
         placeholder="请输入姓名"
-        v-model="form.name"
+        v-model="form.staffName"
       />
-      <dpmsCellPicker
+      <dpmsEnumsPicker
         required
         title="性别"
         placeholder="请选择性别"
-        v-model="form.sex"
-        :list="sexs"
-        listKey="sex"
+        v-model="form.gender"
+        enumsKey="Gender"
         isLink
       />
       <dpmsCellPicker
         title="出生日期"
         placeholder="请选择出生日期"
-        v-model="form.date"
+        v-model="form.birthdayStamp"
         mode="date"
         :end="endDate"
       />
@@ -27,43 +26,35 @@
         required
         title="手机号"
         placeholder="请输入手机号"
-        v-model="form.phone"
+        v-model="form.mobile"
       />
-      <dpmsCellPicker
+      <dpmsEnumsPicker
         required
         title="岗位"
         placeholder="请选择岗位"
-        v-model="form.job"
-        :list="jobs"
-        listKey="job"
+        v-model="form.position"
+        enumsKey="StaffPosition"
         isLink
       />
     </dpmsForm>
 
-    <button @click="saveMyProfile">
-      保存
-    </button>
+    <div class="mt-56">
+      <dpmsButton @click="saveMyProfile"></dpmsButton>
+    </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
-import AsyncValidator from 'async-validator'
-
-console.log(moment().format('YYYY-MM-DD'))
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import institutionAPI from '@/APIS/institution/institution.api'
 
 export default {
   data() {
     return {
-      form: {
-        name: '',
-        sex: '',
-        date: '',
-        phone: '',
-        job: '',
-      },
+      form: {},
       rules: {
-        name: [
+        staffName: [
           {
             required: true,
             message: '请输入姓名',
@@ -71,54 +62,66 @@ export default {
           {
             min: 1,
             max: 30,
-            message: '姓名长度为1-30个字',
+            message: '姓名输入不应该超过 30 字',
           },
         ],
-        sex: {
+        gender: {
           required: true,
           message: '请选择性别',
         },
-        phone: {
+        mobile: {
           required: true,
           message: '请输入手机号',
         },
-        job: {
+        position: {
           required: true,
           message: '请选择岗位',
         },
       },
       endDate: moment().format('YYYY-MM-DD'),
-      sexs: ['男', '女'],
-      jobs: ['医生', '护士', '洁牙师'],
     }
   },
   methods: {
     saveMyProfile() {
       this.$refs.myProfileForm.validate((err, fileds) => {
-        console.log(err, '*******', fileds)
-        console.log('&&&', this.form)
+        delete this.form.belongsMedicalInstitutionDTO
+        delete this.form.workMedicalInstitutionList
+        delete this.form.birthday
         if (err) {
-          this.show(err[0]?.message)
+          this.$utils.show(err[0]?.message)
           return
         }
         //成功执行
+        institutionAPI
+          .updateStaff({
+            ...this.form,
+            birthdayStamp: moment(this.form.birthdayStamp).valueOf(),
+          })
+          .then((res) => {
+            //TODO：成功
+          })
       })
+    },
+    onLoad() {
+      let that = this
+      institutionAPI
+        .getStaffDetail({
+          staffId: getStorage(STORAGE_KEY.STAFF).staffId,
+        })
+        .then((res) => {
+          that.form = res.data
+          this.form.birthdayStamp = moment(res.data.birthdayStamp).format(
+            'YYYY-MM-DD',
+          )
+        })
     },
   },
 }
 </script>
 
-<style scoped>
-button {
-  width: 620rpx;
-  height: 78rpx;
-  line-height: 78rpx;
-  background: #5cbb89;
-  border-radius: 8rpx;
-  font-size: 36rpx;
-  font-weight: 400;
-  text-align: center;
-  color: #ffffff;
-  margin-top: 56rpx;
+<style lang="scss" scoped>
+.page-bg {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.04);
 }
 </style>
