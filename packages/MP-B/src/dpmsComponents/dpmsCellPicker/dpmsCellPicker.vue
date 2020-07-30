@@ -6,6 +6,7 @@
     @change="onChange"
     :mode="mode"
     :end="end"
+    :header-text="headerText"
   >
     <dpmsCell
       :title="title"
@@ -44,6 +45,7 @@ export default {
       required: false,
     },
     end: String,
+    headerText: String,
   },
   watch: {
     value(newVal) {
