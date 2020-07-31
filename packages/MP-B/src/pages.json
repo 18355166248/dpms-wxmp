@@ -49,14 +49,23 @@
   ],
   "subPackages": [
     {
-      "root": "baseSubpackages/",
-      "name": "base",
+      "root": "baseSubpackages/apptForm/",
+      "name": "apptForm",
       "pages": [
         {
-          "path": "apptForm/apptForm"
+          "path": "apptForm",
+          "style": {
+            "navigationBarTitleText": "新建预约"
+          }
         },
         {
-          "path": "apptForm/staffList"
+          "path": "staffList"
+        },
+        {
+          "path": "apptItemList",
+          "style": {
+            "navigationBarTitleText": "预约项目"
+          }
         }
       ]
     }
@@ -64,7 +73,7 @@
   "preloadRule": {
     "pages/index/index": {
       "network": "all",
-      "packages": ["base"]
+      "packages": ["apptForm"]
     }
   },
   "globalStyle": {
@@ -93,5 +102,11 @@
         "text": "我的"
       }
     ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+    }
   }
 }

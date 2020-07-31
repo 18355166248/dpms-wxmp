@@ -7,14 +7,12 @@
         placeholder="请输入姓名"
         v-model="form.staffName"
       />
-      <dpmsCellPicker
+      <dpmsEnumsPicker
         required
         title="性别"
         placeholder="请选择性别"
         v-model="form.gender"
-        :list="GENDER_ENUMS"
-        rangeType="enums"
-        listKey="gender"
+        enumsKey="Gender"
         isLink
       />
       <dpmsCellPicker
@@ -30,43 +28,31 @@
         placeholder="请输入手机号"
         v-model="form.mobile"
       />
-      <dpmsCellPicker
+      <dpmsEnumsPicker
         required
         title="岗位"
         placeholder="请选择岗位"
         v-model="form.position"
-        :list="POSITION_ENUMS"
-        listKey="job"
+        enumsKey="StaffPosition"
         isLink
       />
     </dpmsForm>
 
     <div class="mt-56">
-      <formButton @click="saveMyProfile"></formButton>
+      <dpmsButton @click="saveMyProfile"></dpmsButton>
     </div>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
-import AsyncValidator from 'async-validator'
-import { CCEnumUtil } from '@arctic/tools/es'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import institutionAPI from '@/APIS/institution/institution.api'
-import formButton from '../../components/formButton/formButton'
-
-console.log(moment().format('YYYY-MM-DD'))
 
 export default {
   data() {
     return {
-      form: {
-        staffName: '',
-        gender: '',
-        birthdayStamp: '',
-        mobile: '',
-        position: '',
-      },
+      form: {},
       rules: {
         staffName: [
           {
@@ -93,28 +79,23 @@ export default {
         },
       },
       endDate: moment().format('YYYY-MM-DD'),
-      GENDER_ENUMS: [],
-      POSITION_ENUMS: [],
     }
-  },
-  components: {
-    formButton,
   },
   methods: {
     saveMyProfile() {
       this.$refs.myProfileForm.validate((err, fileds) => {
-        // console.log(err, '*******', fileds)
-        // console.log('&&&', this.form)
         delete this.form.belongsMedicalInstitutionDTO
         delete this.form.workMedicalInstitutionList
+        delete this.form.birthday
         if (err) {
-          this.show(err[0]?.message)
+          this.$utils.show(err[0]?.message)
           return
         }
         //成功执行
         institutionAPI
           .updateStaff({
             ...this.form,
+            birthdayStamp: moment(this.form.birthdayStamp).valueOf(),
           })
           .then((res) => {
             //TODO：成功
@@ -122,22 +103,12 @@ export default {
       })
     },
     onLoad() {
-      this.GENDER_ENUMS = getStorage(STORAGE_KEY.ENUMS)?.Gender || {}
-      this.POSITION_ENUMS = getStorage(STORAGE_KEY.ENUMS).StaffPosition || {}
-
-      //TODO： 枚举值方法调用传值
-      const GENDER_ENUM = CCEnumUtil.create(
-        getStorage(STORAGE_KEY.ENUMS)?.Gender || {},
-      )
-      console.log('----', Object.values(GENDER_ENUM.properties))
-
       let that = this
       institutionAPI
         .getStaffDetail({
           staffId: getStorage(STORAGE_KEY.STAFF).staffId,
         })
         .then((res) => {
-          //成功
           that.form = res.data
           this.form.birthdayStamp = moment(res.data.birthdayStamp).format(
             'YYYY-MM-DD',

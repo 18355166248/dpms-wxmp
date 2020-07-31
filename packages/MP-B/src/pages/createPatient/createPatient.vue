@@ -111,7 +111,6 @@
 <script>
 import moment from 'moment'
 import AsyncValidator from 'async-validator'
-import formButton from '../../components/formButton/formButton'
 
 export default {
   data() {
@@ -179,9 +178,6 @@ export default {
       },
     }
   },
-  components: {
-    formButton,
-  },
   methods: {
     bindDateChange: function (e) {
       this.patientData.date = e.detail.value
@@ -202,7 +198,7 @@ export default {
       this.$refs.createPatientForm.validate((err, fileds) => {
         console.log(err, fileds)
         if (err) {
-          this.show(err[0]?.message)
+          this.$utils.show(err[0]?.message)
         }
         //成功执行
       })
