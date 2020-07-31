@@ -3,7 +3,10 @@
     <scroll-view class="todayWork">
       <view class="todayWork-header">
         <text>当前角色：前台</text>
-        <text>切换角色</text>
+        <text class="todayWork-header-txt">
+          <text class="iconfont icon-retweet"></text>
+          切换角色
+        </text>
       </view>
       <dpmsSearch @change="change" @search="search"></dpmsSearch>
 
@@ -201,14 +204,19 @@ export default {
 .todayWork-wrpper {
   height: 100%;
   overflow-y: auto;
+  background: rgba(0, 0, 0, 0.04);
 
   .todayWork {
     &-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 30rpx 15rpx;
-      background: coral;
+      padding: 32rpx;
+      font-size: 28rpx;
+      background: #feffff;
+      &-txt {
+        color: $dpms-color-primary;
+      }
     }
   }
 }
