@@ -99,6 +99,9 @@ page {
 .icon-check::before {
   content: '\e7fc';
 }
+.icon-right::before {
+  content: '\e7eb';
+}
 /* iconfont图标 end */
 
 .tc {

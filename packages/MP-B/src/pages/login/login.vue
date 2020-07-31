@@ -57,9 +57,9 @@ export default {
       institutionList: [],
       loginInstitutionList: [],
       loginForm: {
-        memberCode: '牙科组演示',
-        username: 'likun1',
-        password: 'likun1',
+        memberCode: '',
+        username: '',
+        password: '',
         mtId: '',
       },
       rules: {
