@@ -25,22 +25,30 @@
         </view>
       </view>
     </view>
-    <button type="default" class="out">
-      退出登录
-    </button>
+    <view class="out">
+      <dpmsButton @click="loginOut" text="退出登录" type="primary" />
+    </view>
   </view>
 </template>
 
 <script>
+import { removeStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
-    return {
-      title: '我的',
-    }
+    return {}
   },
   onLoad() {},
-  methods: {},
-  components: {},
+  methods: {
+    loginOut() {
+      removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+      removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
+      removeStorage(STORAGE_KEY.STAFF)
+      removeStorage(STORAGE_KEY.ENUMS)
+      this.$utils.reLaunch({
+        url: '/pages/login/login',
+      })
+    },
+  },
 }
 </script>
 
@@ -88,5 +96,11 @@ export default {
       margin-right: 10rpx;
     }
   }
+}
+.out {
+  position: fixed;
+  bottom: 20rpx;
+  right: 0;
+  left: 0;
 }
 </style>

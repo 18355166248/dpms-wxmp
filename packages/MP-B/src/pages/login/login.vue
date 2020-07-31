@@ -99,7 +99,7 @@ export default {
     getEnums() {
       systemAPI.getDataDict().then((res) => {
         setStorage(STORAGE_KEY.ENUMS, res.data)
-        uni.reLaunch({
+        this.$utils.reLaunch({
           url: '/pages/home/home',
         })
       })
