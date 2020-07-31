@@ -12,7 +12,7 @@ const authAPI = {
   getPatientTags(data) {
     return httper.get('patient/patient/list/patient-tags', data)
   },
-  // 判断患者是不是在scrm有客户
+  //检查患者是否在scrm系统中
   getPatientInScrm(data) {
     return httper.get('patient/patient/check/patient-in-scrm', data)
   },
