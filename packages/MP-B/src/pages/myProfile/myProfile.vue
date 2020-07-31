@@ -14,6 +14,7 @@
         v-model="form.gender"
         enumsKey="Gender"
         isLink
+        headerText="选择性别"
       />
       <dpmsCellPicker
         title="出生日期"
@@ -21,6 +22,7 @@
         v-model="form.birthdayStamp"
         mode="date"
         :end="endDate"
+        headerText="选择出生日期"
       />
       <dpmsCellInput
         required
@@ -35,11 +37,12 @@
         v-model="form.position"
         enumsKey="StaffPosition"
         isLink
+        headerText="选择岗位"
       />
     </dpmsForm>
 
-    <div class="mt-56">
-      <dpmsButton @click="saveMyProfile"></dpmsButton>
+    <div class="pt-56 pb-82">
+      <dpmsButton @click="saveMyProfile" text="保存" type="primary" />
     </div>
   </div>
 </template>
