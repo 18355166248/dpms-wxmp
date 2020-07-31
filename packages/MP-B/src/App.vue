@@ -74,6 +74,9 @@ page {
 .icon-eye::before {
   content: '\e869';
 }
+.icon-no-eye::before {
+  content: '\e8ff';
+}
 .icon-clock::before {
   content: '\e848';
 }

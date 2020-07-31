@@ -41,7 +41,7 @@
     </view>
 
     <div class="mt-56 mb-82">
-      <formButton @click="savePersonas"></formButton>
+      <dpmsButton @click="savePersonas" text="保存" />
     </div>
   </div>
 </template>
@@ -53,7 +53,6 @@ export default {
       checkedPersonas: [],
     }
   },
-  components: {},
   onshow() {},
   methods: {
     checkboxChange: function (e) {

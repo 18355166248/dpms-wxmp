@@ -11,6 +11,42 @@
       "style": {
         "navigationBarTitleText": "预约"
       }
+    },
+    {
+      "path": "pages/appointmentDetail/appointmentDetail",
+      "style": {
+        "navigationBarTitleText": "预约详情"
+      }
+    },
+    {
+      "path": "pages/appointmenAmend/appointmenAmend",
+      "style": {
+        "navigationBarTitleText": "修改预约"
+      }
+    },
+    {
+      "path": "pages/personManagement/personManagement",
+      "style": {
+        "navigationBarTitleText": "人员管理"
+      }
+    },
+    {
+      "path": "pages/personAdd/personAdd",
+      "style": {
+        "navigationBarTitleText": "新增人员"
+      }
+    },
+    {
+      "path": "pages/personDetail/personDetail",
+      "style": {
+        "navigationBarTitleText": "人员详情"
+      }
+    },
+    {
+      "path": "pages/personAmend/personAmend",
+      "style": {
+        "navigationBarTitleText": "修改人员"
+      }
     }
   ],
   "globalStyle": {
