@@ -19,13 +19,6 @@ const authAPI = {
   getStaffMapThroughPosition(params) {
     return httper.get('institution/staff/group/position', params)
   },
-  // 预约项目
-  getAppointmentItemList(httpInstance, params) {
-    return httpInstance.get(
-      'appointment/settings/appointment-item/list',
-      params,
-    )
-  },
 }
 
 export default authAPI
