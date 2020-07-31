@@ -119,7 +119,12 @@
         </view>
       </view>
     </view>
-    <view class="aptmt"><span class="iconfont icon-time"></span></view>
+    <movable-area out-of-bounds>
+      <!-- <movable-view :x="x" :y="y" direction="all" @change="onChange"
+        >text</movable-view
+      > -->
+      <view class="aptmt"><span class="iconfont icon-time"></span></view>
+    </movable-area>
   </scroll-view>
 </template>
 
@@ -127,11 +132,29 @@
 export default {
   data() {
     return {
-      title: 'Hello',
+      x: 0,
+      y: 0,
+      old: {
+        x: 0,
+        y: 0,
+      },
     }
   },
   onLoad() {},
-  methods: {},
+  methods: {
+    tap: function (e) {
+      this.x = this.old.x
+      this.y = this.old.y
+      this.$nextTick(function () {
+        this.x = 30
+        this.y = 30
+      })
+    },
+    onChange: function (e) {
+      this.old.x = e.detail.x
+      this.old.y = e.detail.y
+    },
+  },
   components: {},
 }
 </script>
