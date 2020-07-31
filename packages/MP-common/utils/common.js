@@ -27,4 +27,20 @@ export default {
       return properties;
     }
   },
+
+  /**
+   * 千分位数字字符串
+   * @param  {Number|String} num 原始数据
+   * @param  {String} lang 语言
+   * @param  {String} currencySymbol 货币符号
+   */
+  formatPrice(num, lang = "en", currencySymbol = "￥") {
+    const number = Number(num);
+
+    const toleranceNum = Number.isNaN(number) ? 0 : number;
+
+    const formatNumberStr = Intl.NumberFormat(lang).format(toleranceNum);
+
+    return `${currencySymbol}${formatNumberStr}`;
+  },
 };

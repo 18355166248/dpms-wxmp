@@ -5,6 +5,7 @@
     :range="list"
     :value="selectValue"
     @change="onChange"
+    :header-text="headerText"
   >
     <dpmsCell
       :title="title"
@@ -42,6 +43,7 @@ export default {
       type: Boolean,
       required: false,
     },
+    headerText: String,
   },
   watch: {
     value(newVal) {
