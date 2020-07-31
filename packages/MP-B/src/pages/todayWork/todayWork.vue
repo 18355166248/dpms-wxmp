@@ -10,18 +10,16 @@
       <view
         v-if="
           selectedRole.roleTodayWorkRelationList &&
-          selectedRole.roleTodayWorkRelationList.length > 0
+          selectedRole.roleTodayWorkRelationList.length > 0 &&
+          dataSource.length > 0
         "
       >
-        <view
-          v-for="item in selectedRole.roleTodayWorkRelationList"
-          :key="item.roleTodayWorkRelationId"
-        >
-          <today-work-card></today-work-card>
+        <view v-for="item in dataSource" :key="item.roleTodayWorkRelationId">
+          <today-work-card :data="item"></today-work-card>
         </view>
       </view>
       <view v-else>
-        空数据
+        <empty></empty>
       </view>
     </scroll-view>
   </view>
@@ -32,6 +30,7 @@ import moment from 'moment'
 import roleApi from '@/APIS/role/role.api'
 import diagnosisApi from '@/APIS/diagnosis/diagnosis.api'
 import todayWorkCard from './today-work-card.vue'
+import empty from '@/components/empty/empty.vue'
 
 export default {
   data() {
@@ -40,6 +39,9 @@ export default {
       roles: [],
       selectedRole: {},
       surplusRoles: [],
+      dataSource: [],
+      current: 1,
+      total: 0,
     }
   },
 
@@ -137,28 +139,45 @@ export default {
         }
       }
     },
-    init() {
-      console.log('this.$utils:', this.$utils)
+    async init() {
+      const [err, res] = await this.$utils.asyncTasks(roleApi.getCurrentStaff())
+      // 今日工作的角色枚举
+      // const TODAY_WORK_ROLE_TYPE_ENUM = this.$utils.getEnums(
+      //   'TodayWorkRoleType',
+      // )
+      // console.log('TODAY_WORK_ROLE_TYPE_ENUM:', TODAY_WORK_ROLE_TYPE_ENUM)
 
-      roleApi
-        .getCurrentStaff()
-        .then((res) => {
-          console.log('res:', res)
+      if (res) {
+        const nonDuplicateData = this.useConsolidateData(res.data)
+        this.roles = nonDuplicateData
+        this.initSelectedRole(nonDuplicateData)
 
-          const nonDuplicateData = this.useConsolidateData(res.data)
-          this.roles = nonDuplicateData
-          this.initSelectedRole(nonDuplicateData)
-          // 今日工作的角色枚举
-          const TODAY_WORK_ROLE_TYPE_ENUM = this.$utils.getEnums(
-            'TodayWorkRoleType',
+        if (this.selectedRole.todayWorkRoleType) {
+          const urlMap = {
+            1: 'getTodayReceptionistList',
+            2: 'getTodayDoctorList',
+            3: 'getTodayConsultant',
+          }
+
+          const [listErr, listRes] = await this.$utils.asyncTasks(
+            diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
+              beginTime: moment('2020-7-1').startOf('day').valueOf(),
+              endTime: moment().endOf('day').valueOf(),
+            }),
           )
-          console.log('TODAY_WORK_ROLE_TYPE_ENUM:', TODAY_WORK_ROLE_TYPE_ENUM)
-          // 请求成功,隐藏加载状态
-        })
-        .catch((err) => {
-          console.log('err:', err)
-          // 请求失败,隐藏加载状态
-        })
+
+          if (listRes) {
+            const { data } = listRes
+            const { total, current, records } = data
+
+            this.current = current
+            this.dataSource = records
+            this.total = total
+          }
+        }
+      }
+
+      uni.stopPullDownRefresh()
     },
     cancel() {
       console.log('取消！')
@@ -172,39 +191,9 @@ export default {
   },
   components: {
     todayWorkCard,
+    empty,
   },
-  computed: {
-    dataSource() {
-      const urlMap = {
-        1: 'getTodayReceptionistList',
-        2: 'getTodayDoctorList',
-        3: 'getTodayConsultant',
-      }
-
-      console.log('diagnosisApi:', diagnosisApi)
-      console.log(
-        'urlMap[this.selectedRole.todayWorkRoleType]:',
-        urlMap[this.selectedRole.todayWorkRoleType],
-      )
-
-      if (this.selectedRole.todayWorkRoleType) {
-        diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
-          beginTime: moment().startOf('day').valueOf(),
-          endTime: moment().endOf('day').valueOf(),
-        })
-          .then((res) => {
-            console.log('res:', res)
-          })
-          .catch((err) => {
-            console.log('err:', err)
-            // 请求失败,隐藏加载状态
-          })
-          .finally(() => {
-            uni.stopPullDownRefresh()
-          })
-      }
-    },
-  },
+  computed: {},
 }
 </script>
 

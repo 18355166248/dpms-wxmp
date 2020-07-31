@@ -1,10 +1,10 @@
 import Vue from 'vue'
 import App from './App'
-import { toastUtil, flyUtil, commonUtil } from 'mpcommon'
+import { toastUtil, flyUtil, commonUtil, utils } from 'mpcommon'
 
 Vue.config.productionTip = false
 
-Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil }
+Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
 
 // 公共样式配置
 Vue.prototype.$commonCss = {

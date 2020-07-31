@@ -19,18 +19,30 @@
         联系电话：15900451752
       </view>
       <view class="today-work-card-time">
-        预约时间：14:30 ~ 16:30
+        预约时间：{{ moment(data.appointmentBeginTimestamp).format('HH:mm') }} ~
+        {{ moment(data.appointmentEndTimestamp).format('HH:mm') }}
       </view>
     </view>
   </view>
 </template>
 
 <script>
+import moment from 'moment'
 import uniTag from '@/components/uni-tag/uni-tag.vue'
 
 export default {
   name: 'todayWorkCard',
-  props: {},
+  props: {
+    data: {
+      type: Object,
+      default: {},
+    },
+  },
+  data() {
+    return {
+      moment,
+    }
+  },
 
   components: {
     uniTag,
