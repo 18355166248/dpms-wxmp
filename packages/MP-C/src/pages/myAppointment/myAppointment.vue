@@ -1,14 +1,9 @@
 <template>
-    <view>jjjjjjjjjjjj</view>
+  <view>jjjjjjjjjjjj</view>
 </template>
 
 <script>
-export default {
-    
-}
+export default {}
 </script>
 
-<style scoped>
-
-</style>
-
+<style scoped></style>
