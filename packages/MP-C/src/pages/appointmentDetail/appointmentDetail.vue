@@ -48,7 +48,7 @@
         提醒：您的预约待确认，请耐心等待诊所审核确认，有任何问题可拨打电话：13967801309
       </div>
       <div class="btn">
-        <button>修改</button>
+        <button @click="amend">修改</button>
         <button>取消</button>
       </div>
     </div>
@@ -66,6 +66,9 @@ export default {
   methods: {
     agree() {
       this.protocol = !this.protocol
+    },
+    amend() {
+      console.log(this)
     },
   },
 }
