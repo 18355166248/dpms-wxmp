@@ -16,12 +16,15 @@ export default {
 
   // 获取枚举值,注意枚举值一定要统一为Storage中的‘enums’字段
   getEnums(key) {
-    let enumObj = wx.getStorageSync("enums")[key];
+    let enumObj = uni.getStorageSync("enums")[key];
     if (enumObj) {
-      return Object.values(CCEnumUtil.create(enumObj).properties).map((v) => ({
-        ...v,
-        zh_CN: v.text.zh_CN,
-      }));
+      let properties = CCEnumUtil.create(enumObj).properties;
+      for (let key in properties)
+        properties[key] = {
+          ...properties[key],
+          zh_CN: properties[key].text.zh_CN,
+        };
+      return properties;
     }
   },
 };

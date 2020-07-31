@@ -63,7 +63,7 @@ export default {
     }
   },
   created() {
-    this.list = this.$utils.commonUtil.getEnums(this.enumsKey)
+    this.list = Object.values(this.$utils.getEnums(this.enumsKey))
     if (this.value) {
       this.selectValue = this.list.findIndex((v) => v.value === this.value)
     }
