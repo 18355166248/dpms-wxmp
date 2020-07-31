@@ -107,20 +107,19 @@
           <view class="storeCard">
             <view class="storeCardTitle">XXXXXX门诊 201-5432090</view>
             <view class="storeCardAddress"
-              ><span class="iconfont icon-location"></span
-              >上海市桂林路23号</view
+              ><span class="iconfont icon-location"></span>
+              上海市桂林路23号</view
             >
             <view class="storeCardTime"
-              ><span class="iconfont icon-time"></span
-              >周二~周日，9:00-21:00</view
+              ><span class="iconfont icon-time"></span>
+              周二~周日，9:00-21:00</view
             >
             <view class="storeCardAptmt">预 约</view>
-
-            <span class="iconfont icon-location"></span>
           </view>
         </view>
       </view>
     </view>
+    <view class="aptmt"><span class="iconfont icon-time"></span></view>
   </scroll-view>
 </template>
 
@@ -355,5 +354,25 @@ export default {
   text-align: center;
   color: #5cbb89;
   line-height: 48rpx;
+  position: relative;
+  top: -78rpx;
+  left: 546rpx;
+}
+.aptmt {
+  width: 88rpx;
+  height: 80rpx;
+  background: linear-gradient(304deg, #74d1a0 11%, #5cbb89 84%);
+  border-radius: 42rpx 0rpx 0rpx 42rpx;
+  box-shadow: 0rpx 10rpx 28rpx 0rpx #b4e0c9;
+  position: fixed;
+  bottom: 26rpx;
+  right: 0;
+  color: #feffff;
+}
+.aptmt > .icon-time {
+  font-size: 50rpx;
+  position: relative;
+  left: 30rpx;
+  top: 12rpx;
 }
 </style>

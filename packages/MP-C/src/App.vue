@@ -42,11 +42,11 @@ page {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-location {
+.icon-location::before {
   content: '\e790';
 }
 
-.icon-time {
+.icon-time::before {
   content: '\e784';
 }
 </style>
