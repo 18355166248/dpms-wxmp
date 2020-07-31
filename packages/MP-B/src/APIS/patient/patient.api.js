@@ -4,8 +4,21 @@ const authAPI = {
   getPatientList(data) {
     return httper.get('patient/patient/page', data)
   },
+  //获取患者类型列表
+  getPatientTypeList(data) {
+    return httper.get('patient/settings/type/list/regular', data)
+  },
+  //获取用户画像列表
   getPatientTags(data) {
     return httper.get('patient/patient/list/patient-tags', data)
+  },
+  // 判断患者是不是在scrm有客户
+  getPatientInScrm(data) {
+    return httper.get('patient/patient/check/patient-in-scrm', data)
+  },
+  //新建患者
+  createPatient(data) {
+    return httper.post('patient/patient/create/with/patient-contact', data)
   },
   details(data) {
     return httper.get('institution/current/details', data)
