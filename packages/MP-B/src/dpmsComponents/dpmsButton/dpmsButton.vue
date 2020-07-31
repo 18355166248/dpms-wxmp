@@ -9,7 +9,13 @@
 <script>
 export default {
   name: 'dpmsButton',
-  props: { text: String, type: String },
+  props: {
+    text: {
+      type: String,
+      default: '保存',
+    },
+    type: String,
+  },
   methods: {
     clickButton() {
       this.$emit('click')
