@@ -19,6 +19,7 @@
 
 <script>
 export default {
+  name: 'dpmsEnumsPicker',
   props: {
     enumsKey: {
       type: String,
@@ -65,7 +66,7 @@ export default {
     }
   },
   created() {
-    this.list = this.$utils.commonUtil.getEnums(this.enumsKey)
+    this.list = this.$utils.getEnums(this.enumsKey)
     if (this.value) {
       this.selectValue = this.list.findIndex((v) => v.value === this.value)
     }

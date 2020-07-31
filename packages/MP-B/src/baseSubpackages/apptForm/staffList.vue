@@ -17,17 +17,18 @@
 </template>
 
 <script>
-import authAPI from 'APIS/patient/patient.api'
 const staffTitle = {
-  5: { title: '选择助理', key: 'ASSISTANT_MANAGER' },
-  6: { title: '选择护士', key: 'NURSE' },
+  5: { title: '选择助理', key: 'ASSISTANT_MANAGER', formKey: 'help' },
+  6: { title: '选择护士', key: 'NURSE', formKey: 'nurse' },
 }
 export default {
   data() {
     return {
       staffList: [],
       checkedList: [], // 选中列表
+      checked: [], // 选中值
       key: '', // 后台数据接收key值
+      formKey: '', // 表单接收值
     }
   },
   created() {},
@@ -36,50 +37,34 @@ export default {
       uni.setNavigationBarTitle({
         title: staffTitle[option].title,
       })
+
       this.key = staffTitle[option].key
+      this.formKey = staffTitle[option].formKey
+      const staffListInfo = uni.getStorageSync('staffListInfo')
+      const staffList = staffListInfo[this.key + '_LIST'] || []
 
-      authAPI
-        .getStaffMapThroughPosition({
-          positions: option,
-          workStatus: 1,
-        })
-        .then((res) => {
-          let staffList = []
-          if (Array.isArray(res.data[this.key])) {
-            staffList = res.data[this.key]
-          }
+      staffList.forEach((staff) => {
+        staff.checked = checked.includes(staff.staffId)
+      })
 
-          if (checked) {
-            let checkedList = []
-            checked = checked.split(',')
-            staffList.forEach((staff) => {
-              if (checked.includes(String(staff.staffId))) {
-                staff.checked = true
-
-                checkedList.push(staff)
-              }
-            })
-            this.checkedList = checkedList
-          }
-
-          this.staffList = staffList
-        })
-        .catch()
+      this.staffList = staffList
     }
   },
   methods: {
     checkboxChange(e) {
+      this.checked = e.detail.value
       this.checkedList = this.staffList.filter((staff) =>
         e.detail.value.includes(String(staff.staffId)),
       )
     },
     onSave() {
       uni.$emit('apptFormWithUpdateStaffList', {
-        key: [this.key + '_LIST'],
-        value: this.checkedList,
+        key: this.formKey,
+        value: this.checked,
+        list: this.checkedList,
       })
 
-      this.flyUtil.back()
+      this.$utils.back()
     },
   },
 }

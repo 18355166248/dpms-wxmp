@@ -1,8 +1,8 @@
 <template>
   <picker
-    :range-key="listKey"
+    :range-key="defaultProps.label"
     :range="list"
-    :value="selectValue"
+    :value="selectIndex"
     @change="onChange"
     :mode="mode"
     :end="end"
@@ -30,7 +30,14 @@ export default {
       default: [],
     },
     value: [String, Number],
-    listKey: String,
+    defaultType: {
+      type: String,
+      default: 'label',
+    },
+    defaultProps: {
+      typre: Object,
+      default: { label: 'label', value: 'value' },
+    },
     placeholder: String,
     required: {
       type: Boolean,
@@ -47,23 +54,47 @@ export default {
     end: String,
     headerText: String,
   },
+  computed: {
+    pickerValue() {
+      const picker = this.list.find(
+        (item) => item[this.defaultType] === this.value,
+      )
+
+      return picker && picker[this.defaultProps.label]
+    },
+    pickerKey() {
+      if (this.defaultProps.label === this.defaultType) {
+        return this.defaultProps.label
+      }
+      if (this.defaultProps.value === this.defaultType) {
+        return this.defaultProps.value
+      }
+    },
+  },
   watch: {
     value(newVal) {
       if (this.value && this.mode === 'date') {
-        this.pickerValue = newVal
+      }
+    },
+    list(newVal) {
+      if (this.value) {
+        this.selectIndex = this.list.findIndex((item) => {
+          const v = item[this.pickerKey]
+
+          return v === this.value
+        })
       }
     },
   },
   data() {
     return {
-      selectValue: 0,
-      pickerValue: this.value,
+      selectIndex: 0,
     }
   },
   created() {
     if (this.value) {
-      this.selectValue = this.list.findIndex((item) => {
-        const v = this.listKey ? item[this.listKey] : item
+      this.selectIndex = this.list.findIndex((item) => {
+        const v = item[this.pickerKey]
 
         return v === this.value
       })
@@ -73,29 +104,21 @@ export default {
     onChange(e) {
       let index = e.detail.value
       let value = index
-      let pickerValue = value
 
-      if (this.listKey) {
-        if (this.mode === 'selector') {
-          value = this.list[index]
-          pickerValue = value[this.listKey]
-        }
-
-        if (this.mode === 'multiSelector') {
-          pickerValue = []
-          value = []
-          e.detail.value.forEach((index2, i) => {
-            value.push(this.list[i][index2])
-            pickerValue.push(this.list[i][index2][this.listKey])
-          })
-        }
+      if (this.mode === 'selector') {
+        value = this.list[index]
       }
 
-      this.selectValue = index
+      if (this.mode === 'multiSelector') {
+        value = []
+        e.detail.value.forEach((index2, i) => {
+          value.push(this.list[i][index2])
+        })
+      }
 
-      this.pickerValue = pickerValue
+      this.selectIndex = index
 
-      this.$emit('input', value)
+      this.$emit('input', value[this.defaultType], value)
     },
   },
 }
