@@ -1,6 +1,15 @@
 <template>
   <dpmsCell :title="title" :required="required" :isLink="isLink">
+    <textarea
+      :value="value"
+      @input="onChange"
+      v-if="type === 'textarea'"
+      :auto-height="autosize"
+      :placeholder="placeholder"
+      placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+    ></textarea>
     <input
+      v-else
       :type="type"
       :value="value"
       @input="onChange"
@@ -35,6 +44,10 @@ export default {
       type: String,
       default: 'text',
     },
+    autosize: {
+      type: Boolean,
+      required: true,
+    },
   },
   methods: {
     onChange(e) {
@@ -46,3 +59,10 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+textarea,
+input {
+  width: 100%;
+}
+</style>
