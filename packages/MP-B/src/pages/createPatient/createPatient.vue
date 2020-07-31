@@ -1,131 +1,146 @@
 <template>
-  <div class="page-bg">
-    <scroll-view scroll-y class="h100">
-      <dpmsForm ref="createPatientForm" :rules="rules">
-        <div class="category-title">基本信息1</div>
-        <dpmsCellInput
-          required
-          title="姓名"
-          placeholder="请输入姓名"
-          v-model="form.patientName"
-        />
-        <dpmsCellPicker
-          required
-          title="性别"
-          placeholder="请选择性别"
-          v-model="form.gender"
-          :list="sexArray"
-          listKey="sex"
-          isLink
-        />
-        <dpmsCellPicker
-          title="出生日期"
-          placeholder="请选择出生日期"
-          v-model="form.birthday"
-          mode="date"
-          :end="end"
-        />
-        <dpmsCellPicker
-          title="患者类型"
-          placeholder="请选择患者类型"
-          v-model="form.settingsTypeId"
-          :list="patientType"
-          listKey="patient"
-          isLink
-        />
-        <dpmsCellPicker
-          mode="region"
-          :list="multiArray"
-          v-model="form.tagList"
-          listKey="name"
-          title="用户画像"
-          placeholder="请选择用户画像"
-        />
-
-        <div class="category-title">联系方式</div>
-        <dpmsCellPicker
-          required
-          :list="contactLabels"
-          v-model="form.contactLabel"
-          listKey="contactLabel"
-          title="联系电话标签"
-          placeholder="请选择联系电话标签"
-          isLink
-        />
-        <dpmsCellInput
-          required
-          title="联系电话"
-          placeholder="请输入联系电话"
-          v-model="form.mobile"
-        />
-        <dpmsCellInput
-          title="备用号码"
-          placeholder="请输入备用号码"
-          v-model="form.alternateMobile"
-        />
-        <dpmsCellInput
-          title="微信号"
-          placeholder="请输入微信号"
-          v-model="form.weChatId"
-        />
-        <dpmsCellInput title="QQ" placeholder="请输入QQ" v-model="form.qqNum" />
-        <dpmsCellPicker
-          mode="region"
-          :list="multiArray"
-          v-model="form.area"
-          listKey="area"
-          title="家庭住址"
-          placeholder="请选择地区"
-        />
-
-        <div class="dpms-cell-group">
-          <div class="dpms-cell" data-layout-align="space-between center">
-            <input
-              placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
-              placeholder="请输入详细住址"
-            />
+  <scroll-view scroll-y class="h100 page-bg">
+    <dpmsForm ref="createPatientForm" :model="form" :rules="rules">
+      <dpmsFormTitle title="基本信息" />
+      <dpmsCellInput
+        required
+        title="姓名"
+        placeholder="请输入姓名"
+        v-model="form.patientName"
+      />
+      <dpmsEnumsPicker
+        required
+        title="性别"
+        placeholder="请选择性别"
+        v-model="form.gender"
+        enumsKey="Gender"
+        isLink
+        headerText="选择性别"
+      />
+      <dpmsDatePicker
+        title="出生日期"
+        placeholder="请选择出生日期"
+        v-model="form.birthday"
+        :end="endDate"
+        headerText="选择出生日期"
+      />
+      <dpmsCellPicker
+        title="患者类型"
+        placeholder="请选择患者类型"
+        v-model="form.settingsTypeId"
+        :list="patientTypeList"
+        defaultType="settingsTypeId"
+        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        isLink
+      />
+      <!-- <dpmsCellPicker
+        mode="region"
+        :list="multiArray"
+        v-model="form.tagIds"
+        listKey="name"
+      /> -->
+      <!-- <dpmsCell
+        title="用户画像"
+        placeholder="请选择用户画像"
+        :value="form.tagIds"
+        isLink
+        @click.native="onSelectTags()"
+      /> -->
+      <div class="dpms-cell-group">
+        <div class="dpms-cell" data-layout-align="space-between center">
+          <div class="dpms-cell-title">
+            <span>用户画像：</span>
+          </div>
+          <div class="dpms-cell-value" data-layout-align="space-between center">
+            <span v-if="patientData.personas.length > 0">
+              <span v-for="persona in patientData.personas" :key="persona"
+                >{{ persona }}
+              </span>
+            </span>
+            <span class="placeholder-style" v-else>请选择用户画像</span>
+            <text class="iconfont icon-arrow-right" />
           </div>
         </div>
-        <div class="mt-56 mb-82">
-          <formButton @click="submit"></formButton>
+      </div>
+      <dpmsFormTitle title="联系方式" />
+      <dpmsEnumsPicker
+        required
+        title="联系电话标签"
+        placeholder="请选择联系电话标签"
+        v-model="form.contactLabel"
+        enumsKey="ContactLabel"
+        isLink
+      />
+      <dpmsCellInput
+        required
+        type="number"
+        title="联系电话"
+        placeholder="请输入联系电话"
+        v-model="form.mobile"
+      />
+      <dpmsCellInput
+        type="number"
+        title="备用号码"
+        placeholder="请输入备用号码"
+        v-model="form.alternateMobile"
+      />
+      <dpmsCellInput
+        title="微信号"
+        placeholder="请输入微信号"
+        v-model="form.weChatId"
+      />
+      <dpmsCellInput
+        type="number"
+        title="QQ"
+        placeholder="请输入QQ"
+        v-model="form.qqNum"
+      />
+      <dpmsCellPicker
+        mode="multiSelector"
+        :list="allPlace"
+        v-model="form.area"
+        listKey="name"
+        title="家庭住址"
+        placeholder="请选择地区"
+      />
+      <div class="dpms-cell-group dpms-cell-group-textarea">
+        <div class="dpms-cell" data-layout-align="space-between center">
+          <textarea
+            placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
+            placeholder="请输入详细住址"
+            auto-height
+            v-model="form.address"
+          />
         </div>
-      </dpmsForm>
-    </scroll-view>
-
-    <!-- <div data-layout-align='space-between center'>
-      <span>用户画像：</span>
-      <span v-if="patientData.personas.length > 0">
-        <span
-          v-for="persona in patientData.personas"
-          :key="persona"
-        >{{persona}} </span>
-      </span>
-      <span v-else>请选择用户画像</span>
-      <span @click="toPersonas">
-        >
-      </span>
-    </div> -->
-  </div>
+      </div>
+      <div class="pt-56 pb-82">
+        <dpmsButton @click="submit" type="primary" />
+        <!-- <div class="pt-6 pb-6"></div> -->
+        <!-- <dpmsButton @click="submit" text="取消" /> -->
+      </div>
+    </dpmsForm>
+  </scroll-view>
 </template>
 
 <script>
 import moment from 'moment'
-import AsyncValidator from 'async-validator'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import authAPI from '@/APIS/patient/patient.api'
+import institutionAPI from '@/APIS/institution/institution.api'
 
 export default {
   data() {
     return {
-      sexArray: ['男', '女'],
-      patientType: ['普通', '临时'],
-      contactLabels: ['本人', '父母', '子女', '亲戚'],
-      end: moment().format('YYYY-MM-DD'),
+      allPlace: [], //省市区列表
+      patientTypeList: [], //患者类型列表
+      endDate: moment().format('YYYY-MM-DD'),
       index: 0,
       form: {
         patientName: '',
         gender: '',
         birthday: '',
         settingsTypeId: '',
-        tagList: '',
+        tagIds: [],
         contactLabel: '',
         mobile: '',
         alternateMobile: '',
@@ -135,12 +150,17 @@ export default {
         address: '',
       },
       rules: {
-        patientName: {
-          required: true,
-          message: '请输入姓名',
-          min: 0,
-          max: 50,
-        },
+        patientName: [
+          {
+            required: true,
+            message: '请输入姓名',
+          },
+          {
+            min: 1,
+            max: 50,
+            message: '姓名输入不应该超过 50 字',
+          },
+        ],
         gender: {
           required: true,
           message: '请选择性别',
@@ -149,38 +169,70 @@ export default {
           required: true,
           message: '请选择联系电话标签',
         },
-        mobile: {
-          type: 'number',
-          required: true,
-          message: '请输入联系电话',
-          len: 11,
-        },
+        mobile: [
+          {
+            required: true,
+            pattern: /^[0-9]*$/,
+            message: '请输入联系电话',
+          },
+          {
+            len: 11,
+            message: '联系电话格式不正确',
+          },
+        ],
         alternateMobile: {
-          type: 'number',
-          message: '请输入备用号码',
-          len: 11,
+          pattern: /^[0-9]{11}$/,
+          message: '备用号码格式不正确',
         },
         weChatId: {
-          message: '请输入微信号',
           min: 0,
           max: 20,
+          message: '请输入正确的微信号',
         },
         qqNum: {
-          message: '请输入QQ',
-          min: 0,
-          max: 20,
+          pattern: /^[0-9]{1,20}$/,
+          message: '请输入正确的QQ格式',
         },
         address: {
-          message: '请输入详细地址',
           min: 0,
           max: 100,
+          message: '详细地址输入不应该超过 100 字',
         },
       },
     }
   },
+  onLoad() {
+    let that = this
+    institutionAPI.getAllPlace().then((res) => {
+      that.allPlace = res.data
+      // TODO：省市区展示
+      console.log('---res0---', res)
+    })
+    authAPI.getPatientTypeList().then((res) => {
+      that.patientTypeList = res.data
+    })
+    authAPI.getPatientTags().then((res) => {
+      that.allPlace = res.data
+      // TODO：用户画像展示
+      console.log('---res1---', res)
+    })
+  },
   methods: {
     bindDateChange: function (e) {
       this.patientData.date = e.detail.value
+    },
+    onSelectTags() {
+      let list = []
+      if (option === 5) list = this.ASSISTANT_MANAGER_LIST
+      if (option === 6) list = this.NURSE_LIST
+
+      this.flyUtil.push({
+        url:
+          '/pages/personas/index?option=' +
+          option +
+          '&checked=' +
+          getTxtFromArr(list, 'staffId'),
+      })
     },
     // toPersonas () {
 
@@ -194,13 +246,77 @@ export default {
     //     })
     //   }
     // },
-    submit() {
+    async checkPatientInScrm() {
+      let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
+        medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
+          .belongsInstitutionId,
+        mobile: this.form.mobile,
+        patientName: this.form.patientName,
+      })
+
+      let that = this
+
+      if (scrmPatientInfo.newCustomer) {
+        //如果是新患者
+        that.addPatient(scrmPatientInfo)
+      } else {
+        //如果患者已存在
+        uni.showModal({
+          content: 'SCRM中存在姓名和手机号相同的客户，是否关联',
+          confirmText: '确认',
+          success: function (res) {
+            if (res.confirm) {
+            } else if (res.cancel) {
+              delete scrmPatientInfo.customerId
+            }
+            console.log('--%%%%--', scrmPatientInfo)
+
+            that.addPatient(scrmPatientInfo)
+          },
+        })
+      }
+    },
+    async addPatient(scrmPatientInfo) {
+      let patientContact = {
+        contactLabel: this.form.contactLabel,
+        mobile: this.form.mobile,
+        alternateMobile: this.form.alternateMobile,
+        weChatId: this.form.weChatId,
+        qqNum: this.form.qqNum,
+        area: this.form.area,
+        address: this.form.address,
+      }
+
+      this.form.birthday = '2020-06-20'
+
+      delete this.form.contactLabel
+      delete this.form.alternateMobile
+      delete this.form.weChatId
+      delete this.form.qqNum
+      delete this.form.area
+      delete this.form.address
+
+      authAPI
+        .createPatient({
+          ...this.form,
+          ...scrmPatientInfo,
+          patientContactStr: JSON.stringify([{ ...patientContact }]),
+        })
+        .then((res) => {
+          //TODO：新建患者成功
+        })
+    },
+    async submit() {
       this.$refs.createPatientForm.validate((err, fileds) => {
         console.log(err, fileds)
+        console.log('---form---', this.form)
+
         if (err) {
           this.$utils.show(err[0]?.message)
+          return
         }
-        //成功执行
+
+        this.checkPatientInScrm()
       })
     },
   },
@@ -233,33 +349,46 @@ export default {
 .dpms-cell-group {
   width: 750rpx;
   height: 112rpx;
+  background: #fff;
   .dpms-cell {
     height: 112rpx;
     margin: 0 32rpx;
     border-bottom: 2rpx solid rgba(0, 0, 0, 0.15);
+    .dpms-cell-title {
+      width: 211rpx;
+      span {
+        font-size: 34rpx;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.9);
+        margin-left: 4rpx;
+      }
+    }
 
     .dpms-cell-value {
       font-size: 34rpx;
       font-weight: 400;
       text-align: right;
       color: rgba(0, 0, 0, 0.5);
+      .placeholder-style {
+        color: rgba(0, 0, 0, 0.25);
+      }
       .iconfont {
         margin-left: 4rpx;
         color: rgba(0, 0, 0, 0.25);
       }
     }
   }
+  .dpms-cell:last-child {
+    border-bottom: none;
+  }
 }
 
-.category-title {
-  width: 750rpx;
-  height: 82rpx;
-  line-height: 82rpx;
-  background: rgba(0, 0, 0, 0.04);
-  text-indent: 32rpx;
-  font-size: 28rpx;
-  font-weight: 400;
-  text-align: left;
-  color: rgba(0, 0, 0, 0.5);
+.dpms-cell-group-textarea {
+  height: 154rpx;
+  .dpms-cell {
+    height: 154rpx;
+    textarea {
+    }
+  }
 }
 </style>
