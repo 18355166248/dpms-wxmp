@@ -6,6 +6,18 @@
       "style": {
         "navigationBarTitleText": "uni-app"
       }
+    },
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登陆授权"
+      }
+    },
+    {
+      "path": "pages/appoint/index",
+      "style": {
+        "navigationBarTitleText": "新建预约"
+      }
     }
   ],
   "globalStyle": {
