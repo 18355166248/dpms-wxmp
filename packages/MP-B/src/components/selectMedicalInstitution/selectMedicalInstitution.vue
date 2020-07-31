@@ -57,6 +57,9 @@
 </template>
 
 <script>
+import systemAPI from '@/APIS/system.api'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
+
 export default {
   name: 'selectMedicalInstitution',
   props: {
@@ -95,7 +98,24 @@ export default {
   computed: {},
   methods: {
     show() {
-      this.showTree = true
+      let institutionListPromise = systemAPI.getInstitutionList({
+        memberCode:
+          this.memberCode ||
+          getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
+      })
+      let loginInstitutionListPromise = systemAPI.getLoginInstitutionList({
+        memberCode:
+          this.memberCode ||
+          getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
+        username: this.username || getStorage(STORAGE_KEY.STAFF).username,
+      })
+      Promise.all([institutionListPromise, loginInstitutionListPromise]).then(
+        (res) => {
+          this.range = [res[0].data]
+          this.disList = res[1].data.workMedicalInstitutionIds
+          this.showTree = true
+        },
+      )
     },
     hide() {
       this.showTree = false

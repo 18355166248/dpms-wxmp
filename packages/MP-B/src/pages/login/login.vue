@@ -29,14 +29,16 @@
           />
         </label>
         <view class="submit">
-          <button type="default" @click="getMedicalInstitution">登 录</button>
+          <button type="default" @click="$refs.selectMedicalInstitution.show()">
+            登 录
+          </button>
         </view>
       </view>
 
       <selectMedicalInstitution
         ref="selectMedicalInstitution"
-        :range="institutionList"
-        :disList="loginInstitutionList"
+        :memberCode="loginForm.memberCode"
+        :username="loginForm.username"
         @confirm="login"
       ></selectMedicalInstitution>
     </view>
@@ -78,28 +80,6 @@ export default {
   },
   onLoad() {},
   methods: {
-    getMedicalInstitution() {
-      this.validate((errors) => {
-        if (errors) {
-          this.$utils.show(errors[0].message)
-          return
-        }
-        let institutionListPromise = systemAPI.getInstitutionList({
-          memberCode: this.loginForm.memberCode,
-        })
-        let loginInstitutionListPromise = systemAPI.getLoginInstitutionList({
-          memberCode: this.loginForm.memberCode,
-          username: this.loginForm.username,
-        })
-        Promise.all([institutionListPromise, loginInstitutionListPromise]).then(
-          (res) => {
-            this.institutionList = [res[0].data]
-            this.loginInstitutionList = res[1].data.workMedicalInstitutionIds
-            this.$refs.selectMedicalInstitution.show()
-          },
-        )
-      })
-    },
     login(val) {
       authAPI
         .login({
