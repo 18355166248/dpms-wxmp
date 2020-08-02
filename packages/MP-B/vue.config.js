@@ -11,5 +11,6 @@ module.exports = {
       .set('APIS', resolve('src/APIS'))
       .set('views', resolve('src/views'))
       .set('common', resolve('src/common'))
+      .set('businessComponents', resolve('src/businessComponents'))
   },
 }

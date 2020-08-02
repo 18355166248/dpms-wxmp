@@ -57,14 +57,14 @@ export default {
 
       if (this.value) {
         v = moment(this.value).format(this.formatValue)
-      } else {
-        v = moment().format(this.formatValue)
       }
 
       return v
     },
     pickerValue() {
-      return moment(this.defaultValue).format(this.formatValue)
+      return this.defaultValue
+        ? moment(this.defaultValue).format(this.formatValue)
+        : undefined
     },
   },
   methods: {

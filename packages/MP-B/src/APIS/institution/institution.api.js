@@ -14,6 +14,13 @@ const institutionAPI = {
       },
     })
   },
+  // 通过医生获取排班诊所信息
+  getMedicalInstitutionInfoByDoctorSchedule(params) {
+    return httper.get(
+      'institution/schedule/get-medical-institution-info-by-doctor-schedule',
+      params,
+    )
+  },
 }
 
 export default institutionAPI

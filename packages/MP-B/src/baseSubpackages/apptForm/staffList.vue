@@ -1,15 +1,21 @@
 <template>
   <div class="staffList pt-56">
-    <checkbox-group @change="checkboxChange">
-      <label
+    <dpmsCheckboxGroup v-model="checked">
+      <div
         v-for="staff in staffList"
         :key="staff.staffId"
         class="checkedLabel"
+        @click="onCheckStaff(staff.staffId)"
       >
-        <checkbox :value="staff.staffId" :checked="staff.checked" />
-        <span class="staffName">{{ staff.staffName }}</span>
-      </label>
-    </checkbox-group>
+        <dpmsCheckbox
+          shape="square"
+          :key="staff.staffId"
+          :label="staff.staffId"
+        >
+          {{ staff.staffName }}
+        </dpmsCheckbox>
+      </div>
+    </dpmsCheckboxGroup>
     <div class="mt-56 tc">
       <button class="submit" @click="onSave">保存</button>
     </div>
@@ -25,7 +31,6 @@ export default {
   data() {
     return {
       staffList: [],
-      checkedList: [], // 选中列表
       checked: [], // 选中值
       key: '', // 后台数据接收key值
       formKey: '', // 表单接收值
@@ -43,28 +48,32 @@ export default {
       const staffListInfo = uni.getStorageSync('staffListInfo')
       const staffList = staffListInfo[this.key + '_LIST'] || []
 
-      staffList.forEach((staff) => {
-        staff.checked = checked.includes(staff.staffId)
-      })
-
       this.staffList = staffList
+      this.checked = checked.split(',').map((v) => Number(v))
     }
   },
   methods: {
-    checkboxChange(e) {
-      this.checked = e.detail.value
-      this.checkedList = this.staffList.filter((staff) =>
-        e.detail.value.includes(String(staff.staffId)),
-      )
-    },
     onSave() {
+      const checkedList = this.staffList.filter((staff) =>
+        this.checked.includes(staff.staffId),
+      )
+
       uni.$emit('apptFormWithUpdateStaffList', {
         key: this.formKey,
         value: this.checked,
-        list: this.checkedList,
+        list: checkedList,
       })
 
       this.$utils.back()
+    },
+    onCheckStaff(staffId) {
+      if (staffId === -1) {
+        this.checked = [-1]
+      } else {
+        if (this.checked.includes(-1)) {
+          this.checked.splice(0, 1)
+        }
+      }
     },
   },
 }
@@ -73,12 +82,9 @@ export default {
 <style lang="scss" scoped>
 .staffList {
   .checkedLabel {
-    display: flex;
+    // display: flex;
     align-items: center;
     padding: 24rpx;
-    .staffName {
-      margin-left: 20rpx;
-    }
   }
   .submit {
     width: 620rpx;
