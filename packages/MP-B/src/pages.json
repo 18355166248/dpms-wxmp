@@ -70,7 +70,8 @@
         {
           "path": "apptForm",
           "style": {
-            "navigationBarTitleText": "新建预约"
+            "navigationBarTitleText": "新建预约",
+            "disableScroll": true
           }
         },
         {

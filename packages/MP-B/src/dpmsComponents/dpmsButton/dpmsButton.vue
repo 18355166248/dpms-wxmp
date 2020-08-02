@@ -14,7 +14,10 @@ export default {
       type: String,
       default: '保存',
     },
-    type: String,
+    type: {
+      type: String,
+      default: 'primary',
+    },
   },
   methods: {
     clickButton() {

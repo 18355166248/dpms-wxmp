@@ -56,8 +56,6 @@ httper.interceptors.request.use((request) => {
       const staff = getStorage(STORAGE_KEY.STAFF)
 
       const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
-      console.log('staff:', staff)
-      console.log('medicalInstitution:', medicalInstitution)
       // 默认参数
       const defaultDatas = {
         // ██████ 鉴权 ██████
