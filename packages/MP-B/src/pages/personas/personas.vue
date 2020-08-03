@@ -1,47 +1,31 @@
 <template>
-  <div class="page-bg">
-    <view class="uni-padding-wrap">
-      <view class="category-title">分组1</view>
-      <view class="uni-list">
-        <checkbox-group @change="checkboxChange">
-          <label class="uni-list-cell uni-list-cell-pd">
-            <checkbox value="r1" />标签1
-          </label>
-          <label class="uni-list-cell uni-list-cell-pd">
-            <checkbox value="r2" />标签2
-          </label>
-        </checkbox-group>
-      </view>
-    </view>
-    <view class="uni-padding-wrap">
-      <view class="category-title">分组2</view>
-      <view class="uni-list">
-        <checkbox-group @change="checkboxChange">
-          <label class="uni-list-cell uni-list-cell-pd">
-            <checkbox value="r4" />标签4
-          </label>
-          <label class="uni-list-cell uni-list-cell-pd">
-            <checkbox value="r5" />标签5
-          </label>
-          <label class="uni-list-cell uni-list-cell-pd">
-            <checkbox value="r6" />标签6
-          </label>
-        </checkbox-group>
-      </view>
-    </view>
-    <view class="uni-padding-wrap">
-      <view class="category-title">分组3</view>
-      <view class="uni-list">
-        <checkbox-group @change="checkboxChange">
-          <label class="uni-list-cell uni-list-cell-pd">
-            <checkbox value="r7" />标签7
-          </label>
-        </checkbox-group>
-      </view>
-    </view>
+  <div class="apptDpmsList">
+    <dpmsCheckboxGroup v-model="checked">
+      <dpmsCollapse class="mb-56">
+        <dpmsCollapseItem
+          v-for="patientTag in list"
+          :key="patientTag.name"
+          :title="patientTag.name"
+          showAnimation
+          open
+        >
+          <div class="apptCollapse">
+            <div
+              v-for="(tag, index) in patientTag.tagInfoDTOList"
+              :key="tag.id"
+              :class="['appt', index === 0 && 'first']"
+            >
+              <dpmsCheckbox shape="square" :key="tag.id" :label="tag.id">
+                {{ tag.name }}
+              </dpmsCheckbox>
+            </div>
+          </div>
+        </dpmsCollapseItem>
+      </dpmsCollapse>
+    </dpmsCheckboxGroup>
 
-    <div class="mt-56 mb-82">
-      <dpmsButton @click="savePersonas" text="保存" />
+    <div class="mt-56">
+      <dpmsButton @click="onSave" />
     </div>
   </div>
 </template>
@@ -50,56 +34,40 @@
 export default {
   data() {
     return {
-      checkedPersonas: [],
+      list: uni.getStorageSync('patientTagsList'),
+      checked: [],
     }
   },
-  onshow() {},
+  onLoad({ checked }) {
+    if (checked) {
+      this.checked = checked.split(',').map((v) => Number(v))
+    }
+  },
   methods: {
-    checkboxChange: function (e) {
-      this.checkedPersonas = [
-        ...new Set([...this.checkedPersonas, ...e.detail.value]),
-      ]
+    onSave() {
+      uni.$emit('updateTagsCheckedList', this.checked)
+      this.$utils.back()
     },
-    savePersonas: function () {
-      uni.navigateTo({
-        url:
-          '/pages/createPatient/index?personas=' +
-          JSON.stringify(this.checkedPersonas),
-      })
-    },
-  },
-  onLoad: function (option) {
-    if (option.personas) {
-      this.checkedPersonas = [
-        ...this.checkedPersonas,
-        ...JSON.parse(option.personas),
-      ]
-    } else {
-      this.checkedPersonas = []
-    }
   },
 }
 </script>
 
-<style scoped>
-.page-bg {
+<style lang="scss" scoped>
+.apptDpmsList {
   height: 100%;
-  background: rgba(0, 0, 0, 0.04);
-}
-.category-title {
-  width: 750rpx;
-  height: 82rpx;
-  line-height: 82rpx;
-  background: rgba(0, 0, 0, 0.04);
-  text-indent: 32rpx;
-  font-size: 28rpx;
-  font-weight: 400;
-  text-align: left;
-  color: rgba(0, 0, 0, 0.5);
-}
+  .apptCollapse {
+    padding-left: 32rpx;
+    .appt {
+      height: 112rpx;
+      line-height: 112rpx;
+      border-top: 1px solid rgba($color: #000000, $alpha: 0.15);
+      color: rgba($color: #000000, $alpha: 0.9);
+      font-size: 34rpx;
 
-.uni-list-cell {
-  justify-content: flex-start;
-  display: block;
+      &.first {
+        border-top: none;
+      }
+    }
+  }
 }
 </style>
