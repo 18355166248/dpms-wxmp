@@ -1,4 +1,6 @@
-<template> </template>
+<template>
+  <view>暂无UI</view>
+</template>
 
 <script>
 export default {}
