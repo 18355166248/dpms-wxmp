@@ -42,8 +42,9 @@
       <div class="protocol">
         <checkbox class="check" checked @click="agree"></checkbox>
         <span>我已知悉并同意</span>
-        <span>《预约服务协议》</span>
+        <span @click="open">《预约服务协议》</span>
       </div>
+
       <div class="reminder">
         提醒：您的预约待确认，请耐心等待诊所审核确认，有任何问题可拨打电话：13967801309
       </div>
@@ -67,8 +68,11 @@ export default {
     agree() {
       this.protocol = !this.protocol
     },
+    open() {
+      console.log('打开协议')
+    },
     amend() {
-      console.log(this)
+      this.$utils.push({ url: '/pages/appointmenAmend/appointmenAmend' })
     },
   },
 }
@@ -77,7 +81,6 @@ export default {
 <style lang="scss" scoped>
 .content {
   padding-bottom: 118rpx;
-  height: 100%;
   background: rgba($color: #000000, $alpha: 0.04);
 }
 .appointmentInfo {
