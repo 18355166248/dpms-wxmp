@@ -1,21 +1,13 @@
 <template>
   <dpmsCell :title="title" :required="required" :isLink="isLink">
-    <textarea
-      :value="value"
-      @input="onChange"
-      v-if="type === 'textarea'"
-      :auto-height="autosize"
-      :placeholder="placeholder"
-      placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-    ></textarea>
     <input
-      v-else
       :type="type"
       :value="value"
       @input="onChange"
       @blur="onBlur"
       placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
       :placeholder="placeholder"
+      :maxlength="max"
     />
     <template v-slot:right-icon>
       <slot name="inputRight" />
@@ -44,9 +36,9 @@ export default {
       type: String,
       default: 'text',
     },
-    autosize: {
-      type: Boolean,
-      required: true,
+    max: {
+      type: Number,
+      default: 140,
     },
   },
   methods: {
@@ -63,6 +55,12 @@ export default {
 <style lang="scss" scoped>
 textarea,
 input {
-  width: 100%;
+  flex: 1;
+  font-size: 34rpx;
+}
+
+textarea {
+  text-align: left;
+  width: auto;
 }
 </style>
