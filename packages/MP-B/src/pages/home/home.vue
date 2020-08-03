@@ -217,8 +217,6 @@ export default {
       return this.$utils.formatPrice(this.pageData.actualIncome)
     },
     scrollHeight: function () {
-      console.log('this.windowHeight:', this.windowHeight)
-      console.log('this.navHeight:', this.navHeight)
       return this.windowHeight - this.navHeight + 'px'
     },
     // 计算属性的 getter
@@ -229,15 +227,9 @@ export default {
       return this.windowHeight - this.navHeight + 'px'
     },
   },
-  onShow: function () {
-    console.log('home Show，app展现在前台')
-  },
-  onHide: function () {
-    console.log('home Hide，app不再展现在前台')
-  },
+
   methods: {
     toUrl(url) {
-      console.log('toUrl:')
       this.$utils.push({
         url,
       })
@@ -253,13 +245,11 @@ export default {
           endTimestamp: moment().endOf('day').valueOf(),
         })
         .then((res) => {
-          console.log('res:', res)
           this.pageData = res.data
           // 请求成功,隐藏加载状态
           this.mescroll.endSuccess()
         })
         .catch((err) => {
-          console.log('err:', err)
           // 请求失败,隐藏加载状态
           this.mescroll.endErr()
         })

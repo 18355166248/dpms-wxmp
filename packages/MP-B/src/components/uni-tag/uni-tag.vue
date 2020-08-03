@@ -50,6 +50,9 @@
 export default {
   name: 'UniTag',
   props: {
+    color: {
+      type: String,
+    },
     type: {
       // 标签类型default、primary、success、warning、error、royal
       type: String,
@@ -86,6 +89,7 @@ export default {
       default: false,
     },
   },
+  computed: {},
   methods: {
     onClick() {
       if (this.disabled === true || this.disabled === 'true') {
@@ -98,16 +102,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$uni-color-primary: #1890ff;
+$uni-color-error: #fa541c;
 $tag-pd: 0px 16px;
 $tag-small-pd: 0px 8px;
+$amount: 0.1;
 
 .uni-tag {
   /* #ifndef APP-NVUE */
-  display: flex;
+  display: inline-flex;
   /* #endif */
   padding: $tag-pd;
-  height: 30px;
-  line-height: 30px;
+  height: 44rpx;
+  line-height: 44rpx;
   justify-content: center;
   color: $uni-text-color;
   border-radius: $uni-border-radius-base;
@@ -115,17 +122,18 @@ $tag-small-pd: 0px 8px;
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-bg-color-grey;
+  margin-left: 16rpx;
 }
 
 .uni-tag--circle {
-  border-radius: 15px;
+  border-radius: 22rpx;
 }
 
 .uni-tag--mark {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
+  border-top-right-radius: 22rpx;
+  border-bottom-right-radius: 22rpx;
 }
 
 .uni-tag--disabled {
@@ -133,9 +141,9 @@ $tag-small-pd: 0px 8px;
 }
 
 .uni-tag--small {
-  height: 20px;
+  height: 30rpx;
   padding: $tag-small-pd;
-  line-height: 20px;
+  line-height: 30rpx;
   font-size: $uni-font-size-sm;
 }
 
@@ -227,7 +235,7 @@ $tag-small-pd: 0px 8px;
 
 .error-uni-tag--inverted {
   color: $uni-color-error;
-  background-color: $uni-bg-color;
+  background-color: rgba($uni-color-error, $amount);
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-color-error;
