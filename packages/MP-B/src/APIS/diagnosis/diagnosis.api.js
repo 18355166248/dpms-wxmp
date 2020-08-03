@@ -19,6 +19,14 @@ const diagnosisAPI = {
   getTodayConsultant(data) {
     return httper.get('diagnosis/register/page-consultant', data)
   },
+  // 新建挂号
+  createNewRegister(data) {
+    return httper.post('diagnosis/register/create', data)
+  },
+  // 挂号
+  createRegister(data) {
+    return httper.post('diagnosis/register/create-with-appointment', data)
+  },
 }
 
 export default diagnosisAPI

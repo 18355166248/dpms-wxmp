@@ -56,11 +56,15 @@ export default {
   },
   computed: {
     pickerValue() {
-      const picker = this.list.find(
+      const pickerIndex = this.list.findIndex(
         (item) => item[this.defaultType] === this.value,
       )
 
-      return picker && picker[this.defaultProps.label]
+      this.selectIndex = pickerIndex === -1 ? 0 : pickerIndex
+
+      return pickerIndex > -1
+        ? this.list[pickerIndex][this.defaultProps.label]
+        : ''
     },
     pickerKey() {
       if (this.defaultProps.label === this.defaultType) {
@@ -72,10 +76,6 @@ export default {
     },
   },
   watch: {
-    value(newVal) {
-      if (this.value && this.mode === 'date') {
-      }
-    },
     list(newVal) {
       if (this.value) {
         this.selectIndex = this.list.findIndex((item) => {
@@ -109,12 +109,12 @@ export default {
         value = this.list[index]
       }
 
-      if (this.mode === 'multiSelector') {
-        value = []
-        e.detail.value.forEach((index2, i) => {
-          value.push(this.list[i][index2])
-        })
-      }
+      // if (this.mode === 'multiSelector') {
+      //   value = []
+      //   e.detail.value.forEach((index2, i) => {
+      //     value.push(this.list[i][index2])
+      //   })
+      // }
 
       this.selectIndex = index
 
