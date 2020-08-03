@@ -46,6 +46,7 @@ export default {
 .dpms-cell {
   position: relative;
   display: flex;
+  align-items: center;
   box-sizing: border-box;
   width: 100%;
   padding: 35rpx 32rpx;
