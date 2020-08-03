@@ -25,7 +25,6 @@
         </view>
       </view>
     </view>
-    <dpmsPlacePicker title="选择地区" v-model="test" />
     <view class="out">
       <dpmsButton @click="loginOut" text="退出登录" type="primary" />
     </view>
@@ -36,9 +35,7 @@
 import { removeStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
-    return {
-      test: 820200,
-    }
+    return {}
   },
   onLoad() {},
   methods: {
