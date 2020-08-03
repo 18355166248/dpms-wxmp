@@ -1,6 +1,7 @@
 <template>
   <view
     :class="[
+      'uni-tag',
       'uni-tag--' + type,
       disabled === true || disabled === 'true' ? 'uni-tag--disabled' : '',
       inverted === true || inverted === 'true'
@@ -11,7 +12,6 @@
       'uni-tag--' + size,
     ]"
     @click="onClick()"
-    class="uni-tag"
     v-if="text"
   >
     <text

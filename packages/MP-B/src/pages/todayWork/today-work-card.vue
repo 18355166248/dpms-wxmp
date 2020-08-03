@@ -18,6 +18,7 @@
             :circle="false"
             type="error"
           ></uni-tag>
+
           <uni-tag
             text="男"
             :inverted="true"
@@ -36,8 +37,13 @@
       </view>
     </view>
 
-    <view>
-      <badge type="processing" text="已预约"></badge>
+    <view class="today-work-card-footer">
+      <badge :type="badge.type" :color="badge.color" :text="badge.text"></badge>
+      <view class="today-work-card-footer-right">
+        <text class="button">取 消</text>
+        <text class="button">编 辑</text>
+        <text class="button">挂 号</text>
+      </view>
     </view>
   </view>
 </template>
@@ -58,8 +64,38 @@ export default {
   data() {
     return {
       moment,
+      cardClass: '',
+      badge: {
+        type: 'success',
+        text: '--',
+      },
     }
   },
+
+  mounted() {
+    // console.log("enums:", this.$utils.getEnums("Register"))
+
+    this.cardClass = 'today-work-card-default'
+
+    if (this.data.registerStatus === 1) {
+      this.badge = { type: 'success', text: '已预约' }
+      // this.cardClass = 'today-work-card-reserved'
+    } else if (this.data.registerStatus === 2) {
+      // this.cardClass = 'today-work-card-registered'
+      this.badge = { type: 'error', text: '已挂号' }
+    } else if (this.data.registerStatus === 3) {
+      // this.cardClass = 'today-work-card-consulting'
+      this.badge = { type: 'warning', text: '治疗中' }
+    } else if (this.data.registerStatus === 4) {
+      // this.cardClass = 'today-work-card-inTreatment'
+      this.badge = { type: 'processing', text: '咨询中' }
+    } else if (this.data.registerStatus === 5) {
+      // this.cardClass = 'today-work-card-reserved'
+      this.badge = { type: 'success', text: '治疗完成' }
+    }
+  },
+
+  computed: {},
 
   components: {
     uniTag,
@@ -73,11 +109,12 @@ export default {
 .today-work-card {
   position: relative;
 
-  margin: 32rpx;
+  margin: 32rpx 32rpx 0;
   border-radius: $uni-border-radius-base;
   background: $dpms-bg-color;
   padding: 32rpx;
-  border-top: 12rpx solid $dpms-color-primary;
+  // border-top-width: 12rpx;
+  // border-top-style: solid;
 
   &-body {
     display: flex;
@@ -109,5 +146,35 @@ export default {
       margin-bottom: 8rpx;
     }
   }
+  &-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &-right {
+      .button {
+        margin-left: 16rpx;
+        padding: 8rpx 32rpx;
+        font-size: 28rpx;
+        border-radius: 28rpx;
+        color: $dpms-color-primary;
+        border: 2rpx solid $dpms-color-primary;
+      }
+    }
+  }
+}
+.today-work-card-reserved {
+  border-top-color: $dpms-color-primary;
+}
+.today-work-card-registered {
+  border-top-color: #f2647c;
+}
+.today-work-card-inTreatment {
+  border-top-color: #fbd438;
+}
+.today-work-card-consulting {
+  border-top-color: #25e9f3;
+}
+.today-work-card-default {
+  border-top-color: #666;
 }
 </style>

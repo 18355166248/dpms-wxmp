@@ -1,14 +1,23 @@
 <template>
-  <view style="overflow-y: auto;" class="todayWork-wrpper">
-    <scroll-view class="todayWork">
-      <view class="todayWork-header">
-        <text>当前角色：前台</text>
-        <text class="todayWork-header-txt">
-          <text class="iconfont icon-retweet"></text>
-          切换角色
-        </text>
+  <view class="todayWork-wrpper" :style="{ paddingBottom: viewPadddingBottm }">
+    <view class="todayWork">
+      <view class="todayWork-header-wrapper">
+        <picker
+          @change="bindPickerChange"
+          :value="roleIndex"
+          :range="roleNames"
+        >
+          <view class="todayWork-header">
+            <text>当前角色：{{ roles[roleIndex].name || '--' }}</text>
+
+            <text class="todayWork-header-txt">
+              <text class="iconfont icon-retweet"></text>
+              切换角色
+            </text>
+          </view>
+        </picker>
+        <dpmsSearch @change="change" @search="search"></dpmsSearch>
       </view>
-      <dpmsSearch @change="change" @search="search"></dpmsSearch>
 
       <view
         v-if="
@@ -16,15 +25,18 @@
           selectedRole.roleTodayWorkRelationList.length > 0 &&
           dataSource.length > 0
         "
+        class="today-work-list"
       >
         <view v-for="item in dataSource" :key="item.roleTodayWorkRelationId">
           <today-work-card :data="item"></today-work-card>
         </view>
+        <uni-load-more :status="more" iconSize="20"></uni-load-more>
       </view>
       <view v-else>
         <empty></empty>
       </view>
-    </scroll-view>
+    </view>
+    <view v-if="isShowNewBtn" class="todayWork-wrpper-new">新建挂号</view>
   </view>
 </template>
 
@@ -34,6 +46,7 @@ import roleApi from '@/APIS/role/role.api'
 import diagnosisApi from '@/APIS/diagnosis/diagnosis.api'
 import todayWorkCard from './today-work-card.vue'
 import empty from '@/components/empty/empty.vue'
+import uniLoadMore from '@/components/uni-load-more/uni-load-more.vue'
 
 export default {
   data() {
@@ -45,16 +58,25 @@ export default {
       dataSource: [],
       current: 1,
       total: 0,
+      more: 'loading',
+      roleIndex: 0,
     }
   },
 
   onLoad() {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
-    this.init()
+    uni.startPullDownRefresh()
   },
   onPullDownRefresh() {
     this.init()
   },
+  onReachBottom() {
+    if (this.dataSource.length < this.total) {
+      this.current += 1
+      this.loadData()
+    }
+  },
+
   methods: {
     useConsolidateData(dataSource) {
       const data = {}
@@ -134,11 +156,41 @@ export default {
 
             index = thirdLevelIndex
           }
+        }
+        // picker 选中的index
+        this.roleIndex = this.roles.findIndex(
+          (item) =>
+            item.todayWorkRoleType === this.selectedRole.todayWorkRoleType,
+        )
+      }
+    },
+    async loadData() {
+      if (this.selectedRole.todayWorkRoleType) {
+        const urlMap = {
+          1: 'getTodayReceptionistList',
+          2: 'getTodayDoctorList',
+          3: 'getTodayConsultant',
+        }
+        this.more = 'loading'
 
-          distinctRoles.splice(index, 1)
+        const [listErr, listRes] = await this.$utils.asyncTasks(
+          diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
+            beginTime: moment('2020-7-1').startOf('day').valueOf(),
+            endTime: moment().endOf('day').valueOf(),
+            current: this.current,
+          }),
+        )
 
-          this.surplusRoles = distinctRoles
-          console.log('this.surplusRoles:', this.surplusRoles)
+        if (listRes) {
+          const { data } = listRes
+          const { total, current, records } = data
+
+          this.dataSource = this.dataSource.concat(records)
+          this.total = total
+
+          if (this.total === this.dataSource.length) {
+            this.more = 'noMore'
+          }
         }
       }
     },
@@ -154,33 +206,17 @@ export default {
         const nonDuplicateData = this.useConsolidateData(res.data)
         this.roles = nonDuplicateData
         this.initSelectedRole(nonDuplicateData)
+        this.current = 1
 
-        if (this.selectedRole.todayWorkRoleType) {
-          const urlMap = {
-            1: 'getTodayReceptionistList',
-            2: 'getTodayDoctorList',
-            3: 'getTodayConsultant',
-          }
-
-          const [listErr, listRes] = await this.$utils.asyncTasks(
-            diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
-              beginTime: moment('2020-7-1').startOf('day').valueOf(),
-              endTime: moment().endOf('day').valueOf(),
-            }),
-          )
-
-          if (listRes) {
-            const { data } = listRes
-            const { total, current, records } = data
-
-            this.current = current
-            this.dataSource = records
-            this.total = total
-          }
-        }
+        this.loadData()
       }
 
       uni.stopPullDownRefresh()
+    },
+    bindPickerChange(e) {
+      console.log('picker发送选择改变，携带值为', e.target.value)
+      this.roleIndex = e.target.value
+      this.selectedRole = this.roles[this.roleIndex]
     },
     cancel() {
       console.log('取消！')
@@ -195,15 +231,24 @@ export default {
   components: {
     todayWorkCard,
     empty,
+    uniLoadMore,
   },
-  computed: {},
+  computed: {
+    roleNames() {
+      return this.roles.map((item) => item.name)
+    },
+    viewPadddingBottm() {
+      return this.selectedRole.todayWorkRoleType === 1 ? '90rpx' : 0
+    },
+    isShowNewBtn() {
+      return this.selectedRole.todayWorkRoleType === 1
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 .todayWork-wrpper {
-  height: 100%;
-  overflow-y: auto;
   background: rgba(0, 0, 0, 0.04);
 
   .todayWork {
@@ -218,6 +263,17 @@ export default {
         color: $dpms-color-primary;
       }
     }
+  }
+  &-new {
+    width: 100%;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    height: 90rpx;
+    line-height: 90rpx;
+    text-align: center;
+    background-color: $dpms-color-primary;
+    color: #fff;
   }
 }
 </style>
