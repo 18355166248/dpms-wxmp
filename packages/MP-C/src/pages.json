@@ -55,6 +55,24 @@
       "style": {
         "navigationBarTitleText": "修改人员"
       }
+    },
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登陆授权"
+      }
+    },
+    {
+      "path": "pages/login/cellphone",
+      "style": {
+        "navigationBarTitleText": "手机号登陆"
+      }
+    },
+    {
+      "path": "pages/appoint/index",
+      "style": {
+        "navigationBarTitleText": "新建预约"
+      }
     }
   ],
   "globalStyle": {

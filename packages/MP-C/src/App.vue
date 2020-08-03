@@ -1,7 +1,14 @@
 <script>
+import systemApi from '@/APIS/system.api'
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   onLaunch: function () {
     console.log('App Launch')
+    const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
+    if (!token) {
+      setStorage(STORAGE_KEY.ACCESS_TOKEN, '123123')
+      systemApi.getAccessToken()
+    }
   },
   onShow: function () {
     console.log('App Show')
