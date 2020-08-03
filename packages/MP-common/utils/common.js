@@ -18,13 +18,13 @@ export default {
   getEnums(key) {
     let enumObj = uni.getStorageSync("enums")[key];
     if (enumObj) {
-      let properties = CCEnumUtil.create(enumObj).properties;
-      for (let key in properties)
-        properties[key] = {
-          ...properties[key],
-          zh_CN: properties[key].text.zh_CN,
+      let enums = CCEnumUtil.create(enumObj);
+      for (let key in enums.properties)
+        enums.properties[key] = {
+          ...enums.properties[key],
+          zh_CN: enums.properties[key].text.zh_CN,
         };
-      return properties;
+      return enums;
     }
   },
 
