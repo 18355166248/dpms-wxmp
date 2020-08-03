@@ -40,6 +40,12 @@
       }
     },
     {
+      "path": "pages/searchPatient/searchPatient",
+      "style": {
+        "navigationBarTitleText": "搜索患者"
+      }
+    },
+    {
       "path": "pages/paitent/paitent",
       "style": {
         "navigationBarTitleText": "患者资料",
