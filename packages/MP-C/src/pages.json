@@ -55,6 +55,12 @@
       }
     },
     {
+      "path": "pages/login/cellphone",
+      "style": {
+        "navigationBarTitleText": "手机号登陆"
+      }
+    },
+    {
       "path": "pages/appoint/index",
       "style": {
         "navigationBarTitleText": "新建预约"

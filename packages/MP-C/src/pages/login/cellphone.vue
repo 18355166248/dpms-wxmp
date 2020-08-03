@@ -2,24 +2,27 @@
   <div class="wrap">
     <image src="/static/logo.png" class="logo">
     <div class="appName">小程序名称</div>
-    <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信登陆</button>
-    <button class="ghost" @click="flyUtil.push({url: 'cellphone'})">手机号登陆</button>
+    <div class="tip">请输入您的手机号，登陆或注册账号</div>
+    <div class="formItem">
+      <input placeholder="请输入手机号">
+    </div>
+    <div class="formItem">
+      <input placeholder="请输入验证码">
+      <div class="btn">获取验证码</div>
+    </div>
+    <button>微信登陆</button>
   </div>
 </template>
 
 <script>
 export default {
-  methods: {
-    getPhoneNumber({detail}) {
-      console.log(detail)
-    },
-  },
+
 }
 </script>
 
 <style lang="scss">
 .wrap{
-  padding-top: 96rpx;
+  padding: 96rpx 32rpx 0;
   background: url(/static/loginbg1.png) no-repeat 0 12rpx /90rpx auto, url(/static/loginbg2.png) no-repeat 100% 206rpx /130rpx auto;
 }
 .logo{
@@ -34,6 +37,27 @@ export default {
   text-align: center;
   margin-bottom: 180rpx;
 }
+.tip{
+  font-size: 28rpx;
+  color: #999999;
+  margin-bottom: 24rpx;
+}
+.formItem{
+  display: flex;
+  align-items: center;
+  border-bottom: solid 2rpx rgba(0,0,0,0.15);
+  height: 112rpx;
+  input{
+    flex: auto;
+  }
+  .btn{
+    color: #5cbb89;
+    font-size: 34rpx;
+    border-left: solid 2rpx rgba(0,0,0,0.15);
+    padding-left: 16rpx;
+    white-space: nowrap;
+  }
+}
 button {
   width: 670rpx;
   height: 100rpx;
@@ -45,6 +69,7 @@ button {
   text-align: center;
   color: #ffffff;
   margin-bottom: 24rpx;
+  margin-top: 90rpx;
   &.ghost{
     background: transparent;
     color: #5cbb89;
