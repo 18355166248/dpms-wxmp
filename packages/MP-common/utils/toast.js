@@ -9,7 +9,6 @@ export default {
    * @return {void}
    */
   show(value, config) {
-    console.log(value, uni.showToast);
     uni.showToast({
       title: value,
       icon: "none",

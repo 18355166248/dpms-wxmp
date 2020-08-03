@@ -57,32 +57,24 @@
 </template>
 
 <script>
+import systemAPI from '@/APIS/system.api'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
+
 export default {
   name: 'selectMedicalInstitution',
   props: {
-    range: {
-      type: Array,
-      default: [],
-    },
-    idKey: {
+    // memberCode为机构名称，不是机构code
+    memberCode: {
       type: String,
-      default: 'medicalInstitutionId',
+      required: true,
     },
-    rangeKey: {
+    username: {
       type: String,
-      default: 'medicalInstitutionSimpleCode',
-    },
-    childrenKey: {
-      type: String,
-      default: 'childMedicalInstitutionList',
+      required: true,
     },
     title: {
       type: String,
       default: '请选择诊所',
-    },
-    disList: {
-      type: Array,
-      default: [],
     },
     openAll: {
       //默认展开
@@ -99,12 +91,31 @@ export default {
     return {
       showTree: false,
       treeList: [],
+      range: [],
+      disList: [],
     }
   },
   computed: {},
   methods: {
     show() {
-      this.showTree = true
+      let institutionListPromise = systemAPI.getInstitutionList({
+        memberCode:
+          this.memberCode ||
+          getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
+      })
+      let loginInstitutionListPromise = systemAPI.getLoginInstitutionList({
+        memberCode:
+          this.memberCode ||
+          getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
+        username: this.username || getStorage(STORAGE_KEY.STAFF).username,
+      })
+      Promise.all([institutionListPromise, loginInstitutionListPromise]).then(
+        (res) => {
+          this.range = [res[0].data]
+          this.disList = res[1].data.workMedicalInstitutionIds
+          this.showTree = true
+        },
+      )
     },
     hide() {
       this.showTree = false
@@ -113,8 +124,8 @@ export default {
     renderTreeList(list = [], rank = 0, parentId = [], parents = []) {
       list.forEach((item) => {
         this.treeList.push({
-          id: item[this.idKey],
-          name: item[this.rangeKey],
+          id: item['medicalInstitutionId'],
+          name: item['medicalInstitutionSimpleCode'],
           source: item,
           parentId, // 父级id数组
           parents, // 父级id数组
@@ -125,19 +136,19 @@ export default {
           hideArr: [],
         })
         if (
-          Array.isArray(item[this.childrenKey]) &&
-          item[this.childrenKey].length > 0
+          Array.isArray(item['childMedicalInstitutionList']) &&
+          item['childMedicalInstitutionList'].length > 0
         ) {
           let parentid = [...parentId],
             parentArr = [...parents]
-          delete parentArr[this.childrenKey]
-          parentid.push(item[this.idKey])
+          delete parentArr['childMedicalInstitutionList']
+          parentid.push(item['medicalInstitutionId'])
           parentArr.push({
-            [this.idKey]: item[this.idKey],
-            [this.rangeKey]: item[this.rangeKey],
+            medicalInstitutionId: item['medicalInstitutionId'],
+            medicalInstitutionSimpleCode: item['medicalInstitutionSimpleCode'],
           })
           this.renderTreeList(
-            item[this.childrenKey],
+            item['childMedicalInstitutionList'],
             rank + 1,
             parentid,
             parentArr,

@@ -1,14 +1,8 @@
 <script>
 export default {
-  onLaunch: function () {
-    console.log('App Launch')
-  },
-  onShow: function () {
-    console.log('App Show')
-  },
-  onHide: function () {
-    console.log('App Hide')
-  },
+  onLaunch: function () {},
+  onShow: function () {},
+  onHide: function () {},
 }
 </script>
 
@@ -74,6 +68,9 @@ page {
 .icon-eye::before {
   content: '\e869';
 }
+.icon-no-eye::before {
+  content: '\e8ff';
+}
 .icon-clock::before {
   content: '\e848';
 }
@@ -98,6 +95,9 @@ page {
 }
 .icon-check::before {
   content: '\e7fc';
+}
+.icon-right::before {
+  content: '\e7eb';
 }
 /* iconfont图标 end */
 
