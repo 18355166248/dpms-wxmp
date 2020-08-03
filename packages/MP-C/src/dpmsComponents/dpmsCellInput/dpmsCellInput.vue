@@ -7,6 +7,7 @@
       @blur="onBlur"
       placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
       :placeholder="placeholder"
+      :maxlength="max"
     />
     <template v-slot:right-icon>
       <slot name="inputRight" />
@@ -35,6 +36,10 @@ export default {
       type: String,
       default: 'text',
     },
+    max: {
+      type: Number,
+      default: 140,
+    },
   },
   methods: {
     onChange(e) {
@@ -46,3 +51,16 @@ export default {
   },
 }
 </script>
+
+<style lang="scss" scoped>
+textarea,
+input {
+  flex: 1;
+  font-size: 34rpx;
+}
+
+textarea {
+  text-align: left;
+  width: auto;
+}
+</style>
