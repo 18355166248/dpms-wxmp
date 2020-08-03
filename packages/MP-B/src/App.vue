@@ -105,6 +105,9 @@ page {
 .icon-retweet::before {
   content: '\e8f0';
 }
+.icon-right::before {
+  content: '\e7eb';
+}
 /* iconfont图标 end */
 
 .tc {

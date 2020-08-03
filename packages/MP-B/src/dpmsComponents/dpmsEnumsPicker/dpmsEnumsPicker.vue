@@ -5,6 +5,7 @@
     :range="list"
     :value="selectValue"
     @change="onChange"
+    :header-text="headerText"
   >
     <dpmsCell
       :title="title"
@@ -42,6 +43,7 @@ export default {
       type: Boolean,
       required: false,
     },
+    headerText: String,
   },
   watch: {
     value(newVal) {
@@ -64,7 +66,7 @@ export default {
     }
   },
   created() {
-    this.list = this.$utils.getEnums(this.enumsKey)
+    this.list = Object.values(this.$utils.getEnums(this.enumsKey))
     if (this.value) {
       this.selectValue = this.list.findIndex((v) => v.value === this.value)
     }
