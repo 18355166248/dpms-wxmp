@@ -5,14 +5,14 @@
       <div class="patientInfo tc pt-48">
         <div class="patientCard">
           <div class="patientDetail">
-            <avatar :gender="form.patient.gender" />
+            <avatar :gender="form.patient && form.patient.gender" />
             <div v-if="form.patient" class="patientCenter">
               <div class="patientTop">
-                <span class="patientName text-ellipsis">{{
-                  form.patient.patientName
-                }}</span>
+                <span class="patientName">{{ form.patient.patientName }}</span>
                 <span class="age">{{ form.patient.age }}</span>
-                <span class="gender">{{ form.patient.genderText }}</span>
+                <span class="gender">{{
+                  (form.patient && form.patient.gender) | getGenderText
+                }}</span>
               </div>
               <div class="patientBottom">
                 <span>联系方式:</span>
@@ -28,11 +28,19 @@
       </div>
       <dpmsForm ref="dpmsForm" :rules="rules">
         <dpmsCellTimePicker
+          v-if="isAppt"
           required
           title="预约开始时间"
           v-model="form.appointmentBeginTimeStamp"
         />
+        <!-- 挂号显示预约时间 -->
+        <dpmsCell
+          v-if="paramsObj.type === 'editRegister'"
+          title="预约时间"
+          :value="form.timeRange"
+        />
         <dpmsCellInput
+          v-if="isAppt"
           required
           type="number"
           title="持续时间"
@@ -58,6 +66,7 @@
           placeholder="请选择医生"
         />
         <dpmsCell
+          v-if="isAppt"
           title="诊所"
           :value="form.medicalInstitution.medicalInstitutionSimpleCode"
         />
@@ -103,6 +112,7 @@
           placeholder="请选择诊室"
         />
         <dpmsCell
+          v-if="isAppt"
           title="预约项目"
           :value="APPT_ITEM_CHECKED_TEXT"
           isLink
@@ -131,6 +141,7 @@
 import authAPI from 'APIS/patient/patient.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
 import institutionAPI from 'APIS/institution/institution.api'
+import diagnosisAPI from 'APIS/diagnosis/diagnosis.api'
 import { apptFormUtil } from './apptForm.util'
 import moment from 'moment'
 import avatar from 'businessComponents/avatar/avatar'
@@ -157,14 +168,23 @@ const notGet =
 
 const medicalInstitution = uni.getStorageSync('medicalInstitution')
 
+// 地址栏参数配置
+const paramsConfig = {
+  createRegister: { title: '新建挂号' },
+  editRegister: { title: '编辑挂号' },
+  createAppt: { title: '新建预约' },
+  editAppt: { title: '编辑预约' },
+}
+
 export default {
   data() {
     return {
+      paramsObj: {},
       saveLoading: false, // 保存按钮loading
       GENDER_ENUM,
-      method: 'create',
+      method: 'edit',
       form: {
-        patient: {}, // 患者信息
+        patient: null, // 患者信息
         visType: undefined, // 就诊类型
         duration: 30, // 持续时间
         COMMON_DATA_APPOINTMENT_ITEM: [], // 预约项目 257, 258
@@ -177,6 +197,7 @@ export default {
         institutionConsultingRoomId: -1, // 诊室
         help: [-1], // 助理 2423
         nurse: [-1], // 护士 2424
+        appointmentType: APPOINTMENT_TYPE_ENUM.COMMON.value, // 预约类型 写死为普通
       },
       rules: {
         appointmentBeginTimeStamp: {
@@ -199,14 +220,37 @@ export default {
       CONSULTANT_LIST: staffListInfo.CONSULTANT_LIST || [], // 咨询师列表
       ConsultingRoomList: [], // 诊室列表
       APPT_ITEM_CHECKED_TEXT: '', // 预约项目选中文本
-      HELP_CHECKED_TEXT: '', // 助理选中文本
-      NURSE_CHECKED_TEXT: '', // 护士选中文本
+      HELP_CHECKED_TEXT: '未指定助理', // 助理选中文本
+      NURSE_CHECKED_TEXT: '未指定护士', // 护士选中文本
 
       selectListCache: [[]], // 0科室, 1诊室, 2医生, 3洁牙师, 4咨询师, 5助理, 6预约项目 7诊所 8护士
       apptInfoCache: {}, // 缓存编辑/挂号预约详情
     }
   },
-  created() {
+  filters: {
+    getGenderText(gender) {
+      if (GENDER_ENUM && GENDER_ENUM.properties && gender) {
+        return GENDER_ENUM.properties[gender].text.zh_CN
+      }
+
+      return ''
+    },
+  },
+  computed: {
+    isAppt() {
+      return (
+        this.paramsObj.type === 'createAppt' ||
+        this.paramsObj.type === 'editAppt'
+      )
+    },
+  },
+  onLoad(option = {}) {
+    this.paramsObj = option
+    uni.setNavigationBarTitle({
+      title: paramsConfig[option.type].title,
+    })
+  },
+  mounted() {
     uni.$on('apptFormWithUpdateStaffList', ({ key, value, list }) => {
       this.$set(this.form, key, value)
 
@@ -230,26 +274,22 @@ export default {
     this.init()
 
     const patient = {
-      age: '24天',
-      birthday: '2020-07-08',
-      createTime: 1596075704000,
-      customerId: 1007467,
+      age: '70岁6月1天',
+      birthday: '1950-02-02',
+      createTime: 1593658269000,
+      customerId: 1006433,
       gender: 1,
       institutionChainType: 2,
       isMember: 2,
       medicalInstitutionId: 968,
-      medicalRecordNo: 'BL202007290005',
-      patientId: 1691,
-      patientName: 'roscoe12553sd去往的群无',
-      patientNo: 'BL202007290005',
-      mobile: 17621399871,
+      medicalRecordNo: 'BL202007010005',
+      mobile: '15900451752',
+      patientId: 925,
+      patientName: '张三爷',
+      patientNo: 'BL202007010005',
     }
 
-    if (GENDER_ENUM && GENDER_ENUM.properties && patient.gender) {
-      patient.genderText = GENDER_ENUM.properties[patient.gender].text.zh_CN
-    }
-
-    this.$set(this.form, 'patient', patient)
+    this.form.patient = patient
   },
   beforeDestroy() {
     uni.$off('apptFormWithUpdateStaffList')
@@ -272,6 +312,8 @@ export default {
     },
     'form.doctor'(newVal) {
       // 通过医生数据获取当前诊所信息
+      if (!this.isAppt) return
+
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
       })
@@ -279,32 +321,55 @@ export default {
   },
   methods: {
     init() {
-      const form = apptFormUtil.formatApptToFormValues(apptMock)
+      // 如果地址栏有appointmentId并且type为editRegister或者editAppt才去获取预约详情
+      const type = this.paramsObj.type
+      if (
+        this.paramsObj.appointmentId &&
+        (type === 'editRegister' || type === 'editAppt')
+      ) {
+        appointmentAPI
+          .getAppointmentDetail({
+            appointmentId: this.paramsObj.appointmentId,
+          })
+          .then((res) => {
+            const form = apptFormUtil.formatApptToFormValues(res.data)
 
-      this.NURSE_LIST = form.nurseList
-      this.ASSISTANT_MANAGER_LIST = form.helpNameList
+            form.appointmentType = APPOINTMENT_TYPE_ENUM.COMMON.value
 
-      this.form = JSON.parse(JSON.stringify(form))
-      this.initCheckedText()
-      console.log(form)
+            if (type === 'editRegister') {
+              form.timeRange =
+                moment(form.appointmentBeginTimeStamp).format('HH:mm') +
+                '~' +
+                moment(form.appointmentEndTimeStamp + 1).format('HH:mm')
+            }
+
+            this.form = JSON.parse(JSON.stringify(form))
+            this.initCheckedText(form.helpList, form.nurseList)
+          })
+      }
 
       // 通过医生数据获取当前诊所信息
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
       })
 
-      appointmentAPI
-        .getAppointmentItemList()
-        .then((res) => {
-          if (Array.isArray(res.data)) {
-            uni.setStorageSync('apptItemList', res.data)
+      // 获取预约项目数据 只有是预约页面才需要获取
+      if (this.isAppt) {
+        appointmentAPI
+          .getAppointmentItemList()
+          .then((res) => {
+            if (Array.isArray(res.data)) {
+              uni.setStorageSync('apptItemList', res.data)
 
-            this.selectListCache[6] = res.data
+              this.selectListCache[6] = res.data
 
-            this.updateApptItemCheckedText()
-          }
-        })
-        .catch()
+              this.updateApptItemCheckedText()
+            }
+          })
+          .catch()
+      } else {
+        this.selectListCache[6] = []
+      }
 
       authAPI
         .getConsultationRoomList({ enabled: true })
@@ -434,7 +499,8 @@ export default {
       let { appointmentBeginTimeStamp, doctor } = this.form
       let getMedicalInstitution
 
-      if (appointmentBeginTimeStamp && doctor && doctor !== -1) {
+      // 开始时间有值 并且医生不是未指定医生并且是预约页面不是挂号页面
+      if (appointmentBeginTimeStamp && doctor && doctor !== -1 && this.isAppt) {
         getMedicalInstitution = institutionAPI.getMedicalInstitutionInfoByDoctorSchedule(
           {
             staffId: doctor,
@@ -469,43 +535,45 @@ export default {
         return
       }
 
-      if (
-        medicalInstitution.institutionChainType === 4 &&
-        medicalInstitution.medicalInstitutionId !==
-          this.form.medicalInstitution.appointmentMedicalInstitutionId
-      ) {
-        this.$utils.show('不可预约到其他诊所')
-
-        return
-      }
-
-      if (apptFormUtil.isHeaderWithLargeArea(this.form.medicalInstitution)) {
-        this.$utils.show('不可预约到总部/大区')
-
-        return
-      }
-
-      if (
-        medicalInstitution.institutionChainType === 2 &&
-        medicalInstitution.topParentId !== 0
-      ) {
-        if (this.form.medicalInstitution?.institutionChainType === 4) {
-          this.$utils.show('不可预约到加盟诊所')
+      if (this.isAppt) {
+        if (
+          medicalInstitution.institutionChainType === 4 &&
+          medicalInstitution.medicalInstitutionId !==
+            this.form.medicalInstitution.appointmentMedicalInstitutionId
+        ) {
+          this.$utils.show('不可预约到其他诊所')
 
           return
         }
-      }
 
-      if (this.form.medicalInstitution?.isCurrentInstitutionFlag === false) {
-        uni.showModal({
-          title: `确定要把患者${this.form.patient.patientName}预约到${this.form.medicalInstitution?.appointmentMedicalInstitutionName}吗？`,
-          showCancel: true,
-          success: () => {
-            this.getApptVerify()
-          },
-        })
+        if (apptFormUtil.isHeaderWithLargeArea(this.form.medicalInstitution)) {
+          this.$utils.show('不可预约到总部/大区')
 
-        return
+          return
+        }
+
+        if (
+          medicalInstitution.institutionChainType === 2 &&
+          medicalInstitution.topParentId !== 0
+        ) {
+          if (this.form.medicalInstitution.institutionChainType === 4) {
+            this.$utils.show('不可预约到加盟诊所')
+
+            return
+          }
+        }
+
+        if (this.form.medicalInstitution.isCurrentInstitutionFlag === false) {
+          uni.showModal({
+            title: `确定要把患者${this.form.patient.patientName}预约到${this.form.medicalInstitution?.appointmentMedicalInstitutionName}吗？`,
+            showCancel: true,
+            success: () => {
+              this.getApptVerify()
+            },
+          })
+
+          return
+        }
       }
 
       this.getApptVerify()
@@ -537,11 +605,9 @@ export default {
         this.form.medicalInstitution,
       )
 
-      // 预约类型为待定不做校验
-      if (
-        APPOINTMENT_TYPE_ENUM.UNDETERMINED.value === formatValue.appointmentType
-      ) {
-        updateApptCb(this.method, formatValue)
+      // 挂号不需要做校验
+      if (!this.isAppt) {
+        this.updateApptCb(this.method, formatValue)
 
         return
       }
@@ -554,30 +620,62 @@ export default {
         () => (this.saveLoading = false),
       )
     },
-    // 新建/更新预约调用接口
+    // 新建/更新预约 | 挂号调用接口
     updateApptCb(method, formatValue) {
+      const type = this.paramsObj.type
+
       let dept
 
-      if (method === 'create' || method === 'again') {
+      if (type === 'createAppt') {
         dept = appointmentAPI.createAppointment({
           appointmentJsonStr: JSON.stringify(formatValue),
         })
       }
 
-      if (method === 'edit') {
+      if (type === 'editAppt') {
         dept = appointmentAPI.updateAppointment({
+          appointmentJsonStr: JSON.stringify(formatValue),
+        })
+      }
+
+      if (type === 'createRegister') {
+        const params = {
+          assistantStaffIds: this.form.help.join(), // 助理ID集合
+          visType: this.form.visType, // 就诊类型（1-初诊/2-复诊）
+          doctorStaffId: this.form.doctor, // 医生ID
+          patientId: this.form.patient.patientId, // 患者ID
+          consultedStaffId: this.form.consultant, // 咨询师ID
+          teethCleanedStaffId: this.form.dentalHygienist, // 洁牙师ID
+          institutionConsultingRoomId: this.form.institutionConsultingRoomId, // 诊室ID
+          nurseStaffIds: this.form.nurse.join(), // 护士ID集合
+          memo: this.form.appointmentMemo, // 备注
+        }
+
+        dept = diagnosisAPI.createNewRegister(params)
+      }
+
+      if (type === 'editRegister') {
+        dept = diagnosisAPI.createRegister({
           appointmentJsonStr: JSON.stringify(formatValue),
         })
       }
 
       dept
         .then(() => {
-          if (method === 'create') {
+          if (type === 'createAppt') {
             this.$utils.show('新增预约成功')
           }
 
-          if (method === 'edit') {
+          if (type === 'editAppt') {
             this.$utils.show('更新预约成功')
+          }
+
+          if (type === 'createRegister') {
+            this.$utils.show('新增挂号成功')
+          }
+
+          if (type === 'editRegister') {
+            this.$utils.show('挂号成功')
           }
         })
         .finally(() => {
@@ -585,19 +683,20 @@ export default {
         })
         .catch()
     },
-    initCheckedText() {
-      this.HELP_CHECKED_TEXT = getTxtFromArr(
-        this.ASSISTANT_MANAGER_LIST.filter((ASSISTANT_MANAGER) =>
-          this.form.help.includes(ASSISTANT_MANAGER.staffId),
-        ),
-        'staffName',
-      )
-      this.NURSE_CHECKED_TEXT = getTxtFromArr(
-        this.NURSE_LIST.filter((NURSE) =>
-          this.form.nurse.includes(NURSE.staffId),
-        ),
-        'staffName',
-      )
+    initCheckedText(helpList = [], nurseList = []) {
+      helpList.length > 0 &&
+        (this.HELP_CHECKED_TEXT = getTxtFromArr(
+          helpList.filter((ASSISTANT_MANAGER) =>
+            this.form.help.includes(ASSISTANT_MANAGER.staffId),
+          ),
+          'staffName',
+        ))
+
+      nurseList.length > 0 &&
+        (this.NURSE_CHECKED_TEXT = getTxtFromArr(
+          nurseList.filter((NURSE) => this.form.nurse.includes(NURSE.staffId)),
+          'staffName',
+        ))
     },
   },
   components: {
@@ -635,11 +734,11 @@ export default {
     box-sizing: border-box;
     height: 296rpx;
     .patientCard {
-      width: 686rpx;
+      width: 702rpx;
       height: 184rpx;
       display: inline-block;
       background-color: #fff;
-      padding: 32rpx;
+      padding: 32rpx 24rpx;
       box-sizing: border-box;
       border-radius: 8rpx;
 
@@ -659,6 +758,7 @@ export default {
           flex: 1;
           text-align: left;
           .patientTop {
+            display: flex;
             .patientName,
             .age,
             .gender {
@@ -668,9 +768,8 @@ export default {
               font-size: 36rpx;
               font-weight: 500;
               color: rgba(0, 0, 0, 0.9);
-              line-height: 44rpx;
-              padding-right: 32rpx;
-              max-width: 220rpx;
+              line-height: 47rpx;
+              padding-right: 30rpx;
               display: inline-block;
               overflow: hidden;
               box-sizing: border-box;
@@ -678,15 +777,21 @@ export default {
             .age,
             .gender {
               display: inline-block;
-              width: 86rpx;
               height: 44rpx;
+              line-height: 44rpx;
               background: #fff2e8;
               border: 1px solid #fa541c;
               border-radius: 2rpx;
               text-align: center;
               color: #fa541c;
+              font-size: 28rpx;
+              box-sizing: border-box;
+            }
+            .age {
+              padding: 0 6rpx;
             }
             .gender {
+              width: 84rpx;
               background: #e6f7ff;
               border: 1px solid #1890ff;
               margin-left: 16rpx;
