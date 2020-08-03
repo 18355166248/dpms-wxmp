@@ -110,7 +110,6 @@ export default {
     return {
       allPlace: [], //省市区列表
       patientTypeList: [], //患者类型列表
-      allTags: [], //用户画像列表
       patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
       index: 0,
