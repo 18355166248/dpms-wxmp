@@ -33,35 +33,13 @@
         :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
         isLink
       />
-      <!-- <dpmsCellPicker
-        mode="region"
-        :list="multiArray"
-        v-model="form.tagIds"
-        listKey="name"
-      /> -->
-      <!-- <dpmsCell
+      <dpmsCell
         title="用户画像"
         placeholder="请选择用户画像"
-        :value="form.tagIds"
+        :value="patientTagsCheckedText"
         isLink
-        @click.native="onSelectTags()"
-      /> -->
-      <div class="dpms-cell-group">
-        <div class="dpms-cell" data-layout-align="space-between center">
-          <div class="dpms-cell-title">
-            <span>用户画像：</span>
-          </div>
-          <div class="dpms-cell-value" data-layout-align="space-between center">
-            <span v-if="patientData.personas.length > 0">
-              <span v-for="persona in patientData.personas" :key="persona"
-                >{{ persona }}
-              </span>
-            </span>
-            <span class="placeholder-style" v-else>请选择用户画像</span>
-            <text class="iconfont icon-arrow-right" />
-          </div>
-        </div>
-      </div>
+        @click.native="onSelectTags"
+      />
       <dpmsFormTitle title="联系方式" />
       <dpmsEnumsPicker
         required
@@ -115,7 +93,6 @@
       </div>
       <div class="pt-56 pb-82">
         <dpmsButton @click="submit" type="primary" />
-        <!-- <div class="pt-6 pb-6"></div> -->
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
@@ -133,6 +110,8 @@ export default {
     return {
       allPlace: [], //省市区列表
       patientTypeList: [], //患者类型列表
+      allTags: [], //用户画像列表
+      patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
       index: 0,
       form: {
@@ -201,6 +180,18 @@ export default {
       },
     }
   },
+  created() {
+    // 更新用户画像选中值
+    uni.$on('updateTagsCheckedList', (checked) => {
+      this.form.tagIds = checked
+
+      this.updateTagsCheckedText()
+    })
+  },
+  beforeDestroy() {
+    uni.$off('updateTagsCheckedList')
+    uni.removeStorageSync('patientTagsList')
+  },
   onLoad() {
     let that = this
     institutionAPI.getAllPlace().then((res) => {
@@ -212,9 +203,12 @@ export default {
       that.patientTypeList = res.data
     })
     authAPI.getPatientTags().then((res) => {
-      that.allPlace = res.data
-      // TODO：用户画像展示
-      console.log('---res1---', res)
+      uni.setStorageSync(
+        'patientTagsList',
+        res.data.filter((v) => v.tagInfoDTOList.length > 0),
+      )
+
+      this.updateTagsCheckedText()
     })
   },
   methods: {
@@ -222,30 +216,28 @@ export default {
       this.patientData.date = e.detail.value
     },
     onSelectTags() {
-      let list = []
-      if (option === 5) list = this.ASSISTANT_MANAGER_LIST
-      if (option === 6) list = this.NURSE_LIST
-
-      this.flyUtil.push({
-        url:
-          '/pages/personas/index?option=' +
-          option +
-          '&checked=' +
-          getTxtFromArr(list, 'staffId'),
+      this.$utils.push({
+        url: '/pages/personas/personas?checked=' + this.form.tagIds.join(','),
       })
     },
-    // toPersonas () {
+    updateTagsCheckedText() {
+      let patientTagsList = uni.getStorageSync('patientTagsList')
 
-    //   if (this.patientData.personas) {
-    //     uni.navigateTo({
-    //       url: '/pages/personas/index?personas=' + JSON.stringify(this.patientData.personas),
-    //     })
-    //   } else {
-    //     uni.navigateTo({
-    //       url: '/pages/personas/index',
-    //     })
-    //   }
-    // },
+      let newPaientTagsList = []
+      patientTagsList.map((item) => {
+        newPaientTagsList = [...newPaientTagsList, ...item.tagInfoDTOList]
+        return item
+      })
+
+      newPaientTagsList = newPaientTagsList.filter((tagItem) =>
+        this.form.tagIds.includes(tagItem.id),
+      )
+
+      this.patientTagsCheckedText = newPaientTagsList
+        .map((tagItem) => tagItem.name)
+        .join(',')
+    },
+    // 检查患者是否已存在scrm系统中
     async checkPatientInScrm() {
       let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
         medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
@@ -258,7 +250,7 @@ export default {
 
       if (scrmPatientInfo.newCustomer) {
         //如果是新患者
-        that.addPatient(scrmPatientInfo)
+        that.createPatient(scrmPatientInfo)
       } else {
         //如果患者已存在
         uni.showModal({
@@ -269,14 +261,12 @@ export default {
             } else if (res.cancel) {
               delete scrmPatientInfo.customerId
             }
-            console.log('--%%%%--', scrmPatientInfo)
-
-            that.addPatient(scrmPatientInfo)
+            that.createPatient(scrmPatientInfo)
           },
         })
       }
     },
-    async addPatient(scrmPatientInfo) {
+    async createPatient(scrmPatientInfo) {
       let patientContact = {
         contactLabel: this.form.contactLabel,
         mobile: this.form.mobile,
@@ -286,8 +276,6 @@ export default {
         area: this.form.area,
         address: this.form.address,
       }
-
-      this.form.birthday = '2020-06-20'
 
       delete this.form.contactLabel
       delete this.form.alternateMobile
@@ -308,9 +296,6 @@ export default {
     },
     async submit() {
       this.$refs.createPatientForm.validate((err, fileds) => {
-        console.log(err, fileds)
-        console.log('---form---', this.form)
-
         if (err) {
           this.$utils.show(err[0]?.message)
           return
@@ -320,9 +305,6 @@ export default {
       })
     },
   },
-  // onLoad: function (option) {
-  //   this.patientData.personas = option.personas && JSON.parse(option.personas)
-  // }
 }
 </script>
 
