@@ -23,9 +23,8 @@
         </view>
       </view>
 
-      <!-- 会议区域 -->
       <view class="calendar_meeting">
-        <!-- 已创建的会议 -->
+        <!-- 已预约卡片 -->
         <view
           v-for="(item, index) in meetingList"
           :key="index"
@@ -34,9 +33,13 @@
           @click="showDetail(index, $event)"
           @longtap="longTapWithEdit($event, item)"
         >
-          <view class="create_content_box meetCard">
+          <view class="metting_content_box meetCard">
+            <view class="meeting_content_name"
+              >{{ item.patient.patientName }}({{
+                item.patient.gender | getGenderText
+              }})</view
+            >
             <view class="meeting_content_time">{{ item.time }}</view>
-            <view class="meeting_content_name">{{ item.meetingName }}</view>
           </view>
         </view>
 
@@ -73,20 +76,29 @@
             <view></view>
           </view>
 
+          <!-- 左侧时间点 -->
           <view :style="createMeet.trueStyle" class="meeting_left_time">
             <view class="left_Time_show">{{ createMeet.startTimeShow }}</view>
             <view class="left_Time_show endTimeText">{{
               createMeet.endTimeShow
             }}</view>
           </view>
-          <view class="create_content_box">
-            <view class="meeting_content">
+
+          <!-- 时间,预约项目,名字显示区 -->
+          <view class="metting_content_box hasAppt">
+            <text v-if="createMeet.meetingName" class="meeting_content_name">{{
+              createMeet.meetingName
+            }}</text>
+            <text class="meeting_content_center">{{
+              createMeet.meetingName
+            }}</text>
+            <view class="meeting_content_time">
               {{ createMeet.startTime }}:{{ createMeet.endTime }}
             </view>
-            <text class="meeting_content">{{ createMeet.meetingName }}</text>
           </view>
         </view>
       </view>
+
       <!-- 时间线刻度 -->
       <view v-if="isToday == 0" class="time_now" :style="nowTime.line">
         <view class="left_text_red">{{ nowTime.text }}</view>
@@ -99,8 +111,14 @@
 
 <script>
 import { scheduleTableUtil } from './dayTable.util.js'
+import { dataDictUtil } from 'utils/dataDict.util'
 import moment from 'moment'
 import { mapState, mapMutations } from 'vuex'
+
+const enums = uni.getStorageSync('enums')
+
+const GENDER_ENUM = dataDictUtil.convert(enums.Gender || {})
+
 let timeOutEvent = 0
 let scrollYtop = 0
 let hidID = -1
@@ -165,6 +183,15 @@ export default {
   //   ]),
 
   // },
+  filters: {
+    getGenderText(gender) {
+      if (GENDER_ENUM && GENDER_ENUM.properties && gender) {
+        return GENDER_ENUM.properties[gender].text.zh_CN
+      }
+
+      return ''
+    },
+  },
   created() {
     this.unitHeight = parseInt(this.hourHeight / 4) || 16 //16px
     this.unitMinute = parseInt(this.uMinute) || 15 //15分钟
@@ -1008,10 +1035,32 @@ export default {
 $timeSize: 12px;
 $borderColor: #ddd;
 
-.create_content_box {
+.metting_content_box {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  .meeting_content_time {
+    margin-left: 5px;
+    min-width: 135px;
+    height: 40rpx;
+    line-height: 40rpx;
+    flex: 0 0 40rpx;
+  }
+
+  .meeting_content_center {
+    flex: 1;
+  }
+
+  .meeting_content_name {
+    // line-height: 100%;
+    margin-left: 5px;
+    width: 250px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .meetCard {
@@ -1166,20 +1215,6 @@ $borderColor: #ddd;
       box-shadow: -2px 2px 3px 0 rgba(0, 0, 0, 0.2);
     }
 
-    .meeting_content_time {
-      margin-left: 5px;
-      min-width: 135px;
-    }
-
-    .meeting_content_name {
-      // line-height: 100%;
-      margin-left: 5px;
-      width: 250px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
     .isFlex {
       align-items: center;
       display: flex;
@@ -1199,10 +1234,8 @@ $borderColor: #ddd;
       z-index: 990;
       font-size: $timeSize;
 
-      .meeting_content {
+      .hasAppt {
         color: #ffffff;
-        margin-left: 7px;
-        // line-height: 100%;
       }
 
       .radius {
