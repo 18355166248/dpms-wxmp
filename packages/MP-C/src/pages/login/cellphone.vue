@@ -4,19 +4,33 @@
     <div class="appName">小程序名称</div>
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
-      <input placeholder="请输入手机号">
+      <input placeholder="请输入手机号" v-model="mobile">
     </div>
     <div class="formItem">
-      <input placeholder="请输入验证码">
+      <input placeholder="请输入验证码" v-model="code">
       <div class="btn">获取验证码</div>
     </div>
-    <button>微信登陆</button>
+    <button @click="phoneLogin">微信登陆</button>
   </div>
 </template>
 
 <script>
+import loginApi from '../../APIS/login/login.api'
 export default {
-
+  data() {
+    return {
+      mobile: '', code: ''
+    }
+  },
+  methods: {
+    phoneLogin() {
+      if (!/^1[3-9]\d{9}$/.test(this.mobile)) return this.$utils.show('请输入正确的手机号')
+      if (!/^\w{4}$/.test(this.code)) return this.$utils.show('请输入4位验证码')
+      loginApi.phoneLogin({
+        mobile: this.mobile, code: this.code
+      })
+    }
+  }
 }
 </script>
 
