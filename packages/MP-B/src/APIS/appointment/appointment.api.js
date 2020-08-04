@@ -19,6 +19,12 @@ const appointmentAPI = {
   getAppointmentDetail(params) {
     return httper.get('appointment/appointment/detail', params)
   },
+  getAppointmentViewListFromStaff(params) {
+    return httper.get(
+      'appointment/appointment-view/list/staff-position',
+      params,
+    )
+  },
 }
 
 export default appointmentAPI

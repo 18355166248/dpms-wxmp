@@ -59,6 +59,10 @@ httper.interceptors.request.use((request) => {
       const defaultDatas = {
         // 进入app就获取，记录用户行为
         accessToken: token,
+        // todo
+        // deviceToken: '',
+        // medicalInstitutionId: '',
+        // scenario: '',
         // ██████ 鉴权 ██████
         // 用户 ID
         _uid: staff?.staffId,
