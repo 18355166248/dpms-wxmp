@@ -1,8 +1,23 @@
 <template>
   <scroll-view class="content" scroll-y>
     <view class="banner">
-      <swiper class="swiper banner" indicator-dots autoplay>
+      <swiper
+        class="swiper banner"
+        indicator-dots
+        autoplay
+        v-for="b in bannerList"
+        :key="b.bannerId"
+      >
         <swiper-item class="alignCenter">
+          <image
+            class="bannerImg"
+            mode="aspectFit"
+            :src="b.imageUrl"
+            :title="b.description"
+            @click="toUrl(b.linkUrl)"
+          />
+        </swiper-item>
+        <!-- <swiper-item class="alignCenter">
           <image
             class="bannerImg"
             mode="aspectFit"
@@ -22,18 +37,30 @@
             mode="aspectFit"
             src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595844395668&di=6c473d00bf3a03f6d6a9e11c901816a6&imgtype=0&src=http%3A%2F%2Fimg.bqatj.com%2Fimg%2Fb6b2d754a722aa35.jpg"
           />
-        </swiper-item>
+        </swiper-item> -->
       </swiper>
     </view>
     <view class="compDesc">
-      <img
-        class="compDescImg"
-        mode="aspectFit"
-        src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595846007191&di=49f7640038b79adbb562fc0ad1e4ab9d&imgtype=0&src=http%3A%2F%2Fimage.suning.cn%2Fuimg%2Fsop%2Fcommodity%2F117970640468680470958160_x.jpg"
-      />
+      <swiper
+        class="swiper compDescImg"
+        autoplay
+        v-for="(p, i) in institutionIntroduce.introduceImageUrls"
+        :key="i"
+      >
+        <swiper-item class="alignCenter">
+          <img class="compDescImg" mode="aspectFit" :src="p" />
+        </swiper-item>
+        <!-- <swiper-item class="alignCenter">
+          <img
+            class="compDescImg"
+            mode="aspectFit"
+            src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595846007191&di=49f7640038b79adbb562fc0ad1e4ab9d&imgtype=0&src=http%3A%2F%2Fimage.suning.cn%2Fuimg%2Fsop%2Fcommodity%2F117970640468680470958160_x.jpg"
+          />
+        </swiper-item> -->
+      </swiper>
       <view class="compDescContent">
         <p class="compDescContentDesc">
-          泽怡信息科技(上海)有限公司于2018年08月07日成立。法定代表人韩光，公司经营范围包括：从事信息科技、健康科技（人体干细胞、基因诊断与治…
+          {{ institutionIntroduce.briefIntroduction || '' }}
         </p>
         <p class="compDescMore">更多详情 ></p>
       </view>
@@ -46,25 +73,26 @@
         >
       </view>
       <view class="cardList">
-        <swiper class="swiper" display-multiple-items="2" next-margin="10rpx">
+        <swiper
+          class="swiper"
+          display-multiple-items="2"
+          next-margin="10rpx"
+          v-for="i in itemList"
+          :key="i.appointmentItemId"
+        >
           <swiper-item>
             <view class="card">
               <view class="cardContent">
-                <text class="cardTitle">口腔预约</text>
+                <text class="cardTitle">{{ i.itemName }}</text>
                 <view class="cardBtn">预约</view>
               </view>
-              <view class="cardDesc"
-                >任意门店可约，口腔全面检查美好口腔牙齿美好…</view
-              >
+              <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
               <view class="cardImg">
-                <img
-                  mode="aspectFit"
-                  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595847895031&di=8aee312e80d2f572504d33fc18072511&imgtype=0&src=http%3A%2F%2Fimg2.xitongzhijia.net%2F170413%2F76-1F413114454146.png"
-                />
+                <img mode="aspectFit" :src="i.itemThumbnailUrl" />
               </view>
             </view>
           </swiper-item>
-          <swiper-item>
+          <!-- <swiper-item>
             <view class="card">
               <view class="cardContent">
                 <text class="cardTitle">口腔预约2</text>
@@ -97,7 +125,7 @@
                 />
               </view>
             </view>
-          </swiper-item>
+          </swiper-item> -->
         </swiper>
       </view>
     </view>
@@ -107,16 +135,24 @@
         <view class="storeBtn" @click="toUrl('/pages/docAptmt/docAptmt')"
           >更多 ></view
         >
-        <view class="storeList">
+        <view
+          class="storeList"
+          v-for="s in storeList.limitedList(3)"
+          :key="s.institutionId"
+        >
           <view class="storeCard">
-            <view class="storeCardTitle">XXXXXX门诊 201-5432090</view>
+            <view class="storeCardTitle"
+              >{{ s.institutionName }} &nbsp;&nbsp;&nbsp;{{
+                s.institutionPhoneNumber
+              }}</view
+            >
             <view class="storeCardAddress"
               ><span class="iconfont icon-location"></span>
-              上海市桂林路23号</view
+              {{ s.institutionAddress }}</view
             >
             <view class="storeCardTime"
               ><span class="iconfont icon-time"></span>
-              周二~周日，9:00-21:00</view
+              {{ s.institutionAddress }}</view
             >
             <view class="storeCardAptmt">预 约</view>
           </view>
@@ -133,9 +169,16 @@
 </template>
 
 <script>
+import institutionAPI from '@/APIS/institution/institution.api'
+const medicalInstitution = uni.getStorageSync('medicalInstitution')
+
 export default {
   data() {
     return {
+      bannerList: [],
+      institutionIntroduce: {},
+      itemList: [],
+      storeList: [],
       x: 0,
       y: 0,
       old: {
@@ -144,31 +187,49 @@ export default {
       },
     }
   },
-  onLoad() {},
+  onLoad() {
+    this.init()
+  },
+  computed: {
+    limitedList: function (length) {
+      return this.storeList.length <= length
+        ? this.storeList
+        : this.storeList.slice(0, --length)
+    },
+  },
   methods: {
-    toUrl: function (url) {
+    async init() {
+      let [err, res] = await this.$utils.asyncTasks(
+        institutionAPI.getInstitutionInfo({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+        }),
+      )
+      if (res) {
+        this.bannerList = res.bannerList
+        this.institutionIntroduce = res.institutionIntroduce
+      }
+      ;[err, res] = await this.$utils.asyncTasks(
+        institutionAPI.getProjList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+        }),
+      )
+      if (res) {
+        this.itemList = res.itemList
+      }
+      ;[err, res] = await this.$utils.asyncTasks(
+        institutionAPI.getStoreList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+        }),
+      )
+      if (res) {
+        this.storeList = res.institutionList
+      }
+    },
+    toUrl(url) {
       this.$utils.push({
         url,
       })
     },
-    tap: function (e) {
-      this.x = this.old.x
-      this.y = this.old.y
-      this.$nextTick(function () {
-        this.x = 30
-        this.y = 30
-      })
-    },
-    onChange: function (e) {
-      this.old.x = e.detail.x
-      this.old.y = e.detail.y
-    },
-    // viewProjMore: function (e) {
-    //   console.log(uni.navigateTo)
-    //   uni.navigateTo({
-    //     url: 'pages/index/projAptmt',
-    //   })
-    // },
   },
   components: {},
 }
@@ -227,7 +288,7 @@ export default {
   margin: 64rpx auto;
   height: 436rpx;
   width: 686rpx;
-  background: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596003351254&di=d7cde5f423850f119e915ffee9da5bae&imgtype=0&src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F12017084876%2F0.jpg)
+  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/compBg.png)
     no-repeat center;
 }
 .projContent {
@@ -341,7 +402,7 @@ export default {
   margin-top: 32rpx;
 }
 .storeCard {
-  background: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596003351254&di=d7cde5f423850f119e915ffee9da5bae&imgtype=0&src=http%3A%2F%2Finews.gtimg.com%2Fnewsapp_match%2F0%2F12017084876%2F0.jpg)
+  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/icon.png)
     no-repeat;
   background-size: 160rpx 120rpx;
   height: 186rpx;
