@@ -1,14 +1,12 @@
 <template>
   <scroll-view class="content" scroll-y>
     <view class="banner">
-      <swiper
-        class="swiper banner"
-        indicator-dots
-        autoplay
-        v-for="b in bannerList"
-        :key="b.bannerId"
-      >
-        <swiper-item class="alignCenter">
+      <swiper class="swiper banner" indicator-dots autoplay>
+        <swiper-item
+          class="alignCenter"
+          v-for="b in bannerList"
+          :key="b.bannerId"
+        >
           <image
             class="bannerImg"
             mode="aspectFit"
@@ -17,46 +15,17 @@
             @click="toUrl(b.linkUrl)"
           />
         </swiper-item>
-        <!-- <swiper-item class="alignCenter">
-          <image
-            class="bannerImg"
-            mode="aspectFit"
-            src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595843250493&di=ae2861d58b2bd6ad784fe9e4caa4bab1&imgtype=0&src=http%3A%2F%2Fi0.hdslb.com%2Fbfs%2Fface%2Fe93c24dc4a4cfdd228524ce87ab8117406fe0c97.jpg"
-          />
-        </swiper-item>
-        <swiper-item class="alignCenter">
-          <image
-            class="bannerImg"
-            mode="aspectFit"
-            src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595844294412&di=d53e27dc81240a496500bb20f0189bb6&imgtype=0&src=http%3A%2F%2F5b0988e595225.cdn.sohucs.com%2Fq_mini%2Cc_zoom%2Cw_640%2Fimages%2F20171106%2F8e9d50ae61f14a8983c9400c1db6d59f.jpeg"
-          />
-        </swiper-item>
-        <swiper-item class="alignCenter">
-          <image
-            class="bannerImg"
-            mode="aspectFit"
-            src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595844395668&di=6c473d00bf3a03f6d6a9e11c901816a6&imgtype=0&src=http%3A%2F%2Fimg.bqatj.com%2Fimg%2Fb6b2d754a722aa35.jpg"
-          />
-        </swiper-item> -->
       </swiper>
     </view>
     <view class="compDesc">
-      <swiper
-        class="swiper compDescImg"
-        autoplay
-        v-for="(p, i) in institutionIntroduce.introduceImageUrls"
-        :key="i"
-      >
-        <swiper-item class="alignCenter">
+      <swiper class="swiper compDescImg" autoplay>
+        <swiper-item
+          class="alignCenter"
+          v-for="(p, i) in institutionIntroduce.introduceImageUrls"
+          :key="i"
+        >
           <img class="compDescImg" mode="aspectFit" :src="p" />
         </swiper-item>
-        <!-- <swiper-item class="alignCenter">
-          <img
-            class="compDescImg"
-            mode="aspectFit"
-            src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595846007191&di=49f7640038b79adbb562fc0ad1e4ab9d&imgtype=0&src=http%3A%2F%2Fimage.suning.cn%2Fuimg%2Fsop%2Fcommodity%2F117970640468680470958160_x.jpg"
-          />
-        </swiper-item> -->
       </swiper>
       <view class="compDescContent">
         <p class="compDescContentDesc">
@@ -73,14 +42,8 @@
         >
       </view>
       <view class="cardList">
-        <swiper
-          class="swiper"
-          display-multiple-items="2"
-          next-margin="10rpx"
-          v-for="i in itemList"
-          :key="i.appointmentItemId"
-        >
-          <swiper-item>
+        <swiper class="swiper" display-multiple-items="2" next-margin="10rpx">
+          <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
             <view class="card">
               <view class="cardContent">
                 <text class="cardTitle">{{ i.itemName }}</text>
@@ -92,40 +55,6 @@
               </view>
             </view>
           </swiper-item>
-          <!-- <swiper-item>
-            <view class="card">
-              <view class="cardContent">
-                <text class="cardTitle">口腔预约2</text>
-                <view class="cardBtn">预约</view>
-              </view>
-              <view class="cardDesc"
-                >任意门店可约，口腔全面检查美好口腔牙齿美好…</view
-              >
-              <view class="cardImg">
-                <img
-                  mode="aspectFit"
-                  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595847895031&di=8aee312e80d2f572504d33fc18072511&imgtype=0&src=http%3A%2F%2Fimg2.xitongzhijia.net%2F170413%2F76-1F413114454146.png"
-                />
-              </view>
-            </view>
-          </swiper-item>
-          <swiper-item>
-            <view class="card">
-              <view class="cardContent">
-                <text class="cardTitle">口腔预约3</text>
-                <view class="cardBtn">预约</view>
-              </view>
-              <view class="cardDesc"
-                >任意门店可约，口腔全面检查美好口腔牙齿美好…</view
-              >
-              <view class="cardImg">
-                <img
-                  mode="aspectFit"
-                  src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1595847895031&di=8aee312e80d2f572504d33fc18072511&imgtype=0&src=http%3A%2F%2Fimg2.xitongzhijia.net%2F170413%2F76-1F413114454146.png"
-                />
-              </view>
-            </view>
-          </swiper-item> -->
         </swiper>
       </view>
     </view>
@@ -135,11 +64,7 @@
         <view class="storeBtn" @click="toUrl('/pages/docAptmt/docAptmt')"
           >更多 ></view
         >
-        <view
-          class="storeList"
-          v-for="s in storeList.limitedList(3)"
-          :key="s.institutionId"
-        >
+        <view class="storeList" v-for="s in storeList" :key="s.institutionId">
           <view class="storeCard">
             <view class="storeCardTitle"
               >{{ s.institutionName }} &nbsp;&nbsp;&nbsp;{{
@@ -190,40 +115,30 @@ export default {
   onLoad() {
     this.init()
   },
-  computed: {
-    limitedList: function (length) {
-      return this.storeList.length <= length
-        ? this.storeList
-        : this.storeList.slice(0, --length)
-    },
-  },
   methods: {
     async init() {
-      let [err, res] = await this.$utils.asyncTasks(
-        institutionAPI.getInstitutionInfo({
+      institutionAPI
+        .getInstitutionInfo({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
-        }),
-      )
-      if (res) {
-        this.bannerList = res.bannerList
-        this.institutionIntroduce = res.institutionIntroduce
-      }
-      ;[err, res] = await this.$utils.asyncTasks(
-        institutionAPI.getProjList({
+        })
+        .then((res) => {
+          this.bannerList = res.data.bannerList
+          this.institutionIntroduce = res.data.institutionIntroduce
+        })
+      institutionAPI
+        .getProjList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
-        }),
-      )
-      if (res) {
-        this.itemList = res.itemList
-      }
-      ;[err, res] = await this.$utils.asyncTasks(
-        institutionAPI.getStoreList({
+        })
+        .then((res) => {
+          this.itemList = res.data.itemList
+        })
+      institutionAPI
+        .getStoreList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
-        }),
-      )
-      if (res) {
-        this.storeList = res.institutionList
-      }
+        })
+        .then((res) => {
+          this.storeList = res.data.institutionList
+        })
     },
     toUrl(url) {
       this.$utils.push({
@@ -283,6 +198,7 @@ export default {
   color: #5cbb89;
   line-height: 36rpx;
   padding-right: 35rpx;
+  margin-top: 90rpx;
 }
 .proj {
   margin: 64rpx auto;
