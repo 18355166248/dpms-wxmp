@@ -41,7 +41,9 @@
     <view class="proj">
       <view class="projContent">
         <text class="projTitle">项目</text>
-        <view class="projBtn">更多</view>
+        <view class="projBtn" @click="toUrl('/pages/docAptmt/docAptmt')"
+          >更多</view
+        >
       </view>
       <view class="cardList">
         <swiper class="swiper" display-multiple-items="2" next-margin="10rpx">
@@ -102,7 +104,9 @@
     <view class="store">
       <view class="storeContent">
         <text class="storeTitle">门店</text>
-        <view class="storeBtn">更多 ></view>
+        <view class="storeBtn" @click="toUrl('/pages/docAptmt/docAptmt')"
+          >更多 ></view
+        >
         <view class="storeList">
           <view class="storeCard">
             <view class="storeCardTitle">XXXXXX门诊 201-5432090</view>
@@ -142,6 +146,11 @@ export default {
   },
   onLoad() {},
   methods: {
+    toUrl: function (url) {
+      this.$utils.push({
+        url,
+      })
+    },
     tap: function (e) {
       this.x = this.old.x
       this.y = this.old.y
@@ -154,6 +163,12 @@ export default {
       this.old.x = e.detail.x
       this.old.y = e.detail.y
     },
+    // viewProjMore: function (e) {
+    //   console.log(uni.navigateTo)
+    //   uni.navigateTo({
+    //     url: 'pages/index/projAptmt',
+    //   })
+    // },
   },
   components: {},
 }
