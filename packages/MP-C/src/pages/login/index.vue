@@ -3,15 +3,33 @@
     <image src="/static/logo.png" class="logo">
     <div class="appName">小程序名称</div>
     <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信登陆</button>
-    <button class="ghost" @click="flyUtil.push({url: 'cellphone'})">手机号登陆</button>
+    <button class="ghost" @click="$utils.push({url: 'cellphone'})">手机号登陆</button>
   </div>
 </template>
 
 <script>
+import loginApi from '../../APIS/login/login.api'
 export default {
   methods: {
     getPhoneNumber({detail}) {
-      console.log(detail)
+      if (detail.encryptedData) {
+        wx.login({
+          success({code}) {
+            console.log(code)
+            loginApi.getOpenid({appId: 'wx00028b3b0c0f877e', code})
+            .then(res => {
+              loginApi.wxLogin({
+                openId: res.data.openid,
+                sessionKey: res.data.sessionKey,
+                encryptedData: detail.encryptedData,
+              })
+            })
+          },
+          fail(...args) {
+            console.log(args)
+          }
+        })
+      }
     },
   },
 }
