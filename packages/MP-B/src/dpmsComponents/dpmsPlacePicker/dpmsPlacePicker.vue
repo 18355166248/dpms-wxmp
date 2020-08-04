@@ -54,9 +54,16 @@ export default {
   },
   computed: {
     pickerText() {
-      return this.multiArray
-        .map((v, i) => v[this.multiIndex[i]] && v[this.multiIndex[i]].name)
-        .join(' ')
+      return this.pickerValue
+        ? this.multiArray
+            .map((v, i) => v[this.multiIndex[i]] && v[this.multiIndex[i]].name)
+            .join(' ')
+        : ''
+    },
+    pickerArr() {
+      return this.multiArray.map((v, i) =>
+        v[this.multiIndex[i]] ? v[this.multiIndex[i]].placeId : '',
+      )
     },
   },
   watch: {
@@ -132,12 +139,10 @@ export default {
       this.$set(this.multiIndex, e.detail.column, e.detail.value)
     },
     onChange(e) {
-      let key = e.detail.value
-      let value = this.placeArr[key[0]].children[key[1]].children
-        ? this.placeArr[key[0]].children[key[1]].children[key[2]]
-        : this.placeArr[key[0]].children[key[1]]
-      this.pickerValue = value.placeId
-      this.$emit('input', value.placeId)
+      let value = this.pickerArr.filter((v) => v).pop()
+      this.pickerValue = value
+      this.$emit('input', value)
+      this.$emit('getArr', this.pickerArr)
     },
   },
 }
