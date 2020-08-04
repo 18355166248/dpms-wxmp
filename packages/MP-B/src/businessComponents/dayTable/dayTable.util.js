@@ -29,7 +29,9 @@ const scheduleTableUtil = {
             // 每一列中的每一个预约 生成最大值, 最小值区间
             let area = {}
 
-            const { startTimeStamp, endTimeStamp } = rowDispatcher ? rowDispatcher(col) : col
+            const { startTimeStamp, endTimeStamp } = rowDispatcher
+              ? rowDispatcher(col)
+              : col
 
             area = {
               min: startTimeStamp,
@@ -43,7 +45,9 @@ const scheduleTableUtil = {
             // 将有相交区域的预约放在一个数组中,就会生成多个不想交的分组区域
             const index = areaList.findIndex(
               (areaItem) =>
-                areaItem.findIndex((areaChildItem) => area.min <= areaChildItem.max) > -1,
+                areaItem.findIndex(
+                  (areaChildItem) => area.min <= areaChildItem.max,
+                ) > -1,
             )
 
             if (index > -1) {
@@ -213,7 +217,9 @@ const scheduleTableUtil = {
 
     const relativeCardVerticalStart = getTimestampByToday(cardVerticalStart)
     const baseOffset =
-      rowStart === relativeCardVerticalStart ? 0 : cardVerticalStart - relativeCardVerticalStart
+      rowStart === relativeCardVerticalStart
+        ? 0
+        : cardVerticalStart - relativeCardVerticalStart
     const relativeCardVerticalEnd = cardVerticalEnd - baseOffset
     const relativeRowStart = getTimestampByToday(rowStart)
     const relativeRowEnd = getTimestampByToday(rowEnd)
@@ -222,12 +228,17 @@ const scheduleTableUtil = {
 
     const top = Math.max(
       verticalPadding,
-      Math.floor(((relativeCardVerticalStart - relativeRowStart) / unitDuration) * cellInnerHeight),
+      Math.floor(
+        ((relativeCardVerticalStart - relativeRowStart) / unitDuration) *
+          cellInnerHeight,
+      ),
     )
 
     const unitNumber = Math.max(
       -1,
-      Math.floor((relativeCardVerticalEnd - relativeRowEnd - 1000) / unitDuration),
+      Math.floor(
+        (relativeCardVerticalEnd - relativeRowEnd - 1000) / unitDuration,
+      ),
     )
 
     let bottom
@@ -235,10 +246,13 @@ const scheduleTableUtil = {
     if (relativeCardVerticalEnd - relativeRowEnd <= 0) {
       bottom = Math.min(
         cellInnerHeight - verticalPadding,
-        Math.floor(((relativeCardVerticalEnd + 1000) / unitDuration) * cellInnerHeight),
+        Math.floor(
+          ((relativeCardVerticalEnd + 1000) / unitDuration) * cellInnerHeight,
+        ),
       )
     } else {
-      const remainder = (relativeCardVerticalEnd - relativeRowEnd) % unitDuration
+      const remainder =
+        (relativeCardVerticalEnd - relativeRowEnd) % unitDuration
       const heightPercent = remainder === 0 ? 1 : remainder / unitDuration
 
       bottom = Math.min(
@@ -247,12 +261,15 @@ const scheduleTableUtil = {
       )
     }
 
-    const height = (unitNumber + 1) * (cellInnerHeight + splitLineWidth) - top + bottom
+    const height =
+      (unitNumber + 1) * (cellInnerHeight + splitLineWidth) - top + bottom
 
     const left = `calc(${(100 * colOffset) / colUnit}% + ${
       horizontalPadding - (colOffset * horizontalPadding) / colUnit
     }px)`
-    const width = `calc(${100 / colUnit}% - ${horizontalPadding + horizontalPadding / colUnit}px)`
+    const width = `calc(${100 / colUnit}% - ${
+      horizontalPadding + horizontalPadding / colUnit
+    }px)`
 
     return {
       top,
