@@ -155,6 +155,11 @@ httper.interceptors.request.use((request) => {
             allowDots: true
           })
         }
+      } else if (request.method === 'GET') {
+        request.body = qs.stringify(request.body, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+          allowDots: true
+        })
       }
       return request
     },
