@@ -54,9 +54,14 @@ export default {
   },
   computed: {
     pickerText() {
-      return this.multiArray
-        .map((v, i) => v[this.multiIndex[i]] && v[this.multiIndex[i]].name)
-        .join(' ')
+      let str
+      JSON.stringify(this.placeArr, (k, v) => {
+        if (v.placeId === this.pickerValue) {
+          str = v.name
+        }
+        return v
+      })
+      return str
     },
   },
   watch: {
@@ -100,17 +105,10 @@ export default {
     // 初始化数组
     renderPlaceArr() {
       let key = this.multiIndex
-
-      this.$set(this.multiArray, 0, this.filterArr(this.placeArr))
-      this.$set(
-        this.multiArray,
-        1,
-        this.filterArr(this.placeArr[key[0]].children),
-      )
-      this.$set(
-        this.multiArray,
-        2,
-        this.filterArr(this.placeArr[key[0]].children[key[1]].children),
+      this.multiArray[0] = this.filterArr(this.placeArr)
+      this.multiArray[1] = this.filterArr(this.placeArr[key[0]].children)
+      this.multiArray[2] = this.filterArr(
+        this.placeArr[key[0]].children[key[1]].children,
       )
     },
     // 复写数据

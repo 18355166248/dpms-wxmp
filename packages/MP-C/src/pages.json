@@ -15,13 +15,21 @@
     {
       "path": "pages/docAptmt/docAptmt",
       "style": {
-        "navigationBarTitleText": "预约"
+        "navigationBarTitleText": "我的",
+        "disableScroll": false,
+        "navigationStyle": "custom"
       }
     },
     {
       "path": "pages/appointmentDetail/appointmentDetail",
       "style": {
         "navigationBarTitleText": "预约详情"
+      }
+    },
+    {
+      "path": "pages/myAppointment/myAppointment",
+      "style": {
+        "navigationBarTitleText": "我的预约"
       }
     },
     {
