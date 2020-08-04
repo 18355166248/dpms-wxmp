@@ -9,6 +9,7 @@
 
 <script>
 import loginApi from '../../APIS/login/login.api'
+import { setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   methods: {
     getPhoneNumber({detail}) {
@@ -22,6 +23,10 @@ export default {
                 openId: res.data.openid,
                 sessionKey: res.data.sessionKey,
                 encryptedData: detail.encryptedData,
+                iv: detail.iv,
+              }).then(res => {
+                setStorage(STORAGE_KEY.STAFF, res.data)
+                this.$utils.back()
               })
             })
           },
