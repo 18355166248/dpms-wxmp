@@ -8,7 +8,8 @@
         <div class="cell__value cell__value--alone field__value">
           <div class="field__body">
             <input
-              type="search"
+              :type="type"
+              :confirm-type="confirmType"
               :placeholder="placeholder"
               class="field__control"
               :value="inputValue"
@@ -36,6 +37,14 @@ export default {
     value: {
       type: String,
       default: null,
+    },
+    type: {
+      type: String,
+      default: 'text',
+    },
+    confirmType: {
+      type: String,
+      default: 'done',
     },
     placeholder: {
       type: String,

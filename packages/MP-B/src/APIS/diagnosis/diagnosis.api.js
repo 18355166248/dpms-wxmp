@@ -24,6 +24,14 @@ const diagnosisAPI = {
   cancleTodayWorkRegister(data) {
     return httper.post('diagnosis/register/update-status', data)
   },
+  // 新建挂号
+  createNewRegister(data) {
+    return httper.post('diagnosis/register/create', data)
+  },
+  // 挂号
+  createRegister(data) {
+    return httper.post('diagnosis/register/create-with-appointment', data)
+  },
 }
 
 export default diagnosisAPI

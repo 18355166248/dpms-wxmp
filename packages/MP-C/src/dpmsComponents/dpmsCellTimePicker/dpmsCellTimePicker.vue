@@ -42,23 +42,34 @@ export default {
       default: false,
     },
     title: String,
-    value: String,
-    formatValue: String, // 格式化展示时间格式
+    value: [String, Number],
+    formatValue: {
+      type: String,
+      default: 'YYYY-MM-DD HH:mm',
+    }, // 格式化展示时间格式
   },
   data() {
-    return {
-      defaultValue: this.value || moment().format('YYYY-MM-DD HH:mm'),
-      pickerValue: undefined,
-    }
+    return {}
+  },
+  computed: {
+    defaultValue() {
+      let v = this.value
+
+      if (this.value) {
+        v = moment(this.value).format(this.formatValue)
+      }
+
+      return v
+    },
+    pickerValue() {
+      return this.defaultValue
+        ? moment(this.defaultValue).format(this.formatValue)
+        : undefined
+    },
   },
   methods: {
     onChange(value) {
-      const pickerValue = this.formatValue
-        ? moment(value.dt).format(this.formatValue)
-        : value.f3
-      this.pickerValue = pickerValue
-
-      this.$emit('input', value.dt)
+      this.$emit('input', moment(value.dt).valueOf())
     },
   },
   components: {},
