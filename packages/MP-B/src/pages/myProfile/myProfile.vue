@@ -42,7 +42,12 @@
     </dpmsForm>
 
     <div class="pt-56 pb-82">
-      <dpmsButton @click="saveMyProfile" type="primary" />
+      <dpmsButton
+        @click="saveMyProfile"
+        type="primary"
+        :disabled="disabledSaveBtn"
+        :loading="loadingSaveBtn"
+      />
     </div>
   </div>
 </template>
@@ -56,6 +61,8 @@ export default {
   data() {
     return {
       form: {},
+      disabledSaveBtn: false,
+      loadingSaveBtn: false,
       rules: {
         staffName: [
           {
@@ -94,6 +101,8 @@ export default {
           this.$utils.show(err[0]?.message)
           return
         }
+        this.disabledSaveBtn = true
+        this.loadingSaveBtn = true
         //成功执行
         institutionAPI
           .updateStaff({
@@ -102,6 +111,12 @@ export default {
           })
           .then((res) => {
             //TODO：成功
+            this.disabledSaveBtn = false
+            this.loadingSaveBtn = false
+          })
+          .catch(() => {
+            this.disabledSaveBtn = false
+            this.loadingSaveBtn = false
           })
       })
     },
