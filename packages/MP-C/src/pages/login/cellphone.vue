@@ -8,11 +8,9 @@
     </div>
     <div class="formItem">
       <input placeholder="请输入验证码" v-model="code" />
-      <div
-        class="btn"
-        :class="{ disabled: !!second }"
-        @click="getCode"
-      >{{ second ? `${second}秒后再试` : '获取验证码' }}</div>
+      <div class="btn" :class="{ disabled: !!second }" @click="getCode">
+        {{ second ? `${second}秒后再试` : '获取验证码' }}
+      </div>
     </div>
     <button @click="phoneLogin">微信登陆</button>
   </div>

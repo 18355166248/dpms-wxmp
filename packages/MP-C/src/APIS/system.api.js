@@ -11,5 +11,4 @@ export default {
   getDataDict(params) {
     return httper.get('system/enums', params, { isNoNeedAuth: true })
   },
-
 }

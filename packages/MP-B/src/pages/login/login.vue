@@ -28,11 +28,15 @@
             v-model="loginForm.password"
           />
         </label>
-        <view class="submit">
-          <button type="default" @click="$refs.selectMedicalInstitution.show()">
-            登 录
-          </button>
-        </view>
+        <button
+          class="submit"
+          type="default"
+          :loading="isLoading"
+          :disabled="isLoading"
+          @click="openSelect"
+        >
+          登 录
+        </button>
       </view>
 
       <selectMedicalInstitution
@@ -40,6 +44,7 @@
         :memberCode="loginForm.memberCode"
         :username="loginForm.username"
         @confirm="login"
+        @onDisList="isLoading = false"
       ></selectMedicalInstitution>
     </view>
   </view>
@@ -54,6 +59,7 @@ import { setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
+      isLoading: false,
       institutionList: [],
       loginInstitutionList: [],
       loginForm: {
@@ -104,6 +110,16 @@ export default {
         })
       })
     },
+    openSelect() {
+      this.validate((err, fileds) => {
+        if (err) {
+          this.$utils.show(err[0].message)
+          return
+        }
+        this.isLoading = true
+        this.$refs.selectMedicalInstitution.show()
+      })
+    },
     validate(callback) {
       let validator = new AsyncValidator(this.rules)
 
@@ -149,15 +165,13 @@ export default {
     input {
       width: 100%;
     }
-    .submit {
-      margin-top: 92rpx;
-      button {
-        height: 100rpx;
-        background: #5cbb89;
-        font-size: 40rpx;
-        color: #fff;
-      }
-    }
   }
+}
+.submit {
+  margin-top: 92rpx;
+  height: 100rpx;
+  background: #5cbb89;
+  font-size: 40rpx;
+  color: #fff;
 }
 </style>

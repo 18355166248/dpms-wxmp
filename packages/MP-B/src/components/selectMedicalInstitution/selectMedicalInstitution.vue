@@ -114,11 +114,13 @@ export default {
           this.range = [res[0].data]
           this.disList = res[1].data.workMedicalInstitutionIds
           this.showTree = true
+          this.$emit('onDisList', true)
         },
       )
     },
     hide() {
       this.showTree = false
+      this.$emit('onHide')
     },
     //扁平化树结构
     renderTreeList(list = [], rank = 0, parentId = [], parents = []) {

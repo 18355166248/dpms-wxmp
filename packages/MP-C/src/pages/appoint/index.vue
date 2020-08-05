@@ -5,14 +5,8 @@
       placeholder="请选择门店"
       :value="institution.medicalInstitutionSimpleCode"
     ></dpmsCellInput>
-    <dpmsCellInput
-      title="门店地址"
-      placeholder="请选择地址"
-    ></dpmsCellInput>
-    <dpmsCellInput
-      title="预约医生"
-      placeholder="请选择医生"
-    ></dpmsCellInput>
+    <dpmsCellInput title="门店地址" placeholder="请选择地址"></dpmsCellInput>
+    <dpmsCellInput title="预约医生" placeholder="请选择医生"></dpmsCellInput>
     <dpmsCellInput
       title="预约项目"
       isRequired

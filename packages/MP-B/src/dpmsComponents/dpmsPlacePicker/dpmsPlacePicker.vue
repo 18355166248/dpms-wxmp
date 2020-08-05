@@ -25,8 +25,8 @@ export default {
   name: 'dpmsPlacePicker',
   props: {
     value: {
-      type: Number,
-      default: 0,
+      type: Array,
+      default: [],
       required: true,
     },
     placeholder: String,
@@ -46,7 +46,7 @@ export default {
   },
   data() {
     return {
-      multiArray: [],
+      multiArray: [[], [], []],
       multiIndex: [0, 0, 0],
       placeArr: [],
       pickerValue: this.value,
@@ -54,18 +54,27 @@ export default {
   },
   computed: {
     pickerText() {
-      return this.pickerValue
-        ? this.multiArray
-            .map((v, i) => v[this.multiIndex[i]] && v[this.multiIndex[i]].name)
+      return this.pickerValue.length
+        ? this.pickerValue
+            .reduce((acc, cur, idx) => {
+              this.multiArray[idx].map(
+                (v) => v.placeId === cur && acc.push(v.name),
+              )
+              return acc
+            }, [])
             .join(' ')
         : ''
+    },
+    pickerArr() {
+      return this.multiArray.map((v, i) =>
+        v[this.multiIndex[i]] ? v[this.multiIndex[i]].placeId : '',
+      )
     },
   },
   watch: {
     value(newVal) {
       this.pickerValue = newVal
-      if (newVal) {
-        this.multiIndex[2] = 0
+      if (newVal && newVal.length) {
         this.reWrite(newVal)
         this.renderPlaceArr()
       }
@@ -93,7 +102,7 @@ export default {
     getAllPlace() {
       institutionAPI.getAllPlace().then((res) => {
         this.placeArr = res.data.constants.PLACE
-        if (this.pickerValue) {
+        if (this.pickerValue.length) {
           this.reWrite(this.pickerValue)
         }
         this.renderPlaceArr()
@@ -116,11 +125,10 @@ export default {
       )
     },
     // 复写数据
-    reWrite(val) {
+    reWrite(arr) {
       JSON.stringify(this.placeArr, (k, v) => {
-        if (v.placeId === val) {
+        if (v.placeId && arr.includes(v.placeId)) {
           this.multiIndex[v.type - 2] = Number(k)
-          if (v.parentId !== 1) this.reWrite(v.parentId)
         }
         return v
       })
@@ -134,12 +142,8 @@ export default {
       this.$set(this.multiIndex, e.detail.column, e.detail.value)
     },
     onChange(e) {
-      let key = e.detail.value
-      let value = this.placeArr[key[0]].children[key[1]].children
-        ? this.placeArr[key[0]].children[key[1]].children[key[2]]
-        : this.placeArr[key[0]].children[key[1]]
-      this.pickerValue = value.placeId
-      this.$emit('input', value.placeId)
+      this.pickerValue = this.pickerArr
+      this.$emit('input', this.pickerArr)
     },
   },
 }
