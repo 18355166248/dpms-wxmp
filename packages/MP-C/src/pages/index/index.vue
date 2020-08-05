@@ -1,6 +1,12 @@
 <template>
   <movable-area>
-    <movable-view :x="x" :y="y" direction="all" @change="onChange" class="aptmt"
+    <movable-view
+      :x="x"
+      :y="y"
+      direction="all"
+      @change="onChange"
+      @click="toUrl('/pages/myAppointment/myAppointment')"
+      class="aptmt"
       ><span class="iconfont icon-time"></span
     ></movable-view>
     <scroll-view class="content" scroll-y>
@@ -41,7 +47,7 @@
       <view class="proj">
         <view class="projContent">
           <text class="projTitle">项目</text>
-          <view class="projBtn" @click="toUrl('/pages/docAptmt/docAptmt')"
+          <view class="projBtn" @click="toUrl('/pages/projAptmt/projAptmt')"
             >更多</view
           >
         </view>
@@ -136,6 +142,7 @@ export default {
         })
     },
     toUrl(url) {
+      console.log(url)
       this.$utils.push({
         url,
       })
