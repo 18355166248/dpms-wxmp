@@ -1,45 +1,51 @@
 <template>
   <div class="page-bg content">
     <scroll-view>
-      <dpmsCellPicker
-        title="预约门店"
-        v-model="form.store"
-        :list="store"
-        isLink
-      />
-      <dpmsCellPicker
-        title="门店地址"
-        v-model="form.storeAddress"
-        :list="store"
-      />
-      <dpmsCellPicker
-        title="预约医生"
-        v-model="form.doctor"
-        :list="store"
-        isLink
-      />
-      <dpmsCellPicker
-        title="预约项目"
-        v-model="form.appointmentProject"
-        :list="store"
-      />
-      <dpmsCellPicker
-        title="预约日期"
-        v-model="form.appointmentData"
-        :list="store"
-        mode="date"
-        :end="end"
-      />
-      <dpmsCellInput
-        title="预约人员"
-        v-model="form.appointmentPerson"
-        :list="store"
-      />
-      <dpmsCellInput
-        title="预约备注"
-        v-model="form.appointmentMemo"
-        :list="store"
-      />
+      <div class="info">
+        <dpmsCellPicker
+          title="预约门店"
+          v-model="form.storeName"
+          :list="storeList"
+          isLink
+        />
+        <span class="iconfont icon-right"></span>
+      </div>
+      <div class="info">
+        <dpmsCellPicker
+          title="门店地址"
+          v-model="form.storeAddress"
+          :list="storeList"
+        />
+        <span class="iconfont icon-right"></span>
+      </div>
+      <div class="info">
+        <dpmsCellPicker
+          title="预约医生"
+          v-model="form.doctor"
+          :list="storeList"
+          isLink
+        />
+        <span class="iconfont icon-right"></span>
+      </div>
+      <div class="info">
+        <dpmsCellPicker
+          title="预约项目"
+          v-model="form.appointmentProject"
+          :list="storeList"
+        />
+        <span class="iconfont icon-right"></span>
+      </div>
+      <div class="info">
+        <dpmsDatePicker
+          title="预约日期"
+          v-model="form.appointmentData"
+          mode="date"
+          :end="end"
+        />
+        <span class="iconfont icon-right"></span>
+      </div>
+      <dpmsCellInput title="预约人员" v-model="form.appointmentPerson" />
+      <dpmsCellInput title="预约备注" v-model="form.appointmentMemo" />
       <div class="operation">
         <div class="protocol">
           <checkbox class="check" checked disabled></checkbox>
@@ -60,10 +66,10 @@ import moment from 'moment'
 export default {
   data() {
     return {
-      store: ['1店', '2店'],
+      storeList: ['1店', '2店'],
       end: moment().format('YYYY-MM-DD'),
       form: {
-        store: '',
+        storeName: '',
         storeAddress: '',
         doctor: '',
         appointmentProject: '',
@@ -118,6 +124,15 @@ export default {
       color: #fff;
       margin-bottom: 24rpx;
     }
+  }
+}
+.info {
+  position: relative;
+  .icon-right {
+    position: absolute;
+    top: 44rpx;
+    right: 40rpx;
+    color: rgba(0, 0, 0, 0.25);
   }
 }
 </style>
