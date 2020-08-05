@@ -31,24 +31,29 @@
       <view class="tc mt-20">请输入姓名/拼音/联系电话查找患者预约记录</view>
     </view>
     <dayTable
+      ref="apptTable"
       :class="showSearch ? 'hidden' : ''"
       :style="{
         width: '100%',
-        height: retract ? 'calc(100% - 284rpx)' : 'calc(100% - 724rpx)',
+        height: retract ? 'calc(100% - 295rpx)' : 'calc(100% - 745rpx)',
       }"
       :apptList="list"
       :chooseDateProp="date"
+      @createAppt="createAppt"
+      @editAppt="editAppt"
     />
   </view>
 </template>
 
 <script>
 import moment from 'moment'
+import _ from 'lodash'
 import AsyncValidator from 'async-validator'
 import institutionAPI from 'APIS/institution/institution.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
 import dayTable from '@/businessComponents/dayTable/dayTable'
 import calendar from '@/businessComponents/calendar/calendar'
+import { globalEventKeys } from 'config/global.eventKeys.js'
 
 const enums = uni.getStorageSync('enums')
 const staff = uni.getStorageSync('staff')
@@ -72,38 +77,27 @@ export default {
       showSearch: false, // 搜索患者
       list: [],
       date: moment().format('YYYY-MM-DD'),
+      apptSuccess: false,
     }
   },
   onLoad() {
     this.init()
+
+    uni.$on(
+      globalEventKeys.apptFormWithSaveSuccess,
+      ({ isSuccess, params }) => {
+        console.log('isSuccess', isSuccess, params)
+        this.$refs.apptTable.clearCreateMeet()
+        this.getApptList()
+      },
+    )
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   watch: {
     date(newVal) {
       this.getApptList()
-      // this.list = [
-      //   {
-      //     1: {
-      //       list: [
-      //         {
-      //           meetingName: '1',
-      //           // startTime: '2020-07-22 10:00:00',
-      //           startTimeStamp: 1595642400000,
-      //           endTimeStamp: 1595646000000,
-      //         },
-      //         {
-      //           meetingName: '2',
-      //           startTimeStamp: 1595638800000,
-      //           endTimeStamp: 1595645100000,
-      //         },
-      //         {
-      //           meetingName: '3',
-      //           startTimeStamp: 1595646900000,
-      //           endTimeStamp: 1595651400000,
-      //         },
-      //       ],
-      //     },
-      //   },
-      // ]
     },
   },
   methods: {
@@ -155,11 +149,14 @@ export default {
           staffIds: this.doctor.staffId,
         })
         .then((res) => {
-          console.log(res.data)
           res.data.forEach((v) => {
             v.startTimeStamp = v.appointmentBeginTimeStamp
             v.endTimeStamp = v.appointmentEndTimeStamp + 1
           })
+
+          res.data.sort(
+            (first, second) => second.startTimeStamp - second.endTimeStamp,
+          )
 
           this.list = [
             {
@@ -188,6 +185,28 @@ export default {
     },
     changeCalendar({ fulldate }) {
       this.date = fulldate
+    },
+    createAppt(params) {
+      this.$utils.push({
+        url:
+          '/baseSubpackages/apptForm/apptForm?type=createAppt&startTimeStamp=' +
+          params.startTimeStamp +
+          '&endTimeStamp=' +
+          params.endTimeStamp +
+          '&doctorId=' +
+          this.doctor.staffId,
+      })
+    },
+    editAppt(params) {
+      this.$utils.push({
+        url:
+          '/baseSubpackages/apptForm/apptForm?type=editAppt&appointmentId=' +
+          params.appointmentId +
+          '&startTimeStamp=' +
+          params.startTimeStamp +
+          '&endTimeStamp=' +
+          params.endTimeStamp,
+      })
     },
   },
   components: {
@@ -221,8 +240,8 @@ page {
       padding: 0 8px;
       font-size: 26rpx;
       width: 100%;
-      height: 55rpx;
-      line-height: 55rpx;
+      height: 76rpx;
+      line-height: 76rpx;
       box-shadow: 0 5rpx 8rpx #00000033;
       display: flex;
       justify-content: space-between;
