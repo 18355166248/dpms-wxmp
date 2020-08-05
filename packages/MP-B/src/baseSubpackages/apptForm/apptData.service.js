@@ -64,11 +64,10 @@ const apptDataService = {
                       '预约时间不在' +
                       staffResult.join(',') +
                       '可约时间内，确定要保存么？',
-                    success: () => {
-                      _.isFunction(onCancelOk) && onCancelOk()
-                    },
-                    onOk: () => {
-                      _.isFunction(onOkCb) && onOkCb()
+                    success: ({ confirm, cancel }) => {
+                      if (confirm) _.isFunction(onOkCb) && onOkCb()
+
+                      if (cancel) _.isFunction(onCancelOk) && onCancelOk()
                     },
                   })
 

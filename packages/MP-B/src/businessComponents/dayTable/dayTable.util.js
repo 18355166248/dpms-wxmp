@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import { scheduleTableConfig } from './dayTable.config.js'
 
 const noContainKeys = ['id', 'time']
@@ -283,6 +284,21 @@ const scheduleTableUtil = {
       const aDayMS = 24 * 60 * 60 * 1000
 
       return timestamp % aDayMS
+    }
+  },
+  /**
+   * 格式化开始时间和结束时间放在卡片上展示
+   * @param {*} startTime 开始 时:分
+   * @param {*} endTime  结束 时:分
+   * @param {*} chooseDate 选择年:月:日
+   */
+  formatStartTimeAndEndTime(startTime, endTime, chooseDate) {
+    return {
+      time: startTime + '-' + endTime,
+      startTime,
+      endTime,
+      startTimeStamp: moment(`${chooseDate} ${startTime}`).valueOf(),
+      endTimeStamp: moment(`${chooseDate} ${endTime}`).valueOf(),
     }
   },
 }

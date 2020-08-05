@@ -17,7 +17,6 @@ export default {
         console.log(detail)
         loginApi.wxLogin({
           openId: this.loginData.openid,
-          sessionKey: this.loginData.sessionKey,
           encryptedData: detail.encryptedData,
           iv: detail.iv,
         }).then(res => {
@@ -34,6 +33,7 @@ export default {
         loginApi.getOpenid({appId: 'wx00028b3b0c0f877e', code})
         .then(res => {
           this.loginData = res.data
+          setStorage(STORAGE_KEY.OPENID, res.data.openid)
         })
       },
       fail(...args) {

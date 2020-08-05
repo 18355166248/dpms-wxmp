@@ -1,6 +1,6 @@
 <template>
   <view class="content">
-    <view class="me" @click="toMyProfile">
+    <view class="me">
       <image v-if="staff.photoUrl" :src="staff.photoUrl" />
       <view class="info">
         <view class="name">{{ staff.staffName }}</view>
