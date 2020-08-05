@@ -1,12 +1,12 @@
 <template>
   <view class="content">
     <view class="me">
-      <image />
+      <image v-if="staff.photoUrl" :src="staff.photoUrl" />
       <view class="info">
-        <view class="name">张三丰</view>
-        <view class="role">医生</view>
+        <view class="name">{{ staff.staffName }}</view>
+        <view class="role">{{ staffPosition[staff.position].zh_CN }}</view>
       </view>
-      <view class="link">
+      <view class="link" @click="goMyProfile">
         <text class="iconfont icon-right" />
       </view>
     </view>
@@ -16,15 +16,18 @@
           <text class="iconfont icon-institutions" />
           登录诊所
         </view>
-        <text class="institution">泽怡</text>
+        <text class="institution">{{
+          medicalInstitution.medicalInstitutionSimpleCode
+        }}</text>
       </view>
       <view class="li">
         <view>
           <text class="iconfont icon-password" />
-          关于北吉熊
+          关于北吉熊1
         </view>
       </view>
     </view>
+    <dpmsPlacePicker v-model="test" title="选择地区"></dpmsPlacePicker>
     <view class="out">
       <dpmsButton @click="loginOut" text="退出登录" type="primary" />
     </view>
@@ -32,13 +35,23 @@
 </template>
 
 <script>
-import { removeStorage, STORAGE_KEY } from '@/utils/storage'
+import { getStorage, removeStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
-    return {}
+    return {
+      test: [],
+      medicalInstitution: getStorage(STORAGE_KEY.MEDICALINSTITUTION),
+      staff: getStorage(STORAGE_KEY.STAFF),
+      staffPosition: this.$utils.getEnums('StaffPosition').properties,
+    }
   },
   onLoad() {},
   methods: {
+    goMyProfile() {
+      this.$utils.push({
+        url: '/pages/myProfile/myProfile',
+      })
+    },
     loginOut() {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
@@ -67,6 +80,8 @@ export default {
   image {
     width: 100rpx;
     height: 100rpx;
+    border-radius: 50%;
+    margin-right: 10rpx;
   }
   .info {
     flex: auto;

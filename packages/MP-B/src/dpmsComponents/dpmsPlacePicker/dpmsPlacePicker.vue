@@ -25,8 +25,8 @@ export default {
   name: 'dpmsPlacePicker',
   props: {
     value: {
-      type: Number,
-      default: 0,
+      type: Array,
+      default: [],
       required: true,
     },
     placeholder: String,
