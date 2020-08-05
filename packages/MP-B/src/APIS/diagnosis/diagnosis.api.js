@@ -19,6 +19,11 @@ const diagnosisAPI = {
   getTodayConsultant(data) {
     return httper.get('diagnosis/register/page-consultant', data)
   },
+
+  // 取消挂号
+  cancleTodayWorkRegister(data) {
+    return httper.post('diagnosis/register/update-status', data)
+  },
   // 新建挂号
   createNewRegister(data) {
     return httper.post('diagnosis/register/create', data)

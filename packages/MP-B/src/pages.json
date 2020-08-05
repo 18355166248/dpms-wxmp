@@ -4,7 +4,7 @@
       "path": "pages/home/home",
       "style": {
         "navigationBarTitleText": "首页",
-        "disableScroll": false,
+        "disableScroll": true,
         "navigationStyle": "custom"
       }
     },
@@ -24,15 +24,15 @@
   ],
   "subPackages": [
     {
-      "root": "pages/todayWork",
+      "root": "baseSubpackages/todayWork/",
       "name": "todayWork",
       "pages": [
         {
           "path": "todayWork",
           "style": {
             "navigationBarTitleText": "今日工作",
-            "disableScroll": true,
-            "enablePullDownRefresh": true
+            "enablePullDownRefresh": true,
+            "onReachBottomDistance": 50
           }
         }
       ]
