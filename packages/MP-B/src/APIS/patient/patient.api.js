@@ -2,7 +2,11 @@ import httper from '../http'
 
 const authAPI = {
   getPatientList(data) {
-    return httper.get('patient/patient/page', data)
+    return httper.get('patient/patient/page', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
   },
   //获取患者类型列表
   getPatientTypeList(data) {

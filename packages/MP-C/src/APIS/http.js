@@ -38,9 +38,9 @@ httper.interceptors.request.use((request) => {
     // access_token
     (request) => {
       if (!request?.isNoNeedAuth) {
-        const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
-        if (token) {
-          request.headers['Authorization'] = `Bearer ${token}`
+        const staff = getStorage(STORAGE_KEY.STAFF)
+        if (staff?.accessToken) {
+          request.headers['Authorization'] = `Bearer ${staff?.accessToken}`
         }
       } else {
         delete request.isNoNeedAuth
@@ -58,7 +58,14 @@ httper.interceptors.request.use((request) => {
       // 默认参数
       const defaultDatas = {
         // 进入app就获取，记录用户行为
-        accessToken: token,
+        headerRequest: {
+          accessToken: token,
+          deviceToken: '123',
+          medicalInstitutionId: medicalInstitution?.medicalInstitutionId,
+          // 来源 小程序
+          scenario: 'miniApp_auth',
+          lang: 'zh_CN',
+        },
         // ██████ 鉴权 ██████
         // 用户 ID
         _uid: staff?.staffId,
@@ -145,8 +152,14 @@ httper.interceptors.request.use((request) => {
 
           request.body = qs.stringify(request.body, {
             arrayFormat: 'comma', // a: [1, 2] => a=1,2
+            allowDots: true,
           })
         }
+      } else if (request.method === 'GET') {
+        request.body = qs.stringify(request.body, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+          allowDots: true,
+        })
       }
       return request
     },

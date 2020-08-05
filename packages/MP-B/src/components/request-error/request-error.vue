@@ -1,0 +1,51 @@
+<template>
+  <view class="request-error" :style="{ background: bg }">
+    <text class="request-error-text">您的手机网络好像不太流畅哦~</text>
+    <view class="request-error-btn" @click="onClick()">
+      重新加载
+    </view>
+  </view>
+</template>
+
+<script>
+export default {
+  name: 'RequestError',
+  props: {
+    bg: {
+      type: String,
+      default: 'none',
+    },
+  },
+  methods: {
+    onClick() {
+      this.$emit('click')
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.request-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  padding-top: 40%;
+
+  background: #fff;
+  &-text {
+    color: #666;
+  }
+  &-btn {
+    width: 40%;
+    height: 64rpx;
+    line-height: 64rpx;
+    margin-top: 30rpx;
+    text-align: center;
+    background: $dpms-color-primary;
+    color: #fff;
+    border-radius: 5rpx;
+  }
+}
+</style>

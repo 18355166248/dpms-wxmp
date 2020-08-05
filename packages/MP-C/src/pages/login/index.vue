@@ -3,17 +3,44 @@
     <image src="/static/logo.png" class="logo">
     <div class="appName">小程序名称</div>
     <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信登陆</button>
-    <button class="ghost" @click="flyUtil.push({url: 'cellphone'})">手机号登陆</button>
+    <button class="ghost" @click="$utils.push({url: 'cellphone'})">手机号登陆</button>
   </div>
 </template>
 
 <script>
+import loginApi from '../../APIS/login/login.api'
+import { setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   methods: {
     getPhoneNumber({detail}) {
-      console.log(detail)
+      if (detail.encryptedData) {
+        console.log(detail)
+        loginApi.wxLogin({
+          openId: this.loginData.openid,
+          sessionKey: this.loginData.sessionKey,
+          encryptedData: detail.encryptedData,
+          iv: detail.iv,
+        }).then(res => {
+          setStorage(STORAGE_KEY.STAFF, res.data)
+          this.$utils.back()
+        })
+      }
     },
   },
+  created() {
+    wx.login({
+      success: ({code}) => {
+        console.log(code)
+        loginApi.getOpenid({appId: 'wx00028b3b0c0f877e', code})
+        .then(res => {
+          this.loginData = res.data
+        })
+      },
+      fail(...args) {
+        console.log(args)
+      }
+    })
+  }
 }
 </script>
 

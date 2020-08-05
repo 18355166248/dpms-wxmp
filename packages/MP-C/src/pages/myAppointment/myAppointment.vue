@@ -1,9 +1,145 @@
 <template>
-  <view>8月3日下午出的设计稿，页面正在写</view>
+  <scroll-view scroll-y style="background: rgba(0, 0, 0, 0.04); height: 100%;">
+    <div class="tab">
+      <div class="recentAppointment" @click="getRecent">
+        <span :class="recent">近期预约</span>
+      </div>
+      <div class="historyAppointment" @click="getHistory">
+        <span :class="history">历史预约</span>
+      </div>
+    </div>
+    <div class="appointmentList">
+      <div class="item" @click="appointmentDetail">
+        <div class="statusType">
+          <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
+          <span>2020-01-12 9:00</span>
+          <span class="colorAndName">
+            <span class="statusColor"></span>
+            <span class="statusName">状态名称</span>
+          </span>
+        </div>
+        <div class="appointmentInfo">
+          <div>门店:门店</div>
+          <div>医生:医生</div>
+          <div>预约项目:预约项目</div>
+          <div>患者姓名:患者姓名</div>
+        </div>
+      </div>
+    </div>
+    <div class="empty" v-show="showEmpty">
+      <image class="emptyImg" src="/static/empty.svg"></image>
+      <div class="emptyTxt">未查询到任何信息</div>
+    </div>
+  </scroll-view>
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      recent: 'active',
+      history: '',
+      showEmpty: false,
+      recentList: [],
+      historyList: [],
+    }
+  },
+  mounted() {},
+  methods: {
+    getRecent() {
+      this.recent = 'active'
+      this.history = ''
+    },
+    getHistory() {
+      this.recent = ''
+      this.history = 'active'
+    },
+    appointmentDetail() {
+      this.$utils.push({ url: '/pages/appointmentDetail/appointmentDetail' })
+    },
+  },
+}
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.tab {
+  height: 76rpx;
+  line-height: 74rpx;
+  margin-bottom: 32rpx;
+  background: #fff;
+  font-size: 28rpx;
+  font-weight: 500;
+  display: flex;
+  div {
+    width: 50%;
+    text-align: center;
+    .active {
+      display: inline-block;
+      border-bottom: #5cbb89 4rpx solid;
+      color: #5cbb89;
+    }
+  }
+}
+.empty {
+  width: 406rpx;
+  height: 374rpx;
+  position: absolute;
+  top: -304rpx;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  text-align: center;
+  .emptyImg {
+    display: inline-block;
+    width: 406rpx;
+    height: 290rpx;
+    margin-bottom: 40rpx;
+  }
+  .emptyTxt {
+    font-size: 34rpx;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.65);
+  }
+}
+.appointmentList {
+  .item {
+    margin: 0 24rpx 32rpx 24rpx;
+    background: #feffff;
+    border-radius: 8rpx;
+    box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
+    box-sizing: border-box;
+    padding: 0 24rpx 32rpx 24rpx;
+    .statusType {
+      font-size: 28rpx;
+      font-weight: 400;
+      height: 68rpx;
+      line-height: 68rpx;
+      border-bottom: 2rpx rgba(0, 0, 0, 0.15) solid;
+      color: rgba(0, 0, 0, 0.9);
+      position: relative;
+      .colorAndName {
+        position: absolute;
+        right: 0;
+        .statusColor {
+          display: inline-block;
+          width: 16rpx;
+          height: 16rpx;
+          border-radius: 50%;
+          background: red;
+          margin-right: 12rpx;
+        }
+        .statusName {
+          color: rgba(0, 0, 0, 0.65);
+        }
+      }
+    }
+    .appointmentInfo {
+      margin-top: 17rpx;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 28rpx;
+      font-weight: 400;
+    }
+  }
+}
+</style>

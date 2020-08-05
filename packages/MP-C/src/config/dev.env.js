@@ -31,7 +31,7 @@ const config = {
   useServerUrlRedirection: {
     open: true,
     pathMap: {
-      'institution-customer': 'http://10.101.11.99:8450/',
+      'institution-customer': 'http://10.101.11.93:8449/',
     },
   },
   iconfontUrl: '//at.alicdn.com/t/font_1575084_5snnlrkarpw.js',

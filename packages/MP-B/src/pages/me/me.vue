@@ -1,6 +1,6 @@
 <template>
   <view class="content">
-    <view class="me">
+    <view class="me" @click="toMyProfile">
       <image v-if="staff.photoUrl" :src="staff.photoUrl" />
       <view class="info">
         <view class="name">{{ staff.staffName }}</view>
@@ -59,6 +59,12 @@ export default {
       removeStorage(STORAGE_KEY.ENUMS)
       this.$utils.reLaunch({
         url: '/pages/login/login',
+      })
+    },
+    // 跳转到"我的资料"页面
+    toMyProfile() {
+      this.$utils.push({
+        url: '/pages/myProfile/myProfile',
       })
     },
   },
