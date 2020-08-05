@@ -15,9 +15,7 @@
     {
       "path": "pages/docAptmt/docAptmt",
       "style": {
-        "navigationBarTitleText": "我的",
-        "disableScroll": false,
-        "navigationStyle": "custom"
+        "navigationBarTitleText": "预约"
       }
     },
     {
@@ -100,7 +98,7 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/docAptmt/docAptmt",
+        "pagePath": "pages/index/index",
         "iconPath": "static/icon-me.png",
         "selectedIconPath": "static/icon-me-active.png",
         "text": "我的"
