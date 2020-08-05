@@ -19,15 +19,15 @@
         />
       </view>
       <view v-else class="curCardInfo">
-        <view>医生: {{ doctor.staffName }}</view>
+        <view class="doctorName">医生：{{ doctor.staffName }}</view>
         <view class="rightCardInfo">
           <span class="iconfont icon-search" @click="showSearch = true" />
-          <span class="iconfont icon-menu" @click="openDrawer" />
+          <span class="iconfont icon-sliders" @click="openDrawer" />
         </view>
       </view>
     </view>
 
-    <view v-if="showSearch">
+    <view v-if="showSearch" class="emptyPatient">
       <view class="tc mt-20">请输入姓名/拼音/联系电话查找患者预约记录</view>
     </view>
     <dayTable
@@ -35,7 +35,7 @@
       :class="showSearch ? 'hidden' : ''"
       :style="{
         width: '100%',
-        height: retract ? 'calc(100% - 295rpx)' : 'calc(100% - 745rpx)',
+        height: retract ? 'calc(100% - 286rpx)' : 'calc(100% - 686rpx)',
       }"
       :apptList="list"
       :chooseDateProp="date"
@@ -230,32 +230,40 @@ page {
   .apptCardInfo {
     position: relative;
     z-index: 1;
+
     .topGray {
       width: 100%;
-      height: 16rpx;
-      background-color: #f2f3f5;
+      height: 20rpx;
     }
     .curCardInfo {
+      background-color: #fff;
       box-sizing: border-box;
-      padding: 0 8px;
+      padding: 0 24rpx 0 24rpx;
       font-size: 26rpx;
       width: 100%;
       height: 76rpx;
       line-height: 76rpx;
-      box-shadow: 0 5rpx 8rpx #00000033;
+      box-shadow: 0 5rpx 10rpx rgba($color: #000000, $alpha: 0.15);
       display: flex;
       justify-content: space-between;
 
+      .doctorName {
+        font-size: 34rpx;
+      }
+
       .rightCardInfo {
+        color: $common-color;
+        font-weight: 700;
+        font-size: 34rpx;
         span:first-child {
-          font-size: 32rpx;
-          margin-right: 10rpx;
-        }
-        span:last-child {
-          font-size: 30rpx;
+          margin-right: 30rpx;
         }
       }
     }
+  }
+
+  .emptyPatient {
+    color: rgba(0, 0, 0, 0.65);
   }
 }
 </style>

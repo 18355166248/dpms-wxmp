@@ -611,6 +611,7 @@ $color_standard: #333;
 $color_border: #f5f5f5;
 .date {
   width: 750rpx;
+  background-color: #fff;
 }
 .head {
   display: flex;
