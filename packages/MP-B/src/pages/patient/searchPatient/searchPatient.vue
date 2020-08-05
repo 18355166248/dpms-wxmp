@@ -99,7 +99,7 @@
 
 <script>
 import authAPI from '@/APIS/patient/patient.api'
-import { dataDictUtil } from '../../utils/dataDict.util'
+import { dataDictUtil } from '../../../utils/dataDict.util'
 
 console.log(
   '&&&&&&&&&',
