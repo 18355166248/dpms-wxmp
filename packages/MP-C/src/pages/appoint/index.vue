@@ -2,27 +2,16 @@
   <div>
     <dpmsCellInput
       title="预约门店"
-      isRequired
-      inputType="picker"
       placeholder="请选择门店"
-      mode="selector"
-      isArrowRight
+      :value="institution.medicalInstitutionSimpleCode"
     ></dpmsCellInput>
     <dpmsCellInput
       title="门店地址"
-      isRequired
-      inputType="picker"
       placeholder="请选择地址"
-      mode="selector"
-      isArrowRight
     ></dpmsCellInput>
     <dpmsCellInput
       title="预约医生"
-      isRequired
-      inputType="picker"
       placeholder="请选择医生"
-      mode="selector"
-      isArrowRight
     ></dpmsCellInput>
     <dpmsCellInput
       title="预约项目"
@@ -86,9 +75,11 @@
 </template>
 
 <script>
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
+      institution: getStorage(STORAGE_KEY.MEDICALINSTITUTION),
       form: {},
       doctorModalVisible: false,
     }
