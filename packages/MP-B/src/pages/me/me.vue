@@ -27,7 +27,6 @@
         </view>
       </view>
     </view>
-    <dpmsPlacePicker v-model="test" title="选择地区"></dpmsPlacePicker>
     <view class="out">
       <dpmsButton @click="loginOut" text="退出登录" type="primary" />
     </view>
@@ -39,7 +38,6 @@ import { getStorage, removeStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
-      test: [],
       medicalInstitution: getStorage(STORAGE_KEY.MEDICALINSTITUTION),
       staff: getStorage(STORAGE_KEY.STAFF),
       staffPosition: this.$utils.getEnums('StaffPosition').properties,
