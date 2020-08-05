@@ -9,29 +9,38 @@
 
 <script>
 import loginApi from '../../APIS/login/login.api'
+import { setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   methods: {
     getPhoneNumber({detail}) {
       if (detail.encryptedData) {
-        wx.login({
-          success({code}) {
-            console.log(code)
-            loginApi.getOpenid({appId: 'wx00028b3b0c0f877e', code})
-            .then(res => {
-              loginApi.wxLogin({
-                openId: res.data.openid,
-                sessionKey: res.data.sessionKey,
-                encryptedData: detail.encryptedData,
-              })
-            })
-          },
-          fail(...args) {
-            console.log(args)
-          }
+        console.log(detail)
+        loginApi.wxLogin({
+          openId: this.loginData.openid,
+          sessionKey: this.loginData.sessionKey,
+          encryptedData: detail.encryptedData,
+          iv: detail.iv,
+        }).then(res => {
+          setStorage(STORAGE_KEY.STAFF, res.data)
+          this.$utils.back()
         })
       }
     },
   },
+  created() {
+    wx.login({
+      success: ({code}) => {
+        console.log(code)
+        loginApi.getOpenid({appId: 'wx00028b3b0c0f877e', code})
+        .then(res => {
+          this.loginData = res.data
+        })
+      },
+      fail(...args) {
+        console.log(args)
+      }
+    })
+  }
 }
 </script>
 

@@ -9,5 +9,8 @@ export default {
   },
   getOpenid(param) {
     return httper.get('institution-customer/open-id', param)
-  }
+  },
+  getVerifyCode(param) {
+    return httper.get('institution-customer/verify-code', param)
+  },
 }
