@@ -2,6 +2,9 @@
   <view class="empty" :style="{ background: bg }">
     <image :src="img" mode="widthFix" class="empty-image"></image>
     <text :style="{ color: textColor }" class="empty-text">{{ text }}</text>
+    <view v-if="!disabled" class="empty-btn" @click="onClick()">
+      重新加载
+    </view>
   </view>
 </template>
 
@@ -12,6 +15,11 @@ export default {
     text: {
       type: String,
       default: '暂无数据',
+    },
+    disabled: {
+      // 是否为禁用状态
+      type: [Boolean, String],
+      default: false,
     },
     bg: {
       type: String,
@@ -28,8 +36,8 @@ export default {
     },
   },
   methods: {
-    refresh() {
-      console.log('refresh !')
+    onClick() {
+      this.$emit('click')
     },
   },
 }
@@ -40,18 +48,30 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding-top: 128rpx;
+
   width: 100%;
+  padding-top: 25%;
   align-items: center;
   color: #555555;
   font-size: 24rpx;
   background: none;
   &-image {
-    width: 406rpx !important;
-    margin-bottom: 20rpx;
+    width: 40% !important;
+    margin-bottom: 40rpx;
   }
   &-text {
-    font-size: 24rpx;
+    font-size: 30rpx;
+    color: rgba(0, 0, 0, 0.65);
+  }
+  &-btn {
+    width: 40%;
+    height: 64rpx;
+    line-height: 64rpx;
+    margin-top: 30rpx;
+    text-align: center;
+    background: $dpms-color-primary;
+    color: #fff;
+    border-radius: 5rpx;
   }
 }
 </style>

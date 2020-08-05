@@ -47,14 +47,6 @@
       }
     },
     {
-      "path": "pages/todayWork/todayWork",
-      "style": {
-        "navigationBarTitleText": "今日工作",
-        "enablePullDownRefresh": true,
-        "onReachBottomDistance": 50
-      }
-    },
-    {
       "path": "pages/index/index",
       "style": {
         "navigationStyle": "custom",
@@ -81,6 +73,20 @@
           "path": "apptItemList",
           "style": {
             "navigationBarTitleText": "预约项目"
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/todayWork/",
+      "name": "todayWork",
+      "pages": [
+        {
+          "path": "todayWork",
+          "style": {
+            "navigationBarTitleText": "今日工作",
+            "enablePullDownRefresh": true,
+            "onReachBottomDistance": 50
           }
         }
       ]

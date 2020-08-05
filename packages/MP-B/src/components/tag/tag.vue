@@ -1,24 +1,22 @@
 <template>
   <view
+    v-if="text"
     :class="[
-      'uni-tag',
-      'uni-tag--' + type,
-      disabled === true || disabled === 'true' ? 'uni-tag--disabled' : '',
-      inverted === true || inverted === 'true'
-        ? type + '-uni-tag--inverted'
-        : '',
-      circle === true || circle === 'true' ? 'uni-tag--circle' : '',
-      mark === true || mark === 'true' ? 'uni-tag--mark' : '',
-      'uni-tag--' + size,
+      'tag',
+      'tag--' + type,
+      disabled === true || disabled === 'true' ? 'tag--disabled' : '',
+      inverted === true || inverted === 'true' ? type + '-tag--inverted' : '',
+      circle === true || circle === 'true' ? 'tag--circle' : '',
+      mark === true || mark === 'true' ? 'tag--mark' : '',
+      'tag--' + size,
     ]"
     @click="onClick()"
-    v-if="text"
   >
     <text
       :class="[
-        type === 'default' ? 'uni-tag--default' : 'uni-tag-text',
-        inverted === true || inverted === 'true' ? 'uni-tag-text--' + type : '',
-        size === 'small' ? 'uni-tag-text--small' : '',
+        type === 'default' ? 'tag--default' : 'tag-text',
+        inverted === true || inverted === 'true' ? 'tag-text--' + type : '',
+        size === 'small' ? 'tag-text--small' : '',
       ]"
       >{{ text }}</text
     >
@@ -29,7 +27,6 @@
 /**
  * Tag 标签
  * @description 用于展示1个或多个文字标签，可点击切换选中、不选中的状态
- * @tutorial https://ext.dcloud.net.cn/plugin?id=35
  * @property {String} text 标签内容
  * @property {String} size = [normal|small] 大小尺寸
  * 	@value normal 正常
@@ -48,7 +45,7 @@
  */
 
 export default {
-  name: 'UniTag',
+  name: 'tag',
   props: {
     color: {
       type: String,
@@ -92,6 +89,7 @@ export default {
   computed: {},
   methods: {
     onClick() {
+      console.log(this)
       if (this.disabled === true || this.disabled === 'true') {
         return
       }
@@ -104,15 +102,16 @@ export default {
 <style lang="scss" scoped>
 $uni-color-primary: #1890ff;
 $uni-color-error: #fa541c;
-$tag-pd: 0px 16px;
-$tag-small-pd: 0px 8px;
+$tag-pd: 0px 28rpx;
+$tag-small-pd: 0px 16rpx;
 $amount: 0.1;
 
-.uni-tag {
+.tag {
   /* #ifndef APP-NVUE */
   display: inline-flex;
   /* #endif */
   padding: $tag-pd;
+  font-size: 28rpx;
   height: 44rpx;
   line-height: 44rpx;
   justify-content: center;
@@ -125,59 +124,57 @@ $amount: 0.1;
   margin-left: 16rpx;
 }
 
-.uni-tag--circle {
+.tag--circle {
   border-radius: 22rpx;
 }
 
-.uni-tag--mark {
+.tag--mark {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
   border-top-right-radius: 22rpx;
   border-bottom-right-radius: 22rpx;
 }
 
-.uni-tag--disabled {
+.tag--disabled {
   opacity: 0.5;
 }
 
-.uni-tag--small {
-  height: 30rpx;
+.tag--small {
   padding: $tag-small-pd;
-  line-height: 30rpx;
   font-size: $uni-font-size-sm;
 }
 
-.uni-tag--default {
+.tag--default {
   color: $uni-text-color;
   font-size: $uni-font-size-base;
 }
 
-.uni-tag-text--small {
+.tag-text--small {
   font-size: $uni-font-size-sm !important;
 }
 
-.uni-tag-text {
+.tag-text {
   color: $uni-text-color-inverse;
   font-size: $uni-font-size-base;
 }
 
-.uni-tag-text--primary {
+.tag-text--primary {
   color: $uni-color-primary !important;
 }
 
-.uni-tag-text--success {
+.tag-text--success {
   color: $uni-color-success !important;
 }
 
-.uni-tag-text--warning {
+.tag-text--warning {
   color: $uni-color-warning !important;
 }
 
-.uni-tag-text--error {
+.tag-text--error {
   color: $uni-color-error !important;
 }
 
-.uni-tag--primary {
+.tag--primary {
   color: $uni-text-color-inverse;
   background-color: $uni-color-primary;
   border-width: 1rpx;
@@ -185,15 +182,16 @@ $amount: 0.1;
   border-color: $uni-color-primary;
 }
 
-.primary-uni-tag--inverted {
+.primary-tag--inverted {
   color: $uni-color-primary;
-  background-color: $uni-bg-color;
+
+  background-color: rgba($uni-color-primary, $amount);
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-color-primary;
 }
 
-.uni-tag--success {
+.tag--success {
   color: $uni-text-color-inverse;
   background-color: $uni-color-success;
   border-width: 1rpx;
@@ -201,7 +199,7 @@ $amount: 0.1;
   border-color: $uni-color-success;
 }
 
-.success-uni-tag--inverted {
+.success-tag--inverted {
   color: $uni-color-success;
   background-color: $uni-bg-color;
   border-width: 1rpx;
@@ -209,7 +207,7 @@ $amount: 0.1;
   border-color: $uni-color-success;
 }
 
-.uni-tag--warning {
+.tag--warning {
   color: $uni-text-color-inverse;
   background-color: $uni-color-warning;
   border-width: 1rpx;
@@ -217,7 +215,7 @@ $amount: 0.1;
   border-color: $uni-color-warning;
 }
 
-.warning-uni-tag--inverted {
+.warning-tag--inverted {
   color: $uni-color-warning;
   background-color: $uni-bg-color;
   border-width: 1rpx;
@@ -225,7 +223,7 @@ $amount: 0.1;
   border-color: $uni-color-warning;
 }
 
-.uni-tag--error {
+.tag--error {
   color: $uni-text-color-inverse;
   background-color: $uni-color-error;
   border-width: 1rpx;
@@ -233,7 +231,7 @@ $amount: 0.1;
   border-color: $uni-color-error;
 }
 
-.error-uni-tag--inverted {
+.error-tag--inverted {
   color: $uni-color-error;
   background-color: rgba($uni-color-error, $amount);
   border-width: 1rpx;
@@ -241,7 +239,7 @@ $amount: 0.1;
   border-color: $uni-color-error;
 }
 
-.uni-tag--inverted {
+.tag--inverted {
   color: $uni-text-color;
   background-color: $uni-bg-color;
   border-width: 1rpx;
