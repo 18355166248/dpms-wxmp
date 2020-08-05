@@ -4,12 +4,16 @@ import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   onLaunch: async function () {
     console.log('App Launch')
+    const enumsRes = await systemApi.getDataDict()
+    setStorage(STORAGE_KEY.ENUMS, enumsRes.data)
+
     let token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
     if (!token) {
       const res = await systemApi.getAccessToken()
       setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data)
       token = res.data
     }
+
     const res = await systemApi.getInstitution({ appId: 'wx00028b3b0c0f877e' })
     setStorage(STORAGE_KEY.MEDICALINSTITUTION, res.data)
   },
