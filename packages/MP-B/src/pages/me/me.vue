@@ -1,12 +1,12 @@
 <template>
   <view class="content">
-    <view class="me" @click="toMyProfile">
+    <view class="me">
       <image />
       <view class="info">
         <view class="name">张三丰</view>
         <view class="role">医生</view>
       </view>
-      <view class="link">
+      <view class="link" @click="toMyProfile">
         <text class="iconfont icon-right" />
       </view>
     </view>

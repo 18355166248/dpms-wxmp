@@ -67,6 +67,11 @@ export default {
       this.$utils.back()
     },
     onCheckStaff(staffId) {
+      if (this.checked.length === 0) {
+        this.checked = [-1]
+        return
+      }
+
       if (staffId === -1) {
         this.checked = [-1]
       } else {

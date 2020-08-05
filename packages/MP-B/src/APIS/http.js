@@ -160,7 +160,8 @@ httper.interceptors.request.use((request) => {
 
 httper.interceptors.response.use(
   function (response) {
-    //不要使用箭头函数，否则调用this.lock()时，this指向不对
+    console.log('response:', response)
+
     if (response?.data?.code === 0) {
       return response.data
     }
