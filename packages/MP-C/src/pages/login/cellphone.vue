@@ -4,10 +4,10 @@
     <div class="appName">小程序名称</div>
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
-      <input placeholder="请输入手机号" v-model="mobile">
+      <input placeholder="请输入手机号" v-model="mobile" />
     </div>
     <div class="formItem">
-      <input placeholder="请输入验证码" v-model="code">
+      <input placeholder="请输入验证码" v-model="code" />
       <div class="btn" :class="{disabled: !!second}" @click="getCode">
         {{second ?`${second}秒后再试` :'获取验证码'}}
       </div>

@@ -54,9 +54,11 @@ export default {
   },
   computed: {
     pickerText() {
-      return this.multiArray
-        .map((v, i) => v[this.multiIndex[i]] && v[this.multiIndex[i]].name)
-        .join(' ')
+      return this.pickerValue
+        ? this.multiArray
+            .map((v, i) => v[this.multiIndex[i]] && v[this.multiIndex[i]].name)
+            .join(' ')
+        : ''
     },
   },
   watch: {
