@@ -103,8 +103,8 @@ export default {
       institutionIntroduce: {},
       itemList: [],
       storeList: [],
-      x: 0,
-      y: 0,
+      x: 300,
+      y: 360,
     }
   },
   onLoad() {
@@ -375,11 +375,11 @@ export default {
   left: 546rpx;
 }
 .aptmt {
-  width: 88rpx;
-  height: 80rpx;
+  width: 78rpx;
+  height: 78rpx;
   background: linear-gradient(304deg, #74d1a0 11%, #5cbb89 84%);
-  border-radius: 42rpx 0rpx 0rpx 42rpx;
-  box-shadow: 0rpx 10rpx 28rpx 0rpx #b4e0c9;
+  box-shadow: 0rpx 26rpx 72rpx 0rpx #b4e0c9;
+  border-radius: 200rpx;
   position: fixed;
   bottom: 26rpx;
   right: 0;
@@ -388,7 +388,7 @@ export default {
 .aptmt > .icon-time {
   font-size: 50rpx;
   position: relative;
-  left: 30rpx;
+  left: 16rpx;
   top: 12rpx;
 }
 
