@@ -97,8 +97,11 @@ export default {
         .then((res) => {
           const { access_token, medicalInstitution, staff } = res.data
           setStorage(STORAGE_KEY.ACCESS_TOKEN, access_token)
-          setStorage(STORAGE_KEY.MEDICALINSTITUTION, medicalInstitution)
-          setStorage(STORAGE_KEY.STAFF, staff)
+          this.$store.commit(
+            'workbenchStore/setMedicalInstitution',
+            medicalInstitution,
+          )
+          this.$store.commit('workbenchStore/setStaff', staff)
           this.getEnums()
         })
     },
