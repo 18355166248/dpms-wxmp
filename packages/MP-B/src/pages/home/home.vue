@@ -102,7 +102,7 @@
           <view class="menu-area-body mt-32">
             <view
               class="menu-area-item"
-              @click="toUrl('/pages/todayWork/todayWork')"
+              @click="toUrl('/baseSubpackages/todayWork/todayWork')"
             >
               <view class="menu-area-item-icon menu-area-item-icon-color1">
                 <text class="iconfont icon-medicine-chest"></text>
