@@ -11,7 +11,7 @@ const genderConfig = {
     path: '../../static/avatar-male.png',
   },
   2: {
-    path: '../../static/avatar-femail.png',
+    path: '../../static/avatar-female.png',
   },
 }
 export default {
@@ -22,6 +22,12 @@ export default {
     },
   },
   name: 'avatar',
+  watch: {
+    gender(newVal) {
+      if (!newVal) this.path = genderConfig[0].path
+      this.path = genderConfig[newVal].path
+    },
+  },
   data() {
     return {
       path: genderConfig[this.gender].path,

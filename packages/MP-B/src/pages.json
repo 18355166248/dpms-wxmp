@@ -20,57 +20,81 @@
         "navigationStyle": "custom",
         "disableScroll": true
       }
-    },
-    {
-      "path": "pages/myProfile/myProfile",
-      "style": {
-        "navigationBarTitleText": "我的资料"
-      }
-    },
-    {
-      "path": "pages/createPatient/createPatient",
-      "style": {
-        "navigationBarTitleText": "新建患者"
-      }
-    },
-    {
-      "path": "pages/personas/personas",
-      "style": {
-        "navigationBarTitleText": "用户画像"
-      }
-    },
-    {
-      "path": "pages/searchPatient/searchPatient",
-      "style": {
-        "navigationBarTitleText": "搜索患者"
-      }
-    },
-    {
-      "path": "pages/paitent/paitent",
-      "style": {
-        "navigationBarTitleText": "患者资料",
-        "disableScroll": true
-      }
-    },
-    {
-      "path": "pages/todayWork/todayWork",
-      "style": {
-        "navigationBarTitleText": "今日工作",
-        "disableScroll": true,
-        "enablePullDownRefresh": true
-      }
-    },
-    {
-      "path": "pages/index/index",
-      "style": {
-        "navigationStyle": "custom",
-        "disableScroll": true
-      }
     }
   ],
   "subPackages": [
     {
-      "root": "baseSubpackages/apptForm/",
+      "root": "pages/todayWork",
+      "name": "todayWork",
+      "pages": [
+        {
+          "path": "todayWork",
+          "style": {
+            "navigationBarTitleText": "今日工作",
+            "disableScroll": true,
+            "enablePullDownRefresh": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/myProfile",
+      "name": "myProfile",
+      "pages": [
+        {
+          "path": "myProfile",
+          "style": {
+            "navigationBarTitleText": "我的资料"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/patient",
+      "name": "patient",
+      "pages": [
+        {
+          "path": "patient",
+          "style": {
+            "navigationBarTitleText": "患者资料",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "createPatient/createPatient",
+          "style": {
+            "navigationBarTitleText": "新建患者"
+          }
+        },
+        {
+          "path": "createPatient/personas",
+          "style": {
+            "navigationBarTitleText": "用户画像"
+          }
+        },
+        {
+          "path": "searchPatient/searchPatient",
+          "style": {
+            "navigationBarTitleText": "搜索患者"
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/apptView",
+      "name": "apptView",
+      "pages": [
+        {
+          "path": "apptView",
+          "style": {
+            "navigationBarTitleText": "预约视图",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/apptForm",
       "name": "apptForm",
       "pages": [
         {
@@ -93,7 +117,7 @@
     }
   ],
   "preloadRule": {
-    "pages/index/index": {
+    "baseSubpackages/apptView/apptView": {
       "network": "all",
       "packages": ["apptForm"]
     }

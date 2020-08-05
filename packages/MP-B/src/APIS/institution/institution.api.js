@@ -21,6 +21,10 @@ const institutionAPI = {
       params,
     )
   },
+  // 获取员工列表
+  getStaffListByPosition(params) {
+    return httper.get('institution/staff/list/position', { params })
+  },
 }
 
 export default institutionAPI
