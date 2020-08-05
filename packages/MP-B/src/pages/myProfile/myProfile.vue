@@ -64,8 +64,8 @@ export default {
           },
           {
             min: 1,
-            max: 30,
-            message: '姓名输入不应该超过 30 字',
+            max: 20,
+            message: '姓名输入不应该超过 20 字',
           },
         ],
         gender: {
