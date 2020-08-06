@@ -22,6 +22,12 @@ const institutionAPI = {
       data,
     )
   },
+  getInnerDocList(data) {
+    return httper.get(
+      '/institution-customer/home-page/appointment/doctor/select/list',
+      data,
+    )
+  },
 }
 
 export default institutionAPI

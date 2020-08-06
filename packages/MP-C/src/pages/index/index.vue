@@ -71,9 +71,6 @@
       <view class="store">
         <view class="storeContent">
           <text class="storeTitle">门店</text>
-          <view class="storeBtn" @click="toUrl('/pages/docAptmt/docAptmt')"
-            >更多 ></view
-          >
           <view class="storeList" v-for="s in storeList" :key="s.institutionId">
             <view class="storeCard">
               <view class="storeCardTitle"

@@ -2,7 +2,9 @@
   <view class="content">
     <view class="nav">
       <view class="leftNav">按项目预约<view class="selected"></view></view>
-      <view class="rightNav">按医生预约</view>
+      <view class="rightNav" @click="jump('/pages/docAptmt/docAptmt')"
+        >按医生预约</view
+      >
     </view>
     <view class="filter">
       <view class="storePicker">
@@ -124,6 +126,9 @@ export default {
     },
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
+    },
+    jump(url) {
+      uni.redirectTo({ url })
     },
   },
   computed: {
