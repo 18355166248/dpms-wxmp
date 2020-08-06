@@ -5,9 +5,17 @@
       <div>还可添加{{ 10 - personList.length }}人</div>
     </div>
     <div class="personList">
-      <div class="item" @click="personDetail">
-        <div class="name">李青青/女<span class="self">本人</span></div>
-        <div class="phone">手机：13901092390</div>
+      <div
+        class="item"
+        @click="personDetail"
+        v-for="val of personList"
+        :key="val.id"
+      >
+        <div class="name">
+          {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
+          <span class="self" v-show="val.defaultPersonnel">本人</span>
+        </div>
+        <div class="phone">手机：{{ val.mobile }}</div>
         <span class="iconfont icon-right"></span>
       </div>
     </div>
@@ -19,15 +27,41 @@
 </template>
 
 <script>
+import customerAPI from '@/APIS/customer/customer.api'
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
       personList: [],
       showEmpty: false,
+      staff: getStorage(STORAGE_KEY.STAFF),
     }
   },
   mounted() {},
+  onLoad() {
+    this.getCustomer()
+  },
   methods: {
+    getCustomer() {
+      let id = this.staff.id
+      customerAPI
+        .getCustomerList({ userId: id })
+        .then((res) => {
+          console.log('111111111111111', res)
+          this.personList = res.data
+          if ((res.data.length = 0)) {
+            this.showEmpty = true
+          } else {
+            this.showEmpty = false
+          }
+        })
+        .catch((error) => {
+          console.log('error', error)
+        })
+    },
+    del() {
+      customerAPI.deleteCustomer({ personnelId: 10015 }).then(() => {})
+    },
     addPerson() {
       this.$utils.push({ url: '/pages/personAdd/personAdd' })
     },
