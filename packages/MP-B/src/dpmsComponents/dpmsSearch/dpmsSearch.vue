@@ -92,6 +92,11 @@ export default {
       isBlur: false,
     }
   },
+  watch: {
+    value(newVal) {
+      this.inputValue = newVal
+    },
+  },
   methods: {
     onToggleClear(bool) {
       if (bool) {
