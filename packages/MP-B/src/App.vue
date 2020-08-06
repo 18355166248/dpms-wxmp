@@ -18,13 +18,13 @@ page {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.eot');
-  src: url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_x98fv1kngr.eot');
+  src: url('//at.alicdn.com/t/font_1965288_x98fv1kngr.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.svg#iconfont') format('svg');
 }
 /*********在线字体代码end*********/
 
@@ -105,6 +105,9 @@ page {
 }
 .icon-sliders::before {
   content: '\e7d6';
+}
+.icon-delete::before {
+  content: '\e7c3';
 }
 /* iconfont图标 end */
 </style>

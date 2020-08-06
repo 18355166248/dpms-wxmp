@@ -9,13 +9,15 @@
     {
       "path": "pages/projAptmt/projAptmt",
       "style": {
-        "navigationBarTitleText": "预约"
+        "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/docAptmt/docAptmt",
       "style": {
-        "navigationBarTitleText": "预约"
+        "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
       }
     },
     {

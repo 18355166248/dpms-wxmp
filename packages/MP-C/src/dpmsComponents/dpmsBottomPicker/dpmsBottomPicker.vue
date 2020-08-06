@@ -1,11 +1,10 @@
 <template>
   <div class="modal" v-show="visible">
     <div class="mask" @click="$emit('update:visible', false)"></div>
-      <div class="inner">
-        <div class="head">{{title}}</div>
-        <div class="body">
-          <slot></slot>
-        </div>
+    <div class="inner">
+      <div class="head">{{title}}</div>
+      <div class="body">
+        <slot></slot>
       </div>
     </div>
   </div>
@@ -18,10 +17,8 @@ export default {
     title: '',
   },
   data() {
-    return {
-      
-    }
-  }
+    return {}
+  },
 }
 </script>
 

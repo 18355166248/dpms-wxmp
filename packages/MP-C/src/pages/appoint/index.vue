@@ -39,8 +39,8 @@
       <div class="doctor" v-for="d in dockers" :key="d.doctorId" @click="dockerClick(d)">
         <image :src="d.doctorAvatarUrl" />
         <div class="info">
-          <div class="name">{{d.doctorName}}</div>
-          <div>擅长: {{d.goodAt}}</div>
+          <div class="name">{{ d.doctorName }}</div>
+          <div>擅长: {{ d.goodAt }}</div>
         </div>
       </div>
     </dpmsBottomPicker>
