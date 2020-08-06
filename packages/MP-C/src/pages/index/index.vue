@@ -57,7 +57,7 @@
               <view class="card">
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
-                  <view class="cardBtn">预约</view>
+                  <view class="cardBtn" v-show="i.canAppointment">预约</view>
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
                 <view class="cardImg">
@@ -89,7 +89,9 @@
                 ><span class="iconfont icon-time"></span>
                 {{ s.institutionAddress }}</view
               >
-              <view class="storeCardAptmt">预 约</view>
+              <view class="storeCardAptmt" v-show="s.canAppointment"
+                >预 约</view
+              >
             </view>
           </view>
         </view>
@@ -120,7 +122,7 @@ export default {
     init() {
       institutionAPI
         .getInstitutionInfo({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
         })
         .then((res) => {
           this.bannerList = res.data.bannerList
@@ -128,21 +130,20 @@ export default {
         })
       institutionAPI
         .getProjList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
         })
         .then((res) => {
           this.itemList = res.data.itemList
         })
       institutionAPI
         .getStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
         })
         .then((res) => {
           this.storeList = res.data.institutionList
         })
     },
     toUrl(url) {
-      console.log(url)
       this.$utils.push({
         url,
       })

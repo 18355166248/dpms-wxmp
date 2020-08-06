@@ -10,7 +10,7 @@ export default {
       setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data)
       token = res.data
     }
-    const res = await systemApi.getInstitution({appId: 'wx00028b3b0c0f877e'})
+    const res = await systemApi.getInstitution({ appId: 'wx00028b3b0c0f877e' })
     setStorage(STORAGE_KEY.MEDICALINSTITUTION, res.data)
   },
   onShow: function () {
@@ -34,13 +34,13 @@ page {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_f0kasrf8xg6.eot');
-  src: url('//at.alicdn.com/t/font_1965288_f0kasrf8xg6.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_x98fv1kngr.eot');
+  src: url('//at.alicdn.com/t/font_1965288_x98fv1kngr.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_f0kasrf8xg6.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_f0kasrf8xg6.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_f0kasrf8xg6.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_f0kasrf8xg6.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_x98fv1kngr.svg#iconfont') format('svg');
 }
 /*********在线字体代码end*********/
 
@@ -78,5 +78,13 @@ page {
 
 .icon-rightCircle::before {
   content: '\e845';
+}
+
+.icon-down::before {
+  content: '\e7ee';
+}
+
+.icon-search::before {
+  content: '\e8ef';
 }
 </style>
