@@ -36,10 +36,14 @@
               class="header-search-wrapper-input"
               confirm-type="search"
               placeholder="搜索"
+              @click="toUrl('/pages/patient/searchPatient/searchPatient')"
             />
             <text class="iconfont icon-search"></text>
           </view>
-          <view class="icon-warpper">
+          <view
+            class="icon-warpper"
+            @click="toUrl('/pages/patient/createPatient/createPatient')"
+          >
             <text class="iconfont icon-plus"></text>
           </view>
         </view>
@@ -111,7 +115,10 @@
                 今日就诊
               </view>
             </view>
-            <view class="menu-area-item">
+            <view
+              class="menu-area-item"
+              @click="toUrl('/baseSubpackages/apptView/apptView')"
+            >
               <view class="menu-area-item-icon menu-area-item-icon-color2">
                 <text class="iconfont icon-clock"></text>
               </view>
@@ -121,7 +128,7 @@
             </view>
             <view
               class="menu-area-item"
-              @click="toUrl('/pages/paitent/paitent')"
+              @click="toUrl('/pages/patient/searchPatient/searchPatient')"
             >
               <view class="menu-area-item-icon menu-area-item-icon-color3">
                 <text class="iconfont icon-patient"></text>
@@ -144,10 +151,8 @@ import navBar from '@/components/nav-bar/nav-bar'
 // 引入mescroll-mixins.js
 
 import MescrollMixin from '@/components/mescroll-uni/mescroll-mixins.js'
-
 // 引入mescroll-body组件 (如已在main.js注册全局组件,则省略此步骤)
 import MescrollBody from '@/components/mescroll-uni/mescroll-body.vue' // 注意.vue后缀不能省
-
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
 
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
@@ -206,7 +211,8 @@ export default {
       return uni.getMenuButtonBoundingClientRect()
     },
     systemInfoObject: function () {
-      return uni.getSystemInfoSync()
+      console.log('SystemInfoSync:', this.$systemInfo)
+      return this.$systemInfo
     },
     staffName: function () {
       return getStorage(STORAGE_KEY.STAFF)

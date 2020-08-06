@@ -24,7 +24,7 @@
   ],
   "subPackages": [
     {
-      "root": "baseSubpackages/todayWork/",
+      "root": "baseSubpackages/todayWork",
       "name": "todayWork",
       "pages": [
         {
