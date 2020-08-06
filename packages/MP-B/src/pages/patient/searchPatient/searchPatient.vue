@@ -1,139 +1,135 @@
 <template>
   <scroll-view>
     <div data-layout-align="space-between center">
-      <dpmsSearch
-        type="text"
-        confirmType="search"
-        placeholder="搜索患者"
-        @change="changePatientParam"
-        @search="searchPatients"
-      />
-      <button class="mini-btn" type="primary" size="mini">新建</button>
+      <div class="search-input">
+        <dpmsSearch
+          type="text"
+          confirmType="search"
+          placeholder="搜索患者"
+          :value="searchValue"
+          @change="changeValue"
+          @search="searchPatients"
+          @clear="cancelSearch"
+        />
+      </div>
+      <div class="create-patient" @click="toCreatePatient">新建</div>
     </div>
 
-    <div v-if="!searchPatientParam">请输入姓名/拼音/手机号查找患者</div>
-    <div v-if="searchPatientParam && patientList.length === 0">
-      没有找到“{{ searchPatientParam }}”这个患者
+    <!-- 搜索提示、结果文字 -->
+    <div class="search-tip-text pt-28" v-if="!isSearchedValue">
+      请输入姓名/拼音/手机号查找患者
     </div>
     <div
-      style="margin-top: 60px; margin-bottom: 60px;"
-      v-if="patientList.length === 0"
+      class="search-tip-text pt-28"
+      v-if="isSearchedValue && patientList.length === 0"
     >
+      没有找到“<span class="patient-name">{{ isSearchedValue }}</span
+      >”这个患者
+    </div>
+
+    <!-- 历史搜索 -->
+    <div class="mt-64 history-search-section" v-if="patientList.length === 0">
       <div data-layout-align="space-between center">
-        <image
-          style="width: 20px; height: 20px;"
-          src="http://uat.cloud.dental.his.laoganma.fun/static/images/male.e2a2278.png"
-        />
-        <span>历史搜索</span>
-        <button
-          class="mini-btn"
-          size="mini"
+        <span class="title">历史搜索</span>
+        <span
+          class="iconfont icon-delete"
           @click="clearHistorySearch"
           v-if="searchRecords.length !== 0"
-        >
-          x
-        </button>
+        ></span>
       </div>
-      <div>
-        <button
-          class="mini-btn"
-          type="primary"
-          size="mini"
-          v-for="searchRecord in searchRecords"
-          :key="searchRecord"
-          @click="chooseSearchRecord(searchRecord)"
-        >
-          {{ searchRecord }}
-        </button>
-      </div>
+      <span
+        class="history-search-text"
+        v-for="searchRecord in searchRecords"
+        :key="searchRecord"
+        @click="chooseSearchRecord(searchRecord)"
+      >
+        {{ searchRecord }}
+      </span>
     </div>
-    <div v-if="searchPatientParam && patientList.length != 0">
-      <div data-layout-align v-for="parient in patientList" :key="parient.id">
-        <image
-          style="width: 60px; height: 60px;"
-          src="http://uat.cloud.dental.his.laoganma.fun/static/images/male.e2a2278.png"
-        />
-        <div>
-          <div>
-            <span>{{ parient.patientName }}</span>
-            <span>{{ parient.genderText }}</span>
-            <span>{{ parient.age }}</span>
-          </div>
-          <div>联系电话: {{ parient.mobile }}</div>
-        </div>
-      </div>
 
-      <div data-layout-align>
-        <image
-          style="width: 60px; height: 60px;"
-          src="http://uat.cloud.dental.his.laoganma.fun/static/images/male.e2a2278.png"
-        />
-        <div>
-          <div><span>张三丰</span><span>男</span><span>31岁</span></div>
-          <div>联系电话: 15900451752</div>
-        </div>
+    <!-- 搜索列表 -->
+    <div v-if="isSearchedValue && patientList.length != 0">
+      <div data-layout-align v-for="parient in patientList" :key="parient.id">
+        <card
+          :name="parient.patientName"
+          :avatarUrl="parient.avatarUrl"
+          :gender="parient.gender"
+          :age="parient.age"
+          :infos="[{ label: '联系电话', value: parient.mobile }]"
+        >
+        </card>
       </div>
-      <div data-layout-align>
-        <image
-          style="width: 60px; height: 60px;"
-          src="http://uat.cloud.dental.his.laoganma.fun/static/images/male.e2a2278.png"
-        />
-        <div>
-          <div><span>张三哥</span><span>男</span><span>23岁</span></div>
-          <div>联系电话: 15900451752</div>
-        </div>
-      </div>
-      <div data-layout-align>
-        <image
-          style="width: 60px; height: 60px;"
-          src="http://uat.cloud.dental.his.laoganma.fun/static/images/female.ac74756.png"
-        />
-        <div>
-          <div><span>张三妹</span><span>女</span><span>16岁</span></div>
-          <div>联系电话: 15900451752</div>
-        </div>
-      </div>
+      <load-more></load-more>
     </div>
   </scroll-view>
 </template>
 
 <script>
-import patientAPI from '@/APIS/patient/patient.api'
+import authAPI from '@/APIS/patient/patient.api'
 import { dataDictUtil } from '../../../utils/dataDict.util'
-
-console.log(
-  '&&&&&&&&&',
-  dataDictUtil.convert(uni.getStorageSync('enums').Gender || {}),
-)
+import loadMore from '@/components/load-more/load-more.vue'
 
 export default {
   data() {
     return {
-      GENDER_ENUM: dataDictUtil.convert(
-        uni.getStorageSync('enums').Gender || {},
-      ),
-      searchPatientParam: '',
-      patientList: [],
-      searchRecords: [],
-      searchFlag: false,
+      searchValue: '', //搜索框输入的值
+      isSearchedValue: '', //执行搜索的值
+      patientList: [], //患者列表
+      searchRecords: [], //搜索历史列表
+      current: 1, //默认展示 第一页数据
+      size: 10, //默认展示 15条数据
+      total: 1, //默认 总条目，
     }
   },
   onLoad() {
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
   },
+  onReachBottom() {
+    if (this.patientList.length < this.total) {
+      this.current += 1
+      this.getPatients()
+    }
+  },
   methods: {
-    changePatientParam(param) {
-      this.searchPatientParam = param.value
-      this.patientList = []
+    toCreatePatient() {
+      this.$utils.push({
+        url: '/pages/patient/createPatient/createPatient',
+      })
     },
+    //更新搜索框的值
+    changeValue(param) {
+      this.searchValue = param.value
+    },
+    getPatients() {
+      authAPI
+        .getPatientList({
+          regularParam: this.isSearchedValue,
+          current: this.current,
+          size: this.size,
+        })
+        .then((res) => {
+          //TODO：搜索患者
+
+          const { total, current, records } = res.data
+
+          that.patientList =
+            current === 1 ? records : that.patientList.concat(records)
+
+          that.total = total
+        })
+        .catch(() => {
+          //
+        })
+    },
+    //执行搜索
     searchPatients: function (e) {
-      this.searchFlag = true
+      this.isSearchedValue = this.searchValue
       let that = this
 
       //搜索历史列表数据
       let searchList = [
         ...new Set([
-          this.searchPatientParam,
+          this.isSearchedValue,
           ...uni.getStorageSync('searchPatientHistory'),
         ]),
       ]
@@ -141,34 +137,27 @@ export default {
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
 
-      patientAPI
-        .getPatientList({
-          regularParam: this.searchPatientParam,
-        })
-        .then((res) => {
-          //TODO：搜索患者
-          console.log('--ddd-0----', res)
-          that.searchFlag = false
-          that.patientList = res.data.records.map((item) => {
-            return {
-              ...item,
-              genderText: that.GENDER_ENUM.properties[item.gender].text.zh_CN,
-            }
-          })
-          console.log('--ddd-----', that.patientList)
-        })
+      this.getPatients()
     },
+    //取消搜索
+    cancelSearch() {
+      this.searchValue = ''
+      this.isSearchedValue = ''
+      this.patientList = []
+    },
+    //选择搜索历史中某一个历史
     chooseSearchRecord(searchRecord) {
-      this.searchPatientParam = searchRecord
+      this.searchValue = searchRecord
     },
     clearHistorySearch() {
+      this.searchRecords = []
       uni.setStorageSync('searchPatientHistory', [])
     },
   },
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 [data-layout-align] {
   display: flex;
   justify-content: flex-start;
@@ -181,5 +170,51 @@ export default {
   align-items: center;
   align-content: center;
   max-width: 100%;
+}
+
+.search-tip-text {
+  font-size: 28rpx;
+  font-weight: 400;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  .patient-name {
+    color: rgba(92, 187, 137, 1);
+  }
+}
+
+.history-search-section {
+  width: 704rpx;
+  padding: 0 24rpx;
+  .title {
+    font-size: 34rpx;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.9);
+  }
+  .icon-delete {
+    color: rgba(0, 0, 0, 0.25);
+  }
+  .history-search-text {
+    height: 68rpx;
+    line-height: 68rpx;
+    padding: 0 24rpx;
+    font-size: 28rpx;
+    font-weight: 400;
+    text-align: center;
+    background: #e7e7e7;
+    border-radius: 2rpx;
+    color: rgba(0, 0, 0, 0.65);
+    display: inline-block;
+    margin: 24rpx 16rpx 0 0;
+  }
+}
+
+.search-input {
+  width: 670rpx;
+}
+.create-patient {
+  margin-right: 24rpx;
+  font-size: 28rpx;
+  font-weight: 400;
+  color: #5cbb89;
 }
 </style>

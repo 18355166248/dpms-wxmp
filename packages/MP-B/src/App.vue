@@ -106,6 +106,9 @@ page {
 .icon-sliders::before {
   content: '\e7d6';
 }
+.icon-delete::before {
+  content: '\e7c3';
+}
 .icon-bank::before {
   content: '\e7c6';
 }

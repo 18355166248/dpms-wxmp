@@ -6,8 +6,19 @@
       :value="institution.medicalInstitutionSimpleCode"
       isLink
     ></dpmsCell>
-    <dpmsCellInput title="门店地址" placeholder="请选择地址" :value="institution.address"></dpmsCellInput>
-    <dpmsCellInput title="预约医生" placeholder="请选择医生" :value="doctor.doctorName"></dpmsCellInput>
+    <dpmsCell
+      title="门店地址"
+      placeholder="请选择地址"
+      :value="institution.address"
+      isLink
+    />
+    <dpmsCell
+      title="预约医生"
+      placeholder="请选择医生"
+      :value="doctor.doctorName"
+      isLink
+      @cellclick="doctorPickerVisible = true"
+    />
     <dpmsCellInput
       title="预约项目"
       isRequired
@@ -24,18 +35,27 @@
       mode="date"
       isArrowRight
     ></dpmsCellInput>
-    <dpmsCellInput title="预约备注" placeholder="请输入备注" inputType="text"></dpmsCellInput>
+    <dpmsCellInput
+      title="预约备注"
+      placeholder="请输入备注"
+      inputType="text"
+    ></dpmsCellInput>
     <div class="agree">
       我已知悉并同意
       <a href>《预约服务协议》</a>
     </div>
     <button>确认预约</button>
     <dpmsBottomPicker :visible.sync="doctorPickerVisible">
-      <div class="doctor" v-for="d in dockers" :key="d.doctorId" @click="dockerClick(d)">
+      <div
+        class="doctor"
+        v-for="d in dockers"
+        :key="d.doctorId"
+        @click="dockerClick(d)"
+      >
         <image :src="d.doctorAvatarUrl" />
         <div class="info">
-          <div class="name">{{d.doctorName}}</div>
-          <div>擅长: {{d.goodAt}}</div>
+          <div class="name">{{ d.doctorName }}</div>
+          <div>擅长: {{ d.goodAt }}</div>
         </div>
       </div>
     </dpmsBottomPicker>
@@ -52,7 +72,7 @@ export default {
       form: {},
       doctor: {},
       dockers: [],
-      doctorPickerVisible: true,
+      doctorPickerVisible: false,
     }
   },
   methods: {

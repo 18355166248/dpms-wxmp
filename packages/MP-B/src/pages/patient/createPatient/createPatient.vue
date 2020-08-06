@@ -73,13 +73,11 @@
         placeholder="请输入QQ"
         v-model="form.qqNum"
       />
-      <dpmsCellPicker
-        mode="multiSelector"
-        :list="allPlace"
-        v-model="form.area"
-        listKey="name"
+      <dpmsPlacePicker
         title="家庭住址"
         placeholder="请选择地区"
+        v-model="form.region"
+        headerText="选择地区"
       />
       <div class="dpms-cell-group dpms-cell-group-textarea">
         <div class="dpms-cell" data-layout-align="space-between center">
@@ -92,7 +90,12 @@
         </div>
       </div>
       <div class="pt-56 pb-82">
-        <dpmsButton @click="submit" type="primary" />
+        <dpmsButton
+          @click="submit"
+          type="primary"
+          :disabled="disabledSaveBtn"
+          :loading="loadingSaveBtn"
+        />
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
@@ -103,16 +106,16 @@
 import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import patientAPI from '@/APIS/patient/patient.api'
-import institutionAPI from '@/APIS/institution/institution.api'
 
 export default {
   data() {
     return {
-      allPlace: [], //省市区列表
       patientTypeList: [], //患者类型列表
       patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
       index: 0,
+      disabledSaveBtn: false,
+      loadingSaveBtn: false,
       form: {
         patientName: '',
         gender: '',
@@ -124,7 +127,7 @@ export default {
         alternateMobile: '',
         weChatId: '',
         qqNum: '',
-        area: '',
+        region: [],
         address: '',
       },
       rules: {
@@ -193,11 +196,6 @@ export default {
   },
   onLoad() {
     let that = this
-    institutionAPI.getAllPlace().then((res) => {
-      that.allPlace = res.data
-      // TODO：省市区展示
-      console.log('---res0---', res)
-    })
     patientAPI.getPatientTypeList().then((res) => {
       that.patientTypeList = res.data
     })
@@ -216,7 +214,9 @@ export default {
     },
     onSelectTags() {
       this.$utils.push({
-        url: '/pages/personas/personas?checked=' + this.form.tagIds.join(','),
+        url:
+          '/pages/patient/createPatient/personas?checked=' +
+          this.form.tagIds.join(','),
       })
     },
     updateTagsCheckedText() {
@@ -238,6 +238,10 @@ export default {
     },
     // 检查患者是否已存在scrm系统中
     async checkPatientInScrm() {
+      //保存患者时，添加禁用和loading效果
+      this.disabledSaveBtn = true
+      this.loadingSaveBtn = true
+
       let { data: scrmPatientInfo } = await patientAPI.getPatientInScrm({
         medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
           .belongsInstitutionId,
@@ -252,45 +256,60 @@ export default {
         that.createPatient(scrmPatientInfo)
       } else {
         //如果患者已存在
-        uni.showModal({
-          content: 'SCRM中存在姓名和手机号相同的客户，是否关联',
-          confirmText: '确认',
-          success: function (res) {
-            if (res.confirm) {
-            } else if (res.cancel) {
-              delete scrmPatientInfo.customerId
-            }
-            that.createPatient(scrmPatientInfo)
-          },
-        })
+        if (scrmPatientInfo.patientId) {
+          that.createPatient(scrmPatientInfo)
+        } else {
+          uni.showModal({
+            content: 'SCRM中存在姓名和手机号相同的客户，是否关联',
+            confirmText: '确认',
+            success: function (res) {
+              if (res.confirm) {
+              } else if (res.cancel) {
+                delete scrmPatientInfo.customerId
+              }
+              that.createPatient(scrmPatientInfo)
+            },
+          })
+        }
       }
     },
     async createPatient(scrmPatientInfo) {
+      const formValue = _.cloneDeep(this.form)
+
       let patientContact = {
         contactLabel: this.form.contactLabel,
         mobile: this.form.mobile,
         alternateMobile: this.form.alternateMobile,
         weChatId: this.form.weChatId,
         qqNum: this.form.qqNum,
-        area: this.form.area,
+        provinc: this.form.region[0],
+        city: this.form.region[1],
+        area: this.form.region[2],
         address: this.form.address,
       }
 
-      delete this.form.contactLabel
-      delete this.form.alternateMobile
-      delete this.form.weChatId
-      delete this.form.qqNum
-      delete this.form.area
-      delete this.form.address
+      delete formValue.contactLabel
+      delete formValue.alternateMobile
+      delete formValue.weChatId
+      delete formValue.qqNum
+      delete formValue.region
+      delete formValue.address
 
       patientAPI
         .createPatient({
-          ...this.form,
+          ...formValue,
           ...scrmPatientInfo,
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {
-          //TODO：新建患者成功
+          //保存患者成功后，取消禁用和loading效果
+          this.disabledSaveBtn = false
+          this.loadingSaveBtn = false
+        })
+        .catch(() => {
+          //保存患者失败后，取消禁用和loading效果
+          this.disabledSaveBtn = false
+          this.loadingSaveBtn = false
         })
     },
     async submit() {
