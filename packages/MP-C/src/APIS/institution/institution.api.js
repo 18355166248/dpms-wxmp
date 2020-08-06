@@ -10,6 +10,7 @@ const institutionAPI = {
   getStoreList(data) {
     return httper.get('institution-customer/home-page/institution/list', data)
   },
+
 }
 
 export default institutionAPI
