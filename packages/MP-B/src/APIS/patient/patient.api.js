@@ -1,6 +1,6 @@
 import httper from '../http'
 
-const authAPI = {
+const patientAPI = {
   getPatientList(data) {
     return httper.get('patient/patient/page', data, {
       headers: {
@@ -36,6 +36,10 @@ const authAPI = {
   getStaffMapThroughPosition(params) {
     return httper.get('institution/staff/group/position', params)
   },
+  // 获取患者信息
+  getPatientDetail(data) {
+    return httper.get('patient/patient/detail', data)
+  },
 }
 
-export default authAPI
+export default patientAPI

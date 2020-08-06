@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import authAPI from '@/APIS/patient/patient.api'
+import patientAPI from '@/APIS/patient/patient.api'
 import { dataDictUtil } from '../../../utils/dataDict.util'
 import loadMore from '@/components/load-more/load-more.vue'
 
@@ -101,7 +101,7 @@ export default {
       this.searchValue = param.value
     },
     getPatients() {
-      authAPI
+      patientAPI
         .getPatientList({
           regularParam: this.isSearchedValue,
           current: this.current,
