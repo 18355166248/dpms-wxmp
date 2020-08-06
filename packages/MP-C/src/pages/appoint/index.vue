@@ -14,14 +14,13 @@
       isLink
       @cellclick="doctorPickerVisible = true"
     />
-    <dpmsCellInput
+    <dpmsCell
       title="预约项目"
-      isRequired
-      inputType="picker"
       placeholder="请选择项目"
-      mode="selector"
-      isArrowRight
-    ></dpmsCellInput>
+      :value="item.itemName"
+      isLink
+      @cellclick="itemPickerVisible = true"
+    />
     <dpmsCellInput
       title="预约日期"
       isRequired
@@ -36,12 +35,21 @@
       <a href>《预约服务协议》</a>
     </div>
     <button>确认预约</button>
-    <dpmsBottomPicker :visible.sync="doctorPickerVisible">
+    <dpmsBottomPicker :visible.sync="doctorPickerVisible" title="选择医生">
       <div class="doctor" v-for="d in dockers" :key="d.doctorId" @click="dockerClick(d)">
         <image :src="d.doctorAvatarUrl" />
         <div class="info">
           <div class="name">{{d.doctorName}}</div>
           <div>擅长: {{d.goodAt}}</div>
+        </div>
+      </div>
+    </dpmsBottomPicker>
+    <dpmsBottomPicker :visible.sync="itemPickerVisible" title="选择项目">
+      <div class="doctor" v-for="itm in items" :key="itm.itemId" @click="itemClick(itm)">
+        <image :src="itm.itemThumbnailUrl" />
+        <div class="info">
+          <div class="name">{{itm.itemName}}</div>
+          <div>{{itm.itemBriefIntroduction}}</div>
         </div>
       </div>
     </dpmsBottomPicker>
@@ -58,7 +66,10 @@ export default {
       form: {},
       doctor: {},
       dockers: [],
+      items: [],
+      item: {},
       doctorPickerVisible: false,
+      itemPickerVisible: false,
     }
   },
   methods: {
@@ -68,13 +79,24 @@ export default {
       })
       this.dockers = res.data.doctorList
     },
+    async getItems() {
+      const res = await appointAPI.getItemList({
+        medicalInstitutionId: this.institution.medicalInstitutionId,
+      })
+      this.items = res.data.itemList
+    },
     dockerClick(d) {
       this.doctor = d
       this.doctorPickerVisible = false
     },
+    itemClick(itm) {
+      this.item = itm
+      this.itemPickerVisible = false
+    },
   },
   created() {
     this.getDoctors()
+    this.getItems()
   },
 }
 </script>

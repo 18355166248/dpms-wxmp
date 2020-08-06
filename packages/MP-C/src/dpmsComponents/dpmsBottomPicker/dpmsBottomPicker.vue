@@ -2,7 +2,7 @@
   <div class="modal" v-show="visible">
     <div class="mask" @click="$emit('update:visible', false)"></div>
       <div class="inner">
-        <div class="head">选择医生</div>
+        <div class="head">{{title}}</div>
         <div class="body">
           <slot></slot>
         </div>
@@ -14,7 +14,8 @@
 <script>
 export default {
   props: {
-    visible: Boolean,
+    visible: false,
+    title: '',
   },
   data() {
     return {

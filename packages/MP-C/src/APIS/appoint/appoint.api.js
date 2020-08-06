@@ -6,4 +6,9 @@ export default {
       size: 1000, ...data,
     })
   },
+  getItemList(data) {
+    return httper.get('institution-customer/home-page/appointment/item/select/list', {
+      size: 1000, ...data,
+    })
+  },
 }
