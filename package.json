@@ -6,13 +6,10 @@
     "@commitlint/config-conventional": "^9.1.1",
     "husky": "^4.2.5",
     "lerna": "^3.20.2",
-    "lint-staged": "^10.2.11",
-    "prettier": "^2.0.5",
-    "pretty-quick": "^2.0.1"
+    "lint-staged": "^10.2.11"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged",
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   }
