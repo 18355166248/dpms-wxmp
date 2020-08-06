@@ -9,13 +9,23 @@
     {
       "path": "pages/projAptmt/projAptmt",
       "style": {
-        "navigationBarTitleText": "预约"
+        "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/docAptmt/docAptmt",
       "style": {
-        "navigationBarTitleText": "预约"
+        "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/mySelf/mySelf",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "disableScroll": false,
+        "navigationStyle": "custom"
       }
     },
     {
@@ -98,7 +108,7 @@
         "text": "首页"
       },
       {
-        "pagePath": "pages/index/index",
+        "pagePath": "pages/mySelf/mySelf",
         "iconPath": "static/icon-me.png",
         "selectedIconPath": "static/icon-me-active.png",
         "text": "我的"

@@ -1,252 +1,291 @@
 <template>
-  <view
-    :style="{
-      paddingTop: navHeight + 'px',
-      height: viewHeight,
-    }"
-    class="home-view"
-  >
-    <view class="home-bg">
-      <image
-        class="home-bg-img"
-        src="/static/header-bg.png"
-        mode="widthFix"
-      ></image>
+  <view class="content">
+    <view class="nav">
+      <view class="leftNav" @click="jump('/pages/projAptmt/projAptmt')"
+        >按项目预约</view
+      >
+      <view class="rightNav">按医生预约<view class="selected"></view></view>
     </view>
-    <text class="my">我的</text>
-    <view class="header-wrapper mh-32 pt-47">
-      <view class="header">
-        <image class="headerImg" :src="headerImgSrc"></image>
-        <view class="userName">112233445566</view>
+    <view class="filter">
+      <view class="storePicker">
+        <picker
+          mode="selector"
+          range-key="institutionName"
+          :range="filterStoreList"
+          :value="selectedIndex"
+          @change="onFilterOption"
+        >
+          <input class="storePickerInput" :value="pickerText" />
+          <span class="iconfont icon-down storePickerIcon"></span>
+        </picker>
+      </view>
+      <view class="keywords">
+        <input
+          :value="keyWord"
+          @blur="emitPullDownRefresh"
+          class="keyWordInput"
+        />
+        <span class="iconfont icon-search keyWordIcon"></span>
       </view>
     </view>
-    <view class="vipInfo">
-      <div>
-        <view>￥1,1111</view>
-        <view>储值卡余额</view>
-      </div>
-      <div>
-        <view>白金会员</view>
-        <view
-          >会员等级
-          <span class="icon iconfont icon-rightCircle"></span>
+    <view class="aptmtList">
+      <view class="aptmtCard" v-for="d in doctorList" :key="d.doctorId">
+        <image :src="d.doctorAvatarUrl" />
+        <view>
+          <view class="aptmtCardContent">
+            <view class="cardTile">{{ d.doctorName }}</view>
+            <view class="cardBtn" v-show="d.canAppointment">预 约</view>
+          </view>
+          <view class="cardDesc">{{ d.goodAt }}</view>
         </view>
-      </div>
-      <div style="border: none;">
-        <view>10000</view>
-        <view>积分</view>
-      </div>
+      </view>
+      <load-more :status="loadStatus"></load-more>
     </view>
-    <view class="personAppointment">
-      <div>
-        <span
-          ><span style="color: #fb8e51;" class="iconfont icon-set"></span
-          >人员管理</span
-        >
-        <span @click="goPerson"
-          >已添加{{ 2 }}人<span class="iconfont icon-right"></span
-        ></span>
-      </div>
-      <div>
-        <span
-          ><span style="color: #4d94fe;" class="iconfont icon-timeCircle"></span
-          >我的预约</span
-        >
-        <span @click="goAppointment"
-          >待确认:{{ 1 }} /已预约:{{ 2
-          }}<span class="iconfont icon-right"></span
-        ></span>
-      </div>
-    </view>
-    <view class="logOut">
-      <div class="quit">退出登录</div>
-      <div class="version">版本号V1.0.0</div>
-    </view>
-    <movable-area out-of-bounds>
-      <view class="aptmt"><span class="iconfont icon-time"></span></view>
-    </movable-area>
   </view>
 </template>
 
 <script>
+import institutionAPI from '@/APIS/institution/institution.api'
+import loadMore from '@/components/load-more/load-more.vue'
+const medicalInstitution = uni.getStorageSync('medicalInstitution')
+
 export default {
   data() {
     return {
-      headerImgSrc: '/static/header-img.svg',
+      doctorList: [],
+      selectedIndex: 0,
+      filterStoreList: [],
+      keyWord: '',
+      currentPage: 1,
+      total: 0,
+      size: 10,
+      loadStatus: 'loading',
     }
   },
-  mounted() {},
+  onLoad() {
+    this.init()
+    this.emitPullDownRefresh()
+  },
+  onPullDownRefresh() {
+    this.currentPage = 1
+    this.loadData('init')
+  },
+  onReachBottom() {
+    if (this.loadStatus === 'loading') return
+    if (this.projList.length >= this.total) return
+    this.loadStatus = 'loading'
+    ++this.currentPage
+    this.loadData('add')
+  },
+  watch: {
+    selectedIndex() {
+      this.emitPullDownRefresh()
+    },
+  },
   methods: {
-    goAppointment() {
-      this.$utils.push({ url: '/pages/myAppointment/myAppointment' })
+    init() {
+      institutionAPI
+        .getFilterStoreList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+        })
+        .then((res) => {
+          res.data.unshift({
+            institutionId: null,
+            institutionName: '全部门店',
+          })
+          this.filterStoreList = res.data
+        })
     },
-    goPerson() {
-      this.$utils.push({ url: '/pages/personManagement/personManagement' })
+    loadData(method) {
+      institutionAPI
+        .getInnerDocList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          filterInstitutionId:
+            this.filterStoreList[this.selectedIndex]?.institutionId || null,
+          searchParam: this.keyWord,
+          current: this.currentPage,
+          size: this.size,
+        })
+        .then((res) => {
+          if (method === 'add') {
+            this.doctorList = this.storeList.concat(res.data.doctorList)
+          } else {
+            this.doctorList = res.data.doctorList
+          }
+          this.total = res.data.total
+          if (this.doctorList.length < this.total) {
+            this.loadStatus = 'more'
+          } else {
+            this.loadStatus = 'noMore'
+          }
+        })
+      uni.stopPullDownRefresh()
     },
+    onFilterOption(e) {
+      this.selectedIndex = e.target.value
+    },
+    emitPullDownRefresh() {
+      uni.startPullDownRefresh()
+    },
+    jump(url) {
+      uni.redirectTo({ url })
+    },
+  },
+  computed: {
+    pickerText() {
+      return this.filterStoreList[this.selectedIndex]?.institutionName
+    },
+  },
+  components: {
+    loadMore,
   },
 }
 </script>
 
-<style lang="scss" scoped>
-.home-view {
-  background: rgba($color: #000000, $alpha: 0.04);
+<style>
+.content {
+  margin: 0 auto;
+  background: rgba(0, 0, 0, 0.04);
   height: 100%;
-  .my {
-    position: relative;
-    top: 62rpx;
-    display: block;
-    color: white;
-    font-size: 36rpx;
-    text-align: center;
-    height: 44rpx;
-    line-height: 44rpx;
-  }
-  .home-bg {
-    width: 100%;
-    height: 420rpx;
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    &-img {
-      width: 100%;
-    }
-  }
-  .header-wrapper {
-    position: relative;
-    .header {
-      position: absolute;
-      left: 72rpx;
-      top: 116rpx;
-      display: flex;
-      align-items: center;
-      color: white;
-      image {
-        display: inline-block;
-        width: 124rpx;
-        height: 124rpx;
-        margin-right: 32rpx;
-      }
-    }
-  }
-  .vipInfo {
-    box-sizing: border-box;
-    height: 154rpx;
-    background: white;
-    position: relative;
-    top: 308rpx;
-    margin: 0 34rpx;
-    display: flex;
-    justify-content: space-around;
-    border-radius: 8rpx;
-    box-shadow: 0px -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
-    padding: 32rpx 0;
-    div {
-      border-right: 1px dashed rgba(0, 0, 0, 0.15);
-      width: 33%;
-      padding-left: 50rpx;
-      view:nth-child(1) {
-        margin-bottom: 16rpx;
-        font-weight: 500;
-        font-size: 34rpx;
-        color: rgba(0, 0, 0, 0.9);
-      }
-      view:nth-child(2) {
-        font-weight: 400;
-        font-size: 24rpx;
-        color: rgba(0, 0, 0, 0.45);
-      }
-      .icon {
-        display: inline-block;
-        margin-left: 10rpx;
-        border-radius: 50%;
-        font-size: 25rpx;
-      }
-    }
-  }
-  .personAppointment {
-    border-bottom: #dbdbdb 2rpx solid;
-    padding-left: 35rpx;
-    position: relative;
-    top: 372rpx;
-    background: white;
-    div {
-      height: 112rpx;
-      line-height: 112rpx;
-      position: relative;
-      display: flex;
-      align-items: center;
-      span:nth-child(1) {
-        font-size: 34rpx;
-        color: rgba(0, 0, 0, 0.9);
-        font-weight: 400;
-        display: flex;
-        align-items: center;
-        span {
-          display: inline-block;
-          margin-right: 20rpx;
-        }
-      }
-      span:nth-child(2) {
-        font-weight: 400;
-        font-size: 34rpx;
-        text-align: right;
-        color: rgba(0, 0, 0, 0.5);
-        position: absolute;
-        right: 32rpx;
-        display: flex;
-        align-items: center;
-        span {
-          display: inline-block;
-          margin-left: 13rpx;
-          color: rgba(0, 0, 0, 0.25);
-        }
-      }
-    }
-    div:first-child {
-      border-bottom: #dbdbdb 2rpx solid;
-    }
-  }
-  .logOut {
-    margin: 0 64rpx;
-    position: relative;
-    top: 600rpx;
-    .quit {
-      height: 78rpx;
-      line-height: 78rpx;
-      text-align: center;
-      color: white;
-      font-size: 36rpx;
-      font-weight: 400;
-      background: #5cbb89;
-      margin-bottom: 32rpx;
-      border-radius: 8px;
-    }
-    .version {
-      font-weight: 400;
-      text-align: center;
-      font-size: 28rpx;
-      color: rgba(0, 0, 0, 0.5);
-    }
-  }
-
-  .aptmt {
-    width: 88rpx;
-    height: 80rpx;
-    background: linear-gradient(304deg, #74d1a0 11%, #5cbb89 84%);
-    border-radius: 42rpx 0rpx 0rpx 42rpx;
-    box-shadow: 0rpx 10rpx 28rpx 0rpx #b4e0c9;
-    position: fixed;
-    bottom: 216rpx;
-    right: 0;
-    color: #feffff;
-  }
-  .aptmt > .icon-time {
-    font-size: 50rpx;
-    position: relative;
-    left: 30rpx;
-    top: 12rpx;
-  }
+}
+.nav {
+  width: 100%;
+  height: 76rpx;
+  background: #ffffff;
+  display: flex;
+}
+.leftNav {
+  width: 50%;
+  font-size: 30rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 36rpx;
+  padding-top: 20rpx;
+}
+.selected {
+  width: 58rpx;
+  height: 4rpx;
+  background: #5cbb89;
+  border-radius: 2rpx;
+  margin: 0 auto;
+  margin-top: 16rpx;
+}
+.rightNav {
+  width: 50%;
+  font-size: 30rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: #5cbb89;
+  line-height: 36rpx;
+  padding-top: 20rpx;
+}
+.filter {
+  margin-top: 24rpx;
+  display: flex;
+}
+.storePicker {
+  width: 232rpx;
+  height: 76rpx;
+  background: #ffffff;
+  border-radius: 8rpx;
+  margin-left: 24rpx;
+}
+.storePickerInput {
+  height: 36rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 36rpx;
+  margin-left: 32rpx;
+  margin-top: 12rpx;
+}
+.storePickerIcon {
+  position: relative;
+  top: -55rpx;
+  left: 180rpx;
+  color: rgba(0, 0, 0, 0.25);
+}
+.keyWordInput {
+  height: 36rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 36rpx;
+  margin-left: 64rpx;
+  margin-top: 12rpx;
+}
+.keywords {
+  width: 446rpx;
+  height: 76rpx;
+  background: #ffffff;
+  border-radius: 8rpx;
+  margin-left: 24rpx;
+}
+.keyWordIcon {
+  position: relative;
+  top: -55rpx;
+  left: 20rpx;
+  color: rgba(0, 0, 0, 0.25);
+}
+.aptmtCard {
+  width: 702rpx;
+  height: 212rpx;
+  margin-left: 24rpx;
+  background: #feffff;
+  border-radius: 8px;
+  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  display: flex;
+  margin-bottom: 16rpx;
+  margin-top: 32rpx;
+}
+.aptmtCard > image {
+  margin-top: 32rpx;
+  margin-left: 24rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 80rpx;
+}
+.cardTile {
+  width: 136rpx;
+  height: 44rpx;
+  font-size: 34rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 44rpx;
+  margin-top: 32rpx;
+  margin-left: 24rpx;
+}
+.cardDesc {
+  width: 446rpx;
+  height: 88rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.5);
+  line-height: 44rpx;
+  margin-left: 24rpx;
+  margin-top: 16rpx;
+}
+.aptmtCardContent {
+  display: flex;
+}
+.cardBtn {
+  width: 130rpx;
+  height: 56rpx;
+  background: #ffffff;
+  border: 2rpx solid #5cbb89;
+  border-radius: 28rpx;
+  font-size: 32rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: center;
+  color: #5cbb89;
+  line-height: 48rpx;
+  position: relative;
+  top: 25rpx;
+  left: 220rpx;
 }
 </style>

@@ -11,7 +11,8 @@
     {
       "path": "pages/me/me",
       "style": {
-        "navigationBarTitleText": "我的"
+        "navigationStyle": "custom",
+        "disableScroll": true
       }
     },
     {
