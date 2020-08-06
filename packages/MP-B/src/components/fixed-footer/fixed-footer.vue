@@ -5,7 +5,6 @@
       id="J_FixedFooter"
       :style="{
         backgroundColor: bgColor,
-        paddingBottom: homeIndicatorHeight + 'px',
       }"
     >
       <slot></slot>
@@ -15,7 +14,6 @@
       class="fixed-footer__placeholder"
       :style="{
         height: height + 'px',
-        backgroundColor: bgColor,
       }"
     ></view>
   </view>
@@ -32,8 +30,6 @@ export default {
   data() {
     return {
       height: 0,
-      homeIndicatorHeight:
-        this.$systemInfo.safeArea.bottom - this.$systemInfo.safeArea.height,
     }
   },
   computed: {},
@@ -42,7 +38,6 @@ export default {
     query
       .select('#J_FixedFooter')
       .boundingClientRect((data) => {
-        console.log('data.height:', data.height)
         this.height = data.height
       })
       .exec()
@@ -57,6 +52,8 @@ export default {
     left: 0;
     bottom: var(--window-bottom);
     z-index: 10;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
   }
   &__placeholder {
     width: 100%;

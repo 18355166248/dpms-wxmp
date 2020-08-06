@@ -112,6 +112,12 @@
           "style": {
             "navigationBarTitleText": "预约项目"
           }
+        },
+        {
+          "path": "apptDetail",
+          "style": {
+            "navigationBarTitleText": "预约详情"
+          }
         }
       ]
     }

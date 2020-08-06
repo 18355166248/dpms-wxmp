@@ -2,9 +2,9 @@
   <view class="empty" :style="{ background: bg }">
     <image :src="img" mode="widthFix" class="empty-image"></image>
     <text :style="{ color: textColor }" class="empty-text">{{ text }}</text>
-    <view v-if="!disabled" class="empty-btn" @click="onClick()">
+    <button v-if="!disabled" class="empty-btn" @click="onClick()">
       重新加载
-    </view>
+    </button>
   </view>
 </template>
 

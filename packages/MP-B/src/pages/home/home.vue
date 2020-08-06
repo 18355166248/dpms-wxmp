@@ -117,7 +117,7 @@
             </view>
             <view
               class="menu-area-item"
-              @click="toUrl('/baseSubpackages/apptView/apptView')"
+              @click="toUrl('/baseSubpackages/apptForm/apptDetail')"
             >
               <view class="menu-area-item-icon menu-area-item-icon-color2">
                 <text class="iconfont icon-clock"></text>
