@@ -37,23 +37,107 @@
         <view
           v-if="dataSourceStatus.request === 'success'"
           class="today-work-list"
-          :style="{ marginBottom: viewPadddingBottm }"
         >
           <template v-if="dataSource.length > 0">
             <view
               v-for="item in dataSource"
               :key="item.roleTodayWorkRelationId"
             >
-              <today-work-card
-                :curRoleKey="curRoleKey"
-                :cardData="item"
-              ></today-work-card>
+              <card
+                statusPlacement="footer"
+                :name="item.patientDTO.patientName"
+                :avatarUrl="item.patientDTO.avatarUrl"
+                :gender="item.patientDTO.gender"
+                :age="item.patientDTO.age"
+                :status="item.registerStatus"
+                :infos="[
+                  { label: '联系方式', value: item.patientDTO.mobile },
+                  {
+                    label: '预约时间',
+                    value: [
+                      item.appointmentBeginTimestamp,
+                      item.appointmentEndTimestamp,
+                    ],
+                  },
+                ]"
+              >
+                <template v-slot:footer-right>
+                  <template v-if="curRoleKey === 'DOCTOR'">
+                    <text
+                      class="button inverted-button"
+                      v-if="!item.doctorOperated"
+                      >接诊</text
+                    >
+                    <text
+                      class="button inverted-button"
+                      v-if="item.doctorOperated"
+                      >治疗完成</text
+                    >
+                  </template>
+                  <template v-else-if="curRoleKey === 'CONSULTANT'">
+                    <text
+                      class="button inverted-button"
+                      v-if="!item.consultedOperated"
+                      >接诊</text
+                    >
+                    <text
+                      class="button inverted-button"
+                      v-if="item.doctorOperated"
+                      >治疗完成</text
+                    >
+                  </template>
+                  <template v-else>
+                    <template v-if="item.registerStatus === 1">
+                      <text
+                        class="button"
+                        @click="
+                          toPage('/baseSubpackages/apptForm/apptForm', {
+                            type: 'editRegister',
+                          })
+                        "
+                        >挂号</text
+                      >
+                      <text
+                        class="button"
+                        @click="
+                          toPage('/baseSubpackages/apptForm/apptForm', {
+                            type: 'editAppt',
+                          })
+                        "
+                        >编辑
+                      </text>
+                      <text class="button" @click="cancleAppointment"
+                        >取消</text
+                      >
+                    </template>
+                    <template v-else-if="item.registerStatus === 2">
+                      <text class="button" @click="cancleRegister">取消</text>
+                    </template>
+                  </template>
+                </template>
+              </card>
             </view>
             <load-more
               :status="dataSourceStatus.status"
               iconSize="20"
             ></load-more>
+            <view v-if="isShowNewBtn">
+              <fixed-footer :bgColor="primaryColor">
+                <view
+                  v-if="isShowNewBtn"
+                  class="todayWork-new"
+                  @click="
+                    toPage('/baseSubpackages/apptForm/apptForm', {
+                      type: 'createRegister',
+                    })
+                  "
+                >
+                  新建挂号
+                </view>
+              </fixed-footer>
+            </view>
           </template>
+
           <template v-else>
             <empty :disabled="true" text="暂无今日就诊数据"></empty>
           </template>
@@ -61,18 +145,6 @@
 
         <view v-else-if="error" class="error-wrapper">
           <request-error @click="emitPullDownRefresh"></request-error>
-        </view>
-
-        <view
-          v-if="isShowNewBtn"
-          class="todayWork-new"
-          @click="
-            toPage('/baseSubpackages/apptForm/apptForm', {
-              type: 'createRegister',
-            })
-          "
-        >
-          新建挂号
         </view>
       </view>
 
@@ -91,12 +163,13 @@
 import moment from 'moment'
 import roleApi from '@/APIS/role/role.api'
 import diagnosisApi from '@/APIS/diagnosis/diagnosis.api'
-import todayWorkCard from './today-work-card.vue'
+import card from '@/components/card/card.vue'
 import empty from '@/components/empty/empty.vue'
 import loadMore from '@/components/load-more/load-more.vue'
 import requestError from '@/components/request-error/request-error.vue'
 import fixedFilter from '@/components/fixed-filter/fixed-filter.vue'
 import qs from 'qs'
+import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 
 export default {
   data() {
@@ -125,6 +198,7 @@ export default {
       total: 0,
 
       roleIndex: 0,
+      primaryColor: this.$commonCss.commonColor,
       TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
     }
   },
@@ -274,7 +348,7 @@ export default {
 
         const [listErr, listRes] = await this.$utils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
-            beginTime: moment().startOf('day').valueOf(),
+            beginTime: moment('2017-7-1').startOf('day').valueOf(),
             endTime: moment().endOf('day').valueOf(),
             current: this.current,
             patientSearchKey: this.patientSearchKey,
@@ -335,11 +409,12 @@ export default {
     },
   },
   components: {
-    todayWorkCard,
+    card,
     empty,
     loadMore,
     requestError,
     fixedFilter,
+    fixedFooter,
   },
   computed: {
     curRoleKey() {
@@ -356,12 +431,7 @@ export default {
     roleNames() {
       return this.roles.map((item) => item.name)
     },
-    viewPadddingBottm() {
-      return this.selectedRole.todayWorkRoleType ===
-        this.TODAY_WORK_ROLE_TYPE_ENUM?.RECEPTIONIST?.value
-        ? '90rpx'
-        : 0
-    },
+
     isShowNewBtn() {
       return (
         this.selectedRole.todayWorkRoleType ===
@@ -394,6 +464,20 @@ export default {
     flex-direction: column;
     min-height: 100%;
     background: rgba(0, 0, 0, 0.04);
+
+    .button {
+      margin-left: 16rpx;
+      padding: 10rpx 32rpx;
+      font-size: 28rpx;
+      border-radius: 28rpx;
+      color: $dpms-color-primary;
+      border: 2rpx solid $dpms-color-primary;
+    }
+    .inverted-button {
+      background: $dpms-color-primary;
+      color: #fff;
+    }
+
     &-header {
       display: flex;
       justify-content: space-between;
@@ -407,9 +491,6 @@ export default {
     }
     &-new {
       width: 100%;
-      position: fixed;
-      left: 0;
-      bottom: 0;
       height: 90rpx;
       line-height: 90rpx;
       text-align: center;

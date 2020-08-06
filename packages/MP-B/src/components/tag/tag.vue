@@ -14,7 +14,7 @@
   >
     <text
       :class="[
-        type === 'default' ? 'tag--default' : 'tag-text',
+        type === 'default' ? 'tag--default' : 'tag-text--' + type,
         inverted === true || inverted === 'true' ? 'tag-text--' + type : '',
         size === 'small' ? 'tag-text--small' : '',
       ]"
@@ -104,7 +104,7 @@ $uni-color-primary: #1890ff;
 $uni-color-error: #fa541c;
 $tag-pd: 0px 28rpx;
 $tag-small-pd: 0px 16rpx;
-$amount: 0.1;
+$amount: 0.2;
 
 .tag {
   /* #ifndef APP-NVUE */
@@ -121,7 +121,7 @@ $amount: 0.1;
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-bg-color-grey;
-  margin-left: 16rpx;
+  margin-right: 16rpx;
 }
 
 .tag--circle {
@@ -175,16 +175,12 @@ $amount: 0.1;
 }
 
 .tag--primary {
-  color: $uni-text-color-inverse;
-  background-color: $uni-color-primary;
-  border-width: 1rpx;
-  border-style: solid;
-  border-color: $uni-color-primary;
+  color: $uni-color-primary;
+  background-color: rgba($uni-color-primary, $amount);
 }
 
 .primary-tag--inverted {
   color: $uni-color-primary;
-
   background-color: rgba($uni-color-primary, $amount);
   border-width: 1rpx;
   border-style: solid;
@@ -192,43 +188,34 @@ $amount: 0.1;
 }
 
 .tag--success {
-  color: $uni-text-color-inverse;
-  background-color: $uni-color-success;
-  border-width: 1rpx;
-  border-style: solid;
-  border-color: $uni-color-success;
+  color: $uni-color-success;
+  background-color: rgba($uni-color-success, $amount);
 }
 
 .success-tag--inverted {
   color: $uni-color-success;
-  background-color: $uni-bg-color;
+  background-color: rgba($uni-color-success, $amount);
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-color-success;
 }
 
 .tag--warning {
-  color: $uni-text-color-inverse;
-  background-color: $uni-color-warning;
-  border-width: 1rpx;
-  border-style: solid;
-  border-color: $uni-color-warning;
+  color: $uni-color-warning;
+  background-color: rgba($uni-color-warning, $amount);
 }
 
 .warning-tag--inverted {
   color: $uni-color-warning;
-  background-color: $uni-bg-color;
+  background-color: rgba($uni-color-warning, $amount);
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-color-warning;
 }
 
 .tag--error {
-  color: $uni-text-color-inverse;
-  background-color: $uni-color-error;
-  border-width: 1rpx;
-  border-style: solid;
-  border-color: $uni-color-error;
+  color: $uni-color-error;
+  background-color: rgba($uni-color-error, $amount);
 }
 
 .error-tag--inverted {
