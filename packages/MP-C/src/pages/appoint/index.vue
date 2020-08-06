@@ -1,12 +1,7 @@
 <template>
   <div>
-    <dpmsCell
-      title="预约门店"
-      placeholder="请选择门店"
-      :value="institution.medicalInstitutionSimpleCode"
-      isLink
-    ></dpmsCell>
-    <dpmsCell title="门店地址" placeholder="请选择地址" :value="institution.address" isLink />
+    <dpmsCell title="预约门店" placeholder="请选择门店" :value="institution.medicalInstitutionSimpleCode"></dpmsCell>
+    <dpmsCell title="门店地址" placeholder="请选择地址" :value="institution.address" />
     <dpmsCell
       title="预约医生"
       placeholder="请选择医生"
@@ -17,18 +12,11 @@
     <dpmsCell
       title="预约项目"
       placeholder="请选择项目"
-      :value="item.itemName"
+      :value="selectedItemsText"
       isLink
       @cellclick="itemPickerVisible = true"
     />
-    <dpmsCellInput
-      title="预约日期"
-      isRequired
-      inputType="picker"
-      placeholder="请选择日期"
-      mode="date"
-      isArrowRight
-    ></dpmsCellInput>
+    <dpmsCell title="预约日期" placeholder="请选择日期" isLink />
     <dpmsCellInput title="预约备注" placeholder="请输入备注" inputType="text"></dpmsCellInput>
     <div class="agree">
       我已知悉并同意
@@ -45,7 +33,7 @@
       </div>
     </dpmsBottomPicker>
     <dpmsBottomPicker :visible.sync="itemPickerVisible" title="选择项目">
-      <div class="doctor" v-for="itm in items" :key="itm.itemId" @click="itemClick(itm)">
+      <div class="item" v-for="itm in items" :key="itm.itemId" @click="itemClick(itm)">
         <image :src="itm.itemThumbnailUrl" />
         <div class="info">
           <div class="name">{{itm.itemName}}</div>
@@ -67,10 +55,15 @@ export default {
       doctor: {},
       dockers: [],
       items: [],
-      item: {},
+      selectedItems: [],
       doctorPickerVisible: false,
       itemPickerVisible: false,
     }
+  },
+  computed: {
+    selectedItemsText() {
+      return this.selectedItems.map((itm) => itm.itemName).join('，')
+    },
   },
   methods: {
     async getDoctors() {
@@ -90,8 +83,8 @@ export default {
       this.doctorPickerVisible = false
     },
     itemClick(itm) {
-      this.item = itm
-      this.itemPickerVisible = false
+      if (this.selectedItems.find((si) => si.itemId === itm.itemId)) return
+      this.selectedItems = [...this.selectedItems, itm]
     },
   },
   created() {
@@ -139,6 +132,27 @@ button {
     flex: none;
     margin-right: 32rpx;
     border-radius: 50%;
+  }
+  .name {
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 34rpx;
+    margin-bottom: 8rpx;
+  }
+}
+.item {
+  margin-bottom: 16rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.09);
+  display: flex;
+  padding: 32rpx 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 28rpx;
+  line-height: 1.6;
+  image {
+    width: 184rpx;
+    height: 140rpx;
+    flex: none;
+    margin-right: 24rpx;
   }
   .name {
     color: rgba(0, 0, 0, 0.9);
