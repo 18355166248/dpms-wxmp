@@ -6,8 +6,14 @@
       :value="institution.medicalInstitutionSimpleCode"
       isLink
     ></dpmsCell>
-    <dpmsCellInput title="门店地址" placeholder="请选择地址" :value="institution.address"></dpmsCellInput>
-    <dpmsCellInput title="预约医生" placeholder="请选择医生" :value="doctor.doctorName"></dpmsCellInput>
+    <dpmsCell title="门店地址" placeholder="请选择地址" :value="institution.address" isLink />
+    <dpmsCell
+      title="预约医生"
+      placeholder="请选择医生"
+      :value="doctor.doctorName"
+      isLink
+      @cellclick="doctorPickerVisible = true"
+    />
     <dpmsCellInput
       title="预约项目"
       isRequired
@@ -52,7 +58,7 @@ export default {
       form: {},
       doctor: {},
       dockers: [],
-      doctorPickerVisible: true,
+      doctorPickerVisible: false,
     }
   },
   methods: {
