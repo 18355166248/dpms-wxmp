@@ -19,7 +19,13 @@
           :style="{ height: unitHeight + 'px;' + item.hidClass }"
         >
           <view class="left_time">{{ item.timeTitle }}</view>
-          <view class="right_content"></view>
+          <view
+            class="right_content"
+            :style="{
+              backgroundColor: item.bgColor,
+              borderColor: item.bgColor,
+            }"
+          ></view>
         </view>
       </view>
 
@@ -33,36 +39,45 @@
           @click="showDetail(index, $event)"
           @longtap="longTapWithEdit($event, item)"
         >
-          <view class="acrossClinic" />
-          <view class="acrossClinicText">跨</view>
-          <view class="metting_content_box meetCard">
+          <view class="metting-inner">
             <view
-              class="docorator"
-              :style="{
-                backgroundColor: getDocoratorColor(item.appointmentStatus),
-              }"
+              v-if="item.acrossInstitutionAppointmentFlag"
+              class="acrossClinic"
             />
-            <view class="meeting_content_name">
-              {{ item.patient.patientName }}{{ item | getGenderText }}
-            </view>
-            <view class="meeting_content_center">
+            <view
+              v-if="item.acrossInstitutionAppointmentFlag"
+              class="acrossClinicText"
+              >跨</view
+            >
+            <view class="metting_content_box meetCard">
               <view
-                v-for="apptItem in item.appointmentResourceMap
-                  .COMMON_DATA_APPOINTMENT_ITEM"
-                :key="apptItem.appointmentSettingsAppointmentItemId"
-                class="apptItem"
+                class="docorator"
                 :style="{
-                  backgroundColor:
-                    apptItem.appointmentSettingsAppointmentItemTypeColor,
-                  color: getApptItemColor(
-                    apptItem.appointmentSettingsAppointmentItemTypeColor,
-                  ),
+                  backgroundColor: getDocoratorColor(item.appointmentStatus),
                 }"
-              >
-                {{ apptItem.appointmentSettingsAppointmentItemName }}
+              />
+              <view class="meeting_content_name">
+                {{ item.patient.patientName }}{{ item | getGenderText }}
               </view>
+              <view class="meeting_content_center">
+                <view
+                  v-for="apptItem in item.appointmentResourceMap
+                    .COMMON_DATA_APPOINTMENT_ITEM"
+                  :key="apptItem.appointmentSettingsAppointmentItemId"
+                  class="apptItem"
+                  :style="{
+                    backgroundColor:
+                      apptItem.appointmentSettingsAppointmentItemTypeColor,
+                    color: getApptItemColor(
+                      apptItem.appointmentSettingsAppointmentItemTypeColor,
+                    ),
+                  }"
+                >
+                  {{ apptItem.appointmentSettingsAppointmentItemName }}
+                </view>
+              </view>
+              <view class="meeting_content_time">{{ item.time }}</view>
             </view>
-            <view class="meeting_content_time">{{ item.time }}</view>
           </view>
         </view>
 
@@ -137,6 +152,7 @@ import { scheduleTableUtil } from './dayTable.util.js'
 import { dataDictUtil } from 'utils/dataDict.util'
 import moment from 'moment'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
+import { numberRangeUtil } from './numberRange.util'
 
 const enums = uni.getStorageSync('enums')
 
@@ -176,6 +192,7 @@ export default {
     defaultChooseLong: Number, //默认点击所占时长
     scrollHeight: String,
     apptList: Array,
+    scheduleList: Array, // 排班时间列表
   },
   data() {
     return {
@@ -253,18 +270,19 @@ export default {
     this.minAll = 1440 / this.unitMinute // 96 (1400 = 24*60)
     this.scrollTop = this.unitHeight * 36 // 默认9点开始
 
-    this.getDefaultTable()
     Array.isArray(this.apptList) &&
       this.apptList.length > 0 &&
       this.getMeetingList()
-    this.isTodayFun(this.chooseDateProp)
   },
   watch: {
-    createMeet(newVal) {},
     apptList(newVal) {
       Array.isArray(this.apptList) &&
         this.apptList.length > 0 &&
         this.getMeetingList()
+    },
+    scheduleList(newVal) {
+      this.getDefaultTable()
+      this.isTodayFun(this.chooseDateProp)
     },
   },
   methods: {
@@ -350,9 +368,11 @@ export default {
         } else {
           time = hour + ':' + (i % rat) * self.unitMinute
         }
+        const bgColor = this.getBackgroundColorByScheduleItemList(time)
         list.push({
           trClass: timeClass,
           timeTitle: time,
+          bgColor,
         })
       }
       this.defaultList = list
@@ -440,6 +460,9 @@ export default {
       //   meetingName: newShow.meetingName,
       //   time: newShow.time,
       // }
+
+      // 跨诊所不可编辑
+      if (this.meetingList[index].acrossInstitutionAppointmentFlag) return
 
       this.$emit('editAppt', this.meetingList[index])
     },
@@ -998,6 +1021,9 @@ export default {
           return
         }
 
+        // 跨诊所不可编辑
+        if (this.createMeeting.acrossInstitutionAppointmentFlag) return
+
         self.$emit('editAppt', this.createMeet)
 
         return
@@ -1059,8 +1085,11 @@ export default {
     },
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
+      // 限制可编辑卡片 非预约状态 跨诊所不可编辑
       if (
-        APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !== meetInfo.appointmentStatus
+        APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !==
+          meetInfo.appointmentStatus ||
+        meetInfo.acrossInstitutionAppointmentFlag
       ) {
         return
       }
@@ -1109,15 +1138,68 @@ export default {
     getDocoratorColor(appointmentStatus) {
       return appointmentStatusColorMap[appointmentStatus]
     },
+    // 清空创建的编辑卡片
     clearCreateMeet() {
       this.isCreate = false
       this.createMeet = defaultMeet
+    },
+    getBackgroundColorByScheduleItemList(timeTitle) {
+      // 如果属于正常班 => 白色
+      // 如果属于休息班 => 红色
+      // 如果属于正常班 又属于休息班 => 不应该存在这样的逻辑（数据异常导致）=> 白色
+      // 如果不属于正常班也不属于休息班 => 灰色
+      const rowStartTimestampByToday =
+        moment(this.chooseDateProp + ' ' + timeTitle).valueOf() -
+        moment().startOf('day')
+      const rowEndTimestampByToday = rowStartTimestampByToday + 900000 - 1 // 900000 = 15分钟的毫秒数
+
+      const abledItemList = this.scheduleList.filter(
+        (item) => item.allowAppointmentStatus === 1,
+      )
+      const disabledItemList = this.scheduleList.filter(
+        (item) => item.allowAppointmentStatus !== 1,
+      )
+
+      const rowInAbledItem = this.checkWhetherInStaffScheduleItemList(
+        rowStartTimestampByToday,
+        rowEndTimestampByToday,
+        abledItemList,
+      )
+      const rowInDisabledItem = this.checkWhetherInStaffScheduleItemList(
+        rowStartTimestampByToday,
+        rowEndTimestampByToday,
+        disabledItemList,
+      )
+
+      if (rowInAbledItem) {
+        return 'white'
+      }
+
+      if (rowInDisabledItem) {
+        return '#fff7f7'
+      }
+
+      return '#f6f6f6'
+    },
+    checkWhetherInStaffScheduleItemList(
+      startTimestampByToday,
+      endTimestampByToday,
+      itemList,
+    ) {
+      return (
+        itemList.filter((item) => {
+          return numberRangeUtil.isOver(
+            [startTimestampByToday, endTimestampByToday],
+            [item.beginTimeMilliSecond, item.endTimeMilliSecond - 1],
+          )
+        }).length > 0
+      )
     },
   },
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 $timeSize: 12px;
 $borderColor: #ddd;
 
@@ -1222,7 +1304,7 @@ $borderColor: #ddd;
     }
 
     .hasTime .right_content {
-      border-color: $borderColor;
+      border-color: $borderColor !important;
     }
   }
 
@@ -1254,24 +1336,31 @@ $borderColor: #ddd;
       background-color: #fff;
       border-radius: 4px;
       overflow: hidden;
-      border: 1px solid #ccc;
       box-sizing: border-box;
 
-      > .acrossClinic {
-        right: 0;
-        top: 0;
-        position: absolute;
-        width: 0;
-        height: 0;
-        border-top: 56rpx solid red;
-        border-left: 56rpx solid transparent;
-      }
-      .acrossClinicText {
-        position: absolute;
-        right: 4rpx;
-        top: 2rpx;
-        color: #fff;
-        font-size: 22rpx;
+      .metting-inner {
+        border: 1px solid #ccc;
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        border-radius: 4px;
+
+        > .acrossClinic {
+          right: -1px;
+          top: -1px;
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-top: 56rpx solid rgb(246, 64, 74);
+          border-left: 56rpx solid transparent;
+        }
+        .acrossClinicText {
+          position: absolute;
+          right: 4rpx;
+          top: 2rpx;
+          color: #fff;
+          font-size: 22rpx;
+        }
       }
     }
 
@@ -1342,7 +1431,7 @@ $borderColor: #ddd;
       height: 63px;
       position: absolute;
       border-radius: 3px;
-      background-color: rgba(32, 141, 5, 0.7);
+      background-color: rgba(92, 187, 137, 0.9);
       z-index: 990;
       font-size: $timeSize;
 
@@ -1391,7 +1480,7 @@ $borderColor: #ddd;
         position: absolute;
         font-size: $timeSize;
         text-align: center;
-        color: #1994fd;
+        color: $common-color;
         line-height: 0;
       }
 

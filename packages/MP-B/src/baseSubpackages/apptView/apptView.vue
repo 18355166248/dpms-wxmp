@@ -1,6 +1,6 @@
 <template>
   <view class="apptView">
-    <dpmsDrawer maskClose ref="dpmsDrawer" @change="onDrawerChange">
+    <dpmsDrawer maskClose ref="dpmsDrawer">
       <view class="pv-32 ph-24 selectDrawer">
         <view class="title mb-32 ml-8">医生</view>
         <div class="doctorList">
@@ -32,7 +32,9 @@
           showCancel
           @cancel="cancel"
           @search="search"
+          @clear="clear"
           placeholder="搜索"
+          :value="searchValueWithAppt"
         />
       </view>
       <view v-else class="curCardInfo">
@@ -49,7 +51,7 @@
       class="apptSearch overHidden pt-12"
       data-layout-grow
     >
-      <scroll-view v-if="apptSearchList" class="h100" scroll-y>
+      <scroll-view v-if="apptSearchList.length > 0" class="h100" scroll-y>
         <view class="apptSearchContent ph-24 pb-32">
           <apptCard
             v-for="apptInfo in apptSearchList"
@@ -72,6 +74,7 @@
       }"
       :apptList="list"
       :chooseDateProp="date"
+      :scheduleList="scheduleList"
       @createAppt="createAppt"
       @editAppt="editAppt"
     />
@@ -108,13 +111,21 @@ export default {
     return {
       doctor: undefined,
       doctorList: [],
+      allDoctorWithApptList: [], // 所以在职医生的预约列表
       retract: true, // 日历展开: false 收缩: true
       showSearch: false, // 搜索患者
       list: [],
       date: moment().format('YYYY-MM-DD'),
+      startTimeStamp: moment().startOf('day').valueOf(),
+      endTimeStamp: moment().endOf('day').valueOf(),
       apptSuccess: false,
-      apptSearchList: undefined, // 模糊搜索列表
+      apptSearchList: [], // 模糊搜索列表
+      searchValueWithAppt: '', // 模糊搜索的值
+      scheduleList: [], // 排班列表
     }
+  },
+  onShow() {
+    this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
   },
   onLoad() {
     this.init()
@@ -123,7 +134,6 @@ export default {
       globalEventKeys.apptFormWithSaveSuccess,
       ({ isSuccess, params }) => {
         console.log('isSuccess', isSuccess, params)
-        this.$refs.apptTable.clearCreateMeet()
         this.getApptList()
       },
     )
@@ -134,13 +144,23 @@ export default {
   watch: {
     date(newVal) {
       this.getApptList()
+
+      const dayMoment = moment(newVal)
+      this.startTimeStamp = dayMoment.startOf('day').valueOf()
+      this.endTimeStamp = dayMoment.endOf('day').valueOf()
+    },
+    showSearch(newVal) {
+      if (newVal) {
+        this.getAllDoctorWithApptList()
+      }
     },
   },
   methods: {
     init() {
       this.getDoctor()
         .then((res) => {
-          console.log(res)
+          this.getApptScheduleInfo()
+
           this.getApptList()
         })
         .catch()
@@ -151,34 +171,30 @@ export default {
         if (isDoctorWithLogin) {
           this.doctor = staff
           resolve()
-        } else {
-          // 获取在职医生列表
-          institutionAPI
-            .getStaffListByPosition({
-              position: doctorValue,
-              workStatus: STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
-              includeUnspecified: true,
-            })
-            .then((res) => {
-              this.doctor = res.data[1]
-              this.doctorList = res.data
-
-              resolve()
-            })
-            .catch()
         }
+
+        // 获取在职医生列表
+        institutionAPI
+          .getStaffListByPosition({
+            position: doctorValue,
+            workStatus: STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
+            includeUnspecified: true,
+          })
+          .then((res) => {
+            !isDoctorWithLogin && (this.doctor = res.data[1])
+            this.doctorList = res.data
+
+            resolve()
+          })
+          .catch()
       })
     },
     // 获取预约列表
     getApptList() {
-      const dayMoment = moment(this.date)
-      const startTimeStamp = dayMoment.startOf('day').valueOf()
-      const endTimeStamp = dayMoment.endOf('day').valueOf()
-
       appointmentAPI
         .getAppointmentViewListFromStaff({
-          appointmentBeginTime: startTimeStamp,
-          appointmentEndTime: endTimeStamp,
+          appointmentBeginTime: this.startTimeStamp,
+          appointmentEndTime: this.endTimeStamp,
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
           position: doctorValue,
           staffId: this.doctor.staffId,
@@ -204,6 +220,39 @@ export default {
         })
         .catch()
     },
+    // 获取排班详情
+    getApptScheduleInfo() {
+      institutionAPI
+        .getApptScheduleList({
+          scheduleBeginTime: this.startTimeStamp,
+          scheduleEndTime: this.endTimeStamp,
+          staffPositions: doctorValue,
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          staffId: this.doctor.staffId,
+        })
+        .then((res) => {
+          console.log('scheduleListWithDoctor', res.data)
+
+          this.scheduleList =
+            res.data[2].institutionScheduleTableMap[this.startTimeStamp]
+        })
+        .catch()
+    },
+    // 获取全部在职医生的预约列表
+    getAllDoctorWithApptList() {
+      appointmentAPI
+        .getAppointmentViewListFromStaff({
+          appointmentBeginTime: this.startTimeStamp,
+          appointmentEndTime: this.endTimeStamp,
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          position: doctorValue,
+          staffIds: this.doctorList.map((doctor) => doctor.staffId).join(','),
+        })
+        .then((res) => {
+          this.allDoctorWithApptList = res.data
+        })
+        .catch()
+    },
     collapseChange(val) {
       this.retract = val
     },
@@ -211,12 +260,30 @@ export default {
       this.showSearch = false
     },
     search({ value }) {
-      console.log('search', value)
+      this.searchValueWithAppt = value
+      const searchList = this.allDoctorWithApptList.filter((appt) => {
+        const mobile = appt.patient.mobile
+        const pinyin = appt.patient.pinyin
+        const patientName = appt.patient.patientName
+
+        return (
+          mobile.indexOf(value) > -1 ||
+          pinyin.indexOf(value) > -1 ||
+          patientName.indexOf(value) > -1
+        )
+      })
+
+      this.apptSearchList = searchList
+    },
+    clear() {
+      this.searchValueWithAppt = ''
+      this.apptSearchList = []
     },
     openDrawer() {
       this.$refs.dpmsDrawer.open()
     },
     changeCalendar({ fulldate }) {
+      this.$refs.apptTable.clearCreateMeet()
       this.date = fulldate
     },
     createAppt(params) {
@@ -240,20 +307,6 @@ export default {
           '&endTimeStamp=' +
           params.endTimeStamp,
       })
-    },
-    onDrawerChange(value) {
-      if (value && this.doctorList.length === 0) {
-        institutionAPI
-          .getStaffListByPosition({
-            position: doctorValue,
-            workStatus: STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
-            includeUnspecified: true,
-          })
-          .then((res) => {
-            this.doctorList = res.data
-          })
-          .catch()
-      }
     },
     onSelected(doctor) {
       this.doctor = doctor
