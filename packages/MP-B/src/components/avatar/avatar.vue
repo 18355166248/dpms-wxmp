@@ -5,7 +5,6 @@
       :src="avatarSrc"
       :style="{ width: avatarSize, height: avatarSize }"
       mode="aspectFill"
-      role="img"
     ></image>
   </view>
 </template>
