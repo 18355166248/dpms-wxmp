@@ -14,6 +14,7 @@
 <script>
 import loginApi from '../../APIS/login/login.api'
 import { setStorage, STORAGE_KEY } from '@/utils/storage'
+import config from '../../config'
 export default {
   methods: {
     getPhoneNumber({ detail }) {
@@ -36,12 +37,10 @@ export default {
     wx.login({
       success: ({ code }) => {
         console.log(code)
-        loginApi
-          .getOpenid({ appId: 'wx00028b3b0c0f877e', code })
-          .then((res) => {
-            this.loginData = res.data
-            setStorage(STORAGE_KEY.OPENID, res.data.openid)
-          })
+        loginApi.getOpenid({ appId: config.appId, code }).then((res) => {
+          this.loginData = res.data
+          setStorage(STORAGE_KEY.OPENID, res.data.openid)
+        })
       },
       fail(...args) {
         console.log(args)

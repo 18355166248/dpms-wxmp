@@ -1,6 +1,7 @@
 <script>
 import systemApi from '@/APIS/system.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import config from './config'
 export default {
   onLaunch: async function () {
     console.log('App Launch')
@@ -13,7 +14,8 @@ export default {
       setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data)
       token = res.data
     }
-    const res = await systemApi.getInstitution({ appId: 'wx00028b3b0c0f877e' })
+
+    const res = await systemApi.getInstitution({ appId: config.appId })
     setStorage(STORAGE_KEY.MEDICALINSTITUTION, res.data)
   },
   onShow: function () {
@@ -58,36 +60,97 @@ page {
 .icon-location::before {
   content: '\e790';
 }
-
 .icon-time::before {
   content: '\e784';
 }
-
 .icon-right::before {
   content: '\e7eb';
 }
-
 .icon-set::before {
   content: '\e78e';
 }
-
 .icon-add::before {
   content: '\e781';
 }
-
 .icon-timeCircle::before {
   content: '\e848';
 }
-
 .icon-rightCircle::before {
   content: '\e845';
 }
-
 .icon-down::before {
   content: '\e7ee';
 }
-
 .icon-search::before {
   content: '\e8ef';
+}
+.icon-arrow-up::before {
+  content: '\e7ed';
+}
+.icon-arrow-down::before {
+  content: '\e7ee';
+}
+.icon-arrow-up-30::before {
+  content: '\e602';
+}
+.icon-arrow-down-30::before {
+  content: '\e618';
+}
+.icon-menu::before {
+  content: '\e7f4';
+}
+.icon-clear::before {
+  content: '\e600';
+}
+.icon-arrow-right::before {
+  content: '\e7eb';
+}
+.icon-plus::before {
+  content: '\e8fe';
+}
+.icon-medicine-chest::before {
+  content: '\e863';
+}
+.icon-eye::before {
+  content: '\e869';
+}
+.icon-no-eye::before {
+  content: '\e8ff';
+}
+.icon-clock::before {
+  content: '\e848';
+}
+.icon-patient::before {
+  content: '\e607';
+}
+.icon-search::before {
+  content: '\e8ef';
+}
+.icon-institutions::before {
+  content: '\e625';
+}
+.icon-password::before {
+  content: '\e626';
+}
+.icon-user::before {
+  content: '\e627';
+}
+.icon-check-circle::before {
+  content: '\e77d';
+}
+.icon-check::before {
+  content: '\e7fc';
+}
+.icon-retweet::before {
+  content: '\e8f0';
+}
+.icon-right::before {
+  content: '\e7eb';
+}
+.icon-close::before {
+  content: '\e844';
+}
+.icon-sliders::before {
+  content: '\e7d6';
 }
 </style>
