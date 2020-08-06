@@ -107,7 +107,7 @@
     </swiper>
     <view @click="open" class="retract icon">
       <text
-        class="iconfont icon-arrow-up"
+        class="iconfont icon-arrow-down"
         :class="[retract ? '' : 'reverseArrow']"
       />
       <!-- ^ -->

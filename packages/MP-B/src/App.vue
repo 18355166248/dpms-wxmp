@@ -107,21 +107,6 @@ page {
   content: '\e7d6';
 }
 /* iconfont图标 end */
-
-.tc {
-  text-align: center;
-}
-
-.hidden {
-  display: none;
-}
-
-.w100 {
-  width: 100%;
-}
-.h100 {
-  height: 100%;
-}
 </style>
 
 <style lang="scss">
