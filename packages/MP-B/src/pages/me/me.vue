@@ -34,16 +34,18 @@
 </template>
 
 <script>
-import { getStorage, removeStorage, STORAGE_KEY } from '@/utils/storage'
+import { removeStorage, STORAGE_KEY } from '@/utils/storage'
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      medicalInstitution: getStorage(STORAGE_KEY.MEDICALINSTITUTION),
-      staff: getStorage(STORAGE_KEY.STAFF),
       staffPosition: this.$utils.getEnums('StaffPosition').properties,
     }
   },
   onLoad() {},
+  computed: {
+    ...mapState('workbenchStore', ['staff', 'medicalInstitution']),
+  },
   methods: {
     goMyProfile() {
       this.$utils.push({
@@ -52,17 +54,11 @@ export default {
     },
     loginOut() {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
-      removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
-      removeStorage(STORAGE_KEY.STAFF)
       removeStorage(STORAGE_KEY.ENUMS)
+      this.$store.commit('workbenchStore/delMedicalInstitution')
+      this.$store.commit('workbenchStore/delStaff')
       this.$utils.reLaunch({
         url: '/pages/login/login',
-      })
-    },
-    // 跳转到"我的资料"页面
-    toMyProfile() {
-      this.$utils.push({
-        url: '/pages/myProfile/myProfile',
       })
     },
   },
