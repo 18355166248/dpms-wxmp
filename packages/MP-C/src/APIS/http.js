@@ -64,7 +64,7 @@ httper.interceptors.request.use((request) => {
           medicalInstitutionId: medicalInstitution?.medicalInstitutionId,
           // 来源 小程序
           scenario: 'miniApp_auth',
-          lang: 'zh_CN'
+          lang: 'zh_CN',
         },
         // ██████ 鉴权 ██████
         // 用户 ID
@@ -152,13 +152,13 @@ httper.interceptors.request.use((request) => {
 
           request.body = qs.stringify(request.body, {
             arrayFormat: 'comma', // a: [1, 2] => a=1,2
-            allowDots: true
+            allowDots: true,
           })
         }
       } else if (request.method === 'GET') {
         request.body = qs.stringify(request.body, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
-          allowDots: true
+          allowDots: true,
         })
       }
       return request

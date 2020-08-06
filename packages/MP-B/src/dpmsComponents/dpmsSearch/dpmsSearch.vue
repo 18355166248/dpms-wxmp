@@ -1,8 +1,15 @@
 <template>
   <div :class="['dpmsSearch', showCancel ? 'search-show-action' : '']">
-    <div class="search__content search__content--square">
+    <div
+      class="search__content search__content--square"
+      :style="{ backgroundColor: leftBgColor }"
+    >
       <div class="cell cell--borderless field">
-        <div class="field__left-icon">
+        <div
+          class="field__left-icon"
+          :class="placeholderClass"
+          :style="placeholderStyle"
+        >
           <i class="iconfont icon-search"><!----></i>
         </div>
         <div class="cell__value cell__value--alone field__value">
@@ -17,8 +24,10 @@
               @confirm="onSearch"
               @blur="onToggleClear(false)"
               @focus="onToggleClear(true)"
+              :placeholder-style="placeholderStyle"
+              :placeholder-class="placeholderClass"
             />
-            <i class="iconfont icon-clear" v-if="showClearBtn" @click="onClear"
+            <i class="iconfont icon-close" v-if="showClearBtn" @click="onClear"
               ><!----></i
             >
           </div>
@@ -58,10 +67,23 @@ export default {
       type: String,
       default: '取消',
     },
+    leftBgColor: {
+      type: String,
+      default: '#fff',
+    },
+    placeholderStyle: {
+      type: Object,
+      default: {},
+    },
+    placeholderClass: {
+      type: String,
+      default: 'placeholderClass',
+    },
   },
   computed: {
     showClearBtn() {
-      return this.isBlur && this.inputValue
+      // return this.isBlur && this.inputValue
+      return this.inputValue
     },
   },
   data() {
@@ -69,6 +91,11 @@ export default {
       inputValue: this.value,
       isBlur: false,
     }
+  },
+  watch: {
+    value(newVal) {
+      this.inputValue = newVal
+    },
   },
   methods: {
     onToggleClear(bool) {
@@ -91,7 +118,7 @@ export default {
       this.$emit('search', { value: e.detail.value })
     },
     onClear() {
-      this.$emit('clear')
+      this.$emit('clear', { value: '' })
       this.inputValue = ''
     },
   },
@@ -108,7 +135,6 @@ export default {
   align-items: center;
   box-sizing: border-box;
   padding: 20rpx 24rpx;
-  background-color: #fff;
   .search__content {
     display: -webkit-box;
     display: -webkit-flex;
@@ -117,8 +143,7 @@ export default {
     -webkit-flex: 1;
     flex: 1;
     padding-left: 16rpx;
-    background-color: #f7f8fa;
-    border-radius: 4rpx;
+    border-radius: 8rpx;
   }
   .cell {
     position: relative;
@@ -126,7 +151,6 @@ export default {
     box-sizing: border-box;
     width: 100%;
     overflow: hidden;
-    color: #323233;
     font-size: 28rpx;
     line-height: 48rpx;
     flex: 1;
@@ -150,6 +174,7 @@ export default {
   }
   .field__left-icon {
     margin-right: 10rpx;
+    font-weight: 700;
   }
 
   .icon {
@@ -160,20 +185,7 @@ export default {
     -webkit-font-smoothing: antialiased;
   }
   .field__control {
-    display: block;
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    margin: 0;
-    padding: 0;
-    color: #323233;
-    line-height: inherit;
-    text-align: left;
-    background-color: transparent;
-    border: 0;
-    resize: none;
-  }
-  .field__control {
+    font-size: 28rpx;
     display: block;
     box-sizing: border-box;
     width: 100%;
@@ -194,13 +206,16 @@ export default {
     -webkit-box-align: center;
     -webkit-align-items: center;
     align-items: center;
+    .iconfont {
+      opacity: 0.65;
+    }
   }
   .field__value {
     overflow: visible;
   }
   .search__action {
-    padding: 0 16rpx;
-    color: #323233;
+    padding: 0 24rpx;
+    color: $common-color;
     font-size: 28rpx;
     line-height: 68rpx;
   }
@@ -209,6 +224,9 @@ export default {
     color: #c8c9cc;
     font-size: 30rpx;
     padding: 0 10rpx;
+  }
+  .placeholderClass {
+    color: rgba($color: #000000, $alpha: 0.25);
   }
 }
 .search-show-action {

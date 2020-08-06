@@ -107,8 +107,8 @@
     </swiper>
     <view @click="open" class="retract icon">
       <text
-        class="iconfont"
-        :class="[retract ? 'icon-arrow-down-30' : 'icon-arrow-up-30']"
+        class="iconfont icon-arrow-down"
+        :class="[retract ? '' : 'reverseArrow']"
       />
       <!-- ^ -->
     </view>
@@ -611,6 +611,7 @@ $color_standard: #333;
 $color_border: #f5f5f5;
 .date {
   width: 750rpx;
+  background-color: #fff;
 }
 .head {
   display: flex;
@@ -637,12 +638,13 @@ $color_border: #f5f5f5;
   justify-content: center;
   align-items: center;
   height: 30rpx;
-  // .iconfont {
-  //   transform: rotate(270deg);
-  //   &.retract_icon {
-  //     transform: rotate(90deg);
-  //   }
-  // }
+  .iconfont {
+    color: rgba(0, 0, 0, 0.25);
+    transition: transform 300ms;
+    &.reverseArrow {
+      transform: rotate(180deg);
+    }
+  }
 }
 .date_dl {
   display: flex;

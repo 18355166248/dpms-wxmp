@@ -5,7 +5,7 @@
       <div class="patientInfo tc pt-48">
         <div class="patientCard">
           <div class="patientDetail">
-            <avatar :gender="form.patient && form.patient.gender" />
+            <patientAvatar :patient="form.patient" />
             <div v-if="form.patient" class="patientCenter">
               <div class="patientTop">
                 <span class="patientName">{{ form.patient.patientName }}</span>
@@ -144,10 +144,10 @@ import institutionAPI from 'APIS/institution/institution.api'
 import diagnosisAPI from 'APIS/diagnosis/diagnosis.api'
 import { apptFormUtil } from './apptForm.util'
 import moment from 'moment'
-import avatar from 'businessComponents/avatar/avatar'
+import patientAvatar from 'businessComponents/patientAvatar/patientAvatar'
 import { dataDictUtil } from 'utils/dataDict.util'
 import { apptDataService } from './apptData.service'
-import { apptMock } from './mock.data'
+import { globalEventKeys } from 'config/global.eventKeys.js'
 
 function getTxtFromArr(Arr, key) {
   return Arr.map((val) => val[key]).join(',')
@@ -245,10 +245,27 @@ export default {
     },
   },
   onLoad(option = {}) {
+    console.log(option)
     this.paramsObj = option
     uni.setNavigationBarTitle({
       title: paramsConfig[option.type].title,
     })
+
+    // 新建预约进入此页面数据初始化 开始时间, 持续时间, 医生
+    if (
+      option.startTimeStamp &&
+      option.endTimeStamp &&
+      option.doctorId &&
+      this.paramsObj.type === 'createAppt'
+    ) {
+      const startTime = moment(Number(option.startTimeStamp))
+      const endTime = moment(Number(option.endTimeStamp))
+      const duration = endTime.diff(startTime, 'minute')
+
+      this.form.appointmentBeginTimeStamp = startTime.format('YYYY-MM-DD HH:mm')
+      this.form.duration = duration
+      this.form.doctor = Number(option.doctorId)
+    }
   },
   mounted() {
     uni.$on('apptFormWithUpdateStaffList', ({ key, value, list }) => {
@@ -273,23 +290,22 @@ export default {
 
     this.init()
 
-    const patient = {
-      age: '70岁6月1天',
-      birthday: '1950-02-02',
-      createTime: 1593658269000,
-      customerId: 1006433,
-      gender: 1,
-      institutionChainType: 2,
-      isMember: 2,
-      medicalInstitutionId: 968,
-      medicalRecordNo: 'BL202007010005',
-      mobile: '15900451752',
-      patientId: 925,
-      patientName: '张三爷',
-      patientNo: 'BL202007010005',
-    }
-
-    this.form.patient = patient
+    // this.$set(this.form, 'patient', {
+    //   age: '7岁10月28天',
+    //   birthday: '2012-09-06',
+    //   createTime: 1593657932000,
+    //   customerId: 1006429,
+    //   gender: 2,
+    //   institutionChainType: 2,
+    //   isMember: 1,
+    //   medicalInstitutionId: 968,
+    //   medicalRecordNo: 'BL202007010002',
+    //   memberId: 80,
+    //   mobile: '15900451752',
+    //   patientId: 921,
+    //   patientName: '张三妹',
+    //   patientNo: 'BL202007010002',
+    // })
   },
   beforeDestroy() {
     uni.$off('apptFormWithUpdateStaffList')
@@ -298,12 +314,6 @@ export default {
     uni.removeStorageSync('staffListInfo')
   },
   watch: {
-    ASSISTANT_MANAGER_LIST(newVal) {
-      this.$set(this.form, 'help', getTxtFromArr(newVal, 'staffName'))
-    },
-    NURSE_LIST(newVal) {
-      this.$set(this.form, 'nurse', getTxtFromArr(newVal, 'staffName'))
-    },
     form: {
       handler(newVal) {
         // console.log(newVal)
@@ -343,8 +353,41 @@ export default {
                 moment(form.appointmentEndTimeStamp + 1).format('HH:mm')
             }
 
+            // 如果是从预约视图的 编辑预约进入, 那么开始时间和持续时间需要用地址栏paramsObj参数进行初始化
+            if (type === 'editAppt') {
+              const option = this.paramsObj
+              const startTime = moment(Number(option.startTimeStamp))
+              const endTime = moment(Number(option.endTimeStamp))
+              const duration = endTime.diff(startTime, 'minute')
+
+              form.appointmentBeginTimeStamp = startTime.format(
+                'YYYY-MM-DD HH:mm',
+              )
+              form.duration = duration
+            }
+
             this.form = JSON.parse(JSON.stringify(form))
             this.initCheckedText(form.helpList, form.nurseList)
+
+            // 获取预约项目数据 只有是预约页面才需要获取
+            if (this.isAppt) {
+              appointmentAPI
+                .getAppointmentItemList()
+                .then((res) => {
+                  if (Array.isArray(res.data)) {
+                    uni.setStorageSync('apptItemList', res.data)
+
+                    this.selectListCache[6] = res.data
+
+                    console.log('apptI', res.data)
+
+                    this.updateApptItemCheckedText()
+                  }
+                })
+                .catch()
+            } else {
+              this.selectListCache[6] = []
+            }
           })
       }
 
@@ -352,24 +395,6 @@ export default {
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
       })
-
-      // 获取预约项目数据 只有是预约页面才需要获取
-      if (this.isAppt) {
-        appointmentAPI
-          .getAppointmentItemList()
-          .then((res) => {
-            if (Array.isArray(res.data)) {
-              uni.setStorageSync('apptItemList', res.data)
-
-              this.selectListCache[6] = res.data
-
-              this.updateApptItemCheckedText()
-            }
-          })
-          .catch()
-      } else {
-        this.selectListCache[6] = []
-      }
 
       authAPI
         .getConsultationRoomList({ enabled: true })
@@ -392,6 +417,8 @@ export default {
           }
         })
         .catch()
+
+      console.log(notGet)
 
       if (notGet) {
         return
@@ -468,7 +495,7 @@ export default {
           '/baseSubpackages/apptForm/staffList?option=' +
           option +
           '&checked=' +
-          checked,
+          checked.join(','),
       })
     },
     // 选择预约项目
@@ -481,6 +508,8 @@ export default {
     },
     updateApptItemCheckedText() {
       let apptItemList = uni.getStorageSync('apptItemList')
+
+      console.log(apptItemList, this.form.COMMON_DATA_APPOINTMENT_ITEM)
 
       apptItemList = apptItemList.filter((apptItem) =>
         this.form.COMMON_DATA_APPOINTMENT_ITEM.includes(
@@ -607,7 +636,7 @@ export default {
 
       // 挂号不需要做校验
       if (!this.isAppt) {
-        this.updateApptCb(this.method, formatValue)
+        this.updateApptCb(formatValue)
 
         return
       }
@@ -615,13 +644,13 @@ export default {
       // 预约 校验
       apptDataService.getApptVerify(
         formatValue,
-        () => this.updateApptCb(this.method, formatValue),
+        () => this.updateApptCb(formatValue),
         null,
         () => (this.saveLoading = false),
       )
     },
     // 新建/更新预约 | 挂号调用接口
-    updateApptCb(method, formatValue) {
+    updateApptCb(formatValue) {
       const type = this.paramsObj.type
 
       let dept
@@ -677,6 +706,12 @@ export default {
           if (type === 'editRegister') {
             this.$utils.show('挂号成功')
           }
+
+          uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
+            isSuccess: true,
+            params: this.paramsConfig,
+          })
+          this.$utils.back()
         })
         .finally(() => {
           this.saveLoading = false
@@ -700,7 +735,7 @@ export default {
     },
   },
   components: {
-    avatar,
+    patientAvatar,
   },
 }
 </script>

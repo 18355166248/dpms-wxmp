@@ -250,6 +250,8 @@ const apptFormUtil = {
     // 从缓存中查找是否是已存在的数据, 如果已存在, 将缓存数据合并进来
     const helpListCache = staffArr.filter((staff) => staff.position === 5)
 
+    console.log('values.help', values.help)
+
     values.help.forEach((helpItem) => {
       let help = selectList[5].find((staff) => staff.staffId === helpItem)
 
@@ -273,6 +275,8 @@ const apptFormUtil = {
     // 8护士
     // 从缓存中查找是否是已存在的数据, 如果已存在, 将缓存数据合并进来
     const nurseListCache = staffArr.filter((staff) => staff.position === 6)
+
+    console.log(values)
 
     values.nurse.forEach((nurseItem) => {
       let nurse = selectList[8].find((staff) => staff.staffId === nurseItem)
@@ -408,7 +412,10 @@ const apptFormUtil = {
     // 格式化预约项目
     values.COMMON_DATA_APPOINTMENT_ITEM = []
 
-    if (values.appointmentResourceMap?.COMMON_DATA_APPOINTMENT_ITEM) {
+    if (
+      values.appointmentResourceMap &&
+      values.appointmentResourceMap.COMMON_DATA_APPOINTMENT_ITEM
+    ) {
       values.appointmentResourceMap.COMMON_DATA_APPOINTMENT_ITEM.forEach(
         (apptItem) => {
           values.COMMON_DATA_APPOINTMENT_ITEM.push(

@@ -1,6 +1,8 @@
 <template>
   <button
     @click="clickButton"
+    :disabled="disabled"
+    :loading="loading"
     :class="[type === 'primary' ? 'dpms-button-primary' : '']"
   >
     {{ text }}
@@ -17,6 +19,14 @@ export default {
     type: {
       type: String,
       default: 'primary',
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
   methods: {

@@ -1,12 +1,12 @@
 <template>
   <view class="content">
     <view class="me">
-      <image />
+      <image v-if="staff.photoUrl" :src="staff.photoUrl" />
       <view class="info">
-        <view class="name">张三丰</view>
-        <view class="role">医生</view>
+        <view class="name">{{ staff.staffName }}</view>
+        <view class="role">{{ staffPosition[staff.position].zh_CN }}</view>
       </view>
-      <view class="link">
+      <view class="link" @click="goMyProfile">
         <text class="iconfont icon-right" />
       </view>
     </view>
@@ -16,12 +16,14 @@
           <text class="iconfont icon-institutions" />
           登录诊所
         </view>
-        <text class="institution">泽怡</text>
+        <text class="institution">{{
+          medicalInstitution.medicalInstitutionSimpleCode
+        }}</text>
       </view>
       <view class="li">
         <view>
           <text class="iconfont icon-password" />
-          关于北吉熊
+          关于北吉熊1
         </view>
       </view>
     </view>
@@ -33,17 +35,28 @@
 
 <script>
 import { removeStorage, STORAGE_KEY } from '@/utils/storage'
+import { mapState } from 'vuex'
 export default {
   data() {
-    return {}
+    return {
+      staffPosition: this.$utils.getEnums('StaffPosition').properties,
+    }
   },
   onLoad() {},
+  computed: {
+    ...mapState('workbenchStore', ['staff', 'medicalInstitution']),
+  },
   methods: {
+    goMyProfile() {
+      this.$utils.push({
+        url: '/pages/myProfile/myProfile',
+      })
+    },
     loginOut() {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
-      removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
-      removeStorage(STORAGE_KEY.STAFF)
       removeStorage(STORAGE_KEY.ENUMS)
+      this.$store.commit('workbenchStore/delMedicalInstitution')
+      this.$store.commit('workbenchStore/delStaff')
       this.$utils.reLaunch({
         url: '/pages/login/login',
       })
@@ -67,6 +80,8 @@ export default {
   image {
     width: 100rpx;
     height: 100rpx;
+    border-radius: 50%;
+    margin-right: 10rpx;
   }
   .info {
     flex: auto;

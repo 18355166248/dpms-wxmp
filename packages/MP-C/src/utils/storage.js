@@ -8,6 +8,8 @@ const STORAGE_KEY = {
   STAFF: 'staff',
   // 枚举值
   ENUMS: 'enums',
+  // openid
+  OPENID: 'openid',
 }
 
 export { STORAGE_KEY }

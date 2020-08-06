@@ -12,18 +12,19 @@ export default {
 /*每个页面公共css */
 page {
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_g4yfrr4ns3b.eot');
-  src: url('//at.alicdn.com/t/font_1965288_g4yfrr4ns3b.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.eot');
+  src: url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_g4yfrr4ns3b.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_g4yfrr4ns3b.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_g4yfrr4ns3b.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_g4yfrr4ns3b.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_mzfv0zzzfoh.svg#iconfont') format('svg');
 }
 /*********在线字体代码end*********/
 
@@ -49,9 +50,6 @@ page {
 }
 .icon-menu::before {
   content: '\e7f4';
-}
-.icon-search::before {
-  content: '\e636';
 }
 .icon-clear::before {
   content: '\e600';
@@ -102,22 +100,13 @@ page {
 .icon-right::before {
   content: '\e7eb';
 }
+.icon-close::before {
+  content: '\e844';
+}
+.icon-sliders::before {
+  content: '\e7d6';
+}
 /* iconfont图标 end */
-
-.tc {
-  text-align: center;
-}
-
-.hidden {
-  display: none;
-}
-
-.w100 {
-  width: 100%;
-}
-.h100 {
-  height: 100%;
-}
 </style>
 
 <style lang="scss">
