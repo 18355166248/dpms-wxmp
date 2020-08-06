@@ -5,7 +5,7 @@
       <div class="patientInfo tc pt-48">
         <div class="patientCard">
           <div class="patientDetail">
-            <avatar :gender="form.patient && form.patient.gender" />
+            <patientAvatar :patient="form.patient" />
             <div v-if="form.patient" class="patientCenter">
               <div class="patientTop">
                 <span class="patientName">{{ form.patient.patientName }}</span>
@@ -144,7 +144,7 @@ import institutionAPI from 'APIS/institution/institution.api'
 import diagnosisAPI from 'APIS/diagnosis/diagnosis.api'
 import { apptFormUtil } from './apptForm.util'
 import moment from 'moment'
-import avatar from 'businessComponents/avatar/avatar'
+import patientAvatar from 'businessComponents/patientAvatar/patientAvatar'
 import { dataDictUtil } from 'utils/dataDict.util'
 import { apptDataService } from './apptData.service'
 import { globalEventKeys } from 'config/global.eventKeys.js'
@@ -735,7 +735,7 @@ export default {
     },
   },
   components: {
-    avatar,
+    patientAvatar,
   },
 }
 </script>

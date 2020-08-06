@@ -33,6 +33,8 @@
           @click="showDetail(index, $event)"
           @longtap="longTapWithEdit($event, item)"
         >
+          <view class="acrossClinic" />
+          <view class="acrossClinicText">跨</view>
           <view class="metting_content_box meetCard">
             <view
               class="docorator"
@@ -134,7 +136,6 @@
 import { scheduleTableUtil } from './dayTable.util.js'
 import { dataDictUtil } from 'utils/dataDict.util'
 import moment from 'moment'
-import { mapState, mapMutations } from 'vuex'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
 
 const enums = uni.getStorageSync('enums')
@@ -1161,7 +1162,6 @@ $borderColor: #ddd;
 
 .meetCard {
   position: relative;
-  border: 1px solid #ccc;
   box-sizing: border-box;
   border-left: none;
 
@@ -1254,6 +1254,25 @@ $borderColor: #ddd;
       background-color: #fff;
       border-radius: 4px;
       overflow: hidden;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+
+      > .acrossClinic {
+        right: 0;
+        top: 0;
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-top: 56rpx solid red;
+        border-left: 56rpx solid transparent;
+      }
+      .acrossClinicText {
+        position: absolute;
+        right: 4rpx;
+        top: 2rpx;
+        color: #fff;
+        font-size: 22rpx;
+      }
     }
 
     .meeting_detail {
