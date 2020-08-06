@@ -1,5 +1,5 @@
 <template>
-  <div class="dpms-cell">
+  <div class="dpms-cell" @click="$emit('cellclick')">
     <div :class="['dpms-cell__title', required ? 'required' : '']">
       {{ title }}
     </div>
