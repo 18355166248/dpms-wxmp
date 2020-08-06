@@ -6,6 +6,8 @@ Vue.config.productionTip = false
 
 Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
 
+Vue.prototype.$systemInfo = uni.getSystemInfoSync()
+
 // 公共样式配置
 Vue.prototype.$commonCss = {
   commonColor: '#5cbb89',

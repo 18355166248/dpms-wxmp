@@ -186,7 +186,7 @@ export default {
 }
 
 .load-more__text {
-  font-size: 28rpx;
+  font-size: 14px;
 }
 
 .load-more__img {
