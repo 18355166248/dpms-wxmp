@@ -12,6 +12,7 @@ export default {
 /*每个页面公共css */
 page {
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 /*********在线字体代码start*********/
@@ -49,9 +50,6 @@ page {
 }
 .icon-menu::before {
   content: '\e7f4';
-}
-.icon-search::before {
-  content: '\e636';
 }
 .icon-clear::before {
   content: '\e600';
@@ -105,22 +103,10 @@ page {
 .icon-close::before {
   content: '\e844';
 }
+.icon-sliders::before {
+  content: '\e7d6';
+}
 /* iconfont图标 end */
-
-.tc {
-  text-align: center;
-}
-
-.hidden {
-  display: none;
-}
-
-.w100 {
-  width: 100%;
-}
-.h100 {
-  height: 100%;
-}
 </style>
 
 <style lang="scss">

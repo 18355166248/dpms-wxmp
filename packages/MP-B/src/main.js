@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import App from './App'
+import store from './store'
 import { toastUtil, flyUtil, commonUtil, utils } from 'mpcommon'
 
 Vue.config.productionTip = false
 
 Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
+Vue.prototype.$store = store
 
 Vue.prototype.$systemInfo = uni.getSystemInfoSync()
 
@@ -18,5 +20,6 @@ App.mpType = 'app'
 
 const app = new Vue({
   ...App,
+  store,
 })
 app.$mount()

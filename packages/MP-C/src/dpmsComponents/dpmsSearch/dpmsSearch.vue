@@ -18,7 +18,7 @@
               @blur="onToggleClear(false)"
               @focus="onToggleClear(true)"
             />
-            <i class="iconfont icon-clear" v-if="showClearBtn" @click="onClear"
+            <i class="iconfont icon-close" v-if="showClearBtn" @click="onClear"
               ><!----></i
             >
           </div>
@@ -61,7 +61,8 @@ export default {
   },
   computed: {
     showClearBtn() {
-      return this.isBlur && this.inputValue
+      // return this.isBlur && this.inputValue
+      return this.inputValue
     },
   },
   data() {
@@ -91,7 +92,7 @@ export default {
       this.$emit('search', { value: e.detail.value })
     },
     onClear() {
-      this.$emit('clear')
+      this.$emit('clear', { value: '' })
       this.inputValue = ''
     },
   },
@@ -194,6 +195,9 @@ export default {
     -webkit-box-align: center;
     -webkit-align-items: center;
     align-items: center;
+    .iconfont {
+      opacity: 0.65;
+    }
   }
   .field__value {
     overflow: visible;
