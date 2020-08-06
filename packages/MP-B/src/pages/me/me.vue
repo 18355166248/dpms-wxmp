@@ -1,7 +1,13 @@
 <template>
   <view class="content">
+    <view class="status_bar" :style="{ height: navTop }"></view>
+    <view class="tit">我的</view>
     <view class="me">
-      <image v-if="staff.photoUrl" :src="staff.photoUrl" />
+      <patientAvatar
+        :width="124"
+        :patient="{ avatarUrl: staff.photoUrl }"
+        class="image"
+      />
       <view class="info">
         <view class="name">{{ staff.staffName }}</view>
         <view class="role">{{ staffPosition[staff.position].zh_CN }}</view>
@@ -13,27 +19,27 @@
     <view class="menu">
       <view class="li">
         <view>
-          <text class="iconfont icon-institutions" />
+          <text class="iconfont icon-bank" />
           登录诊所
         </view>
-        <text class="institution">{{
+        <text class="text">{{
           medicalInstitution.medicalInstitutionSimpleCode
         }}</text>
       </view>
       <view class="li">
         <view>
-          <text class="iconfont icon-password" />
+          <image class="logo" src="../../static/icon-mini-log.png" />
           关于北吉熊1
         </view>
+        <text @click="goMyProfile" class="iconfont icon-right text" />
       </view>
     </view>
-    <view class="out">
-      <dpmsButton @click="loginOut" text="退出登录" type="primary" />
-    </view>
+    <view class="out" @click="loginOut">退出登录</view>
   </view>
 </template>
 
 <script>
+import patientAvatar from '@/businessComponents/patientAvatar/patientAvatar'
 import { removeStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
 export default {
@@ -42,9 +48,17 @@ export default {
       staffPosition: this.$utils.getEnums('StaffPosition').properties,
     }
   },
-  onLoad() {},
+  components: {
+    patientAvatar,
+  },
   computed: {
     ...mapState('workbenchStore', ['staff', 'medicalInstitution']),
+    menuButtonObject() {
+      return uni.getMenuButtonBoundingClientRect()
+    },
+    navTop: function () {
+      return `${this.menuButtonObject.top}px`
+    },
   },
   methods: {
     goMyProfile() {
@@ -66,56 +80,90 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.content {
+  background-image: url('https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/home-header-bg.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.status_bar {
+  width: 100%;
+}
+.tit {
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  font-size: 36rpx;
+  color: #fff;
+}
 .me {
-  height: 200rpx;
-  margin: 50rpx 20rpx;
-  padding: 10rpx;
+  margin-bottom: 64rpx;
+  padding: 45rpx 34rpx 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box;
-  background: #feffff;
-  border-radius: 8rpx;
-  box-shadow: 0rpx 20rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
-  image {
-    width: 100rpx;
-    height: 100rpx;
-    border-radius: 50%;
-    margin-right: 10rpx;
+  .image {
+    margin-right: 32rpx;
   }
   .info {
     flex: auto;
-    padding: 0 10rpx;
     box-sizing: border-box;
     .name {
-      font-weight: bold;
-      margin-bottom: 10rpx;
+      font-size: 36rpx;
+      margin-bottom: 16rpx;
+      color: #fff;
     }
     .role {
-      font-size: 24rpx;
+      float: left;
+      font-size: 26rpx;
+      padding: 0 16rpx;
+      height: 40rpx;
+      line-height: 40rpx;
+      color: #fff;
+      background: #44a874;
+      border-radius: 2rpx;
     }
   }
   .link {
     width: 50rpx;
+    height: 124rpx;
+    line-height: 124rpx;
     text-align: center;
+    color: rgba(0, 0, 0, 0.25);
   }
 }
 .menu {
+  padding-left: 32rpx;
+  margin-bottom: 20rpx;
+  background-color: #fff;
   .li {
-    height: 80rpx;
-    padding: 0 50rpx;
+    height: 112rpx;
+    padding-right: 32rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    text.iconfont {
+    border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+    text.icon-bank {
+      font-size: 38rpx;
       margin-right: 10rpx;
+      color: #6dcd9a;
+    }
+    .text {
+      color: rgba(0, 0, 0, 0.5);
+    }
+    .logo {
+      width: 40rpx;
+      height: 40rpx;
+      margin-right: 10rpx;
+      vertical-align: middle;
     }
   }
 }
 .out {
-  position: fixed;
-  bottom: 20rpx;
-  right: 0;
-  left: 0;
+  height: 112rpx;
+  line-height: 112rpx;
+  background: #fff;
+  font-size: 34rpx;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.9);
 }
 </style>
