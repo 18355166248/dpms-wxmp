@@ -10,7 +10,24 @@ const institutionAPI = {
   getStoreList(data) {
     return httper.get('institution-customer/home-page/institution/list', data)
   },
-
+  getFilterStoreList(data) {
+    return httper.get(
+      '/institution-customer/home-page/institution/list/all',
+      data,
+    )
+  },
+  getInnerProjList(data) {
+    return httper.get(
+      '/institution-customer/home-page/appointment/item/select/list',
+      data,
+    )
+  },
+  getInnerDocList(data) {
+    return httper.get(
+      '/institution-customer/home-page/appointment/doctor/select/list',
+      data,
+    )
+  },
 }
 
 export default institutionAPI

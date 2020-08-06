@@ -9,7 +9,7 @@ const STORAGE_KEY = {
   // 枚举值
   ENUMS: 'enums',
   // openid
-  OPENID: 'openid'
+  OPENID: 'openid',
 }
 
 export { STORAGE_KEY }

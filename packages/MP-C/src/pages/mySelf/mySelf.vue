@@ -100,7 +100,7 @@ export default {
     }
   },
   mounted() {},
-  beforeMount () {
+  beforeMount() {
     this.getCount()
   },
   onLoad() {},

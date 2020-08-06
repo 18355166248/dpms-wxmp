@@ -1,109 +1,234 @@
 <template>
-  <scroll-view class="content" scroll-y>
+  <view class="content">
     <view class="nav">
-      <navigator
-        class="navigator"
-        url="navigate/navigate?title=navigate"
-        hover-class="navigator-hover"
+      <view class="leftNav">按项目预约<view class="selected"></view></view>
+      <view class="rightNav" @click="jump('/pages/docAptmt/docAptmt')"
+        >按医生预约</view
       >
-        <button type="default">按预约项目</button>
-      </navigator>
-      <navigator
-        class="navigator"
-        url="navigate/navigate?title=navigate"
-        hover-class="navigator-hover"
-      >
-        <button type="default">按医生预约</button>
-      </navigator>
     </view>
     <view class="filter">
-      <picker
-        mode="selector"
-        range-key="key"
-        :range="list"
-        :value="selectedValue"
-        @change="onFilterOption"
-      >
-        <dpmsCell :value="pickerText" />
-      </picker>
-      <dpmsCellInput v-model="keyWord" />
-      <button class="mini-btn" type="primary">搜索</button>
-    </view>
-    <view class="aptmtList">
-      <view class="aptmtCard">
-        <image
-          src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596454148382&di=2e33fe17edce69e9bfd4885318602677&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201901%2F14%2F20190114220449_Y4FMZ.thumb.700_0.jpeg"
+      <view class="storePicker">
+        <picker
+          mode="selector"
+          range-key="institutionName"
+          :range="filterStoreList"
+          :value="selectedIndex"
+          @change="onFilterOption"
+        >
+          <input class="storePickerInput" :value="pickerText" />
+          <span class="iconfont icon-down storePickerIcon"></span>
+        </picker>
+      </view>
+      <view class="keywords">
+        <input
+          :value="keyWord"
+          @blur="emitPullDownRefresh"
+          class="keyWordInput"
         />
-        <view>
-          <view class="cardTile">牙齿美容</view>
-          <view class="cardDesc"
-            >任意门店可约，口腔全面检查美好口腔牙齿美牙齿美牙齿美好齿牙…</view
-          >
-        </view>
+        <span class="iconfont icon-search keyWordIcon"></span>
       </view>
     </view>
-  </scroll-view>
+    <view class="aptmtList">
+      <view class="aptmtCard" v-for="p in projList" :key="p.appointmentItemId">
+        <image :src="p.itemThumbnailUrl" />
+        <view>
+          <view class="aptmtCardContent">
+            <view class="cardTile">{{ p.itemName }}</view>
+            <view class="cardBtn" v-show="p.canAppointment">预 约</view>
+          </view>
+          <view class="cardDesc">{{ p.itemBriefIntroduction }}</view>
+        </view>
+      </view>
+      <load-more :status="loadStatus"></load-more>
+    </view>
+  </view>
 </template>
 
 <script>
+import institutionAPI from '@/APIS/institution/institution.api'
+import loadMore from '@/components/load-more/load-more.vue'
+const medicalInstitution = uni.getStorageSync('medicalInstitution')
+
 export default {
   data() {
     return {
-      selectedValue: 0,
-      list: [
-        {
-          key: 'cn',
-          value: '中国',
-        },
-        {
-          key: 'usa',
-          value: '美国',
-        },
-        {
-          key: 'brazil',
-          value: '巴西',
-        },
-        {
-          key: 'jp',
-          value: '日本',
-        },
-      ],
+      projList: [],
+      selectedIndex: 0,
+      filterStoreList: [],
       keyWord: '',
+      currentPage: 1,
+      total: 0,
+      size: 10,
+      loadStatus: 'loading',
     }
   },
-  onLoad() {},
+  onLoad() {
+    this.init()
+    this.emitPullDownRefresh()
+  },
+  onPullDownRefresh() {
+    this.currentPage = 1
+    this.loadData('init')
+  },
+  onReachBottom() {
+    if (this.loadStatus === 'loading') return
+    if (this.projList.length >= this.total) return
+    this.loadStatus = 'loading'
+    ++this.currentPage
+    this.loadData('add')
+  },
+  watch: {
+    selectedIndex() {
+      this.emitPullDownRefresh()
+    },
+  },
   methods: {
-    onFilterOption: function (e) {
-      // console.log('picker发送选择改变，携带值为', e.target.value)
-      this.selectedValue = e.target.value
+    init() {
+      institutionAPI
+        .getFilterStoreList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+        })
+        .then((res) => {
+          res.data.unshift({
+            institutionId: null,
+            institutionName: '全部门店',
+          })
+          this.filterStoreList = res.data
+        })
+    },
+    loadData(method) {
+      institutionAPI
+        .getInnerProjList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          filterInstitutionId:
+            this.filterStoreList[this.selectedIndex]?.institutionId || null,
+          searchParam: this.keyWord,
+          current: this.currentPage,
+          size: this.size,
+        })
+        .then((res) => {
+          if (method === 'add') {
+            this.projList = this.projList.concat(res.data.itemList)
+          } else {
+            this.projList = res.data.itemList
+          }
+          this.total = res.data.total
+          if (this.projList.length < this.total) {
+            this.loadStatus = 'more'
+          } else {
+            this.loadStatus = 'noMore'
+          }
+        })
+      uni.stopPullDownRefresh()
+    },
+    onFilterOption(e) {
+      this.selectedIndex = e.target.value
+    },
+    emitPullDownRefresh() {
+      uni.startPullDownRefresh()
+    },
+    jump(url) {
+      uni.redirectTo({ url })
     },
   },
   computed: {
     pickerText() {
-      return this.list[this.selectedValue].key
+      return this.filterStoreList[this.selectedIndex]?.institutionName
     },
   },
-  components: {},
+  components: {
+    loadMore,
+  },
 }
 </script>
 
 <style>
 .content {
   margin: 0 auto;
+  background: rgba(0, 0, 0, 0.04);
   height: 100%;
 }
 .nav {
-  margin: 0 auto;
-  display: flex;
-  flex-direction: row;
   width: 100%;
-  margin-top: 20rpx;
+  height: 76rpx;
+  background: #ffffff;
+  display: flex;
 }
-.navigator {
+.leftNav {
   width: 50%;
+  font-size: 30rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: #5cbb89;
+  line-height: 36rpx;
+  padding-top: 20rpx;
+}
+.selected {
+  width: 58rpx;
+  height: 4rpx;
+  background: #5cbb89;
+  border-radius: 2rpx;
+  margin: 0 auto;
+  margin-top: 16rpx;
+}
+.rightNav {
+  width: 50%;
+  font-size: 30rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 36rpx;
+  padding-top: 20rpx;
 }
 .filter {
+  margin-top: 24rpx;
   display: flex;
+}
+.storePicker {
+  width: 232rpx;
+  height: 76rpx;
+  background: #ffffff;
+  border-radius: 8rpx;
+  margin-left: 24rpx;
+}
+.storePickerInput {
+  height: 36rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 36rpx;
+  margin-left: 32rpx;
+  margin-top: 12rpx;
+}
+.storePickerIcon {
+  position: relative;
+  top: -55rpx;
+  left: 180rpx;
+  color: rgba(0, 0, 0, 0.25);
+}
+.keyWordInput {
+  height: 36rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: left;
+  color: rgba(0, 0, 0, 0.9);
+  line-height: 36rpx;
+  margin-left: 64rpx;
+  margin-top: 12rpx;
+}
+.keywords {
+  width: 446rpx;
+  height: 76rpx;
+  background: #ffffff;
+  border-radius: 8rpx;
+  margin-left: 24rpx;
+}
+.keyWordIcon {
+  position: relative;
+  top: -55rpx;
+  left: 20rpx;
+  color: rgba(0, 0, 0, 0.25);
 }
 .aptmtCard {
   width: 702rpx;
@@ -114,6 +239,7 @@ export default {
   box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
   display: flex;
   margin-bottom: 16rpx;
+  margin-top: 32rpx;
 }
 .aptmtCard > image {
   margin-top: 32rpx;
@@ -143,5 +269,23 @@ export default {
   line-height: 44rpx;
   margin-left: 24rpx;
   margin-top: 16rpx;
+}
+.aptmtCardContent {
+  display: flex;
+}
+.cardBtn {
+  width: 130rpx;
+  height: 56rpx;
+  background: #ffffff;
+  border: 2rpx solid #5cbb89;
+  border-radius: 28rpx;
+  font-size: 32rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: center;
+  color: #5cbb89;
+  line-height: 48rpx;
+  position: relative;
+  top: 25rpx;
+  left: 180rpx;
 }
 </style>
