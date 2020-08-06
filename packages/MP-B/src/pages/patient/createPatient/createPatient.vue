@@ -105,7 +105,7 @@
 <script>
 import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
-import authAPI from '@/APIS/patient/patient.api'
+import patientAPI from '@/APIS/patient/patient.api'
 
 export default {
   data() {
@@ -196,10 +196,10 @@ export default {
   },
   onLoad() {
     let that = this
-    authAPI.getPatientTypeList().then((res) => {
+    patientAPI.getPatientTypeList().then((res) => {
       that.patientTypeList = res.data
     })
-    authAPI.getPatientTags().then((res) => {
+    patientAPI.getPatientTags().then((res) => {
       uni.setStorageSync(
         'patientTagsList',
         res.data.filter((v) => v.tagInfoDTOList.length > 0),
@@ -242,7 +242,7 @@ export default {
       this.disabledSaveBtn = true
       this.loadingSaveBtn = true
 
-      let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
+      let { data: scrmPatientInfo } = await patientAPI.getPatientInScrm({
         medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
           .belongsInstitutionId,
         mobile: this.form.mobile,
@@ -295,7 +295,7 @@ export default {
       delete formValue.region
       delete formValue.address
 
-      authAPI
+      patientAPI
         .createPatient({
           ...formValue,
           ...scrmPatientInfo,
