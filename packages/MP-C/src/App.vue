@@ -1,6 +1,7 @@
 <script>
 import systemApi from '@/APIS/system.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import config from './config'
 export default {
   onLaunch: async function () {
     console.log('App Launch')
@@ -14,7 +15,7 @@ export default {
       token = res.data
     }
 
-    const res = await systemApi.getInstitution({ appId: 'wx00028b3b0c0f877e' })
+    const res = await systemApi.getInstitution({ appId: config.appId })
     setStorage(STORAGE_KEY.MEDICALINSTITUTION, res.data)
   },
   onShow: function () {
