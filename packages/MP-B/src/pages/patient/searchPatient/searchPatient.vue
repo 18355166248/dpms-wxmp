@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import authAPI from '@/APIS/patient/patient.api'
+import patientAPI from '@/APIS/patient/patient.api'
 import { dataDictUtil } from '../../../utils/dataDict.util'
 
 console.log(
@@ -141,7 +141,7 @@ export default {
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
 
-      authAPI
+      patientAPI
         .getPatientList({
           regularParam: this.searchPatientParam,
         })

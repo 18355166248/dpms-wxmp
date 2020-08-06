@@ -102,7 +102,7 @@
 <script>
 import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
-import authAPI from '@/APIS/patient/patient.api'
+import patientAPI from '@/APIS/patient/patient.api'
 import institutionAPI from '@/APIS/institution/institution.api'
 
 export default {
@@ -198,10 +198,10 @@ export default {
       // TODO：省市区展示
       console.log('---res0---', res)
     })
-    authAPI.getPatientTypeList().then((res) => {
+    patientAPI.getPatientTypeList().then((res) => {
       that.patientTypeList = res.data
     })
-    authAPI.getPatientTags().then((res) => {
+    patientAPI.getPatientTags().then((res) => {
       uni.setStorageSync(
         'patientTagsList',
         res.data.filter((v) => v.tagInfoDTOList.length > 0),
@@ -238,7 +238,7 @@ export default {
     },
     // 检查患者是否已存在scrm系统中
     async checkPatientInScrm() {
-      let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
+      let { data: scrmPatientInfo } = await patientAPI.getPatientInScrm({
         medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
           .belongsInstitutionId,
         mobile: this.form.mobile,
@@ -283,7 +283,7 @@ export default {
       delete this.form.area
       delete this.form.address
 
-      authAPI
+      patientAPI
         .createPatient({
           ...this.form,
           ...scrmPatientInfo,
