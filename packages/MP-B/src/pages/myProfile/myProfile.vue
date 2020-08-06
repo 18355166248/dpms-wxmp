@@ -97,7 +97,6 @@ export default {
         delete this.form.belongsMedicalInstitutionDTO
         delete this.form.workMedicalInstitutionList
         delete this.form.birthday
-        delete this.form.roleList
         if (err) {
           this.$utils.show(err[0]?.message)
           return
