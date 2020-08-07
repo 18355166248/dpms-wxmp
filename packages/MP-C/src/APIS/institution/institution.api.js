@@ -8,7 +8,10 @@ const institutionAPI = {
     return httper.get('institution-customer/home-page/item/list', data)
   },
   getStoreList(data) {
-    return httper.get('institution-customer/home-page/institution/list', data)
+    return httper.get(
+      '/institution-customer/home-page/appointment/institution/select/list',
+      data,
+    )
   },
   getFilterStoreList(data) {
     return httper.get(
@@ -25,6 +28,18 @@ const institutionAPI = {
   getInnerDocList(data) {
     return httper.get(
       '/institution-customer/home-page/appointment/doctor/select/list',
+      data,
+    )
+  },
+  getProjDetail(data) {
+    return httper.get('/institution-customer/home-page/item/detail', data)
+  },
+  getDocDetail(data) {
+    return httper.get('/institution-customer/home-page/doctor/detail', data)
+  },
+  checkPorjCanAptmt(data) {
+    return httper.get(
+      '/institution-customer/home-page/item/appointment/check',
       data,
     )
   },

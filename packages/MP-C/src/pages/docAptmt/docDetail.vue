@@ -2,12 +2,13 @@
   <scroll-view class="content" scroll-y>
     <view class="compDesc">
       <view class="compDescContent">
-        <p class="projTitle">
-          {{ item.itemName }}
-        </p>
-        <p class="projDesc">
-          {{ item.itemBriefIntroduction }}
-        </p>
+        <view class="aptmtCard">
+          <image :src="doctor.doctorAvatarUrl" />
+          <view class="aptmtCardContent">
+            <view class="cardTile">{{ doctor.doctorName }}</view>
+            <view class="cardDesc">{{ doctor.goodAt }}</view>
+          </view>
+        </view>
       </view>
     </view>
     <view class="storeContent">
@@ -64,7 +65,7 @@ const medicalInstitution = uni.getStorageSync('medicalInstitution')
 export default {
   data() {
     return {
-      item: [],
+      doctor: [],
       institutionList: [],
       tips: [],
     }
@@ -75,13 +76,13 @@ export default {
   methods: {
     init() {
       institutionAPI
-        .getProjDetail({
+        .getDocDetail({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
-          appointmentItemId: 1,
+          appointmentDoctorId: 1,
         })
         .then((res) => {
           this.institutionList = res.data.institutionList
-          this.item = res.data.item
+          this.doctor = res.data.doctor
           this.tips = res.data.tips
         })
     },
@@ -107,7 +108,6 @@ export default {
 }
 .compDescContent {
   width: 686rpx;
-  height: 256rpx;
   top: 48rpx;
   left: 32rpx;
   position: relative;
@@ -115,32 +115,47 @@ export default {
   border-radius: 8rpx;
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
-.projTitle {
-  width: 204rpx;
+.aptmtCard {
+  width: 702rpx;
+  height: 224rpx;
+  background: #ffffff;
+  border-radius: 8rpx;
+  box-shadow: 0rpx -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+}
+.aptmtCard > image {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 200rpx;
+  margin-top: 32rpx;
+  margin-left: 24rpx;
+}
+.cardTile {
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
+  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
-  padding-top: 32rpx;
-  padding-left: 24rpx;
+  margin-top: 44rpx;
 }
-.projDesc {
-  width: 654rpx;
-  height: 132rpx;
+.cardDesc {
+  height: 88rpx;
   font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
-  color: rgba(0, 0, 0, 0.65);
+  color: rgba(0, 0, 0, 0.5);
   line-height: 44rpx;
-  padding-top: 24rpx;
-  padding-left: 24rpx;
+  margin-top: 16rpx;
+}
+.aptmtCardContent {
+  width: 502rpx;
+  margin-left: 32rpx;
 }
 .storeContent {
   width: 684rpx;
   margin-left: 32rpx;
-  margin-top: 188rpx;
+  margin-top: 168rpx;
 }
 .storeTitle {
   width: 136rpx;

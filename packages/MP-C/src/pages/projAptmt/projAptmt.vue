@@ -16,8 +16,8 @@
           @change="onFilterOption"
         >
           <input class="storePickerInput" :value="pickerText" />
-          <span class="iconfont icon-down storePickerIcon"></span>
         </picker>
+        <span class="iconfont icon-down storePickerIcon"></span>
       </view>
       <view class="keywords">
         <input
@@ -62,8 +62,8 @@ export default {
       loadStatus: 'loading',
     }
   },
-  onLoad() {
-    this.init()
+  onLoad(params) {
+    this.init(params)
     this.emitPullDownRefresh()
   },
   onPullDownRefresh() {
@@ -83,17 +83,24 @@ export default {
     },
   },
   methods: {
-    init() {
+    init(params) {
+      const { appointmentInstitutionId } = params
       institutionAPI
         .getFilterStoreList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          filterInstitutionId: appointmentInstitutionId,
         })
         .then((res) => {
           res.data.unshift({
-            institutionId: null,
+            appointmentInstitutionId: null,
             institutionName: '全部门店',
           })
           this.filterStoreList = res.data
+          if (appointmentInstitutionId) {
+            this.selectedIndex = this.filterStoreList.findIndex(
+              (v) => v.appointmentInstitutionId == appointmentInstitutionId,
+            )
+          }
         })
     },
     loadData(method) {
@@ -101,7 +108,8 @@ export default {
         .getInnerProjList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
           filterInstitutionId:
-            this.filterStoreList[this.selectedIndex]?.institutionId || null,
+            this.filterStoreList[this.selectedIndex]
+              ?.appointmentInstitutionId || null,
           searchParam: this.keyWord,
           current: this.currentPage,
           size: this.size,
@@ -142,7 +150,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content {
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.04);
@@ -190,6 +198,7 @@ export default {
   background: #ffffff;
   border-radius: 8rpx;
   margin-left: 24rpx;
+  display: flex;
 }
 .storePickerInput {
   height: 36rpx;
@@ -202,10 +211,9 @@ export default {
   margin-top: 12rpx;
 }
 .storePickerIcon {
-  position: relative;
-  top: -55rpx;
-  left: 180rpx;
   color: rgba(0, 0, 0, 0.25);
+  margin-top: 22rpx;
+  margin-right: 4rpx;
 }
 .keyWordInput {
   height: 36rpx;
