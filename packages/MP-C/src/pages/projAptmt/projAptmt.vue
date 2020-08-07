@@ -47,7 +47,9 @@
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {

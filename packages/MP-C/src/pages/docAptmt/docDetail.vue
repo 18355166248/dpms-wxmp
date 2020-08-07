@@ -60,7 +60,8 @@
 
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
 
 export default {
   data() {
