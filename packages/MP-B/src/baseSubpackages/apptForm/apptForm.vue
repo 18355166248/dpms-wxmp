@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import authAPI from 'APIS/patient/patient.api'
+import patientAPI from 'APIS/patient/patient.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
 import institutionAPI from 'APIS/institution/institution.api'
 import diagnosisAPI from 'APIS/diagnosis/diagnosis.api'
@@ -396,7 +396,7 @@ export default {
         this.$set(this.form, 'medicalInstitution', res.data[0])
       })
 
-      authAPI
+      patientAPI
         .getConsultationRoomList({ enabled: true })
         .then((res) => {
           if (Array.isArray(res.data)) {
@@ -424,7 +424,7 @@ export default {
         return
       }
 
-      authAPI
+      patientAPI
         .getStaffMapThroughPosition({
           positions: '2,3,4,5,6', // 医生:2 --- 洁牙师:3 --- 咨询师:4 --- 助理:5 --- 护士:6
           workStatus: 1,

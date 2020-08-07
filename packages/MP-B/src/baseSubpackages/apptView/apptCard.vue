@@ -1,5 +1,12 @@
 <template>
-  <view class="appt-card">
+  <view
+    class="appt-card"
+    @click="
+      toPage('/baseSubpackages/apptForm/apptDetail', {
+        appointmentId: appt.appointmentId,
+      })
+    "
+  >
     <div class="avatar">
       <patientAvatar :patient="appt.patient" />
     </div>
@@ -40,6 +47,7 @@
 
 <script>
 import moment from 'moment'
+import qs from 'qs'
 import patientAvatar from 'businessComponents/patientAvatar/patientAvatar'
 
 export default {
@@ -72,13 +80,19 @@ export default {
       [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
       [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
     }
-    console.log(this.appt)
   },
   computed: {},
   components: {
     patientAvatar,
   },
   methods: {
+    toPage(url, params) {
+      this.$utils.push({
+        url: `${url}?${qs.stringify(params, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+        })}`,
+      })
+    },
     getGender(gender) {
       return this.GENDER_ENUM.properties[gender].text.zh_CN
     },

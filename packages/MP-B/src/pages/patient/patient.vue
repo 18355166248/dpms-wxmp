@@ -5,13 +5,17 @@
 </template>
 
 <script>
+import patientAPI from '@/APIS/patient/patient.api'
+
 export default {
   data() {
     return {
-      title: '患者资料',
+      patientId: '',
     }
   },
-  onLoad() {},
+  onLoad(params) {
+    this.patientId = params.patientId
+  },
   methods: {},
   components: {},
 }

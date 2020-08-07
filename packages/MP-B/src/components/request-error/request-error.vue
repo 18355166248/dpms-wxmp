@@ -1,9 +1,9 @@
 <template>
   <view class="request-error" :style="{ background: bg }">
     <text class="request-error-text">您的手机网络好像不太流畅哦~</text>
-    <view class="request-error-btn" @click="onClick()">
+    <button class="request-error-btn" @click="onClick()">
       重新加载
-    </view>
+    </button>
   </view>
 </template>
 
@@ -46,6 +46,7 @@ export default {
     background: $dpms-color-primary;
     color: #fff;
     border-radius: 5rpx;
+    font-size: 28rpx;
   }
 }
 </style>

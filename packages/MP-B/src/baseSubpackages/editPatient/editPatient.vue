@@ -1,36 +1,127 @@
 <template>
-  <editPatient></editPatient>
+  <scroll-view scroll-y class="h100 page-bg">
+    <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
+      <dpmsFormTitle title="基本信息" />
+      <dpmsCellInput
+        required
+        title="姓名"
+        placeholder="请输入姓名"
+        v-model="form.patientName"
+      />
+      <dpmsEnumsPicker
+        required
+        title="性别"
+        placeholder="请选择性别"
+        v-model="form.gender"
+        enumsKey="Gender"
+        isLink
+        headerText="选择性别"
+      />
+      <dpmsDatePicker
+        title="出生日期"
+        placeholder="请选择出生日期"
+        v-model="form.birthday"
+        :end="endDate"
+        headerText="选择出生日期"
+      />
+      <dpmsCellPicker
+        title="患者类型"
+        placeholder="请选择患者类型"
+        v-model="form.settingsTypeId"
+        :list="patientTypeList"
+        defaultType="settingsTypeId"
+        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        isLink
+      />
+      <dpmsCell
+        title="用户画像"
+        placeholder="请选择用户画像"
+        :value="patientTagsCheckedText"
+        isLink
+        @click.native="onSelectTags"
+      />
+      <dpmsFormTitle title="联系方式" />
+      <dpmsEnumsPicker
+        required
+        title="联系电话标签"
+        placeholder="请选择联系电话标签"
+        v-model="form.contactLabel"
+        enumsKey="ContactLabel"
+        isLink
+      />
+      <dpmsCellInput
+        required
+        type="number"
+        title="联系电话"
+        placeholder="请输入联系电话"
+        v-model="form.mobile"
+      />
+      <dpmsCellInput
+        type="number"
+        title="备用号码"
+        placeholder="请输入备用号码"
+        v-model="form.alternateMobile"
+      />
+      <dpmsCellInput
+        title="微信号"
+        placeholder="请输入微信号"
+        v-model="form.weChatId"
+      />
+      <dpmsCellInput
+        type="number"
+        title="QQ"
+        placeholder="请输入QQ"
+        v-model="form.qqNum"
+      />
+      <dpmsPlacePicker
+        title="家庭住址"
+        placeholder="请选择地区"
+        v-model="form.region"
+        headerText="选择地区"
+      />
+      <div class="dpms-cell-group dpms-cell-group-textarea">
+        <div class="dpms-cell" data-layout-align="space-between center">
+          <textarea
+            placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
+            placeholder="请输入详细住址"
+            auto-height
+            v-model="form.address"
+          />
+        </div>
+      </div>
+      <div class="pt-56 pb-82">
+        <dpmsButton
+          @click="submit"
+          type="primary"
+          :disabled="disabledSaveBtn"
+          :loading="loadingSaveBtn"
+        />
+        <!-- <dpmsButton @click="submit" text="取消" /> -->
+      </div>
+    </dpmsForm>
+  </scroll-view>
 </template>
 
 <script>
 import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import patientAPI from '@/APIS/patient/patient.api'
-import editPatient from '@/baseSubpackages/editPatient/editPatient.vue'
 
 export default {
+  // props: {
+  //   form: {
+  //     type: Object,
+  //     required: true,
+  //   },
+  // },
   data() {
     return {
       patientTypeList: [], //患者类型列表
       patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
-      index: 0,
       disabledSaveBtn: false,
       loadingSaveBtn: false,
-      form: {
-        patientName: '',
-        gender: '',
-        birthday: '',
-        settingsTypeId: '',
-        tagIds: [],
-        contactLabel: '',
-        mobile: '',
-        alternateMobile: '',
-        weChatId: '',
-        qqNum: '',
-        region: [],
-        address: '',
-      },
+      form: {},
       rules: {
         patientName: [
           {
@@ -83,9 +174,6 @@ export default {
       },
     }
   },
-  components: {
-    editPatient,
-  },
   created() {
     // 更新用户画像选中值
     uni.$on('updateTagsCheckedList', (checked) => {
@@ -93,12 +181,7 @@ export default {
 
       this.updateTagsCheckedText()
     })
-  },
-  beforeDestroy() {
-    uni.$off('updateTagsCheckedList')
-    uni.removeStorageSync('patientTagsList')
-  },
-  onLoad() {
+
     let that = this
     patientAPI.getPatientTypeList().then((res) => {
       that.patientTypeList = res.data
@@ -111,6 +194,10 @@ export default {
 
       this.updateTagsCheckedText()
     })
+  },
+  beforeDestroy() {
+    uni.$off('updateTagsCheckedList')
+    uni.removeStorageSync('patientTagsList')
   },
   methods: {
     bindDateChange: function (e) {
@@ -146,7 +233,7 @@ export default {
       this.disabledSaveBtn = true
       this.loadingSaveBtn = true
 
-      let { data: scrmPatientInfo } = await patientAPI.getPatientInScrm({
+      let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
         medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
           .belongsInstitutionId,
         mobile: this.form.mobile,
@@ -199,7 +286,7 @@ export default {
       delete formValue.region
       delete formValue.address
 
-      patientAPI
+      authAPI
         .createPatient({
           ...formValue,
           ...scrmPatientInfo,
@@ -217,7 +304,7 @@ export default {
         })
     },
     async submit() {
-      this.$refs.createPatientForm.validate((err, fileds) => {
+      this.$refs.editPatientForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0]?.message)
           return

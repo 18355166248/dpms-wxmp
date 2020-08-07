@@ -16,7 +16,7 @@
         isLink
         headerText="选择性别"
       />
-      <dpmsCellPicker
+      <dpmsDatePicker
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthdayStamp"
@@ -45,8 +45,8 @@
       <dpmsButton
         @click="saveMyProfile"
         type="primary"
-        :disabled="disabledSaveBtn"
-        :loading="loadingSaveBtn"
+        :disabled="isLoading"
+        :loading="isLoading"
       />
     </div>
   </div>
@@ -54,15 +54,31 @@
 
 <script>
 import moment from 'moment'
-import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import { mapState } from 'vuex'
 import institutionAPI from '@/APIS/institution/institution.api'
+
+const formData = {
+  staffId: '',
+  photoUrl: '',
+  username: '',
+  staffName: '',
+  mobile: '',
+  gender: '',
+  jobNo: '',
+  position: '',
+  departmentId: '',
+  workStatus: '',
+  belongsInstitutionId: '',
+  workMedicalInstitutionIds: '',
+  roleIds: '',
+  birthdayStamp: '',
+}
 
 export default {
   data() {
     return {
-      form: {},
-      disabledSaveBtn: false,
-      loadingSaveBtn: false,
+      form: formData,
+      isLoading: false,
       rules: {
         staffName: [
           {
@@ -91,18 +107,24 @@ export default {
       endDate: moment().format('YYYY-MM-DD'),
     }
   },
+  computed: {
+    ...mapState('workbenchStore', ['staff']),
+  },
+  created() {
+    // 初始化form
+    let form = JSON.parse(JSON.stringify(this.staff, Object.keys(formData)))
+    form.birthdayStamp = moment(form.birthdayStamp).format('YYYY-MM-DD')
+    console.log('form', form)
+    this.form = form
+  },
   methods: {
     saveMyProfile() {
       this.$refs.myProfileForm.validate((err, fileds) => {
-        delete this.form.belongsMedicalInstitutionDTO
-        delete this.form.workMedicalInstitutionList
-        delete this.form.birthday
         if (err) {
-          this.$utils.show(err[0]?.message)
+          this.$utils.show(err[0].message)
           return
         }
-        this.disabledSaveBtn = true
-        this.loadingSaveBtn = true
+        this.isLoading = true
         //成功执行
         institutionAPI
           .updateStaff({
@@ -110,28 +132,24 @@ export default {
             birthdayStamp: moment(this.form.birthdayStamp).valueOf(),
           })
           .then((res) => {
-            //TODO：成功
-            this.disabledSaveBtn = false
-            this.loadingSaveBtn = false
+            this.$store.commit('workbenchStore/setStaff', {
+              ...this.staff,
+              ...this.form,
+            })
+            let that = this
+            this.$utils.show('修改成功', {
+              duration: 1000,
+              complete() {
+                setTimeout(() => {
+                  that.$utils.back()
+                }, 1000)
+              },
+            })
           })
           .catch(() => {
-            this.disabledSaveBtn = false
-            this.loadingSaveBtn = false
+            this.isLoading = false
           })
       })
-    },
-    onLoad() {
-      let that = this
-      institutionAPI
-        .getStaffDetail({
-          staffId: getStorage(STORAGE_KEY.STAFF).staffId,
-        })
-        .then((res) => {
-          that.form = res.data
-          this.form.birthdayStamp = moment(res.data.birthdayStamp).format(
-            'YYYY-MM-DD',
-          )
-        })
     },
   },
 }

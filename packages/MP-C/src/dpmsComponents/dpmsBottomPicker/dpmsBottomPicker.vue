@@ -1,11 +1,10 @@
 <template>
   <div class="modal" v-show="visible">
     <div class="mask" @click="$emit('update:visible', false)"></div>
-      <div class="inner">
-        <div class="head">选择医生</div>
-        <div class="body">
-          <slot></slot>
-        </div>
+    <div class="inner">
+      <div class="head">选择医生</div>
+      <div class="body">
+        <slot></slot>
       </div>
     </div>
   </div>
@@ -17,10 +16,8 @@ export default {
     visible: Boolean,
   },
   data() {
-    return {
-      
-    }
-  }
+    return {}
+  },
 }
 </script>
 
