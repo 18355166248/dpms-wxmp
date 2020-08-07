@@ -20,7 +20,7 @@
       请输入姓名/拼音/手机号查找患者
     </div>
     <div
-      class="search-tip-text pt-28"
+      class="search-tip-text pt-28 pl-24 pr-24"
       v-if="isSearchedValue && patientList.length === 0"
     >
       没有找到“<span class="patient-name">{{ isSearchedValue }}</span
@@ -43,14 +43,18 @@
         :key="searchRecord"
         @click="chooseSearchRecord(searchRecord)"
       >
-        {{ searchRecord }}
+        {{
+          searchRecord.length > 10
+            ? `${searchRecord.substring(0, 10)}...`
+            : searchRecord
+        }}
       </span>
     </div>
 
     <!-- 搜索列表 -->
     <div v-if="isSearchedValue && patientList.length != 0">
-      <div v-for="parient in patientList" :key="parient.id">
-        <div @click="toPatient">
+      <div v-for="parient in patientList" :key="parient.patientId">
+        <div @click="toPatient(parient.patientId)">
           <card
             :name="parient.patientName"
             :avatarUrl="parient.avatarUrl"
@@ -67,7 +71,6 @@
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
-import { dataDictUtil } from '../../../utils/dataDict.util'
 import loadMore from '@/components/load-more/load-more.vue'
 
 export default {
@@ -169,9 +172,9 @@ export default {
       this.searchRecords = []
       uni.setStorageSync('searchPatientHistory', [])
     },
-    toPatient() {
+    toPatient(id) {
       this.$utils.push({
-        url: '/pages/patient/patient',
+        url: '/pages/patient/patient?patientId=' + id,
       })
     },
   },

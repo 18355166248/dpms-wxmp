@@ -1,5 +1,5 @@
 <template>
-  <scroll-view scroll-y class="h100 page-bg">
+  <div class="h100">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
       <dpmsCellInput
@@ -100,7 +100,7 @@
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
-  </scroll-view>
+  </div>
 </template>
 
 <script>
@@ -284,11 +284,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-bg {
-  height: 100%;
-  background: rgba(0, 0, 0, 0.04);
-}
-
 [data-layout-align] {
   display: flex;
   justify-content: flex-start;

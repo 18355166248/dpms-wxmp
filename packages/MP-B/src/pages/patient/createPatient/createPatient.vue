@@ -59,7 +59,7 @@ export default {
         alternateMobile: form.alternateMobile,
         weChatId: form.weChatId,
         qqNum: form.qqNum,
-        provinc: form.region[0],
+        province: form.region[0],
         city: form.region[1],
         area: form.region[2],
         address: form.address,
