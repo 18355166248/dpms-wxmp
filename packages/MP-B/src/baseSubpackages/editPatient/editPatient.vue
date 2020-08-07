@@ -94,7 +94,7 @@
           @click="submit"
           type="primary"
           :disabled="disabledSaveBtn"
-          :loading="loadingSaveBtn"
+          :loading="disabledSaveBtn"
         />
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
@@ -120,8 +120,20 @@ export default {
       patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
-      loadingSaveBtn: false,
-      form: {},
+      form: {
+        patientName: '',
+        gender: '',
+        birthday: '',
+        settingsTypeId: '',
+        tagIds: [],
+        contactLabel: '',
+        mobile: '',
+        alternateMobile: '',
+        weChatId: '',
+        qqNum: '',
+        region: [],
+        address: '',
+      },
       rules: {
         patientName: [
           {
@@ -200,9 +212,6 @@ export default {
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
-    bindDateChange: function (e) {
-      this.patientData.date = e.detail.value
-    },
     onSelectTags() {
       this.$utils.push({
         url:
@@ -227,82 +236,6 @@ export default {
         .map((tagItem) => tagItem.name)
         .join(',')
     },
-    // 检查患者是否已存在scrm系统中
-    async checkPatientInScrm() {
-      //保存患者时，添加禁用和loading效果
-      this.disabledSaveBtn = true
-      this.loadingSaveBtn = true
-
-      let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
-        medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
-          .belongsInstitutionId,
-        mobile: this.form.mobile,
-        patientName: this.form.patientName,
-      })
-
-      let that = this
-
-      if (scrmPatientInfo.newCustomer) {
-        //如果是新患者
-        that.createPatient(scrmPatientInfo)
-      } else {
-        //如果患者已存在
-        if (scrmPatientInfo.patientId) {
-          that.createPatient(scrmPatientInfo)
-        } else {
-          uni.showModal({
-            content: 'SCRM中存在姓名和手机号相同的客户，是否关联',
-            confirmText: '确认',
-            success: function (res) {
-              if (res.confirm) {
-              } else if (res.cancel) {
-                delete scrmPatientInfo.customerId
-              }
-              that.createPatient(scrmPatientInfo)
-            },
-          })
-        }
-      }
-    },
-    async createPatient(scrmPatientInfo) {
-      const formValue = _.cloneDeep(this.form)
-
-      let patientContact = {
-        contactLabel: this.form.contactLabel,
-        mobile: this.form.mobile,
-        alternateMobile: this.form.alternateMobile,
-        weChatId: this.form.weChatId,
-        qqNum: this.form.qqNum,
-        provinc: this.form.region[0],
-        city: this.form.region[1],
-        area: this.form.region[2],
-        address: this.form.address,
-      }
-
-      delete formValue.contactLabel
-      delete formValue.alternateMobile
-      delete formValue.weChatId
-      delete formValue.qqNum
-      delete formValue.region
-      delete formValue.address
-
-      authAPI
-        .createPatient({
-          ...formValue,
-          ...scrmPatientInfo,
-          patientContactStr: JSON.stringify([{ ...patientContact }]),
-        })
-        .then((res) => {
-          //保存患者成功后，取消禁用和loading效果
-          this.disabledSaveBtn = false
-          this.loadingSaveBtn = false
-        })
-        .catch(() => {
-          //保存患者失败后，取消禁用和loading效果
-          this.disabledSaveBtn = false
-          this.loadingSaveBtn = false
-        })
-    },
     async submit() {
       this.$refs.editPatientForm.validate((err, fileds) => {
         if (err) {
@@ -310,8 +243,13 @@ export default {
           return
         }
 
-        this.checkPatientInScrm()
+        //保存患者时，添加禁用和loading效果
+        this.disabledSaveBtn = true
+        this.$emit('submit', this.form)
       })
+    },
+    showBtn() {
+      this.disabledSaveBtn = false
     },
   },
 }

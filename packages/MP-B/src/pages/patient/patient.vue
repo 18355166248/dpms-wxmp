@@ -1,24 +1,142 @@
 <template>
   <view class="content">
-    患者资料
+    <div class="bg"></div>
+    <card
+      :name="patient.patientName"
+      :avatarUrl="patient.avatarUrl"
+      :gender="patient.gender"
+      :age="patient.age"
+      :infos="[
+        { label: '联系方式', value: patient.mobile },
+        { label: '用户画像', value: patient.tagListTxt },
+      ]"
+    />
+    <view class="menu-area">
+      <view class="menu-area-body mt-48">
+        <view
+          class="menu-area-item"
+          @click="toUrl('/baseSubpackages/todayWork/todayWork')"
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color1">
+            <text class="iconfont icon-my-entity"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            详细信息
+          </view>
+        </view>
+        <view
+          class="menu-area-item"
+          @click="toUrl('/baseSubpackages/apptForm/apptDetail')"
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color2">
+            <text class="iconfont icon-clock"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            预约
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
+import card from '@/components/card/card.vue'
 
 export default {
   data() {
     return {
       patientId: '',
+      patient: {},
     }
   },
   onLoad(params) {
     this.patientId = params.patientId
   },
-  methods: {},
-  components: {},
+  mounted(params) {
+    this.getPatient()
+  },
+  methods: {
+    getPatient() {
+      patientAPI.getPatientDetail({ patientId: this.patientId }).then((res) => {
+        let { data } = res
+        this.patient = data
+        this.patient.tagListTxt = this.patient.tagList
+          .map((v) => v.name)
+          .join('，')
+        console.log('this.patient', this.patient)
+      })
+    },
+    toUrl(url) {
+      this.$utils.push({
+        url,
+      })
+    },
+  },
+  components: {
+    card,
+  },
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.bg {
+  position: absolute;
+  width: 2500rpx;
+  height: 2500rpx;
+  border-radius: 1250rpx;
+  top: -2300rpx;
+  left: -875rpx;
+  background-color: $common-color;
+  z-index: 0;
+}
+.content {
+  padding-top: 40rpx;
+}
+.menu-area {
+  padding: 0 32rpx;
+  $width: 112rpx;
+  @mixin colors($linearStartColor, $linearEndColor) {
+    box-shadow: 0px 20px 20px -20px $linearEndColor;
+    background: linear-gradient(
+      323deg,
+      $linearStartColor 10%,
+      $linearEndColor 89%
+    );
+  }
+
+  &-body {
+    display: flex;
+    flex-direction: row;
+    .menu-area-item {
+      width: $width;
+      margin-right: 80rpx;
+      text-align: center;
+      &-icon {
+        width: $width;
+        height: $width;
+        line-height: $width;
+        border-radius: 40rpx;
+        text-align: center;
+        color: #fff;
+        .iconfont {
+          font-size: 60rpx;
+        }
+      }
+      &-icon-color1 {
+        $values: rgba(18, 148, 220, 1), rgba(57, 203, 240, 1);
+        @include colors($values...);
+      }
+      &-icon-color2 {
+        $values: rgba(251, 141, 81, 1), rgba(254, 178, 119, 1);
+        @include colors($values...);
+      }
+
+      &-txt {
+        font-size: 28rpx;
+      }
+    }
+  }
+}
+</style>
