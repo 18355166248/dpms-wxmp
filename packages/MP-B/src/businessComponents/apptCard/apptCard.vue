@@ -33,7 +33,7 @@
         <text class="subTag">{{ appt.patient.age }}</text>
       </view>
       <view class="apptDetail">
-        <view>
+        <view v-if="appt.visType">
           就诊类型：{{ VIS_TYPE_ENUM.properties[appt.visType].zh_CN }}
         </view>
         <view>联系方式：{{ appt.patient.mobile }}</view>

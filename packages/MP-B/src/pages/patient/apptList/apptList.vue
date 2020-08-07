@@ -6,7 +6,7 @@
           v-for="apptInfo in dataSource"
           :key="apptInfo.appointmentId"
           :appt="apptInfo"
-          :doctor="doctor"
+          :doctor="getDoctor(apptInfo.appointmentResourceMap.STAFF)"
         />
       </view>
     </scroll-view>
@@ -34,10 +34,6 @@ export default {
     this.loadData()
   },
   methods: {
-    // 触发下拉事件
-    emitPullDownRefresh() {
-      uni.startPullDownRefresh()
-    },
     // 获取列表数据
     loadData() {
       patientAPI.getApptList({ patientId: this.patientId }).then((res) => {
@@ -47,8 +43,6 @@ export default {
           ...data.beforeList,
           ...data.currentList,
         ]
-        console.log('data', this.dataSource)
-        // this.formData = data
       })
     },
     // 获取患者信息
@@ -58,18 +52,20 @@ export default {
         this.patient = data
       })
     },
-    getDoctor(val) {},
+    getDoctor(val) {
+      let doctor = val.filter((v) => v.position === 2 && v.staffId !== -1)[0]
+      return doctor ? doctor : { staffName: '未指定医生' }
+    },
   },
   components: {
     apptCard,
-    // empty,
-    // loadMore,
-    // requestError,
-    // fixedFilter,
-    // fixedFooter,
   },
   computed: {},
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.content {
+  padding-top: 32rpx;
+}
+</style>
