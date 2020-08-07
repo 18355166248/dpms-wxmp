@@ -14,9 +14,23 @@
       }
     },
     {
+      "path": "pages/projAptmt/projDetail",
+      "style": {
+        "navigationBarTitleText": "项目详情",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
       "path": "pages/docAptmt/docAptmt",
       "style": {
         "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/docAptmt/docDetail",
+      "style": {
+        "navigationBarTitleText": "医生详情",
         "enablePullDownRefresh": true
       }
     },
