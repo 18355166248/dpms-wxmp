@@ -16,8 +16,8 @@
           @change="onFilterOption"
         >
           <input class="storePickerInput" :value="pickerText" />
-          <span class="iconfont icon-down storePickerIcon"></span>
         </picker>
+        <span class="iconfont icon-down storePickerIcon"></span>
       </view>
       <view class="keywords">
         <input
@@ -29,12 +29,30 @@
       </view>
     </view>
     <view class="aptmtList">
-      <view class="aptmtCard" v-for="d in doctorList" :key="d.doctorId">
+      <view
+        class="aptmtCard"
+        v-for="d in doctorList"
+        :key="d.appointmentDoctorId"
+      >
+        <view
+          class="clickableArea"
+          @click="
+            toUrl(
+              '/pages/docAptmt/docDetail?appointmentDoctorId=' +
+                d.appointmentDoctorId,
+            )
+          "
+        ></view>
         <image :src="d.doctorAvatarUrl" />
         <view>
           <view class="aptmtCardContent">
             <view class="cardTile">{{ d.doctorName }}</view>
-            <view class="cardBtn" v-show="d.canAppointment">预 约</view>
+            <view
+              class="cardBtn"
+              v-show="d.canAppointment"
+              @click="handleAptmt(d.appointmentDoctorId)"
+              >预 约</view
+            >
           </view>
           <view class="cardDesc">{{ d.goodAt }}</view>
         </view>
@@ -47,7 +65,9 @@
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {
@@ -72,7 +92,7 @@ export default {
   },
   onReachBottom() {
     if (this.loadStatus === 'loading') return
-    if (this.projList.length >= this.total) return
+    if (this.doctorList.length >= this.total) return
     this.loadStatus = 'loading'
     ++this.currentPage
     this.loadData('add')
@@ -90,7 +110,7 @@ export default {
         })
         .then((res) => {
           res.data.unshift({
-            institutionId: null,
+            appointmentInstitutionId: null,
             institutionName: '全部门店',
           })
           this.filterStoreList = res.data
@@ -101,14 +121,15 @@ export default {
         .getInnerDocList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
           filterInstitutionId:
-            this.filterStoreList[this.selectedIndex]?.institutionId || null,
+            this.filterStoreList[this.selectedIndex]
+              ?.appointmentInstitutionId || null,
           searchParam: this.keyWord,
           current: this.currentPage,
           size: this.size,
         })
         .then((res) => {
           if (method === 'add') {
-            this.doctorList = this.storeList.concat(res.data.doctorList)
+            this.doctorList = this.doctorList.concat(res.data.doctorList)
           } else {
             this.doctorList = res.data.doctorList
           }
@@ -127,6 +148,33 @@ export default {
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
     },
+    handleAptmt(appointmentDoctorId) {
+      // e.preventDefault()
+      // if (!staff) {
+      //   this.$utils.replace({ url: '/pages/login/index' })
+      // }
+      const { toUrl } = this
+      institutionAPI
+        .checkDocCanAptmt({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          appointmentDoctorId,
+        })
+        .then((res) => {
+          if (res.data.canAppointment) {
+            toUrl('/pages/appoint/index?doctorId=' + appointmentDoctorId)
+            return
+          }
+          toUrl(
+            '/pages/docAptmt/docDetail?appointmentDoctorId=' +
+              appointmentDoctorId,
+          )
+        })
+    },
+    toUrl(url) {
+      this.$utils.push({
+        url,
+      })
+    },
     jump(url) {
       uni.redirectTo({ url })
     },
@@ -142,7 +190,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content {
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.04);
@@ -190,6 +238,7 @@ export default {
   background: #ffffff;
   border-radius: 8rpx;
   margin-left: 24rpx;
+  display: flex;
 }
 .storePickerInput {
   height: 36rpx;
@@ -202,10 +251,9 @@ export default {
   margin-top: 12rpx;
 }
 .storePickerIcon {
-  position: relative;
-  top: -55rpx;
-  left: 180rpx;
   color: rgba(0, 0, 0, 0.25);
+  margin-top: 22rpx;
+  margin-right: 4rpx;
 }
 .keyWordInput {
   height: 36rpx;
@@ -287,5 +335,12 @@ export default {
   position: relative;
   top: 25rpx;
   left: 220rpx;
+  z-index: 9999;
+}
+.clickableArea {
+  height: 212rpx;
+  width: 500rpx;
+  position: absolute;
+  z-index: 9999;
 }
 </style>
