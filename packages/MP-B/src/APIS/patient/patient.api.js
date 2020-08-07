@@ -40,6 +40,14 @@ const patientAPI = {
   getPatientDetail(data) {
     return httper.get('patient/patient/detail', data)
   },
+  // 更新患者信息
+  updatePatient(data) {
+    return httper.post('patient/patient/update/with/patient-contact', data)
+  },
+  // 查询患者的预约记录
+  getApptList(data) {
+    return httper.get('appointment/appointment/list-patient', data)
+  },
 }
 
 export default patientAPI
