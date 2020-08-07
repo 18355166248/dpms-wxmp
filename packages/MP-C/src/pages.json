@@ -30,7 +30,7 @@
     {
       "path": "pages/docAptmt/docDetail",
       "style": {
-        "navigationBarTitleText": "项目详情",
+        "navigationBarTitleText": "医生详情",
         "enablePullDownRefresh": true
       }
     },
