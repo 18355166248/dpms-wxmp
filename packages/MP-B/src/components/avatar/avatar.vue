@@ -1,11 +1,10 @@
 <template>
-  <view class="avatar">
+  <view class="avatar" :style="{ width: avatarSize, height: avatarSize }">
     <image
       class="avatar__img"
       :src="avatarSrc"
       :style="{ width: avatarSize, height: avatarSize }"
       mode="aspectFill"
-      role="img"
     ></image>
   </view>
 </template>

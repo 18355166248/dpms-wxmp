@@ -113,6 +113,18 @@
           "style": {
             "navigationBarTitleText": "预约项目"
           }
+        },
+        {
+          "path": "apptDetail",
+          "style": {
+            "navigationBarTitleText": "预约详情"
+          }
+        },
+        {
+          "path": "cancleAppt",
+          "style": {
+            "navigationBarTitleText": "取消预约"
+          }
         }
       ]
     }

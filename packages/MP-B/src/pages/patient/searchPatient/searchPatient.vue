@@ -49,7 +49,7 @@
 
     <!-- 搜索列表 -->
     <div v-if="isSearchedValue && patientList.length != 0">
-      <div data-layout-align v-for="parient in patientList" :key="parient.id">
+      <div v-for="parient in patientList" :key="parient.id">
         <card
           :name="parient.patientName"
           :avatarUrl="parient.avatarUrl"
@@ -101,6 +101,7 @@ export default {
       this.searchValue = param.value
     },
     getPatients() {
+      let that = this
       patientAPI
         .getPatientList({
           regularParam: this.isSearchedValue,
@@ -112,9 +113,11 @@ export default {
 
           const { total, current, records } = res.data
 
-          that.patientList =
-            current === 1 ? records : that.patientList.concat(records)
-
+          if (current === 1) {
+            that.patientList = records
+          } else {
+            that.patientList = that.patientList.concat(records)
+          }
           that.total = total
         })
         .catch(() => {
