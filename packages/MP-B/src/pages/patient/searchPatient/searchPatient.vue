@@ -50,16 +50,17 @@
     <!-- 搜索列表 -->
     <div v-if="isSearchedValue && patientList.length != 0">
       <div v-for="parient in patientList" :key="parient.id">
-        <card
-          :name="parient.patientName"
-          :avatarUrl="parient.avatarUrl"
-          :gender="parient.gender"
-          :age="parient.age"
-          :infos="[{ label: '联系电话', value: parient.mobile }]"
-        >
-        </card>
+        <div @click="toPatient">
+          <card
+            :name="parient.patientName"
+            :avatarUrl="parient.avatarUrl"
+            :gender="parient.gender"
+            :age="parient.age"
+            :infos="[{ label: '联系电话', value: parient.mobile }]"
+          />
+        </div>
       </div>
-      <load-more></load-more>
+      <load-more :status="dataSourceStatus.status" />
     </div>
   </scroll-view>
 </template>
@@ -79,6 +80,12 @@ export default {
       current: 1, //默认展示 第一页数据
       size: 10, //默认展示 15条数据
       total: 1, //默认 总条目，
+      // 数据列表的状态
+      dataSourceStatus: {
+        loading: true,
+        status: 'loading',
+        request: 'loading',
+      },
     }
   },
   onLoad() {
@@ -119,6 +126,10 @@ export default {
             that.patientList = that.patientList.concat(records)
           }
           that.total = total
+
+          if (total === that.patientList.length) {
+            this.dataSourceStatus.status = 'noMore'
+          }
         })
         .catch(() => {
           //
@@ -157,6 +168,11 @@ export default {
     clearHistorySearch() {
       this.searchRecords = []
       uni.setStorageSync('searchPatientHistory', [])
+    },
+    toPatient() {
+      this.$utils.push({
+        url: '/pages/patient/patient',
+      })
     },
   },
 }
