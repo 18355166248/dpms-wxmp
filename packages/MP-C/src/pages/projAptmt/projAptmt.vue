@@ -46,7 +46,7 @@
             <view
               class="cardBtn"
               v-show="p.canAppointment"
-              @click="handleAptmt(d.appointmentDoctorId)"
+              @click="handleAptmt(p.appointmentItemId)"
               >预 约</view
             >
           </view>
@@ -151,7 +151,7 @@ export default {
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
     },
-    handleAptmt(e, appointmentItemId) {
+    handleAptmt(appointmentItemId) {
       // e.preventDefault()
       // if (!staff) {
       //   this.$utils.replace({ url: '/pages/login/index' })
@@ -164,7 +164,7 @@ export default {
         })
         .then((res) => {
           if (res.data.canAppointment) {
-            toUrl('/pages/appoint/index?projAptmt=' + appointmentDoctorId)
+            toUrl('/pages/appoint/index?projAptmt=' + appointmentItemId)
             return
           }
           toUrl(
@@ -342,7 +342,7 @@ export default {
 }
 .clickableArea {
   height: 212rpx;
-  width: 500rpx;
+  width: 520rpx;
   position: absolute;
   z-index: 9999;
 }

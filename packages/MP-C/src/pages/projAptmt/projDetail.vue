@@ -74,7 +74,7 @@ export default {
     this.init(params)
   },
   methods: {
-    init() {
+    init(params) {
       const { appointmentItemId } = params
       institutionAPI
         .getProjDetail({
