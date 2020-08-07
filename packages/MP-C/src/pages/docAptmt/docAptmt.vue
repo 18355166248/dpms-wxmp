@@ -29,12 +29,30 @@
       </view>
     </view>
     <view class="aptmtList">
-      <view class="aptmtCard" v-for="d in doctorList" :key="d.doctorId">
+      <view
+        class="aptmtCard"
+        v-for="d in doctorList"
+        :key="d.appointmentDoctorId"
+      >
+        <view
+          class="clickableArea"
+          @click="
+            toUrl(
+              '/pages/docAptmt/docDetail?appointmentDoctorId=' +
+                d.appointmentDoctorId,
+            )
+          "
+        ></view>
         <image :src="d.doctorAvatarUrl" />
         <view>
           <view class="aptmtCardContent">
             <view class="cardTile">{{ d.doctorName }}</view>
-            <view class="cardBtn" v-show="d.canAppointment">预 约</view>
+            <view
+              class="cardBtn"
+              v-show="d.canAppointment"
+              @click="handleAptmt(d.appointmentDoctorId)"
+              >预 约</view
+            >
           </view>
           <view class="cardDesc">{{ d.goodAt }}</view>
         </view>
@@ -129,6 +147,33 @@ export default {
     },
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
+    },
+    handleAptmt(appointmentDoctorId) {
+      // e.preventDefault()
+      // if (!staff) {
+      //   this.$utils.replace({ url: '/pages/login/index' })
+      // }
+      const { toUrl } = this
+      institutionAPI
+        .checkDocCanAptmt({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          appointmentDoctorId,
+        })
+        .then((res) => {
+          if (res.data.canAppointment) {
+            toUrl('/pages/appoint/index?doctorId=' + appointmentDoctorId)
+            return
+          }
+          toUrl(
+            '/pages/docAptmt/docDetail?appointmentDoctorId=' +
+              appointmentDoctorId,
+          )
+        })
+    },
+    toUrl(url) {
+      this.$utils.push({
+        url,
+      })
     },
     jump(url) {
       uni.redirectTo({ url })
@@ -290,5 +335,12 @@ export default {
   position: relative;
   top: 25rpx;
   left: 220rpx;
+  z-index: 9999;
+}
+.clickableArea {
+  height: 212rpx;
+  width: 500rpx;
+  position: absolute;
+  z-index: 9999;
 }
 </style>

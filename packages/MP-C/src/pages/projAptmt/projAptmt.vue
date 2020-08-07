@@ -30,11 +30,25 @@
     </view>
     <view class="aptmtList">
       <view class="aptmtCard" v-for="p in projList" :key="p.appointmentItemId">
+        <view
+          class="clickableArea"
+          @click="
+            toUrl(
+              '/pages/projAptmt/projDetail?appointmentItemId=' +
+                p.appointmentItemId,
+            )
+          "
+        ></view>
         <image :src="p.itemThumbnailUrl" />
         <view>
           <view class="aptmtCardContent">
             <view class="cardTile">{{ p.itemName }}</view>
-            <view class="cardBtn" v-show="p.canAppointment">预 约</view>
+            <view
+              class="cardBtn"
+              v-show="p.canAppointment"
+              @click="handleAptmt(d.appointmentDoctorId)"
+              >预 约</view
+            >
           </view>
           <view class="cardDesc">{{ p.itemBriefIntroduction }}</view>
         </view>
@@ -136,6 +150,33 @@ export default {
     },
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
+    },
+    handleAptmt(e, appointmentItemId) {
+      // e.preventDefault()
+      // if (!staff) {
+      //   this.$utils.replace({ url: '/pages/login/index' })
+      // }
+      const { toUrl } = this
+      institutionAPI
+        .checkPorjCanAptmt({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          appointmentItemId,
+        })
+        .then((res) => {
+          if (res.data.canAppointment) {
+            toUrl('/pages/appoint/index?projAptmt=' + appointmentDoctorId)
+            return
+          }
+          toUrl(
+            '/pages/projAptmt/projDetail?appointmentItemId=' +
+              appointmentItemId,
+          )
+        })
+    },
+    toUrl(url) {
+      this.$utils.push({
+        url,
+      })
     },
     jump(url) {
       uni.redirectTo({ url })
@@ -297,5 +338,12 @@ export default {
   position: relative;
   top: 25rpx;
   left: 180rpx;
+  z-index: 9999;
+}
+.clickableArea {
+  height: 212rpx;
+  width: 500rpx;
+  position: absolute;
+  z-index: 9999;
 }
 </style>

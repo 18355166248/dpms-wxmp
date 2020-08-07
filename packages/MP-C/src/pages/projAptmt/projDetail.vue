@@ -70,15 +70,16 @@ export default {
       tips: [],
     }
   },
-  onLoad() {
-    this.init()
+  onLoad(params) {
+    this.init(params)
   },
   methods: {
     init() {
+      const { appointmentItemId } = params
       institutionAPI
         .getProjDetail({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
-          appointmentItemId: 1,
+          appointmentItemId,
         })
         .then((res) => {
           this.institutionList = res.data.institutionList

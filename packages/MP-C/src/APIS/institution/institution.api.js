@@ -43,6 +43,12 @@ const institutionAPI = {
       data,
     )
   },
+  checkDocCanAptmt(data) {
+    return httper.get(
+      '/institution-customer/home-page/doctor/appointment/check',
+      data,
+    )
+  },
 }
 
 export default institutionAPI

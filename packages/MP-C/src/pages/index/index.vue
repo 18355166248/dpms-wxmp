@@ -197,16 +197,23 @@ export default {
         })
     },
     handleProjAptmt(appointmentItemId) {
-      if (!staff) {
-        this.$utils.replace({ url: '/pages/login/index' })
-      }
+      // if (!staff) {
+      //   this.$utils.replace({ url: '/pages/login/index' })
+      // }
+      const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
-          console.log(res)
+          if (res.data.canAppointment) {
+            toUrl('/pages/appoint/index?itemId=' + appointmentItemId)
+            return
+          }
+          toUrl(
+            '/pages/docAptmt/docAptmt?appointmentItemId=' + appointmentItemId,
+          )
         })
     },
     toUrl(url) {
