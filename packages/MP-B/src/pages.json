@@ -70,7 +70,7 @@
         {
           "path": "createPatient/personas",
           "style": {
-            "navigationBarTitleText": "用户画像"
+            "navigationBarTitleText": "患者标签"
           }
         },
         {
