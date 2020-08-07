@@ -125,17 +125,19 @@ export default {
         })
     },
     //执行搜索
-    searchPatients: function (e) {
+    searchPatients() {
+      if (!this.searchValue) {
+        return
+      }
       this.isSearchedValue = this.searchValue
-      let that = this
 
-      //搜索历史列表数据
+      //搜索历史列表数据：最多显示10条
       let searchList = [
         ...new Set([
           this.isSearchedValue,
           ...uni.getStorageSync('searchPatientHistory'),
         ]),
-      ]
+      ].filter((v, index) => index < 10)
 
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
