@@ -8,16 +8,12 @@
       class="home-view"
     >
       <view class="home-bg">
-        <image
-          class="home-bg-img"
-          src="/static/header-bg.png"
-          mode="widthFix"
-        ></image>
+        <image class="home-bg-img" src="/static/header-bg.png" mode="widthFix" />
       </view>
       <text class="my">我的</text>
       <view class="header-wrapper mh-32 pt-47">
         <view class="header">
-          <image class="headerImg" :src="headerImgSrc"></image>
+          <image class="headerImg" :src="headerImgSrc" />
           <view class="userName">112233445566</view>
         </view>
       </view>
@@ -28,8 +24,8 @@
         </div>
         <div>
           <view>白金会员</view>
-          <view
-            >会员等级
+          <view>
+            会员等级
             <span class="icon iconfont icon-rightCircle"></span>
           </view>
         </div>
@@ -40,26 +36,23 @@
       </view>
       <view class="personAppointment">
         <div>
-          <span
-            ><span style="color: #fb8e51;" class="iconfont icon-set"></span
-            >人员管理</span
-          >
-          <span @click="goPerson"
-            >已添加{{ count }}人<span class="iconfont icon-right"></span
-          ></span>
+          <span>
+            <span style="color: #fb8e51;" class="iconfont icon-set"></span>人员管理
+          </span>
+          <span @click="goPerson">
+            已添加{{ count }}人
+            <span class="iconfont icon-right"></span>
+          </span>
         </div>
         <div>
-          <span
-            ><span
-              style="color: #4d94fe;"
-              class="iconfont icon-timeCircle"
-            ></span
-            >我的预约</span
-          >
-          <span @click="goAppointment"
-            >待确认:{{ 1 }} /已预约:{{ 2
-            }}<span class="iconfont icon-right"></span
-          ></span>
+          <span>
+            <span style="color: #4d94fe;" class="iconfont icon-timeCircle"></span>我的预约
+          </span>
+          <span @click="goAppointment">
+            待确认:{{ 1 }} /已预约:{{ 2
+            }}
+            <span class="iconfont icon-right"></span>
+          </span>
         </div>
       </view>
       <view class="logOut">
@@ -74,8 +67,9 @@
         @change="onChange"
         @click="goAppointment"
         class="aptmt"
-        ><span class="iconfont icon-time"></span
-      ></movable-view>
+      >
+        <span class="iconfont icon-time"></span>
+      </movable-view>
     </view>
   </movable-area>
 </template>

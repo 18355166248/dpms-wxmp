@@ -1,14 +1,8 @@
 <template>
   <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div class="hint">
-      提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
-    </div>
+    <div class="hint">提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。</div>
     <div class="personInfo">
-      <dpmsCellInput
-        title="姓名"
-        v-model="form.personnelName"
-        placeholder="请输入姓名"
-      />
+      <dpmsCellInput title="姓名" v-model="form.personnelName" placeholder="请输入姓名" />
       <dpmsEnumsPicker
         title="性别"
         v-model="form.gender"
@@ -30,21 +24,14 @@
         placeholder="请选择联系电话标签"
         enumsKey="ContactLabel"
       />
-      <dpmsCellInput
-        type="number"
-        title="联系电话"
-        v-model="form.mobile"
-        placeholder="请输入联系电话"
-        @change="phone"
-      />
+      <dpmsCellInput type="number" title="联系电话" v-model="form.mobile" placeholder="请输入联系电话" />
       <div class="info" v-show="needAuthCode">
-        <dpmsCellInput type="number" title="验证码" v-model="form.authCode" />
+        <dpmsCellInput type="number" title="验证码" v-model="form.verificationCode" />
         <span
           class="getAuthCode"
           :class="{ disabled: !!second }"
           @click="getCode"
-          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span
-        >
+        >{{ second ? `${second}秒后再试` : '获取验证码' }}</span>
       </div>
       <dpmsCellPicker
         title="默认人员"
@@ -68,26 +55,40 @@ export default {
   data() {
     return {
       endDate: moment().format('YYYY-MM-DD'),
-      male: ['男', '女'],
       second: 0,
       defaultType: [
         { label: '开', value: true },
         { label: '关', value: false },
       ],
-      needAuthCode: true,
+      needAuthCode: false,
       form: {
         personnelName: '',
         gender: '',
         birthday: '',
         mobile: '',
         contactLabel: '',
-        authCode: '',
-        defaultPersonnel: null,
+        verificationCode: '',
+        defaultPersonnel: '',
         userId: getStorage(STORAGE_KEY.STAFF).id,
         id: '',
         personnelId: '',
       },
     }
+  },
+  watch: {
+    'form.mobile'() {
+      if (this.form.mobile.length == 11) {
+        customerAPI
+          .needVerify({
+            userId: getStorage(STORAGE_KEY.STAFF).id,
+            mobile: this.form.mobile,
+          })
+          .then((res) => {
+            console.log(res)
+            this.needAuthCode = res.data
+          })
+      }
+    },
   },
   created() {},
   methods: {
@@ -116,7 +117,7 @@ export default {
       }
     },
     submit() {
-      if ((this.form.defaultPersonnel = '开')) {
+      if (this.form.defaultPersonnel == '开') {
         this.form.defaultPersonnel = true
       } else {
         this.form.defaultPersonnel = false
@@ -129,19 +130,6 @@ export default {
         .catch((error) => {
           console.log('form', this.form)
         })
-    },
-    phone() {
-      if ((this.form.mobile.length = 11)) {
-        customerAPI
-          .needVerify({
-            userId: getStorage(STORAGE_KEY.STAFF).id,
-            mobile: this.form.mobile,
-          })
-          .then((res) => {
-            console.log(res)
-            this.needAuthCode = res.data
-          })
-      }
     },
   },
 }
