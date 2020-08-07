@@ -72,6 +72,7 @@ export default {
       delete formValue.region
       delete formValue.address
 
+      let that = this
       patientAPI
         .createPatient({
           ...formValue,
@@ -79,10 +80,19 @@ export default {
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {
-          this.$refs.editPatient.showBtn()
+          that.$refs.editPatient.showBtn()
+
+          that.$utils.show('修改成功', {
+            duration: 1000,
+            complete() {
+              setTimeout(() => {
+                that.$utils.back()
+              }, 1000)
+            },
+          })
         })
         .catch(() => {
-          this.$refs.editPatient.showBtn()
+          that.$refs.editPatient.showBtn()
         })
     },
   },
