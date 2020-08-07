@@ -7,20 +7,23 @@
     <div class="personList">
       <div
         class="item"
-        @click="personDetail"
-        v-for="val of personList"
+        v-for="(val,index) of personList"
+        @click="personDetail(index)"
         :key="val.id"
       >
         <div class="name">
           {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
-          <span class="self" v-show="val.defaultPersonnel">本人</span>
+          <span
+            class="self"
+            v-if="val.contactLabel==1"
+          >本人</span>
         </div>
         <div class="phone">手机：{{ val.mobile }}</div>
         <span class="iconfont icon-right"></span>
       </div>
     </div>
     <div class="empty" v-show="showEmpty">
-      <image class="emptyImg" src="/static/empty.svg"></image>
+      <image class="emptyImg" src="/static/empty.svg" />
       <div class="emptyTxt">未查询到任何信息</div>
     </div>
   </scroll-view>
@@ -29,6 +32,7 @@
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+
 export default {
   data() {
     return {
@@ -47,9 +51,8 @@ export default {
       customerAPI
         .getCustomerList({ userId: id })
         .then((res) => {
-          console.log('111111111111111', res)
           this.personList = res.data
-          if ((res.data.length = 0)) {
+          if (res.data.length == 0) {
             this.showEmpty = true
           } else {
             this.showEmpty = false
@@ -65,8 +68,11 @@ export default {
     addPerson() {
       this.$utils.push({ url: '/pages/personAdd/personAdd' })
     },
-    personDetail() {
-      this.$utils.push({ url: '/pages/personDetail/personDetail' })
+    personDetail(index) {
+      let detail = JSON.stringify(this.personList[index])
+      this.$utils.push({
+        url: '/pages/personDetail/personDetail?personDetail=detail',
+      })
     },
   },
 }
