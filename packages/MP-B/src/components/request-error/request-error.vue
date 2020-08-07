@@ -46,6 +46,7 @@ export default {
     background: $dpms-color-primary;
     color: #fff;
     border-radius: 5rpx;
+    font-size: 28rpx;
   }
 }
 </style>

@@ -93,6 +93,7 @@
                         @click="
                           toPage('/baseSubpackages/apptForm/apptForm', {
                             type: 'editRegister',
+                            appointmentId: item.appointmentId,
                           })
                         "
                       >
@@ -103,12 +104,20 @@
                         @click="
                           toPage('/baseSubpackages/apptForm/apptForm', {
                             type: 'editAppt',
+                            appointmentId: item.appointmentId,
                           })
                         "
                       >
                         编辑
                       </button>
-                      <button class="button" @click="cancleAppointment">
+                      <button
+                        class="button"
+                        @click="
+                          toPage('/baseSubpackages/apptForm/cancleAppt', {
+                            appointmentId: item.appointmentId,
+                          })
+                        "
+                      >
                         取消
                       </button>
                     </template>
@@ -177,6 +186,7 @@ import requestError from '@/components/request-error/request-error.vue'
 import fixedFilter from '@/components/fixed-filter/fixed-filter.vue'
 import qs from 'qs'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+import { globalEventKeys } from '@/config/global.eventKeys.js'
 
 export default {
   data() {
@@ -209,7 +219,14 @@ export default {
       TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
     }
   },
-
+  onReady() {
+    uni.$on(globalEventKeys.cancleApptSuccess, () => {
+      this.loadData()
+    })
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.cancleApptSuccess)
+  },
   onLoad() {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.loadCurrentStaff()
@@ -485,6 +502,9 @@ export default {
 
       color: $dpms-color-primary;
       border: 2rpx solid $dpms-color-primary;
+      &::after {
+        border: none;
+      }
     }
     .inverted-button {
       background: $dpms-color-primary;
@@ -509,6 +529,9 @@ export default {
       text-align: center;
       background-color: $dpms-color-primary;
       color: #fff;
+      &::after {
+        border: none;
+      }
     }
   }
 }

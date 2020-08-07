@@ -37,7 +37,7 @@
           :style="{ paddingRight: status ? '120rpx' : 0 }"
         >
           <text class="card-baseInfo-name">{{ name }}</text>
-          <view v-if="status" class="card-baseInfo-extend">
+          <view v-if="badgeObj" class="card-baseInfo-extend">
             <badge
               :type="badgeObj.type"
               :color="badgeObj.color"
@@ -46,7 +46,7 @@
           </view>
         </view>
 
-        <view class="mb-40">
+        <view :class="{ 'mb-40': infos.length > 0 }">
           <tag :text="genderTag.text" :circle="false" type="error"></tag>
           <template v-if="age">
             <tag :text="age" :circle="false" type="error"></tag>
@@ -98,10 +98,12 @@ import qs from 'qs'
  * @property {String} avatarUrl 患者头像（如果不传，则会根据性别，显示默认头像）
  * @property {Number} gender 患者性别
  * @property {String} age 患者年龄
- * @property {Number} status 卡片状态
+ * @property {Number|Object} status 卡片状态
+ * @value { Number } 挂号状态，会自动生成对应的文本，颜色，类型
+ * @value { Object } {type: 徽章类型(根据不同类型生成不同的颜色和特效), color: 徽章颜色，会改变默认type类型的颜色, text: 徽章文本} 自定义徽章信息
  * @property {String|Number|Object} cornerMarker 卡片角标
  * @value { String | Number } 直接显示
- * 	@value { Object } = {size: 角标大小, bgColor: 角标背景, color: 文本颜色, text: 文本内容} 角标对象
+ * @value { Object } = {size: 角标大小, bgColor: 角标背景, color: 文本颜色, text: 文本内容} 角标对象
  * @property {Object} marginConfig 卡片间隙对象
  * @value size { Number } 间隙大小
  * @value position { Array|String } 间隙方向如: "left", ["left"], ["left", "top"],["left", "right", "top", "bottom"]
@@ -135,8 +137,7 @@ export default {
       default: null,
     },
     status: {
-      type: Number,
-      default: null,
+      type: [Number, Object],
     },
     cornerMarker: {
       type: [String, Number, Object],
@@ -224,38 +225,44 @@ export default {
     },
     badgeObj() {
       if (this.status) {
-        const text = this.status
-          ? this.REGISTER_ENUM.properties[this.status]?.zh_CN
-          : '--'
-        const status = this.REGISTER_ENUM.properties[this.status]?.key
+        if (this.$utils.isNumber(this.status)) {
+          const text = this.status
+            ? this.REGISTER_ENUM.properties[this.status]?.zh_CN
+            : '--'
+          const status = this.REGISTER_ENUM.properties[this.status]?.key
 
-        const badge = { text }
+          const badge = { text }
 
-        switch (status) {
-          case 'REGISTER_APPOINTED':
-            badge.type = 'success'
-            break
-          case 'REGISTER_REGISTERED':
-            badge.type = 'error'
-            break
-          case 'REGISTER_CONSULTING':
-            badge.type = 'warning'
-            break
-          case 'REGISTER_TREATING':
-            badge.type = 'processing'
-            break
-          case 'REGISTER_TREATED':
-            badge.type = 'success'
-            break
-          case 'REGISTER_CANCELED':
-            badge.type = 'error'
-            break
-          default:
-            badge.type = 'default'
+          switch (status) {
+            case 'REGISTER_APPOINTED':
+              badge.type = 'success'
+              break
+            case 'REGISTER_REGISTERED':
+              badge.type = 'error'
+              break
+            case 'REGISTER_CONSULTING':
+              badge.type = 'warning'
+              break
+            case 'REGISTER_TREATING':
+              badge.type = 'processing'
+              break
+            case 'REGISTER_TREATED':
+              badge.type = 'success'
+              break
+            case 'REGISTER_CANCELED':
+              badge.type = 'error'
+              break
+            default:
+              badge.type = 'default'
+          }
+
+          return badge
         }
-
-        return badge
+        if (this.$utils.isObject(this.status)) {
+          return this.status
+        }
       }
+      return null
     },
 
     genderTag() {
@@ -314,7 +321,7 @@ export default {
   padding: 32rpx 24rpx;
   // border-top-width: 12rpx;
   // border-top-style: solid;
-  box-shadow: 0rpx -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
 
   &-corner-marker {
     position: absolute;

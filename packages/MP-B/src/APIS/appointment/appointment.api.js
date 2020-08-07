@@ -25,6 +25,10 @@ const appointmentAPI = {
       params,
     )
   },
+  // 预约 状态修改
+  updateAppointmentStatus(data) {
+    return httper.post('appointment/appointment/update/status', data)
+  },
 }
 
 export default appointmentAPI
