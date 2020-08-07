@@ -104,7 +104,7 @@ $uni-color-primary: #1890ff;
 $uni-color-error: #fa541c;
 $tag-pd: 0px 28rpx;
 $tag-small-pd: 0px 16rpx;
-$amount: 0.2;
+$amount: 0.1;
 
 .tag {
   /* #ifndef APP-NVUE */

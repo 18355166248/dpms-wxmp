@@ -18,87 +18,25 @@
         </card>
       </view>
       <view class="appt-detail-wrapper-main-cotent">
-        <view class="description-item">
-          <view class="description-item-label">预约诊所</view>
-          <view class="description-item-con">{{
-            dataSource.medicalInstitutionSimpleCode ||
-            '医疗机构简称（接口文档有，真实返回数据没有）'
-          }}</view>
-        </view>
-        <view class="description-item">
-          <view class="description-item-label">预约时间</view>
-          <view class="description-item-con">{{ apptTime }}</view>
-        </view>
-        <view class="description-item">
-          <view class="description-item-label">咨询师</view>
-          <view class="description-item-con">{{ staff.consultant }}</view>
-        </view>
-        <view class="description-item">
-          <view class="description-item-label">医生</view>
-          <view class="description-item-con">{{ staff.doctor }}</view>
-        </view>
-        <view class="description-item">
-          <view class="description-item-label">助理</view>
-          <view class="description-item-con">{{ staff.assistant }}</view>
-        </view>
-        <view class="description-item">
-          <view class="description-item-label">预约项目</view>
-          <view class="description-item-con">{{ apptItemsStr }}</view>
-        </view>
-        <view class="description-item">
-          <view class="description-item-label">预约备注</view>
-          <view class="description-item-con">{{
-            dataSource.appointmentMemo || '--'
-          }}</view>
-        </view>
+        <textarea
+          @blur="bindTextAreaBlur"
+          auto-height
+          v-model="appointmentMemo"
+          placeholder="请输入预约备注"
+          :maxlength="500"
+          class="memo"
+        />
       </view>
     </view>
     <fixed-footer>
       <view class="button-group">
-        <template v-if="statusEnumKey === 'APPOINTMENT'">
-          <button
-            class="button button-ghost"
-            @click="
-              toPage('/baseSubpackages/apptForm/cancleAppt', {
-                appointmentId: appointmentId,
-              })
-            "
-          >
-            取消
-          </button>
-          <button
-            class="button button-ghost"
-            @click="
-              toPage('/baseSubpackages/apptForm/apptForm', {
-                type: 'editRegister',
-                appointmentId: appointmentId,
-              })
-            "
-          >
-            挂号
-          </button>
-          <button
-            class="button"
-            @click="
-              toPage('/baseSubpackages/apptForm/apptForm', {
-                type: 'editAppt',
-                appointmentId: appointmentId,
-              })
-            "
-          >
-            编辑
-          </button>
-        </template>
         <button
-          v-else-if="statusEnumKey === 'REGISTERED'"
           class="button"
-          @click="
-            toPage('/baseSubpackages/apptForm/cancleAppt', {
-              appointmentId: appointmentId,
-            })
-          "
+          @click="save"
+          :disabled="isSaveing"
+          :loading="isSaveing"
         >
-          取消
+          保存
         </button>
       </view>
     </fixed-footer>
@@ -108,12 +46,11 @@
   </view>
 </template>
 <script>
-import moment from 'moment'
-import qs from 'qs'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import card from '@/components/card/card.vue'
 import requestError from '@/components/request-error/request-error.vue'
+import { globalEventKeys } from '@/config/global.eventKeys.js'
 
 export default {
   data() {
@@ -122,9 +59,11 @@ export default {
         loading: true,
         status: 'loading',
       },
+      appointmentMemo: '',
       appointmentId: null,
       dataSource: {},
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      isSaveing: false,
     }
   },
   components: {
@@ -136,13 +75,8 @@ export default {
     this.loadData()
   },
   methods: {
-    // 页面跳转
-    toPage(url, params) {
-      this.$utils.push({
-        url: `${url}?${qs.stringify(params, {
-          arrayFormat: 'comma', // a: [1, 2] => a=1,2
-        })}`,
-      })
+    bindTextAreaBlur(e) {
+      console.log(e.detail.value)
     },
     // 请求数据
     async loadData() {
@@ -161,35 +95,28 @@ export default {
         this.dataSource = listRes.data
         this.requestStatus.status = 'success'
       }
-
-      console.log('listRes:', listRes)
-
       uni.hideNavigationBarLoading()
+    },
+    async save() {
+      this.isSaveing = true
+
+      const [listErr, listRes] = await this.$utils.asyncTasks(
+        appointmentAPI.updateAppointmentStatus({
+          appointmentId: this.appointmentId,
+          appointmentStatus: this.APPOINTMENT_STATUS_ENUM.CANCELED.value,
+          appointmentMemo: this.appointmentMemo,
+        }),
+      )
+
+      if (listRes) {
+        uni.$emit(globalEventKeys.cancleApptSuccess)
+        this.$utils.back()
+      }
+
+      this.isSaveing = false
     },
   },
   computed: {
-    statusEnumKey() {
-      if (this.dataSource.appointmentStatus) {
-        return this.APPOINTMENT_STATUS_ENUM.properties[
-          this.dataSource.appointmentStatus
-        ].key
-      }
-    },
-    staff() {
-      if (Array.isArray(this.dataSource?.appointmentResourceMap?.STAFF)) {
-        const staff = this.dataSource.appointmentResourceMap.STAFF
-        return {
-          doctor: staff[0].staffName,
-          consultant: staff[2].staffName,
-          assistant: staff[3].staffName,
-        }
-      }
-      return {
-        doctor: '--',
-        consultant: '--',
-        assistant: '--',
-      }
-    },
     statusBadge() {
       const appointmentStatusColorMap = {
         [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
@@ -211,30 +138,6 @@ export default {
           : '--',
       }
     },
-
-    apptItemsStr() {
-      if (
-        this.dataSource.appointmentResourceMap &&
-        Array.isArray(
-          this.dataSource.appointmentResourceMap.COMMON_DATA_APPOINTMENT_ITEM,
-        ) &&
-        this.dataSource.appointmentResourceMap.COMMON_DATA_APPOINTMENT_ITEM
-          .length > 0
-      ) {
-        // 生成项目名的字符串数组
-        const itemsArr = this.dataSource.appointmentResourceMap.COMMON_DATA_APPOINTMENT_ITEM.map(
-          (item) => item.appointmentSettingsAppointmentItemName,
-        )
-        return itemsArr.join('、')
-      }
-
-      return '--'
-    },
-    apptTime() {
-      return `${moment(this.dataSource.appointmentBeginTimeStamp).format(
-        'YYYY-MM-DD HH:mm',
-      )}`
-    },
   },
 }
 </script>
@@ -244,7 +147,6 @@ export default {
   height: 100%;
   box-sizing: border-box;
   position: relative;
-  background: #fefefe;
 
   .circular-arc-top {
     width: 100%;
@@ -283,7 +185,6 @@ export default {
       transform: translateY(-50%);
     }
     &-main-cotent {
-      padding: 0 32rpx;
       color: $common-text-color;
       font-size: $dpms-font-size-base;
 
@@ -326,6 +227,7 @@ export default {
       color: #fff;
       box-sizing: border-box;
       border-radius: 0;
+      font-size: 30rpx;
 
       &:first-child {
         border-right: none;
@@ -341,6 +243,13 @@ export default {
       border: 2rpx solid $dpms-color-primary;
       border-bottom: none;
     }
+  }
+  .memo {
+    width: 100%;
+    min-height: 300rpx;
+    background: #fff;
+    box-sizing: border-box;
+    padding: 30rpx;
   }
 }
 </style>

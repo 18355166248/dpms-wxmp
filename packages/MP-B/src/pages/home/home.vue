@@ -31,13 +31,13 @@
     >
       <view class="header-wrapper mh-32 pt-47">
         <view class="header">
-          <view class="header-search-wrapper mr-24">
-            <input
-              class="header-search-wrapper-input"
-              confirm-type="search"
-              placeholder="搜索"
-              @click="toUrl('/pages/patient/searchPatient/searchPatient')"
-            />
+          <view
+            class="header-search-wrapper mr-24"
+            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+          >
+            <view class="header-search-wrapper-input">
+              搜索
+            </view>
             <text class="iconfont icon-search"></text>
           </view>
           <view
@@ -117,7 +117,7 @@
             </view>
             <view
               class="menu-area-item"
-              @click="toUrl('/baseSubpackages/apptForm/apptDetail')"
+              @click="toUrl('/baseSubpackages/apptView/apptView')"
             >
               <view class="menu-area-item-icon menu-area-item-icon-color2">
                 <text class="iconfont icon-clock"></text>
@@ -194,43 +194,34 @@ export default {
   },
 
   computed: {
-    capsuleHeight: function () {
-      return `${this.menuButtonObject.height}px`
+    capsuleHeight() {
+      return `${uni.getMenuButtonBoundingClientRect().height}px`
     },
-    windowHeight: function () {
-      return this.systemInfoObject.windowHeight
-    },
-    navHeight: function () {
+    navHeight() {
       return (
-        this.systemInfoObject.statusBarHeight +
-        this.menuButtonObject.height +
-        (this.menuButtonObject.top - this.systemInfoObject.statusBarHeight)
+        this.$systemInfo.statusBarHeight +
+        uni.getMenuButtonBoundingClientRect().height +
+        (uni.getMenuButtonBoundingClientRect().top -
+          this.$systemInfo.statusBarHeight)
       )
     },
-    menuButtonObject: function () {
-      return uni.getMenuButtonBoundingClientRect()
-    },
-    systemInfoObject: function () {
-      console.log('SystemInfoSync:', this.$systemInfo)
-      return this.$systemInfo
-    },
-    staffName: function () {
+    staffName() {
       return getStorage(STORAGE_KEY.STAFF)
         ? getStorage(STORAGE_KEY.STAFF).staffName
         : '--'
     },
-    price: function () {
+    price() {
       return this.$utils.formatPrice(this.pageData.actualIncome)
     },
-    scrollHeight: function () {
-      return this.windowHeight - this.navHeight + 'px'
+    scrollHeight() {
+      return this.$systemInfo.windowHeight - this.navHeight + 'px'
     },
     // 计算属性的 getter
-    navTop: function () {
-      return `${this.menuButtonObject.top}px`
+    navTop() {
+      return `${uni.getMenuButtonBoundingClientRect().top}px`
     },
     viewHeight() {
-      return this.windowHeight - this.navHeight + 'px'
+      return this.$systemInfo.windowHeight - this.navHeight + 'px'
     },
   },
 
