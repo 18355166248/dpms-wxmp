@@ -90,7 +90,7 @@ import appointmentAPI from 'APIS/appointment/appointment.api'
 import dayTable from '@/businessComponents/dayTable/dayTable'
 import calendar from '@/businessComponents/calendar/calendar'
 import { globalEventKeys } from 'config/global.eventKeys.js'
-import apptCard from './apptCard.vue'
+import apptCard from '@/businessComponents/apptCard/apptCard.vue'
 
 const enums = uni.getStorageSync('enums')
 const staff = uni.getStorageSync('staff')
