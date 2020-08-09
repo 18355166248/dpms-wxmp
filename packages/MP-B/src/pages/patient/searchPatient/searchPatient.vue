@@ -54,7 +54,7 @@
     <!-- 搜索列表 -->
     <div v-if="isSearchedValue && patientList.length != 0">
       <div v-for="parient in patientList" :key="parient.patientId">
-        <div @click="toPatient(parient.patientId)">
+        <div @click="clickPatientCard(parient.patientId)">
           <card
             :name="parient.patientName"
             :avatarUrl="parient.avatarUrl"
@@ -72,6 +72,16 @@
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import loadMore from '@/components/load-more/load-more.vue'
+import { globalEventKeys } from 'config/global.eventKeys.js'
+
+const paramsConfigWithType = {
+  createAppt: {
+    name: 'createAppt',
+  },
+  editAppt: {
+    name: 'editAppt',
+  },
+}
 
 export default {
   data() {
@@ -89,9 +99,11 @@ export default {
         status: 'loading',
         request: 'loading',
       },
+      paramsObj: {},
     }
   },
-  onLoad() {
+  onLoad(option) {
+    this.paramsObj = option
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
   },
   onReachBottom() {
@@ -171,6 +183,23 @@ export default {
     clearHistorySearch() {
       this.searchRecords = []
       uni.setStorageSync('searchPatientHistory', [])
+    },
+    // 点击患者卡片
+    clickPatientCard(patientId) {
+      if (
+        this.paramsObj.type === 'createAppt' ||
+        this.paramsObj.type === 'editAppt'
+      ) {
+        uni.$emit(globalEventKeys.selectPatientCardFromSearchPatient, {
+          patientId,
+        })
+
+        this.$utils.back()
+
+        return
+      }
+
+      this.toPatient(patientId)
     },
     toPatient(id) {
       this.$utils.push({
