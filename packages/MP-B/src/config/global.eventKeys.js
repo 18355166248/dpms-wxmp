@@ -5,6 +5,8 @@ const globalEventKeys = {
   apptFormWithSaveSuccess: 'apptFormWithSaveSuccess',
   // 取消预约成功
   cancleApptSuccess: 'cancleApptSuccess',
+  // 搜索患者 点击患者卡片
+  selectPatientCardFromSearchPatient: 'selectPatientCardFromSearchPatient',
 }
 
 export { globalEventKeys }

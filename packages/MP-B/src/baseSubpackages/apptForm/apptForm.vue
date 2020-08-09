@@ -19,7 +19,7 @@
                 <span class="ml-10">{{ form.patient.mobile }}</span>
               </div>
             </div>
-            <div class="patientRight">
+            <div class="patientRight" @click="selectPatient">
               <span v-if="!form.patient">选择患者</span>
               <span class="iconfont icon-arrow-right"></span>
             </div>
@@ -245,7 +245,6 @@ export default {
     },
   },
   onLoad(option = {}) {
-    console.log(option)
     this.paramsObj = option
     uni.setNavigationBarTitle({
       title: paramsConfig[option.type].title,
@@ -268,6 +267,7 @@ export default {
     }
   },
   mounted() {
+    // 更新选中员工列表
     uni.$on('apptFormWithUpdateStaffList', ({ key, value, list }) => {
       this.$set(this.form, key, value)
 
@@ -285,41 +285,26 @@ export default {
     uni.$on('updateApptItemCheckedList', (checked) => {
       this.form.COMMON_DATA_APPOINTMENT_ITEM = checked
 
-      this.updateApptItemCheckedText()
+      this.updateApptItemCheckedText(this.form)
     })
+    // 更新选中患者卡片信息
+    uni.$on(
+      globalEventKeys.selectPatientCardFromSearchPatient,
+      ({ patientId }) => {
+        this.getPatientInfoFromServer(patientId)
+      },
+    )
 
     this.init()
-
-    // this.$set(this.form, 'patient', {
-    //   age: '7岁10月28天',
-    //   birthday: '2012-09-06',
-    //   createTime: 1593657932000,
-    //   customerId: 1006429,
-    //   gender: 2,
-    //   institutionChainType: 2,
-    //   isMember: 1,
-    //   medicalInstitutionId: 968,
-    //   medicalRecordNo: 'BL202007010002',
-    //   memberId: 80,
-    //   mobile: '15900451752',
-    //   patientId: 921,
-    //   patientName: '张三妹',
-    //   patientNo: 'BL202007010002',
-    // })
   },
   beforeDestroy() {
     uni.$off('apptFormWithUpdateStaffList')
     uni.$off('updateApptItemCheckedList')
+    uni.$off(globalEventKeys.selectPatientCardFromSearchPatient)
     uni.removeStorageSync('apptItemList')
     uni.removeStorageSync('staffListInfo')
   },
   watch: {
-    form: {
-      handler(newVal) {
-        // console.log(newVal)
-      },
-      deep: true,
-    },
     'form.doctor'(newVal) {
       // 通过医生数据获取当前诊所信息
       if (!this.isAppt) return
@@ -333,6 +318,9 @@ export default {
     init() {
       // 如果地址栏有appointmentId并且type为editRegister或者editAppt才去获取预约详情
       const type = this.paramsObj.type
+
+      this.selectListCache[6] = [] // 预约项目类别
+
       if (
         this.paramsObj.appointmentId &&
         (type === 'editRegister' || type === 'editAppt')
@@ -343,6 +331,8 @@ export default {
           })
           .then((res) => {
             const form = apptFormUtil.formatApptToFormValues(res.data)
+
+            console.log('form', form)
 
             form.appointmentType = APPOINTMENT_TYPE_ENUM.COMMON.value
 
@@ -364,33 +354,20 @@ export default {
                 'YYYY-MM-DD HH:mm',
               )
               form.duration = duration
+
+              this.getAppointmentItemList().then(() => {
+                this.updateApptItemCheckedText(form)
+              })
             }
 
             this.form = JSON.parse(JSON.stringify(form))
-            this.initCheckedText(form.helpList, form.nurseList)
-
-            // 获取预约项目数据 只有是预约页面才需要获取
-            if (this.isAppt) {
-              appointmentAPI
-                .getAppointmentItemList()
-                .then((res) => {
-                  if (Array.isArray(res.data)) {
-                    uni.setStorageSync('apptItemList', res.data)
-
-                    this.selectListCache[6] = res.data
-
-                    console.log('apptI', res.data)
-
-                    this.updateApptItemCheckedText()
-                  }
-                })
-                .catch()
-            } else {
-              this.selectListCache[6] = []
-            }
+            this.initCheckedText(form.helpNameList, form.nurseList)
           })
       }
 
+      if (this.isAppt) {
+        this.getAppointmentItemList()
+      }
       // 通过医生数据获取当前诊所信息
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
@@ -417,8 +394,6 @@ export default {
           }
         })
         .catch()
-
-      console.log(notGet)
 
       if (notGet) {
         return
@@ -471,10 +446,23 @@ export default {
         })
         .catch()
     },
-    submit() {
-      this.$refs.dpmsForm.validate((err, fileds) => {
-        console.log(err, fileds)
-        console.log(this.form)
+    // 获取预约项目列表
+    getAppointmentItemList() {
+      return new Promise((resolve) => {
+        appointmentAPI
+          .getAppointmentItemList()
+          .then((res) => {
+            if (Array.isArray(res.data)) {
+              uni.setStorageSync('apptItemList', res.data)
+
+              this.selectListCache[6] = res.data
+
+              resolve()
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
       })
     },
     onBlurWithDuration(value) {
@@ -506,13 +494,11 @@ export default {
           this.form.COMMON_DATA_APPOINTMENT_ITEM.join(','),
       })
     },
-    updateApptItemCheckedText() {
+    updateApptItemCheckedText(form) {
       let apptItemList = uni.getStorageSync('apptItemList')
 
-      console.log(apptItemList, this.form.COMMON_DATA_APPOINTMENT_ITEM)
-
       apptItemList = apptItemList.filter((apptItem) =>
-        this.form.COMMON_DATA_APPOINTMENT_ITEM.includes(
+        form.COMMON_DATA_APPOINTMENT_ITEM.includes(
           apptItem.appointmentSettingsAppointmentItemId,
         ),
       )
@@ -718,10 +704,10 @@ export default {
         })
         .catch()
     },
-    initCheckedText(helpList = [], nurseList = []) {
-      helpList.length > 0 &&
+    initCheckedText(helpNameList = [], nurseList = []) {
+      helpNameList.length > 0 &&
         (this.HELP_CHECKED_TEXT = getTxtFromArr(
-          helpList.filter((ASSISTANT_MANAGER) =>
+          helpNameList.filter((ASSISTANT_MANAGER) =>
             this.form.help.includes(ASSISTANT_MANAGER.staffId),
           ),
           'staffName',
@@ -732,6 +718,23 @@ export default {
           nurseList.filter((NURSE) => this.form.nurse.includes(NURSE.staffId)),
           'staffName',
         ))
+    },
+    // 选择患者
+    selectPatient() {
+      this.$utils.push({
+        url:
+          '/pages/patient/searchPatient/searchPatient?type=' +
+          this.paramsObj.type,
+      })
+    },
+    // 获取患者信息
+    getPatientInfoFromServer(patientId) {
+      patientAPI
+        .getPatientDetail({ patientId })
+        .then((res) => {
+          this.$set(this.form, 'patient', res.data)
+        })
+        .catch()
     },
   },
   components: {
