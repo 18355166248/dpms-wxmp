@@ -17,13 +17,13 @@
             class="alignCenter"
             v-for="b in bannerList"
             :key="b.bannerId"
+            @click="toUrl(b.linkUrl)"
           >
             <image
               class="bannerImg"
               mode="aspectFit"
               :src="b.imageUrl"
               :title="b.description"
-              @click="toUrl(b.linkUrl)"
             />
           </swiper-item>
         </swiper>
