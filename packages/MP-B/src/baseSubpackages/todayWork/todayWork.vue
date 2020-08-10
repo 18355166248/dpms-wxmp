@@ -640,7 +640,7 @@ export default {
 
         const [listErr, listRes] = await this.$utils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
-            beginTime: moment('2017-07-01').startOf('day').valueOf(),
+            beginTime: moment().startOf('day').valueOf(),
             endTime: moment().endOf('day').valueOf(),
             current: this.current,
             patientSearchKey: this.patientSearchKey,
