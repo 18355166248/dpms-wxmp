@@ -62,6 +62,9 @@
           >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
+                <view class="cardImg">
+                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
+                </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
                   <view
@@ -72,9 +75,6 @@
                   >
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
-                <view class="cardImg">
-                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
-                </view>
               </view>
             </swiper-item>
           </swiper>
@@ -227,6 +227,9 @@ export default {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
       }
+      uni.showLoading({
+        title: '加载中...',
+      })
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
@@ -348,18 +351,22 @@ export default {
 }
 .card {
   width: 306rpx;
-  height: 312rpx;
+  height: 296rpx;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 30rpx 0rpx rgba(0, 0, 0, 0.09);
+  padding-top: 16rpx;
 }
 .cardContent {
   width: 274rpx;
   height: 36rpx;
-  padding: 16rpx;
+  display: flex;
+  margin-left: 16rpx;
+  margin-bottom: 16rpx;
+  margin-top: 18rpx;
 }
 .cardTitle {
-  width: 112rpx;
+  width: 190rpx;
   height: 36rpx;
   font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Medium;
@@ -385,7 +392,7 @@ export default {
   text-align: left;
   color: rgba(0, 0, 0, 0.45);
   line-height: 36rpx;
-  margin: 12rpx;
+  margin-left: 16rpx;
 }
 .cardImg {
   width: 274rpx;
