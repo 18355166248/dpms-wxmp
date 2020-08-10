@@ -28,7 +28,7 @@
         />
       </view>
     </view>
-    <view class="aptmtList" v-show="projList.length > 0">
+    <view class="aptmtList" v-show="total !== 0">
       <view class="aptmtCard" v-for="p in projList" :key="p.appointmentItemId">
         <view
           class="clickableArea"
@@ -55,7 +55,7 @@
       </view>
       <load-more :status="loadStatus"></load-more>
     </view>
-    <view class="empty" v-show="doctorList.length === 0">
+    <view class="empty" v-show="total === 0">
       <image
         src="https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/%E7%A9%BA%E7%99%BD%E9%A1%B5_%E7%94%BB%E6%9D%BF%201%402x.png"
       />
