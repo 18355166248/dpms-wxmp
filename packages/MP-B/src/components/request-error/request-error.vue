@@ -1,6 +1,8 @@
 <template>
   <view class="request-error" :style="{ background: bg }">
-    <text class="request-error-text">您的手机网络好像不太流畅哦~</text>
+    <text class="request-error-text">{{
+      msg ? msg : '您的手机网络好像不太流畅哦~'
+    }}</text>
     <button class="request-error-btn" @click="onClick()">
       重新加载
     </button>
@@ -11,6 +13,9 @@
 export default {
   name: 'RequestError',
   props: {
+    msg: {
+      type: String,
+    },
     bg: {
       type: String,
       default: 'none',

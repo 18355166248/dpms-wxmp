@@ -70,8 +70,9 @@ export default {
     },
     personDetail(index) {
       let detail = JSON.stringify(this.personList[index])
+      console.log('detail', detail)
       this.$utils.push({
-        url: '/pages/personDetail/personDetail?personDetail=detail',
+        url: '/pages/personDetail/personDetail?personDetail=' + detail,
       })
     },
   },

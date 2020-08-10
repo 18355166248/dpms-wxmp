@@ -111,8 +111,9 @@ export default {
       this.$emit('cancel', { value: e.detail.value })
     },
     onChange(e) {
-      this.inputValue = e.target.value
+      // this.inputValue = e.target.value
       this.$emit('change', { value: e.detail.value })
+      this.$emit('input', e.detail.value)
     },
     onSearch(e) {
       this.$emit('search', { value: e.detail.value })

@@ -496,6 +496,9 @@ export default {
     },
     updateApptItemCheckedText(form) {
       let apptItemList = uni.getStorageSync('apptItemList')
+      uni.pageScrollTo({
+        scrollTop: 0,
+      })
 
       apptItemList = apptItemList.filter((apptItem) =>
         form.COMMON_DATA_APPOINTMENT_ITEM.includes(
@@ -696,6 +699,7 @@ export default {
           uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
             isSuccess: true,
             params: this.paramsConfig,
+            appt: formatValue,
           })
           this.$utils.back()
         })
