@@ -13,8 +13,8 @@
 <script>
 export default {
   props: {
-    visible: false,
-    title: '',
+    visible: Boolean,
+    title: String,
   },
   data() {
     return {}
