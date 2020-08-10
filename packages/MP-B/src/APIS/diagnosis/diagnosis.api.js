@@ -32,6 +32,10 @@ const diagnosisAPI = {
   createRegister(data) {
     return httper.post('diagnosis/register/create-with-appointment', data)
   },
+  // 修改患者状态
+  updateRegisterStatus(data) {
+    return httper.post('diagnosis/register/update-status', data)
+  },
 }
 
 export default diagnosisAPI

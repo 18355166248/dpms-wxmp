@@ -44,6 +44,11 @@
               :key="item.roleTodayWorkRelationId"
             >
               <card
+                @card-click="
+                  toPage('/pages/patient/patient', {
+                    patientId: item.patientDTO.patientId,
+                  })
+                "
                 :name="item.patientDTO.patientName"
                 :avatarUrl="item.patientDTO.avatarUrl"
                 :gender="item.patientDTO.gender"
@@ -64,33 +69,65 @@
                   <template v-if="curRoleKey === 'DOCTOR'">
                     <button
                       class="button inverted-button"
-                      v-if="!item.doctorOperated"
+                      v-if="
+                        item.registerStatus === 2 || item.registerStatus === 3
+                      "
+                      @click.stop="
+                        treating({
+                          registerId: item.registerId,
+                          tip: 'treating',
+                        })
+                      "
                     >
                       接诊
                     </button>
                     <button
                       class="button inverted-button"
-                      v-if="item.doctorOperated"
+                      v-if="item.registerStatus === 4"
+                      @click.stop="
+                        finishTreatment({
+                          registerId: item.registerId,
+                          tip: 'finishTreatment',
+                        })
+                      "
                     >
                       治疗完成
                     </button>
                   </template>
                   <template v-else-if="curRoleKey === 'CONSULTANT'">
-                    <button class="button" v-if="!item.consultedOperated">
+                    <button
+                      class="button"
+                      v-if="
+                        item.registerStatus === 1 || item.registerStatus === 4
+                      "
+                      @click.stop="
+                        treating({
+                          registerId: item.registerId,
+                          tip: 'treating',
+                        })
+                      "
+                    >
                       接诊
                     </button>
                     <button
                       class="button inverted-button"
-                      v-if="item.doctorOperated"
+                      v-if="item.registerStatus === 3"
+                      @click.stop="
+                        finishTreatment({
+                          registerId: item.registerId,
+                          tip: 'finishTreatment',
+                        })
+                      "
                     >
                       治疗完成
                     </button>
                   </template>
+
                   <template v-else>
                     <template v-if="item.registerStatus === 1">
                       <button
                         class="button inverted-button"
-                        @click="
+                        @click.stop="
                           toPage('/baseSubpackages/apptForm/apptForm', {
                             type: 'editRegister',
                             appointmentId: item.appointmentId,
@@ -101,7 +138,7 @@
                       </button>
                       <button
                         class="button"
-                        @click="
+                        @click.stop="
                           toPage('/baseSubpackages/apptForm/apptForm', {
                             type: 'editAppt',
                             appointmentId: item.appointmentId,
@@ -112,7 +149,7 @@
                       </button>
                       <button
                         class="button"
-                        @click="
+                        @click.stop="
                           toPage('/baseSubpackages/apptForm/cancleAppt', {
                             appointmentId: item.appointmentId,
                           })
@@ -121,12 +158,47 @@
                         取消
                       </button>
                     </template>
-                    <template v-else-if="item.registerStatus === 2">
+                    <template v-if="item.registerStatus === 2">
                       <button
                         class="button inverted-button"
-                        @click="cancleRegister"
+                        @click.stop="
+                          treating({
+                            registerId: item.registerId,
+                            tip: 'treating',
+                          })
+                        "
+                      >
+                        接诊
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          cancleRegister({
+                            registerId: item.registerId,
+                            tip: 'cancleRegister',
+                          })
+                        "
                       >
                         取消
+                      </button>
+                    </template>
+                    <template
+                      v-if="
+                        item.registerStatus === 3 ||
+                        item.registerStatus === 4 ||
+                        item.registerStatus === 5
+                      "
+                    >
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          finishTreatment({
+                            registerId: item.registerId,
+                            tip: 'finishTreatment',
+                          })
+                        "
+                      >
+                        治疗完成
                       </button>
                     </template>
                   </template>
@@ -216,20 +288,37 @@ export default {
 
       roleIndex: 0,
       primaryColor: this.$commonCss.commonColor,
+      REGISTER_ENUM: this.$utils.getEnums('Register'),
       TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
     }
   },
-  onReady() {
-    uni.$on(globalEventKeys.cancleApptSuccess, () => {
-      this.loadData()
-    })
-  },
+  // onReady() {
+  //   uni.$on(globalEventKeys.cancleApptSuccess,  () => {
+  //     console.log("this:", this)
+  //     this.emitPullDownRefresh()
+
+  //   })
+  //   uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
+  //     console.log("this:", this)
+  //     this.emitPullDownRefresh()
+  //   })
+  // },
+
   onUnload() {
     uni.$off(globalEventKeys.cancleApptSuccess)
+    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   onLoad() {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.loadCurrentStaff()
+
+    uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
+      console.log('this:', this)
+    })
+    // 监听事件
+    uni.$on(globalEventKeys.cancleApptSuccess, () => {
+      console.log('this:', this)
+    })
   },
   onPullDownRefresh() {
     this.current = 1
@@ -246,6 +335,30 @@ export default {
   },
 
   methods: {
+    // 治疗完成
+    finishTreatment(record) {
+      const status = this.REGISTER_ENUM.REGISTER_TREATED.value
+      this.changeStatus(record.registerId, status, record.tip)
+    },
+    // 接诊
+    treating(record) {
+      const status = this.REGISTER_ENUM.REGISTER_TREATING.value
+      this.changeStatus(record.registerId, status, record.tip)
+    },
+    // 取消挂号
+    cancleRegister(record) {
+      uni.showActionSheet({
+        itemList: ['确定'],
+        success: (res) => {
+          const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+
+          this.changeStatus(record.registerId, status, record.tip)
+        },
+        fail: function (res) {
+          console.log(res.errMsg)
+        },
+      })
+    },
     handleClear() {
       this.patientSearchKey = ''
       this.emitPullDownRefresh()
@@ -254,6 +367,7 @@ export default {
       this.patientSearchKey = val.value
     },
     toPage(url, params) {
+      console.log('params:', params)
       this.$utils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
@@ -262,6 +376,7 @@ export default {
     },
     // 触发下拉事件
     emitPullDownRefresh() {
+      console.log('触发下拉事件')
       uni.startPullDownRefresh()
     },
     useConsolidateData(dataSource) {
@@ -354,6 +469,30 @@ export default {
           (item) =>
             item.todayWorkRoleType === this.selectedRole.todayWorkRoleType,
         )
+      }
+    },
+    async changeStatus(registerId, status, tipKey) {
+      uni.showLoading({
+        title: '正在提交...',
+        mask: true,
+      })
+      const tips = {
+        cancleRegister: '取消成功',
+        treating: '接诊成功',
+        finishTreatment: '治疗完成',
+      }
+      const [err, res] = await this.$utils.asyncTasks(
+        diagnosisApi.updateRegisterStatus({ registerId, status }),
+      )
+
+      uni.hideLoading()
+
+      if (res) {
+        uni.showToast({
+          icon: 'success',
+          title: tips[tipKey],
+        })
+        this.emitPullDownRefresh()
       }
     },
     // 获取列表数据
@@ -492,7 +631,7 @@ export default {
     .button {
       display: inline-block;
       margin-left: 16rpx;
-      width: 130rpx;
+      padding: 0 32rpx;
       height: 56rpx;
       line-height: 56rpx;
 
