@@ -101,6 +101,18 @@
       "style": {
         "navigationBarTitleText": "新建预约"
       }
+    },
+    {
+      "path": "pages/knowUs/index",
+      "style": {
+        "navigationBarTitleText": "了解我们"
+      }
+    },
+    {
+      "path": "pages/membership/membershipCard",
+      "style": {
+        "navigationBarTitleText": "会员卡"
+      }
     }
   ],
   "globalStyle": {
