@@ -17,13 +17,13 @@
             class="alignCenter"
             v-for="b in bannerList"
             :key="b.bannerId"
+            @click="toUrl(b.linkUrl)"
           >
             <image
               class="bannerImg"
               mode="aspectFit"
               :src="b.imageUrl"
               :title="b.description"
-              @click="toUrl(b.linkUrl)"
             />
           </swiper-item>
         </swiper>
@@ -42,7 +42,9 @@
           <p class="compDescContentDesc">
             {{ institutionIntroduce.briefIntroduction || '' }}
           </p>
-          <p class="compDescMore">更多详情 ></p>
+          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
+            更多详情 >
+          </p>
         </view>
       </view>
       <view class="proj">
@@ -53,9 +55,24 @@
           >
         </view>
         <view class="cardList">
-          <swiper class="swiper" display-multiple-items="2" next-margin="10rpx">
+          <swiper
+            class="swiper"
+            :display-multiple-items="displayMultipleItems"
+            next-margin="10rpx"
+          >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
+                <view
+                  class="cardImg"
+                  @click="
+                    toUrl(
+                      '/pages/projAptmt/projDetail?appointmentItemId=' +
+                        i.appointmentItemId,
+                    )
+                  "
+                >
+                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
+                </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
                   <view
@@ -66,9 +83,6 @@
                   >
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
-                <view class="cardImg">
-                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
-                </view>
               </view>
             </swiper-item>
           </swiper>
@@ -136,6 +150,7 @@ export default {
       currentPage: 1,
       total: 0,
       size: 3,
+      displayMultipleItems: 1,
     }
   },
   created() {
@@ -146,6 +161,9 @@ export default {
         self.x = res.windowWidth
         self.hide = false
       },
+    })
+    uni.setNavigationBarTitle({
+      title: medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
     })
   },
   onLoad() {
@@ -167,6 +185,11 @@ export default {
         })
         .then((res) => {
           this.itemList = res.data.itemList
+          if (this.itemList.length > 1) {
+            this.displayMultipleItems = 2
+          } else {
+            this.displayMultipleItems = 1
+          }
         })
       institutionAPI
         .getStoreList({
@@ -211,7 +234,11 @@ export default {
     handleProjAptmt(appointmentItemId) {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
+        return
       }
+      uni.showLoading({
+        title: '加载中...',
+      })
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
@@ -333,18 +360,22 @@ export default {
 }
 .card {
   width: 306rpx;
-  height: 312rpx;
+  height: 296rpx;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 30rpx 0rpx rgba(0, 0, 0, 0.09);
+  padding-top: 16rpx;
 }
 .cardContent {
   width: 274rpx;
   height: 36rpx;
-  padding: 16rpx;
+  display: flex;
+  margin-left: 16rpx;
+  margin-bottom: 16rpx;
+  margin-top: 18rpx;
 }
 .cardTitle {
-  width: 112rpx;
+  width: 190rpx;
   height: 36rpx;
   font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Medium;
@@ -370,7 +401,7 @@ export default {
   text-align: left;
   color: rgba(0, 0, 0, 0.45);
   line-height: 36rpx;
-  margin: 12rpx;
+  margin-left: 16rpx;
 }
 .cardImg {
   width: 274rpx;
@@ -462,7 +493,7 @@ export default {
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: center;
   color: #5cbb89;
-  line-height: 48rpx;
+  line-height: 52rpx;
   position: relative;
   top: -78rpx;
   left: 546rpx;
@@ -481,8 +512,8 @@ export default {
 .aptmt > .icon-time {
   font-size: 50rpx;
   position: relative;
-  left: 16rpx;
-  top: 12rpx;
+  left: 18%;
+  top: 16%;
 }
 
 movable-area {

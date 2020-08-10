@@ -1,8 +1,14 @@
 <template>
   <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div class="hint">提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。</div>
+    <div class="hint">
+      提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
+    </div>
     <div class="personInfo">
-      <dpmsCellInput title="姓名" v-model="form.personnelName" placeholder="请输入姓名" />
+      <dpmsCellInput
+        title="姓名"
+        v-model="form.personnelName"
+        placeholder="请输入姓名"
+      />
       <dpmsEnumsPicker
         title="性别"
         v-model="form.gender"
@@ -24,14 +30,24 @@
         placeholder="请选择联系电话标签"
         enumsKey="ContactLabel"
       />
-      <dpmsCellInput type="number" title="联系电话" v-model="form.mobile" placeholder="请输入联系电话" />
+      <dpmsCellInput
+        type="number"
+        title="联系电话"
+        v-model="form.mobile"
+        placeholder="请输入联系电话"
+      />
       <div class="info" v-show="needAuthCode">
-        <dpmsCellInput type="number" title="验证码" v-model="form.verificationCode" />
+        <dpmsCellInput
+          type="number"
+          title="验证码"
+          v-model="form.verificationCode"
+        />
         <span
           class="getAuthCode"
           :class="{ disabled: !!second }"
           @click="getCode"
-        >{{ second ? `${second}秒后再试` : '获取验证码' }}</span>
+          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span
+        >
       </div>
       <dpmsCellPicker
         title="默认人员"
@@ -77,8 +93,37 @@ export default {
   },
   created() {},
   onLoad(info) {
-    console.log('jjjjjjjjjjjjjjj', info)
-    this.form = JSON.parse(info)
+    this.form = JSON.parse(info.personDetail)
+    if (this.form.defaultPersonnel) {
+      this.form.defaultPersonnel = '开'
+    } else {
+      this.form.defaultPersonnel = '关'
+    }
+    console.log('jjjjjjjjjjjjjjj', this.form)
+    customerAPI
+      .needVerify({
+        userId: getStorage(STORAGE_KEY.STAFF).id,
+        mobile: this.form.mobile,
+      })
+      .then((res) => {
+        console.log(res)
+        this.needAuthCode = res.data
+      })
+  },
+  watch: {
+    'form.mobile'() {
+      if (this.form.mobile.length == 11) {
+        customerAPI
+          .needVerify({
+            userId: getStorage(STORAGE_KEY.STAFF).id,
+            mobile: this.form.mobile,
+          })
+          .then((res) => {
+            console.log(res)
+            this.needAuthCode = res.data
+          })
+      }
+    },
   },
   methods: {
     getCode() {
@@ -111,14 +156,15 @@ export default {
       } else {
         this.form.defaultPersonnel = false
       }
-      customerAPI
-        .creatCustomer(this.form)
-        .then((res) => {
-          console.log('1111111111', res)
-        })
-        .catch((error) => {
-          console.log('form', this.form)
-        })
+      delete this.form.patientDTO
+      customerAPI.updateCustomer(this.form).then((res) => {
+        console.log('1111111111', res)
+        if (res.code == 0) {
+          this.$utils.replace({
+            url: '/pages/personManagement/personManagement',
+          })
+        }
+      })
     },
     phone() {
       if (this.form.mobile.length == 11) {
