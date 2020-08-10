@@ -503,8 +503,8 @@ export default {
 .aptmt > .icon-time {
   font-size: 50rpx;
   position: relative;
-  left: 16rpx;
-  top: 12rpx;
+  left: 18%;
+  top: 16%;
 }
 
 movable-area {
