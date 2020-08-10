@@ -1,5 +1,5 @@
 <template>
-  <scroll-view scroll-y class="h100 page-bg">
+  <div class="h100">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
       <dpmsCellInput
@@ -18,6 +18,7 @@
         headerText="选择性别"
       />
       <dpmsDatePicker
+        required
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
@@ -34,8 +35,8 @@
         isLink
       />
       <dpmsCell
-        title="用户画像"
-        placeholder="请选择用户画像"
+        title="患者标签"
+        placeholder="请选择患者标签"
         :value="patientTagsCheckedText"
         isLink
         @click.native="onSelectTags"
@@ -94,34 +95,49 @@
           @click="submit"
           type="primary"
           :disabled="disabledSaveBtn"
-          :loading="loadingSaveBtn"
+          :loading="disabledSaveBtn"
         />
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
-  </scroll-view>
+  </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import patientAPI from '@/APIS/patient/patient.api'
 
+const formDefault = {
+  patientName: '',
+  gender: '',
+  birthday: '',
+  settingsTypeId: '',
+  tagIds: [],
+  contactLabel: '',
+  mobile: '',
+  alternateMobile: '',
+  weChatId: '',
+  qqNum: '',
+  region: [],
+  address: '',
+}
+
 export default {
-  // props: {
-  //   form: {
-  //     type: Object,
-  //     required: true,
-  //   },
-  // },
+  props: {
+    formData: {
+      type: Object,
+      default: formDefault,
+    },
+  },
   data() {
     return {
       patientTypeList: [], //患者类型列表
       patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
-      loadingSaveBtn: false,
-      form: {},
+      form: this.filterFormData(this.formData),
       rules: {
         patientName: [
           {
@@ -137,6 +153,10 @@ export default {
         gender: {
           required: true,
           message: '请选择性别',
+        },
+        birthday: {
+          required: true,
+          message: '请选择出生日期',
         },
         contactLabel: {
           required: true,
@@ -174,6 +194,11 @@ export default {
       },
     }
   },
+  watch: {
+    formData(newVal) {
+      this.form = this.filterFormData(newVal)
+    },
+  },
   created() {
     // 更新用户画像选中值
     uni.$on('updateTagsCheckedList', (checked) => {
@@ -200,8 +225,20 @@ export default {
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
-    bindDateChange: function (e) {
-      this.patientData.date = e.detail.value
+    filterFormData(data) {
+      if (_.isEmpty(data)) {
+        return formDefault
+      }
+
+      // 格式化formData
+      data = { ...formDefault, ...data, ...data.patientContactsList[0] }
+      data.region = [data.province, data.city, data.area]
+      if (data.tagList) {
+        data.tagIds = data.tagList.map((v) => v.id)
+        this.patientTagsCheckedText = data.tagList.map((v) => v.name).join(',')
+      }
+
+      return data
     },
     onSelectTags() {
       this.$utils.push({
@@ -227,82 +264,6 @@ export default {
         .map((tagItem) => tagItem.name)
         .join(',')
     },
-    // 检查患者是否已存在scrm系统中
-    async checkPatientInScrm() {
-      //保存患者时，添加禁用和loading效果
-      this.disabledSaveBtn = true
-      this.loadingSaveBtn = true
-
-      let { data: scrmPatientInfo } = await authAPI.getPatientInScrm({
-        medicalInstitutionId: getStorage(STORAGE_KEY.STAFF)
-          .belongsInstitutionId,
-        mobile: this.form.mobile,
-        patientName: this.form.patientName,
-      })
-
-      let that = this
-
-      if (scrmPatientInfo.newCustomer) {
-        //如果是新患者
-        that.createPatient(scrmPatientInfo)
-      } else {
-        //如果患者已存在
-        if (scrmPatientInfo.patientId) {
-          that.createPatient(scrmPatientInfo)
-        } else {
-          uni.showModal({
-            content: 'SCRM中存在姓名和手机号相同的客户，是否关联',
-            confirmText: '确认',
-            success: function (res) {
-              if (res.confirm) {
-              } else if (res.cancel) {
-                delete scrmPatientInfo.customerId
-              }
-              that.createPatient(scrmPatientInfo)
-            },
-          })
-        }
-      }
-    },
-    async createPatient(scrmPatientInfo) {
-      const formValue = _.cloneDeep(this.form)
-
-      let patientContact = {
-        contactLabel: this.form.contactLabel,
-        mobile: this.form.mobile,
-        alternateMobile: this.form.alternateMobile,
-        weChatId: this.form.weChatId,
-        qqNum: this.form.qqNum,
-        provinc: this.form.region[0],
-        city: this.form.region[1],
-        area: this.form.region[2],
-        address: this.form.address,
-      }
-
-      delete formValue.contactLabel
-      delete formValue.alternateMobile
-      delete formValue.weChatId
-      delete formValue.qqNum
-      delete formValue.region
-      delete formValue.address
-
-      authAPI
-        .createPatient({
-          ...formValue,
-          ...scrmPatientInfo,
-          patientContactStr: JSON.stringify([{ ...patientContact }]),
-        })
-        .then((res) => {
-          //保存患者成功后，取消禁用和loading效果
-          this.disabledSaveBtn = false
-          this.loadingSaveBtn = false
-        })
-        .catch(() => {
-          //保存患者失败后，取消禁用和loading效果
-          this.disabledSaveBtn = false
-          this.loadingSaveBtn = false
-        })
-    },
     async submit() {
       this.$refs.editPatientForm.validate((err, fileds) => {
         if (err) {
@@ -310,19 +271,19 @@ export default {
           return
         }
 
-        this.checkPatientInScrm()
+        //保存患者时，添加禁用和loading效果
+        this.disabledSaveBtn = true
+        this.$emit('submit', this.form)
       })
+    },
+    showBtn() {
+      this.disabledSaveBtn = false
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.page-bg {
-  height: 100%;
-  background: rgba(0, 0, 0, 0.04);
-}
-
 [data-layout-align] {
   display: flex;
   justify-content: flex-start;
@@ -378,8 +339,6 @@ export default {
   height: 154rpx;
   .dpms-cell {
     height: 154rpx;
-    textarea {
-    }
   }
 }
 </style>

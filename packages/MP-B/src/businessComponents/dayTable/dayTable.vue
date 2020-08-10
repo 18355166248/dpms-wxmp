@@ -1,11 +1,12 @@
 <template>
-  <view class="dayTable">
+  <view class="dayTable" id="dayTableId">
     <scroll-view
       class="calendar_body"
       :style="scrollHeight"
       :scroll-y="isScroll"
       :scroll-top="scrollTop"
       @scroll="scroll"
+      scroll-with-animation
     >
       <!-- 表格 -->
       <!-- @touchstart="touchSt(index,$event)" @touchend="touchEn(index)" -->
@@ -57,7 +58,7 @@
                 }"
               />
               <view class="meeting_content_name">
-                {{ item.patient.patientName }}{{ item | getGenderText }}
+                {{ item.patient.patientName }}{{ getGenderText(item) }}
               </view>
               <view class="meeting_content_center">
                 <view
@@ -90,6 +91,7 @@
  -->
         <!-- 创建会议 -->
         <view
+          id="createApptId"
           v-if="isCreate"
           class="meeting_create"
           :style="createMeet.style"
@@ -126,7 +128,7 @@
           <view class="metting_content_box hasAppt">
             <text v-if="createMeet.patient" class="meeting_content_name">
               {{ createMeet.patient.patientName
-              }}{{ createMeet | getGenderText }}
+              }}{{ getGenderText(createMeet) }}
             </text>
             <text v-else class="meeting_content_name">再次点击新建预约</text>
             <text class="meeting_content_center" />
@@ -154,21 +156,7 @@ import moment from 'moment'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
 import { numberRangeUtil } from './numberRange.util'
 
-const enums = uni.getStorageSync('enums')
-
-const VIS_TYPE_ENUM = dataDictUtil.convert(enums.VisType)
-const APPOINTMENT_STATUS_ENUM = enums.AppointmentStatus // 预约状态
-
-const appointmentStatusColorMap = {
-  [APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
-  [APPOINTMENT_STATUS_ENUM.REGISTERED.value]: '#f04965',
-  [APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
-  [APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
-  [APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
-  [APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
-}
-
-const GENDER_ENUM = dataDictUtil.convert(enums.Gender || {})
+const windowHeight = uni.getSystemInfoSync().windowHeight
 
 let timeOutEvent = 0
 let scrollYtop = 0
@@ -193,6 +181,7 @@ export default {
     scrollHeight: String,
     apptList: Array,
     scheduleList: Array, // 排班时间列表
+    retract: Boolean, // 日历展开: false 收缩: true 用于更新视图的高度
   },
   data() {
     return {
@@ -216,6 +205,11 @@ export default {
       isToday: 0,
       meetingDetail: '',
       editMeet: false, // 编辑会话中
+      tableToTop: 0, // dayTable距离页面顶部距离
+      moveTimer: undefined, // 移动拖拽时的定时器
+      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
+      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      GENDER_ENUM: this.$utils.getEnums('Gender'),
     }
   },
   //如果将chooseDateProp放入vuex 监听可使用下面方法
@@ -236,30 +230,16 @@ export default {
   //   ]),
 
   // },
-  filters: {
-    getGenderText(apptInfo) {
-      if (
-        GENDER_ENUM &&
-        GENDER_ENUM.properties &&
-        VIS_TYPE_ENUM &&
-        VIS_TYPE_ENUM.properties &&
-        apptInfo &&
-        apptInfo.patient &&
-        apptInfo.patient.gender
-      ) {
-        return `（${
-          GENDER_ENUM.properties[apptInfo.patient.gender].text.zh_CN
-        }${
-          apptInfo.visType
-            ? '，' + VIS_TYPE_ENUM.properties[apptInfo.visType].text.zh_CN
-            : ''
-        }）`
-      }
-
-      return ''
-    },
-  },
   created() {
+    this.appointmentStatusColorMap = {
+      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
+      [this.APPOINTMENT_STATUS_ENUM.REGISTERED.value]: '#f04965',
+      [this.APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
+      [this.APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
+      [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
+      [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
+    }
+
     this.unitHeight = parseInt(this.hourHeight / 4) || 16 //16px
     this.unitMinute = parseInt(this.uMinute) || 15 //15分钟
     this.showMinute = parseInt(this.showMin) || 60 //60分钟
@@ -274,6 +254,16 @@ export default {
       this.apptList.length > 0 &&
       this.getMeetingList()
   },
+  mounted() {
+    const query = uni.createSelectorQuery().in(this)
+
+    query
+      .select('#dayTableId')
+      .boundingClientRect((data) => {
+        this.tableToTop = data.top
+      })
+      .exec()
+  },
   watch: {
     apptList(newVal) {
       Array.isArray(this.apptList) &&
@@ -283,6 +273,15 @@ export default {
     scheduleList(newVal) {
       this.getDefaultTable()
       this.isTodayFun(this.chooseDateProp)
+    },
+    retract() {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .select('#dayTableId')
+        .boundingClientRect((data) => {
+          this.tableToTop = data.top
+        })
+        .exec()
     },
   },
   methods: {
@@ -461,8 +460,8 @@ export default {
       //   time: newShow.time,
       // }
 
-      // 跨诊所不可编辑
-      if (this.meetingList[index].acrossInstitutionAppointmentFlag) return
+      // 跨诊所, 非预约状态 不可编辑
+      if (this.isDisabled(this.meetingList[index])) return
 
       this.$emit('editAppt', this.meetingList[index])
     },
@@ -512,10 +511,10 @@ export default {
       let endTime = ''
       if (id < 2) {
         id = 2
-      } else if (id > 89) {
+      } else if (id > 91) {
         // endId = 96;
         id = 90
-        stId = 88
+        stId = 92
       } else {
         stId = id - 2
         // endId = id + 6;
@@ -650,13 +649,13 @@ export default {
       let trueTextTop = stId * self.unitHeight - top //字体样式
       let height = (endId - topId) * self.unitHeight - (y - startY) //会议高度
 
-      if (
-        height < self.minMute * self.unitHeight ||
-        height > self.unitHeight * 16
-      ) {
-        //订会时间不小于15分钟或者不大于4个小时
+      // 订会时间不小于15分钟或者不大于4个小时 height > self.unitHeight * 16
+      if (height < self.minMute * self.unitHeight || stId < 0) {
         return
       }
+
+      this.onWatchMove('top')
+
       let startTime = self.defaultList[stId].timeTitle
       let endTime = self.defaultList[endId].timeTitle
 
@@ -807,23 +806,25 @@ export default {
       let top = self.createMeet.top
       let height =
         y - endY + (defaultId - self.createMeet.idSt) * self.unitHeight
-      //到最小单元格不允许移动 或者是超过4个小时
-      if (
-        height < self.minMute * self.unitHeight ||
-        height > self.unitHeight * 16
-      ) {
+
+      // 计算后的底部id 如果等于97就设为96
+      let end = defaultId + nid
+      //到最小单元格不允许移动 或者是超过4个小时 height > self.unitHeight * 16
+      if (height < self.minMute * self.unitHeight || end > 96) {
         return
       }
 
+      this.onWatchMove('bottom')
+
       let startTime = self.defaultList[self.createMeet.idSt].timeTitle
-      let endTime = self.defaultList[defaultId + nid].timeTitle
+      let endTime = self.defaultList[end].timeTitle
       let startTimeShow = startTime,
         endTimeShow = endTime
       if (self.isToday == 0) {
         if (!!self.isHidTime(self.createMeet.idSt)) {
           startTimeShow = ''
         }
-        if (!!self.isHidTime(defaultId + nid)) {
+        if (!!self.isHidTime(end)) {
           endTimeShow = ''
         }
       }
@@ -832,7 +833,6 @@ export default {
       //   isFlex = "isFlex"
       // }
       //该判断功能暂定
-      let end = defaultId + nid
       // let hasMeeting = this.meetingList.some(function(item) {
       // 	return end > item.startId + 0.1 && self.createMeet.idSt < item.startId;
       // });
@@ -939,7 +939,7 @@ export default {
       self.meetingTouchStartY = e.touches[0].clientY
       self.meetingTouchStartOff = e.currentTarget.offsetTop
       self.meetingTouchIdSt = self.createMeet.idSt
-      self.isScroll = false
+      // self.isScroll = false
     },
     //拖拽整个会议移动中
     touchMeetingMove(e) {
@@ -954,11 +954,18 @@ export default {
       let idSt = self.meetingTouchIdSt + nid
       let idEnd = idSt + meeting.length
 
-      if (idSt < 0) {
-        return
-      } else if (idEnd > this.minAll) {
+      console.log('idSt', idSt)
+
+      if (
+        idSt < 0 ||
+        idEnd > this.minAll ||
+        idSt > this.minAll - this.defaultChoose
+      ) {
         return
       }
+
+      this.onWatchMove(ny > 0 ? 'bottom' : 'top')
+
       //不能超过时间线之前
       // if (self.isToday == 0 && idSt < this.timeId + 1) {
       //   return
@@ -1008,10 +1015,15 @@ export default {
     },
     //拖拽整个会议移动结束
     touchMeetingEnd(e) {
-      this.isScroll = true
+      // this.isScroll = true
       let self = this
       let y = e.currentTarget.offsetTop
       let absY = Math.abs(y - self.meetingTouchStartOff)
+
+      // 表示点击的左侧时间点
+      if (e.target.offsetLeft === 0) {
+        return
+      }
 
       if (absY == 0) {
         // 点击编辑中的卡片 如果没有患者信息则需要跳转到新建预约页面, 否则不做任何操作
@@ -1021,8 +1033,8 @@ export default {
           return
         }
 
-        // 跨诊所不可编辑
-        if (this.createMeeting.acrossInstitutionAppointmentFlag) return
+        // 跨诊所, 非预约状态 不可编辑
+        if (this.isDisabled(this.createMeet)) return
 
         self.$emit('editAppt', this.createMeet)
 
@@ -1086,13 +1098,7 @@ export default {
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
       // 限制可编辑卡片 非预约状态 跨诊所不可编辑
-      if (
-        APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !==
-          meetInfo.appointmentStatus ||
-        meetInfo.acrossInstitutionAppointmentFlag
-      ) {
-        return
-      }
+      if (this.isDisabled(meetInfo)) return
 
       const {
         startTimeStamp,
@@ -1136,7 +1142,7 @@ export default {
       return colorConfig ? colorConfig.border : ''
     },
     getDocoratorColor(appointmentStatus) {
-      return appointmentStatusColorMap[appointmentStatus]
+      return this.appointmentStatusColorMap[appointmentStatus]
     },
     // 清空创建的编辑卡片
     clearCreateMeet() {
@@ -1144,6 +1150,7 @@ export default {
       this.createMeet = defaultMeet
     },
     getBackgroundColorByScheduleItemList(timeTitle) {
+      if (timeTitle === '24:00') return
       // 如果属于正常班 => 白色
       // 如果属于休息班 => 红色
       // 如果属于正常班 又属于休息班 => 不应该存在这样的逻辑（数据异常导致）=> 白色
@@ -1194,6 +1201,70 @@ export default {
           )
         }).length > 0
       )
+    },
+    getGenderText(apptInfo) {
+      if (
+        this.GENDER_ENUM &&
+        this.GENDER_ENUM.properties &&
+        this.VIS_TYPE_ENUM &&
+        this.VIS_TYPE_ENUM.properties &&
+        apptInfo &&
+        apptInfo.patient &&
+        apptInfo.patient.gender
+      ) {
+        return `（${
+          this.GENDER_ENUM.properties[apptInfo.patient.gender].text.zh_CN
+        }${
+          apptInfo.visType
+            ? '，' + this.VIS_TYPE_ENUM.properties[apptInfo.visType].text.zh_CN
+            : ''
+        }）`
+      }
+
+      return ''
+    },
+    /**
+     * 监听拖拽 进行滚动
+     * @params arrow (bottom, top)
+     */
+    onWatchMove(arrow) {
+      if (!this.moveTimer) {
+        const limit = 30
+        let cardPosition = {}
+        const query = uni.createSelectorQuery().in(this)
+        query
+          .select('#createApptId')
+          .boundingClientRect((data) => {
+            cardPosition = data
+          })
+          .exec()
+        this.moveTimer = setTimeout(() => {
+          clearTimeout(this.moveTimer)
+          this.moveTimer = null
+
+          if (arrow === 'top' && cardPosition.top - this.tableToTop < limit) {
+            const scrollTop = this.scrollTop - limit
+            this.scrollTop = scrollTop < 0 ? 0 : scrollTop
+          }
+
+          if (
+            arrow === 'bottom' &&
+            windowHeight - cardPosition.bottom < limit * 2
+          ) {
+            this.scrollTop += limit * 2
+          }
+        }, 500)
+      }
+    },
+    // 判断预约卡片是否支持编辑
+    isDisabled(appt) {
+      // 非预约状态不可编辑
+      const notApptStatus =
+        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !==
+        appt.appointmentStatus
+
+      const isCurInstitution = appt.acrossInstitutionAppointmentFlag
+      return notApptStatus || isCurInstitution
     },
   },
 }
@@ -1440,8 +1511,8 @@ $borderColor: #ddd;
       }
 
       .radius {
-        width: 80px;
-        height: 80px;
+        width: 20px;
+        height: 20px;
         position: absolute;
         z-index: 999;
         cursor: pointer;
@@ -1460,12 +1531,12 @@ $borderColor: #ddd;
       }
 
       .radius_first {
-        top: -40px;
+        top: -10px;
         left: 0;
       }
 
       .radius_second {
-        bottom: -40px;
+        bottom: -10px;
         right: 0;
       }
 

@@ -109,14 +109,16 @@ export default {
           getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
         username: this.username || getStorage(STORAGE_KEY.STAFF).username,
       })
-      Promise.all([institutionListPromise, loginInstitutionListPromise]).then(
-        (res) => {
+      Promise.all([institutionListPromise, loginInstitutionListPromise])
+        .then((res) => {
           this.range = [res[0].data]
           this.disList = res[1].data.workMedicalInstitutionIds
           this.showTree = true
           this.$emit('onDisList', true)
-        },
-      )
+        })
+        .catch((res) => {
+          this.$emit('onDisList', true)
+        })
     },
     hide() {
       this.showTree = false
