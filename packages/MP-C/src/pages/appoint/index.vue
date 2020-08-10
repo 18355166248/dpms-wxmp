@@ -1,32 +1,79 @@
 <template>
   <div>
-    <dpmsCell title="预约门店" placeholder="请选择门店" :value="institution.medicalInstitutionSimpleCode"></dpmsCell>
-    <dpmsCell title="门店地址" placeholder="请选择地址" :value="institution.address" />
-    <dpmsCell
-      title="预约医生"
-      placeholder="请选择医生"
-      :value="doctor.doctorName"
-      isLink
-      @cellclick="doctorPickerVisible = true"
-    />
-    <dpmsCell
-      title="预约项目"
-      placeholder="请选择项目"
-      :value="selectedItemsText"
-      isLink
-      @cellclick="itemPickerVisible = true"
-    />
-    <dpmsCell title="预约日期" isLink>
-      <dpmsAppointTimePicker placeholder="请选择日期" />
-    </dpmsCell>
-    <dpmsCellInput title="预约备注" placeholder="请输入备注" inputType="text"></dpmsCellInput>
+    <dpmsForm ref="editForm" :model="form" :rules="rules">
+      <dpmsCell
+        title="预约门店"
+        placeholder="请选择门店"
+        :value="shopDetail.shopName"
+      ></dpmsCell>
+      <dpmsCell
+        title="门店地址"
+        placeholder="请选择地址"
+        :value="shopDetail.shopAddress"
+      />
+      <dpmsCell
+        title="预约医生"
+        placeholder="请选择医生"
+        :value="doctor.doctorName"
+        isLink
+        @cellclick="doctorPickerVisible = true"
+      />
+      <dpmsCell
+        title="预约项目"
+        placeholder="请选择项目"
+        :value="selectedItemsText"
+        isLink
+        @cellclick="itemPickerVisible = true"
+      />
+      <dpmsDatePicker
+        v-model="form.date"
+        placeholder="请选择日期"
+        title="预约日期"
+        :start="startDate"
+        :end="endDate"
+        required
+        isLink
+      />
+      <dpmsCellPicker
+        defaultType="value"
+        :list="doctorTimeFilter"
+        v-model="form.timeStamp"
+        title="预约时间"
+        placeholder="请选择时间"
+        required
+        isLink
+      />
+      <dpmsCellPicker
+        defaultType="value"
+        :list="personnelList"
+        v-model="form.personnelId"
+        title="预约人员"
+        placeholder="请选择预约人员"
+        required
+        isLink
+      />
+      <dpmsCellInput
+        title="预约备注"
+        placeholder="请输入备注"
+        inputType="text"
+        v-model="form.appointmentMemo"
+      />
+    </dpmsForm>
     <div class="agree">
-      我已知悉并同意
+      <dpmsCheckbox
+        class="checkbox"
+        @change="(v) => (btnDisabled = !v)"
+      />我已知悉并同意
       <a href>《预约服务协议》</a>
     </div>
-    <button>确认预约</button>
+    <dpmsButton :disabled="btnDisabled" text="确认预约" @click="submit" />
     <dpmsBottomPicker :visible.sync="doctorPickerVisible" title="选择医生">
-      <div class="doctor" v-for="d in dockers" :key="d.doctorId" @click="dockerClick(d)">
+      <div
+        class="doctor"
+        v-for="d in dockers"
+        :key="d.doctorId"
+        @click="dockerClick(d)"
+      >
         <image :src="d.doctorAvatarUrl" />
         <div class="info">
           <div class="name">{{ d.doctorName }}</div>
@@ -35,11 +82,16 @@
       </div>
     </dpmsBottomPicker>
     <dpmsBottomPicker :visible.sync="itemPickerVisible" title="选择项目">
-      <div class="item" v-for="itm in items" :key="itm.itemId" @click="itemClick(itm)">
+      <div
+        class="item"
+        v-for="itm in items"
+        :key="itm.itemId"
+        @click="itemClick(itm)"
+      >
         <image :src="itm.itemThumbnailUrl" />
         <div class="info">
-          <div class="name">{{itm.itemName}}</div>
-          <div>{{itm.itemBriefIntroduction}}</div>
+          <div class="name">{{ itm.itemName }}</div>
+          <div>{{ itm.itemBriefIntroduction }}</div>
         </div>
       </div>
     </dpmsBottomPicker>
@@ -47,17 +99,45 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 export default {
   data() {
     return {
-      institution: getStorage(STORAGE_KEY.MEDICALINSTITUTION),
-      form: {},
+      institution: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+        .medicalInstitutionDTO,
+      userId: getStorage(STORAGE_KEY.STAFF).id,
+      shopDetail: {},
+      form: {
+        doctorId: '',
+        itemId: [],
+        date: '',
+        timeStamp: '',
+        personnelId: '',
+        appointmentMemo: '',
+      },
+      rules: {
+        date: {
+          required: true,
+          message: '请选择预约日期',
+        },
+        timeStamp: {
+          required: true,
+          message: '请选择预约时间',
+        },
+        personnelId: {
+          required: true,
+          message: '请选择预约人员',
+        },
+      },
+      btnDisabled: true,
       doctor: {},
       dockers: [],
+      doctorTime: [],
       items: [],
       selectedItems: [],
+      personnelList: [],
       doctorPickerVisible: false,
       itemPickerVisible: false,
     }
@@ -66,8 +146,81 @@ export default {
     selectedItemsText() {
       return this.selectedItems.map((itm) => itm.itemName).join('，')
     },
+    doctorTimeFilter() {
+      return this.doctorTime.map((v) => ({
+        label: moment(v.startAvailableDateStamp).format('HH:mm'),
+        value: v.startAvailableDateStamp,
+      }))
+    },
+    startDate() {
+      return moment(this.shopDetail.preAdvanceDayOfAppointmentTime).format(
+        'YYYY-MM-DD',
+      )
+    },
+    endDate() {
+      return moment(this.shopDetail.nextAdvanceDayOfAppointmentTime).format(
+        'YYYY-MM-DD',
+      )
+    },
+  },
+  watch: {
+    'form.date': function (newVal) {
+      if (newVal) {
+        this.getDoctorTime(newVal)
+      }
+    },
   },
   methods: {
+    submit() {
+      this.$refs.editForm.validate((err, fileds) => {
+        if (err) {
+          this.$utils.show(err[0].message)
+          return
+        }
+
+        let timeStamp = this.doctorTime.filter(
+          (v) => v.startAvailableDateStamp === this.form.timeStamp,
+        )
+        let param = {
+          medicalInstitutionId: this.institution.medicalInstitutionId,
+          appointmentBeginTimeStamp: timeStamp[0].startAvailableDateStamp,
+          appointmentEndTimeStamp: timeStamp[0].endAvailableDateStamp,
+          networkAppointmentItemList: this.form.itemId.map((v) => ({
+            itemId: v.itemId,
+            itemName: v.itemName,
+            itemType: v.itemType,
+            itemTypeName: v.itemTypeName,
+          })),
+          shopId: this.shopDetail.settingsShopId,
+          ...this.form,
+          timeStamp: '',
+          itemId: '',
+        }
+        this.btnDisabled = true
+        appointAPI
+          .creatAppt({ appointmentJsonStr: JSON.stringify(param) })
+          .then((res) => {
+            let { data } = res
+
+            this.btnDisabled = false
+          })
+          .catch(() => {
+            this.btnDisabled = false
+          })
+      })
+    },
+    getDoctorTime(date) {
+      appointAPI
+        .getTime({
+          medicalInstitutionId: this.institution.medicalInstitutionId,
+          doctorId: this.form.doctorId,
+          dateStr: date,
+        })
+        .then((res) => {
+          let { data } = res
+          this.doctorTime = data.filter((v) => v.isShow)
+        })
+    },
     async getDoctors() {
       const res = await appointAPI.getDoctorList({
         medicalInstitutionId: this.institution.medicalInstitutionId,
@@ -80,18 +233,42 @@ export default {
       })
       this.items = res.data.itemList
     },
+    async getPersonnelList() {
+      const res = await appointAPI.getPersonnelList({
+        userId: this.userId,
+      })
+      this.personnelList = res.data
+    },
+    async getShopDetail() {
+      const res = await appointAPI.getShopDetail({
+        medicalInstitution: this.institution.medicalInstitutionId,
+      })
+      this.shopDetail = res.data
+    },
     dockerClick(d) {
+      this.form.doctorId = d.doctorId
+      if (this.form.date) {
+        this.getDoctorTime(this.form.date)
+      }
       this.doctor = d
       this.doctorPickerVisible = false
     },
     itemClick(itm) {
       if (this.selectedItems.find((si) => si.itemId === itm.itemId)) return
       this.selectedItems = [...this.selectedItems, itm]
+      this.form.itemId = this.selectedItems
+    },
+    async init() {
+      this.$utils.showLoading()
+      await this.getDoctors()
+      await this.getItems()
+      await this.getPersonnelList()
+      await this.getShopDetail()
+      this.$utils.clearLoading()
     },
   },
   created() {
-    this.getDoctors()
-    this.getItems()
+    this.init()
   },
 }
 </script>
@@ -100,9 +277,12 @@ export default {
 .agree {
   color: rgba(153, 153, 153, 1);
   font-size: 24rpx;
-  padding: 0 32rpx;
-  line-height: 80rpx;
+  padding: 20rpx 32rpx;
   display: flex;
+  align-items: center;
+  .checkbox {
+    margin-right: 10rpx;
+  }
   a {
     color: rgba(92, 187, 137, 1);
   }
