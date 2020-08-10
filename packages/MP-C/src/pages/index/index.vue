@@ -234,8 +234,8 @@ export default {
     handleProjAptmt(appointmentItemId) {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
+        return
       }
-      return
       uni.showLoading({
         title: '加载中...',
       })
