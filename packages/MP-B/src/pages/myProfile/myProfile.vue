@@ -131,7 +131,9 @@ export default {
         institutionAPI
           .updateStaff({
             ...this.form,
-            birthdayStamp: moment(this.form.birthdayStamp).valueOf(),
+            birthdayStamp: this.form.birthdayStamp
+              ? moment(this.form.birthdayStamp).valueOf()
+              : '',
           })
           .then((res) => {
             this.$store.commit('workbenchStore/setStaff', {
