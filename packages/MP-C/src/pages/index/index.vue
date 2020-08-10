@@ -484,7 +484,7 @@ export default {
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: center;
   color: #5cbb89;
-  line-height: 48rpx;
+  line-height: 52rpx;
   position: relative;
   top: -78rpx;
   left: 546rpx;
