@@ -189,7 +189,8 @@ export default {
       if (
         this.paramsObj.type === 'createAppt' ||
         this.paramsObj.type === 'editAppt' ||
-        this.paramsObj.type === 'createRegister'
+        this.paramsObj.type === 'createRegister' ||
+        this.paramsObj.type === 'editRegister'
       ) {
         uni.$emit(globalEventKeys.selectPatientCardFromSearchPatient, {
           patientId,
