@@ -137,10 +137,14 @@ export default {
     uni.$on(globalEventKeys.cancleApptSuccess, () => {
       this.loadData()
     })
+    uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
+      this.loadData()
+    })
   },
   onUnload() {
     console.log('off !')
     uni.$off(globalEventKeys.cancleApptSuccess)
+    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   onLoad(option) {
     this.appointmentId = Number(option.appointmentId)
