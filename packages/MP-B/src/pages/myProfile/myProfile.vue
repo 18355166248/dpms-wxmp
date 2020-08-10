@@ -1,5 +1,5 @@
 <template>
-  <div class="page-bg">
+  <div>
     <dpmsForm ref="myProfileForm" :model="form" :rules="rules">
       <dpmsCellInput
         required
@@ -154,10 +154,3 @@ export default {
   },
 }
 </script>
-
-<style lang="scss" scoped>
-.page-bg {
-  height: 100%;
-  background: rgba(0, 0, 0, 0.04);
-}
-</style>

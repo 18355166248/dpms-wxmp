@@ -47,7 +47,7 @@ const scheduleTableUtil = {
             const index = areaList.findIndex(
               (areaItem) =>
                 areaItem.findIndex(
-                  (areaChildItem) => area.min <= areaChildItem.max,
+                  (areaChildItem) => area.min < areaChildItem.max,
                 ) > -1,
             )
 

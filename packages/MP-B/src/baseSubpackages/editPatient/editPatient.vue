@@ -1,5 +1,5 @@
 <template>
-  <scroll-view scroll-y class="h100 page-bg">
+  <div class="h100">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
       <dpmsCellInput
@@ -18,6 +18,7 @@
         headerText="选择性别"
       />
       <dpmsDatePicker
+        required
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
@@ -34,8 +35,8 @@
         isLink
       />
       <dpmsCell
-        title="用户画像"
-        placeholder="请选择用户画像"
+        title="患者标签"
+        placeholder="请选择患者标签"
         :value="patientTagsCheckedText"
         isLink
         @click.native="onSelectTags"
@@ -99,7 +100,7 @@
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
-  </scroll-view>
+  </div>
 </template>
 
 <script>
@@ -152,6 +153,10 @@ export default {
         gender: {
           required: true,
           message: '请选择性别',
+        },
+        birthday: {
+          required: true,
+          message: '请选择出生日期',
         },
         contactLabel: {
           required: true,
@@ -279,11 +284,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-bg {
-  height: 100%;
-  background: rgba(0, 0, 0, 0.04);
-}
-
 [data-layout-align] {
   display: flex;
   justify-content: flex-start;
