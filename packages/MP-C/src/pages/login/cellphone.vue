@@ -8,9 +8,11 @@
     </div>
     <div class="formItem">
       <input placeholder="请输入验证码" v-model="code" />
-      <div class="btn" :class="{ disabled: !!second }" @click="getCode">
-        {{ second ? `${second}秒后再试` : '获取验证码' }}
-      </div>
+      <div
+        class="btn"
+        :class="{ disabled: !!second }"
+        @click="getCode"
+      >{{ second ? `${second}秒后再试` : '获取验证码' }}</div>
     </div>
     <button @click="phoneLogin">微信登陆</button>
   </div>
@@ -35,7 +37,7 @@ export default {
       countdown.call(this, 60, (sec) => {
         this.second = sec
       })
-      loginApi.getVerifyCode({ phone: this.mobile })
+      loginApi.getVerifyCode({ phone: this.mobile, appVersion: '1.0.0' })
     },
     async phoneLogin() {
       if (!/^1[3-9]\d{9}$/.test(this.mobile))
