@@ -7,6 +7,7 @@
       @change="onChange"
       @click="toUrl('/pages/projAptmt/projAptmt')"
       class="aptmt"
+      v-show="!hide"
       ><span class="iconfont icon-time"></span
     ></movable-view>
     <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
@@ -128,13 +129,24 @@ export default {
       institutionIntroduce: {},
       itemList: [],
       storeList: [],
-      x: 300,
-      y: 360,
+      x: 0,
+      y: 0,
+      hide: true,
       loadStatus: 'loading',
       currentPage: 1,
       total: 0,
       size: 3,
     }
+  },
+  beforeMount() {
+    const self = this
+    uni.getSystemInfo({
+      success: function (res) {
+        self.y = res.windowHeight - 60
+        self.x = res.windowWidth
+        self.hide = false
+      },
+    })
   },
   onLoad() {
     this.init()
@@ -197,9 +209,9 @@ export default {
         })
     },
     handleProjAptmt(appointmentItemId) {
-      // if (!staff) {
-      //   this.$utils.replace({ url: '/pages/login/index' })
-      // }
+      if (!staff) {
+        this.$utils.replace({ url: '/pages/login/index' })
+      }
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({

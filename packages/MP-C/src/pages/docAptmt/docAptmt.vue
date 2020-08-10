@@ -149,10 +149,9 @@ export default {
       uni.startPullDownRefresh()
     },
     handleAptmt(appointmentDoctorId) {
-      // e.preventDefault()
-      // if (!staff) {
-      //   this.$utils.replace({ url: '/pages/login/index' })
-      // }
+      if (!staff) {
+        this.$utils.replace({ url: '/pages/login/index' })
+      }
       const { toUrl } = this
       institutionAPI
         .checkDocCanAptmt({

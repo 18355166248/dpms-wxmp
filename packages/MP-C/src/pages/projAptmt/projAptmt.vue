@@ -152,10 +152,9 @@ export default {
       uni.startPullDownRefresh()
     },
     handleAptmt(appointmentItemId) {
-      // e.preventDefault()
-      // if (!staff) {
-      //   this.$utils.replace({ url: '/pages/login/index' })
-      // }
+      if (!staff) {
+        this.$utils.replace({ url: '/pages/login/index' })
+      }
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
