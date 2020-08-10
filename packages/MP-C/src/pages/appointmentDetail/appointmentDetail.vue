@@ -109,7 +109,7 @@
           修改
         </button>
         <button
-          @click="del"
+          @click="delAppoint"
           v-if="
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
               .zh_CN == '待确认' ||
@@ -154,10 +154,29 @@ export default {
           this.detailInfo = res.data
         })
     },
+    delAppoint() {
+      uni.showModal({
+        content: '您确认取消预约吗？',
+        cancelText: '再想想',
+        confirmText: '确认',
+        confirmColor: '#5CBB89',
+        success: (confirm) => {
+          if (confirm.confirm) {
+            this.del()
+          }
+        },
+      })
+    },
     del() {
       appointmentAPI
         .deleteAppointment({ networkAppointmentId: this.networkAppointmentId })
-        .then(() => {})
+        .then((res) => {
+          if (res.code == 0) {
+            this.$utils.replace({
+              url: '/pages/myAppointment/myAppointment',
+            })
+          }
+        })
     },
     agree() {
       this.protocol = !this.protocol
