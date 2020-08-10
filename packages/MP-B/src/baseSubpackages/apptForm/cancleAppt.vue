@@ -109,7 +109,9 @@ export default {
       )
 
       if (listRes) {
-        uni.$emit(globalEventKeys.cancleApptSuccess)
+        uni.$emit(globalEventKeys.cancleApptSuccess, {
+          appointmentId: this.appointmentId,
+        })
         this.$utils.back()
       }
 

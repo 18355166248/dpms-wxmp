@@ -1,19 +1,7 @@
 <template>
-  <view
-    :style="{
-      paddingTop: navHeight + 'px',
-      height: viewHeight,
-    }"
-    class="home-view"
-  >
-    <view class="home-bg">
-      <image
-        class="home-bg-img"
-        src="https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/home-header-bg.png"
-      ></image>
-    </view>
-
+  <view class="home-view">
     <nav-bar
+      :navLeftLoading="switchClinicStatus === 'loading'"
       :navHeight="navHeight"
       :navTop="navTop"
       :capsuleHeight="capsuleHeight"
@@ -21,128 +9,118 @@
       @click="switchClinic"
     />
 
-    <mescroll-body
-      ref="mescrollRef"
-      @init="mescrollInit"
-      @down="downCallback"
-      @up="upCallback"
-      :down="downOption"
-      :up="upOption"
-      :top="scrollTop"
-      :height="scrollHeight"
-    >
-      <view class="header-wrapper mh-32 pt-47">
-        <view class="header">
+    <view class="header-wrapper mh-32 pt-47">
+      <view class="header">
+        <view
+          class="header-search-wrapper mr-24"
+          @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+        >
+          <view class="header-search-wrapper-input">
+            搜索
+          </view>
+          <text class="iconfont icon-search"></text>
+        </view>
+        <view
+          class="icon-warpper"
+          @click="toUrl('/pages/patient/createPatient/createPatient')"
+        >
+          <text class="iconfont icon-plus"></text>
+        </view>
+      </view>
+      <view class="c-white mt-36 fz-34">你好，{{ staffName }}</view>
+    </view>
+    <view class="ph-32">
+      <view class="statistics pv-32">
+        <view class="statistics-header" @click="toggle">
+          今日统计
+
+          <text v-if="visible" class="iconfont icon-no-eye ml-18"></text>
+          <text v-else class="iconfont icon-eye ml-18"></text>
+        </view>
+        <view class="statistics-body">
+          <view class="statistics-item">
+            <view class="statistics-item-header">
+              <toggle
+                :text="pageData.patientCount"
+                :isVisible="visible"
+              ></toggle>
+            </view>
+            <text class="statistics-item-body">新增患者</text>
+          </view>
+          <view class="statistics-item">
+            <view class="statistics-item-header">
+              <toggle
+                :text="pageData.appointmentCount"
+                :isVisible="visible"
+              ></toggle>
+            </view>
+
+            <text class="statistics-item-body">新增预约</text>
+          </view>
+          <view class="statistics-item">
+            <view class="statistics-item-header">
+              <toggle
+                :text="pageData.registerFirstDiagnosisCount"
+                :isVisible="visible"
+              ></toggle>
+              /
+              <toggle
+                :text="pageData.registerCount"
+                :isVisible="visible"
+              ></toggle>
+            </view>
+            <text class="statistics-item-body">今日就诊</text>
+          </view>
+          <view class="statistics-item">
+            <view class="statistics-item-header">
+              <toggle :text="price" :isVisible="visible"></toggle>
+            </view>
+            <text class="statistics-item-body">实收金额</text>
+          </view>
+        </view>
+      </view>
+      <view class="menu-area mt-68">
+        <view class="menu-area-header">
+          常用功能
+        </view>
+        <view class="menu-area-body mt-32">
           <view
-            class="header-search-wrapper mr-24"
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/todayWork/todayWork')"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color1">
+              <text class="iconfont icon-medicine-chest"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              今日就诊
+            </view>
+          </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/apptView/apptView')"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color2">
+              <text class="iconfont icon-clock"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              预约
+            </view>
+          </view>
+          <view
+            class="menu-area-item"
             @click="toUrl('/pages/patient/searchPatient/searchPatient')"
           >
-            <view class="header-search-wrapper-input">
-              搜索
+            <view class="menu-area-item-icon menu-area-item-icon-color3">
+              <text class="iconfont icon-patient"></text>
             </view>
-            <text class="iconfont icon-search"></text>
-          </view>
-          <view
-            class="icon-warpper"
-            @click="toUrl('/pages/patient/createPatient/createPatient')"
-          >
-            <text class="iconfont icon-plus"></text>
-          </view>
-        </view>
-        <view class="c-white mt-36 fz-34">你好，{{ staffName }}</view>
-      </view>
-      <view class="ph-32">
-        <view class="statistics pv-32">
-          <view class="statistics-header" @click="toggle">
-            今日统计
-
-            <text v-if="visible" class="iconfont icon-no-eye ml-18"></text>
-            <text v-else class="iconfont icon-eye ml-18"></text>
-          </view>
-          <view class="statistics-body">
-            <view class="statistics-item">
-              <view class="statistics-item-header">
-                <toggle
-                  :text="pageData.patientCount"
-                  :isVisible="visible"
-                ></toggle>
-              </view>
-              <text class="statistics-item-body">新增患者</text>
-            </view>
-            <view class="statistics-item">
-              <view class="statistics-item-header">
-                <toggle
-                  :text="pageData.appointmentCount"
-                  :isVisible="visible"
-                ></toggle>
-              </view>
-
-              <text class="statistics-item-body">新增预约</text>
-            </view>
-            <view class="statistics-item">
-              <view class="statistics-item-header">
-                <toggle
-                  :text="pageData.registerFirstDiagnosisCount"
-                  :isVisible="visible"
-                ></toggle>
-                /
-                <toggle
-                  :text="pageData.registerCount"
-                  :isVisible="visible"
-                ></toggle>
-              </view>
-              <text class="statistics-item-body">今日就诊</text>
-            </view>
-            <view class="statistics-item">
-              <view class="statistics-item-header">
-                <toggle :text="price" :isVisible="visible"></toggle>
-              </view>
-              <text class="statistics-item-body">实收金额</text>
-            </view>
-          </view>
-        </view>
-        <view class="menu-area mt-68">
-          <view class="menu-area-header">
-            常用功能
-          </view>
-          <view class="menu-area-body mt-32">
-            <view
-              class="menu-area-item"
-              @click="toUrl('/baseSubpackages/todayWork/todayWork')"
-            >
-              <view class="menu-area-item-icon menu-area-item-icon-color1">
-                <text class="iconfont icon-medicine-chest"></text>
-              </view>
-              <view class="menu-area-item-txt mt-24">
-                今日就诊
-              </view>
-            </view>
-            <view
-              class="menu-area-item"
-              @click="toUrl('/baseSubpackages/apptView/apptView')"
-            >
-              <view class="menu-area-item-icon menu-area-item-icon-color2">
-                <text class="iconfont icon-clock"></text>
-              </view>
-              <view class="menu-area-item-txt mt-24">
-                预约
-              </view>
-            </view>
-            <view
-              class="menu-area-item"
-              @click="toUrl('/pages/patient/searchPatient/searchPatient')"
-            >
-              <view class="menu-area-item-icon menu-area-item-icon-color3">
-                <text class="iconfont icon-patient"></text>
-              </view>
-              <view class="menu-area-item-txt mt-24">
-                患者
-              </view>
+            <view class="menu-area-item-txt mt-24">
+              患者
             </view>
           </view>
         </view>
       </view>
-    </mescroll-body>
+    </view>
+
     <selectMedicalInstitution
       ref="selectMedicalInstitution"
       @confirm="selectClinic"
@@ -154,21 +132,16 @@
 import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
 
-// 引入mescroll-mixins.js
-
-import MescrollMixin from '@/components/mescroll-uni/mescroll-mixins.js'
-// 引入mescroll-body组件 (如已在main.js注册全局组件,则省略此步骤)
-import MescrollBody from '@/components/mescroll-uni/mescroll-body.vue' // 注意.vue后缀不能省
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
 
-import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import toggle from '@/components/toggle/toggle'
+import patientApi from '@/APIS/patient/patient.api'
+import { globalEventKeys } from '@/config/global.eventKeys'
 
 export default {
-  mixins: [MescrollMixin], // 使用mixin
   components: {
     navBar,
-    MescrollBody,
     toggle,
   },
   data() {
@@ -188,6 +161,8 @@ export default {
         isLock: true,
         use: false,
       },
+
+      switchClinicStatus: 'success',
       // 列表数据
       pageData: {
         patientCount: 0,
@@ -198,7 +173,20 @@ export default {
       },
     }
   },
+  onLoad() {
+    // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
+    this.init()
 
+    uni.$on(globalEventKeys.newPatient, () => {
+      this.init()
+    })
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.newPatient)
+  },
+  onPullDownRefresh() {
+    this.pullDownLoadData()
+  },
   computed: {
     capsuleHeight() {
       return `${uni.getMenuButtonBoundingClientRect().height}px`
@@ -217,6 +205,11 @@ export default {
         : '--'
     },
     medicalInstitutionSimpleCode() {
+      if (this.switchClinicStatus === 'loading') {
+        return '诊所切换中...'
+      } else if (this.switchClinicStatus === 'error') {
+        return '切换失败，请重试'
+      }
       return getStorage(STORAGE_KEY.MEDICALINSTITUTION)
         ? getStorage(STORAGE_KEY.MEDICALINSTITUTION)
             .medicalInstitutionSimpleCode
@@ -238,9 +231,6 @@ export default {
   },
 
   methods: {
-    selectClinic(val) {
-      console.log('val:', val)
-    },
     switchClinic() {
       this.$refs.selectMedicalInstitution.show()
     },
@@ -253,21 +243,61 @@ export default {
       this.visible = !this.visible
     },
     /*下拉刷新的回调, 有三种处理方式:*/
-    downCallback() {
-      diagnosisAPI
-        .getTodayWorkStatistics({
+    async pullDownLoadData() {
+      const [err, res] = await this.loadData()
+      uni.stopPullDownRefresh()
+    },
+    async loadData() {
+      const [err, res] = await this.$utils.asyncTasks(
+        diagnosisAPI.getTodayWorkStatistics({
           beginTimestamp: moment().startOf('day').valueOf(),
           endTimestamp: moment().endOf('day').valueOf(),
-        })
-        .then((res) => {
-          this.pageData = res.data
-          // 请求成功,隐藏加载状态
-          this.mescroll.endSuccess()
-        })
-        .catch((err) => {
-          // 请求失败,隐藏加载状态
-          this.mescroll.endErr()
-        })
+        }),
+      )
+
+      if (err) {
+        return [err, null]
+      }
+
+      if (res) {
+        return [null, res]
+      }
+    },
+    async init() {
+      uni.showLoading({
+        title: '正在加载...',
+        mask: true,
+      })
+      const [err, res] = await this.loadData()
+      uni.hideLoading()
+    },
+
+    async selectClinic(val) {
+      console.log('val:', val)
+      this.switchClinicStatus = 'loading'
+
+      const [err, res] = await this.$utils.asyncTasks(
+        patientApi.details({
+          _mtId: val.source.medicalInstitutionId,
+          _cmtId: val.source.topParentId,
+          _cmtType: val.source.institutionChainType,
+        }),
+      )
+
+      if (err) {
+        this.switchClinicStatus = 'error'
+      }
+      if (res) {
+        const medicalInstitution = {
+          ...res.data.medicalInstitution,
+          tenantId: getStorage(STORAGE_KEY.MEDICALINSTITUTION).tenantId,
+        }
+
+        this.switchClinicStatus = 'success'
+        setStorage(STORAGE_KEY.STAFF, res.data.staff)
+        setStorage(STORAGE_KEY.MEDICALINSTITUTION, medicalInstitution)
+        this.init()
+      }
     },
   },
 }
@@ -275,6 +305,10 @@ export default {
 
 <style lang="scss" scoped>
 .home-view {
+  height: 100%;
+  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/home-header-bg.png)
+    0 0 no-repeat;
+  background-size: 100%;
   .home-bg {
     width: 100%;
     position: fixed;
