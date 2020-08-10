@@ -177,7 +177,7 @@ export default {
         })
         .then((res) => {
           this.itemList = res.data.itemList
-          if (this.itemList > 1) {
+          if (this.itemList.length > 1) {
             this.displayMultipleItems = 2
           } else {
             this.displayMultipleItems = 1
