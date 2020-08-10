@@ -166,8 +166,9 @@
                         取消
                       </button>
                     </template>
-                    <template v-if="item.registerStatus === 2">
+                    <template v-else>
                       <button
+                        v-if="item.registerStatus === 2"
                         class="button inverted-button"
                         @click.stop="
                           cancleRegister({
@@ -194,6 +195,7 @@
                       >
                         治疗完成
                       </button>
+
                       <button
                         class="button inverted-button"
                         v-else
@@ -311,15 +313,14 @@ export default {
     uni.$on(globalEventKeys.apptFormWithSaveSuccess, (apptData) => {
       console.log('apptData:', apptData)
 
-      this.updateDataForApptStatus(apptData)
+      this.updateAppt(apptData)
     })
     // 监听事件
     uni.$on(globalEventKeys.cancleApptSuccess, (val) => {
       const rowIndex = this.dataSource.findIndex(
         (item) => item.appointmentId === val.appointmentId,
       )
-
-      this.$delete(this.dataSource, rowIndex)
+      this.dataSource.splice(rowIndex, 1)
     })
   },
   onUnload() {
@@ -500,45 +501,64 @@ export default {
     updateAppt(apptData) {
       // editRegister
       // editAppt
-      // createAppt
+      // createRegister
 
       const { appt, params } = apptData
+      const { type } = params
       const rowIndex = this.dataSource.findIndex(
-        (item) => item.appointmentId === appointmentId,
+        (item) => item.appointmentId === Number(params.appointmentId),
       )
 
-      const { registerStatus } = this.dataSource[rowIndex]
+      if (rowIndex !== -1) {
+        const { consultedOperated, doctorOperated } = this.dataSource[rowIndex]
 
-      const {
-        patient,
-        patientId,
-        appointmentBeginTimeStamp,
-        appointmentEndTimeStamp,
-        appointmentId,
-        visType,
-        appointmentStatus,
-      } = appt
+        const {
+          patient,
+          patientId,
+          appointmentBeginTimeStamp,
+          appointmentEndTimeStamp,
+          appointmentId,
+        } = appt
 
-      const { type } = params
+        const { type } = params
 
-      const newRowData = {
-        appointmentBeginTimestamp: appointmentBeginTimeStamp,
-        appointmentEndTimestamp: appointmentEndTimeStamp,
-        appointmentId,
-        patientDTO: patient,
-        patientId,
-        appointmentStatus, // 预约状态
-        registerStatus, // 挂号状态
+        const newRowData = {
+          appointmentBeginTimestamp: appointmentBeginTimeStamp,
+          appointmentEndTimestamp: appointmentEndTimeStamp,
+          appointmentId,
+          consultedOperated,
+          doctorOperated,
+          patientId,
+          patientDTO: patient,
+        }
+
+        if (type === 'editRegister') {
+          newRowData.registerId = appt.registerId
+          newRowData.registerStatus = this.REGISTER_ENUM.REGISTER_REGISTERED.value
+        }
+
+        if (type === 'editAppt') {
+          newRowData.registerStatus = this.dataSource[rowIndex].registerStatus
+        }
+
+        this.$set(this.dataSource, rowIndex, newRowData)
+      } else {
+        if (type === 'createRegister') {
+          const newRowData = {
+            ...appt,
+            appointmentBeginTimestamp: appt.appointmentBeginTimeStamp,
+            appointmentEndTimestamp: appt.appointmentEndTimeStamp,
+            registerStatus: this.REGISTER_ENUM.REGISTER_REGISTERED.value,
+            patientDTO: appt.patient,
+            doctorOperated: false,
+            consultedOperated: false,
+          }
+          this.dataSource = [newRowData, ...this.dataSource]
+          console.log('this.dataSource:', this.dataSource)
+        }
       }
-
-      if (type === 'editRegister') {
-        newRowData.appointmentStatus = this.APPOINTMENT_STATUS_ENUM.REGISTERED.value
-        newRowData.registerStatus = this.REGISTER_ENUM.REGISTER_REGISTERED.value
-      }
-
-      this.$set(this.dataSource, rowIndex, newRowData)
     },
-    updateDataForApptStatus() {},
+
     // 更新数据的挂号状态
     updateDataForRegisterStatus(registerId, registerStatus, type, role) {
       const rowIndex = this.dataSource.findIndex(
@@ -546,9 +566,17 @@ export default {
       )
 
       if (type === 'REGISTER_CANCELED') {
-        this.$delete(this.dataSource, rowIndex)
+        this.dataSource.splice(rowIndex, 1)
       } else {
-        const newRowData = { ...this.dataSource[rowIndex], registerStatus }
+        const newRegisterStatus =
+          registerStatus < this.dataSource[rowIndex].registerStatus
+            ? this.dataSource[rowIndex].registerStatus
+            : registerStatus
+
+        const newRowData = {
+          ...this.dataSource[rowIndex],
+          registerStatus: newRegisterStatus,
+        }
 
         if (role === 'DOCTOR') {
           newRowData.doctorOperated = true
@@ -559,6 +587,8 @@ export default {
 
         this.$set(this.dataSource, rowIndex, newRowData)
       }
+
+      console.log('this.dataSource:', this.dataSource)
     },
     async changeStatus(record, role) {
       const status = this.REGISTER_ENUM[record.type].value
@@ -610,7 +640,7 @@ export default {
 
         const [listErr, listRes] = await this.$utils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
-            beginTime: moment('2017-7-1').startOf('day').valueOf(),
+            beginTime: moment('2017-07-01').startOf('day').valueOf(),
             endTime: moment().endOf('day').valueOf(),
             current: this.current,
             patientSearchKey: this.patientSearchKey,
