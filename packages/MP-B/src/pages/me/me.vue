@@ -10,9 +10,11 @@
       />
       <view class="info">
         <view class="name">{{ staff.staffName }}</view>
-        <view class="role">{{ staffPosition[staff.position].zh_CN }}</view>
+        <view v-if="staff.position" class="role">{{
+          staffPosition[staff.position].zh_CN
+        }}</view>
       </view>
-      <view class="link" @click="goMyProfile">
+      <view class="link" @click="toUrl('/pages/myProfile/myProfile')">
         <text class="iconfont icon-right" />
       </view>
     </view>
@@ -28,10 +30,13 @@
       </view>
       <view class="li">
         <view>
-          <image class="logo" src="../../static/icon-mini-log.png" />
+          <image class="logo" src="../../static/icon-mini-logo.png" />
           关于北吉熊1
         </view>
-        <text @click="goMyProfile" class="iconfont icon-right text" />
+        <text
+          @click="toUrl('/pages/myProfile/about')"
+          class="iconfont icon-right text"
+        />
       </view>
     </view>
     <view class="out" @click="loginOut">退出登录</view>
@@ -61,9 +66,9 @@ export default {
     },
   },
   methods: {
-    goMyProfile() {
+    toUrl(url) {
       this.$utils.push({
-        url: '/pages/myProfile/myProfile',
+        url,
       })
     },
     loginOut() {
@@ -97,7 +102,7 @@ export default {
 }
 .me {
   margin-bottom: 64rpx;
-  padding: 45rpx 34rpx 0;
+  padding: 45rpx 22rpx 0 34rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -127,8 +132,8 @@ export default {
     width: 50rpx;
     height: 124rpx;
     line-height: 124rpx;
+    color: #fff;
     text-align: center;
-    color: rgba(0, 0, 0, 0.25);
   }
 }
 .menu {

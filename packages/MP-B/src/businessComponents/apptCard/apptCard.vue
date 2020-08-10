@@ -112,11 +112,11 @@ $fontColor: rgba(
 );
 
 .appt-card {
+  background: #feffff;
   border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  height: 384rpx;
   padding: 32rpx 24rpx;
-  background-color: #fff;
   display: flex;
   align-items: stretch;
   margin-bottom: 32rpx;
