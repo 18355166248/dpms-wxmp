@@ -74,16 +74,7 @@
                   <img mode="aspectFit" :src="i.itemThumbnailUrl" />
                 </view>
                 <view class="cardContent">
-                  <text
-                    class="cardTitle"
-                    @click="
-                      toUrl(
-                        '/pages/projAptmt/projDetail?appointmentItemId=' +
-                          i.appointmentItemId,
-                      )
-                    "
-                    >{{ i.itemName }}</text
-                  >
+                  <text class="cardTitle">{{ i.itemName }}</text>
                   <view
                     class="cardBtn"
                     v-show="i.canAppointment"
