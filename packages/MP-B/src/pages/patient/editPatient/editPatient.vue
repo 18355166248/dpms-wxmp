@@ -28,10 +28,17 @@ export default {
   },
   methods: {
     getPatient() {
-      patientAPI.getPatientDetail({ patientId: this.patientId }).then((res) => {
-        let { data } = res
-        this.formData = data
-      })
+      this.$utils.showLoading()
+      patientAPI
+        .getPatientDetail({ patientId: this.patientId })
+        .then((res) => {
+          let { data } = res
+          this.formData = data
+          this.$utils.clearLoading()
+        })
+        .catch(() => {
+          this.$utils.clearLoading()
+        })
     },
     updatePatient(form) {
       const formValue = _.cloneDeep(form)
@@ -65,8 +72,16 @@ export default {
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {
-          this.$refs.editPatient.showBtn()
-          this.$utils.back()
+          let that = this
+          this.$utils.show('修改成功', {
+            duration: 1000,
+            complete() {
+              setTimeout(() => {
+                that.$refs.editPatient.showBtn()
+                that.$utils.back()
+              }, 1000)
+            },
+          })
         })
         .catch(() => {
           this.$refs.editPatient.showBtn()

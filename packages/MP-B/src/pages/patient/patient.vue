@@ -30,7 +30,9 @@
         </view>
         <view
           class="menu-area-item"
-          @click="toUrl('/baseSubpackages/apptForm/apptDetail')"
+          @click="
+            toUrl('/pages/patient/apptList/apptList?patientId=' + patientId)
+          "
         >
           <view class="menu-area-item-icon menu-area-item-icon-color2">
             <text class="iconfont icon-clock"></text>
@@ -63,13 +65,20 @@ export default {
   },
   methods: {
     getPatient() {
-      patientAPI.getPatientDetail({ patientId: this.patientId }).then((res) => {
-        let { data } = res
-        this.patient = data
-        this.patient.tagListTxt = this.patient.tagList
-          .map((v) => v.name)
-          .join('，')
-      })
+      this.$utils.showLoading()
+      patientAPI
+        .getPatientDetail({ patientId: this.patientId })
+        .then((res) => {
+          let { data } = res
+          this.patient = data
+          this.patient.tagListTxt = this.patient.tagList
+            .map((v) => v.name)
+            .join('，')
+          this.$utils.clearLoading()
+        })
+        .catch(() => {
+          this.$utils.clearLoading()
+        })
     },
     toUrl(url) {
       this.$utils.push({
@@ -128,11 +137,11 @@ export default {
         }
       }
       &-icon-color1 {
-        $values: rgba(18, 148, 220, 1), rgba(57, 203, 240, 1);
+        $values: rgba(57, 203, 240, 1), rgba(18, 148, 220, 1);
         @include colors($values...);
       }
       &-icon-color2 {
-        $values: rgba(251, 141, 81, 1), rgba(254, 178, 119, 1);
+        $values: rgba(254, 178, 119, 1), rgba(251, 141, 81, 1);
         @include colors($values...);
       }
 

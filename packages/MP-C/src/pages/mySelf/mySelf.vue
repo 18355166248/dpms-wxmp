@@ -8,7 +8,11 @@
       class="home-view"
     >
       <view class="home-bg">
-        <image class="home-bg-img" src="/static/header-bg.png" mode="widthFix" />
+        <image
+          class="home-bg-img"
+          src="/static/header-bg.png"
+          mode="widthFix"
+        />
       </view>
       <text class="my">我的</text>
       <view class="header-wrapper mh-32 pt-47">
@@ -37,26 +41,30 @@
       <view class="personAppointment">
         <div>
           <span>
-            <span style="color: #fb8e51;" class="iconfont icon-set"></span>人员管理
+            <span style="color: #fb8e51;" class="iconfont icon-set"></span
+            >人员管理
           </span>
           <span @click="goPerson">
-            已添加{{ count }}人
+            已添加{{ count || 0 }}人
             <span class="iconfont icon-right"></span>
           </span>
         </div>
         <div>
           <span>
-            <span style="color: #4d94fe;" class="iconfont icon-timeCircle"></span>我的预约
+            <span
+              style="color: #4d94fe;"
+              class="iconfont icon-timeCircle"
+            ></span
+            >我的预约
           </span>
           <span @click="goAppointment">
-            待确认:{{ 1 }} /已预约:{{ 2
-            }}
+            待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
             <span class="iconfont icon-right"></span>
           </span>
         </div>
       </view>
       <view class="logOut">
-        <div class="quit">退出登录</div>
+        <div class="quit" @click="logOut">退出登录</div>
         <div class="version">版本号V1.0.0</div>
       </view>
 
@@ -82,6 +90,8 @@ export default {
   data() {
     return {
       count: '',
+      confirmedCount: '',
+      appointCount: '',
       x: 300,
       y: 360,
       headerImgSrc: '/static/header-img.svg',
@@ -89,6 +99,7 @@ export default {
   },
   beforeCreate() {
     let staff = getStorage(STORAGE_KEY.STAFF)
+    console.log('aaaaaaaaaaa', staff)
     if (!staff) {
       this.$utils.replace({ url: '/pages/login/index' })
     }
@@ -96,6 +107,8 @@ export default {
   mounted() {},
   beforeMount() {
     this.getCount()
+    this.getAppointCount()
+    this.getUserDetail()
   },
   onLoad() {},
   methods: {
@@ -105,6 +118,33 @@ export default {
         .then((res) => {
           this.count = res.data
         })
+    },
+    getAppointCount() {
+      customerAPI
+        .getAppointCount({ userId: getStorage(STORAGE_KEY.STAFF).id })
+        .then((res) => {
+          this.appointCount = res.data.appointmentCount
+          this.confirmedCount = res.data.undeterminedCount
+        })
+    },
+    getUserDetail() {
+      customerAPI
+        .userDetail({ userId: getStorage(STORAGE_KEY.STAFF).id })
+        .then((res) => {
+          console.log('userDetail', res)
+          customerAPI
+            .getMemberDetails({ memberId: res.data.user.memberId })
+            .then((re) => {
+              console.log('MemberDetails', re)
+            })
+        })
+    },
+    logOut() {
+      customerAPI.logOut().then((res) => {
+        if (res.code == 0) {
+          this.$utils.replace({ url: '/pages/login/index' })
+        }
+      })
     },
     goAppointment() {
       this.$utils.push({ url: '/pages/myAppointment/myAppointment' })
