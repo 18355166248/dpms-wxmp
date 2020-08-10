@@ -13,6 +13,7 @@ const config = {
   scrmUrl: 'http://pre.scrm.medcloud.cn',
   DPMSAntdPrefixCls: 'dpms-ant',
   SCRMAntdPrefixCls: 'SCRM',
+  appId: 'wxdc573e390f80f5c0',
 }
 
 export default config

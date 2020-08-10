@@ -114,7 +114,7 @@ import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import card from '@/components/card/card.vue'
 import requestError from '@/components/request-error/request-error.vue'
-import { globalEventKeys } from '@/config/global.eventKeys.js'
+import { globalEventKeys } from '@/config/global.eventKeys'
 
 export default {
   data() {
