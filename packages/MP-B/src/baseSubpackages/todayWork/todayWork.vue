@@ -69,54 +69,62 @@
                   <template v-if="curRoleKey === 'DOCTOR'">
                     <button
                       class="button inverted-button"
-                      v-if="
-                        item.registerStatus === 2 || item.registerStatus === 3
-                      "
+                      v-if="item.doctorOperated"
                       @click.stop="
-                        treating({
-                          registerId: item.registerId,
-                          tip: 'treating',
-                        })
-                      "
-                    >
-                      接诊
-                    </button>
-                    <button
-                      class="button inverted-button"
-                      v-if="item.registerStatus === 4"
-                      @click.stop="
-                        finishTreatment({
-                          registerId: item.registerId,
-                          tip: 'finishTreatment',
-                        })
+                        finishTreatment(
+                          {
+                            registerId: item.registerId,
+                            type: 'REGISTER_TREATED',
+                          },
+                          'DOCTOR',
+                        )
                       "
                     >
                       治疗完成
+                    </button>
+                    <button
+                      class="button inverted-button"
+                      v-else
+                      @click.stop="
+                        treating(
+                          {
+                            registerId: item.registerId,
+                            type: 'REGISTER_TREATING',
+                          },
+                          'DOCTOR',
+                        )
+                      "
+                    >
+                      接诊
                     </button>
                   </template>
                   <template v-else-if="curRoleKey === 'CONSULTANT'">
                     <button
                       class="button"
-                      v-if="
-                        item.registerStatus === 1 || item.registerStatus === 4
-                      "
+                      v-if="item.consultedOperated"
                       @click.stop="
-                        treating({
-                          registerId: item.registerId,
-                          tip: 'treating',
-                        })
+                        treating(
+                          {
+                            registerId: item.registerId,
+                            type: 'REGISTER_TREATING',
+                          },
+                          'CONSULTANT',
+                        )
                       "
                     >
                       接诊
                     </button>
                     <button
                       class="button inverted-button"
-                      v-if="item.registerStatus === 3"
+                      v-else
                       @click.stop="
-                        finishTreatment({
-                          registerId: item.registerId,
-                          tip: 'finishTreatment',
-                        })
+                        finishTreatment(
+                          {
+                            registerId: item.registerId,
+                            type: 'REGISTER_TREATED',
+                          },
+                          'CONSULTANT',
+                        )
                       "
                     >
                       治疗完成
@@ -162,43 +170,44 @@
                       <button
                         class="button inverted-button"
                         @click.stop="
-                          treating({
-                            registerId: item.registerId,
-                            tip: 'treating',
-                          })
-                        "
-                      >
-                        接诊
-                      </button>
-                      <button
-                        class="button inverted-button"
-                        @click.stop="
                           cancleRegister({
                             registerId: item.registerId,
-                            tip: 'cancleRegister',
+                            type: 'REGISTER_CANCELED',
                           })
                         "
                       >
                         取消
                       </button>
-                    </template>
-                    <template
-                      v-if="
-                        item.registerStatus === 3 ||
-                        item.registerStatus === 4 ||
-                        item.registerStatus === 5
-                      "
-                    >
+
                       <button
                         class="button inverted-button"
+                        v-if="item.doctorOperated"
                         @click.stop="
-                          finishTreatment({
-                            registerId: item.registerId,
-                            tip: 'finishTreatment',
-                          })
+                          finishTreatment(
+                            {
+                              registerId: item.registerId,
+                              type: 'REGISTER_TREATED',
+                            },
+                            'DOCTOR',
+                          )
                         "
                       >
                         治疗完成
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        v-else
+                        @click.stop="
+                          treating(
+                            {
+                              registerId: item.registerId,
+                              type: 'REGISTER_TREATING',
+                            },
+                            'DOCTOR',
+                          )
+                        "
+                      >
+                        接诊
                       </button>
                     </template>
                   </template>
@@ -290,35 +299,32 @@ export default {
       primaryColor: this.$commonCss.commonColor,
       REGISTER_ENUM: this.$utils.getEnums('Register'),
       TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
+      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
     }
   },
-  // onReady() {
-  //   uni.$on(globalEventKeys.cancleApptSuccess,  () => {
-  //     console.log("this:", this)
-  //     this.emitPullDownRefresh()
-
-  //   })
-  //   uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
-  //     console.log("this:", this)
-  //     this.emitPullDownRefresh()
-  //   })
-  // },
-
-  onUnload() {
-    uni.$off(globalEventKeys.cancleApptSuccess)
-    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
-  },
   onLoad() {
+    console.log('APPOINTMENT_STATUS_ENUM:', this.APPOINTMENT_STATUS_ENUM)
+    console.log('REGISTER_ENUM:', this.REGISTER_ENUM)
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.loadCurrentStaff()
 
-    uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
-      console.log('this:', this)
+    uni.$on(globalEventKeys.apptFormWithSaveSuccess, (apptData) => {
+      console.log('apptData:', apptData)
+
+      this.updateDataForApptStatus(apptData)
     })
     // 监听事件
-    uni.$on(globalEventKeys.cancleApptSuccess, () => {
-      console.log('this:', this)
+    uni.$on(globalEventKeys.cancleApptSuccess, (val) => {
+      const rowIndex = this.dataSource.findIndex(
+        (item) => item.appointmentId === val.appointmentId,
+      )
+
+      this.$delete(this.dataSource, rowIndex)
     })
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.cancleApptSuccess)
+    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   onPullDownRefresh() {
     this.current = 1
@@ -336,14 +342,12 @@ export default {
 
   methods: {
     // 治疗完成
-    finishTreatment(record) {
-      const status = this.REGISTER_ENUM.REGISTER_TREATED.value
-      this.changeStatus(record.registerId, status, record.tip)
+    finishTreatment(record, role) {
+      this.changeStatus(record, role)
     },
     // 接诊
-    treating(record) {
-      const status = this.REGISTER_ENUM.REGISTER_TREATING.value
-      this.changeStatus(record.registerId, status, record.tip)
+    treating(record, role) {
+      this.changeStatus(record, role)
     },
     // 取消挂号
     cancleRegister(record) {
@@ -352,20 +356,23 @@ export default {
         success: (res) => {
           const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
 
-          this.changeStatus(record.registerId, status, record.tip)
+          this.changeStatus(record)
         },
         fail: function (res) {
           console.log(res.errMsg)
         },
       })
     },
+    // 清空搜索
     handleClear() {
       this.patientSearchKey = ''
       this.emitPullDownRefresh()
     },
+    // 搜索输入框改变
     searchChange(val) {
       this.patientSearchKey = val.value
     },
+    // 页面跳转
     toPage(url, params) {
       console.log('params:', params)
       this.$utils.push({
@@ -376,9 +383,9 @@ export default {
     },
     // 触发下拉事件
     emitPullDownRefresh() {
-      console.log('触发下拉事件')
       uni.startPullDownRefresh()
     },
+    // 去重、合并角色数组
     useConsolidateData(dataSource) {
       const data = {}
       if (dataSource.length > 0) {
@@ -471,18 +478,105 @@ export default {
         )
       }
     },
-    async changeStatus(registerId, status, tipKey) {
+    /**
+     * 就诊状态枚举值
+     * REGISTER_APPOINTED(1, "已预约", "Appointed"),
+     * REGISTER_REGISTERED(2, "已挂号", "Registered"),
+     * REGISTER_CONSULTING(3, "咨询中", "Consulting"),
+     * REGISTER_TREATING(4, "治疗中", "Treating"),
+     * REGISTER_TREATED(5, "治疗完成", "Treated");
+     * */
+
+    /**
+     *
+     * 前台角色：可能有新建挂号、预约转挂号、编辑预约、取消预约、取消挂号，除此外如果挂号状态：2， 前台同时还包含了医生的角色权限，并且判断逻辑也一致。如：doctorOperated
+     *
+     * 医生与咨询角色平行的，都可以有接诊按钮。解释：如果医生操作接诊，咨询还是可以操作接诊。治疗完成也是同样逻辑
+     *
+     * 医生角色：可能有接诊、治疗完成。根据doctorOperated判断，如果doctorOperated: false，为接诊。如果doctorOperated: true，始终显示治疗完成
+     * 咨询角色：可能有接诊、治疗完成。根据consultedOperated判断，如果consultedOperated: false，为接诊。如果consultedOperated: true，始终显示治疗完成
+     *
+     */
+    updateAppt(apptData) {
+      // editRegister
+      // editAppt
+      // createAppt
+
+      const { appt, params } = apptData
+      const rowIndex = this.dataSource.findIndex(
+        (item) => item.appointmentId === appointmentId,
+      )
+
+      const { registerStatus } = this.dataSource[rowIndex]
+
+      const {
+        patient,
+        patientId,
+        appointmentBeginTimeStamp,
+        appointmentEndTimeStamp,
+        appointmentId,
+        visType,
+        appointmentStatus,
+      } = appt
+
+      const { type } = params
+
+      const newRowData = {
+        appointmentBeginTimestamp: appointmentBeginTimeStamp,
+        appointmentEndTimestamp: appointmentEndTimeStamp,
+        appointmentId,
+        patientDTO: patient,
+        patientId,
+        appointmentStatus, // 预约状态
+        registerStatus, // 挂号状态
+      }
+
+      if (type === 'editRegister') {
+        newRowData.appointmentStatus = this.APPOINTMENT_STATUS_ENUM.REGISTERED.value
+        newRowData.registerStatus = this.REGISTER_ENUM.REGISTER_REGISTERED.value
+      }
+
+      this.$set(this.dataSource, rowIndex, newRowData)
+    },
+    updateDataForApptStatus() {},
+    // 更新数据的挂号状态
+    updateDataForRegisterStatus(registerId, registerStatus, type, role) {
+      const rowIndex = this.dataSource.findIndex(
+        (item) => item.registerId === registerId,
+      )
+
+      if (type === 'REGISTER_CANCELED') {
+        this.$delete(this.dataSource, rowIndex)
+      } else {
+        const newRowData = { ...this.dataSource[rowIndex], registerStatus }
+
+        if (role === 'DOCTOR') {
+          newRowData.doctorOperated = true
+        }
+        if (role === 'CONSULTANT') {
+          newRowData.consultedOperated = true
+        }
+
+        this.$set(this.dataSource, rowIndex, newRowData)
+      }
+    },
+    async changeStatus(record, role) {
+      const status = this.REGISTER_ENUM[record.type].value
+
       uni.showLoading({
         title: '正在提交...',
         mask: true,
       })
       const tips = {
-        cancleRegister: '取消成功',
-        treating: '接诊成功',
-        finishTreatment: '治疗完成',
+        REGISTER_CANCELED: '取消成功',
+        REGISTER_TREATING: '接诊成功',
+        REGISTER_TREATED: '治疗完成',
       }
       const [err, res] = await this.$utils.asyncTasks(
-        diagnosisApi.updateRegisterStatus({ registerId, status }),
+        diagnosisApi.updateRegisterStatus({
+          registerId: record.registerId,
+          status,
+        }),
       )
 
       uni.hideLoading()
@@ -490,9 +584,14 @@ export default {
       if (res) {
         uni.showToast({
           icon: 'success',
-          title: tips[tipKey],
+          title: tips[record.type],
         })
-        this.emitPullDownRefresh()
+        this.updateDataForRegisterStatus(
+          record.registerId,
+          status,
+          record.type,
+          role,
+        )
       }
     },
     // 获取列表数据
@@ -536,8 +635,8 @@ export default {
           }
         }
         this.dataSourceStatus.loading = false
-        uni.stopPullDownRefresh()
       }
+      uni.stopPullDownRefresh()
     },
     // 获取角色列表
     async loadCurrentStaff() {

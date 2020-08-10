@@ -7,6 +7,8 @@ const globalEventKeys = {
   cancleApptSuccess: 'cancleApptSuccess',
   // 搜索患者 点击患者卡片
   selectPatientCardFromSearchPatient: 'selectPatientCardFromSearchPatient',
+  // 新建患者
+  newPatient: 'newPatient',
 }
 
 export { globalEventKeys }
