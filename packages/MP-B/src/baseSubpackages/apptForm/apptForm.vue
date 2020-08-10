@@ -679,7 +679,7 @@ export default {
       }
 
       dept
-        .then(() => {
+        .then((res) => {
           if (type === 'createAppt') {
             this.$utils.show('新增预约成功')
           }
@@ -699,7 +699,7 @@ export default {
           uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
             isSuccess: true,
             params: this.paramsObj,
-            appt: formatValue,
+            appt: { ...formatValue, ...res.data },
           })
           this.$utils.back()
         })
