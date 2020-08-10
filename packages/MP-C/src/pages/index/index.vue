@@ -42,7 +42,9 @@
           <p class="compDescContentDesc">
             {{ institutionIntroduce.briefIntroduction || '' }}
           </p>
-          <p class="compDescMore">更多详情 ></p>
+          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
+            更多详情 >
+          </p>
         </view>
       </view>
       <view class="proj">
@@ -60,6 +62,9 @@
           >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
+                <view class="cardImg">
+                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
+                </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
                   <view
@@ -70,9 +75,6 @@
                   >
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
-                <view class="cardImg">
-                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
-                </view>
               </view>
             </swiper-item>
           </swiper>
@@ -225,6 +227,10 @@ export default {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
       }
+      return
+      uni.showLoading({
+        title: '加载中...',
+      })
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
@@ -346,18 +352,22 @@ export default {
 }
 .card {
   width: 306rpx;
-  height: 312rpx;
+  height: 296rpx;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 30rpx 0rpx rgba(0, 0, 0, 0.09);
+  padding-top: 16rpx;
 }
 .cardContent {
   width: 274rpx;
   height: 36rpx;
-  padding: 16rpx;
+  display: flex;
+  margin-left: 16rpx;
+  margin-bottom: 16rpx;
+  margin-top: 18rpx;
 }
 .cardTitle {
-  width: 112rpx;
+  width: 190rpx;
   height: 36rpx;
   font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Medium;
@@ -383,7 +393,7 @@ export default {
   text-align: left;
   color: rgba(0, 0, 0, 0.45);
   line-height: 36rpx;
-  margin: 12rpx;
+  margin-left: 16rpx;
 }
 .cardImg {
   width: 274rpx;
@@ -475,7 +485,7 @@ export default {
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: center;
   color: #5cbb89;
-  line-height: 48rpx;
+  line-height: 52rpx;
   position: relative;
   top: -78rpx;
   left: 546rpx;
@@ -494,8 +504,8 @@ export default {
 .aptmt > .icon-time {
   font-size: 50rpx;
   position: relative;
-  left: 16rpx;
-  top: 12rpx;
+  left: 18%;
+  top: 16%;
 }
 
 movable-area {
