@@ -3,7 +3,7 @@
     {
       "path": "pages/index/index",
       "style": {
-        "navigationBarTitleText": "XXX的诊所"
+        "navigationBarTitleText": ""
       }
     },
     {
@@ -100,6 +100,18 @@
       "path": "pages/appoint/index",
       "style": {
         "navigationBarTitleText": "新建预约"
+      }
+    },
+    {
+      "path": "pages/knowUs/index",
+      "style": {
+        "navigationBarTitleText": "了解我们"
+      }
+    },
+    {
+      "path": "pages/membership/membershipCard",
+      "style": {
+        "navigationBarTitleText": "会员卡"
       }
     }
   ],

@@ -6,10 +6,13 @@
           v-for="apptInfo in dataSource"
           :key="apptInfo.appointmentId"
           :appt="apptInfo"
-          :doctor="doctor"
+          :doctor="getDoctor(apptInfo.appointmentResourceMap.STAFF)"
         />
       </view>
     </scroll-view>
+    <template v-else>
+      <empty :disabled="true" text="暂无预约数据"></empty>
+    </template>
   </view>
 </template>
 
@@ -17,6 +20,7 @@
 import moment from 'moment'
 import patientAPI from '@/APIS/patient/patient.api'
 import apptCard from '@/businessComponents/apptCard/apptCard.vue'
+import empty from '@/components/empty/empty.vue'
 
 export default {
   data() {
@@ -30,46 +34,47 @@ export default {
     this.patientId = params.patientId
   },
   onReady() {
-    this.getPatient()
-    this.loadData()
+    this.init()
   },
   methods: {
-    // 触发下拉事件
-    emitPullDownRefresh() {
-      uni.startPullDownRefresh()
+    async init() {
+      this.$utils.showLoading()
+      await this.loadData()
+      await this.getPatient()
+      this.$utils.clearLoading()
     },
     // 获取列表数据
-    loadData() {
-      patientAPI.getApptList({ patientId: this.patientId }).then((res) => {
-        let { data } = res
-        this.dataSource = [
-          ...data.afterList,
-          ...data.beforeList,
-          ...data.currentList,
-        ]
-        console.log('data', this.dataSource)
-        // this.formData = data
+    async loadData() {
+      const { data } = await patientAPI.getApptList({
+        patientId: this.patientId,
       })
+      this.dataSource = [
+        ...data.afterList,
+        ...data.beforeList,
+        ...data.currentList,
+      ]
     },
     // 获取患者信息
-    getPatient() {
-      patientAPI.getPatientDetail({ patientId: this.patientId }).then((res) => {
-        let { data } = res
-        this.patient = data
+    async getPatient() {
+      const { data } = await patientAPI.getPatientDetail({
+        patientId: this.patientId,
       })
+      this.patient = data
     },
-    getDoctor(val) {},
+    getDoctor(val) {
+      let doctor = val.filter((v) => v.position === 2 && v.staffId !== -1)[0]
+      return doctor ? doctor : { staffName: '未指定医生' }
+    },
   },
   components: {
     apptCard,
-    // empty,
-    // loadMore,
-    // requestError,
-    // fixedFilter,
-    // fixedFooter,
+    empty,
   },
-  computed: {},
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.content {
+  padding-top: 32rpx;
+}
+</style>

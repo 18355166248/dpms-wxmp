@@ -7,6 +7,7 @@
       @change="onChange"
       @click="toUrl('/pages/projAptmt/projAptmt')"
       class="aptmt"
+      v-show="!hide"
       ><span class="iconfont icon-time"></span
     ></movable-view>
     <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
@@ -52,7 +53,11 @@
           >
         </view>
         <view class="cardList">
-          <swiper class="swiper" display-multiple-items="2" next-margin="10rpx">
+          <swiper
+            class="swiper"
+            display-multiple-items="displayMultipleItems"
+            next-margin="10rpx"
+          >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
                 <view class="cardContent">
@@ -128,13 +133,28 @@ export default {
       institutionIntroduce: {},
       itemList: [],
       storeList: [],
-      x: 300,
-      y: 360,
+      x: 0,
+      y: 0,
+      hide: true,
       loadStatus: 'loading',
       currentPage: 1,
       total: 0,
       size: 3,
+      displayMultipleItems: 1,
     }
+  },
+  created() {
+    const self = this
+    uni.getSystemInfo({
+      success: function (res) {
+        self.y = res.windowHeight - 60
+        self.x = res.windowWidth
+        self.hide = false
+      },
+    })
+    uni.setNavigationBarTitle({
+      title: medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
+    })
   },
   onLoad() {
     this.init()
@@ -155,6 +175,11 @@ export default {
         })
         .then((res) => {
           this.itemList = res.data.itemList
+          if (this.itemList >= 2) {
+            this.displayMultipleItems = 2
+          } else {
+            this.displayMultipleItems = 1
+          }
         })
       institutionAPI
         .getStoreList({
@@ -197,9 +222,9 @@ export default {
         })
     },
     handleProjAptmt(appointmentItemId) {
-      // if (!staff) {
-      //   this.$utils.replace({ url: '/pages/login/index' })
-      // }
+      if (!staff) {
+        this.$utils.replace({ url: '/pages/login/index' })
+      }
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({

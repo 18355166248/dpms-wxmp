@@ -1,37 +1,41 @@
 <template>
   <scroll-view class="knowUs" scroll-y>
     <view class="knowUs-title">
-      <text>$机构名称</text>
+      <text>详情介绍</text>
     </view>
-    <view class="knowUs-img">
-      <img
-        mode="scaleFit"
-        src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=1930662946,3376692344&fm=26&gp=0.jpg"
-      />
+    <view class="knowUs-detail">
+      <rich-text :nodes="introduceDetail"></rich-text>
     </view>
     <view class="store">
       <view class="storeContent">
         <view class="storeTop">
-          <text class="storeTitle">门店</text>
-          <view class="storeBtn" @click="toUrl('/pages/docAptmt/docAptmt')">
-            更多 >
-          </view>
+          <text class="storeTitle">可用门店</text>
         </view>
         <view class="storeList" v-for="s in storeList" :key="s.institutionId">
           <view class="storeCard">
             <view class="storeCardTitle">
               {{ s.institutionName }} &nbsp;&nbsp;&nbsp;
-              {{ s.institutionPhoneNumber }}
+              {{ s.institutionPhoneNumber || '' }}
             </view>
-            <view class="storeCardAddress">
+            <View class="storeCardAddress">
               <span class="iconfont icon-location"></span>
               {{ s.institutionAddress }}
-            </view>
+            </View>
             <view class="storeCardTime">
               <span class="iconfont icon-time"></span>
               {{ s.institutionAddress }}
             </view>
-            <view class="storeCardAptmt">预 约</view>
+            <view
+              class="storeCardAptmt"
+              @click="
+                toUrl(
+                  '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
+                    s.appointmentInstitutionId,
+                )
+              "
+            >
+              预 约
+            </view>
           </view>
         </view>
       </view>
@@ -43,17 +47,14 @@
 </template>
 
 <script>
-import institutionAPI from '@/APIS/institution/institution.api'
+import introduceAPI from '@/APIS/introduce/introduce.api'
 const medicalInstitution = uni.getStorageSync('medicalInstitution')
 export default {
   data() {
     return {
+      introduceDetail: '',
       storeList: [],
-      introduceImgs: [
-        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596709833912&di=e299594afa60fbe4f85ba148f288abf9&imgtype=0&src=http%3A%2F%2Ft8.baidu.com%2Fit%2Fu%3D1484500186%2C1503043093%26fm%3D79%26app%3D86%26f%3DJPEG%3Fw%3D1280%26h%3D853',
-        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596709833911&di=5a1df450608f0065f3745609d8eacf4f&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D3363001160%2C1163944807%26fm%3D79%26app%3D86%26f%3DJPEG%3Fw%3D1280%26h%3D830',
-        'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1596709894913&di=943388c61c02031888537b3ef1817928&imgtype=0&src=http%3A%2F%2Ft9.baidu.com%2Fit%2Fu%3D2266751744%2C4253267866%26fm%3D79%26app%3D86%26f%3DJPEG%3Fw%3D1280%26h%3D854',
-      ],
+      introduceImgs: [],
     }
   },
   onLoad() {
@@ -61,12 +62,25 @@ export default {
   },
   methods: {
     init() {
-      institutionAPI
+      introduceAPI
+        .getIntroduceInfo({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            this.introduceImgs = res.data.introduceImageUrls || []
+            this.introduceDetail = res.data.detailIntroduction || ''
+          }
+        })
+
+      introduceAPI
         .getStoreList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
         })
         .then((res) => {
-          this.storeList = res.data.institutionList
+          if (res.code === 0) {
+            this.storeList = res.data.institutionList
+          }
         })
     },
   },
@@ -78,21 +92,16 @@ export default {
   box-sizing: border-box;
   height: 100%;
   background: rgba($color: #000000, $alpha: 0.04);
-  padding: 40rpx 20rpx;
+  padding: 32rpx 24rpx;
   .knowUs-title {
-    text-align: center;
-    font-size: 60rpx;
-    font-weight: 600;
-    margin-bottom: 40rpx;
+    font-size: 34rpx;
+    font-family: PingFangSC, PingFangSC-Medium;
+    margin-bottom: 32rpx;
   }
-  .knowUs-img {
-    margin-bottom: 40rpx;
-    img {
-      width: 100%;
-    }
+  .knowUs-detail {
+    margin-bottom: 48rpx;
   }
   .store {
-    margin-top: 16rpx;
   }
   .storeTop {
     display: flex;
@@ -100,7 +109,7 @@ export default {
     justify-content: space-between;
   }
   .storeTitle {
-    font-size: 36rpx;
+    font-size: 34rpx;
     font-family: PingFangSC, PingFangSC-Medium;
   }
   .storeBtn {
@@ -153,6 +162,9 @@ export default {
     padding-left: 24rpx;
   }
   .storeCardAptmt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     width: 130rpx;
     height: 56rpx;
     background: #ffffff;
@@ -162,19 +174,18 @@ export default {
     font-family: PingFangSC, PingFangSC-Regular;
     text-align: center;
     color: #5cbb89;
-    line-height: 48rpx;
     position: relative;
     top: -78rpx;
     left: 546rpx;
   }
   .knowUs-introduce {
-    margin-top: 40rpx;
-    width: 730rpx;
+    margin-top: 48rpx;
+    width: 716rpx;
     img {
-      width: 345rpx;
-      height: 300rpx;
-      margin-bottom: 20rpx;
-      margin-right: 20rpx;
+      width: 344rpx;
+      height: 260rpx;
+      margin-bottom: 14rpx;
+      margin-right: 14rpx;
     }
   }
 }
