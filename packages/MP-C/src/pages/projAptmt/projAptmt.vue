@@ -20,12 +20,12 @@
         <span class="iconfont icon-down storePickerIcon"></span>
       </view>
       <view class="keywords">
+        <span class="iconfont icon-search keyWordIcon"></span>
         <input
           :value="keyWord"
           @blur="emitPullDownRefresh"
           class="keyWordInput"
         />
-        <span class="iconfont icon-search keyWordIcon"></span>
       </view>
     </view>
     <view class="aptmtList" v-show="projList.length > 0">
@@ -270,7 +270,7 @@ export default {
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 36rpx;
-  margin-left: 64rpx;
+  margin-left: 24rpx;
   margin-top: 12rpx;
 }
 .keywords {
@@ -279,11 +279,11 @@ export default {
   background: #ffffff;
   border-radius: 8rpx;
   margin-left: 24rpx;
+  display: flex;
 }
 .keyWordIcon {
-  position: relative;
-  top: -55rpx;
-  left: 20rpx;
+  margin-top: 22rpx;
+  margin-left: 18rpx;
   color: rgba(0, 0, 0, 0.25);
 }
 .aptmtCard {
