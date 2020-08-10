@@ -159,6 +159,7 @@ export default {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
       }
+      return
       uni.showLoading({
         title: '加载中...',
       })
