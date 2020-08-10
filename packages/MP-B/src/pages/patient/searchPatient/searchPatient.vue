@@ -20,7 +20,7 @@
       请输入姓名/拼音/手机号查找患者
     </div>
     <div
-      class="search-tip-text pt-28"
+      class="search-tip-text pt-28 pl-24 pr-24"
       v-if="isSearchedValue && patientList.length === 0"
     >
       没有找到“<span class="patient-name">{{ isSearchedValue }}</span
@@ -43,31 +43,45 @@
         :key="searchRecord"
         @click="chooseSearchRecord(searchRecord)"
       >
-        {{ searchRecord }}
+        {{
+          searchRecord.length > 10
+            ? `${searchRecord.substring(0, 10)}...`
+            : searchRecord
+        }}
       </span>
     </div>
 
     <!-- 搜索列表 -->
     <div v-if="isSearchedValue && patientList.length != 0">
-      <div v-for="parient in patientList" :key="parient.id">
-        <card
-          :name="parient.patientName"
-          :avatarUrl="parient.avatarUrl"
-          :gender="parient.gender"
-          :age="parient.age"
-          :infos="[{ label: '联系电话', value: parient.mobile }]"
-        >
-        </card>
+      <div v-for="parient in patientList" :key="parient.patientId">
+        <div @click="clickPatientCard(parient.patientId)">
+          <card
+            :name="parient.patientName"
+            :avatarUrl="parient.avatarUrl"
+            :gender="parient.gender"
+            :age="parient.age"
+            :infos="[{ label: '联系电话', value: parient.mobile }]"
+          />
+        </div>
       </div>
-      <load-more></load-more>
+      <load-more :status="dataSourceStatus.status" />
     </div>
   </scroll-view>
 </template>
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
-import { dataDictUtil } from '../../../utils/dataDict.util'
 import loadMore from '@/components/load-more/load-more.vue'
+import { globalEventKeys } from 'config/global.eventKeys.js'
+
+const paramsConfigWithType = {
+  createAppt: {
+    name: 'createAppt',
+  },
+  editAppt: {
+    name: 'editAppt',
+  },
+}
 
 export default {
   data() {
@@ -79,9 +93,17 @@ export default {
       current: 1, //默认展示 第一页数据
       size: 10, //默认展示 15条数据
       total: 1, //默认 总条目，
+      // 数据列表的状态
+      dataSourceStatus: {
+        loading: true,
+        status: 'loading',
+        request: 'loading',
+      },
+      paramsObj: {},
     }
   },
-  onLoad() {
+  onLoad(option) {
+    this.paramsObj = option
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
   },
   onReachBottom() {
@@ -119,23 +141,29 @@ export default {
             that.patientList = that.patientList.concat(records)
           }
           that.total = total
+
+          if (total === that.patientList.length) {
+            this.dataSourceStatus.status = 'noMore'
+          }
         })
         .catch(() => {
           //
         })
     },
     //执行搜索
-    searchPatients: function (e) {
+    searchPatients() {
+      if (!this.searchValue) {
+        return
+      }
       this.isSearchedValue = this.searchValue
-      let that = this
 
-      //搜索历史列表数据
+      //搜索历史列表数据：最多显示10条
       let searchList = [
         ...new Set([
           this.isSearchedValue,
           ...uni.getStorageSync('searchPatientHistory'),
         ]),
-      ]
+      ].filter((v, index) => index < 10)
 
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
@@ -155,6 +183,28 @@ export default {
     clearHistorySearch() {
       this.searchRecords = []
       uni.setStorageSync('searchPatientHistory', [])
+    },
+    // 点击患者卡片
+    clickPatientCard(patientId) {
+      if (
+        this.paramsObj.type === 'createAppt' ||
+        this.paramsObj.type === 'editAppt'
+      ) {
+        uni.$emit(globalEventKeys.selectPatientCardFromSearchPatient, {
+          patientId,
+        })
+
+        this.$utils.back()
+
+        return
+      }
+
+      this.toPatient(patientId)
+    },
+    toPatient(id) {
+      this.$utils.push({
+        url: '/pages/patient/patient?patientId=' + id,
+      })
     },
   },
 }

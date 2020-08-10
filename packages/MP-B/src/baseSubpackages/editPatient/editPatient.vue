@@ -1,5 +1,5 @@
 <template>
-  <scroll-view scroll-y class="h100 page-bg">
+  <div class="h100">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
       <dpmsCellInput
@@ -18,6 +18,7 @@
         headerText="选择性别"
       />
       <dpmsDatePicker
+        required
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
@@ -34,8 +35,8 @@
         isLink
       />
       <dpmsCell
-        title="用户画像"
-        placeholder="请选择用户画像"
+        title="患者标签"
+        placeholder="请选择患者标签"
         :value="patientTagsCheckedText"
         isLink
         @click.native="onSelectTags"
@@ -99,41 +100,44 @@
         <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
-  </scroll-view>
+  </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import moment from 'moment'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import patientAPI from '@/APIS/patient/patient.api'
 
+const formDefault = {
+  patientName: '',
+  gender: '',
+  birthday: '',
+  settingsTypeId: '',
+  tagIds: [],
+  contactLabel: '',
+  mobile: '',
+  alternateMobile: '',
+  weChatId: '',
+  qqNum: '',
+  region: [],
+  address: '',
+}
+
 export default {
-  // props: {
-  //   form: {
-  //     type: Object,
-  //     required: true,
-  //   },
-  // },
+  props: {
+    formData: {
+      type: Object,
+      default: formDefault,
+    },
+  },
   data() {
     return {
       patientTypeList: [], //患者类型列表
       patientTagsCheckedText: '', //用户画像选中文本
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
-      form: {
-        patientName: '',
-        gender: '',
-        birthday: '',
-        settingsTypeId: '',
-        tagIds: [],
-        contactLabel: '',
-        mobile: '',
-        alternateMobile: '',
-        weChatId: '',
-        qqNum: '',
-        region: [],
-        address: '',
-      },
+      form: this.filterFormData(this.formData),
       rules: {
         patientName: [
           {
@@ -149,6 +153,10 @@ export default {
         gender: {
           required: true,
           message: '请选择性别',
+        },
+        birthday: {
+          required: true,
+          message: '请选择出生日期',
         },
         contactLabel: {
           required: true,
@@ -186,6 +194,11 @@ export default {
       },
     }
   },
+  watch: {
+    formData(newVal) {
+      this.form = this.filterFormData(newVal)
+    },
+  },
   created() {
     // 更新用户画像选中值
     uni.$on('updateTagsCheckedList', (checked) => {
@@ -212,6 +225,21 @@ export default {
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
+    filterFormData(data) {
+      if (_.isEmpty(data)) {
+        return formDefault
+      }
+
+      // 格式化formData
+      data = { ...formDefault, ...data, ...data.patientContactsList[0] }
+      data.region = [data.province, data.city, data.area]
+      if (data.tagList) {
+        data.tagIds = data.tagList.map((v) => v.id)
+        this.patientTagsCheckedText = data.tagList.map((v) => v.name).join(',')
+      }
+
+      return data
+    },
     onSelectTags() {
       this.$utils.push({
         url:
@@ -256,11 +284,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-bg {
-  height: 100%;
-  background: rgba(0, 0, 0, 0.04);
-}
-
 [data-layout-align] {
   display: flex;
   justify-content: flex-start;
@@ -316,8 +339,6 @@ export default {
   height: 154rpx;
   .dpms-cell {
     height: 154rpx;
-    textarea {
-    }
   }
 }
 </style>

@@ -59,7 +59,7 @@ export default {
         alternateMobile: form.alternateMobile,
         weChatId: form.weChatId,
         qqNum: form.qqNum,
-        provinc: form.region[0],
+        province: form.region[0],
         city: form.region[1],
         area: form.region[2],
         address: form.address,
@@ -72,6 +72,7 @@ export default {
       delete formValue.region
       delete formValue.address
 
+      let that = this
       patientAPI
         .createPatient({
           ...formValue,
@@ -79,10 +80,19 @@ export default {
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {
-          this.$refs.editPatient.showBtn()
+          that.$refs.editPatient.showBtn()
+
+          that.$utils.show('修改成功', {
+            duration: 1000,
+            complete() {
+              setTimeout(() => {
+                that.$utils.back()
+              }, 1000)
+            },
+          })
         })
         .catch(() => {
-          this.$refs.editPatient.showBtn()
+          that.$refs.editPatient.showBtn()
         })
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <view class="card" :style="[cardMargin]">
+  <view class="card" :style="[cardMargin]" @click="onClick">
     <view
       v-if="cornerMarkerFormat.text"
       class="card-corner-marker"
@@ -47,7 +47,10 @@
         </view>
 
         <view :class="{ 'mb-40': infos.length > 0 }">
-          <tag :text="genderTag.text" :circle="false" type="error"></tag>
+          <template v-if="gender">
+            <tag :text="genderTag" :circle="false" type="error"></tag>
+          </template>
+
           <template v-if="age">
             <tag :text="age" :circle="false" type="error"></tag>
           </template>
@@ -59,7 +62,7 @@
             v-for="(infoItem, index) in infos"
             :key="index"
           >
-            <template>
+            <template v-if="infoItem.value">
               <text class="mr-6">{{ infoItem.label }}：</text>
               <text>{{ formatVal(infoItem.value) }}</text>
             </template>
@@ -90,6 +93,8 @@ import qs from 'qs'
 /**
  * card 卡片
  *
+ * tips:  当disabled为true, 并且绑定了事件函数。如果插槽中有点击事件，需要设置event.stop阻止冒泡
+ *
  * @description 用于大部分卡片效果
  * @property {Boolean} disabled = [true|false] 禁用状态
  * 	@value true 卡片不能点击（不触发点击事件）
@@ -118,7 +123,10 @@ export default {
   props: {
     disabled: {
       type: Boolean,
-      default: true,
+      default: false,
+    },
+    id: {
+      type: Number,
     },
     name: {
       type: String,
@@ -130,7 +138,7 @@ export default {
     },
     gender: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     age: {
       type: String,
@@ -266,26 +274,13 @@ export default {
     },
 
     genderTag() {
-      const genderCode = {
-        MALE: 'primary',
-        FEMALE: 'error',
-      }
-
       if (this?.GENDER_ENUM?.properties) {
-        return {
-          type: this.gender
-            ? genderCode[this.GENDER_ENUM.properties[this.gender].key]
-            : 'primary',
-          text: this.gender
-            ? this.GENDER_ENUM.properties[this.gender]?.text?.zh_CN
-            : '--',
-        }
+        return this.gender
+          ? this.GENDER_ENUM.properties[this.gender]?.text?.zh_CN
+          : '--'
       }
 
-      return {
-        type: 'primary',
-        text: '--',
-      }
+      return '--'
     },
   },
 
@@ -308,7 +303,8 @@ export default {
       if (this.disabled === true) {
         return
       }
-      this.$emit('click')
+
+      this.$emit('cardClick')
     },
   },
 }

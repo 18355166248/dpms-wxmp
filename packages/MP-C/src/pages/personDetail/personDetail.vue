@@ -32,18 +32,28 @@
 </template>
 
 <script>
+import customerAPI from '@/APIS/customer/customer.api'
+
 export default {
   data() {
-    return {}
+    return {
+      datail: '',
+    }
   },
   onLoad(info) {
-    console.log('qqqqqqqqqqqqqq', info, JSON.parse(info))
+    console.log('qqqqqqqqqqqqqq', info)
+    this.datail = JSON.parse(info)
   },
   methods: {
     amend() {
-      this.$utils.push({ url: '/pages/personAmend/personAmend' })
+      let amend = JSON.stringify(this.datail)
+      this.$utils.push({
+        url: '/pages/personAmend/personAmend?personDetail=' + amend,
+      })
     },
-    del() {},
+    del() {
+      customerAPI.deleteCustomer({ personnelId: this.datail.id }).then(() => {})
+    },
   },
 }
 </script>

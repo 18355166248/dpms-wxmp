@@ -104,7 +104,7 @@
     </fixed-footer>
   </view>
   <view v-else-if="requestStatus.status === 'error'">
-    <request-error @click="loadData"></request-error>
+    <request-error @click="loadData" :msg="requestStatus.msg"></request-error>
   </view>
 </template>
 <script>
@@ -114,6 +114,7 @@ import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import card from '@/components/card/card.vue'
 import requestError from '@/components/request-error/request-error.vue'
+import { globalEventKeys } from '@/config/global.eventKeys.js'
 
 export default {
   data() {
@@ -121,6 +122,7 @@ export default {
       requestStatus: {
         loading: true,
         status: 'loading',
+        msg: '',
       },
       appointmentId: null,
       dataSource: {},
@@ -130,6 +132,15 @@ export default {
   components: {
     card,
     requestError,
+  },
+  onReady() {
+    uni.$on(globalEventKeys.cancleApptSuccess, () => {
+      this.loadData()
+    })
+  },
+  onUnload() {
+    console.log('off !')
+    uni.$off(globalEventKeys.cancleApptSuccess)
   },
   onLoad(option) {
     this.appointmentId = Number(option.appointmentId)
@@ -155,14 +166,13 @@ export default {
 
       if (listErr) {
         this.requestStatus.status = 'error'
+        this.requestStatus.msg = listErr.message
       }
 
       if (listRes) {
         this.dataSource = listRes.data
         this.requestStatus.status = 'success'
       }
-
-      console.log('listRes:', listRes)
 
       uni.hideNavigationBarLoading()
     },

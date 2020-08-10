@@ -34,7 +34,7 @@
           @search="search"
           @clear="clear"
           placeholder="搜索"
-          :value="searchValueWithAppt"
+          v-model="searchValueWithAppt"
         />
       </view>
       <view v-else class="curCardInfo">
@@ -65,6 +65,7 @@
         请输入姓名/拼音/联系电话查找患者预约记录
       </view>
     </view>
+
     <dayTable
       ref="apptTable"
       :class="showSearch ? 'hidden' : ''"
@@ -75,6 +76,7 @@
       :apptList="list"
       :chooseDateProp="date"
       :scheduleList="scheduleList"
+      :retract="retract"
       @createAppt="createAppt"
       @editAppt="editAppt"
     />
@@ -90,7 +92,7 @@ import appointmentAPI from 'APIS/appointment/appointment.api'
 import dayTable from '@/businessComponents/dayTable/dayTable'
 import calendar from '@/businessComponents/calendar/calendar'
 import { globalEventKeys } from 'config/global.eventKeys.js'
-import apptCard from './apptCard.vue'
+import apptCard from '@/businessComponents/apptCard/apptCard.vue'
 
 const enums = uni.getStorageSync('enums')
 const staff = uni.getStorageSync('staff')
@@ -126,6 +128,8 @@ export default {
   },
   onShow() {
     this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
+    this.getApptList()
+    this.refreshDoctorWithApptList()
   },
   onLoad() {
     this.init()
@@ -143,11 +147,14 @@ export default {
   },
   watch: {
     date(newVal) {
-      this.getApptList()
-
       const dayMoment = moment(newVal)
       this.startTimeStamp = dayMoment.startOf('day').valueOf()
       this.endTimeStamp = dayMoment.endOf('day').valueOf()
+
+      this.searchValueWithAppt = ''
+
+      this.getApptList()
+      this.refreshDoctorWithApptList()
     },
     showSearch(newVal) {
       if (newVal) {
@@ -163,12 +170,15 @@ export default {
 
           this.getApptList()
         })
-        .catch()
+        .catch((err) => {
+          console.log('staff not found')
+        })
     },
     // 获取医生详情
     getDoctor() {
       return new Promise((resolve) => {
         if (isDoctorWithLogin) {
+          if (!staff) reject()
           this.doctor = staff
           resolve()
         }
@@ -186,11 +196,13 @@ export default {
 
             resolve()
           })
-          .catch()
+          .catch(() => {
+            reject()
+          })
       })
     },
     // 获取预约列表
-    getApptList() {
+    getApptList: _.debounce(function () {
       appointmentAPI
         .getAppointmentViewListFromStaff({
           appointmentBeginTime: this.startTimeStamp,
@@ -219,7 +231,7 @@ export default {
           ]
         })
         .catch()
-    },
+    }, 300),
     // 获取排班详情
     getApptScheduleInfo() {
       institutionAPI
@@ -240,18 +252,21 @@ export default {
     },
     // 获取全部在职医生的预约列表
     getAllDoctorWithApptList() {
-      appointmentAPI
-        .getAppointmentViewListFromStaff({
-          appointmentBeginTime: this.startTimeStamp,
-          appointmentEndTime: this.endTimeStamp,
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
-          position: doctorValue,
-          staffIds: this.doctorList.map((doctor) => doctor.staffId).join(','),
-        })
-        .then((res) => {
-          this.allDoctorWithApptList = res.data
-        })
-        .catch()
+      return new Promise((resolve) => {
+        appointmentAPI
+          .getAppointmentViewListFromStaff({
+            appointmentBeginTime: this.startTimeStamp,
+            appointmentEndTime: this.endTimeStamp,
+            medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+            position: doctorValue,
+            staffIds: this.doctorList.map((doctor) => doctor.staffId).join(','),
+          })
+          .then((res) => {
+            this.allDoctorWithApptList = res.data
+            resolve()
+          })
+          .catch()
+      })
     },
     collapseChange(val) {
       this.retract = val
@@ -260,6 +275,8 @@ export default {
       this.showSearch = false
     },
     search({ value }) {
+      if (!value) return (this.apptSearchList = [])
+
       this.searchValueWithAppt = value
       const searchList = this.allDoctorWithApptList.filter((appt) => {
         const mobile = appt.patient.mobile
@@ -312,6 +329,13 @@ export default {
       this.doctor = doctor
       this.$refs.dpmsDrawer.close()
       this.getApptList()
+    },
+    refreshDoctorWithApptList() {
+      this.getAllDoctorWithApptList()
+        .then(() => {
+          this.search({ value: this.searchValueWithAppt })
+        })
+        .catch()
     },
   },
   components: {

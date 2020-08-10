@@ -68,9 +68,21 @@
           }
         },
         {
+          "path": "editPatient/editPatient",
+          "style": {
+            "navigationBarTitleText": "详细信息"
+          }
+        },
+        {
+          "path": "apptList/apptList",
+          "style": {
+            "navigationBarTitleText": "预约记录"
+          }
+        },
+        {
           "path": "createPatient/personas",
           "style": {
-            "navigationBarTitleText": "用户画像"
+            "navigationBarTitleText": "患者标签"
           }
         },
         {

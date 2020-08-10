@@ -15,7 +15,11 @@
       <view class="menu-area-body mt-48">
         <view
           class="menu-area-item"
-          @click="toUrl('/baseSubpackages/todayWork/todayWork')"
+          @click="
+            toUrl(
+              '/pages/patient/editPatient/editPatient?patientId=' + patientId,
+            )
+          "
         >
           <view class="menu-area-item-icon menu-area-item-icon-color1">
             <text class="iconfont icon-my-entity"></text>
@@ -54,7 +58,7 @@ export default {
   onLoad(params) {
     this.patientId = params.patientId
   },
-  mounted(params) {
+  onShow() {
     this.getPatient()
   },
   methods: {
@@ -65,7 +69,6 @@ export default {
         this.patient.tagListTxt = this.patient.tagList
           .map((v) => v.name)
           .join('，')
-        console.log('this.patient', this.patient)
       })
     },
     toUrl(url) {

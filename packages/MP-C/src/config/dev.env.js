@@ -29,7 +29,7 @@ const config = {
   DPMSServerUrl: 'http://dev.cloud.api.dental.laoganma.fun/',
   SCRMServerUrl: 'http://api.scrm.dev.laoganma.fun/',
   useServerUrlRedirection: {
-    open: true,
+    open: false,
     pathMap: {
       'institution-customer': 'http://10.101.11.93:8449/',
     },
@@ -39,7 +39,7 @@ const config = {
   scrmUrl: 'http://dev.scrm.laoganma.fun',
   DPMSAntdPrefixCls: 'dpms-ant',
   SCRMAntdPrefixCls: 'SCRM',
-  appId: 'wx00028b3b0c0f877e',
+  appId: 'wxdc573e390f80f5c0',
 }
 
 export default config

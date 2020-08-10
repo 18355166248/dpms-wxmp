@@ -5,11 +5,11 @@
       :y="y"
       direction="all"
       @change="onChange"
-      @click="toUrl('/pages/myAppointment/myAppointment')"
+      @click="toUrl('/pages/projAptmt/projAptmt')"
       class="aptmt"
       ><span class="iconfont icon-time"></span
     ></movable-view>
-    <scroll-view class="content" scroll-y>
+    <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
@@ -57,7 +57,12 @@
               <view class="card">
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
-                  <view class="cardBtn" v-show="i.canAppointment">预约</view>
+                  <view
+                    class="cardBtn"
+                    v-show="i.canAppointment"
+                    @click="handleProjAptmt(i.appointmentItemId)"
+                    >预约</view
+                  >
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
                 <view class="cardImg">
@@ -71,7 +76,11 @@
       <view class="store">
         <view class="storeContent">
           <text class="storeTitle">门店</text>
-          <view class="storeList" v-for="s in storeList" :key="s.institutionId">
+          <view
+            class="storeList"
+            v-for="s in storeList"
+            :key="s.appointmentInstitutionId"
+          >
             <view class="storeCard">
               <view class="storeCardTitle"
                 >{{ s.institutionName }} &nbsp;&nbsp;&nbsp;{{
@@ -86,11 +95,20 @@
                 ><span class="iconfont icon-time"></span>
                 {{ s.institutionAddress }}</view
               >
-              <view class="storeCardAptmt" v-show="s.canAppointment"
+              <view
+                class="storeCardAptmt"
+                v-show="s.canAppointment"
+                @click="
+                  toUrl(
+                    '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
+                      s.appointmentInstitutionId,
+                  )
+                "
                 >预 约</view
               >
             </view>
           </view>
+          <load-more :status="loadStatus"></load-more>
         </view>
       </view>
     </scroll-view>
@@ -99,7 +117,9 @@
 
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {
@@ -110,6 +130,10 @@ export default {
       storeList: [],
       x: 300,
       y: 360,
+      loadStatus: 'loading',
+      currentPage: 1,
+      total: 0,
+      size: 3,
     }
   },
   onLoad() {
@@ -135,9 +159,61 @@ export default {
       institutionAPI
         .getStoreList({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          current: this.currentPage,
+          size: this.size,
         })
         .then((res) => {
           this.storeList = res.data.institutionList
+          this.total = res.data.total
+          if (this.storeList.length < this.total) {
+            this.loadStatus = 'more'
+          } else {
+            this.loadStatus = 'noMore'
+          }
+        })
+    },
+    loadMoreList() {
+      if (this.loadStatus === 'loading') return
+      if (this.storeList.length >= this.total) return
+      this.loadStatus = 'loading'
+      ++this.currentPage
+      this.loadData()
+    },
+    loadData() {
+      institutionAPI
+        .getStoreList({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          current: this.currentPage,
+          size: this.size,
+        })
+        .then((res) => {
+          this.storeList = this.storeList.concat(res.data.institutionList)
+          this.total = res.data.total
+          if (this.storeList.length < this.total) {
+            this.loadStatus = 'more'
+          } else {
+            this.loadStatus = 'noMore'
+          }
+        })
+    },
+    handleProjAptmt(appointmentItemId) {
+      // if (!staff) {
+      //   this.$utils.replace({ url: '/pages/login/index' })
+      // }
+      const { toUrl } = this
+      institutionAPI
+        .checkPorjCanAptmt({
+          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          appointmentItemId,
+        })
+        .then((res) => {
+          if (res.data.canAppointment) {
+            toUrl('/pages/appoint/index?itemId=' + appointmentItemId)
+            return
+          }
+          toUrl(
+            '/pages/docAptmt/docAptmt?appointmentItemId=' + appointmentItemId,
+          )
         })
     },
     toUrl(url) {
@@ -156,7 +232,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content {
   height: 100%;
 }
