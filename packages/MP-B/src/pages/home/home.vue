@@ -17,6 +17,8 @@
       :navHeight="navHeight"
       :navTop="navTop"
       :capsuleHeight="capsuleHeight"
+      :navLeftText="medicalInstitutionSimpleCode"
+      @click="switchClinic"
     />
 
     <mescroll-body
@@ -141,6 +143,10 @@
         </view>
       </view>
     </mescroll-body>
+    <selectMedicalInstitution
+      ref="selectMedicalInstitution"
+      @confirm="selectClinic"
+    ></selectMedicalInstitution>
   </view>
 </template>
 
@@ -210,6 +216,12 @@ export default {
         ? getStorage(STORAGE_KEY.STAFF).staffName
         : '--'
     },
+    medicalInstitutionSimpleCode() {
+      return getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+        ? getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+            .medicalInstitutionSimpleCode
+        : '--'
+    },
     price() {
       return this.$utils.formatPrice(this.pageData.actualIncome)
     },
@@ -226,6 +238,12 @@ export default {
   },
 
   methods: {
+    selectClinic(val) {
+      console.log('val:', val)
+    },
+    switchClinic() {
+      this.$refs.selectMedicalInstitution.show()
+    },
     toUrl(url) {
       this.$utils.push({
         url,

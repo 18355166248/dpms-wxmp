@@ -2,11 +2,12 @@
   <view class="nav-bar" :style="{ height: navHeight + 'px' }">
     <view
       class="navbar-action-wrap"
+      @click="onClickLeft"
       :style="{ top: navTop, height: capsuleHeight, lineHeight: capsuleHeight }"
     >
       <view
         ><text class="iconfont icon-menu fz-34 mr-20"></text
-        ><text class="fz-34">南京遇的诊所</text></view
+        ><text class="fz-34">{{ navLeftText }}</text></view
       >
     </view>
   </view>
@@ -16,6 +17,10 @@
 export default {
   name: 'NavBar',
   props: {
+    navLeftText: {
+      type: String,
+      default: '',
+    },
     backgroundColor: {
       type: String,
       default: '#FFFFFF',
@@ -38,7 +43,7 @@ export default {
 
   methods: {
     onClickLeft() {
-      this.$emit('clickLeft')
+      this.$emit('click')
     },
   },
 }
