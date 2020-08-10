@@ -138,6 +138,7 @@ import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import toggle from '@/components/toggle/toggle'
 import patientApi from '@/APIS/patient/patient.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -188,6 +189,8 @@ export default {
     this.pullDownLoadData()
   },
   computed: {
+    ...mapState('workbenchStore', ['medicalInstitution']),
+
     capsuleHeight() {
       return `${uni.getMenuButtonBoundingClientRect().height}px`
     },
@@ -232,7 +235,9 @@ export default {
 
   methods: {
     switchClinic() {
-      this.$refs.selectMedicalInstitution.show()
+      if (this.medicalInstitution.institutionChainType !== 1) {
+        this.$refs.selectMedicalInstitution.show()
+      }
     },
     toUrl(url) {
       this.$utils.push({
