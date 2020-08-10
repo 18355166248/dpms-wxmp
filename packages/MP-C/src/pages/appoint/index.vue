@@ -16,7 +16,9 @@
       isLink
       @cellclick="itemPickerVisible = true"
     />
-    <dpmsCell title="预约日期" placeholder="请选择日期" isLink />
+    <dpmsCell title="预约日期" isLink>
+      <dpmsAppointTimePicker placeholder="请选择日期" />
+    </dpmsCell>
     <dpmsCellInput title="预约备注" placeholder="请输入备注" inputType="text"></dpmsCellInput>
     <div class="agree">
       我已知悉并同意
