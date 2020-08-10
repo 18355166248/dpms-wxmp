@@ -6,7 +6,7 @@
           type="text"
           confirmType="search"
           placeholder="搜索患者"
-          :value="searchValue"
+          v-model="searchValue"
           @change="changeValue"
           @search="searchPatients"
           @clear="cancelSearch"
