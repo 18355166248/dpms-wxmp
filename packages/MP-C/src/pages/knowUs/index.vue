@@ -83,6 +83,12 @@ export default {
           }
         })
     },
+
+    toUrl(url) {
+      this.$utils.push({
+        url,
+      })
+    },
   },
 }
 </script>
