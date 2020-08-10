@@ -92,11 +92,7 @@
         <button
           v-else-if="statusEnumKey === 'REGISTERED'"
           class="button"
-          @click="
-            toPage('/baseSubpackages/apptForm/cancleAppt', {
-              appointmentId: appointmentId,
-            })
-          "
+          @click="cancleRegister"
         >
           取消
         </button>
@@ -124,9 +120,11 @@ export default {
         status: 'loading',
         msg: '',
       },
+      registerId: null,
       appointmentId: null,
       dataSource: {},
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      REGISTER_ENUM: this.$utils.getEnums('Register'),
     }
   },
   components: {
@@ -137,7 +135,11 @@ export default {
     uni.$on(globalEventKeys.cancleApptSuccess, () => {
       this.loadData()
     })
-    uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
+    uni.$on(globalEventKeys.apptFormWithSaveSuccess, (apptData) => {
+      const { params, appt } = apptData
+      if (params.type === 'editRegister') {
+        this.registerId = appt.registerId
+      }
       this.loadData()
     })
   },
@@ -151,6 +153,27 @@ export default {
     this.loadData()
   },
   methods: {
+    cancleRegister() {
+      if (this.registerId) {
+        const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+
+        diagnosisApi
+          .updateRegisterStatus({
+            registerId,
+            status,
+          })
+          .then((res) => {
+            if (res.code === 0) {
+              uni.showToast({
+                icon: 'success',
+                title: '取消成功',
+              })
+              this.loadData()
+            }
+          })
+          .catch()
+      }
+    },
     // 页面跳转
     toPage(url, params) {
       this.$utils.push({
