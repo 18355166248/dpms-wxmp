@@ -1,8 +1,14 @@
 <template>
   <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div class="hint">提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。</div>
+    <div class="hint">
+      提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
+    </div>
     <div class="personInfo">
-      <dpmsCellInput title="姓名" v-model="form.personnelName" placeholder="请输入姓名" />
+      <dpmsCellInput
+        title="姓名"
+        v-model="form.personnelName"
+        placeholder="请输入姓名"
+      />
       <dpmsEnumsPicker
         title="性别"
         v-model="form.gender"
@@ -24,14 +30,26 @@
         placeholder="请选择联系电话标签"
         enumsKey="ContactLabel"
       />
-      <dpmsCellInput type="number" title="联系电话" v-model="form.mobile" placeholder="请输入联系电话" />
+      <dpmsCellInput
+        type="number"
+        title="联系电话"
+        v-model="form.mobile"
+        placeholder="请输入联系电话"
+      />
       <div class="info" v-show="needAuthCode">
-        <dpmsCellInput type="number" title="验证码" v-model="form.verificationCode" />
+        <!-- <dpmsCellInput
+          type="number"
+          title="验证码"
+          v-model="form.verificationCode"
+        /> -->
+        <span>验证码</span>
+        <input v-model="form.verificationCode" class="ipt" />
         <span
           class="getAuthCode"
           :class="{ disabled: !!second }"
           @click="getCode"
-        >{{ second ? `${second}秒后再试` : '获取验证码' }}</span>
+          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span
+        >
       </div>
       <dpmsCellPicker
         title="默认人员"
@@ -122,14 +140,14 @@ export default {
       } else {
         this.form.defaultPersonnel = false
       }
-      customerAPI
-        .creatCustomer(this.form)
-        .then((res) => {
-          console.log('1111111111', res)
-        })
-        .catch((error) => {
-          console.log('form', this.form)
-        })
+      customerAPI.creatCustomer(this.form).then((res) => {
+        console.log('1111111111', res)
+        if (res.code == 0) {
+          this.$utils.replace({
+            url: '/pages/personManagement/personManagement',
+          })
+        }
+      })
     },
   },
 }
@@ -161,6 +179,10 @@ export default {
 }
 .info {
   position: relative;
+  margin-left: 32rpx;
+  font-size: 35rpx;
+  border-bottom: 2rpx rgba(0, 0, 0, 0.15) solid;
+  padding: 34rpx 0;
   .icon-right {
     position: absolute;
     top: 44rpx;
@@ -169,7 +191,7 @@ export default {
   }
   .getAuthCode {
     position: absolute;
-    top: 44rpx;
+    top: 38rpx;
     right: 40rpx;
     display: inline-block;
     color: #5cbb89;
@@ -183,5 +205,11 @@ export default {
       z-index: 0;
     }
   }
+}
+.ipt {
+  display: inline-block;
+  position: absolute;
+  top: 31rpx;
+  left: 120rpx;
 }
 </style>
