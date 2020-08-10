@@ -698,7 +698,7 @@ export default {
 
           uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
             isSuccess: true,
-            params: this.paramsConfig,
+            params: this.paramsObj,
             appt: formatValue,
           })
           this.$utils.back()
