@@ -15,7 +15,7 @@
           :value="selectedIndex"
           @change="onFilterOption"
         >
-          <input class="storePickerInput" :value="pickerText" />
+          <input class="storePickerInput" :value="pickerText" disabled />
         </picker>
         <span class="iconfont icon-down storePickerIcon"></span>
       </view>
@@ -23,8 +23,9 @@
         <span class="iconfont icon-search keyWordIcon"></span>
         <input
           :value="keyWord"
-          @blur="emitPullDownRefresh"
+          @blur="setKeyWord"
           class="keyWordInput"
+          disabled
         />
       </view>
     </view>
@@ -83,14 +84,13 @@ export default {
       filterStoreList: [],
       keyWord: '',
       currentPage: 1,
-      total: 0,
+      total: -1,
       size: 10,
       loadStatus: 'loading',
     }
   },
   onLoad() {
     this.init()
-    this.emitPullDownRefresh()
   },
   onPullDownRefresh() {
     this.currentPage = 1
@@ -120,6 +120,7 @@ export default {
             institutionName: '全部门店',
           })
           this.filterStoreList = res.data
+          this.emitPullDownRefresh()
         })
     },
     loadData(method) {
@@ -158,6 +159,10 @@ export default {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
       }
+      return
+      uni.showLoading({
+        title: '加载中...',
+      })
       const { toUrl } = this
       institutionAPI
         .checkDocCanAptmt({
@@ -182,6 +187,10 @@ export default {
     },
     jump(url) {
       uni.redirectTo({ url })
+    },
+    setKeyWord(e) {
+      this.keyWord = e.target.value
+      this.emitPullDownRefresh()
     },
   },
   computed: {
@@ -302,7 +311,7 @@ export default {
   border-radius: 80rpx;
 }
 .cardTile {
-  width: 136rpx;
+  width: 320rpx;
   height: 44rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
@@ -336,10 +345,10 @@ export default {
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: center;
   color: #5cbb89;
-  line-height: 48rpx;
+  line-height: 52rpx;
   position: relative;
   top: 25rpx;
-  left: 220rpx;
+  left: 20rpx;
   z-index: 9999;
 }
 .clickableArea {
