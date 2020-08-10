@@ -58,7 +58,7 @@
 
 <script>
 import systemAPI from '@/APIS/system.api'
-import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import { mapState } from 'vuex'
 
 export default {
   name: 'selectMedicalInstitution',
@@ -95,19 +95,17 @@ export default {
       disList: [],
     }
   },
-  computed: {},
+  computed: {
+    ...mapState('workbenchStore', ['staff', 'medicalInstitution']),
+  },
   methods: {
     show() {
       let institutionListPromise = systemAPI.getInstitutionList({
-        memberCode:
-          this.memberCode ||
-          getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
+        memberCode: this.memberCode || this.medicalInstitution.memberCode,
       })
       let loginInstitutionListPromise = systemAPI.getLoginInstitutionList({
-        memberCode:
-          this.memberCode ||
-          getStorage(STORAGE_KEY.MEDICALINSTITUTION).memberCode,
-        username: this.username || getStorage(STORAGE_KEY.STAFF).username,
+        memberCode: this.memberCode || this.medicalInstitution.memberCode,
+        username: this.username || this.staff.username,
       })
       Promise.all([institutionListPromise, loginInstitutionListPromise])
         .then((res) => {
@@ -221,6 +219,7 @@ export default {
     treeItemSelect(item, index) {
       if (this.disList.includes(item.id)) {
         // 点击选项时触发
+        console.log('item', item)
         this.$emit('confirm', item)
         this.hide()
       }

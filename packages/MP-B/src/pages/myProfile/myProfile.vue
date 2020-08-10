@@ -53,6 +53,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import moment from 'moment'
 import { mapState } from 'vuex'
 import institutionAPI from '@/APIS/institution/institution.api'
@@ -112,10 +113,11 @@ export default {
   },
   created() {
     // 初始化form
-    let form = JSON.parse(JSON.stringify(this.staff, Object.keys(formData)))
-    form.birthdayStamp = moment(form.birthdayStamp).format('YYYY-MM-DD')
-    console.log('form', form)
-    this.form = form
+    let form = _.pick(this.staff, Object.keys(formData))
+    form.birthdayStamp = form.birthdayStamp
+      ? moment(form.birthdayStamp).format('YYYY-MM-DD')
+      : ''
+    this.form = { ...formData, ...form }
   },
   methods: {
     saveMyProfile() {

@@ -47,6 +47,14 @@
           "style": {
             "navigationBarTitleText": "我的资料"
           }
+        },
+        {
+          "path": "about",
+          "style": {
+            "navigationBarTitleText": "关于北吉熊",
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
         }
       ]
     },

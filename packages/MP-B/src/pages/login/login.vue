@@ -104,6 +104,9 @@ export default {
           this.$store.commit('workbenchStore/setStaff', staff)
           this.getEnums()
         })
+        .catch((res) => {
+          this.isLoading = false
+        })
     },
     getEnums() {
       systemAPI.getDataDict().then((res) => {
@@ -119,8 +122,22 @@ export default {
           this.$utils.show(err[0].message)
           return
         }
+
+        // 判断是否单体
         this.isLoading = true
-        this.$refs.selectMedicalInstitution.show()
+        systemAPI
+          .getInstitutionList({ memberCode: this.loginForm.memberCode })
+          .then((res) => {
+            const { institutionChainType, medicalInstitutionId } = res.data
+            if (institutionChainType === 1) {
+              this.login({ id: medicalInstitutionId })
+            } else {
+              this.$refs.selectMedicalInstitution.show()
+            }
+          })
+          .catch((res) => {
+            this.isLoading = false
+          })
       })
     },
     validate(callback) {
