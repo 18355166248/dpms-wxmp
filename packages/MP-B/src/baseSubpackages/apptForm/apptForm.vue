@@ -350,9 +350,6 @@ export default {
               const endTime = moment(Number(option.endTimeStamp))
               const duration = endTime.diff(startTime, 'minute')
 
-              form.appointmentBeginTimeStamp = startTime.format(
-                'YYYY-MM-DD HH:mm',
-              )
               form.duration = duration
 
               this.getAppointmentItemList().then(() => {
