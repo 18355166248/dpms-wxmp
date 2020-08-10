@@ -53,7 +53,11 @@
           >
         </view>
         <view class="cardList">
-          <swiper class="swiper" display-multiple-items="2" next-margin="10rpx">
+          <swiper
+            class="swiper"
+            display-multiple-items="displayMultipleItems"
+            next-margin="10rpx"
+          >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
                 <view class="cardContent">
@@ -136,6 +140,7 @@ export default {
       currentPage: 1,
       total: 0,
       size: 3,
+      displayMultipleItems: 1,
     }
   },
   created() {
@@ -146,6 +151,9 @@ export default {
         self.x = res.windowWidth
         self.hide = false
       },
+    })
+    uni.setNavigationBarTitle({
+      title: medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
     })
   },
   onLoad() {
@@ -167,6 +175,11 @@ export default {
         })
         .then((res) => {
           this.itemList = res.data.itemList
+          if (this.itemList >= 2) {
+            this.displayMultipleItems = 2
+          } else {
+            this.displayMultipleItems = 1
+          }
         })
       institutionAPI
         .getStoreList({
