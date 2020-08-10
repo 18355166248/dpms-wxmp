@@ -279,8 +279,8 @@ export default {
 
       this.searchValueWithAppt = value
       const searchList = this.allDoctorWithApptList.filter((appt) => {
-        const mobile = appt.patient.mobile
-        const pinyin = appt.patient.pinyin
+        const mobile = appt.patient.mobile || ''
+        const pinyin = appt.patient.pinyin || ''
         const patientName = appt.patient.patientName
 
         return (
