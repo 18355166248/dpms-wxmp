@@ -207,31 +207,36 @@ export default {
       this.updateTagsCheckedText()
     })
 
-    let that = this
-    patientAPI.getPatientTypeList().then((res) => {
-      that.patientTypeList = res.data
-    })
-    patientAPI.getPatientTags().then((res) => {
-      uni.setStorageSync(
-        'patientTagsList',
-        res.data.filter((v) => v.tagInfoDTOList.length > 0),
-      )
-
-      this.updateTagsCheckedText()
-    })
+    this.getPatientTypeList()
+    this.getPatientTags()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
+    async getPatientTypeList() {
+      let res = await patientAPI.getPatientTypeList()
+      this.patientTypeList = res.data
+    },
+    async getPatientTags() {
+      let res = await patientAPI.getPatientTags()
+
+      uni.setStorageSync(
+        'patientTagsList',
+        res.data.filter((v) => v.tagInfoDTOList.length > 0),
+      )
+      this.updateTagsCheckedText()
+    },
     filterFormData(data) {
       if (_.isEmpty(data)) {
         return formDefault
       }
 
       // 格式化formData
-      data = { ...formDefault, ...data, ...data.patientContactsList[0] }
+      data = data.patientContactsList
+        ? { ...formDefault, ...data, ...data.patientContactsList[0] }
+        : { ...formDefault, ...data, ...data.patientContactsList }
       data.region = [data.province, data.city, data.area]
       if (data.tagList) {
         data.tagIds = data.tagList.map((v) => v.id)
