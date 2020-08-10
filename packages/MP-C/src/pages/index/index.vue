@@ -57,7 +57,7 @@
         <view class="cardList">
           <swiper
             class="swiper"
-            display-multiple-items="displayMultipleItems"
+            :display-multiple-items="displayMultipleItems"
             next-margin="10rpx"
           >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
@@ -177,7 +177,7 @@ export default {
         })
         .then((res) => {
           this.itemList = res.data.itemList
-          if (this.itemList >= 2) {
+          if (this.itemList > 1) {
             this.displayMultipleItems = 2
           } else {
             this.displayMultipleItems = 1
