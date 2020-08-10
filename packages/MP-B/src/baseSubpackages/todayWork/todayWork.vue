@@ -75,7 +75,7 @@
                       @click.stop="
                         treating({
                           registerId: item.registerId,
-                          tip: 'treating',
+                          type: 'REGISTER_TREATING',
                         })
                       "
                     >
@@ -87,7 +87,7 @@
                       @click.stop="
                         finishTreatment({
                           registerId: item.registerId,
-                          tip: 'finishTreatment',
+                          type: 'REGISTER_TREATED',
                         })
                       "
                     >
@@ -103,7 +103,7 @@
                       @click.stop="
                         treating({
                           registerId: item.registerId,
-                          tip: 'treating',
+                          type: 'REGISTER_TREATING',
                         })
                       "
                     >
@@ -115,7 +115,7 @@
                       @click.stop="
                         finishTreatment({
                           registerId: item.registerId,
-                          tip: 'finishTreatment',
+                          type: 'REGISTER_TREATED',
                         })
                       "
                     >
@@ -164,7 +164,7 @@
                         @click.stop="
                           treating({
                             registerId: item.registerId,
-                            tip: 'treating',
+                            type: 'REGISTER_TREATING',
                           })
                         "
                       >
@@ -175,7 +175,7 @@
                         @click.stop="
                           cancleRegister({
                             registerId: item.registerId,
-                            tip: 'cancleRegister',
+                            type: 'REGISTER_CANCELED',
                           })
                         "
                       >
@@ -194,7 +194,7 @@
                         @click.stop="
                           finishTreatment({
                             registerId: item.registerId,
-                            tip: 'finishTreatment',
+                            type: 'REGISTER_TREATED',
                           })
                         "
                       >
@@ -337,13 +337,11 @@ export default {
   methods: {
     // 治疗完成
     finishTreatment(record) {
-      const status = this.REGISTER_ENUM.REGISTER_TREATED.value
-      this.changeStatus(record.registerId, status, record.tip)
+      this.changeStatus(record)
     },
     // 接诊
     treating(record) {
-      const status = this.REGISTER_ENUM.REGISTER_TREATING.value
-      this.changeStatus(record.registerId, status, record.tip)
+      this.changeStatus(record)
     },
     // 取消挂号
     cancleRegister(record) {
@@ -352,7 +350,7 @@ export default {
         success: (res) => {
           const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
 
-          this.changeStatus(record.registerId, status, record.tip)
+          this.changeStatus(record)
         },
         fail: function (res) {
           console.log(res.errMsg)
@@ -471,18 +469,30 @@ export default {
         )
       }
     },
-    async changeStatus(registerId, status, tipKey) {
+    updateData(registerId, registerStatus) {
+      const rowIndex = this.dataSource.findIndex(
+        (item) => item.registerId === registerId,
+      )
+      const newRowData = { ...this.dataSource[rowIndex], registerStatus }
+      this.$set(this.dataSource, rowIndex, newRowData)
+    },
+    async changeStatus(record) {
+      const status = this.REGISTER_ENUM[record.type].value
+
       uni.showLoading({
         title: '正在提交...',
         mask: true,
       })
       const tips = {
-        cancleRegister: '取消成功',
-        treating: '接诊成功',
-        finishTreatment: '治疗完成',
+        REGISTER_CANCELED: '取消成功',
+        REGISTER_TREATING: '接诊成功',
+        REGISTER_TREATED: '治疗完成',
       }
       const [err, res] = await this.$utils.asyncTasks(
-        diagnosisApi.updateRegisterStatus({ registerId, status }),
+        diagnosisApi.updateRegisterStatus({
+          registerId: record.registerId,
+          status,
+        }),
       )
 
       uni.hideLoading()
@@ -490,9 +500,9 @@ export default {
       if (res) {
         uni.showToast({
           icon: 'success',
-          title: tips[tipKey],
+          title: tips[record.type],
         })
-        this.emitPullDownRefresh()
+        this.updateData(record.registerId, status)
       }
     },
     // 获取列表数据
@@ -536,8 +546,8 @@ export default {
           }
         }
         this.dataSourceStatus.loading = false
-        uni.stopPullDownRefresh()
       }
+      uni.stopPullDownRefresh()
     },
     // 获取角色列表
     async loadCurrentStaff() {

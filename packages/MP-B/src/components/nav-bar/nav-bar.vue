@@ -5,18 +5,25 @@
       @click="onClickLeft"
       :style="{ top: navTop, height: capsuleHeight, lineHeight: capsuleHeight }"
     >
-      <view
-        ><text class="iconfont icon-menu fz-34 mr-20"></text
-        ><text class="fz-34">{{ navLeftText }}</text></view
-      >
+      <view class="navbar-action-wrap-left"
+        ><text class="iconfont icon-menu fz-38 mr-20"></text>
+        <text class="fz-34 mr-10">{{ navLeftText }} </text>
+        <spin v-if="navLeftLoading" :iconSize="18"></spin>
+      </view>
     </view>
   </view>
 </template>
 
 <script>
+import spin from '@/components/spin/spin.vue'
+
 export default {
   name: 'NavBar',
   props: {
+    navLeftLoading: {
+      type: Boolean,
+      default: false,
+    },
     navLeftText: {
       type: String,
       default: '',
@@ -39,7 +46,9 @@ export default {
     },
   },
 
-  components: {},
+  components: {
+    spin,
+  },
 
   methods: {
     onClickLeft() {
@@ -51,7 +60,7 @@ export default {
 <style lang="scss" scoped>
 .nav-bar {
   width: 100%;
-  position: fixed;
+  position: relative;
   top: 0;
   left: 0;
   z-index: 10000;
@@ -90,6 +99,11 @@ export default {
   position: absolute;
   left: 16px;
   z-index: 11;
+
+  &-left {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .navbar-action-group {

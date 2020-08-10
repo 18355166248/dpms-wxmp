@@ -6,6 +6,8 @@
 import { mapState } from 'vuex'
 import editPatient from '@/baseSubpackages/editPatient/editPatient.vue'
 import patientAPI from '@/APIS/patient/patient.api'
+import { globalEventKeys } from '@/config/global.eventKeys.js'
+
 export default {
   data() {
     return {}
@@ -86,6 +88,8 @@ export default {
             duration: 1000,
             complete() {
               setTimeout(() => {
+                uni.$emit(globalEventKeys.newPatient)
+
                 that.$utils.back()
               }, 1000)
             },
