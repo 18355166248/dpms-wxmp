@@ -13,6 +13,7 @@ const config = {
   scrmUrl: 'http://uat.scrm.laoganma.fun',
   DPMSAntdPrefixCls: 'dpms-ant',
   SCRMAntdPrefixCls: 'SCRM',
+  appId: 'wxdc573e390f80f5c0',
 }
 
 export default config
