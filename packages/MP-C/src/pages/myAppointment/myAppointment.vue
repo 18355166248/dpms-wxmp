@@ -9,53 +9,111 @@
       </div>
     </div>
     <div class="appointmentList">
-      <div class="item" @click="appointmentDetail">
+      <div
+        class="item"
+        v-for="val of appointList"
+        :key="val.networkAppointmentId"
+        @click="appointmentDetail(val.networkAppointmentId)"
+      >
         <div class="statusType">
           <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
-          <span>2020-01-12 9:00</span>
+          <span>{{ time(val.appointmentBeginTime) }}</span>
           <span class="colorAndName">
             <span class="statusColor"></span>
-            <span class="statusName">状态名称</span>
+            <span class="statusName">{{
+              NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus].zh_CN
+            }}</span>
           </span>
         </div>
         <div class="appointmentInfo">
-          <div>门店:门店</div>
-          <div>医生:医生</div>
-          <div>预约项目:预约项目</div>
-          <div>患者姓名:患者姓名</div>
+          <div>门店:{{ val.shopName || '' }}</div>
+          <div>医生:{{ val.doctorName || '' }}</div>
+          <div>
+            预约项目:{{
+              val.networkAppointmentItemList
+                ? item(val.networkAppointmentItemList)
+                : ''
+            }}
+          </div>
+          <div>患者姓名:{{ val.patientName || '' }}</div>
         </div>
       </div>
     </div>
     <div class="empty" v-show="showEmpty">
-      <image class="emptyImg" src="/static/empty.svg"></image>
+      <image class="emptyImg" src="/static/empty.svg" />
       <div class="emptyTxt">未查询到任何信息</div>
     </div>
   </scroll-view>
 </template>
 
 <script>
+import moment from 'moment'
+import appointmentAPI from '@/APIS/appointment/appointment.api'
+import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+
 export default {
   data() {
     return {
       recent: 'active',
       history: '',
       showEmpty: false,
-      recentList: [],
-      historyList: [],
+      appointList: [],
+      NETWORL_APPOINTMENT_STATUS: this.$utils.getEnums(
+        'NetworkAppointmentStatus',
+      ),
+      RECENT_APPOINTMENT: getStorage(STORAGE_KEY.ENUMS).AppointmentListType
+        .RECENT_APPOINTMENT.value,
+      HISTORY_APPOINTMENT: getStorage(STORAGE_KEY.ENUMS).AppointmentListType
+        .HISTORY_APPOINTMENT.value,
     }
   },
-  mounted() {},
+  mounted() {
+    console.log('NETWORL_APPOINTMENT_STATUS', this.NETWORL_APPOINTMENT_STATUS)
+  },
+  onLoad() {
+    this.getAppointmentList(this.RECENT_APPOINTMENT)
+  },
   methods: {
+    getAppointmentList(type) {
+      appointmentAPI
+        .getAppointmentList({
+          userId: 0,
+          appointmentListType: type,
+        })
+        .then((res) => {
+          console.log('recentListrecentList', res)
+          this.appointList = res.data
+          if (res.data.length == 0) {
+            this.showEmpty = true
+          } else {
+            this.showEmpty = false
+          }
+        })
+    },
     getRecent() {
       this.recent = 'active'
       this.history = ''
+      this.getAppointmentList(this.RECENT_APPOINTMENT)
     },
     getHistory() {
       this.recent = ''
       this.history = 'active'
+      this.getAppointmentList(this.HISTORY_APPOINTMENT)
     },
-    appointmentDetail() {
-      this.$utils.push({ url: '/pages/appointmentDetail/appointmentDetail' })
+    time(t) {
+      return moment(t).format('YYYY-MM-DD HH:mm')
+    },
+    appointmentDetail(id) {
+      this.$utils.push({
+        url:
+          '/pages/appointmentDetail/appointmentDetail?networkAppointmentId=' +
+          id,
+      })
+    },
+    item(val) {
+      for (let i in val) {
+        return val[i].itemName + ','
+      }
     },
   },
 }
