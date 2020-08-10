@@ -265,6 +265,7 @@ export default {
       }
 
       if (res) {
+        this.pageData = res.data
         return [null, res]
       }
     },
