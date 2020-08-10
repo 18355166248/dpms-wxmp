@@ -138,7 +138,7 @@ export default {
       size: 3,
     }
   },
-  beforeMount() {
+  created() {
     const self = this
     uni.getSystemInfo({
       success: function (res) {
