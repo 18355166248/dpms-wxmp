@@ -62,11 +62,28 @@
           >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
-                <view class="cardImg">
+                <view
+                  class="cardImg"
+                  @click="
+                    toUrl(
+                      '/pages/projAptmt/projDetail?appointmentItemId=' +
+                        p.appointmentItemId,
+                    )
+                  "
+                >
                   <img mode="aspectFit" :src="i.itemThumbnailUrl" />
                 </view>
                 <view class="cardContent">
-                  <text class="cardTitle">{{ i.itemName }}</text>
+                  <text
+                    class="cardTitle"
+                    @click="
+                      toUrl(
+                        '/pages/projAptmt/projDetail?appointmentItemId=' +
+                          p.appointmentItemId,
+                      )
+                    "
+                    >{{ i.itemName }}</text
+                  >
                   <view
                     class="cardBtn"
                     v-show="i.canAppointment"
