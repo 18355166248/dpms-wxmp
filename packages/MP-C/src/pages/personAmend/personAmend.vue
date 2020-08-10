@@ -76,6 +76,10 @@ export default {
     }
   },
   created() {},
+  onLoad(info) {
+    console.log('jjjjjjjjjjjjjjj', info)
+    this.form = JSON.parse(info)
+  },
   methods: {
     getCode() {
       console.log('------------------')
