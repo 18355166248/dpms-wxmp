@@ -34,7 +34,7 @@
               white-space: nowrap;
               text-overflow: ellipsis;
             "
-            >{{ memberCardTypeQueryResponse.cardTypeName || ' ' }}</view
+            >{{ memberCardTypeQueryResponse.cardTypeName || '--' }}</view
           >
           <view>
             会员等级
@@ -112,7 +112,7 @@ export default {
     let staff = getStorage(STORAGE_KEY.STAFF)
     console.log('aaaaaaaaaaa', staff)
     if (!staff) {
-      this.$utils.replace({ url: '/pages/login/index' })
+      this.$utils.push({ url: '/pages/login/index' })
     }
   },
   mounted() {},
