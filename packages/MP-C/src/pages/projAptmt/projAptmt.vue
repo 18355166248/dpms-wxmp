@@ -15,17 +15,13 @@
           :value="selectedIndex"
           @change="onFilterOption"
         >
-          <input class="storePickerInput" :value="pickerText" />
+          <input class="storePickerInput" :value="pickerText" disabled />
         </picker>
         <span class="iconfont icon-down storePickerIcon"></span>
       </view>
       <view class="keywords">
         <span class="iconfont icon-search keyWordIcon"></span>
-        <input
-          :value="keyWord"
-          @blur="emitPullDownRefresh"
-          class="keyWordInput"
-        />
+        <input :value="keyWord" @blur="setKeyWord" class="keyWordInput" />
       </view>
     </view>
     <view class="aptmtList" v-show="total !== 0">
@@ -186,6 +182,10 @@ export default {
     jump(url) {
       uni.redirectTo({ url })
     },
+    setKeyWord(e) {
+      this.keyWord = e.target.value
+      this.emitPullDownRefresh()
+    },
   },
   computed: {
     pickerText() {
@@ -305,7 +305,7 @@ export default {
   border-radius: 4rpx;
 }
 .cardTile {
-  width: 136rpx;
+  width: 300rpx;
   height: 44rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
@@ -342,7 +342,6 @@ export default {
   line-height: 48rpx;
   position: relative;
   top: 25rpx;
-  left: 180rpx;
   z-index: 9999;
 }
 .clickableArea {

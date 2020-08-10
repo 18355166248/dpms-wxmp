@@ -42,7 +42,9 @@
           <p class="compDescContentDesc">
             {{ institutionIntroduce.briefIntroduction || '' }}
           </p>
-          <p class="compDescMore">更多详情 ></p>
+          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
+            更多详情 >
+          </p>
         </view>
       </view>
       <view class="proj">
