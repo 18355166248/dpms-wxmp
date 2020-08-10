@@ -67,7 +67,7 @@
                   @click="
                     toUrl(
                       '/pages/projAptmt/projDetail?appointmentItemId=' +
-                        p.appointmentItemId,
+                        i.appointmentItemId,
                     )
                   "
                 >
@@ -79,7 +79,7 @@
                     @click="
                       toUrl(
                         '/pages/projAptmt/projDetail?appointmentItemId=' +
-                          p.appointmentItemId,
+                          i.appointmentItemId,
                       )
                     "
                     >{{ i.itemName }}</text
