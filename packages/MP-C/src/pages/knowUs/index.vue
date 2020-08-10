@@ -4,7 +4,7 @@
       <text>详情介绍</text>
     </view>
     <view class="knowUs-detail">
-      <rich-text nodes="{{introduceDetail}}"></rich-text>
+      <rich-text :nodes="introduceDetail"></rich-text>
     </view>
     <view class="store">
       <view class="storeContent">
