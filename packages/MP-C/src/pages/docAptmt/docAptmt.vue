@@ -20,15 +20,15 @@
         <span class="iconfont icon-down storePickerIcon"></span>
       </view>
       <view class="keywords">
+        <span class="iconfont icon-search keyWordIcon"></span>
         <input
           :value="keyWord"
           @blur="emitPullDownRefresh"
           class="keyWordInput"
         />
-        <span class="iconfont icon-search keyWordIcon"></span>
       </view>
     </view>
-    <view class="aptmtList">
+    <view class="aptmtList" v-show="doctorList.length > 0">
       <view
         class="aptmtCard"
         v-for="d in doctorList"
@@ -58,6 +58,12 @@
         </view>
       </view>
       <load-more :status="loadStatus"></load-more>
+    </view>
+    <view class="empty" v-show="doctorList.length === 0">
+      <image
+        src="https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/%E7%A9%BA%E7%99%BD%E9%A1%B5_%E7%94%BB%E6%9D%BF%201%402x.png"
+      />
+      <text>未查询到任何信息</text>
     </view>
   </view>
 </template>
@@ -149,10 +155,9 @@ export default {
       uni.startPullDownRefresh()
     },
     handleAptmt(appointmentDoctorId) {
-      // e.preventDefault()
-      // if (!staff) {
-      //   this.$utils.replace({ url: '/pages/login/index' })
-      // }
+      if (!staff) {
+        this.$utils.replace({ url: '/pages/login/index' })
+      }
       const { toUrl } = this
       institutionAPI
         .checkDocCanAptmt({
@@ -262,7 +267,7 @@ export default {
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 36rpx;
-  margin-left: 64rpx;
+  margin-left: 24rpx;
   margin-top: 12rpx;
 }
 .keywords {
@@ -271,11 +276,11 @@ export default {
   background: #ffffff;
   border-radius: 8rpx;
   margin-left: 24rpx;
+  display: flex;
 }
 .keyWordIcon {
-  position: relative;
-  top: -55rpx;
-  left: 20rpx;
+  margin-top: 22rpx;
+  margin-left: 18rpx;
   color: rgba(0, 0, 0, 0.25);
 }
 .aptmtCard {
@@ -342,5 +347,22 @@ export default {
   width: 500rpx;
   position: absolute;
   z-index: 9999;
+}
+.empty {
+  width: 406rpx;
+  margin-top: 196rpx;
+  margin-left: 172rpx;
+}
+.empty > image {
+  width: 406rpx;
+  height: 290rpx;
+}
+.empty > text {
+  font-size: 34rpx;
+  font-family: PingFangSC, PingFangSC-Regular;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 44rpx;
+  margin-left: 70rpx;
 }
 </style>
