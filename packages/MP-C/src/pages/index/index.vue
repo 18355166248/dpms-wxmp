@@ -17,13 +17,13 @@
             class="alignCenter"
             v-for="b in bannerList"
             :key="b.bannerId"
+            @click="toUrl(b.linkUrl)"
           >
             <image
               class="bannerImg"
               mode="aspectFit"
               :src="b.imageUrl"
               :title="b.description"
-              @click="toUrl(b.linkUrl)"
             />
           </swiper-item>
         </swiper>
@@ -57,12 +57,20 @@
         <view class="cardList">
           <swiper
             class="swiper"
-            display-multiple-items="displayMultipleItems"
+            :display-multiple-items="displayMultipleItems"
             next-margin="10rpx"
           >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
-                <view class="cardImg">
+                <view
+                  class="cardImg"
+                  @click="
+                    toUrl(
+                      '/pages/projAptmt/projDetail?appointmentItemId=' +
+                        i.appointmentItemId,
+                    )
+                  "
+                >
                   <img mode="aspectFit" :src="i.itemThumbnailUrl" />
                 </view>
                 <view class="cardContent">
@@ -177,7 +185,7 @@ export default {
         })
         .then((res) => {
           this.itemList = res.data.itemList
-          if (this.itemList >= 2) {
+          if (this.itemList.length > 1) {
             this.displayMultipleItems = 2
           } else {
             this.displayMultipleItems = 1
@@ -226,8 +234,8 @@ export default {
     handleProjAptmt(appointmentItemId) {
       if (!staff) {
         this.$utils.replace({ url: '/pages/login/index' })
+        return
       }
-      return
       uni.showLoading({
         title: '加载中...',
       })
