@@ -18,23 +18,31 @@
       <view class="header-wrapper mh-32 pt-47">
         <view class="header">
           <image class="headerImg" :src="headerImgSrc" />
-          <view class="userName">112233445566</view>
+          <view class="userName">{{ mobile }}</view>
         </view>
       </view>
       <view class="vipInfo">
         <div>
-          <view>￥1,1111</view>
+          <view>￥{{ memberDetails.balance || 0 }}</view>
           <view>储值卡余额</view>
         </div>
-        <div>
-          <view>白金会员</view>
+        <div @click="goMembershipCard">
+          <view
+            style="
+              overflow: hidden;
+              width: 90%;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            "
+            >{{ memberCardTypeQueryResponse.cardTypeName || ' ' }}</view
+          >
           <view>
             会员等级
             <span class="icon iconfont icon-rightCircle"></span>
           </view>
         </div>
         <div style="border: none;">
-          <view>10000</view>
+          <view>{{ memberDetails.currentPoints || 0 }}</view>
           <view>积分</view>
         </div>
       </view>
@@ -57,7 +65,7 @@
             ></span
             >我的预约
           </span>
-          <span @click="goAppointment">
+          <span @click="goAppointment('/pages/myAppointment/myAppointment')">
             待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
             <span class="iconfont icon-right"></span>
           </span>
@@ -73,7 +81,7 @@
         :y="y"
         direction="all"
         @change="onChange"
-        @click="goAppointment"
+        @click="goAppointment('/pages/projAptmt/projAptmt')"
         class="aptmt"
       >
         <span class="iconfont icon-time"></span>
@@ -95,6 +103,9 @@ export default {
       x: 300,
       y: 360,
       headerImgSrc: '/static/header-img.svg',
+      mobile: '',
+      memberDetails: {},
+      memberCardTypeQueryResponse: {},
     }
   },
   beforeCreate() {
@@ -106,12 +117,17 @@ export default {
   },
   mounted() {},
   beforeMount() {
-    this.getCount()
-    this.getAppointCount()
-    this.getUserDetail()
+    if (getStorage(STORAGE_KEY.STAFF).id) {
+      this.getCount()
+      this.getAppointCount()
+      this.getUserDetail()
+    }
   },
   onLoad() {},
   methods: {
+    goMembershipCard() {
+      this.$utils.push({ url: '/pages/membership/membershipCard' })
+    },
     getCount() {
       customerAPI
         .getPersonCount({ userId: getStorage(STORAGE_KEY.STAFF).id })
@@ -132,10 +148,14 @@ export default {
         .userDetail({ userId: getStorage(STORAGE_KEY.STAFF).id })
         .then((res) => {
           console.log('userDetail', res)
+          this.mobile = res.data.mobile
           customerAPI
-            .getMemberDetails({ memberId: res.data.user.memberId })
+            .getMemberDetails({ memberId: res.data.memberId })
             .then((re) => {
               console.log('MemberDetails', re)
+              this.memberDetails = re.data.memberDetailResponse
+              this.memberCardTypeQueryResponse =
+                re.data.memberCardTypeQueryResponse
             })
         })
     },
@@ -146,8 +166,8 @@ export default {
         }
       })
     },
-    goAppointment() {
-      this.$utils.push({ url: '/pages/myAppointment/myAppointment' })
+    goAppointment(url) {
+      this.$utils.push({ url: url })
     },
     goPerson() {
       this.$utils.push({ url: '/pages/personManagement/personManagement' })

@@ -3,28 +3,28 @@
     <div class="personInfo">
       <div>
         <span>姓名</span>
-        <span></span>
+        <span>{{ datail.personnelName }}</span>
       </div>
       <div>
         <span>性别</span>
-        <span></span>
+        <span>{{ datail.gender == 1 ? '男' : '女' }}</span>
       </div>
       <div>
         <span>出生日期</span>
-        <span></span>
+        <span>{{ datail.birthday }}</span>
       </div>
       <div>
         <span>联系电话标签</span>
-        <span></span>
+        <span>{{ CONTACT_LABEL.properties[datail.contactLabel].zh_CN }}</span>
       </div>
       <div>
         <span>联系电话</span>
-        <span></span>
+        <span>{{ datail.mobile }}</span>
       </div>
     </div>
     <div class="operation">
       <div class="btn">
-        <button @click="del">移除</button>
+        <button @click="deletePerson">移除</button>
         <button @click="amend">修改</button>
       </div>
     </div>
@@ -37,12 +37,13 @@ import customerAPI from '@/APIS/customer/customer.api'
 export default {
   data() {
     return {
-      datail: '',
+      datail: {},
+      CONTACT_LABEL: this.$utils.getEnums('ContactLabel'),
     }
   },
   onLoad(info) {
-    console.log('qqqqqqqqqqqqqq', info)
-    this.datail = JSON.parse(info)
+    this.datail = JSON.parse(info.personDetail)
+    console.log('qqqqqqqqqqqqqq', this.datail)
   },
   methods: {
     amend() {
@@ -51,8 +52,31 @@ export default {
         url: '/pages/personAmend/personAmend?personDetail=' + amend,
       })
     },
+    deletePerson() {
+      uni.showModal({
+        title: '移除人员',
+        content:
+          '移除后，将无法看到该人员的所有相关信息，也无法进行预约，是否再想想？',
+        cancelText: '再想想',
+        confirmText: '确认',
+        confirmColor: '#5CBB89',
+        success: (confirm) => {
+          if (confirm.confirm) {
+            this.del()
+          }
+        },
+      })
+    },
     del() {
-      customerAPI.deleteCustomer({ personnelId: this.datail.id }).then(() => {})
+      customerAPI
+        .deleteCustomer({ personnelId: this.datail.id })
+        .then((res) => {
+          if (res.code == 0) {
+            this.$utils.replace({
+              url: '/pages/personManagement/personManagement',
+            })
+          }
+        })
     },
   },
 }

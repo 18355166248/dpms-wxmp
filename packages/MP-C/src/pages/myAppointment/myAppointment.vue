@@ -19,7 +19,24 @@
           <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
           <span>{{ time(val.appointmentBeginTime) }}</span>
           <span class="colorAndName">
-            <span class="statusColor"></span>
+            <span
+              class="statusColor"
+              :style="{
+                background:
+                  NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus]
+                    .zh_CN == '已预约'
+                    ? '#5CBB89'
+                    : NETWORL_APPOINTMENT_STATUS.properties[
+                        val.appointmentStatus
+                      ].zh_CN == '已挂号'
+                    ? '#F2647C'
+                    : NETWORL_APPOINTMENT_STATUS.properties[
+                        val.appointmentStatus
+                      ].zh_CN == '待确认'
+                    ? '#FBD438'
+                    : '#B1B0B0',
+              }"
+            ></span>
             <span class="statusName">{{
               NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus].zh_CN
             }}</span>
@@ -184,7 +201,6 @@ export default {
           width: 16rpx;
           height: 16rpx;
           border-radius: 50%;
-          background: red;
           margin-right: 12rpx;
         }
         .statusName {
