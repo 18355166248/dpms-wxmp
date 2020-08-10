@@ -156,6 +156,7 @@ export default {
       } else {
         this.form.defaultPersonnel = false
       }
+      delete this.form.patientDTO
       customerAPI.updateCustomer(this.form).then((res) => {
         console.log('1111111111', res)
         if (res.code == 0) {
