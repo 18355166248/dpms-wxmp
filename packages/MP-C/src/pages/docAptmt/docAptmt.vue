@@ -166,6 +166,18 @@ export default {
       uni.showLoading({
         title: '加载中...',
       })
+      if (this.selectedIndex > 0) {
+        let shopId = this.filterStoreList[this.selectedIndex]
+          ?.appointmentInstitutionId
+        if (shopId) {
+          toUrl(
+            '/pages/appoint/index?doctorId=' +
+              appointmentDoctorId +
+              '&shopId=' +
+              shopId,
+          )
+        }
+      }
       const { toUrl } = this
       institutionAPI
         .checkDocCanAptmt({
@@ -174,12 +186,13 @@ export default {
         })
         .then((res) => {
           if (res.data.canAppointment) {
-            toUrl('/pages/appoint/index?doctorId=' + appointmentDoctorId)
+            toUrl(
+              `/pages/appoint/index?doctorId=${appointmentDoctorId}&shopId=${res.data.institutionList[0]?.appointmentInstitutionId}`,
+            )
             return uni.hideLoading()
           }
           toUrl(
-            '/pages/docAptmt/docDetail?appointmentDoctorId=' +
-              appointmentDoctorId,
+            `/pages/docAptmt/docDetail?appointmentDoctorId=${appointmentDoctorId}`,
           )
           return uni.hideLoading()
         })
