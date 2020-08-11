@@ -65,6 +65,7 @@
 <script>
 import moment from 'moment'
 import customerAPI from '@/APIS/customer/customer.api'
+import { globalEventKeys } from '@/config/global.eventKeys'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
@@ -160,9 +161,13 @@ export default {
       customerAPI.updateCustomer(this.form).then((res) => {
         console.log('1111111111', res)
         if (res.code == 0) {
-          this.$utils.replace({
-            url: '/pages/personManagement/personManagement',
+          uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+            isSuccess: true,
           })
+          this.$utils.back()
+          // this.$utils.replace({
+          //   url: '/pages/personManagement/personManagement',
+          // })
         }
       })
     },

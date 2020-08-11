@@ -33,6 +33,7 @@
 
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
+import { globalEventKeys } from '@/config/global.eventKeys'
 
 export default {
   data() {
@@ -72,9 +73,13 @@ export default {
         .deleteCustomer({ personnelId: this.datail.id })
         .then((res) => {
           if (res.code == 0) {
-            this.$utils.replace({
-              url: '/pages/personManagement/personManagement',
+            uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+              isSuccess: true,
             })
+            this.$utils.back()
+            // this.$utils.replace({
+            //   url: '/pages/personManagement/personManagement',
+            // })
           }
         })
     },

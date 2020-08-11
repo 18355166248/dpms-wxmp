@@ -127,6 +127,8 @@
 <script>
 import moment from 'moment'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
+import { globalEventKeys } from '@/config/global.eventKeys'
+
 export default {
   data() {
     return {
@@ -172,9 +174,10 @@ export default {
         .deleteAppointment({ networkAppointmentId: this.networkAppointmentId })
         .then((res) => {
           if (res.code == 0) {
-            this.$utils.replace({
-              url: '/pages/myAppointment/myAppointment',
+            uni.$emit(globalEventKeys.deleteAppointFormWithSaveSuccess, {
+              isSuccess: true,
             })
+            this.$utils.back()
           }
         })
     },

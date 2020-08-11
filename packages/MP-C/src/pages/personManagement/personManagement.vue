@@ -7,16 +7,13 @@
     <div class="personList">
       <div
         class="item"
-        v-for="(val,index) of personList"
+        v-for="(val, index) of personList"
         @click="personDetail(index)"
         :key="val.id"
       >
         <div class="name">
           {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
-          <span
-            class="self"
-            v-if="val.contactLabel==1"
-          >本人</span>
+          <span class="self" v-if="val.contactLabel == 1">本人</span>
         </div>
         <div class="phone">手机：{{ val.mobile }}</div>
         <span class="iconfont icon-right"></span>
@@ -32,6 +29,7 @@
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import { globalEventKeys } from '@/config/global.eventKeys'
 
 export default {
   data() {
@@ -44,6 +42,16 @@ export default {
   mounted() {},
   onLoad() {
     this.getCustomer()
+    uni.$on(
+      globalEventKeys.updatePersonFormWithSaveSuccess,
+      ({ isSuccess }) => {
+        console.log('isSuccess', isSuccess)
+        this.getCustomer()
+      },
+    )
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.updatePersonFormWithSaveSuccess)
   },
   methods: {
     getCustomer() {
