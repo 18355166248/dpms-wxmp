@@ -7,8 +7,8 @@
     >
       <view class="navbar-action-wrap-left"
         ><text class="iconfont icon-menu fz-38 mr-20"></text>
-        <text class="fz-34 mr-10">{{ navLeftText }} </text>
-        <spin v-if="navLeftLoading" :iconSize="18"></spin>
+        <text class="fz-34 mr-10 name">{{ navLeftText }} </text>
+        <spin v-if="navLeftLoading" :iconSize="18" color="#fff"></spin>
       </view>
     </view>
   </view>
@@ -103,6 +103,12 @@ export default {
   &-left {
     display: flex;
     align-items: center;
+    .name {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      max-width: 380rpx;
+      white-space: nowrap;
+    }
   }
 }
 
