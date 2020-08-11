@@ -117,7 +117,7 @@ export default {
     let staff = getStorage(STORAGE_KEY.STAFF)
     console.log('aaaaaaaaaaa', staff)
     if (!staff) {
-      this.$utils.reLaunch({ url: '/pages/login/index' })
+      this.$utils.push({ url: '/pages/login/index' })
     }
   },
   mounted() {},
@@ -168,11 +168,7 @@ export default {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
           removeStorage(STORAGE_KEY.STAFF)
-          removeStorage(STORAGE_KEY.ACCESS_TOKEN)
-          removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
-          removeStorage(STORAGE_KEY.ENUMS)
-          removeStorage(STORAGE_KEY.OPENID)
-          this.$utils.reLaunch({ url: '/pages/login/index' })
+          this.$utils.push({ url: '/pages/login/index' })
         }
       })
     },
