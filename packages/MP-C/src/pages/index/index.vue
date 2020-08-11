@@ -176,7 +176,6 @@ export default {
     })
   },
   onPullDownRefresh() {
-    console.log('refresh')
     this.init()
   },
   methods: {
