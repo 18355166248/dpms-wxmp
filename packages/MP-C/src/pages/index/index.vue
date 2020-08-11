@@ -263,7 +263,7 @@ export default {
             return uni.hideLoading()
           }
           toUrl(
-            '/pages/docAptmt/docAptmt?appointmentItemId=' + appointmentItemId,
+            '/pages/projAptmt/projAptmt?appointmentItemId=' + appointmentItemId,
           )
           return uni.hideLoading()
         })
