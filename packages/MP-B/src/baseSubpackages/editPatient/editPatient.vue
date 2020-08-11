@@ -162,29 +162,14 @@ export default {
           required: true,
           message: '请选择联系电话标签',
         },
-        mobile: [
-          {
-            required: true,
-            pattern: /^[0-9]*$/,
-            message: '请输入联系电话',
-          },
-          {
-            len: 11,
-            message: '联系电话格式不正确',
-          },
-        ],
-        alternateMobile: {
-          pattern: /^[0-9]{11}$/,
-          message: '备用号码格式不正确',
+        mobile: {
+          required: true,
+          message: '请输入联系电话',
         },
         weChatId: {
           min: 0,
           max: 20,
           message: '请输入正确的微信号',
-        },
-        qqNum: {
-          pattern: /^[0-9]{1,20}$/,
-          message: '请输入正确的QQ格式',
         },
         address: {
           min: 0,
@@ -273,6 +258,24 @@ export default {
       this.$refs.editPatientForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0]?.message)
+          return
+        }
+
+        if (!/^\d{11}$/.test(this.form.mobile)) {
+          this.$utils.show('联系电话格式不正确')
+          return
+        }
+
+        if (
+          this.form.alternateMobile &&
+          !/^\d{11}$/.test(this.form.alternateMobile)
+        ) {
+          this.$utils.show('备用号码格式不正确')
+          return
+        }
+
+        if (this.form.qqNum && !/^[0-9]{1,20}$/.test(this.form.qqNum)) {
+          this.$utils.show('请输入正确的QQ格式')
           return
         }
 
