@@ -175,12 +175,13 @@ export default {
         .then((res) => {
           if (res.data.canAppointment) {
             toUrl('/pages/appoint/index?doctorId=' + appointmentDoctorId)
-            return
+            return uni.hideLoading()
           }
           toUrl(
             '/pages/docAptmt/docDetail?appointmentDoctorId=' +
               appointmentDoctorId,
           )
+          return uni.hideLoading()
         })
     },
     toUrl(url) {

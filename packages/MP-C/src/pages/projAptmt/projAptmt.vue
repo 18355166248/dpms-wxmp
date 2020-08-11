@@ -183,12 +183,13 @@ export default {
         .then((res) => {
           if (res.data.canAppointment) {
             toUrl('/pages/appoint/index?projAptmt=' + appointmentItemId)
-            return
+            return uni.hideLoading()
           }
           toUrl(
             '/pages/projAptmt/projDetail?appointmentItemId=' +
               appointmentItemId,
           )
+          return uni.hideLoading()
         })
     },
     toUrl(url) {
