@@ -117,7 +117,7 @@ export default {
     let staff = getStorage(STORAGE_KEY.STAFF)
     console.log('aaaaaaaaaaa', staff)
     if (!staff) {
-      this.$utils.push({ url: '/pages/login/index' })
+      this.$utils.reLaunch({ url: '/pages/login/index' })
     }
   },
   mounted() {},
