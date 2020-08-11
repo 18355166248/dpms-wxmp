@@ -92,6 +92,7 @@
 
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
+import { globalEventKeys } from '@/config/global.eventKeys'
 import {
   getStorage,
   setStorage,
@@ -121,14 +122,14 @@ export default {
     }
   },
   mounted() {},
-  beforeMount() {
+  beforeMount() {},
+  onShow() {
     if (getStorage(STORAGE_KEY.STAFF).id) {
       this.getCount()
       this.getAppointCount()
       this.getUserDetail()
     }
   },
-  onLoad() {},
   methods: {
     goMembershipCard() {
       this.$utils.push({ url: '/pages/membership/membershipCard' })
