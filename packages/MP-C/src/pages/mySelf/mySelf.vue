@@ -92,7 +92,12 @@
 
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
-import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import {
+  getStorage,
+  setStorage,
+  removeStorage,
+  STORAGE_KEY,
+} from '@/utils/storage'
 
 export default {
   data() {
@@ -112,7 +117,7 @@ export default {
     let staff = getStorage(STORAGE_KEY.STAFF)
     console.log('aaaaaaaaaaa', staff)
     if (!staff) {
-      this.$utils.push({ url: '/pages/login/index' })
+      this.$utils.reLaunch({ url: '/pages/login/index' })
     }
   },
   mounted() {},
@@ -162,7 +167,12 @@ export default {
     logOut() {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
-          this.$utils.push({ url: '/pages/login/index' })
+          removeStorage(STORAGE_KEY.STAFF)
+          removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+          removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
+          removeStorage(STORAGE_KEY.ENUMS)
+          removeStorage(STORAGE_KEY.OPENID)
+          this.$utils.reLaunch({ url: '/pages/login/index' })
         }
       })
     },
