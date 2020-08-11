@@ -83,9 +83,10 @@
       <div class="dpms-cell-group dpms-cell-group-textarea">
         <div class="dpms-cell" data-layout-align="space-between center">
           <textarea
+            style="height: 142rpx; padding: 6rpx 0; width: 686rpx;"
             placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
             placeholder="请输入详细住址"
-            auto-height
+            maxlength="100"
             v-model="form.address"
           />
         </div>
