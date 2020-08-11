@@ -132,8 +132,10 @@
 
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
+import systemApi from '@/APIS/system.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+import config from '../../config'
+let medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
 const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
@@ -155,19 +157,25 @@ export default {
   },
   created() {
     const self = this
-    uni.getSystemInfo({
-      success: function (res) {
-        self.y = res.windowHeight - 60
-        self.x = res.windowWidth
-        self.hide = false
-      },
-    })
-    uni.setNavigationBarTitle({
-      title: medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
-    })
-  },
-  onLoad() {
-    this.init()
+    systemApi
+      .getInstitution({
+        appId: config.appId,
+      })
+      .then((res) => {
+        medicalInstitution = res.data
+        uni.getSystemInfo({
+          success: function (res) {
+            self.y = res.windowHeight - 60
+            self.x = res.windowWidth
+            self.hide = false
+          },
+        })
+        uni.setNavigationBarTitle({
+          title:
+            medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
+        })
+        this.init()
+      })
   },
   methods: {
     init() {
