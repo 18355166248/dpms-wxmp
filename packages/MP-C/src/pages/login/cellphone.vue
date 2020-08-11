@@ -50,6 +50,7 @@ export default {
         openId: getStorage(STORAGE_KEY.OPENID),
       })
       setStorage(STORAGE_KEY.STAFF, res.data)
+      setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
       this.$utils.back(2)
     },
   },

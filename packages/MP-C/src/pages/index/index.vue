@@ -50,7 +50,10 @@
       <view class="proj">
         <view class="projContent">
           <text class="projTitle">项目</text>
-          <view class="projBtn" @click="toUrl('/pages/projAptmt/projAptmt')"
+          <view
+            class="projBtn"
+            @click="toUrl('/pages/projAptmt/projAptmt')"
+            v-show="itemList.length > 3"
             >更多</view
           >
         </view>
@@ -176,7 +179,6 @@ export default {
     })
   },
   onPullDownRefresh() {
-    console.log('refresh')
     this.init()
   },
   methods: {
