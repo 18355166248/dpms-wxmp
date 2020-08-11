@@ -9,7 +9,7 @@ export default {
     console.log('App Launch')
     try {
       const enumsRes = await systemApi.getDataDict()
-      this.SET_ENUMS(enumsRes)
+      this.SET_ENUMS(enumsRes.data)
 
       let token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
       if (!token) {
