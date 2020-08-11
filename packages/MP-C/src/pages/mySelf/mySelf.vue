@@ -92,7 +92,12 @@
 
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
-import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import {
+  getStorage,
+  setStorage,
+  removeStorage,
+  STORAGE_KEY,
+} from '@/utils/storage'
 
 export default {
   data() {
@@ -115,15 +120,13 @@ export default {
       this.$utils.push({ url: '/pages/login/index' })
     }
   },
-  mounted() {},
-  beforeMount() {
+  onShow() {
     if (getStorage(STORAGE_KEY.STAFF).id) {
       this.getCount()
       this.getAppointCount()
       this.getUserDetail()
     }
   },
-  onLoad() {},
   methods: {
     goMembershipCard() {
       this.$utils.push({ url: '/pages/membership/membershipCard' })
@@ -162,7 +165,8 @@ export default {
     logOut() {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
-          this.$utils.replace({ url: '/pages/login/index' })
+          removeStorage(STORAGE_KEY.STAFF)
+          this.$utils.push({ url: '/pages/login/index' })
         }
       })
     },

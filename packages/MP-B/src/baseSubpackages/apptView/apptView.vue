@@ -235,18 +235,24 @@ export default {
     // 获取排班详情
     getApptScheduleInfo() {
       institutionAPI
-        .getApptScheduleList({
+        .getApptScheduleListByStaff({
           scheduleBeginTime: this.startTimeStamp,
           scheduleEndTime: this.endTimeStamp,
-          staffPositions: doctorValue,
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          // medicalInstitutionId: medicalInstitution.medicalInstitutionId,
           staffId: this.doctor.staffId,
         })
         .then((res) => {
-          console.log('scheduleListWithDoctor', res.data)
-
-          this.scheduleList =
-            res.data[2].institutionScheduleTableMap[this.startTimeStamp]
+          if (
+            Array.isArray(res.data) &&
+            res.data[0] &&
+            _.isPlainObject(res.data[0].institutionScheduleTableMap) &&
+            Array.isArray(
+              res.data[0].institutionScheduleTableMap[this.startTimeStamp],
+            )
+          ) {
+            this.scheduleList =
+              res.data[0].institutionScheduleTableMap[this.startTimeStamp]
+          }
         })
         .catch()
     },

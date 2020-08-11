@@ -28,6 +28,8 @@
               @change="searchChange"
               @search="emitPullDownRefresh"
               @clear="handleClear"
+              type="text"
+              v-model="patientSearchKey"
               confirmType="search"
               placeholder="搜索患者"
             ></dpmsSearch>
