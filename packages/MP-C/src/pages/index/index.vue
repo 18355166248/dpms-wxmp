@@ -132,11 +132,9 @@
 
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
-import systemApi from '@/APIS/system.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-import config from '../../config'
-const staff = getStorage(STORAGE_KEY.STAFF)
 import { mapState } from 'vuex'
+const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {
@@ -162,22 +160,25 @@ export default {
   },
   watch: {
     MEDICALINSTITUTION(newVal) {
-      console.log('MEDICALINSTITUTION', newVal)
-
-      uni.getSystemInfo({
-        success: (res) => {
-          this.y = res.windowHeight - 60
-          this.x = res.windowWidth
-          this.hide = false
-        },
-      })
       uni.setNavigationBarTitle({
         title: newVal.medicalInstitutionDTO.medicalInstitutionName,
       })
       this.init()
     },
   },
-  created() {},
+  created() {
+    uni.getSystemInfo({
+      success: (res) => {
+        this.y = res.windowHeight - 60
+        this.x = res.windowWidth
+        this.hide = false
+      },
+    })
+  },
+  onPullDownRefresh() {
+    console.log('refresh')
+    this.init()
+  },
   methods: {
     init() {
       institutionAPI
@@ -310,8 +311,8 @@ export default {
   left: 32rpx;
   position: relative;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .compDescContentDesc {
   font-size: 28rpx;
