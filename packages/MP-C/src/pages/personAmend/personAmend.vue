@@ -155,7 +155,7 @@ export default {
           uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
             isSuccess: true,
           })
-          this.$utils.back()
+          this.$utils.back(2)
           // this.$utils.replace({
           //   url: '/pages/personManagement/personManagement',
           // })
