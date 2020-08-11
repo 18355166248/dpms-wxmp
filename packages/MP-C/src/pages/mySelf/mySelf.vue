@@ -162,7 +162,7 @@ export default {
     logOut() {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
-          this.$utils.replace({ url: '/pages/login/index' })
+          this.$utils.push({ url: '/pages/login/index' })
         }
       })
     },
