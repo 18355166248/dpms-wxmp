@@ -135,8 +135,8 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import systemApi from '@/APIS/system.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import config from '../../config'
-let medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
 const staff = getStorage(STORAGE_KEY.STAFF)
+import { mapState } from 'vuex'
 
 export default {
   data() {
@@ -155,33 +155,34 @@ export default {
       displayMultipleItems: 1,
     }
   },
-  created() {
-    const self = this
-    systemApi
-      .getInstitution({
-        appId: config.appId,
-      })
-      .then((res) => {
-        medicalInstitution = res.data
-        uni.getSystemInfo({
-          success: function (res) {
-            self.y = res.windowHeight - 60
-            self.x = res.windowWidth
-            self.hide = false
-          },
-        })
-        uni.setNavigationBarTitle({
-          title:
-            medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
-        })
-        this.init()
-      })
+  computed: {
+    ...mapState('loginStore', {
+      MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+    }),
   },
+  watch: {
+    MEDICALINSTITUTION(newVal) {
+      console.log('MEDICALINSTITUTION', newVal)
+
+      uni.getSystemInfo({
+        success: (res) => {
+          this.y = res.windowHeight - 60
+          this.x = res.windowWidth
+          this.hide = false
+        },
+      })
+      uni.setNavigationBarTitle({
+        title: newVal.medicalInstitutionDTO.medicalInstitutionName,
+      })
+      this.init()
+    },
+  },
+  created() {},
   methods: {
     init() {
       institutionAPI
         .getInstitutionInfo({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
           this.bannerList = res.data.bannerList
@@ -189,7 +190,7 @@ export default {
         })
       institutionAPI
         .getProjList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
           this.itemList = res.data.itemList
@@ -201,7 +202,7 @@ export default {
         })
       institutionAPI
         .getStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           current: this.currentPage,
           size: this.size,
         })
@@ -225,7 +226,7 @@ export default {
     loadData() {
       institutionAPI
         .getStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           current: this.currentPage,
           size: this.size,
         })
@@ -250,7 +251,7 @@ export default {
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
