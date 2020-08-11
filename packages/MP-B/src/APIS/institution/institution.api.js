@@ -29,6 +29,10 @@ const institutionAPI = {
   getApptScheduleListByStaff(params) {
     return httper.get('/institution/schedule/select/one-staff', params)
   },
+  // 机构ID 获取连锁诊所（树状结构）
+  getInstitutionList(params) {
+    return httper.get('institution/medical-institution/detail-child-id', params)
+  },
 }
 
 export default institutionAPI

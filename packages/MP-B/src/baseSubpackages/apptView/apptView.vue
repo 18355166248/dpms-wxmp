@@ -1,6 +1,12 @@
 <template>
   <view class="apptView">
-    <dpmsDrawer maskClose ref="dpmsDrawer">
+    <dpmsDrawer maskClose ref="dpmsDrawer" :width="750">
+      <dpmsCell
+        v-if="isHeaderWithLargeArea"
+        title="诊所"
+        isLink
+        @click.native="openSelectMedicalInstitution"
+      />
       <view class="pv-32 ph-24 selectDrawer">
         <view class="title mb-32 ml-8">医生</view>
         <div class="doctorList">
@@ -18,6 +24,13 @@
         </div>
       </view>
     </dpmsDrawer>
+
+    <selectMedicalInstitution
+      v-if="isHeaderWithLargeArea"
+      ref="selectMedicalInstitution"
+      @confirm="selectInstitution"
+      :list="institutionList"
+    />
 
     <calendar
       :value="date"
@@ -93,6 +106,7 @@ import dayTable from '@/businessComponents/dayTable/dayTable'
 import calendar from '@/businessComponents/calendar/calendar'
 import { globalEventKeys } from 'config/global.eventKeys.js'
 import apptCard from '@/businessComponents/apptCard/apptCard.vue'
+import { apptFormUtil } from '@/baseSubpackages/apptForm/apptForm.util'
 
 const enums = uni.getStorageSync('enums')
 const staff = uni.getStorageSync('staff')
@@ -100,6 +114,7 @@ const medicalInstitution = uni.getStorageSync('medicalInstitution')
 
 const STAFF_POSITION_ENUM = enums.StaffPosition
 const STAFF_STATUS_ENUM = enums.StaffStatus
+const INSTITUTION_CHAIN_TYPE_ENUM = enums.InstitutionChainType
 
 const doctorValue = STAFF_POSITION_ENUM.DOCTOR.value
 
@@ -124,6 +139,11 @@ export default {
       apptSearchList: [], // 模糊搜索列表
       searchValueWithAppt: '', // 模糊搜索的值
       scheduleList: [], // 排班列表
+      institutionInfo: {}, // 总部/大区诊所选择信息
+      isHeaderWithLargeArea: apptFormUtil.isHeaderWithLargeArea(
+        medicalInstitution,
+      ),
+      institutionList: [], // 总部/大区 诊所列表
     }
   },
   onShow() {
@@ -163,7 +183,24 @@ export default {
     },
   },
   methods: {
-    init() {
+    async init() {
+      // 如果是总部/大区 需要获取诊所列表
+      if (this.isHeaderWithLargeArea) {
+        const [err, res] = await this.$utils.asyncTasks(
+          institutionAPI.getInstitutionList({
+            medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+            institutionChainTypes:
+              INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value +
+              ',' +
+              INSTITUTION_CHAIN_TYPE_ENUM.REGIONAL.value,
+          }),
+        )
+
+        if (err) return
+
+        this.institutionList = [res.data]
+      }
+
       this.getDoctor()
         .then((res) => {
           this.getApptScheduleInfo()
@@ -342,6 +379,10 @@ export default {
           this.search({ value: this.searchValueWithAppt })
         })
         .catch()
+    },
+    // 打开选择诊所弹窗
+    openSelectMedicalInstitution() {
+      this.$refs.selectMedicalInstitution.show()
     },
   },
   components: {
