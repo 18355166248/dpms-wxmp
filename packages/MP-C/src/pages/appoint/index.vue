@@ -104,13 +104,12 @@
 
 <script>
 import moment from 'moment'
+import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 export default {
   data() {
     return {
-      institution: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
-        .medicalInstitutionDTO,
       userId: getStorage(STORAGE_KEY.STAFF).id,
       shopId: '',
       shopDetail: {},
@@ -148,6 +147,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('loginStore', ['MEDICALINSTITUTION']),
     selectedItemsText() {
       return this.selectedItems.map((itm) => itm.itemName).join('，')
     },
@@ -194,7 +194,7 @@ export default {
           (v) => v.startAvailableDateStamp === this.form.timeStamp,
         )
         let param = {
-          medicalInstitutionId: this.institution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentBeginTimeStamp: timeStamp[0].startAvailableDateStamp,
           appointmentEndTimeStamp: timeStamp[0].endAvailableDateStamp,
           networkAppointmentItemList: this.form.itemId.map((v) => ({
@@ -225,7 +225,7 @@ export default {
     getDoctorTime(date) {
       appointAPI
         .getTime({
-          medicalInstitutionId: this.institution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           doctorId: this.form.doctorId,
           shopId: this.shopId,
           dateStr: date,
@@ -238,14 +238,14 @@ export default {
     },
     async getDoctors(id) {
       const res = await appointAPI.getDoctorList({
-        medicalInstitutionId: this.institution.medicalInstitutionId,
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         filterInstitutionId: id,
       })
       this.dockers = res.data.doctorList
     },
     async getItems() {
       const res = await appointAPI.getItemList({
-        medicalInstitutionId: this.institution.medicalInstitutionId,
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
       })
       this.items = res.data.itemList.filter((v) => v.canAppointment)
     },

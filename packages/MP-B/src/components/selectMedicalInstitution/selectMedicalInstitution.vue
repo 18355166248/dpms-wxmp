@@ -115,8 +115,10 @@ export default {
       })
       Promise.all([institutionListPromise, loginInstitutionListPromise])
         .then((res) => {
-          this.range = this.list || [res[0].data]
-          this.disList = this.workList || res[1].data.workMedicalInstitutionIds
+          this.range = this.list.length ? this.list : [res[0].data]
+          this.disList = this.workList.length
+            ? this.workList
+            : res[1].data.workMedicalInstitutionIds
           this.showTree = true
           this.$emit('onDisList', true)
         })
@@ -241,12 +243,16 @@ export default {
       this.initTree(list)
     },
     list(list) {
-      this.range = list
-      this.initTree(list)
+      if (list.length) {
+        this.range = list
+        this.initTree(list)
+      }
     },
     workList(list) {
-      this.disList = list
-      this.initTree(list)
+      if (list.length) {
+        this.disList = list
+        this.initTree(list)
+      }
     },
   },
   mounted() {
