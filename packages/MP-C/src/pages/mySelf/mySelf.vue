@@ -92,7 +92,6 @@
 
 <script>
 import customerAPI from '@/APIS/customer/customer.api'
-import { globalEventKeys } from '@/config/global.eventKeys'
 import {
   getStorage,
   setStorage,
@@ -121,8 +120,6 @@ export default {
       this.$utils.push({ url: '/pages/login/index' })
     }
   },
-  mounted() {},
-  beforeMount() {},
   onShow() {
     if (getStorage(STORAGE_KEY.STAFF).id) {
       this.getCount()
