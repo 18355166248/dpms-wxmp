@@ -44,7 +44,11 @@
         isLink
       />
       <dpmsCellPicker
-        defaultType="value"
+        defaultType="id"
+        :defaultProps="{
+          label: 'personnelName',
+          value: 'id',
+        }"
         :list="personnelList"
         v-model="form.personnelId"
         title="预约人员"
@@ -108,6 +112,7 @@ export default {
       institution: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
         .medicalInstitutionDTO,
       userId: getStorage(STORAGE_KEY.STAFF).id,
+      shopId: '',
       shopDetail: {},
       form: {
         doctorId: '',
@@ -153,14 +158,18 @@ export default {
       }))
     },
     startDate() {
-      return moment(this.shopDetail.preAdvanceDayOfAppointmentTime).format(
-        'YYYY-MM-DD',
-      )
+      return this.shopDetail.preAdvanceDayOfAppointmentTime
+        ? moment(this.shopDetail.preAdvanceDayOfAppointmentTime).format(
+            'YYYY-MM-DD',
+          )
+        : ''
     },
     endDate() {
-      return moment(this.shopDetail.nextAdvanceDayOfAppointmentTime).format(
-        'YYYY-MM-DD',
-      )
+      return this.shopDetail.nextAdvanceDayOfAppointmentTime
+        ? moment(this.shopDetail.nextAdvanceDayOfAppointmentTime).format(
+            'YYYY-MM-DD',
+          )
+        : ''
     },
   },
   watch: {
@@ -169,6 +178,9 @@ export default {
         this.getDoctorTime(newVal)
       }
     },
+  },
+  onLoad(params) {
+    this.shopId = params.shopId
   },
   methods: {
     submit() {
@@ -188,10 +200,11 @@ export default {
           networkAppointmentItemList: this.form.itemId.map((v) => ({
             itemId: v.itemId,
             itemName: v.itemName,
-            itemType: v.itemType,
+            itemType: v.itemTypeId,
             itemTypeName: v.itemTypeName,
           })),
-          shopId: this.shopDetail.settingsShopId,
+          shopId: this.shopId,
+          userId: this.userId,
           ...this.form,
           timeStamp: '',
           itemId: '',
@@ -214,16 +227,19 @@ export default {
         .getTime({
           medicalInstitutionId: this.institution.medicalInstitutionId,
           doctorId: this.form.doctorId,
+          shopId: this.shopId,
           dateStr: date,
         })
         .then((res) => {
           let { data } = res
           this.doctorTime = data.filter((v) => v.isShow)
+          this.form.timeStamp = ''
         })
     },
-    async getDoctors() {
+    async getDoctors(id) {
       const res = await appointAPI.getDoctorList({
         medicalInstitutionId: this.institution.medicalInstitutionId,
+        filterInstitutionId: id,
       })
       this.dockers = res.data.doctorList
     },
@@ -231,7 +247,7 @@ export default {
       const res = await appointAPI.getItemList({
         medicalInstitutionId: this.institution.medicalInstitutionId,
       })
-      this.items = res.data.itemList
+      this.items = res.data.itemList.filter((v) => v.canAppointment)
     },
     async getPersonnelList() {
       const res = await appointAPI.getPersonnelList({
@@ -241,9 +257,10 @@ export default {
     },
     async getShopDetail() {
       const res = await appointAPI.getShopDetail({
-        medicalInstitution: this.institution.medicalInstitutionId,
+        shopId: this.shopId,
       })
       this.shopDetail = res.data
+      this.getDoctors(this.shopDetail.settingsShopId)
     },
     dockerClick(d) {
       this.form.doctorId = d.doctorId
@@ -260,7 +277,6 @@ export default {
     },
     async init() {
       this.$utils.showLoading()
-      await this.getDoctors()
       await this.getItems()
       await this.getPersonnelList()
       await this.getShopDetail()
