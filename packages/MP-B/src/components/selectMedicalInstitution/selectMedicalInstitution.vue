@@ -72,6 +72,12 @@ export default {
       type: String,
       required: true,
     },
+    list: {
+      type: Array,
+    },
+    workList: {
+      type: Array,
+    },
     title: {
       type: String,
       default: '请选择诊所',
@@ -109,8 +115,10 @@ export default {
       })
       Promise.all([institutionListPromise, loginInstitutionListPromise])
         .then((res) => {
-          this.range = [res[0].data]
-          this.disList = res[1].data.workMedicalInstitutionIds
+          this.range = this.list.length ? this.list : [res[0].data]
+          this.disList = this.workList.length
+            ? this.workList
+            : res[1].data.workMedicalInstitutionIds
           this.showTree = true
           this.$emit('onDisList', true)
         })
@@ -218,8 +226,6 @@ export default {
     },
     treeItemSelect(item, index) {
       if (this.disList.includes(item.id)) {
-        // 点击选项时触发
-        console.log('item', item)
         this.$emit('confirm', item)
         this.hide()
       }
@@ -235,6 +241,18 @@ export default {
   watch: {
     range(list) {
       this.initTree(list)
+    },
+    list(list) {
+      if (list.length) {
+        this.range = list
+        this.initTree(list)
+      }
+    },
+    workList(list) {
+      if (list.length) {
+        this.disList = list
+        this.initTree(list)
+      }
     },
   },
   mounted() {

@@ -1,6 +1,12 @@
 <template>
-  <picker mode="multiSelector" :range="range" :value="pickerValue" @columnchange="columnchange">
-    <div>{{dateText || placeholder}}</div>
+  <picker
+    mode="multiSelector"
+    :range="range"
+    :value="pickerValue"
+    @columnchange="columnchange"
+    @change="change"
+  >
+    <div>{{ pickerText || placeholder }}</div>
   </picker>
 </template>
 
@@ -24,13 +30,22 @@ export default {
         return '请选择预约时间'
       },
     },
-    value: Object,
+    value: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
       range: [years, months, dates, hourMinutes],
-      pickerValue: [0, now.month(), now.date() - 1, 0],
+      pickerValue: this.filterValue(this.value),
+      pickerText: '',
     }
+  },
+  watch: {
+    value(newVal) {
+      this.pickerValue = this.filterValue(newVal)
+    },
   },
   computed: {
     dateText() {
@@ -45,6 +60,18 @@ export default {
     },
   },
   methods: {
+    filterValue(val) {
+      if (val) {
+        return [
+          this.range[0].indexOf(moment(val).year()),
+          this.range[1].indexOf(moment(val).month() + 1),
+          this.range[2].indexOf(moment(val).date()),
+          this.range[3].indexOf(moment(val).format('HH:mm')),
+        ]
+      } else {
+        return [0, now.month(), now.date() - 1, 0]
+      }
+    },
     columnchange({ detail: { column, value } }) {
       let pickerValue = this.pickerValue.map((v, i) => {
         if (i === column) {
@@ -77,9 +104,12 @@ export default {
       }
       this.pickerValue = pickerValue
     },
+    change() {
+      this.pickerText = this.dateText
+      this.$emit('input', moment(this.dateText).valueOf())
+    },
   },
 }
 </script>
 
-<style>
-</style>
+<style></style>

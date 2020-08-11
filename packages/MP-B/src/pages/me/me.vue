@@ -2,7 +2,7 @@
   <view class="content">
     <view class="status_bar" :style="{ height: navTop }"></view>
     <view class="tit">我的</view>
-    <view class="me">
+    <view class="me" @click="toUrl('/pages/myProfile/myProfile')">
       <patientAvatar
         :width="124"
         :patient="{ avatarUrl: staff.photoUrl }"
@@ -14,7 +14,7 @@
           staffPosition[staff.position].zh_CN
         }}</view>
       </view>
-      <view class="link" @click="toUrl('/pages/myProfile/myProfile')">
+      <view class="link">
         <text class="iconfont icon-right" />
       </view>
     </view>
@@ -28,15 +28,12 @@
           medicalInstitution.medicalInstitutionSimpleCode
         }}</text>
       </view>
-      <view class="li">
+      <view class="li" @click="toUrl('/pages/myProfile/about')">
         <view>
           <image class="logo" src="../../static/icon-mini-logo.png" />
           关于北吉熊1
         </view>
-        <text
-          @click="toUrl('/pages/myProfile/about')"
-          class="iconfont icon-right text"
-        />
+        <text class="iconfont icon-right text" />
       </view>
     </view>
     <view class="out" @click="loginOut">退出登录</view>

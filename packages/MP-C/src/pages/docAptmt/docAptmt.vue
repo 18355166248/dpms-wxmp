@@ -73,7 +73,7 @@
 import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+import { mapState } from 'vuex'
 const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
@@ -107,12 +107,15 @@ export default {
     selectedIndex() {
       this.emitPullDownRefresh()
     },
+    MEDICALINSTITUTION(newVal) {
+      this.init()
+    },
   },
   methods: {
     init() {
       institutionAPI
         .getFilterStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
           res.data.unshift({
@@ -126,7 +129,7 @@ export default {
     loadData(method) {
       institutionAPI
         .getInnerDocList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           filterInstitutionId:
             this.filterStoreList[this.selectedIndex]
               ?.appointmentInstitutionId || null,
@@ -166,18 +169,19 @@ export default {
       const { toUrl } = this
       institutionAPI
         .checkDocCanAptmt({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentDoctorId,
         })
         .then((res) => {
           if (res.data.canAppointment) {
             toUrl('/pages/appoint/index?doctorId=' + appointmentDoctorId)
-            return
+            return uni.hideLoading()
           }
           toUrl(
             '/pages/docAptmt/docDetail?appointmentDoctorId=' +
               appointmentDoctorId,
           )
+          return uni.hideLoading()
         })
     },
     toUrl(url) {
@@ -197,6 +201,9 @@ export default {
     pickerText() {
       return this.filterStoreList[this.selectedIndex]?.institutionName
     },
+    ...mapState('loginStore', {
+      MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+    }),
   },
   components: {
     loadMore,

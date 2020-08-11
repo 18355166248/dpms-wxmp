@@ -52,6 +52,7 @@
       <dpmsCellPicker
         title="默认人员"
         placeholder="是否设置为默认人员"
+        defaultType="value"
         v-model="form.defaultPersonnel"
         :list="defaultType"
       />
@@ -65,6 +66,7 @@
 <script>
 import moment from 'moment'
 import customerAPI from '@/APIS/customer/customer.api'
+import { globalEventKeys } from '@/config/global.eventKeys'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
@@ -94,11 +96,6 @@ export default {
   created() {},
   onLoad(info) {
     this.form = JSON.parse(info.personDetail)
-    if (this.form.defaultPersonnel) {
-      this.form.defaultPersonnel = '开'
-    } else {
-      this.form.defaultPersonnel = '关'
-    }
     console.log('jjjjjjjjjjjjjjj', this.form)
     customerAPI
       .needVerify({
@@ -151,18 +148,17 @@ export default {
       }
     },
     submit() {
-      if ((this.form.defaultPersonnel = '开')) {
-        this.form.defaultPersonnel = true
-      } else {
-        this.form.defaultPersonnel = false
-      }
       delete this.form.patientDTO
       customerAPI.updateCustomer(this.form).then((res) => {
         console.log('1111111111', res)
         if (res.code == 0) {
-          this.$utils.replace({
-            url: '/pages/personManagement/personManagement',
+          uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+            isSuccess: true,
           })
+          this.$utils.back(2)
+          // this.$utils.replace({
+          //   url: '/pages/personManagement/personManagement',
+          // })
         }
       })
     },

@@ -84,7 +84,7 @@ export default {
         .then((res) => {
           that.$refs.editPatient.showBtn()
 
-          that.$utils.show('修改成功', {
+          that.$utils.show('新增患者成功', {
             duration: 1000,
             complete() {
               setTimeout(() => {

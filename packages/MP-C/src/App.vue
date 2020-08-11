@@ -2,27 +2,40 @@
 import systemApi from '@/APIS/system.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import config from './config'
+import { mapMutations } from 'vuex'
+
 export default {
   onLaunch: async function () {
     console.log('App Launch')
-    const enumsRes = await systemApi.getDataDict()
-    setStorage(STORAGE_KEY.ENUMS, enumsRes.data)
+    try {
+      const enumsRes = await systemApi.getDataDict()
+      this.SET_ENUMS(enumsRes.data)
 
-    let token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
-    if (!token) {
-      const res = await systemApi.getAccessToken()
-      setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data)
-      token = res.data
+      let token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
+      if (!token) {
+        const res = await systemApi.getAccessToken()
+        this.SET_ACCESS_TOKEN(res.data)
+        token = res.data
+      }
+
+      const res = await systemApi.getInstitution({ appId: config.appId })
+      this.SET_MEDICALINSTITUTION(res.data)
+    } catch (error) {
+      console.log('Init Error-----', error)
     }
-
-    const res = await systemApi.getInstitution({ appId: config.appId })
-    setStorage(STORAGE_KEY.MEDICALINSTITUTION, res.data)
   },
   onShow: function () {
     console.log('App Show')
   },
   onHide: function () {
     console.log('App Hide')
+  },
+  methods: {
+    ...mapMutations('loginStore', [
+      'SET_ACCESS_TOKEN',
+      'SET_ENUMS',
+      'SET_MEDICALINSTITUTION',
+    ]),
   },
 }
 </script>

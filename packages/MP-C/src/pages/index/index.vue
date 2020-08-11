@@ -50,7 +50,10 @@
       <view class="proj">
         <view class="projContent">
           <text class="projTitle">项目</text>
-          <view class="projBtn" @click="toUrl('/pages/projAptmt/projAptmt')"
+          <view
+            class="projBtn"
+            @click="toUrl('/pages/projAptmt/projAptmt')"
+            v-show="itemList.length > 3"
             >更多</view
           >
         </view>
@@ -133,7 +136,7 @@
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+import { mapState } from 'vuex'
 const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
@@ -153,27 +156,36 @@ export default {
       displayMultipleItems: 1,
     }
   },
+  computed: {
+    ...mapState('loginStore', {
+      MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+    }),
+  },
+  watch: {
+    MEDICALINSTITUTION(newVal) {
+      uni.setNavigationBarTitle({
+        title: newVal.medicalInstitutionDTO.medicalInstitutionName,
+      })
+      this.init()
+    },
+  },
   created() {
-    const self = this
     uni.getSystemInfo({
-      success: function (res) {
-        self.y = res.windowHeight - 60
-        self.x = res.windowWidth
-        self.hide = false
+      success: (res) => {
+        this.y = res.windowHeight - 60
+        this.x = res.windowWidth
+        this.hide = false
       },
     })
-    uni.setNavigationBarTitle({
-      title: medicalInstitution.medicalInstitutionDTO.medicalInstitutionName,
-    })
   },
-  onLoad() {
+  onPullDownRefresh() {
     this.init()
   },
   methods: {
     init() {
       institutionAPI
         .getInstitutionInfo({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
           this.bannerList = res.data.bannerList
@@ -181,7 +193,7 @@ export default {
         })
       institutionAPI
         .getProjList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
           this.itemList = res.data.itemList
@@ -193,7 +205,7 @@ export default {
         })
       institutionAPI
         .getStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           current: this.currentPage,
           size: this.size,
         })
@@ -217,7 +229,7 @@ export default {
     loadData() {
       institutionAPI
         .getStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           current: this.currentPage,
           size: this.size,
         })
@@ -242,17 +254,18 @@ export default {
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
           if (res.data.canAppointment) {
             toUrl('/pages/appoint/index?itemId=' + appointmentItemId)
-            return
+            return uni.hideLoading()
           }
           toUrl(
             '/pages/docAptmt/docAptmt?appointmentItemId=' + appointmentItemId,
           )
+          return uni.hideLoading()
         })
     },
     toUrl(url) {
@@ -301,8 +314,8 @@ export default {
   left: 32rpx;
   position: relative;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .compDescContentDesc {
   font-size: 28rpx;

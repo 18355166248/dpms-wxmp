@@ -67,6 +67,7 @@
 import moment from 'moment'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import { globalEventKeys } from '@/config/global.eventKeys'
 
 export default {
   data() {
@@ -89,6 +90,16 @@ export default {
   },
   onLoad() {
     this.getAppointmentList(this.RECENT_APPOINTMENT)
+    uni.$on(
+      globalEventKeys.deleteAppointFormWithSaveSuccess,
+      ({ isSuccess }) => {
+        console.log('isSuccess', isSuccess)
+        this.getAppointmentList(this.RECENT_APPOINTMENT)
+      },
+    )
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.deleteAppointFormWithSaveSuccess)
   },
   methods: {
     getAppointmentList(type) {

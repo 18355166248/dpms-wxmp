@@ -185,14 +185,14 @@ httper.interceptors.response.use(
     })
 
     if (
-      response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value
+      response.data.code === 1004000000
     ) {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
 
       uni.reLaunch({
-        url: '/pages/login/login',
+        url: '/pages/login/index',
       })
     } else {
       return Promise.reject(response.data)

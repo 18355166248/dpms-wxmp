@@ -64,7 +64,7 @@
 import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+import { mapState } from 'vuex'
 const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
@@ -78,9 +78,11 @@ export default {
       total: -1,
       size: 10,
       loadStatus: 'loading',
+      params: '',
     }
   },
   onLoad(params) {
+    this.params = params
     this.init(params)
   },
   onPullDownRefresh() {
@@ -94,9 +96,20 @@ export default {
     ++this.currentPage
     this.loadData('add')
   },
+  computed: {
+    ...mapState('loginStore', {
+      MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+    }),
+    pickerText() {
+      return this.filterStoreList[this.selectedIndex]?.institutionName
+    },
+  },
   watch: {
     selectedIndex() {
       this.emitPullDownRefresh()
+    },
+    MEDICALINSTITUTION(newVal) {
+      this.init(this.params)
     },
   },
   methods: {
@@ -104,7 +117,7 @@ export default {
       const { appointmentInstitutionId } = params
       institutionAPI
         .getFilterStoreList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           filterInstitutionId: appointmentInstitutionId,
         })
         .then((res) => {
@@ -124,7 +137,7 @@ export default {
     loadData(method) {
       institutionAPI
         .getInnerProjList({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           filterInstitutionId:
             this.filterStoreList[this.selectedIndex]
               ?.appointmentInstitutionId || null,
@@ -164,18 +177,19 @@ export default {
       const { toUrl } = this
       institutionAPI
         .checkPorjCanAptmt({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
           if (res.data.canAppointment) {
             toUrl('/pages/appoint/index?projAptmt=' + appointmentItemId)
-            return
+            return uni.hideLoading()
           }
           toUrl(
             '/pages/projAptmt/projDetail?appointmentItemId=' +
               appointmentItemId,
           )
+          return uni.hideLoading()
         })
     },
     toUrl(url) {
@@ -189,11 +203,6 @@ export default {
     setKeyWord(e) {
       this.keyWord = e.target.value
       this.emitPullDownRefresh()
-    },
-  },
-  computed: {
-    pickerText() {
-      return this.filterStoreList[this.selectedIndex]?.institutionName
     },
   },
   components: {

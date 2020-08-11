@@ -26,11 +26,8 @@ const institutionAPI = {
     return httper.get('institution/staff/list/position', params)
   },
   // 获取预约排班列表
-  getApptScheduleList(params) {
-    return httper.get(
-      'institution/schedule/select-appointment-view-table',
-      params,
-    )
+  getApptScheduleListByStaff(params) {
+    return httper.get('/institution/schedule/select/one-staff', params)
   },
 }
 

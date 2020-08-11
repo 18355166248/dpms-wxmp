@@ -84,7 +84,9 @@ export default {
       },
     }
   },
-  onLoad() {},
+  onLoad() {
+    uni.showShareMenu()
+  },
   methods: {
     login(val) {
       authAPI
