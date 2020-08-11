@@ -180,6 +180,7 @@ export default {
     },
   },
   onLoad(params) {
+    console.log(`new appoint`, params)
     this.shopId = params.shopId
   },
   methods: {
