@@ -6,6 +6,12 @@ const config = {
     notVerifyPath: false,
   },
   enableNotReleaseCode: false,
+  useServerUrlRedirection: {
+    open: false,
+    pathMap: {
+      'institution-customer': 'http://10.101.11.93:8449/',
+    },
+  },
   DPMSServerUrl: 'http://uat.cloud.api.dental.laoganma.fun/',
   SCRMServerUrl: 'http://api.scrm.uat.laoganma.fun/',
   iconfontUrl: '//at.alicdn.com/t/font_1575084_5snnlrkarpw.js',
