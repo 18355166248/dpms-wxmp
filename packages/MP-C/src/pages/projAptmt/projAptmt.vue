@@ -171,6 +171,18 @@ export default {
         this.$utils.replace({ url: '/pages/login/index' })
         return
       }
+      if (this.selectedIndex > 0) {
+        let shopId = this.filterStoreList[this.selectedIndex]
+          ?.appointmentInstitutionId
+        if (shopId) {
+          toUrl(
+            '/pages/appoint/index?projAptmt=' +
+              appointmentItemId +
+              '&shopId=' +
+              shopId,
+          )
+        }
+      }
       uni.showLoading({
         title: '加载中...',
       })
@@ -182,7 +194,9 @@ export default {
         })
         .then((res) => {
           if (res.data.canAppointment) {
-            toUrl('/pages/appoint/index?projAptmt=' + appointmentItemId)
+            toUrl(
+              `/pages/appoint/index?projAptmt=${appointmentItemId}&shopId=${res.data.institutionList[0]?.appointmentInstitutionId}`,
+            )
             return uni.hideLoading()
           }
           toUrl(
