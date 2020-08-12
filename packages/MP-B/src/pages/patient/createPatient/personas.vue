@@ -29,11 +29,7 @@
       </div>
     </div>
     <div v-else>
-      <empty
-        disabled="false"
-        text="暂无患者标签数据"
-        @click="loadPatientTags"
-      ></empty>
+      <empty disabled="false" text="暂无患者标签数据"></empty>
     </div>
   </div>
 </template>
@@ -52,6 +48,9 @@ export default {
     if (checked) {
       this.checked = checked.split(',').map((v) => Number(v))
     }
+  },
+  onShow() {
+    this.loadPatientTags()
   },
   methods: {
     onSave() {
