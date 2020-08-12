@@ -21,12 +21,7 @@
       </view>
       <view class="keywords">
         <span class="iconfont icon-search keyWordIcon"></span>
-        <input
-          :value="keyWord"
-          @blur="setKeyWord"
-          class="keyWordInput"
-          disabled
-        />
+        <input :value="keyWord" @blur="setKeyWord" class="keyWordInput" />
       </view>
     </view>
     <view class="aptmtList" v-show="total !== 0">
