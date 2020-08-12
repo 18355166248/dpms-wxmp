@@ -70,9 +70,6 @@ export default {
           console.log('error', error)
         })
     },
-    del() {
-      customerAPI.deleteCustomer({ personnelId: 10015 }).then(() => {})
-    },
     addPerson() {
       this.$utils.push({ url: '/pages/personAdd/personAdd' })
     },
