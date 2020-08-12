@@ -56,12 +56,9 @@ export default {
     },
     async loadPatientTags() {
       let res = await patientAPI.getPatientTags()
-
-      uni.setStorageSync(
-        'patientTagsList',
-        res.data.filter((v) => v.tagInfoDTOList.length > 0),
-      )
-      this.list = res.data.filter((v) => v.tagInfoDTOList.length > 0)
+      let patientTagsList = res.data.filter((v) => v.tagInfoDTOList.length > 0)
+      uni.setStorageSync('patientTagsList', patientTagsList)
+      this.list = patientTagsList
     },
   },
 }
