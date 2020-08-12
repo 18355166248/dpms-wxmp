@@ -218,8 +218,17 @@ export default {
         appointAPI
           .creatAppt({ appointmentJsonStr: JSON.stringify(param) })
           .then((res) => {
-            let { data } = res
-            this.btnDisabled = false
+            let that = this
+            this.$utils.show('预约成功', {
+              duration: 1000,
+              complete() {
+                setTimeout(() => {
+                  that.$utils.push({
+                    url: '/pages/myAppointment/myAppointment',
+                  })
+                }, 1000)
+              },
+            })
           })
           .catch(() => {
             this.btnDisabled = false
