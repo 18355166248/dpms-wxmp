@@ -15,6 +15,7 @@
         :key="val.networkAppointmentId"
         @click="appointmentDetail(val.networkAppointmentId)"
       >
+        <image class="watch" src="/static/watch.svg" />
         <div class="statusType">
           <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
           <span>{{ time(val.appointmentBeginTime) }}</span>
@@ -37,9 +38,11 @@
                     : '#B1B0B0',
               }"
             ></span>
-            <span class="statusName">{{
+            <span class="statusName">
+              {{
               NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus].zh_CN
-            }}</span>
+              }}
+            </span>
           </span>
         </div>
         <div class="appointmentInfo">
@@ -47,9 +50,9 @@
           <div>医生:{{ val.doctorName || '' }}</div>
           <div>
             预约项目:{{
-              val.networkAppointmentItemList
-                ? item(val.networkAppointmentItemList)
-                : ''
+            val.networkAppointmentItemList
+            ? item(val.networkAppointmentItemList)
+            : ''
             }}
           </div>
           <div>患者姓名:{{ val.patientName || '' }}</div>
@@ -105,7 +108,7 @@ export default {
     getAppointmentList(type) {
       appointmentAPI
         .getAppointmentList({
-          userId: 0,
+          userId: getStorage(STORAGE_KEY.STAFF).id,
           appointmentListType: type,
         })
         .then((res) => {
@@ -196,6 +199,15 @@ export default {
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
     box-sizing: border-box;
     padding: 0 24rpx 32rpx 24rpx;
+    position: relative;
+    .watch {
+      display: inline-block;
+      width: 198rpx;
+      height: 152rpx;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
     .statusType {
       font-size: 28rpx;
       font-weight: 400;

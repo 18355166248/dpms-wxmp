@@ -8,6 +8,8 @@ const STORAGE_KEY = {
   STAFF: 'staff',
   // 枚举值
   ENUMS: 'enums',
+  // 登录时会员和用户名
+  LOGIN_INFO: 'loginInfo',
 }
 
 export { STORAGE_KEY }

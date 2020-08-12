@@ -55,7 +55,7 @@ import _ from 'lodash'
 import AsyncValidator from 'async-validator'
 import systemAPI from '@/APIS/system.api'
 import authAPI from '@/APIS/auth/auth.api'
-import { setStorage, STORAGE_KEY } from '@/utils/storage'
+import { setStorage, getStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
@@ -63,8 +63,12 @@ export default {
       institutionList: [],
       loginInstitutionList: [],
       loginForm: {
-        memberCode: '',
-        username: '',
+        memberCode: getStorage(STORAGE_KEY.LOGIN_INFO)
+          ? getStorage(STORAGE_KEY.LOGIN_INFO).memberCode
+          : '',
+        username: getStorage(STORAGE_KEY.LOGIN_INFO)
+          ? getStorage(STORAGE_KEY.LOGIN_INFO).username
+          : '',
         password: '',
         mtId: '',
       },
@@ -101,6 +105,10 @@ export default {
         })
         .then((res) => {
           const { access_token, medicalInstitution, staff } = res.data
+          setStorage(STORAGE_KEY.LOGIN_INFO, {
+            memberCode: this.loginForm.memberCode,
+            username: this.loginForm.username,
+          })
           setStorage(STORAGE_KEY.ACCESS_TOKEN, access_token)
           this.$store.commit(
             'workbenchStore/setMedicalInstitution',
