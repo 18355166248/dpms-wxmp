@@ -51,7 +51,7 @@
             <view
               class="cardBtn"
               v-show="d.canAppointment"
-              @click="handleAptmt(d.appointmentDoctorId)"
+              @click="handleAptmt(d.doctorId)"
               >预 约</view
             >
           </view>
