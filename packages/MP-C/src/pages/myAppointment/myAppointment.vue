@@ -108,7 +108,7 @@ export default {
     getAppointmentList(type) {
       appointmentAPI
         .getAppointmentList({
-          userId: 0,
+          userId: getStorage(STORAGE_KEY.STAFF).id,
           appointmentListType: type,
         })
         .then((res) => {
