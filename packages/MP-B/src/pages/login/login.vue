@@ -85,7 +85,10 @@ export default {
     }
   },
   onLoad() {
-    uni.showShareMenu()
+    uni.showShareMenu({
+      title: '北极熊',
+      content: '医疗服务云',
+    })
   },
   methods: {
     login(val) {

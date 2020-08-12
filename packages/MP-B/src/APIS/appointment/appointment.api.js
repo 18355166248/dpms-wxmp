@@ -29,6 +29,20 @@ const appointmentAPI = {
   updateAppointmentStatus(data) {
     return httper.post('appointment/appointment/update/status', data)
   },
+  // 获取预约视图总部/大区时 诊所选择的值
+  getLastAccessMedicalInstitution(params) {
+    return httper.get(
+      'appointment/appointment/select-last-access-medical-institution',
+      params,
+    )
+  },
+  // 预约视图总部/大区时 更改诊所时, 传给后端
+  updateAccessMedicalInstitution(data) {
+    return httper.post(
+      'appointment/appointment/chang-staff-access-record',
+      data,
+    )
+  },
 }
 
 export default appointmentAPI

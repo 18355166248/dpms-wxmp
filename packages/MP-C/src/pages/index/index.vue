@@ -81,7 +81,7 @@
                   <view
                     class="cardBtn"
                     v-show="i.canAppointment"
-                    @click="handleProjAptmt(i.appointmentItemId)"
+                    @click="handleProjAptmt(i.itemId)"
                     >预约</view
                   >
                 </view>
@@ -260,11 +260,12 @@ export default {
         .then((res) => {
           if (res.data.canAppointment) {
             toUrl('/pages/appoint/index?itemId=' + appointmentItemId)
-            return
+            return uni.hideLoading()
           }
           toUrl(
-            '/pages/docAptmt/docAptmt?appointmentItemId=' + appointmentItemId,
+            '/pages/projAptmt/projAptmt?appointmentItemId=' + appointmentItemId,
           )
+          return uni.hideLoading()
         })
     },
     toUrl(url) {

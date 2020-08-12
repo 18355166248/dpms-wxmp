@@ -104,13 +104,12 @@
 
 <script>
 import moment from 'moment'
+import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 export default {
   data() {
     return {
-      institution: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
-        .medicalInstitutionDTO,
       userId: getStorage(STORAGE_KEY.STAFF).id,
       shopId: '',
       shopDetail: {},
@@ -148,6 +147,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('loginStore', ['MEDICALINSTITUTION']),
     selectedItemsText() {
       return this.selectedItems.map((itm) => itm.itemName).join('，')
     },
@@ -180,7 +180,19 @@ export default {
     },
   },
   onLoad(params) {
+    console.log(`new appoint`, params)
     this.shopId = params.shopId
+
+    if (params.doctorId) {
+      this.$set(this.form, 'doctorId', Number(params.doctorId))
+    }
+
+    if (params.projAptmt) {
+      this.$set(this.form, 'itemId', Number(params.projAptmt))
+    }
+  },
+  created() {
+    this.init()
   },
   methods: {
     submit() {
@@ -194,7 +206,7 @@ export default {
           (v) => v.startAvailableDateStamp === this.form.timeStamp,
         )
         let param = {
-          medicalInstitutionId: this.institution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentBeginTimeStamp: timeStamp[0].startAvailableDateStamp,
           appointmentEndTimeStamp: timeStamp[0].endAvailableDateStamp,
           networkAppointmentItemList: this.form.itemId.map((v) => ({
@@ -225,7 +237,7 @@ export default {
     getDoctorTime(date) {
       appointAPI
         .getTime({
-          medicalInstitutionId: this.institution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           doctorId: this.form.doctorId,
           shopId: this.shopId,
           dateStr: date,
@@ -238,16 +250,33 @@ export default {
     },
     async getDoctors(id) {
       const res = await appointAPI.getDoctorList({
-        medicalInstitutionId: this.institution.medicalInstitutionId,
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         filterInstitutionId: id,
       })
       this.dockers = res.data.doctorList
+      if (this.form.doctorId && this.dockers.length > 0) {
+        const doctor = this.dockers.find(
+          (doctor) => doctor.doctorId === this.form.doctorId,
+        )
+
+        if (doctor) {
+          this.doctor = doctor
+        }
+      }
     },
     async getItems() {
       const res = await appointAPI.getItemList({
-        medicalInstitutionId: this.institution.medicalInstitutionId,
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
       })
       this.items = res.data.itemList.filter((v) => v.canAppointment)
+
+      if (this.form.itemId && this.items.length > 0) {
+        const item = this.items.find((item) => item.itemId === this.form.itemId)
+
+        if (item) {
+          this.selectedItems = [item]
+        }
+      }
     },
     async getPersonnelList() {
       const res = await appointAPI.getPersonnelList({
@@ -271,7 +300,15 @@ export default {
       this.doctorPickerVisible = false
     },
     itemClick(itm) {
-      if (this.selectedItems.find((si) => si.itemId === itm.itemId)) return
+      const selectIndex = this.selectedItems.findIndex(
+        (si) => si.itemId === itm.itemId,
+      )
+
+      if (selectIndex > -1) {
+        this.selectedItems.splice(selectIndex, 1)
+
+        return
+      }
       this.selectedItems = [...this.selectedItems, itm]
       this.form.itemId = this.selectedItems
     },
@@ -282,9 +319,6 @@ export default {
       await this.getShopDetail()
       this.$utils.clearLoading()
     },
-  },
-  created() {
-    this.init()
   },
 }
 </script>

@@ -51,13 +51,16 @@
                     patientId: item.patientDTO.patientId,
                   })
                 "
+                :cornerMarker="
+                  item.acrossInstitutionAppointmentFlag ? '跨' : null
+                "
                 :name="item.patientDTO.patientName"
                 :avatarUrl="item.patientDTO.avatarUrl"
                 :gender="item.patientDTO.gender"
                 :age="item.patientDTO.age"
                 :status="item.registerStatus"
                 :infos="[
-                  { label: '联系方式', value: item.patientDTO.mobile },
+                  { label: '联系电话', value: item.patientDTO.mobile },
                   {
                     label: '预约时间',
                     value: [
@@ -276,7 +279,7 @@ import { globalEventKeys } from '@/config/global.eventKeys.js'
 export default {
   data() {
     return {
-      title: '今日工作',
+      title: '今日就诊',
       roles: [],
       selectedRole: {},
       surplusRoles: [],

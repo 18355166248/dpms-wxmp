@@ -35,8 +35,7 @@
             v-show="i.canAppointment"
             @click="
               toUrl(
-                '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
-                  i.appointmentInstitutionId,
+                `/pages/appoint/index?projAptmt=${params.appointmentItemId}&shopId=${i.appointmentInstitutionId}`,
               )
             "
             >预 约</view
@@ -68,10 +67,12 @@ export default {
       item: [],
       institutionList: [],
       tips: [],
+      params: {},
     }
   },
   onLoad(params) {
     this.init(params)
+    this.params = params
   },
   methods: {
     init(params) {
