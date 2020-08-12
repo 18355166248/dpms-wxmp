@@ -7,8 +7,8 @@
     <div class="personList">
       <div
         class="item"
-        v-for="(val, index) of personList"
-        @click="personDetail(index)"
+        v-for="val of personList"
+        @click="personDetail(val.id)"
         :key="val.id"
       >
         <div class="name">
@@ -76,8 +76,13 @@ export default {
     addPerson() {
       this.$utils.push({ url: '/pages/personAdd/personAdd' })
     },
-    personDetail(index) {
-      let detail = JSON.stringify(this.personList[index])
+    personDetail(id) {
+      let detail
+      for (let i of this.personList) {
+        if (i.id == id) {
+          detail = JSON.stringify(i)
+        }
+      }
       console.log('detail', detail)
       this.$utils.push({
         url: '/pages/personDetail/personDetail?personDetail=' + detail,
