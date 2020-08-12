@@ -29,7 +29,11 @@
       </div>
     </div>
     <div v-else>
-      <empty text="暂无患者标签数据" @click="loadPatientTags"></empty>
+      <empty
+        disabled="false"
+        text="暂无患者标签数据"
+        @click="loadPatientTags"
+      ></empty>
     </div>
   </div>
 </template>
