@@ -19,12 +19,8 @@
       <text
         class="card-corner-marker-text"
         :style="{ color: cornerMarkerFormat.color }"
-        >{{ cornerMarker.text }}</text
+        >{{ cornerMarkerFormat.text }}</text
       >
-    </view>
-
-    <view v-else class="card-corner-marker">
-      <text class="card-corner-marker-text">{{ cornerMarker }}</text>
     </view>
     <view class="card-body">
       <view class="card-imgBox">
@@ -148,7 +144,7 @@ export default {
       type: [Number, Object],
     },
     cornerMarker: {
-      type: [String, Number, Object],
+      type: [String, Number, Object, Boolean],
       default: null,
     },
     marginConfig: {
@@ -218,7 +214,14 @@ export default {
           size: this.$utils.isNumber(val.size) ? val.size : 60,
           bgColor: this.$utils.isString(val.bgColor) ? val.bgColor : '#f6404a',
           color: this.$utils.isString(val.color) ? val.color : '#fafafa',
-          text: val.text,
+          text: val.text || '跨',
+        }
+      } else if (this.$utils.isBoolean(val) && val) {
+        return {
+          size: 60,
+          bgColor: '#f6404a',
+          color: '#fafafa',
+          text: '跨',
         }
       }
       return {
