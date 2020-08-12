@@ -43,8 +43,8 @@
       </div>
       <span
         class="history-search-text"
-        v-for="searchRecord in searchRecords"
-        :key="searchRecord"
+        v-for="(searchRecord, index) in searchRecords"
+        :key="index"
         @click="chooseSearchRecord(searchRecord)"
       >
         {{
@@ -155,27 +155,29 @@ export default {
 
       //搜索历史列表数据：最多显示10条
       let searchList = [
-        ...new Set([
-          this.searchValue,
-          ...uni.getStorageSync('searchPatientHistory'),
-        ]),
+        ...new Set([this.searchValue, ...this.searchRecords]),
       ].filter((v, index) => index < 10)
 
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
+
+      console.log('----搜索后 历史值----', this.searchRecords)
 
       this.getPatients()
     },
     //取消搜索
     cancelSearch() {
       this.searchValue = ''
-      this.isSearchedValue = ''
       this.current = 1
       this.patientList = []
     },
     //选择搜索历史中某一个历史
     chooseSearchRecord(searchRecord) {
+      console.log('----选择时 历史值----', this.searchRecords)
+      console.log('--###--', searchRecord)
+
       this.searchValue = searchRecord
+      this.isSearchedValue = searchRecord
       this.getPatients()
     },
     clearHistorySearch() {
