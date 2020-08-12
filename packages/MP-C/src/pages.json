@@ -56,12 +56,6 @@
       }
     },
     {
-      "path": "pages/appointmenAmend/appointmenAmend",
-      "style": {
-        "navigationBarTitleText": "修改预约"
-      }
-    },
-    {
       "path": "pages/personManagement/personManagement",
       "style": {
         "navigationBarTitleText": "人员管理"

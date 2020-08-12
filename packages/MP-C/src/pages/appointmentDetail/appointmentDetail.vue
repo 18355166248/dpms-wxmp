@@ -15,7 +15,7 @@
       </div>
       <div>
         <span>预约项目</span>
-        <span>{{ item(detailInfo.networkAppointmentItemList) }}</span>
+        <span>{{ arrObjKeys(detailInfo.networkAppointmentItemList,'itemName',',') }}</span>
       </div>
       <div>
         <span>预约日期</span>
@@ -35,10 +35,13 @@
       </div>
       <div>
         <span>状态</span>
-        <span>{{
+        <span>
+          {{
           NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-            .zh_CN
-        }}</span>
+          .zh_CN?NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+          .zh_CN:''
+          }}
+        </span>
       </div>
     </div>
     <div class="operation">
@@ -56,8 +59,8 @@
         "
       >
         提醒：您的预约{{
-          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-            .zh_CN
+        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+        .zh_CN
         }}，请耐心等待诊所审核确认，有任何问题可拨打电话：13967801309
       </div>
       <div
@@ -70,8 +73,8 @@
         "
       >
         您的预约{{
-          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-            .zh_CN
+        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+        .zh_CN
         }}，有任何问题可拨打电话：13967801309
       </div>
       <div
@@ -82,8 +85,8 @@
         "
       >
         您的预约{{
-          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-            .zh_CN
+        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+        .zh_CN
         }}没有及时就诊，有任何问题可拨打电话：13967801309
       </div>
       <div
@@ -94,8 +97,8 @@
         "
       >
         您{{
-          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-            .zh_CN
+        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+        .zh_CN
         }}，请及时就诊，有任何问题可拨打电话：13967801309
       </div>
       <div class="btn">
@@ -105,9 +108,7 @@
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
               .zh_CN == '待确认'
           "
-        >
-          修改
-        </button>
+        >修改</button>
         <button
           @click="delAppoint"
           v-if="
@@ -116,9 +117,7 @@
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
               .zh_CN == '已预约'
           "
-        >
-          取消
-        </button>
+        >取消</button>
       </div>
     </div>
   </div>
@@ -137,19 +136,19 @@ export default {
       ),
       protocol: true,
       networkAppointmentId: '',
-      detailInfo: null,
+      detailInfo: {},
     }
   },
   mounted() {},
   onLoad(id) {
     this.networkAppointmentId = id.networkAppointmentId
-    this.getDetail(id.networkAppointmentId)
+    this.getDetail()
   },
   methods: {
-    getDetail(id) {
+    getDetail() {
       appointmentAPI
         .getAppointmentDetail({
-          networkAppointmentId: id,
+          networkAppointmentId: this.networkAppointmentId,
         })
         .then((res) => {
           console.log('kkkkkkkkkkkk', res)
@@ -188,7 +187,21 @@ export default {
       console.log('打开协议')
     },
     amend() {
-      this.$utils.push({ url: '/pages/appointmenAmend/appointmenAmend' })
+      if (this.protocol) {
+        this.$utils.push({
+          url:
+            '/pages/appoint/index?shopId=' +
+            this.detailInfo.shopId +
+            '&userId=' +
+            this.detailInfo.userId +
+            '&doctorId=' +
+            this.detailInfo.doctorId +
+            '&networkAppointmentId=' +
+            this.detailInfo.networkAppointmentId,
+        })
+      } else {
+        this.$utils.show('请同意预约服务协议')
+      }
     },
     date(t) {
       return moment(t).format('YYYY-MM-DD')
@@ -196,10 +209,13 @@ export default {
     time(t) {
       return moment(t).format('HH:mm')
     },
-    item(val) {
-      for (let i in val) {
-        return val[i].itemName + ','
-      }
+    arrObjKeys(arr, key, splitQuote) {
+      return (
+        arr &&
+        arr.reduce((prev, cur) => {
+          return cur[key] ? (prev += `${prev && splitQuote}${cur[key]}`) : prev
+        }, '')
+      )
     },
   },
 }
