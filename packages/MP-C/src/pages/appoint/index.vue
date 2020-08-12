@@ -112,7 +112,7 @@ export default {
     return {
       userId: getStorage(STORAGE_KEY.STAFF).id,
       shopId: '',
-      projAptmt: '',
+      itemId: '',
       shopDetail: {},
       form: {
         doctorId: '',
@@ -181,14 +181,8 @@ export default {
   },
   onLoad(params) {
     this.shopId = params.shopId
-
-    if (params.doctorId) {
-      this.$set(this.form, 'doctorId', Number(params.doctorId))
-    }
-
-    if (params.itemId) {
-      this.$set(this.form, 'itemId', Number(params.itemId))
-    }
+    this.itemId = params.itemId
+    this.form.doctorId = params.doctorId
   },
   created() {
     this.init()
@@ -254,7 +248,7 @@ export default {
       this.dockers = res.data.doctorList
       if (this.form.doctorId && this.dockers.length > 0) {
         const doctor = this.dockers.find((doctor) => {
-          return doctor.appointmentDoctorId === Number(this.form.doctorId)
+          return doctor.doctorId === Number(this.form.doctorId)
         })
         if (doctor) {
           this.doctor = doctor
@@ -267,8 +261,10 @@ export default {
       })
       this.items = res.data.itemList.filter((v) => v.canAppointment)
       // 默认选择参数中的项目
-      if (this.projAptmt && this.items.length > 0) {
-        const item = this.items.find((item) => item.itemId === this.projAptmt)
+      if (this.itemId && this.items.length > 0) {
+        const item = this.items.find(
+          (item) => item.itemId === Number(this.itemId),
+        )
         if (item) {
           this.form.itemList = [item]
         }
