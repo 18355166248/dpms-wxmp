@@ -40,4 +40,8 @@ export default {
       data,
     )
   },
+  // 修改预约
+  updateAppt(data) {
+    return httper.post('institution-customer/online-appointment/update', data)
+  },
 }

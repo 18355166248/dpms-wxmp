@@ -107,12 +107,15 @@ import moment from 'moment'
 import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
+import appointmentAPI from '@/APIS/appointment/appointment.api'
 export default {
   data() {
     return {
       userId: getStorage(STORAGE_KEY.STAFF).id,
       shopId: '',
       itemId: '',
+      networkAppointmentId: '',
+      apiUrl: 'creatAppt',
       shopDetail: {},
       form: {
         doctorId: '',
@@ -173,22 +176,48 @@ export default {
     },
   },
   watch: {
-    'form.date': function (newVal) {
-      if (newVal) {
-        this.getDoctorTime(newVal)
+    'form.date': function (newVal, oldVal) {
+      if (newVal && oldVal) {
+        this.form.timeStamp = ''
       }
+      this.getDoctorTime(newVal)
     },
   },
   onLoad(params) {
     this.shopId = params.shopId
     this.itemId = params.itemId
     this.form.doctorId = params.doctorId
+    // 编辑模式
+    if (params.networkAppointmentId) {
+      this.networkAppointmentId = params.networkAppointmentId
+      this.apiUrl = 'updateAppt'
+      this.createEdit(params.networkAppointmentId)
+    }
   },
   created() {
     this.init()
   },
   methods: {
+    createEdit(id) {
+      uni.setNavigationBarTitle({ title: '修改预约' })
+      appointmentAPI
+        .getAppointmentDetail({
+          networkAppointmentId: id,
+        })
+        .then((res) => {
+          const { data } = res
+          this.form = {
+            doctorId: data.doctorId,
+            itemList: data.networkAppointmentItemList,
+            date: moment(data.appointmentBeginTimeStamp).format('YYYY-MM-DD'),
+            timeStamp: data.appointmentBeginTimeStamp,
+            personnelId: data.personnelId,
+            appointmentMemo: data.appointmentMemo,
+          }
+        })
+    },
     submit() {
+      console.log(this.form.timeStamp)
       this.$refs.editForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
@@ -214,9 +243,11 @@ export default {
           timeStamp: '',
           itemList: '',
         }
+        if (this.networkAppointmentId) {
+          param.networkAppointmentId = this.networkAppointmentId
+        }
         this.btnDisabled = true
-        appointAPI
-          .creatAppt({ appointmentJsonStr: JSON.stringify(param) })
+        appointAPI[this.apiUrl]({ appointmentJsonStr: JSON.stringify(param) })
           .then((res) => {
             let that = this
             this.$utils.show('预约成功', {
@@ -246,7 +277,6 @@ export default {
         .then((res) => {
           let { data } = res
           this.doctorTime = data.filter((v) => v.isShow)
-          this.form.timeStamp = ''
         })
     },
     async getDoctors(id) {

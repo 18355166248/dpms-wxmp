@@ -51,7 +51,7 @@
           <div>
             预约项目:{{
             val.networkAppointmentItemList
-            ? item(val.networkAppointmentItemList)
+            ? arrObjKeys(val.networkAppointmentItemList,'itemName',',')
             : ''
             }}
           </div>
@@ -141,10 +141,10 @@ export default {
           id,
       })
     },
-    item(val) {
-      for (let i in val) {
-        return val[i].itemName + ','
-      }
+    arrObjKeys(arr, key, splitQuote) {
+      return arr.reduce((prev, cur) => {
+        return cur[key] ? (prev += `${prev && splitQuote}${cur[key]}`) : prev
+      }, '')
     },
   },
 }
