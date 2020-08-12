@@ -187,8 +187,8 @@ export default {
       this.$set(this.form, 'doctorId', Number(params.doctorId))
     }
 
-    if (params.projAptmt) {
-      this.$set(this.form, 'itemId', Number(params.projAptmt))
+    if (params.itemId) {
+      this.$set(this.form, 'itemId', Number(params.itemId))
     }
   },
   created() {
