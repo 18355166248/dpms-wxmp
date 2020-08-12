@@ -184,7 +184,7 @@ httper.interceptors.response.use(
       // removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
 
-      uni.reLaunch({
+      uni.navigateTo({
         url: '/pages/login/index',
       })
 
