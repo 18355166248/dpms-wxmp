@@ -51,9 +51,7 @@
                     patientId: item.patientDTO.patientId,
                   })
                 "
-                :cornerMarker="
-                  item.acrossInstitutionAppointmentFlag ? '跨' : null
-                "
+                :cornerMarker="item.acrossInstitutionAppointmentFlag"
                 :name="item.patientDTO.patientName"
                 :avatarUrl="item.patientDTO.avatarUrl"
                 :gender="item.patientDTO.gender"

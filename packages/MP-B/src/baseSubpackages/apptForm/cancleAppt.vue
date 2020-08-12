@@ -4,9 +4,7 @@
     <view class="appt-detail-wrapper">
       <view class="appt-detail-wrapper-info-card">
         <card
-          :cornerMarker="
-            dataSource.acrossInstitutionAppointmentFlag ? '跨' : null
-          "
+          :cornerMarker="dataSource.acrossInstitutionAppointmentFlag"
           :marginConfig="{ position: ['left', 'right'] }"
           :name="dataSource.patient.patientName"
           :avatarUrl="dataSource.patient.avatarUrl"

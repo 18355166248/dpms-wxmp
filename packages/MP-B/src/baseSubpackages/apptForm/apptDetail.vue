@@ -4,9 +4,7 @@
     <view class="appt-detail-wrapper">
       <view class="appt-detail-wrapper-info-card">
         <card
-          :cornerMarker="
-            dataSource.acrossInstitutionAppointmentFlag ? '跨' : null
-          "
+          :cornerMarker="dataSource.acrossInstitutionAppointmentFlag"
           :marginConfig="{ position: ['left', 'right'] }"
           :name="dataSource.patient.patientName"
           :avatarUrl="dataSource.patient.avatarUrl"
@@ -131,35 +129,29 @@ export default {
     card,
     requestError,
   },
-  onReady() {
+  onLoad(option) {
+    this.appointmentId = Number(option.appointmentId)
+    this.loadData()
+
     uni.$on(globalEventKeys.cancleApptSuccess, () => {
       this.loadData()
     })
-    uni.$on(globalEventKeys.apptFormWithSaveSuccess, (apptData) => {
-      const { params, appt } = apptData
-      if (params.type === 'editRegister') {
-        this.registerId = appt.registerId
-      }
+    uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
       this.loadData()
     })
   },
   onUnload() {
-    console.log('off !')
     uni.$off(globalEventKeys.cancleApptSuccess)
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
-  onLoad(option) {
-    this.appointmentId = Number(option.appointmentId)
-    this.loadData()
-  },
   methods: {
     cancleRegister() {
-      if (this.registerId) {
+      if (this.dataSource.registerId) {
         const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
 
         diagnosisApi
           .updateRegisterStatus({
-            registerId,
+            registerId: this.dataSource.registerId,
             status,
           })
           .then((res) => {
