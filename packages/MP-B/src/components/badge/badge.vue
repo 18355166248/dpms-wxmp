@@ -84,14 +84,14 @@ export default {
       }
     }
     &-warning {
-      background: #fbd438;
+      background: rgb(250, 204, 20);
       &::after {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        border: 1rpx solid #fbd438;
+        border: 1rpx solid rgb(250, 204, 20);
         border-radius: 50%;
         -webkit-animation: statusProcessing 1.2s infinite ease-in-out;
         animation: statusProcessing 1.2s infinite ease-in-out;

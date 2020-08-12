@@ -181,9 +181,14 @@ export default {
   },
   onLoad(params) {
     this.shopId = params.shopId
-    this.projAptmt = params.projAptmt
-    this.form.doctorId = params.doctorId
-    console.log('params', params)
+
+    if (params.doctorId) {
+      this.$set(this.form, 'doctorId', Number(params.doctorId))
+    }
+
+    if (params.itemId) {
+      this.$set(this.form, 'itemId', Number(params.itemId))
+    }
   },
   created() {
     this.init()

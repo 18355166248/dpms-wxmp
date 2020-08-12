@@ -249,13 +249,14 @@ export default {
               badge.type = 'error'
               break
             case 'REGISTER_CONSULTING':
-              badge.type = 'warning'
+              badge.type = 'processing'
               break
             case 'REGISTER_TREATING':
-              badge.type = 'processing'
+              badge.type = 'warning'
               break
             case 'REGISTER_TREATED':
               badge.type = 'success'
+              badge.color = 'rgb(24, 144, 255)'
               break
             case 'REGISTER_CANCELED':
               badge.type = 'error'
