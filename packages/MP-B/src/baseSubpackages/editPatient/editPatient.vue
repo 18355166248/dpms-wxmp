@@ -288,6 +288,9 @@ export default {
     showBtn() {
       this.disabledSaveBtn = false
     },
+    hideBtn() {
+      this.disabledSaveBtn = true
+    },
   },
 }
 </script>
