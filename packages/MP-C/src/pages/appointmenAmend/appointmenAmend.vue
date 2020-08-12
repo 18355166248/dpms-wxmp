@@ -1,49 +1,11 @@
 <template>
   <div class="page-bg content">
     <scroll-view>
-      <div class="info">
-        <dpmsCellPicker
-          title="预约门店"
-          v-model="form.storeName"
-          :list="storeList"
-          isLink
-        />
-        <span class="iconfont icon-right"></span>
-      </div>
-      <div class="info">
-        <dpmsCellPicker
-          title="门店地址"
-          v-model="form.storeAddress"
-          :list="storeList"
-        />
-        <span class="iconfont icon-right"></span>
-      </div>
-      <div class="info">
-        <dpmsCellPicker
-          title="预约医生"
-          v-model="form.doctor"
-          :list="storeList"
-          isLink
-        />
-        <span class="iconfont icon-right"></span>
-      </div>
-      <div class="info">
-        <dpmsCellPicker
-          title="预约项目"
-          v-model="form.appointmentProject"
-          :list="storeList"
-        />
-        <span class="iconfont icon-right"></span>
-      </div>
-      <div class="info">
-        <dpmsDatePicker
-          title="预约日期"
-          v-model="form.appointmentData"
-          mode="date"
-          :end="end"
-        />
-        <span class="iconfont icon-right"></span>
-      </div>
+      <dpmsCellPicker title="预约门店" v-model="form.storeName" :list="storeList" isLink />
+      <dpmsCellPicker title="门店地址" v-model="form.storeAddress" :list="storeList" />
+      <dpmsCellPicker title="预约医生" v-model="form.doctor" :list="storeList" isLink />
+      <dpmsCellPicker title="预约项目" v-model="form.appointmentProject" :list="storeList" />
+      <dpmsDatePicker title="预约日期" v-model="form.appointmentData" mode="date" :end="end" />
       <dpmsCellInput title="预约人员" v-model="form.appointmentPerson" />
       <dpmsCellInput title="预约备注" v-model="form.appointmentMemo" />
       <div class="operation">
