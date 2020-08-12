@@ -51,6 +51,7 @@ httper.interceptors.request.use((request) => {
     async (request) => {
       const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
       const staff = getStorage(STORAGE_KEY.STAFF)
+      const enums = getStorage(STORAGE_KEY.ENUMS)
 
       const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
       console.log('staff:', staff)
@@ -73,7 +74,7 @@ httper.interceptors.request.use((request) => {
         /**
          * @desc 用户类型
          */
-        _ut: CC_HTTP_ENUMS.SYSTEM_PARAMS_ENUMS.USER_TYPE.STAFF.value,
+        _ut: enums && enums.UserType.USER_TYPE_ENTERPRISE_WECHAT_STAFF.value,
 
         /**
          * @desc 终端

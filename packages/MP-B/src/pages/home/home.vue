@@ -279,7 +279,7 @@ export default {
     },
     async init() {
       uni.showLoading({
-        title: '正在加载...',
+        title: '正在加载',
         mask: true,
       })
       const [err, res] = await this.loadData()

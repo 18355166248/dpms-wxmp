@@ -65,7 +65,11 @@ const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
 export default {
   data() {
     return {
-      doctor: [],
+      doctor: {
+        doctorName: '',
+        goodAt: '',
+        doctorAvatarUrl: '',
+      },
       institutionList: [],
       tips: [],
       params: {},
