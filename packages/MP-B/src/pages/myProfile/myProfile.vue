@@ -141,7 +141,7 @@ export default {
               ...this.form,
             })
             let that = this
-            this.$utils.show('修改成功', {
+            this.$utils.show('保存成功', {
               duration: 1000,
               complete() {
                 setTimeout(() => {
