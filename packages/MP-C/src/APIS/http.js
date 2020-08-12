@@ -179,22 +179,24 @@ httper.interceptors.response.use(
       return response.data
     }
 
-    uni.showToast({
-      icon: 'none',
-      title: response?.data?.msg || response?.data?.message || '数据请求失败',
-    })
-
     if (response.data.code === 1004000000) {
-      removeStorage(STORAGE_KEY.ACCESS_TOKEN)
-      removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
+      // removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+      // removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
 
       uni.reLaunch({
         url: '/pages/login/index',
       })
-    } else {
-      return Promise.reject(response.data)
+
+      return
     }
+
+    uni.showToast({
+      icon: 'none',
+      title: response?.data?.msg || response?.data?.message || '数据请求失败',
+    })
+
+    return Promise.reject(response.data)
   },
   function (err) {
     // uni.showToast({

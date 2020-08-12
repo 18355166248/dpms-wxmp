@@ -178,11 +178,16 @@ export default {
       },
     })
   },
+  onShow() {
+    this.init()
+  },
   onPullDownRefresh() {
     this.init()
   },
   methods: {
     init() {
+      if (!this.MEDICALINSTITUTION) return
+
       institutionAPI
         .getInstitutionInfo({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
