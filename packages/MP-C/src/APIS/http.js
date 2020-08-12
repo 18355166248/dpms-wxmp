@@ -184,9 +184,7 @@ httper.interceptors.response.use(
       title: response?.data?.msg || response?.data?.message || '数据请求失败',
     })
 
-    if (
-      response.data.code === 1004000000
-    ) {
+    if (response.data.code === 1004000000) {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
@@ -199,10 +197,12 @@ httper.interceptors.response.use(
     }
   },
   function (err) {
-    uni.showToast({
-      icon: 'none',
-      title: err?.data?.msg || err?.data?.message || '数据请求失败',
-    })
+    // uni.showToast({
+    //   icon: 'none',
+    //   title: err?.data?.msg || err?.data?.message || '数据请求失败',
+    // })
+
+    console.log('-----err----', err)
 
     return Promise.reject(err)
   },

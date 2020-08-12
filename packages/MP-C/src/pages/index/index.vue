@@ -81,7 +81,7 @@
                   <view
                     class="cardBtn"
                     v-show="i.canAppointment"
-                    @click="handleProjAptmt(i.itemId)"
+                    @click="handleProjAptmt(i)"
                     >预约</view
                   >
                 </view>
@@ -137,7 +137,7 @@
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const staff = getStorage(STORAGE_KEY.STAFF)
+const ACCESS_TOKEN = getStorage(STORAGE_KEY.ACCESS_TOKEN)
 
 export default {
   data() {
@@ -243,11 +243,11 @@ export default {
           }
         })
     },
-    handleProjAptmt(appointmentItemId) {
-      if (!staff) {
-        this.$utils.replace({ url: '/pages/login/index' })
-        return
-      }
+    handleProjAptmt({ appointmentItemId, itemId }) {
+      // if (!ACCESS_TOKEN) {
+      //   this.$utils.replace({ url: '/pages/login/index' })
+      //   return
+      // }
       uni.showLoading({
         title: '加载中...',
       })
@@ -258,14 +258,35 @@ export default {
           appointmentItemId,
         })
         .then((res) => {
+          console.log('res', res)
           if (res.data.canAppointment) {
-            toUrl('/pages/appoint/index?itemId=' + appointmentItemId)
-            return uni.hideLoading()
+            const canApptInstitutionList = res.data.institutionList.filter(
+              (institution) => institution.canAppointment,
+            )
+
+            if (canApptInstitutionList.length === 0)
+              this.$utils.show('无可约门店')
+
+            if (canApptInstitutionList.length === 1) {
+              toUrl(
+                '/pages/appoint/index?itemId=' +
+                  itemId +
+                  '&shopId=' +
+                  canApptInstitutionList[0].appointmentInstitutionId,
+              )
+            }
+
+            if (canApptInstitutionList.length > 1) {
+              toUrl(
+                '/pages/projAptmt/projAptmt?appointmentItemId=' +
+                  appointmentItemId,
+              )
+            }
+          } else {
+            this.$utils.show('项目不可预约')
           }
-          toUrl(
-            '/pages/projAptmt/projAptmt?appointmentItemId=' + appointmentItemId,
-          )
-          return uni.hideLoading()
+
+          uni.hideLoading()
         })
     },
     toUrl(url) {
