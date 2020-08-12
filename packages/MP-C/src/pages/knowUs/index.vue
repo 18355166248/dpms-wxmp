@@ -27,6 +27,7 @@
             </view>
             <view
               class="storeCardAptmt"
+              v-show="s.canAppointment"
               @click="
                 toUrl(
                   '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +

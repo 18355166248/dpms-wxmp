@@ -42,7 +42,7 @@
             <view
               class="cardBtn"
               v-show="p.canAppointment"
-              @click="handleAptmt(p.itemId)"
+              @click="handleAptmt(p)"
               >预 约</view
             >
           </view>
@@ -166,44 +166,55 @@ export default {
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
     },
-    handleAptmt(appointmentItemId) {
-      if (!staff) {
-        this.$utils.replace({ url: '/pages/login/index' })
-        return
-      }
-      if (this.selectedIndex > 0) {
-        let shopId = this.filterStoreList[this.selectedIndex]
-          ?.appointmentInstitutionId
-        if (shopId) {
-          toUrl(
-            '/pages/appoint/index?projAptmt=' +
-              appointmentItemId +
-              '&shopId=' +
-              shopId,
-          )
-        }
-      }
+    handleAptmt({ appointmentItemId, itemId }) {
+      const { toUrl } = this
+
+      // if (this.selectedIndex > 0) {
+      //   let shopId = this.filterStoreList[this.selectedIndex]
+      //     ?.appointmentInstitutionId
+      //   if (shopId) {
+      //     toUrl('/pages/appoint/index?itemId=' + itemId + '&shopId=' + shopId)
+      //   }
+      // }
       uni.showLoading({
         title: '加载中...',
       })
-      const { toUrl } = this
+
       institutionAPI
         .checkPorjCanAptmt({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
+          console.log('res', res)
           if (res.data.canAppointment) {
-            toUrl(
-              `/pages/appoint/index?projAptmt=${appointmentItemId}&shopId=${res.data.institutionList[0]?.appointmentInstitutionId}`,
+            const canApptInstitutionList = res.data.institutionList.filter(
+              (institution) => institution.canAppointment,
             )
-            return uni.hideLoading()
+
+            if (canApptInstitutionList.length === 0)
+              this.$utils.show('无可约门店')
+
+            if (canApptInstitutionList.length === 1) {
+              toUrl(
+                '/pages/appoint/index?itemId=' +
+                  itemId +
+                  '&shopId=' +
+                  canApptInstitutionList[0].appointmentInstitutionId,
+              )
+            }
+
+            if (canApptInstitutionList.length > 1) {
+              toUrl(
+                '/pages/projAptmt/projAptmt?appointmentItemId=' +
+                  appointmentItemId,
+              )
+            }
+          } else {
+            this.$utils.show('项目不可预约')
           }
-          toUrl(
-            '/pages/projAptmt/projDetail?appointmentItemId=' +
-              appointmentItemId,
-          )
-          return uni.hideLoading()
+
+          uni.hideLoading()
         })
     },
     toUrl(url) {

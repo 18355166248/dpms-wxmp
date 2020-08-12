@@ -112,10 +112,11 @@ export default {
     return {
       userId: getStorage(STORAGE_KEY.STAFF).id,
       shopId: '',
+      itemId: '',
       shopDetail: {},
       form: {
         doctorId: '',
-        itemId: [],
+        itemList: [],
         date: '',
         timeStamp: '',
         personnelId: '',
@@ -140,7 +141,6 @@ export default {
       dockers: [],
       doctorTime: [],
       items: [],
-      selectedItems: [],
       personnelList: [],
       doctorPickerVisible: false,
       itemPickerVisible: false,
@@ -149,7 +149,7 @@ export default {
   computed: {
     ...mapState('loginStore', ['MEDICALINSTITUTION']),
     selectedItemsText() {
-      return this.selectedItems.map((itm) => itm.itemName).join('，')
+      return this.form.itemList.map((itm) => itm.itemName).join('，')
     },
     doctorTimeFilter() {
       return this.doctorTime.map((v) => ({
@@ -180,16 +180,9 @@ export default {
     },
   },
   onLoad(params) {
-    console.log(`new appoint`, params)
     this.shopId = params.shopId
-
-    if (params.doctorId) {
-      this.$set(this.form, 'doctorId', Number(params.doctorId))
-    }
-
-    if (params.projAptmt) {
-      this.$set(this.form, 'itemId', Number(params.projAptmt))
-    }
+    this.itemId = params.itemId
+    this.form.doctorId = params.doctorId
   },
   created() {
     this.init()
@@ -209,7 +202,7 @@ export default {
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentBeginTimeStamp: timeStamp[0].startAvailableDateStamp,
           appointmentEndTimeStamp: timeStamp[0].endAvailableDateStamp,
-          networkAppointmentItemList: this.form.itemId.map((v) => ({
+          networkAppointmentItemList: this.form.itemList.map((v) => ({
             itemId: v.itemId,
             itemName: v.itemName,
             itemType: v.itemTypeId,
@@ -219,14 +212,13 @@ export default {
           userId: this.userId,
           ...this.form,
           timeStamp: '',
-          itemId: '',
+          itemList: '',
         }
         this.btnDisabled = true
         appointAPI
           .creatAppt({ appointmentJsonStr: JSON.stringify(param) })
           .then((res) => {
             let { data } = res
-
             this.btnDisabled = false
           })
           .catch(() => {
@@ -255,10 +247,9 @@ export default {
       })
       this.dockers = res.data.doctorList
       if (this.form.doctorId && this.dockers.length > 0) {
-        const doctor = this.dockers.find(
-          (doctor) => doctor.doctorId === this.form.doctorId,
-        )
-
+        const doctor = this.dockers.find((doctor) => {
+          return doctor.doctorId === Number(this.form.doctorId)
+        })
         if (doctor) {
           this.doctor = doctor
         }
@@ -269,25 +260,22 @@ export default {
         medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
       })
       this.items = res.data.itemList.filter((v) => v.canAppointment)
-
-      if (this.form.itemId && this.items.length > 0) {
-        const item = this.items.find((item) => item.itemId === this.form.itemId)
-
+      // 默认选择参数中的项目
+      if (this.itemId && this.items.length > 0) {
+        const item = this.items.find(
+          (item) => item.itemId === Number(this.itemId),
+        )
         if (item) {
-          this.selectedItems = [item]
+          this.form.itemList = [item]
         }
       }
     },
     async getPersonnelList() {
-      const res = await appointAPI.getPersonnelList({
-        userId: this.userId,
-      })
+      const res = await appointAPI.getPersonnelList({ userId: this.userId })
       this.personnelList = res.data
     },
     async getShopDetail() {
-      const res = await appointAPI.getShopDetail({
-        shopId: this.shopId,
-      })
+      const res = await appointAPI.getShopDetail({ shopId: this.shopId })
       this.shopDetail = res.data
       this.getDoctors(this.shopDetail.settingsShopId)
     },
@@ -300,17 +288,16 @@ export default {
       this.doctorPickerVisible = false
     },
     itemClick(itm) {
-      const selectIndex = this.selectedItems.findIndex(
+      const selectIndex = this.form.itemList.findIndex(
         (si) => si.itemId === itm.itemId,
       )
 
       if (selectIndex > -1) {
-        this.selectedItems.splice(selectIndex, 1)
+        this.form.itemList.splice(selectIndex, 1)
 
         return
       }
-      this.selectedItems = [...this.selectedItems, itm]
-      this.form.itemId = this.selectedItems
+      this.form.itemList = [...this.form.itemList, itm]
     },
     async init() {
       this.$utils.showLoading()
