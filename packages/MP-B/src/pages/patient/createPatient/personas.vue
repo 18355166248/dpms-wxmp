@@ -1,36 +1,42 @@
 <template>
   <div class="apptDpmsList">
-    <dpmsCheckboxGroup v-model="checked">
-      <dpmsCollapse class="mb-56">
-        <dpmsCollapseItem
-          v-for="patientTag in list"
-          :key="patientTag.name"
-          :title="patientTag.name"
-          showAnimation
-          open
-        >
-          <div class="apptCollapse">
-            <div
-              v-for="(tag, index) in patientTag.tagInfoDTOList"
-              :key="tag.id"
-              :class="['appt', index === 0 && 'first']"
-            >
-              <dpmsCheckbox shape="square" :key="tag.id" :label="tag.id">
-                {{ tag.name }}
-              </dpmsCheckbox>
+    <div v-if="list.length === 0">
+      <dpmsCheckboxGroup v-model="checked">
+        <dpmsCollapse class="mb-56">
+          <dpmsCollapseItem
+            v-for="patientTag in list"
+            :key="patientTag.name"
+            :title="patientTag.name"
+            showAnimation
+            open
+          >
+            <div class="apptCollapse">
+              <div
+                v-for="(tag, index) in patientTag.tagInfoDTOList"
+                :key="tag.id"
+                :class="['appt', index === 0 && 'first']"
+              >
+                <dpmsCheckbox shape="square" :key="tag.id" :label="tag.id">
+                  {{ tag.name }}
+                </dpmsCheckbox>
+              </div>
             </div>
-          </div>
-        </dpmsCollapseItem>
-      </dpmsCollapse>
-    </dpmsCheckboxGroup>
-
-    <div class="mt-56">
-      <dpmsButton @click="onSave" />
+          </dpmsCollapseItem>
+        </dpmsCollapse>
+      </dpmsCheckboxGroup>
+      <div class="mt-56">
+        <dpmsButton @click="onSave" />
+      </div>
+    </div>
+    <div v-else>
+      <empty text="暂无患者标签数据" @click="loadPatientTags"></empty>
     </div>
   </div>
 </template>
 
 <script>
+import patientAPI from '@/APIS/patient/patient.api'
+
 export default {
   data() {
     return {
@@ -47,6 +53,15 @@ export default {
     onSave() {
       uni.$emit('updateTagsCheckedList', this.checked)
       this.$utils.back()
+    },
+    async loadPatientTags() {
+      let res = await patientAPI.getPatientTags()
+
+      uni.setStorageSync(
+        'patientTagsList',
+        res.data.filter((v) => v.tagInfoDTOList.length > 0),
+      )
+      this.list = res.data.filter((v) => v.tagInfoDTOList.length > 0)
     },
   },
 }
