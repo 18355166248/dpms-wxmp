@@ -2,8 +2,12 @@
   <div class="wrap">
     <image src="/static/logo.png" class="logo" />
     <div class="appName">小程序名称</div>
-    <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信登陆</button>
-    <button class="ghost" @click="$utils.push({ url: 'cellphone' })">手机号登陆</button>
+    <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">
+      微信登陆
+    </button>
+    <button class="ghost" @click="$utils.push({ url: 'cellphone' })">
+      手机号登陆
+    </button>
   </div>
 </template>
 

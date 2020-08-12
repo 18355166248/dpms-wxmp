@@ -26,7 +26,7 @@
             ><span class="iconfont icon-location"></span>
             {{ i.institutionAddress }}</view
           >
-          <view class="storeCardTime"
+          <view class="storeCardTime" v-if="i.businessHours"
             ><span class="iconfont icon-time"></span>
             {{ i.businessHours }}</view
           >
@@ -59,7 +59,7 @@
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+import { mapState } from 'vuex'
 
 export default {
   data() {
@@ -74,12 +74,17 @@ export default {
     this.init(params)
     this.params = params
   },
+  computed: {
+    ...mapState('loginStore', {
+      MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+    }),
+  },
   methods: {
     init(params) {
       const { appointmentItemId } = params
       institutionAPI
         .getProjDetail({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {

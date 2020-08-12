@@ -125,6 +125,8 @@ export default {
       this.getCount()
       this.getAppointCount()
       this.getUserDetail()
+    } else {
+      this.$utils.push({ url: '/pages/login/index' })
     }
   },
   methods: {
