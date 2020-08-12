@@ -188,9 +188,19 @@ export default {
     },
     amend() {
       if (this.protocol) {
-        this.$utils.push({ url: '/pages/appointmenAmend/appointmenAmend' })
+        this.$utils.push({
+          url:
+            '/pages/appoint/index?shopId=' +
+            this.detailInfo.shopId +
+            '&userId=' +
+            this.detailInfo.userId +
+            '&doctorId=' +
+            this.detailInfo.doctorId +
+            '&networkAppointmentId=' +
+            this.detailInfo.networkAppointmentId,
+        })
       } else {
-        this.this.$utils.show('请同意预约服务协议')
+        this.$utils.show('请同意预约服务协议')
       }
     },
     date(t) {
