@@ -64,7 +64,10 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      item: [],
+      item: {
+        itemName: '',
+        itemBriefIntroduction: '',
+      },
       institutionList: [],
       tips: [],
       params: {},
