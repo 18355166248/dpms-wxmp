@@ -42,7 +42,7 @@
             <view
               class="cardBtn"
               v-show="p.canAppointment"
-              @click="handleAptmt(p.appointmentItemId)"
+              @click="handleAptmt(p.itemId)"
               >预 约</view
             >
           </view>

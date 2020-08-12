@@ -81,7 +81,7 @@
                   <view
                     class="cardBtn"
                     v-show="i.canAppointment"
-                    @click="handleProjAptmt(i.appointmentItemId)"
+                    @click="handleProjAptmt(i.itemId)"
                     >预约</view
                   >
                 </view>
