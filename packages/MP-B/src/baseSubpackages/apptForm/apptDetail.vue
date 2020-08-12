@@ -363,10 +363,10 @@ export default {
       color: #fff;
       box-sizing: border-box;
       border-radius: 0;
+      border-bottom: 1px solid $dpms-color-primary;
 
       &:first-child {
         border-right: none;
-        border-left: none;
       }
       &::after {
         border: none;
