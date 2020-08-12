@@ -185,18 +185,24 @@ export default {
       }
     },
     submit() {
-      delete this.form.patientDTO
-      customerAPI.updateCustomer(this.form).then((res) => {
-        console.log('1111111111', res)
-        if (res.code == 0) {
-          uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-            isSuccess: true,
-          })
-          this.$utils.back(2)
-          // this.$utils.replace({
-          //   url: '/pages/personManagement/personManagement',
-          // })
+      this.$refs.editForm.validate((err, fileds) => {
+        if (err) {
+          this.$utils.show(err[0].message)
+          return
         }
+        delete this.form.patientDTO
+        customerAPI.updateCustomer(this.form).then((res) => {
+          console.log('1111111111', res)
+          if (res.code == 0) {
+            uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+              isSuccess: true,
+            })
+            this.$utils.back(2)
+            // this.$utils.replace({
+            //   url: '/pages/personManagement/personManagement',
+            // })
+          }
+        })
       })
     },
     phone() {
