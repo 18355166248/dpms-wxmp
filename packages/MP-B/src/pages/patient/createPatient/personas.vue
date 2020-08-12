@@ -1,6 +1,6 @@
 <template>
   <div class="apptDpmsList">
-    <div v-if="list.length === 0">
+    <div v-if="list.length !== 0">
       <dpmsCheckboxGroup v-model="checked">
         <dpmsCollapse class="mb-56">
           <dpmsCollapseItem
