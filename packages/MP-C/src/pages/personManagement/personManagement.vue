@@ -1,6 +1,6 @@
 <template>
   <scroll-view scroll-y style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div v-show="personList.length < 10" class="add" @click="addPerson">
+    <div v-if="personList.length < 10" class="add" @click="addPerson">
       <div class="iconfont icon-add"></div>
       <div>还可添加{{ 10 - personList.length }}人</div>
     </div>
@@ -69,7 +69,9 @@ export default {
         })
     },
     addPerson() {
-      this.$utils.push({ url: '/pages/personAdd/personAdd' })
+      this.$utils.push({
+        url: '/pages/personAdd/personAdd?param=' + this.personList.length,
+      })
     },
     personDetail(id) {
       let detail

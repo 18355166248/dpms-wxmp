@@ -37,7 +37,7 @@
         />
         <div class="info" v-show="needAuthCode">
           <span>验证码</span>
-          <input v-model="form.verificationCode" class="ipt" />
+          <input maxlength="4" type="number" v-model="form.verificationCode" class="ipt" />
           <span
             class="getAuthCode"
             :class="{ disabled: !!second }"
@@ -146,6 +146,13 @@ export default {
     },
   },
   created() {},
+  onLoad(param) {
+    if (param.param == 0) {
+      this.form.defaultPersonnel = true
+    } else {
+      this.form.defaultPersonnel = false
+    }
+  },
   methods: {
     getCode() {
       console.log('------------------')
@@ -180,15 +187,23 @@ export default {
         customerAPI.creatCustomer(this.form).then((res) => {
           console.log('1111111111', res)
           if (res.code == 0) {
-            uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-              isSuccess: true,
+            uni.showModal({
+              title: '操作成功',
+              content: '人员信息维护成功，您可以继续进行预约',
+              cancelText: '返回',
+              confirmText: '预约',
+              confirmColor: '#5CBB89',
+              success: (confirm) => {
+                if (confirm.confirm) {
+                  this.$utils.reLaunch({ url: '/pages/projAptmt/projAptmt' })
+                } else {
+                  uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+                    isSuccess: true,
+                  })
+                  this.$utils.back()
+                }
+              },
             })
-            this.$utils.back()
-          }
-          if (this.form.defaultPersonnel == true) {
-            this.form.defaultPersonnel = '开'
-          } else {
-            this.form.defaultPersonnel = '关'
           }
         })
       })
@@ -253,7 +268,7 @@ export default {
 .ipt {
   display: inline-block;
   position: absolute;
-  top: 31rpx;
+  top: 35rpx;
   left: 120rpx;
 }
 </style>

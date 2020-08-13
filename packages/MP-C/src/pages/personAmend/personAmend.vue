@@ -137,7 +137,7 @@ export default {
     customerAPI
       .needVerify({
         userId: getStorage(STORAGE_KEY.STAFF).id,
-        mobile: this.form.mobile,
+        mobile: JSON.parse(info.personDetail).mobile,
       })
       .then((res) => {
         console.log(res)
