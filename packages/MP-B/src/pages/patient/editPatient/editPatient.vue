@@ -84,7 +84,7 @@ export default {
         .updatePatient({
           patientId: this.patientId,
           ...formValue,
-          ...scrmPatientInfo,
+          customerId: scrmPatientInfo.customerId,
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {

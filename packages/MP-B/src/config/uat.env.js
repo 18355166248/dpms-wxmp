@@ -13,12 +13,6 @@ const config = {
   scrmUrl: 'http://uat.scrm.laoganma.fun',
   DPMSAntdPrefixCls: 'dpms-ant',
   SCRMAntdPrefixCls: 'SCRM',
-  useServerUrlRedirection: {
-    open: true,
-    pathMap: {
-      institution: 'http://10.101.11.99:8442/',
-    },
-  },
 }
 
 export default config

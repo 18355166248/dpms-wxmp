@@ -591,7 +591,7 @@ export default {
     },
     // 点击创建
     touchSt(e) {
-      if (this.isHeaderWithLargeArea) return
+      if (!this.isHeaderWithLargeArea) return
 
       this.scrollTop = scrollYtop
       let self = this
@@ -1111,7 +1111,7 @@ export default {
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
       // 限制可编辑卡片 非预约状态 跨诊所不可编辑
-      if (this.isDisabled(meetInfo) || this.isHeaderWithLargeArea) return
+      if (this.isDisabled(meetInfo) || !this.isHeaderWithLargeArea) return
 
       const {
         startTimeStamp,

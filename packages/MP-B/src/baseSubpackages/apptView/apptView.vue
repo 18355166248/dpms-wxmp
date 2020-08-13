@@ -425,15 +425,23 @@ export default {
       })
     },
     editAppt(params) {
-      this.$utils.push({
-        url:
-          '/baseSubpackages/apptForm/apptForm?type=editAppt&appointmentId=' +
-          params.appointmentId +
-          '&startTimeStamp=' +
-          params.startTimeStamp +
-          '&endTimeStamp=' +
-          params.endTimeStamp,
-      })
+      if (this.isHeaderWithLargeArea) {
+        this.$utils.push({
+          url:
+            '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
+            params.appointmentId,
+        })
+      } else {
+        this.$utils.push({
+          url:
+            '/baseSubpackages/apptForm/apptForm?type=editAppt&appointmentId=' +
+            params.appointmentId +
+            '&startTimeStamp=' +
+            params.startTimeStamp +
+            '&endTimeStamp=' +
+            params.endTimeStamp,
+        })
+      }
     },
     // 抽屉医生选择
     onSelected(doctor) {
