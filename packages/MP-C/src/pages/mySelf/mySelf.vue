@@ -115,9 +115,8 @@ export default {
   },
   beforeCreate() {
     let staff = getStorage(STORAGE_KEY.STAFF)
-    console.log('aaaaaaaaaaa', staff)
     if (!staff) {
-      this.$utils.push({ url: '/pages/login/index' })
+      this.$utils.reLaunch({ url: '/pages/login/index' })
     }
   },
   onShow() {
@@ -126,7 +125,9 @@ export default {
       this.getAppointCount()
       this.getUserDetail()
     } else {
-      this.$utils.push({ url: '/pages/login/index' })
+      this.mobile = ''
+      this.memberDetails = {}
+      this.memberCardTypeQueryResponse = {}
     }
   },
   methods: {
@@ -168,7 +169,7 @@ export default {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
           removeStorage(STORAGE_KEY.STAFF)
-          this.$utils.push({ url: '/pages/login/index' })
+          this.$utils.reLaunch({ url: '/pages/login/index' })
         }
       })
     },
