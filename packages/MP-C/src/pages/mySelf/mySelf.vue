@@ -160,6 +160,7 @@ export default {
             })
         })
     },
+
     logOut() {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
