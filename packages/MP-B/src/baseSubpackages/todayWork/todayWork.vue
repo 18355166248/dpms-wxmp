@@ -391,8 +391,9 @@ export default {
     },
     // 去重、合并角色数组
     useConsolidateData(dataSource) {
-      const data = {}
       if (dataSource.length > 0) {
+        const data = {}
+
         dataSource.forEach((item) => {
           if (item.todayWorkRoleType) {
             if (data[item.todayWorkRoleType]) {
@@ -413,7 +414,9 @@ export default {
                 roleTodayWorkRelationList.forEach((item) => {
                   const index = distinctRoleTodayWorkRelationList.findIndex(
                     (record) => {
-                      return record.todayWorkRoleType === item.todayWorkRoleType
+                      return (
+                        record.todayWorkSettingId === item.todayWorkSettingId
+                      )
                     },
                   )
 
@@ -422,17 +425,21 @@ export default {
                   }
                 })
 
-                data.roleTodayWorkRelationList = distinctRoleTodayWorkRelationList
+                data[
+                  item.todayWorkRoleType
+                ].roleTodayWorkRelationList = distinctRoleTodayWorkRelationList
               }
-            }
-
-            if (item?.roleTodayWorkRelationList?.length > 0) {
-              data[item.todayWorkRoleType] = item
+            } else {
+              if (item?.roleTodayWorkRelationList?.length > 0) {
+                data[item.todayWorkRoleType] = item
+              }
             }
           }
         })
+
+        return Object.values(data)
       }
-      return Object.values(data)
+      return []
     },
     // 初始化默认选中项
     initSelectedRole(distinctRoles) {
