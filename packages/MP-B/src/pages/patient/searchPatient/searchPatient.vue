@@ -23,12 +23,16 @@
       class="search-tip-text pt-28 pl-24 pr-24"
       v-if="isSearchedValue && patientList.length === 0"
     >
-      没有找到“<span class="patient-name">{{ isSearchedValue }}</span
-      >”这个患者
+      没有找到“
+      <span class="patient-name">{{ isSearchedValue }}</span>
+      ”这个患者
     </div>
 
     <!-- 历史搜索 -->
-    <div class="mt-64 history-search-section" v-if="patientList.length === 0">
+    <div
+      class="mt-64 history-search-section"
+      v-if="!searchValue || (isSearchedValue && patientList.length === 0)"
+    >
       <div data-layout-align="space-between center">
         <span class="title">历史搜索</span>
         <span
@@ -39,8 +43,8 @@
       </div>
       <span
         class="history-search-text"
-        v-for="searchRecord in searchRecords"
-        :key="searchRecord"
+        v-for="(searchRecord, index) in searchRecords"
+        :key="index"
         @click="chooseSearchRecord(searchRecord)"
       >
         {{
@@ -52,7 +56,7 @@
     </div>
 
     <!-- 搜索列表 -->
-    <div v-if="isSearchedValue && patientList.length != 0">
+    <div v-if="searchValue && patientList.length != 0">
       <div v-for="parient in patientList" :key="parient.patientId">
         <div @click="clickPatientCard(parient.patientId)">
           <card
@@ -93,8 +97,8 @@ export default {
       current: 1, //默认展示 第一页数据
       size: 10, //默认展示 15条数据
       total: 1, //默认 总条目，
-      // 数据列表的状态
       dataSourceStatus: {
+        // 数据列表的状态
         loading: true,
         status: 'loading',
         request: 'loading',
@@ -122,63 +126,59 @@ export default {
     changeValue(param) {
       this.searchValue = param.value
     },
-    getPatients() {
-      let that = this
-      patientAPI
-        .getPatientList({
-          regularParam: this.isSearchedValue,
-          current: this.current,
-          size: this.size,
-        })
-        .then((res) => {
-          //TODO：搜索患者
+    async getPatients() {
+      let {
+        data: { total, current, records },
+      } = await patientAPI.getPatientList({
+        regularParam: this.isSearchedValue,
+        current: this.current,
+        size: this.size,
+      })
 
-          const { total, current, records } = res.data
+      if (current === 1) {
+        this.patientList = records
+      } else {
+        this.patientList = this.patientList.concat(records)
+      }
+      this.total = total
 
-          if (current === 1) {
-            that.patientList = records
-          } else {
-            that.patientList = that.patientList.concat(records)
-          }
-          that.total = total
-
-          if (total === that.patientList.length) {
-            this.dataSourceStatus.status = 'noMore'
-          }
-        })
-        .catch(() => {
-          //
-        })
+      if (total === this.patientList.length) {
+        this.dataSourceStatus.status = 'noMore'
+      }
     },
     //执行搜索
     searchPatients() {
-      if (!this.searchValue) {
+      if (!this.searchValue.trim()) {
         return
       }
       this.isSearchedValue = this.searchValue
 
       //搜索历史列表数据：最多显示10条
       let searchList = [
-        ...new Set([
-          this.isSearchedValue,
-          ...uni.getStorageSync('searchPatientHistory'),
-        ]),
+        ...new Set([this.searchValue, ...this.searchRecords]),
       ].filter((v, index) => index < 10)
 
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
+
+      console.log('----搜索后 历史值----', this.searchRecords)
 
       this.getPatients()
     },
     //取消搜索
     cancelSearch() {
       this.searchValue = ''
-      this.isSearchedValue = ''
+      this.current = 1
       this.patientList = []
     },
     //选择搜索历史中某一个历史
     chooseSearchRecord(searchRecord) {
+      console.log('----选择时 历史值----', this.searchRecords)
+      console.log('--###--', searchRecord)
+
       this.searchValue = searchRecord
+      this.isSearchedValue = searchRecord
+      this.getPatients()
     },
     clearHistorySearch() {
       this.searchRecords = []
