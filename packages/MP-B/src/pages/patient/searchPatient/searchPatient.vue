@@ -121,6 +121,9 @@ export default {
     },
     //更新搜索框的值
     changeValue(param) {
+      if (!param.value.trim()) {
+        this.patientList = []
+      }
       this.searchValue = param.value
     },
     async getPatients() {
