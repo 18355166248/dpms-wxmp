@@ -16,7 +16,7 @@
     </div>
 
     <!-- 搜索提示、结果文字 -->
-    <div class="search-tip-text pt-28" v-if="!searchValue || !isSearchedValue">
+    <div class="search-tip-text pt-28" v-if="!searchValue">
       请输入姓名/拼音/手机号查找患者
     </div>
     <div
