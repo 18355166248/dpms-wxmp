@@ -169,7 +169,7 @@ httper.interceptors.request.use((request) => {
   requestInterceptors.forEach((requestInterceptor) =>
     requestInterceptor(request),
   )
-
+  console.log('request', request)
   return request
 })
 
