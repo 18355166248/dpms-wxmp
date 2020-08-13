@@ -16,7 +16,7 @@
     </div>
 
     <!-- 搜索提示、结果文字 -->
-    <div class="search-tip-text pt-28" v-if="!searchValue || !isSearchedValue">
+    <div class="search-tip-text pt-28" v-if="!(searchValue && isSearchedValue)">
       请输入姓名/拼音/手机号查找患者
     </div>
     <div
@@ -29,10 +29,7 @@
     </div>
 
     <!-- 历史搜索 -->
-    <div
-      class="mt-64 history-search-section"
-      v-if="!searchValue || (isSearchedValue && patientList.length === 0)"
-    >
+    <div class="mt-64 history-search-section" v-if="patientList.length === 0">
       <div data-layout-align="space-between center">
         <span class="title">历史搜索</span>
         <span
@@ -135,11 +132,12 @@ export default {
       let {
         data: { total, current, records },
       } = await patientAPI.getPatientList({
-        regularParam: this.isSearchedValue,
+        regularParam: this.searchValue,
         current: this.current,
         size: this.size,
       })
 
+      this.isSearchedValue = this.searchValue
       uni.hideLoading()
 
       if (current === 1) {
@@ -151,6 +149,8 @@ export default {
 
       if (total === this.patientList.length) {
         this.dataSourceStatus.status = 'noMore'
+      } else {
+        this.dataSourceStatus.status = 'more'
       }
     },
     //执行搜索
@@ -158,7 +158,6 @@ export default {
       if (!this.searchValue.trim()) {
         return
       }
-      this.isSearchedValue = this.searchValue
 
       //搜索历史列表数据：最多显示10条
       let searchList = [
@@ -185,7 +184,6 @@ export default {
       console.log('--###--', searchRecord)
 
       this.searchValue = searchRecord
-      this.isSearchedValue = searchRecord
 
       //更新搜索历史顺序
       this.searchRecords.unshift(...this.searchRecords.splice(index, 1))

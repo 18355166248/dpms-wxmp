@@ -8,17 +8,13 @@
       class="home-view"
     >
       <view class="home-bg">
-        <image
-          class="home-bg-img"
-          src="/static/header-bg.png"
-          mode="widthFix"
-        />
+        <image class="home-bg-img" src="/static/header-bg.png" mode="widthFix" />
       </view>
       <text class="my">我的</text>
       <view class="header-wrapper mh-32 pt-47">
         <view class="header">
           <image class="headerImg" :src="headerImgSrc" />
-          <view class="userName">{{ mobile }}</view>
+          <view class="userName">{{ mobile||'未登录' }}</view>
         </view>
       </view>
       <view class="vipInfo">
@@ -34,8 +30,7 @@
               white-space: nowrap;
               text-overflow: ellipsis;
             "
-            >{{ memberCardTypeQueryResponse.cardTypeName || '--' }}</view
-          >
+          >{{ memberCardTypeQueryResponse.cardTypeName || '--' }}</view>
           <view>
             会员等级
             <span class="icon iconfont icon-rightCircle"></span>
@@ -49,8 +44,7 @@
       <view class="personAppointment">
         <div>
           <span>
-            <span style="color: #fb8e51;" class="iconfont icon-set"></span
-            >人员管理
+            <span style="color: #fb8e51;" class="iconfont icon-set"></span>人员管理
           </span>
           <span @click="goPerson">
             已添加{{ count || 0 }}人
@@ -59,19 +53,17 @@
         </div>
         <div>
           <span>
-            <span
-              style="color: #4d94fe;"
-              class="iconfont icon-timeCircle"
-            ></span
-            >我的预约
+            <span style="color: #4d94fe;" class="iconfont icon-timeCircle"></span>我的预约
           </span>
           <span @click="goAppointment('/pages/myAppointment/myAppointment')">
             待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
-            <span class="iconfont icon-right"></span>
+            <span
+              class="iconfont icon-right"
+            ></span>
           </span>
         </div>
       </view>
-      <view class="logOut">
+      <view class="logOut" v-if="showLogout">
         <div class="quit" @click="logOut">退出登录</div>
         <div class="version">版本号V1.0.0</div>
       </view>
@@ -111,34 +103,54 @@ export default {
       mobile: '',
       memberDetails: {},
       memberCardTypeQueryResponse: {},
-    }
-  },
-  beforeCreate() {
-    let staff = getStorage(STORAGE_KEY.STAFF)
-    if (!staff) {
-      this.$utils.reLaunch({ url: '/pages/login/index' })
+      showLogout: false,
     }
   },
   onShow() {
-    if (getStorage(STORAGE_KEY.STAFF).id) {
-      this.getCount()
-      this.getAppointCount()
-      this.getUserDetail()
-    } else {
-      this.mobile = ''
-      this.memberDetails = {}
-      this.memberCardTypeQueryResponse = {}
-    }
+    this.load()
+  },
+  onPullDownRefresh() {
+    this.load()
   },
   methods: {
     goMembershipCard() {
       this.$utils.push({ url: '/pages/membership/membershipCard' })
     },
+    load() {
+      if (getStorage(STORAGE_KEY.STAFF).id) {
+        this.showLogout = true
+        this.getCount()
+        this.getAppointCount()
+        this.getUserDetail()
+      } else {
+        this.mobile = ''
+        this.memberDetails = {}
+        this.memberCardTypeQueryResponse = {}
+        this.showLogout = false
+        uni.showModal({
+          title: '您还未授权登录',
+          content: '您需要授权信息才能获取更多服务',
+          showCancel: false,
+          confirmText: '立即授权',
+          confirmColor: '#5CBB89',
+          success: (confirm) => {
+            if (confirm.confirm) {
+              this.$utils.reLaunch({ url: '/pages/login/index?param=myself' })
+            }
+          },
+        })
+      }
+    },
     getCount() {
+      uni.showLoading({
+        title: '加载中...',
+      })
       customerAPI
         .getPersonCount({ userId: getStorage(STORAGE_KEY.STAFF).id })
         .then((res) => {
           this.count = res.data
+          uni.hideLoading()
+          uni.stopPullDownRefresh()
         })
     },
     getAppointCount() {
@@ -169,7 +181,7 @@ export default {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
           removeStorage(STORAGE_KEY.STAFF)
-          this.$utils.reLaunch({ url: '/pages/login/index' })
+          this.$utils.reLaunch({ url: '/pages/login/index?param=myself' })
         }
       })
     },
