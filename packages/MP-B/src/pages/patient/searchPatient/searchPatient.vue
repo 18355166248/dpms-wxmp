@@ -149,6 +149,8 @@ export default {
 
       if (total === this.patientList.length) {
         this.dataSourceStatus.status = 'noMore'
+      } else {
+        this.dataSourceStatus.status = 'more'
       }
     },
     //执行搜索
