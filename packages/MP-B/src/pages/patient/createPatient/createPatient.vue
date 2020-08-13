@@ -27,30 +27,10 @@ export default {
         mobile: form.mobile,
         patientName: form.patientName,
       })
-
-      let that = this
-
-      if (scrmPatientInfo.newCustomer) {
-        //如果是新患者
-        this.createPatient(scrmPatientInfo, form)
-      } else {
-        //如果患者已存在
-        if (scrmPatientInfo.patientId) {
-          this.createPatient(scrmPatientInfo, form)
-        } else {
-          uni.showModal({
-            content: 'SCRM中存在姓名和手机号相同的客户，是否关联',
-            confirmText: '确认',
-            success: function (res) {
-              if (res.confirm) {
-              } else if (res.cancel) {
-                delete scrmPatientInfo.customerId
-              }
-              that.createPatient(scrmPatientInfo, form)
-            },
-          })
-        }
+      if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
+        delete scrmPatientInfo.customerId
       }
+      this.createPatient(scrmPatientInfo, form)
     },
     async createPatient(scrmPatientInfo, form) {
       const formValue = _.cloneDeep(form)
