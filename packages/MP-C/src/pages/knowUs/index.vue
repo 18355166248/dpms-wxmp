@@ -49,7 +49,6 @@
 
 <script>
 import introduceAPI from '@/APIS/introduce/introduce.api'
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
 export default {
   data() {
     return {
@@ -63,6 +62,7 @@ export default {
   },
   methods: {
     init() {
+      const medicalInstitution = uni.getStorageSync('medicalInstitution')
       introduceAPI
         .getIntroduceInfo({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
@@ -97,7 +97,6 @@ export default {
 <style lang="scss" scoped scroll-y>
 .knowUs {
   box-sizing: border-box;
-  height: 100%;
   background: rgba($color: #000000, $alpha: 0.04);
   padding: 32rpx 24rpx;
   .knowUs-title {
