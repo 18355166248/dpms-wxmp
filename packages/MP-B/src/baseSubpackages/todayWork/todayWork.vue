@@ -104,7 +104,7 @@
                   <template v-else-if="curRoleKey === 'CONSULTANT'">
                     <button
                       class="button"
-                      v-if="item.consultedOperated"
+                      v-if="!item.consultedOperated"
                       @click.stop="
                         treating(
                           {
