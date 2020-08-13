@@ -63,7 +63,7 @@
           </span>
         </div>
       </view>
-      <view class="logOut">
+      <view class="logOut" v-if="showLogout">
         <div class="quit" @click="logOut">退出登录</div>
         <div class="version">版本号V1.0.0</div>
       </view>
@@ -103,10 +103,12 @@ export default {
       mobile: '',
       memberDetails: {},
       memberCardTypeQueryResponse: {},
+      showLogout: false,
     }
   },
   onShow() {
     if (getStorage(STORAGE_KEY.STAFF).id) {
+      this.showLogout = true
       this.getCount()
       this.getAppointCount()
       this.getUserDetail()
@@ -114,6 +116,7 @@ export default {
       this.mobile = ''
       this.memberDetails = {}
       this.memberCardTypeQueryResponse = {}
+      this.showLogout = false
       uni.showModal({
         title: '您还未授权登录',
         content: '您需要授权信息才能获取更多服务',
