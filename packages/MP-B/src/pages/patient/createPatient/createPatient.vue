@@ -58,7 +58,7 @@ export default {
       patientAPI
         .createPatient({
           ...formValue,
-          ...scrmPatientInfo,
+          customerId: scrmPatientInfo.customerId,
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {
