@@ -3,7 +3,7 @@
     <image :src="img" mode="widthFix" class="empty-image"></image>
     <text :style="{ color: textColor }" class="empty-text">{{ text }}</text>
     <button v-if="!disabled" class="empty-btn" @click="onClick()">
-      重新加载
+      {{ btnText }}
     </button>
   </view>
 </template>
@@ -18,8 +18,13 @@ export default {
     },
     disabled: {
       // 是否为禁用状态
-      type: [Boolean, String],
+      type: Boolean,
       default: false,
+    },
+    btnText: {
+      // 是否为禁用状态
+      type: String,
+      default: '重新加载',
     },
     bg: {
       type: String,

@@ -20,12 +20,31 @@
           </view>
           <text class="iconfont icon-search"></text>
         </view>
+
         <view
+          v-if="isHeadquartersAndRegion"
           class="btn-new"
           @click="toUrl('/pages/patient/createPatient/createPatient')"
         >
           <text>新建</text>
         </view>
+        <template v-else>
+          <dropDown
+            :list="[
+              {
+                name: '新建患者',
+                value: 'newPatient',
+                icon: 'icon-patient',
+              },
+              { name: '新建预约', value: 'newAppt', icon: 'icon-clock' },
+            ]"
+            @select="dropMenuSelect"
+          >
+            <view class="btn-new">
+              <text>新建</text>
+            </view>
+          </dropDown>
+        </template>
       </view>
       <view class="c-white mt-36 fz-34 ml-32">你好，{{ staffName }}</view>
     </view>
@@ -37,9 +56,8 @@
       >
         <view class="statistics-header" @click="toggle">
           今日统计
-
-          <text v-if="visible" class="iconfont icon-no-eye ml-18"></text>
-          <text v-else class="iconfont icon-eye ml-18"></text>
+          <text v-if="visible" class="iconfont icon-eye ml-18"></text>
+          <text v-else class="iconfont icon-no-eye ml-18"></text>
         </view>
         <view class="statistics-body">
           <view class="statistics-item">
@@ -124,10 +142,10 @@
 <script>
 import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
-
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
-
 import toggle from '@/components/toggle/toggle'
+import dropDown from './dropDown.vue'
+
 import patientApi from '@/APIS/patient/patient.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { mapState } from 'vuex'
@@ -136,6 +154,7 @@ export default {
   components: {
     navBar,
     toggle,
+    dropDown,
   },
   data() {
     return {
@@ -148,6 +167,13 @@ export default {
         textLoading: '正在加载',
       },
       scrollTop: '0px',
+
+      newBtnNames: ['新建患者', '新建预约'],
+      btnIndex: 0,
+      newBtns: [
+        '/pages/patient/createPatient/createPatient',
+        '/baseSubpackages/apptView/apptView',
+      ],
 
       // 上拉加载的配置(可选, 绝大部分情况无需配置)
       upOption: {
@@ -170,6 +196,8 @@ export default {
   onLoad() {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.init()
+
+    console.log('this:', this)
 
     uni.$on(globalEventKeys.newPatient, () => {
       this.init()
@@ -242,6 +270,13 @@ export default {
   },
 
   methods: {
+    dropMenuSelect(val) {
+      const urls = {
+        newPatient: '/pages/patient/createPatient/createPatient',
+        newAppt: '/baseSubpackages/apptView/apptView',
+      }
+      this.toUrl(urls[val])
+    },
     switchClinic() {
       if (this.institutionChainTypeKey !== 'SINGLE_STORE') {
         this.$refs.selectMedicalInstitution.show()
@@ -254,6 +289,10 @@ export default {
     },
     toggle() {
       this.visible = !this.visible
+    },
+    bindPickerChange(e) {
+      this.roleIndex = e.target.value
+      this.selectedRole = this.roles[this.roleIndex]
     },
     /*下拉刷新的回调, 有三种处理方式:*/
     async pullDownLoadData() {
