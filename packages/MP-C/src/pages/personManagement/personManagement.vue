@@ -69,7 +69,9 @@ export default {
         })
     },
     addPerson() {
-      this.$utils.push({ url: '/pages/personAdd/personAdd' })
+      this.$utils.push({
+        url: '/pages/personAdd/personAdd?param=' + this.personList.length,
+      })
     },
     personDetail(id) {
       let detail
