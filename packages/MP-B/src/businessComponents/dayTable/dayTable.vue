@@ -249,7 +249,6 @@ export default {
 
     this.minRatio = this.showMinute / this.unitMinute // 4 一个显示的时间段分几块
     this.minAll = 1440 / this.unitMinute // 96 (1400 = 24*60)
-    this.scrollTop = this.unitHeight * 36 // 默认9点开始
 
     Array.isArray(this.apptList) &&
       this.apptList.length > 0 &&
@@ -273,8 +272,12 @@ export default {
         this.getMeetingList()
     },
     scheduleList(newVal) {
+      console.log('newVal', newVal)
       this.getDefaultTable()
       this.isTodayFun(this.chooseDateProp)
+      setTimeout(() => {
+        this.scrollTop = this.unitHeight * 36 + 15 // 默认9点开始
+      })
     },
     retract() {
       const query = uni.createSelectorQuery().in(this)
@@ -350,7 +353,7 @@ export default {
       let timeId = hour * self.minRatio + Math.floor(min / self.unitMinute)
 
       self.timeId = timeId
-      this.scrollTop = timeId * this.unitHeight - 50
+      // this.scrollTop = timeId * this.unitHeight - 50
     },
     //获取表格默认数据
     getDefaultTable() {
