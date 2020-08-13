@@ -4,7 +4,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import editPatient from '@/baseSubpackages/editPatient/editPatient.vue'
+import editPatient from '@/businessComponents/editPatient/editPatient.vue'
 import patientAPI from '@/APIS/patient/patient.api'
 import { globalEventKeys } from '@/config/global.eventKeys.js'
 
