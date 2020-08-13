@@ -2,7 +2,7 @@
   <editPatient
     ref="editPatient"
     :formData="formData"
-    @submit="updatePatient"
+    @submit="checkPatientInScrm"
   ></editPatient>
 </template>
 
@@ -19,6 +19,9 @@ export default {
   },
   components: {
     editPatient,
+  },
+  computed: {
+    ...mapState('workbenchStore', ['staff']),
   },
   onLoad(params) {
     this.patientId = params.patientId
@@ -40,7 +43,19 @@ export default {
           this.$utils.clearLoading()
         })
     },
-    updatePatient(form) {
+    // 检查患者是否已存在scrm系统中
+    async checkPatientInScrm(form) {
+      let { data: scrmPatientInfo } = await patientAPI.getPatientInScrm({
+        medicalInstitutionId: this.staff.belongsInstitutionId,
+        mobile: form.mobile,
+        patientName: form.patientName,
+      })
+      if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
+        delete scrmPatientInfo.customerId
+      }
+      this.updatePatient(scrmPatientInfo, form)
+    },
+    updatePatient(scrmPatientInfo, form) {
       const formValue = _.cloneDeep(form)
 
       let patientContact = {
@@ -69,6 +84,7 @@ export default {
         .updatePatient({
           patientId: this.patientId,
           ...formValue,
+          ...scrmPatientInfo,
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {

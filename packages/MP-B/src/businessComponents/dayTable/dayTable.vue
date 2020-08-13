@@ -155,6 +155,7 @@ import { dataDictUtil } from 'utils/dataDict.util'
 import moment from 'moment'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
 import { numberRangeUtil } from './numberRange.util'
+import { frontAuthUtil } from '@/utils/frontAuth.util'
 
 const windowHeight = uni.getSystemInfoSync().windowHeight
 
@@ -210,6 +211,9 @@ export default {
       VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
       GENDER_ENUM: this.$utils.getEnums('Gender'),
+      isHeaderWithLargeArea: frontAuthUtil.check(
+        '预约中心/预约视图/新建修改、取消、日志',
+      ),
       createApptClick: false,
     }
   },
@@ -584,6 +588,8 @@ export default {
     },
     // 点击创建
     touchSt(e) {
+      if (this.isHeaderWithLargeArea) return
+
       this.scrollTop = scrollYtop
       let self = this
       if (e.target.offsetLeft < 50) {
@@ -1102,7 +1108,7 @@ export default {
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
       // 限制可编辑卡片 非预约状态 跨诊所不可编辑
-      if (this.isDisabled(meetInfo)) return
+      if (this.isDisabled(meetInfo) || this.isHeaderWithLargeArea) return
 
       const {
         startTimeStamp,
