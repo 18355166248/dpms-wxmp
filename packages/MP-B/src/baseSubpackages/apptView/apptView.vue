@@ -66,9 +66,14 @@
                 accessMedicalInstitution.medicalInstitutionSimpleCode
               }}</view
             >
-            <view class="doctorName doctorSelect text-ellipsis">
-              医生：{{ doctor.staffName }}
-              <span @click="openDrawer" class="ml-20 changeDoctorIcon">
+            <view
+              class="doctorName doctorSelect"
+              :style="{ width: isHeaderWithLargeArea ? '50%' : '100%' }"
+            >
+              <span class="doctorName text-ellipsis">
+                医生：{{ doctor.staffName }}674645654645ssdsdsadasdass大电风扇
+              </span>
+              <span @click="openDrawer" class="pl-20 changeDoctorIcon">
                 <span class="iconfont icon-new-weet" />
               </span>
             </view>
@@ -132,16 +137,15 @@ import apptCard from '@/businessComponents/apptCard/apptCard.vue'
 import { apptFormUtil } from '@/baseSubpackages/apptForm/apptForm.util'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { apptViewUtil } from './apptView.util'
+import { mapState } from 'vuex'
 
 const enums = uni.getStorageSync('enums')
 const staff = uni.getStorageSync('staff')
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
-
 const STAFF_POSITION_ENUM = enums.StaffPosition
 const STAFF_STATUS_ENUM = enums.StaffStatus
 const INSTITUTION_CHAIN_TYPE_ENUM = enums.InstitutionChainType
 
-const doctorValue = STAFF_POSITION_ENUM.DOCTOR.value
+const doctorValue = STAFF_POSITION_ENUM && STAFF_POSITION_ENUM.DOCTOR.value
 
 // 1、如果当前登录人为医生，则 默认为当前登录人员的预约视图
 // 2、如果当前登录人不是医生，则默认为WEB端，排名第一的医生（不包含未指定医生）
@@ -169,9 +173,14 @@ export default {
         '预约中心/预约视图/诊所的查询条件',
       ),
       institutionList: [], // 总部/大区 诊所列表
-      accessMedicalInstitution: medicalInstitution.medicalInstitutionId, // 获取总部/大区时 预约视图诊所选择 如果后台返回-1表示没有直营诊所 则提示：“无下属直营诊所，无法查看预约视图”
+      accessMedicalInstitution: {}, // 获取总部/大区时 预约视图诊所选择 如果后台返回-1表示没有直营诊所 则提示：“无下属直营诊所，无法查看预约视图”
       institutionCanSelectList: [], // 总部/大区 诊所列表 可编辑id(medicalInstitutionId)
     }
+  },
+  computed: {
+    ...mapState('workbenchStore', {
+      medicalInstitution: (state) => state.medicalInstitution,
+    }),
   },
   onShow() {
     this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
@@ -208,6 +217,9 @@ export default {
         this.getAllDoctorWithApptList()
       }
     },
+    medicalInstitution(newVal) {
+      this.accessMedicalInstitution = newVal
+    },
   },
   methods: {
     async init() {
@@ -215,7 +227,7 @@ export default {
       if (this.isHeaderWithLargeArea) {
         const [err, res] = await this.$utils.asyncTasks(
           institutionAPI.getInstitutionList({
-            medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+            medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
             institutionChainTypes:
               INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value +
               ',' +
@@ -367,7 +379,7 @@ export default {
           .getAppointmentViewListFromStaff({
             appointmentBeginTime: this.startTimeStamp,
             appointmentEndTime: this.endTimeStamp,
-            medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+            medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
             position: doctorValue,
             staffIds: this.doctorList.map((doctor) => doctor.staffId).join(','),
           })
@@ -536,6 +548,7 @@ page {
           display: flex;
           flex: 1;
           overflow: hidden;
+          padding-right: 20rpx;
           .doctorName {
             font-size: 28rpx;
             width: 50%;
@@ -545,6 +558,9 @@ page {
           .doctorSelect {
             display: flex;
             align-items: center;
+            .doctorName {
+              flex: 1;
+            }
             .changeDoctorIcon {
               display: flex;
             }
