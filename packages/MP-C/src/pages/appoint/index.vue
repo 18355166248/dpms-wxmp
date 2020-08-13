@@ -70,7 +70,11 @@
       <a href>《预约服务协议》</a>
     </div>
     <dpmsButton :disabled="btnDisabled" text="确认预约" @click="submit" />
-    <dpmsBottomPicker :visible.sync="doctorPickerVisible" title="选择医生">
+    <dpmsBottomPicker
+      class="dpmsBottomPicker"
+      :visible.sync="doctorPickerVisible"
+      title="选择医生"
+    >
       <div
         class="doctor"
         :class="{ active: form.doctorId === d.doctorId }"
@@ -84,8 +88,13 @@
           <div>擅长: {{ d.goodAt }}</div>
         </div>
       </div>
+      <empty v-if="!dockers.length" :disabled="true" text="暂无可预约医生" />
     </dpmsBottomPicker>
-    <dpmsBottomPicker :visible.sync="doctorTimePickerVisible" title="选择时间">
+    <dpmsBottomPicker
+      class="dpmsBottomPicker"
+      :visible.sync="doctorTimePickerVisible"
+      title="选择时间"
+    >
       <div class="time">
         <div
           class="info"
@@ -97,8 +106,17 @@
           {{ time.label }}
         </div>
       </div>
+      <empty
+        v-if="!doctorTimeFilter.length"
+        :disabled="true"
+        text="暂无可预约时间"
+      />
     </dpmsBottomPicker>
-    <dpmsBottomPicker :visible.sync="itemPickerVisible" title="选择项目">
+    <dpmsBottomPicker
+      class="dpmsBottomPicker"
+      :visible.sync="itemPickerVisible"
+      title="选择项目"
+    >
       <div
         class="item"
         :class="{
@@ -114,6 +132,7 @@
           <div>{{ itm.itemBriefIntroduction }}</div>
         </div>
       </div>
+      <empty v-if="!items.length" :disabled="true" text="暂无可预约项目" />
     </dpmsBottomPicker>
   </div>
 </template>
@@ -124,6 +143,7 @@ import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
+import empty from '@/components/empty/empty.vue'
 export default {
   data() {
     return {
@@ -165,6 +185,9 @@ export default {
       itemPickerVisible: false,
       doctorTimePickerVisible: false,
     }
+  },
+  components: {
+    empty,
   },
   computed: {
     ...mapState('loginStore', ['MEDICALINSTITUTION']),
@@ -503,5 +526,8 @@ button {
       color: #fff;
     }
   }
+}
+.dpmsBottomPicker .empty {
+  padding: 100rpx 0;
 }
 </style>

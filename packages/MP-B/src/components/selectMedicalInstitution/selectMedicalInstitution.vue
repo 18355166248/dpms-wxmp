@@ -251,7 +251,7 @@ export default {
     workList(list) {
       if (list.length) {
         this.disList = list
-        this.initTree(list)
+        this.initTree(this.list)
       }
     },
   },
