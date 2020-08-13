@@ -107,8 +107,9 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import AsyncValidator from 'async-validator'
 import patientAPI from '@/APIS/patient/patient.api'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 const formDefault = {
   patientName: '',
@@ -163,14 +164,28 @@ export default {
           required: true,
           message: '请选择联系电话标签',
         },
-        mobile: {
-          required: true,
-          message: '请输入联系电话',
+        mobile: [
+          {
+            required: true,
+            message: '请输入联系电话',
+          },
+          {
+            pattern: /^\d{11}$/,
+            message: '联系电话格式不正确',
+          },
+        ],
+        alternateMobile: {
+          pattern: /^\d{11}$/,
+          message: '备用号码格式不正确',
         },
         weChatId: {
           min: 0,
           max: 20,
           message: '请输入正确的微信号',
+        },
+        qqNum: {
+          pattern: /^\d{1,20}$/,
+          message: '请输入正确的QQ格式',
         },
         address: {
           min: 0,
@@ -256,27 +271,9 @@ export default {
         .join(',')
     },
     async submit() {
-      this.$refs.editPatientForm.validate((err, fileds) => {
+      this.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0]?.message)
-          return
-        }
-
-        if (!/^\d{11}$/.test(this.form.mobile)) {
-          this.$utils.show('联系电话格式不正确')
-          return
-        }
-
-        if (
-          this.form.alternateMobile &&
-          !/^\d{11}$/.test(this.form.alternateMobile)
-        ) {
-          this.$utils.show('备用号码格式不正确')
-          return
-        }
-
-        if (this.form.qqNum && !/^[0-9]{1,20}$/.test(this.form.qqNum)) {
-          this.$utils.show('请输入正确的QQ格式')
           return
         }
 
@@ -290,6 +287,13 @@ export default {
     },
     hideBtn() {
       this.disabledSaveBtn = true
+    },
+    validate(callback) {
+      let validator = new AsyncValidator(this.rules)
+
+      validator.validate(this.form, (errors, fields) => {
+        _.isFunction(callback) && callback(errors, fields)
+      })
     },
   },
 }
