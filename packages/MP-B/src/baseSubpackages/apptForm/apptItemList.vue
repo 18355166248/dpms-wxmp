@@ -1,6 +1,6 @@
 <template>
   <div class="apptDpmsList">
-    <dpmsCheckboxGroup v-model="checked">
+    <dpmsCheckboxGroup v-model="checked" v-if="list && list.length">
       <dpmsCollapse class="mb-56">
         <dpmsCollapseItem
           v-for="apptType in list"
@@ -26,17 +26,25 @@
         </dpmsCollapseItem>
       </dpmsCollapse>
     </dpmsCheckboxGroup>
+    <empty :disabled="true" text="暂无预约项目" v-else />
 
     <div class="mt-56">
-      <dpmsButton @click="onSave" />
+      <dpmsButton @click="onSave" v-if="list && list.length" />
+      <button class="button" @click.stop="this.$utils.back()" v-else>
+        取消
+      </button>
     </div>
   </div>
 </template>
 
 <script>
 import { colorNumberList } from './colorNumberList'
+import empty from '@/components/empty/empty.vue'
 
 export default {
+  components: {
+    empty,
+  },
   data() {
     return {
       list: this.formatList(uni.getStorageSync('apptItemList')),
