@@ -107,39 +107,49 @@ export default {
     }
   },
   onShow() {
-    if (getStorage(STORAGE_KEY.STAFF).id) {
-      this.showLogout = true
-      this.getCount()
-      this.getAppointCount()
-      this.getUserDetail()
-    } else {
-      this.mobile = ''
-      this.memberDetails = {}
-      this.memberCardTypeQueryResponse = {}
-      this.showLogout = false
-      uni.showModal({
-        title: '您还未授权登录',
-        content: '您需要授权信息才能获取更多服务',
-        showCancel: false,
-        confirmText: '立即授权',
-        confirmColor: '#5CBB89',
-        success: (confirm) => {
-          if (confirm.confirm) {
-            this.$utils.reLaunch({ url: '/pages/login/index?param=myself' })
-          }
-        },
-      })
-    }
+    this.load()
+  },
+  onPullDownRefresh() {
+    this.load()
   },
   methods: {
     goMembershipCard() {
       this.$utils.push({ url: '/pages/membership/membershipCard' })
     },
+    load() {
+      if (getStorage(STORAGE_KEY.STAFF).id) {
+        this.showLogout = true
+        this.getCount()
+        this.getAppointCount()
+        this.getUserDetail()
+      } else {
+        this.mobile = ''
+        this.memberDetails = {}
+        this.memberCardTypeQueryResponse = {}
+        this.showLogout = false
+        uni.showModal({
+          title: '您还未授权登录',
+          content: '您需要授权信息才能获取更多服务',
+          showCancel: false,
+          confirmText: '立即授权',
+          confirmColor: '#5CBB89',
+          success: (confirm) => {
+            if (confirm.confirm) {
+              this.$utils.reLaunch({ url: '/pages/login/index?param=myself' })
+            }
+          },
+        })
+      }
+    },
     getCount() {
+      uni.showLoading({
+        title: '加载中...',
+      })
       customerAPI
         .getPersonCount({ userId: getStorage(STORAGE_KEY.STAFF).id })
         .then((res) => {
           this.count = res.data
+          uni.hideLoading()
         })
     },
     getAppointCount() {
