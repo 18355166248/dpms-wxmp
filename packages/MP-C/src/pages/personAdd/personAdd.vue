@@ -1,63 +1,58 @@
 <template>
   <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div class="hint">
-      提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
-    </div>
+    <div class="hint">提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。</div>
     <div class="personInfo">
-      <dpmsCellInput
-        title="姓名"
-        v-model="form.personnelName"
-        placeholder="请输入姓名"
-      />
-      <dpmsEnumsPicker
-        title="性别"
-        v-model="form.gender"
-        enumsKey="Gender"
-        placeholder="请选择性别"
-        headerText="选择性别"
-        isLink
-      />
-      <dpmsDatePicker
-        title="出生日期"
-        mode="date"
-        placeholder="请选择出生日期"
-        v-model="form.birthday"
-        :end="endDate"
-      />
-      <dpmsEnumsPicker
-        title="联系电话标签"
-        v-model="form.contactLabel"
-        placeholder="请选择联系电话标签"
-        enumsKey="ContactLabel"
-      />
-      <dpmsCellInput
-        type="number"
-        title="联系电话"
-        v-model="form.mobile"
-        placeholder="请输入联系电话"
-      />
-      <div class="info" v-show="needAuthCode">
-        <!-- <dpmsCellInput
+      <dpmsForm ref="editForm" :model="form" :rules="rules">
+        <dpmsCellInput required title="姓名" v-model="form.personnelName" placeholder="请输入姓名" />
+        <dpmsEnumsPicker
+          required
+          title="性别"
+          v-model="form.gender"
+          enumsKey="Gender"
+          placeholder="请选择性别"
+          headerText="选择性别"
+          isLink
+        />
+        <dpmsDatePicker
+          required
+          title="出生日期"
+          mode="date"
+          placeholder="请选择出生日期"
+          v-model="form.birthday"
+          :end="endDate"
+        />
+        <dpmsEnumsPicker
+          required
+          title="联系电话标签"
+          v-model="form.contactLabel"
+          placeholder="请选择联系电话标签"
+          enumsKey="ContactLabel"
+        />
+        <dpmsCellInput
+          required
           type="number"
-          title="验证码"
-          v-model="form.verificationCode"
-        /> -->
-        <span>验证码</span>
-        <input v-model="form.verificationCode" class="ipt" />
-        <span
-          class="getAuthCode"
-          :class="{ disabled: !!second }"
-          @click="getCode"
-          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span
-        >
-      </div>
-      <dpmsCellPicker
-        title="默认人员"
-        placeholder="是否设置为默认人员"
-        defaultType="value"
-        v-model="form.defaultPersonnel"
-        :list="defaultType"
-      />
+          title="联系电话"
+          v-model="form.mobile"
+          placeholder="请输入联系电话"
+        />
+        <div class="info" v-show="needAuthCode">
+          <span>验证码</span>
+          <input v-model="form.verificationCode" class="ipt" />
+          <span
+            class="getAuthCode"
+            :class="{ disabled: !!second }"
+            @click="getCode"
+          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span>
+        </div>
+        <dpmsCellPicker
+          title="默认人员"
+          placeholder="是否设置为默认人员"
+          defaultType="value"
+          required
+          v-model="form.defaultPersonnel"
+          :list="defaultType"
+        />
+      </dpmsForm>
     </div>
     <div class="btn" @click="submit">
       <button>确认</button>
@@ -92,6 +87,46 @@ export default {
         userId: getStorage(STORAGE_KEY.STAFF).id,
         id: '',
         personnelId: '',
+      },
+      rules: {
+        personnelName: [
+          {
+            required: true,
+            message: '请输入姓名',
+          },
+          {
+            min: 1,
+            max: 50,
+            message: '姓名输入不应该超过 50 字',
+          },
+        ],
+        gender: {
+          required: true,
+          message: '请选择性别',
+        },
+        birthday: {
+          required: true,
+          message: '请选择出生日期',
+        },
+        contactLabel: {
+          required: true,
+          message: '请选择联系电话标签',
+        },
+        mobile: [
+          {
+            required: true,
+            pattern: /^[0-9]*$/,
+            message: '请输入联系电话',
+          },
+          {
+            len: 11,
+            message: '联系电话格式不正确',
+          },
+        ],
+        defaultPersonnel: {
+          required: true,
+          message: '请选择是否设置为默认人员',
+        },
       },
     }
   },
@@ -137,19 +172,25 @@ export default {
       }
     },
     submit() {
-      customerAPI.creatCustomer(this.form).then((res) => {
-        console.log('1111111111', res)
-        if (res.code == 0) {
-          uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-            isSuccess: true,
-          })
-          this.$utils.back()
+      this.$refs.editForm.validate((err, fileds) => {
+        if (err) {
+          this.$utils.show(err[0].message)
+          return
         }
-        if (this.form.defaultPersonnel == true) {
-          this.form.defaultPersonnel = '开'
-        } else {
-          this.form.defaultPersonnel = '关'
-        }
+        customerAPI.creatCustomer(this.form).then((res) => {
+          console.log('1111111111', res)
+          if (res.code == 0) {
+            uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+              isSuccess: true,
+            })
+            this.$utils.back()
+          }
+          if (this.form.defaultPersonnel == true) {
+            this.form.defaultPersonnel = '开'
+          } else {
+            this.form.defaultPersonnel = '关'
+          }
+        })
       })
     },
   },
