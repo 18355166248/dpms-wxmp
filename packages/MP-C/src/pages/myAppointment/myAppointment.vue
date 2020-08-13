@@ -128,6 +128,7 @@ export default {
           } else {
             this.showEmpty = false
           }
+          uni.stopPullDownRefresh()
         })
     },
     getRecent() {

@@ -150,6 +150,7 @@ export default {
         .then((res) => {
           this.count = res.data
           uni.hideLoading()
+          uni.stopPullDownRefresh()
         })
     },
     getAppointCount() {

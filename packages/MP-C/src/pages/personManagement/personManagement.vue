@@ -70,6 +70,7 @@ export default {
           } else {
             this.showEmpty = false
           }
+          uni.stopPullDownRefresh()
         })
         .catch((error) => {
           console.log('error', error)
