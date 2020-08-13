@@ -50,7 +50,9 @@ export default {
     }
   },
   onShow() {
-    this.loadPatientTags()
+    if (!uni.getStorageSync('patientTagsList').length) {
+      this.loadPatientTags()
+    }
   },
   methods: {
     onSave() {

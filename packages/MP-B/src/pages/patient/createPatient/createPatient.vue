@@ -96,7 +96,7 @@ export default {
           })
         })
         .catch(() => {
-          that.$refs.editPatient.showBtn()
+          that.$refs.editPatient.hideBtn()
         })
     },
   },
