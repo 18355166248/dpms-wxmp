@@ -1455,13 +1455,13 @@ $borderColor: #ddd;
       padding: 10px;
     }
 
-    .meeting_detail_top {
-      // top: -114px;
-    }
+    // .meeting_detail_top {
+    //   // top: -114px;
+    // }
 
-    .meeting_detail_bottom {
-      // bottom: -114px;
-    }
+    // .meeting_detail_bottom {
+    //   // bottom: -114px;
+    // }
 
     .meeting_detail_top ::before {
       content: '';
