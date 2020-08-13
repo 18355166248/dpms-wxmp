@@ -111,6 +111,9 @@ export default {
       this.getAppointCount()
       this.getUserDetail()
     } else {
+      this.mobile = ''
+      this.memberDetails = {}
+      this.memberCardTypeQueryResponse = {}
       uni.showModal({
         title: '您还未授权登录',
         content: '您需要授权信息才能获取更多服务',
@@ -160,7 +163,6 @@ export default {
             })
         })
     },
-
     logOut() {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
