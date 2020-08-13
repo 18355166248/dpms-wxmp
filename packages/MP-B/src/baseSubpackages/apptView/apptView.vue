@@ -442,8 +442,8 @@ page {
 
   .apptSearch {
     flex: 1 1 100%;
-    .apptSearchContent {
-    }
+    // .apptSearchContent {
+    // }
 
     .emptyPatient {
       color: rgba(0, 0, 0, 0.65);

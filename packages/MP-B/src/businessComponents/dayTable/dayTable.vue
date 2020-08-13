@@ -97,7 +97,7 @@
           :style="createMeet.style"
           @touchstart.stop="touchMeetingStart"
           @touchmove.stop="touchMeetingMove"
-          @touchend.stop="touchMeetingEnd"
+          @touchend.stop="!createApptClick && touchMeetingEnd($event)"
         >
           <view
             class="radius_first radius"
@@ -210,6 +210,7 @@ export default {
       VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
       GENDER_ENUM: this.$utils.getEnums('Gender'),
+      createApptClick: false,
     }
   },
   //如果将chooseDateProp放入vuex 监听可使用下面方法
@@ -256,6 +257,7 @@ export default {
   },
   mounted() {
     const query = uni.createSelectorQuery().in(this)
+    this.createApptClick = false
 
     query
       .select('#dayTableId')
@@ -1029,6 +1031,7 @@ export default {
         // 点击编辑中的卡片 如果没有患者信息则需要跳转到新建预约页面, 否则不做任何操作
         if (!this.createMeet.patient) {
           self.$emit('createAppt', this.createMeet)
+          this.createApptClick = true
 
           return
         }
@@ -1036,6 +1039,7 @@ export default {
         // 跨诊所, 非预约状态 不可编辑
         if (this.isDisabled(this.createMeet)) return
 
+        this.createApptClick = true
         self.$emit('editAppt', this.createMeet)
 
         return
@@ -1148,6 +1152,7 @@ export default {
     clearCreateMeet() {
       this.isCreate = false
       this.createMeet = defaultMeet
+      this.createApptClick = false
     },
     getBackgroundColorByScheduleItemList(timeTitle) {
       if (timeTitle === '24:00') return
