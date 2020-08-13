@@ -1,28 +1,30 @@
 <template>
-  <scroll-view scroll-y style="background: rgba(0, 0, 0, 0.04); height: 100%;">
-    <div class="tab">
-      <div class="recentAppointment" @click="getRecent">
-        <span :class="recent">近期预约</span>
-      </div>
-      <div class="historyAppointment" @click="getHistory">
-        <span :class="history">历史预约</span>
-      </div>
-    </div>
-    <div class="appointmentList">
-      <div
-        class="item"
-        v-for="val of appointList"
-        :key="val.networkAppointmentId"
-        @click="appointmentDetail(val.networkAppointmentId)"
-      >
-        <image class="watch" src="/static/watch.svg" />
-        <div class="statusType">
-          <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
-          <span>{{ time(val.appointmentBeginTime) }}</span>
-          <span class="colorAndName">
-            <span
-              class="statusColor"
-              :style="{
+  <movable-area>
+    <view>
+      <scroll-view scroll-y>
+        <div class="tab">
+          <div class="recentAppointment" @click="getRecent">
+            <span :class="recent">近期预约</span>
+          </div>
+          <div class="historyAppointment" @click="getHistory">
+            <span :class="history">历史预约</span>
+          </div>
+        </div>
+        <div class="appointmentList">
+          <div
+            class="item"
+            v-for="val of appointList"
+            :key="val.networkAppointmentId"
+            @click="appointmentDetail(val.networkAppointmentId)"
+          >
+            <image class="watch" src="/static/watch.svg" />
+            <div class="statusType">
+              <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
+              <span>{{ time(val.appointmentBeginTime) }}</span>
+              <span class="colorAndName">
+                <span
+                  class="statusColor"
+                  :style="{
                 background:
                   NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus]
                     .zh_CN == '已预约'
@@ -37,33 +39,35 @@
                     ? '#FBD438'
                     : '#B1B0B0',
               }"
-            ></span>
-            <span class="statusName">
-              {{
-              NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus].zh_CN
-              }}
-            </span>
-          </span>
-        </div>
-        <div class="appointmentInfo">
-          <div>门店:{{ val.shopName || '' }}</div>
-          <div>医生:{{ val.doctorName || '' }}</div>
-          <div>
-            预约项目:{{
-            val.networkAppointmentItemList
-            ? arrObjKeys(val.networkAppointmentItemList,'itemName',',')
-            : ''
-            }}
+                ></span>
+                <span class="statusName">
+                  {{
+                  NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus].zh_CN
+                  }}
+                </span>
+              </span>
+            </div>
+            <div class="appointmentInfo">
+              <div>门店:{{ val.shopName || '' }}</div>
+              <div>医生:{{ val.doctorName || '' }}</div>
+              <div>
+                预约项目:{{
+                val.networkAppointmentItemList
+                ? arrObjKeys(val.networkAppointmentItemList,'itemName',',')
+                : ''
+                }}
+              </div>
+              <div>患者姓名:{{ val.patientName || '' }}</div>
+            </div>
           </div>
-          <div>患者姓名:{{ val.patientName || '' }}</div>
         </div>
-      </div>
-    </div>
+      </scroll-view>
+    </view>
     <div class="empty" v-show="showEmpty">
       <image class="emptyImg" src="/static/empty.svg" />
       <div class="emptyTxt">未查询到任何信息</div>
     </div>
-  </scroll-view>
+  </movable-area>
 </template>
 
 <script>
@@ -104,6 +108,11 @@ export default {
   onUnload() {
     uni.$off(globalEventKeys.deleteAppointFormWithSaveSuccess)
   },
+  onPullDownRefresh() {
+    this.recent = 'active'
+    this.history = ''
+    this.getAppointmentList(this.RECENT_APPOINTMENT)
+  },
   methods: {
     getAppointmentList(type) {
       appointmentAPI
@@ -119,6 +128,7 @@ export default {
           } else {
             this.showEmpty = false
           }
+          uni.stopPullDownRefresh()
         })
     },
     getRecent() {
@@ -151,6 +161,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+movable-area {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.04);
+}
 .tab {
   height: 76rpx;
   line-height: 74rpx;
