@@ -2,12 +2,8 @@
   <div class="wrap">
     <image src="/static/logo.png" class="logo" />
     <div class="appName">小程序名称</div>
-    <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">
-      微信登陆
-    </button>
-    <button class="ghost" @click="$utils.push({ url: 'cellphone' })">
-      手机号登陆
-    </button>
+    <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">微信登陆</button>
+    <button class="ghost" @click="$utils.push({ url: 'cellphone' })">手机号登陆</button>
   </div>
 </template>
 
@@ -16,6 +12,17 @@ import loginApi from '../../APIS/login/login.api'
 import { setStorage, STORAGE_KEY } from '@/utils/storage'
 import config from '../../config'
 export default {
+  data() {
+    return {
+      myself: null,
+    }
+  },
+  onLoad(param) {
+    console.log(param)
+    if (param) {
+      this.myself = param.param
+    }
+  },
   methods: {
     getPhoneNumber({ detail }) {
       if (detail.encryptedData) {
@@ -29,7 +36,11 @@ export default {
           .then((res) => {
             setStorage(STORAGE_KEY.STAFF, res.data)
             setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
-            this.$utils.back()
+            if (this.myself == 'myself') {
+              this.$utils.reLaunch({ url: '/pages/index/index' })
+            } else {
+              this.$utils.back()
+            }
           })
       }
     },
