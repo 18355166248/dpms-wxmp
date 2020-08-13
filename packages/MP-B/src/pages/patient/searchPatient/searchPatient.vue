@@ -16,12 +16,12 @@
     </div>
 
     <!-- 搜索提示、结果文字 -->
-    <div class="search-tip-text pt-28" v-if="!isSearchedValue">
+    <div class="search-tip-text pt-28" v-if="!searchValue || !isSearchedValue">
       请输入姓名/拼音/手机号查找患者
     </div>
     <div
       class="search-tip-text pt-28 pl-24 pr-24"
-      v-if="isSearchedValue && patientList.length === 0"
+      v-if="searchValue && isSearchedValue && patientList.length === 0"
     >
       没有找到“
       <span class="patient-name">{{ isSearchedValue }}</span>
@@ -45,7 +45,7 @@
         class="history-search-text"
         v-for="(searchRecord, index) in searchRecords"
         :key="index"
-        @click="chooseSearchRecord(searchRecord)"
+        @click="chooseSearchRecord(searchRecord, index)"
       >
         {{
           searchRecord.length > 10
@@ -127,6 +127,11 @@ export default {
       this.searchValue = param.value
     },
     async getPatients() {
+      uni.showLoading({
+        title: '搜索患者中',
+        mask: true,
+      })
+
       let {
         data: { total, current, records },
       } = await patientAPI.getPatientList({
@@ -134,6 +139,8 @@ export default {
         current: this.current,
         size: this.size,
       })
+
+      uni.hideLoading()
 
       if (current === 1) {
         this.patientList = records
@@ -168,16 +175,23 @@ export default {
     //取消搜索
     cancelSearch() {
       this.searchValue = ''
+      this.isSearchedValue = ''
       this.current = 1
       this.patientList = []
     },
     //选择搜索历史中某一个历史
-    chooseSearchRecord(searchRecord) {
+    chooseSearchRecord(searchRecord, index) {
       console.log('----选择时 历史值----', this.searchRecords)
       console.log('--###--', searchRecord)
 
       this.searchValue = searchRecord
       this.isSearchedValue = searchRecord
+
+      //更新搜索历史顺序
+      this.searchRecords.unshift(...this.searchRecords.splice(index, 1))
+      //this.searchRecords.map((a, b) => a)
+      uni.setStorageSync('searchPatientHistory', this.searchRecords)
+
       this.getPatients()
     },
     clearHistorySearch() {
