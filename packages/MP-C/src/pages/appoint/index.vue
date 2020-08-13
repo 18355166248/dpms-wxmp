@@ -34,14 +34,13 @@
         required
         isLink
       />
-      <dpmsCellPicker
-        defaultType="value"
-        :list="doctorTimeFilter"
-        v-model="form.timeStamp"
+      <dpmsCell
         title="预约时间"
         placeholder="请选择时间"
+        :value="timeStampFilter"
         required
         isLink
+        @cellclick="doctorTimePickerVisible = true"
       />
       <dpmsCellPicker
         defaultType="id"
@@ -74,6 +73,7 @@
     <dpmsBottomPicker :visible.sync="doctorPickerVisible" title="选择医生">
       <div
         class="doctor"
+        :class="{ active: form.doctorId === d.doctorId }"
         v-for="d in dockers"
         :key="d.doctorId"
         @click="dockerClick(d)"
@@ -85,9 +85,25 @@
         </div>
       </div>
     </dpmsBottomPicker>
+    <dpmsBottomPicker :visible.sync="doctorTimePickerVisible" title="选择时间">
+      <div class="time">
+        <div
+          class="info"
+          :class="{ active: form.timeStamp === time.value }"
+          v-for="time in doctorTimeFilter"
+          :key="time.value"
+          @click="doctorTimeClick(time.value)"
+        >
+          {{ time.label }}
+        </div>
+      </div>
+    </dpmsBottomPicker>
     <dpmsBottomPicker :visible.sync="itemPickerVisible" title="选择项目">
       <div
         class="item"
+        :class="{
+          active: form.itemList.map((v) => v.itemId).includes(itm.itemId),
+        }"
         v-for="itm in items"
         :key="itm.itemId"
         @click="itemClick(itm)"
@@ -147,6 +163,7 @@ export default {
       personnelList: [],
       doctorPickerVisible: false,
       itemPickerVisible: false,
+      doctorTimePickerVisible: false,
     }
   },
   computed: {
@@ -174,6 +191,11 @@ export default {
           )
         : ''
     },
+    timeStampFilter() {
+      return this.form.timeStamp
+        ? moment(this.form.timeStamp).format('HH:mm')
+        : ''
+    },
   },
   watch: {
     'form.date': function (newVal, oldVal) {
@@ -184,6 +206,7 @@ export default {
     },
   },
   onLoad(params) {
+    console.log('params', params)
     this.shopId = params.shopId
     this.itemId = params.itemId
     this.form.doctorId = params.doctorId
@@ -217,7 +240,6 @@ export default {
         })
     },
     submit() {
-      console.log(this.form.timeStamp)
       this.$refs.editForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
@@ -277,6 +299,15 @@ export default {
         .then((res) => {
           let { data } = res
           this.doctorTime = data.filter((v) => v.isShow)
+
+          // 如果编辑状态，原始时间已不可预约，清除时间
+          if (
+            !this.doctorTime
+              .map((v) => v.startAvailableDateStamp)
+              .includes(this.form.timeStamp)
+          ) {
+            this.form.timeStamp = ''
+          }
         })
     },
     async getDoctors(id) {
@@ -325,6 +356,10 @@ export default {
       }
       this.doctor = d
       this.doctorPickerVisible = false
+    },
+    doctorTimeClick(value) {
+      this.form.timeStamp = value
+      this.doctorTimePickerVisible = false
     },
     itemClick(itm) {
       const selectIndex = this.form.itemList.findIndex(
@@ -384,6 +419,21 @@ button {
   color: rgba(0, 0, 0, 0.5);
   font-size: 28rpx;
   line-height: 1.6;
+  overflow: hidden;
+  &.active {
+    border: 1rpx solid #5cbb89;
+    position: relative;
+    ::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-top: 40rpx solid #5cbb89;
+      border-left: 40rpx solid transparent;
+    }
+  }
   image {
     width: 120rpx;
     height: 120rpx;
@@ -406,6 +456,21 @@ button {
   color: rgba(0, 0, 0, 0.5);
   font-size: 28rpx;
   line-height: 1.6;
+  overflow: hidden;
+  &.active {
+    border: 1rpx solid #5cbb89;
+    position: relative;
+    ::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-top: 40rpx solid #5cbb89;
+      border-left: 40rpx solid transparent;
+    }
+  }
   image {
     width: 184rpx;
     height: 140rpx;
@@ -416,6 +481,27 @@ button {
     color: rgba(0, 0, 0, 0.9);
     font-size: 34rpx;
     margin-bottom: 8rpx;
+  }
+}
+.time {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -50rpx;
+  .info {
+    width: 150rpx;
+    height: 68rpx;
+    line-height: 68rpx;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.65);
+    font-size: 28rpx;
+    background: #f5f5f5;
+    border-radius: 2rpx;
+    margin-bottom: 32rpx;
+    margin-right: 34rpx;
+    &.active {
+      background: #5cbb89;
+      color: #fff;
+    }
   }
 }
 </style>
