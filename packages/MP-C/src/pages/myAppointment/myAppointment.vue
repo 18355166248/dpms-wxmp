@@ -57,7 +57,7 @@
                 : ''
                 }}
               </div>
-              <div>患者姓名:{{ val.patientName || '' }}</div>
+              <div>患者姓名:{{ val.personnelName || '' }}</div>
             </div>
           </div>
         </div>
