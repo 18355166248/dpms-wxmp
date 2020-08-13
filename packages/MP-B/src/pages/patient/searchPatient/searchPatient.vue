@@ -16,15 +16,16 @@
     </div>
 
     <!-- 搜索提示、结果文字 -->
-    <div class="search-tip-text pt-28" v-if="!isSearchedValue">
+    <div class="search-tip-text pt-28" v-if="!(searchValue && isSearchedValue)">
       请输入姓名/拼音/手机号查找患者
     </div>
     <div
       class="search-tip-text pt-28 pl-24 pr-24"
-      v-if="isSearchedValue && patientList.length === 0"
+      v-if="searchValue && isSearchedValue && patientList.length === 0"
     >
-      没有找到“<span class="patient-name">{{ isSearchedValue }}</span
-      >”这个患者
+      没有找到“
+      <span class="patient-name">{{ isSearchedValue }}</span>
+      ”这个患者
     </div>
 
     <!-- 历史搜索 -->
@@ -39,9 +40,9 @@
       </div>
       <span
         class="history-search-text"
-        v-for="searchRecord in searchRecords"
-        :key="searchRecord"
-        @click="chooseSearchRecord(searchRecord)"
+        v-for="(searchRecord, index) in searchRecords"
+        :key="index"
+        @click="chooseSearchRecord(searchRecord, index)"
       >
         {{
           searchRecord.length > 10
@@ -52,7 +53,7 @@
     </div>
 
     <!-- 搜索列表 -->
-    <div v-if="isSearchedValue && patientList.length != 0">
+    <div v-if="searchValue && patientList.length != 0">
       <div v-for="parient in patientList" :key="parient.patientId">
         <div @click="clickPatientCard(parient.patientId)">
           <card
@@ -93,8 +94,8 @@ export default {
       current: 1, //默认展示 第一页数据
       size: 10, //默认展示 15条数据
       total: 1, //默认 总条目，
-      // 数据列表的状态
       dataSourceStatus: {
+        // 数据列表的状态
         loading: true,
         status: 'loading',
         request: 'loading',
@@ -120,53 +121,56 @@ export default {
     },
     //更新搜索框的值
     changeValue(param) {
+      if (!param.value.trim()) {
+        this.patientList = []
+      }
       this.searchValue = param.value
     },
-    getPatients() {
-      let that = this
-      patientAPI
-        .getPatientList({
-          regularParam: this.isSearchedValue,
-          current: this.current,
-          size: this.size,
-        })
-        .then((res) => {
-          //TODO：搜索患者
+    async getPatients() {
+      uni.showLoading({
+        title: '搜索患者中',
+        mask: true,
+      })
 
-          const { total, current, records } = res.data
+      let {
+        data: { total, current, records },
+      } = await patientAPI.getPatientList({
+        regularParam: this.searchValue,
+        current: this.current,
+        size: this.size,
+      })
 
-          if (current === 1) {
-            that.patientList = records
-          } else {
-            that.patientList = that.patientList.concat(records)
-          }
-          that.total = total
+      this.isSearchedValue = this.searchValue
+      uni.hideLoading()
 
-          if (total === that.patientList.length) {
-            this.dataSourceStatus.status = 'noMore'
-          }
-        })
-        .catch(() => {
-          //
-        })
+      if (current === 1) {
+        this.patientList = records
+      } else {
+        this.patientList = this.patientList.concat(records)
+      }
+      this.total = total
+
+      if (total === this.patientList.length) {
+        this.dataSourceStatus.status = 'noMore'
+      } else {
+        this.dataSourceStatus.status = 'more'
+      }
     },
     //执行搜索
     searchPatients() {
-      if (!this.searchValue) {
+      if (!this.searchValue.trim()) {
         return
       }
-      this.isSearchedValue = this.searchValue
 
       //搜索历史列表数据：最多显示10条
       let searchList = [
-        ...new Set([
-          this.isSearchedValue,
-          ...uni.getStorageSync('searchPatientHistory'),
-        ]),
+        ...new Set([this.searchValue, ...this.searchRecords]),
       ].filter((v, index) => index < 10)
 
       this.searchRecords = searchList
       uni.setStorageSync('searchPatientHistory', searchList)
+
+      console.log('----搜索后 历史值----', this.searchRecords)
 
       this.getPatients()
     },
@@ -174,11 +178,22 @@ export default {
     cancelSearch() {
       this.searchValue = ''
       this.isSearchedValue = ''
+      this.current = 1
       this.patientList = []
     },
     //选择搜索历史中某一个历史
-    chooseSearchRecord(searchRecord) {
+    chooseSearchRecord(searchRecord, index) {
+      console.log('----选择时 历史值----', this.searchRecords)
+      console.log('--###--', searchRecord)
+
       this.searchValue = searchRecord
+
+      //更新搜索历史顺序
+      this.searchRecords.unshift(...this.searchRecords.splice(index, 1))
+      //this.searchRecords.map((a, b) => a)
+      uni.setStorageSync('searchPatientHistory', this.searchRecords)
+
+      this.getPatients()
     },
     clearHistorySearch() {
       this.searchRecords = []

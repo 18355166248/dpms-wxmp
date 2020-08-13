@@ -1,29 +1,31 @@
 <template>
-  <scroll-view style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div v-show="personList.length < 10" class="add" @click="addPerson">
-      <div class="iconfont icon-add"></div>
-      <div>还可添加{{ 10 - personList.length }}人</div>
-    </div>
-    <div class="personList">
-      <div
-        class="item"
-        v-for="val of personList"
-        @click="personDetail(val.id)"
-        :key="val.id"
-      >
-        <div class="name">
-          {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
-          <span class="self" v-if="val.contactLabel == 1">本人</span>
+  <movable-area>
+    <view>
+      <scroll-view scroll-y>
+        <div v-if="personList.length < 10" class="add" @click="addPerson">
+          <div class="iconfont icon-add"></div>
+          <div>还可添加{{ 10 - personList.length }}人</div>
         </div>
-        <div class="phone">手机：{{ val.mobile }}</div>
-        <span class="iconfont icon-right"></span>
-      </div>
-    </div>
+        <div class="personList">
+          <div class="item" v-for="val of personList" @click="personDetail(val.id)" :key="val.id">
+            <div class="name">
+              {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
+              <span
+                class="self"
+                v-if="val.contactLabel == 1"
+              >本人</span>
+            </div>
+            <div class="phone">手机：{{ val.mobile }}</div>
+            <span class="iconfont icon-right"></span>
+          </div>
+        </div>
+      </scroll-view>
+    </view>
     <div class="empty" v-show="showEmpty">
       <image class="emptyImg" src="/static/empty.svg" />
       <div class="emptyTxt">未查询到任何信息</div>
     </div>
-  </scroll-view>
+  </movable-area>
 </template>
 
 <script>
@@ -53,6 +55,9 @@ export default {
   onUnload() {
     uni.$off(globalEventKeys.updatePersonFormWithSaveSuccess)
   },
+  onPullDownRefresh() {
+    this.getCustomer()
+  },
   methods: {
     getCustomer() {
       let id = this.staff.id
@@ -65,13 +70,16 @@ export default {
           } else {
             this.showEmpty = false
           }
+          uni.stopPullDownRefresh()
         })
         .catch((error) => {
           console.log('error', error)
         })
     },
     addPerson() {
-      this.$utils.push({ url: '/pages/personAdd/personAdd' })
+      this.$utils.push({
+        url: '/pages/personAdd/personAdd?param=' + this.personList.length,
+      })
     },
     personDetail(id) {
       let detail
@@ -90,6 +98,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+movable-area {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.04);
+}
 .add {
   height: 148rpx;
   margin: 32rpx 24rpx;

@@ -97,7 +97,7 @@
           :style="createMeet.style"
           @touchstart.stop="touchMeetingStart"
           @touchmove.stop="touchMeetingMove"
-          @touchend.stop="touchMeetingEnd"
+          @touchend.stop="!createApptClick && touchMeetingEnd($event)"
         >
           <view
             class="radius_first radius"
@@ -210,6 +210,7 @@ export default {
       VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
       GENDER_ENUM: this.$utils.getEnums('Gender'),
+      createApptClick: false,
     }
   },
   //如果将chooseDateProp放入vuex 监听可使用下面方法
@@ -248,7 +249,6 @@ export default {
 
     this.minRatio = this.showMinute / this.unitMinute // 4 一个显示的时间段分几块
     this.minAll = 1440 / this.unitMinute // 96 (1400 = 24*60)
-    this.scrollTop = this.unitHeight * 36 // 默认9点开始
 
     Array.isArray(this.apptList) &&
       this.apptList.length > 0 &&
@@ -256,6 +256,7 @@ export default {
   },
   mounted() {
     const query = uni.createSelectorQuery().in(this)
+    this.createApptClick = false
 
     query
       .select('#dayTableId')
@@ -271,8 +272,12 @@ export default {
         this.getMeetingList()
     },
     scheduleList(newVal) {
+      console.log('newVal', newVal)
       this.getDefaultTable()
       this.isTodayFun(this.chooseDateProp)
+      setTimeout(() => {
+        this.scrollTop = this.unitHeight * 36 + 15 // 默认9点开始
+      })
     },
     retract() {
       const query = uni.createSelectorQuery().in(this)
@@ -348,7 +353,7 @@ export default {
       let timeId = hour * self.minRatio + Math.floor(min / self.unitMinute)
 
       self.timeId = timeId
-      this.scrollTop = timeId * this.unitHeight - 50
+      // this.scrollTop = timeId * this.unitHeight - 50
     },
     //获取表格默认数据
     getDefaultTable() {
@@ -1029,6 +1034,7 @@ export default {
         // 点击编辑中的卡片 如果没有患者信息则需要跳转到新建预约页面, 否则不做任何操作
         if (!this.createMeet.patient) {
           self.$emit('createAppt', this.createMeet)
+          this.createApptClick = true
 
           return
         }
@@ -1036,6 +1042,7 @@ export default {
         // 跨诊所, 非预约状态 不可编辑
         if (this.isDisabled(this.createMeet)) return
 
+        this.createApptClick = true
         self.$emit('editAppt', this.createMeet)
 
         return
@@ -1148,6 +1155,7 @@ export default {
     clearCreateMeet() {
       this.isCreate = false
       this.createMeet = defaultMeet
+      this.createApptClick = false
     },
     getBackgroundColorByScheduleItemList(timeTitle) {
       if (timeTitle === '24:00') return

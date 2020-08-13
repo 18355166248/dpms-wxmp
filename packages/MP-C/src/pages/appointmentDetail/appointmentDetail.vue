@@ -61,7 +61,7 @@
         提醒：您的预约{{
         NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
         .zh_CN
-        }}，请耐心等待诊所审核确认，有任何问题可拨打电话：13967801309
+        }}，请耐心等待诊所审核确认，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
       </div>
       <div
         class="reminder"
@@ -75,7 +75,7 @@
         您的预约{{
         NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
         .zh_CN
-        }}，有任何问题可拨打电话：13967801309
+        }}，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
       </div>
       <div
         class="reminder"
@@ -87,7 +87,7 @@
         您的预约{{
         NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
         .zh_CN
-        }}没有及时就诊，有任何问题可拨打电话：13967801309
+        }}没有及时就诊，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
       </div>
       <div
         class="reminder"
@@ -99,7 +99,7 @@
         您{{
         NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
         .zh_CN
-        }}，请及时就诊，有任何问题可拨打电话：13967801309
+        }}，请及时就诊，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
       </div>
       <div class="btn">
         <button

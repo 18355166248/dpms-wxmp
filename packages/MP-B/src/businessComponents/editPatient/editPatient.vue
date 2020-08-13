@@ -83,9 +83,10 @@
       <div class="dpms-cell-group dpms-cell-group-textarea">
         <div class="dpms-cell" data-layout-align="space-between center">
           <textarea
+            style="height: 142rpx; padding: 6rpx 0; width: 686rpx;"
             placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
             placeholder="请输入详细住址"
-            auto-height
+            maxlength="100"
             v-model="form.address"
           />
         </div>
@@ -106,8 +107,9 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import AsyncValidator from 'async-validator'
 import patientAPI from '@/APIS/patient/patient.api'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 const formDefault = {
   patientName: '',
@@ -165,16 +167,15 @@ export default {
         mobile: [
           {
             required: true,
-            pattern: /^[0-9]*$/,
             message: '请输入联系电话',
           },
           {
-            len: 11,
+            pattern: /^\d{11}$/,
             message: '联系电话格式不正确',
           },
         ],
         alternateMobile: {
-          pattern: /^[0-9]{11}$/,
+          pattern: /^\d{11}$/,
           message: '备用号码格式不正确',
         },
         weChatId: {
@@ -183,7 +184,7 @@ export default {
           message: '请输入正确的微信号',
         },
         qqNum: {
-          pattern: /^[0-9]{1,20}$/,
+          pattern: /^\d{1,20}$/,
           message: '请输入正确的QQ格式',
         },
         address: {
@@ -270,7 +271,7 @@ export default {
         .join(',')
     },
     async submit() {
-      this.$refs.editPatientForm.validate((err, fileds) => {
+      this.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0]?.message)
           return
@@ -283,6 +284,16 @@ export default {
     },
     showBtn() {
       this.disabledSaveBtn = false
+    },
+    hideBtn() {
+      this.disabledSaveBtn = true
+    },
+    validate(callback) {
+      let validator = new AsyncValidator(this.rules)
+
+      validator.validate(this.form, (errors, fields) => {
+        _.isFunction(callback) && callback(errors, fields)
+      })
     },
   },
 }

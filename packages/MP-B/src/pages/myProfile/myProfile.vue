@@ -56,6 +56,7 @@
 import _ from 'lodash'
 import moment from 'moment'
 import { mapState } from 'vuex'
+import AsyncValidator from 'async-validator'
 import institutionAPI from '@/APIS/institution/institution.api'
 
 const formData = {
@@ -96,10 +97,16 @@ export default {
           required: true,
           message: '请选择性别',
         },
-        mobile: {
-          required: true,
-          message: '请输入手机号',
-        },
+        mobile: [
+          {
+            required: true,
+            message: '请输入手机号',
+          },
+          {
+            pattern: /^\d{11}$/,
+            message: '手机号格式不正确',
+          },
+        ],
         position: {
           required: true,
           message: '请选择岗位',
@@ -121,7 +128,7 @@ export default {
   },
   methods: {
     saveMyProfile() {
-      this.$refs.myProfileForm.validate((err, fileds) => {
+      this.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
           return
@@ -141,7 +148,7 @@ export default {
               ...this.form,
             })
             let that = this
-            this.$utils.show('修改成功', {
+            this.$utils.show('保存成功', {
               duration: 1000,
               complete() {
                 setTimeout(() => {
@@ -153,6 +160,13 @@ export default {
           .catch(() => {
             this.isLoading = false
           })
+      })
+    },
+    validate(callback) {
+      let validator = new AsyncValidator(this.rules)
+
+      validator.validate(this.form, (errors, fields) => {
+        _.isFunction(callback) && callback(errors, fields)
       })
     },
   },

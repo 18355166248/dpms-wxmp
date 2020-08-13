@@ -40,6 +40,7 @@
       "style": {
         "navigationBarTitleText": "我的",
         "disableScroll": false,
+        "enablePullDownRefresh": true,
         "navigationStyle": "custom"
       }
     },
@@ -52,13 +53,15 @@
     {
       "path": "pages/myAppointment/myAppointment",
       "style": {
-        "navigationBarTitleText": "我的预约"
+        "navigationBarTitleText": "我的预约",
+        "enablePullDownRefresh": true
       }
     },
     {
       "path": "pages/personManagement/personManagement",
       "style": {
-        "navigationBarTitleText": "人员管理"
+        "navigationBarTitleText": "人员管理",
+        "enablePullDownRefresh": true
       }
     },
     {
