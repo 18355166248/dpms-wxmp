@@ -27,9 +27,9 @@ export default {
         mobile: form.mobile,
         patientName: form.patientName,
       })
-      if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
-        delete scrmPatientInfo.customerId
-      }
+      // if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
+      //   delete scrmPatientInfo.customerId
+      // }
       this.createPatient(scrmPatientInfo, form)
     },
     async createPatient(scrmPatientInfo, form) {
