@@ -51,7 +51,11 @@ export default {
       })
       setStorage(STORAGE_KEY.STAFF, res.data)
       setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
-      this.$utils.back(2)
+      if (getCurrentPages().slice(-2)[0].route.includes('pages/login')) {
+        this.$utils.reLaunch({ url: '/pages/index/index' })
+      } else {
+        this.$utils.back(2)
+      }
     },
   },
 }
