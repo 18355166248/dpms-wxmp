@@ -1,16 +1,5 @@
 <template>
   <movable-area>
-    <movable-view
-      :x="x"
-      :y="y"
-      direction="all"
-      @change="onChange"
-      @click="toUrl('/pages/projAptmt/projAptmt')"
-      class="aptmt"
-      v-show="!hide"
-    >
-      <span class="iconfont icon-time"></span>
-    </movable-view>
     <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
@@ -136,6 +125,17 @@
         </view>
       </view>
     </scroll-view>
+    <movable-view
+      :x="x"
+      :y="y"
+      direction="all"
+      @change="onChange"
+      @click="toUrl('/pages/projAptmt/projAptmt')"
+      class="aptmt"
+      v-show="!hide"
+    >
+      <span class="iconfont icon-time"></span>
+    </movable-view>
     <Notice />
   </movable-area>
 </template>
@@ -241,6 +241,7 @@ export default {
             this.loadStatus = 'noMore'
           }
         })
+      uni.stopPullDownRefresh()
     },
     loadMoreList() {
       if (this.loadStatus === 'loading') return
