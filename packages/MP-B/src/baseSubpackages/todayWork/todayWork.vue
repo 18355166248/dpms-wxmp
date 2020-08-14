@@ -109,7 +109,7 @@
                         treating(
                           {
                             registerId: item.registerId,
-                            type: 'REGISTER_TREATING',
+                            type: 'REGISTER_CONSULTING',
                           },
                           'CONSULTANT',
                         )
