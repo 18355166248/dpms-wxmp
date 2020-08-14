@@ -48,7 +48,7 @@
       <div class="protocol">
         <checkbox class="check" checked @click="agree"></checkbox>
         <span>我已知悉并同意</span>
-        <span @click="open">《预约服务协议》</span>
+        <span @click="showContent = true">《预约服务协议》</span>
       </div>
 
       <div
@@ -120,6 +120,22 @@
         >取消</button>
       </div>
     </div>
+    <modal
+      :show="showContent"
+      title="预约服务协议"
+      confirm-color="#5cbb89"
+      :show-cancel="false"
+      @close="showContent = false"
+    >
+      <view style="padding: 32rpx 24rpx;">
+        <view>1. 停诊将会短信通知您，请保持电话畅通；</view>
+        <view>
+          2.
+          您的预约信息作为登陆信息，在诊所核实确认时有权取消您的预约信息；
+        </view>
+        <view>3. 实名制预约，就诊人信息不符合没法就诊；</view>
+      </view>
+    </modal>
   </div>
 </template>
 
@@ -127,6 +143,7 @@
 import moment from 'moment'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
+import modal from '@/components/modal/neil-modal.vue'
 
 export default {
   data() {
@@ -137,9 +154,13 @@ export default {
       protocol: true,
       networkAppointmentId: '',
       detailInfo: {},
+      showContent: false,
     }
   },
   mounted() {},
+  components: {
+    modal,
+  },
   onLoad(id) {
     this.networkAppointmentId = id.networkAppointmentId
     this.getDetail()
