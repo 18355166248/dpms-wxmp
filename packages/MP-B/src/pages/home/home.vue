@@ -257,6 +257,7 @@ export default {
       )
     },
     staffName() {
+      console.log('this.staff :', this.staff)
       return this.staff ? this.staff.staffName : '--'
     },
     medicalInstitutionSimpleCode() {
