@@ -8,6 +8,12 @@
       }
     },
     {
+      "path": "pages/index/webView",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+    {
       "path": "pages/projAptmt/projAptmt",
       "style": {
         "navigationBarTitleText": "预约",

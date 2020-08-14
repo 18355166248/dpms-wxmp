@@ -80,6 +80,9 @@ export default {
     this.init(params)
     this.params = params
   },
+  onPullDownRefresh() {
+    this.init(this.params)
+  },
   computed: {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
@@ -100,6 +103,7 @@ export default {
           this.detailIntroduction =
             res.data.detailIntroduction || res.data.item.itemDetailIntroduction
         })
+      uni.stopPullDownRefresh()
     },
     toUrl(url) {
       this.$utils.push({

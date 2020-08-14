@@ -69,6 +69,7 @@ import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
+      phone: '',
       endDate: moment().format('YYYY-MM-DD'),
       second: 0,
       defaultType: [
@@ -133,29 +134,26 @@ export default {
   created() {},
   onLoad(info) {
     this.form = JSON.parse(info.personDetail)
+    this.form.verificationCode = ''
+    this.phone = JSON.parse(info.personDetail).mobile
     console.log('jjjjjjjjjjjjjjj', this.form)
-    customerAPI
-      .needVerify({
-        userId: getStorage(STORAGE_KEY.STAFF).id,
-        mobile: JSON.parse(info.personDetail).mobile,
-      })
-      .then((res) => {
-        console.log(res)
-        this.needAuthCode = res.data
-      })
   },
   watch: {
     'form.mobile'() {
       if (this.form.mobile.length == 11) {
-        customerAPI
-          .needVerify({
-            userId: getStorage(STORAGE_KEY.STAFF).id,
-            mobile: this.form.mobile,
-          })
-          .then((res) => {
-            console.log(res)
-            this.needAuthCode = res.data
-          })
+        if (this.form.mobile === this.phone) {
+          this.needAuthCode = false
+        } else {
+          customerAPI
+            .needVerify({
+              userId: getStorage(STORAGE_KEY.STAFF).id,
+              mobile: this.form.mobile,
+            })
+            .then((res) => {
+              console.log('rrrrrrrrr', res)
+              this.needAuthCode = res.data
+            })
+        }
       }
     },
   },
@@ -204,19 +202,6 @@ export default {
           }
         })
       })
-    },
-    phone() {
-      if (this.form.mobile.length == 11) {
-        customerAPI
-          .needVerify({
-            userId: getStorage(STORAGE_KEY.STAFF).id,
-            mobile: this.form.mobile,
-          })
-          .then((res) => {
-            console.log(res)
-            this.needAuthCode = res.data
-          })
-      }
     },
   },
 }

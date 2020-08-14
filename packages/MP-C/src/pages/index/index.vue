@@ -1,24 +1,20 @@
 <template>
   <movable-area>
-    <movable-view
-      :x="x"
-      :y="y"
-      direction="all"
-      @change="onChange"
-      @click="toUrl('/pages/projAptmt/projAptmt')"
-      class="aptmt"
-      v-show="!hide"
+    <scroll-view
+      class="content"
+      scroll-y
+      @scrolltolower="loadMoreList"
+      refresher-enabled
+      @refresherrefresh="onRefresh"
+      :refresher-triggered="refresherTriggered"
     >
-      <span class="iconfont icon-time"></span>
-    </movable-view>
-    <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
             class="alignCenter"
             v-for="b in bannerList"
             :key="b.bannerId"
-            @click="toUrl(b.linkUrl)"
+            @click="bannerToUrl(b.linkUrl)"
           >
             <image
               class="bannerImg"
@@ -86,7 +82,11 @@
                     >预约</view
                   >
                 </view>
-                <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
+                <view class="cardDesc">{{
+                  i.itemBriefIntroduction.length > 12
+                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
+                    : i.itemBriefIntroduction
+                }}</view>
               </view>
             </swiper-item>
           </swiper>
@@ -128,10 +128,25 @@
               >
             </view>
           </view>
-          <load-more :status="loadStatus"></load-more>
+          <load-more
+            :status="loadStatus"
+            :contentText="contentText"
+            :color="color"
+          ></load-more>
         </view>
       </view>
     </scroll-view>
+    <movable-view
+      :x="x"
+      :y="y"
+      direction="all"
+      @change="onChange"
+      @click="toUrl('/pages/projAptmt/projAptmt')"
+      class="aptmt"
+      v-show="!hide"
+    >
+      <span class="iconfont icon-time"></span>
+    </movable-view>
     <Notice />
   </movable-area>
 </template>
@@ -140,7 +155,6 @@
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const ACCESS_TOKEN = getStorage(STORAGE_KEY.ACCESS_TOKEN)
 import Notice from './notice'
 
 export default {
@@ -156,9 +170,14 @@ export default {
       loadStatus: 'loading',
       currentPage: 1,
       total: 0,
-      size: 3,
+      size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
+      refresherTriggered: false,
+      color: '#5CBB89',
+      contentText: {
+        contentdown: '加载更多',
+      },
     }
   },
   computed: {
@@ -192,7 +211,6 @@ export default {
   methods: {
     init() {
       if (!this.MEDICALINSTITUTION) return
-
       institutionAPI
         .getInstitutionInfo({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
@@ -238,6 +256,19 @@ export default {
             this.loadStatus = 'noMore'
           }
         })
+      this.refresherTriggered = false
+    },
+    bannerToUrl(url) {
+      if (url.indexOf(`http`) !== -1) {
+        this.toUrl(`/pages/index/webView?url=${url}`)
+      } else {
+        this.toUrl(url)
+      }
+    },
+    onRefresh() {
+      if (this.refresherTriggered) return
+      this.refresherTriggered = true
+      this.init()
     },
     loadMoreList() {
       if (this.loadStatus === 'loading') return
@@ -274,7 +305,6 @@ export default {
           appointmentItemId,
         })
         .then((res) => {
-          console.log('res', res)
           if (res.data.canAppointment) {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,

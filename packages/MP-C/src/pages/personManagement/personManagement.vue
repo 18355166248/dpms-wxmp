@@ -77,8 +77,13 @@ export default {
         })
     },
     addPerson() {
+      let personList = JSON.stringify(this.personList)
       this.$utils.push({
-        url: '/pages/personAdd/personAdd?param=' + this.personList.length,
+        url:
+          '/pages/personAdd/personAdd?param=' +
+          this.personList.length +
+          '&personList=' +
+          personList,
       })
     },
     personDetail(id) {

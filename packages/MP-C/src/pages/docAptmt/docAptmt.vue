@@ -50,7 +50,13 @@
               >预 约</view
             >
           </view>
-          <view class="cardDesc">{{ d.goodAt }}</view>
+          <view class="cardDesc"
+            >{{
+              d.goodAt.length > 30
+                ? d.goodAt.substring(0, 30) + '...'
+                : d.goodAt
+            }}
+          </view>
         </view>
       </view>
       <load-more :status="loadStatus"></load-more>
@@ -69,7 +75,6 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {
@@ -165,7 +170,6 @@ export default {
           appointmentDoctorId,
         })
         .then((res) => {
-          console.log('res', res)
           if (res.data.canAppointment) {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,
