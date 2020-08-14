@@ -46,7 +46,11 @@
               >预 约</view
             >
           </view>
-          <view class="cardDesc">{{ p.itemBriefIntroduction }}</view>
+          <view class="cardDesc">{{
+            p.itemBriefIntroduction.length > 35
+              ? p.itemBriefIntroduction.substring(0, 35) + '...'
+              : p.itemBriefIntroduction
+          }}</view>
         </view>
       </view>
       <load-more :status="loadStatus"></load-more>
@@ -65,7 +69,6 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {

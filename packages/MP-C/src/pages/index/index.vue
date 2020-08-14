@@ -1,16 +1,5 @@
 <template>
   <movable-area>
-    <movable-view
-      :x="x"
-      :y="y"
-      direction="all"
-      @change="onChange"
-      @click="toUrl('/pages/projAptmt/projAptmt')"
-      class="aptmt"
-      v-show="!hide"
-    >
-      <span class="iconfont icon-time"></span>
-    </movable-view>
     <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
@@ -86,7 +75,11 @@
                     >预约</view
                   >
                 </view>
-                <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
+                <view class="cardDesc">{{
+                  i.itemBriefIntroduction.length > 12
+                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
+                    : i.itemBriefIntroduction
+                }}</view>
               </view>
             </swiper-item>
           </swiper>
@@ -132,6 +125,17 @@
         </view>
       </view>
     </scroll-view>
+    <movable-view
+      :x="x"
+      :y="y"
+      direction="all"
+      @change="onChange"
+      @click="toUrl('/pages/projAptmt/projAptmt')"
+      class="aptmt"
+      v-show="!hide"
+    >
+      <span class="iconfont icon-time"></span>
+    </movable-view>
     <Notice />
   </movable-area>
 </template>
@@ -140,7 +144,6 @@
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const ACCESS_TOKEN = getStorage(STORAGE_KEY.ACCESS_TOKEN)
 import Notice from './notice'
 
 export default {
@@ -238,6 +241,7 @@ export default {
             this.loadStatus = 'noMore'
           }
         })
+      uni.stopPullDownRefresh()
     },
     loadMoreList() {
       if (this.loadStatus === 'loading') return
@@ -274,7 +278,6 @@ export default {
           appointmentItemId,
         })
         .then((res) => {
-          console.log('res', res)
           if (res.data.canAppointment) {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,
