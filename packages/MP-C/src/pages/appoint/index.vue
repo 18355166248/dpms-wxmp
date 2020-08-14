@@ -67,7 +67,7 @@
         class="checkbox"
         @change="(v) => (btnDisabled = !v)"
       />我已知悉并同意
-      <a href>《预约服务协议》</a>
+      <text @click="showContent = true">《预约服务协议》</text>
     </div>
     <dpmsButton :disabled="btnDisabled" text="确认预约" @click="submit" />
     <dpmsBottomPicker
@@ -134,6 +134,21 @@
       </div>
       <empty v-if="!items.length" :disabled="true" text="暂无可预约项目" />
     </dpmsBottomPicker>
+    <modal
+      :show="showContent"
+      title="预约服务协议"
+      :show-cancel="false"
+      @close="showContent = false"
+    >
+      <view style="padding: 32rpx 24rpx;">
+        <view>1. 停诊将会短信通知您，请保持电话畅通；</view>
+        <view
+          >2.
+          您的预约信息作为登陆信息，在诊所核实确认时有权取消您的预约信息；</view
+        >
+        <view>3. 实名制预约，就诊人信息不符合没法就诊；</view>
+      </view>
+    </modal>
   </div>
 </template>
 
@@ -144,10 +159,12 @@ import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import empty from '@/components/empty/empty.vue'
+import modal from '@/components/modal/neil-modal.vue'
 export default {
   data() {
     return {
       userId: getStorage(STORAGE_KEY.STAFF).id,
+      showContent: false,
       shopId: '',
       itemId: '',
       networkAppointmentId: '',
@@ -188,6 +205,7 @@ export default {
   },
   components: {
     empty,
+    modal,
   },
   computed: {
     ...mapState('loginStore', ['MEDICALINSTITUTION']),
@@ -299,7 +317,7 @@ export default {
               duration: 1000,
               complete() {
                 setTimeout(() => {
-                  that.$utils.push({
+                  that.$utils.replace({
                     url: '/pages/myAppointment/myAppointment',
                   })
                 }, 1000)
@@ -417,7 +435,7 @@ export default {
   .checkbox {
     margin-right: 10rpx;
   }
-  a {
+  text {
     color: rgba(92, 187, 137, 1);
   }
 }
