@@ -43,6 +43,7 @@
         @cellclick="doctorTimePickerVisible = true"
       />
       <dpmsCellPicker
+        v-if="personnelList.length"
         defaultType="id"
         :defaultProps="{
           label: 'personnelName',
@@ -54,6 +55,14 @@
         placeholder="请选择预约人员"
         required
         isLink
+      />
+      <dpmsCell
+        v-else
+        title="预约人员"
+        placeholder="请选择预约人员"
+        required
+        isLink
+        @cellclick="personneEmpty = true"
       />
       <dpmsCellInput
         title="预约备注"
@@ -69,7 +78,11 @@
       />我已知悉并同意
       <text @click="showContent = true">《预约服务协议》</text>
     </div>
-    <dpmsButton :disabled="btnDisabled" text="确认预约" @click="submit" />
+    <dpmsButton
+      :disabled="btnDisabled"
+      :text="networkAppointmentId ? '修改预约' : '确认预约'"
+      @click="submit"
+    />
     <dpmsBottomPicker
       class="dpmsBottomPicker"
       :visible.sync="doctorPickerVisible"
@@ -137,6 +150,7 @@
     <modal
       :show="showContent"
       title="预约服务协议"
+      confirm-color="#5cbb89"
       :show-cancel="false"
       @close="showContent = false"
     >
@@ -149,6 +163,16 @@
         <view>3. 实名制预约，就诊人信息不符合没法就诊；</view>
       </view>
     </modal>
+    <modal
+      class="personneEmpty"
+      :show="personneEmpty"
+      confirm-text="新增人员"
+      content="暂无可预约人员"
+      align="center"
+      @close="personneEmpty = false"
+      @confirm="addPersonne"
+      confirm-color="#5cbb89"
+    />
   </div>
 </template>
 
@@ -165,10 +189,12 @@ export default {
     return {
       userId: getStorage(STORAGE_KEY.STAFF).id,
       showContent: false,
+      personneEmpty: false,
       shopId: '',
       itemId: '',
       networkAppointmentId: '',
       apiUrl: 'creatAppt',
+      editData: {},
       shopDetail: {},
       form: {
         doctorId: '',
@@ -219,11 +245,12 @@ export default {
       }))
     },
     startDate() {
-      return this.shopDetail.preAdvanceDayOfAppointmentTime
-        ? moment(this.shopDetail.preAdvanceDayOfAppointmentTime).format(
-            'YYYY-MM-DD',
-          )
-        : ''
+      let shopStartDate = moment(
+        this.shopDetail.preAdvanceDayOfAppointmentTime,
+      ).valueOf()
+      return moment(Math.max(moment().valueOf(), shopStartDate)).format(
+        'YYYY-MM-DD',
+      )
     },
     endDate() {
       return this.shopDetail.nextAdvanceDayOfAppointmentTime
@@ -247,7 +274,6 @@ export default {
     },
   },
   onLoad(params) {
-    console.log('params', params)
     this.shopId = params.shopId
     this.itemId = params.itemId
     this.form.doctorId = params.doctorId
@@ -270,6 +296,7 @@ export default {
         })
         .then((res) => {
           const { data } = res
+          this.editData = data
           this.form = {
             doctorId: data.doctorId,
             itemList: data.networkAppointmentItemList,
@@ -341,13 +368,17 @@ export default {
           let { data } = res
           this.doctorTime = data.filter((v) => v.isShow)
 
-          // 如果编辑状态，原始时间已不可预约，清除时间
+          // 如果编辑状态，原始时间已不可预约，插入原始时间
           if (
+            this.form.timeStamp &&
             !this.doctorTime
               .map((v) => v.startAvailableDateStamp)
               .includes(this.form.timeStamp)
           ) {
-            this.form.timeStamp = ''
+            this.doctorTime.unshift({
+              startAvailableDateStamp: this.editData.appointmentBeginTimeStamp,
+              endAvailableDateStamp: this.editData.appointmentEndTimeStamp,
+            })
           }
         })
     },
@@ -384,6 +415,9 @@ export default {
     async getPersonnelList() {
       const res = await appointAPI.getPersonnelList({ userId: this.userId })
       this.personnelList = res.data
+    },
+    addPersonne() {
+      this.$utils.push({ url: '/pages/personManagement/personManagement' })
     },
     async getShopDetail() {
       const res = await appointAPI.getShopDetail({ shopId: this.shopId })
@@ -547,5 +581,8 @@ button {
 }
 .dpmsBottomPicker .empty {
   padding: 100rpx 0;
+}
+.personneEmpty .empty {
+  padding: 50rpx 0;
 }
 </style>
