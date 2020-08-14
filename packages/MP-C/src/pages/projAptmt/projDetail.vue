@@ -80,6 +80,9 @@ export default {
     this.init(params)
     this.params = params
   },
+  onPullDownRefresh() {
+    this.init(this.params)
+  },
   computed: {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,

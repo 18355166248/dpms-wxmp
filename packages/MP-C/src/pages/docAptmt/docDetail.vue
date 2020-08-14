@@ -80,6 +80,10 @@ export default {
   },
   onLoad(params) {
     this.init(params)
+    this.params = params
+  },
+  onPullDownRefresh() {
+    this.init(this.params)
   },
   methods: {
     init(params) {

@@ -86,7 +86,11 @@
                     >预约</view
                   >
                 </view>
-                <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
+                <view class="cardDesc">{{
+                  i.itemBriefIntroduction.length > 12
+                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
+                    : i.itemBriefIntroduction
+                }}</view>
               </view>
             </swiper-item>
           </swiper>
