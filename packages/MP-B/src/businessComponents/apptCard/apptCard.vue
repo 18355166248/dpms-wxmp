@@ -36,7 +36,9 @@
         <view v-if="appt.visType">
           就诊类型：{{ VIS_TYPE_ENUM.properties[appt.visType].zh_CN }}
         </view>
-        <view>联系方式：{{ appt.patient.mobile }}</view>
+        <view v-if="appt.patient.mobile"
+          >联系方式：{{ appt.patient.mobile }}</view
+        >
         <view>预约时间：{{ getApptTime() }}</view>
         <view>预约诊所：{{ appt.medicalInstitutionSimpleCode }}</view>
         <view>预约医生：{{ doctor.staffName }}</view>
