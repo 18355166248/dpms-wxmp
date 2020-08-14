@@ -1,6 +1,6 @@
 <template>
   <div class="notice" v-if="visible">
-    <cover-view class="mask"></cover-view>
+    <div class="mask"></div>
     <div class="inner">
       <div class="content" :style="{backgroundImage: `url(${notice.backgroundPictureUrl})`}">
         <div class="tit">{{notice.announcementTitle}}</div>
@@ -35,8 +35,10 @@ export default {
       this.visible = res.data?.enable
     },
   },
-  created() {
-    this.getNotice()
+  watch: {
+    MEDICALINSTITUTION(newVal, oldVal) {
+      this.getNotice()
+    },
   },
 }
 </script>
@@ -55,6 +57,7 @@ export default {
   }
   .inner {
     position: fixed;
+    z-index: 1;
     top: 50%;
     left: 50%;
     width: 600rpx;
