@@ -199,7 +199,7 @@ export default {
 
             if (canApptInstitutionList.length > 1) {
               toUrl(
-                '/pages/projAptmt/projAptmt?appointmentItemId=' +
+                '/pages/projAptmt/projDetail?appointmentItemId=' +
                   appointmentItemId,
               )
             }
