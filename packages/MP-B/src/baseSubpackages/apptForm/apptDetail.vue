@@ -51,7 +51,11 @@
         </view>
       </view>
     </view>
-    <fixed-footer v-if="isHeaderWithLargeArea">
+    <fixed-footer
+      v-if="
+        isHeaderWithLargeArea && !dataSource.acrossInstitutionAppointmentFlag
+      "
+    >
       <view class="button-group">
         <template v-if="statusEnumKey === 'APPOINTMENT'">
           <button
