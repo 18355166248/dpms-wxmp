@@ -46,7 +46,11 @@
               >预 约</view
             >
           </view>
-          <view class="cardDesc">{{ p.itemBriefIntroduction }}</view>
+          <view class="cardDesc">{{
+            p.itemBriefIntroduction.length > 35
+              ? p.itemBriefIntroduction.substring(0, 35) + '...'
+              : p.itemBriefIntroduction
+          }}</view>
         </view>
       </view>
       <load-more :status="loadStatus"></load-more>
@@ -65,7 +69,6 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const staff = getStorage(STORAGE_KEY.STAFF)
 
 export default {
   data() {
@@ -168,25 +171,15 @@ export default {
     },
     handleAptmt({ appointmentItemId, itemId }) {
       const { toUrl } = this
-
-      // if (this.selectedIndex > 0) {
-      //   let shopId = this.filterStoreList[this.selectedIndex]
-      //     ?.appointmentInstitutionId
-      //   if (shopId) {
-      //     toUrl('/pages/appoint/index?itemId=' + itemId + '&shopId=' + shopId)
-      //   }
-      // }
       uni.showLoading({
         title: '加载中...',
       })
-
       institutionAPI
         .checkPorjCanAptmt({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
-          console.log('res', res)
           if (res.data.canAppointment) {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,

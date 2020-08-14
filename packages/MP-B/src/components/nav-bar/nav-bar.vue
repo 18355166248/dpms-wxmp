@@ -63,7 +63,7 @@ export default {
   position: relative;
   top: 0;
   left: 0;
-  z-index: 10000;
+  z-index: 10;
   flex-shrink: 0;
   overflow: hidden;
   color: #fff;

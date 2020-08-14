@@ -8,7 +8,7 @@
       :age="patient.age"
       :infos="[
         { label: '联系方式', value: patient.mobile },
-        { label: '用户画像', value: patient.tagListTxt },
+        { label: '患者标签', value: patient.tagListTxt },
       ]"
     />
     <view class="menu-area">
