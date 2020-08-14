@@ -26,7 +26,7 @@
         </swiper>
       </view>
       <view class="compDesc">
-        <swiper class="swiper compDescImg" autoplay>
+        <!-- <swiper class="swiper compDescImg" autoplay>
           <swiper-item
             class="alignCenter"
             v-for="(p, i) in institutionIntroduce.introduceImageUrls"
@@ -34,7 +34,7 @@
           >
             <img class="compDescImg" mode="aspectFit" :src="p" />
           </swiper-item>
-        </swiper>
+        </swiper> -->
         <view class="compDescContent">
           <p class="compDescContentDesc">
             {{ institutionIntroduce.briefIntroduction || '' }}
@@ -372,8 +372,8 @@ export default {
 }
 .compDesc {
   width: 750rpx;
-  height: 488rpx;
-  margin-top: 64rpx;
+  height: 192rpx;
+  /* margin-top: 64rpx; */
 }
 .compDescImg {
   width: 750rpx;

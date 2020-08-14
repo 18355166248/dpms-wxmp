@@ -35,8 +35,14 @@ export default {
       this.visible = res.data?.enable
     },
   },
+  created() {
+    if (this.MEDICALINSTITUTION) {
+      this.getNotice()
+    }
+  },
   watch: {
-    MEDICALINSTITUTION(newVal, oldVal) {
+    MEDICALINSTITUTION(newVal) {
+      if (!newVal) return
       this.getNotice()
     },
   },
@@ -65,7 +71,7 @@ export default {
     padding: 16rpx;
     background: linear-gradient(315deg, #81dbac, #5cbb89 99%);
     border-radius: 8rpx;
-    margin-bottom: 110rpx;
+    margin-bottom: 120rpx;
     .content {
       background: white;
       border-radius: 8rpx;
@@ -73,9 +79,11 @@ export default {
       font-size: 28rpx;
       color: rgba(0, 0, 0, 0.65);
       line-height: 1.6;
-      background-size: contain;
+      background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
+      overflow: auto;
+      height: 700rpx;
       .tit {
         color: rgba(0, 0, 0, 0.9);
         font-size: 34rpx;

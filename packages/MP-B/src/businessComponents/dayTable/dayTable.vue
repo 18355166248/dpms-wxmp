@@ -470,7 +470,7 @@ export default {
       // }
 
       // 跨诊所, 非预约状态 不可编辑
-      if (this.isDisabled(this.meetingList[index])) return
+      // if (this.isDisabled(this.meetingList[index])) return
 
       this.$emit('editAppt', this.meetingList[index])
     },
@@ -798,6 +798,12 @@ export default {
           endTimeShow: endTimeShow,
         }
         self.createMeet = NewcreateMeet
+
+        self.createMeet.patient &&
+          self.$emit('changeCard', {
+            meet: self.createMeet,
+            type: 'moveTop',
+          })
       }
     },
     //拉下边框下移开始
@@ -941,6 +947,12 @@ export default {
           endTimeShow: endTimeShow,
         }
         self.createMeet = NewcreateMeet
+
+        self.createMeet.patient &&
+          self.$emit('changeCard', {
+            meet: self.createMeet,
+            type: 'moveBottom',
+          })
       }
     },
     //拖拽整个会议开始
@@ -1046,7 +1058,7 @@ export default {
         }
 
         // 跨诊所, 非预约状态 不可编辑
-        if (this.isDisabled(this.createMeet)) return
+        // if (this.isDisabled(this.createMeet)) return
 
         this.createApptClick = true
         self.$emit('editAppt', this.createMeet)
@@ -1106,6 +1118,12 @@ export default {
           endTimeShow: endTimeShow,
         }
         self.createMeet = NewcreateMeet
+
+        self.createMeet.patient &&
+          self.$emit('changeCard', {
+            meet: self.createMeet,
+            type: 'touchMeeting',
+          })
       }
     },
     // 长按卡片新增编辑卡片
@@ -1171,7 +1189,7 @@ export default {
       // 如果不属于正常班也不属于休息班 => 灰色
       const rowStartTimestampByToday =
         moment(this.chooseDateProp + ' ' + timeTitle).valueOf() -
-        moment().startOf('day')
+        moment(this.chooseDateProp).startOf('day')
       const rowEndTimestampByToday = rowStartTimestampByToday + 900000 - 1 // 900000 = 15分钟的毫秒数
 
       const abledItemList = this.scheduleList.filter(
