@@ -103,6 +103,7 @@ export default {
           this.detailIntroduction =
             res.data.detailIntroduction || res.data.item.itemDetailIntroduction
         })
+      uni.stopPullDownRefresh()
     },
     toUrl(url) {
       this.$utils.push({

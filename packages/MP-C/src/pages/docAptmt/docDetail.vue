@@ -101,6 +101,7 @@ export default {
             res.data.detailIntroduction ||
             res.data.doctorName.detailIntroduction
         })
+      uni.stopPullDownRefresh()
     },
     toUrl(url) {
       this.$utils.push({

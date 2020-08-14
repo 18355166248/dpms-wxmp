@@ -144,7 +144,6 @@
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-const ACCESS_TOKEN = getStorage(STORAGE_KEY.ACCESS_TOKEN)
 import Notice from './notice'
 
 export default {
@@ -278,7 +277,6 @@ export default {
           appointmentItemId,
         })
         .then((res) => {
-          console.log('res', res)
           if (res.data.canAppointment) {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,
