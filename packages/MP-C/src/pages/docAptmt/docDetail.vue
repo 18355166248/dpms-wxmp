@@ -62,7 +62,7 @@
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
-const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+import { mapState } from 'vuex'
 
 export default {
   data() {
@@ -85,12 +85,17 @@ export default {
   onPullDownRefresh() {
     this.init(this.params)
   },
+  computed: {
+    ...mapState('loginStore', {
+      MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+    }),
+  },
   methods: {
     init(params) {
       const { appointmentDoctorId } = params
       institutionAPI
         .getDocDetail({
-          medicalInstitutionId: medicalInstitution.medicalInstitutionId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentDoctorId,
         })
         .then((res) => {
