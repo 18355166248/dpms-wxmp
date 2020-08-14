@@ -21,13 +21,22 @@
           <text class="iconfont icon-search"></text>
         </view>
 
-        <view
-          v-if="isHeadquartersAndRegion"
-          class="btn-new"
-          @click="toUrl('/pages/patient/createPatient/createPatient')"
-        >
-          <text>新建</text>
-        </view>
+        <template v-if="isHeadquartersAndRegion">
+          <dropDown
+            :list="[
+              {
+                name: '新建患者',
+                value: 'newPatient',
+                icon: 'icon-patient',
+              },
+            ]"
+            @select="dropMenuSelect"
+          >
+            <view class="btn-new">
+              <text>新建</text>
+            </view>
+          </dropDown>
+        </template>
         <template v-else>
           <dropDown
             :list="[
@@ -193,6 +202,12 @@ export default {
       },
     }
   },
+  onShareAppMessage(res) {
+    return {
+      title: '自定义分享标题',
+      path: '/pages/home/home',
+    }
+  },
   onLoad() {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.init()
@@ -317,14 +332,15 @@ export default {
       }
     },
     async init() {
-      uni.showLoading({
-        title: '正在加载',
-        mask: true,
-      })
-      const [err, res] = await this.loadData()
-      uni.hideLoading()
+      if (!this.isHeadquartersAndRegion) {
+        uni.showLoading({
+          title: '正在加载',
+          mask: true,
+        })
+        const [err, res] = await this.loadData()
+        uni.hideLoading()
+      }
     },
-
     async selectClinic(val) {
       console.log('val:', val)
       this.switchClinicStatus = 'loading'
