@@ -358,15 +358,16 @@ export default {
     },
     // 取消挂号
     cancleRegister(record) {
-      uni.showActionSheet({
-        itemList: ['确定'],
-        success: (res) => {
-          const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
-
-          this.changeStatus(record)
-        },
-        fail: function (res) {
-          console.log(res.errMsg)
+      uni.showModal({
+        title: '提示',
+        content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
+        success(res) {
+          if (res.confirm) {
+            const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+            this.changeStatus(record)
+          } else if (res.cancel) {
+            console.log('用户点击取消')
+          }
         },
       })
     },

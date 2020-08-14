@@ -81,9 +81,8 @@ export default {
     z-index: 101;
     list-style: none;
     background-color: #4c4c4c;
-    border-radius: 4rpx;
+    border-radius: 8rpx;
     padding-left: 0;
-    box-shadow: 10rpx 10rpx 20rpx rgba(224, 32, 32, 0.2);
 
     .dropdown-menu-item {
       display: flex;
