@@ -54,9 +54,10 @@ export default {
         .reverse()
         .join("")
         .match(/(\d{1,3})/g); // 分割反向转为字符串然后最多3个，最少1个，将匹配的值放进数组返回
+      const numericalSymbols = Number(money) < 0 ? "-" : "";
       return (
-        (Number(money) < 0 ? "-" : "") +
         sysmbol +
+        numericalSymbols +
         temp.join(",").split("").reverse().join("") +
         right
       ); // 补齐正负号和货币符号，数组转为字符串，通过逗号分隔，再分割（包含逗号也分割）反向转为字符串变回原来的顺序
