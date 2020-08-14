@@ -8,8 +8,9 @@
       @click="toUrl('/pages/projAptmt/projAptmt')"
       class="aptmt"
       v-show="!hide"
-      ><span class="iconfont icon-time"></span
-    ></movable-view>
+    >
+      <span class="iconfont icon-time"></span>
+    </movable-view>
     <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
@@ -19,12 +20,7 @@
             :key="b.bannerId"
             @click="toUrl(b.linkUrl)"
           >
-            <image
-              class="bannerImg"
-              mode="aspectFit"
-              :src="b.imageUrl"
-              :title="b.description"
-            />
+            <image class="bannerImg" mode="aspectFit" :src="b.imageUrl" :title="b.description" />
           </swiper-item>
         </swiper>
       </view>
@@ -39,12 +35,8 @@
           </swiper-item>
         </swiper>
         <view class="compDescContent">
-          <p class="compDescContentDesc">
-            {{ institutionIntroduce.briefIntroduction || '' }}
-          </p>
-          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
-            更多详情 >
-          </p>
+          <p class="compDescContentDesc">{{ institutionIntroduce.briefIntroduction || '' }}</p>
+          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">更多详情 ></p>
         </view>
       </view>
       <view class="proj">
@@ -54,15 +46,10 @@
             class="projBtn"
             @click="toUrl('/pages/projAptmt/projAptmt')"
             v-show="itemList.length > 3"
-            >更多</view
-          >
+          >更多</view>
         </view>
         <view class="cardList">
-          <swiper
-            class="swiper"
-            :display-multiple-items="displayMultipleItems"
-            next-margin="10rpx"
-          >
+          <swiper class="swiper" :display-multiple-items="displayMultipleItems" next-margin="10rpx">
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
                 <view
@@ -78,12 +65,7 @@
                 </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
-                  <view
-                    class="cardBtn"
-                    v-show="i.canAppointment"
-                    @click="handleProjAptmt(i)"
-                    >预约</view
-                  >
+                  <view class="cardBtn" v-show="i.canAppointment" @click="handleProjAptmt(i)">预约</view>
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
               </view>
@@ -94,25 +76,21 @@
       <view class="store">
         <view class="storeContent">
           <text class="storeTitle">门店</text>
-          <view
-            class="storeList"
-            v-for="s in storeList"
-            :key="s.appointmentInstitutionId"
-          >
+          <view class="storeList" v-for="s in storeList" :key="s.appointmentInstitutionId">
             <view class="storeCard">
-              <view class="storeCardTitle"
-                >{{ s.institutionName }} &nbsp;&nbsp;&nbsp;{{
-                  s.institutionPhoneNumber
-                }}</view
-              >
-              <view class="storeCardAddress"
-                ><span class="iconfont icon-location"></span>
-                {{ s.institutionAddress }}</view
-              >
-              <view class="storeCardTime"
-                ><span class="iconfont icon-time"></span>
-                {{ s.institutionAddress }}</view
-              >
+              <view class="storeCardTitle">
+                {{ s.institutionName }} &nbsp;&nbsp;&nbsp;{{
+                s.institutionPhoneNumber
+                }}
+              </view>
+              <view class="storeCardAddress">
+                <span class="iconfont icon-location"></span>
+                {{ s.institutionAddress }}
+              </view>
+              <view class="storeCardTime">
+                <span class="iconfont icon-time"></span>
+                {{ s.institutionAddress }}
+              </view>
               <view
                 class="storeCardAptmt"
                 v-show="s.canAppointment"
@@ -122,14 +100,14 @@
                       s.appointmentInstitutionId,
                   )
                 "
-                >预 约</view
-              >
+              >预 约</view>
             </view>
           </view>
           <load-more :status="loadStatus"></load-more>
         </view>
       </view>
     </scroll-view>
+    <Notice />
   </movable-area>
 </template>
 
@@ -138,6 +116,7 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
 const ACCESS_TOKEN = getStorage(STORAGE_KEY.ACCESS_TOKEN)
+import Notice from './notice'
 
 export default {
   data() {
@@ -306,7 +285,9 @@ export default {
       })
     },
   },
-  components: {},
+  components: {
+    Notice,
+  },
 }
 </script>
 

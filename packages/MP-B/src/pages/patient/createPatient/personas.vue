@@ -29,7 +29,7 @@
       </div>
     </div>
     <div v-else>
-      <empty disabled="false" text="暂无患者标签数据"></empty>
+      <empty :disabled="true" text="暂无患者标签数据"></empty>
     </div>
   </div>
 </template>

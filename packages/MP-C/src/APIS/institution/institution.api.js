@@ -49,6 +49,9 @@ const institutionAPI = {
       data,
     )
   },
+  getNotice(data) {
+    return httper.get('/institution-customer/home-page/announcement', data)
+  }
 }
 
 export default institutionAPI
