@@ -293,12 +293,17 @@ const scheduleTableUtil = {
    * @param {*} chooseDate 选择年:月:日
    */
   formatStartTimeAndEndTime(startTime, endTime, chooseDate) {
+    const startStamp = moment(`${chooseDate} ${startTime}`).valueOf()
+    const endStamp = moment(`${chooseDate} ${endTime}`).valueOf()
+
     return {
       time: startTime + '-' + endTime,
       startTime,
       endTime,
-      startTimeStamp: moment(`${chooseDate} ${startTime}`).valueOf(),
-      endTimeStamp: moment(`${chooseDate} ${endTime}`).valueOf(),
+      startTimeStamp: startStamp,
+      endTimeStamp: endStamp,
+      appointmentBeginTimeStamp: startStamp,
+      appointmentEndTimeStamp: endStamp,
     }
   },
 }
