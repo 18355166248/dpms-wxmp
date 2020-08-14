@@ -69,7 +69,7 @@ httper.interceptors.request.use((request) => {
         },
         // ██████ 鉴权 ██████
         // 用户 ID
-        _uid: staff?.staffId,
+        _uid: staff?.id,
 
         /**
          * @desc 用户类型
