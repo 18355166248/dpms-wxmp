@@ -470,7 +470,7 @@ export default {
       // }
 
       // 跨诊所, 非预约状态 不可编辑
-      if (this.isDisabled(this.meetingList[index])) return
+      // if (this.isDisabled(this.meetingList[index])) return
 
       this.$emit('editAppt', this.meetingList[index])
     },
@@ -1046,7 +1046,7 @@ export default {
         }
 
         // 跨诊所, 非预约状态 不可编辑
-        if (this.isDisabled(this.createMeet)) return
+        // if (this.isDisabled(this.createMeet)) return
 
         this.createApptClick = true
         self.$emit('editAppt', this.createMeet)
