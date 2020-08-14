@@ -20,7 +20,12 @@
             :key="b.bannerId"
             @click="toUrl(b.linkUrl)"
           >
-            <image class="bannerImg" mode="aspectFit" :src="b.imageUrl" :title="b.description" />
+            <image
+              class="bannerImg"
+              mode="aspectFit"
+              :src="b.imageUrl"
+              :title="b.description"
+            />
           </swiper-item>
         </swiper>
       </view>
@@ -35,8 +40,12 @@
           </swiper-item>
         </swiper>
         <view class="compDescContent">
-          <p class="compDescContentDesc">{{ institutionIntroduce.briefIntroduction || '' }}</p>
-          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">更多详情 ></p>
+          <p class="compDescContentDesc">
+            {{ institutionIntroduce.briefIntroduction || '' }}
+          </p>
+          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
+            更多详情 >
+          </p>
         </view>
       </view>
       <view class="proj">
@@ -45,11 +54,16 @@
           <view
             class="projBtn"
             @click="toUrl('/pages/projAptmt/projAptmt')"
-            v-show="itemList.length > 3"
-          >更多</view>
+            v-show="showMoreBtn"
+            >更多</view
+          >
         </view>
         <view class="cardList">
-          <swiper class="swiper" :display-multiple-items="displayMultipleItems" next-margin="10rpx">
+          <swiper
+            class="swiper"
+            :display-multiple-items="displayMultipleItems"
+            next-margin="10rpx"
+          >
             <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
               <view class="card">
                 <view
@@ -65,7 +79,12 @@
                 </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{ i.itemName }}</text>
-                  <view class="cardBtn" v-show="i.canAppointment" @click="handleProjAptmt(i)">预约</view>
+                  <view
+                    class="cardBtn"
+                    v-show="i.canAppointment"
+                    @click="handleProjAptmt(i)"
+                    >预约</view
+                  >
                 </view>
                 <view class="cardDesc">{{ i.itemBriefIntroduction }}</view>
               </view>
@@ -76,12 +95,17 @@
       <view class="store">
         <view class="storeContent">
           <text class="storeTitle">门店</text>
-          <view class="storeList" v-for="s in storeList" :key="s.appointmentInstitutionId">
+          <view
+            class="storeList"
+            v-for="s in storeList"
+            :key="s.appointmentInstitutionId"
+          >
             <view class="storeCard">
               <view class="storeCardTitle">
-                {{ s.institutionName }} &nbsp;&nbsp;&nbsp;{{
-                s.institutionPhoneNumber
-                }}
+                <text>{{ s.institutionName }}</text>
+                <text style="float: right;">{{
+                  s.institutionPhoneNumber
+                }}</text>
               </view>
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
@@ -89,7 +113,7 @@
               </view>
               <view class="storeCardTime">
                 <span class="iconfont icon-time"></span>
-                {{ s.institutionAddress }}
+                {{ s.businessHours }}
               </view>
               <view
                 class="storeCardAptmt"
@@ -100,7 +124,8 @@
                       s.appointmentInstitutionId,
                   )
                 "
-              >预 约</view>
+                >预 约</view
+              >
             </view>
           </view>
           <load-more :status="loadStatus"></load-more>
@@ -133,6 +158,7 @@ export default {
       total: 0,
       size: 3,
       displayMultipleItems: 1,
+      showMoreBtn: false,
     }
   },
   computed: {
@@ -174,6 +200,11 @@ export default {
         .then((res) => {
           this.bannerList = res.data.bannerList
           this.institutionIntroduce = res.data.institutionIntroduce
+          if (this.institutionIntroduce.briefIntroduction.length > 70) {
+            this.institutionIntroduce.briefIntroduction =
+              this.institutionIntroduce.briefIntroduction.substring(0, 70) +
+              `...`
+          }
         })
       institutionAPI
         .getProjList({
@@ -185,6 +216,11 @@ export default {
             this.displayMultipleItems = 2
           } else {
             this.displayMultipleItems = 1
+          }
+          if (this.itemList.length > 3) {
+            this.showMoreBtn = true
+          } else {
+            this.showMoreBtn = false
           }
         })
       institutionAPI
@@ -228,10 +264,6 @@ export default {
         })
     },
     handleProjAptmt({ appointmentItemId, itemId }) {
-      // if (!ACCESS_TOKEN) {
-      //   this.$utils.replace({ url: '/pages/login/index' })
-      //   return
-      // }
       uni.showLoading({
         title: '加载中...',
       })
@@ -325,7 +357,7 @@ export default {
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .compDescContentDesc {
-  font-size: 28rpx;
+  font-size: 30rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
@@ -337,9 +369,9 @@ export default {
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: right;
   color: #5cbb89;
-  line-height: 36rpx;
-  padding-right: 35rpx;
-  margin-top: 90rpx;
+  position: absolute;
+  bottom: 20rpx;
+  right: 20rpx;
 }
 .proj {
   margin: 64rpx auto;

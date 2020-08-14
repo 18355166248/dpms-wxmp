@@ -168,25 +168,15 @@ export default {
     },
     handleAptmt({ appointmentItemId, itemId }) {
       const { toUrl } = this
-
-      // if (this.selectedIndex > 0) {
-      //   let shopId = this.filterStoreList[this.selectedIndex]
-      //     ?.appointmentInstitutionId
-      //   if (shopId) {
-      //     toUrl('/pages/appoint/index?itemId=' + itemId + '&shopId=' + shopId)
-      //   }
-      // }
       uni.showLoading({
         title: '加载中...',
       })
-
       institutionAPI
         .checkPorjCanAptmt({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentItemId,
         })
         .then((res) => {
-          console.log('res', res)
           if (res.data.canAppointment) {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,

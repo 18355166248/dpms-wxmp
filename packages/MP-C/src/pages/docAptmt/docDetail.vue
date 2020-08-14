@@ -19,10 +19,10 @@
         :key="i.appointmentInstitutionId"
       >
         <view class="storeCard">
-          <view class="storeCardTitle"
-            >{{ i.institutionName }} &nbsp;&nbsp;&nbsp;
-            {{ i.institutionPhoneNumber }}</view
-          >
+          <view class="storeCardTitle">
+            <text>{{ i.institutionName }}</text>
+            <text style="float: right;">{{ i.institutionPhoneNumber }}</text>
+          </view>
           <view class="storeCardAddress"
             ><span class="iconfont icon-location"></span>
             {{ i.institutionAddress }}</view
@@ -36,7 +36,7 @@
             v-show="i.canAppointment"
             @click="
               toUrl(
-                `/pages/appoint/index?doctorId=${params.appointmentDoctorId}&shopId=${i.appointmentInstitutionId}`,
+                `/pages/appoint/index?doctorId=${doctor.doctorId}&shopId=${i.appointmentInstitutionId}`,
               )
             "
             >预 约</view
@@ -46,7 +46,9 @@
     </view>
     <view class="detail">
       <text class="detailTitle">详情介绍</text>
-      <view class="richText">{{ item.itemDetailIntroduction }}</view>
+      <view class="richText">
+        <rich-text :nodes="detailIntroduction"></rich-text>
+      </view>
     </view>
     <view class="descr">
       <text class="descrTitle">温馨提示</text>
@@ -73,6 +75,7 @@ export default {
       institutionList: [],
       tips: [],
       params: {},
+      detailIntroduction: '',
     }
   },
   onLoad(params) {
@@ -90,6 +93,9 @@ export default {
           this.institutionList = res.data.institutionList
           this.doctor = res.data.doctor
           this.tips = res.data.tips
+          this.detailIntroduction =
+            res.data.detailIntroduction ||
+            res.data.doctorName.detailIntroduction
         })
     },
     toUrl(url) {
