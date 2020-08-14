@@ -123,6 +123,8 @@ export default {
     changeValue(param) {
       if (!param.value.trim()) {
         this.patientList = []
+      } else {
+        this.isSearchedValue = ''
       }
       this.searchValue = param.value
     },
