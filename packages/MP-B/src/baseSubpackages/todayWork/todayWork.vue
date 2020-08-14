@@ -245,7 +245,10 @@
           </template>
         </view>
 
-        <view v-else-if="error" class="error-wrapper">
+        <view
+          v-else-if="dataSourceStatus.request === 'error'"
+          class="error-wrapper"
+        >
           <request-error @click="emitPullDownRefresh"></request-error>
         </view>
       </view>
@@ -604,7 +607,7 @@ export default {
       const status = this.REGISTER_ENUM[record.type].value
 
       uni.showLoading({
-        title: '正在提交...',
+        title: '正在提交',
         mask: true,
       })
       const tips = {

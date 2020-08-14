@@ -69,14 +69,15 @@ export default {
     color: rgba(0, 0, 0, 0.65);
   }
   &-btn {
-    width: 40%;
-    height: 64rpx;
-    line-height: 64rpx;
+    width: 30%;
+    height: 52rpx;
+    line-height: 52rpx;
     margin-top: 30rpx;
     text-align: center;
     background: $dpms-color-primary;
     color: #fff;
     border-radius: 5rpx;
+    font-size: 28rpx;
   }
 }
 </style>

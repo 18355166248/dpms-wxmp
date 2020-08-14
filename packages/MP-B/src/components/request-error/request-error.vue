@@ -43,9 +43,9 @@ export default {
     color: #666;
   }
   &-btn {
-    width: 40%;
-    height: 64rpx;
-    line-height: 64rpx;
+    width: 30%;
+    height: 52rpx;
+    line-height: 52rpx;
     margin-top: 30rpx;
     text-align: center;
     background: $dpms-color-primary;
