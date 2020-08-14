@@ -439,12 +439,8 @@ export default {
     editAppt(params) {
       this.$utils.push({
         url:
-          '/baseSubpackages/apptForm/apptForm?type=editAppt&appointmentId=' +
-          params.appointmentId +
-          '&startTimeStamp=' +
-          params.startTimeStamp +
-          '&endTimeStamp=' +
-          params.endTimeStamp,
+          '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
+          params.appointmentId,
       })
     },
     // 抽屉医生选择
