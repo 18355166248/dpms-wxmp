@@ -14,7 +14,7 @@
         @click="getCode"
       >{{ second ? `${second}秒后再试` : '获取验证码' }}</div>
     </div>
-    <button @click="phoneLogin">微信登陆</button>
+    <button @click="phoneLogin">确定</button>
   </div>
 </template>
 
