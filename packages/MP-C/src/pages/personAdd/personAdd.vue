@@ -76,9 +76,10 @@ export default {
         { label: '关', value: false },
       ],
       needAuthCode: false,
+      personList: [],
       form: {
         personnelName: '',
-        gender: '',
+        gender: 2,
         birthday: '',
         mobile: '',
         contactLabel: '',
@@ -152,6 +153,7 @@ export default {
     } else {
       this.form.defaultPersonnel = false
     }
+    this.personList = JSON.parse(param.personList)
   },
   methods: {
     getCode() {
@@ -183,6 +185,15 @@ export default {
         if (err) {
           this.$utils.show(err[0].message)
           return
+        }
+        for (let i in this.personList) {
+          if (
+            this.personList[i].personnelName == this.form.personnelName &&
+            this.personList[i].mobile == this.form.mobile
+          ) {
+            this.$utils.show('不可添加相同人员')
+            return
+          }
         }
         customerAPI.creatCustomer(this.form).then((res) => {
           console.log('1111111111', res)
