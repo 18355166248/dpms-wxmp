@@ -57,6 +57,7 @@ export default {
   }
   .inner {
     position: fixed;
+    z-index: 1;
     top: 50%;
     left: 50%;
     width: 600rpx;
