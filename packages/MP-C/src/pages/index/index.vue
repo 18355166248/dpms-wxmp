@@ -1,13 +1,20 @@
 <template>
   <movable-area>
-    <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
+    <scroll-view
+      class="content"
+      scroll-y
+      @scrolltolower="loadMoreList"
+      refresher-enabled
+      @refresherrefresh="onRefresh"
+      :refresher-triggered="refresherTriggered"
+    >
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
             class="alignCenter"
             v-for="b in bannerList"
             :key="b.bannerId"
-            @click="toUrl(b.linkUrl)"
+            @click="bannerToUrl(b.linkUrl)"
           >
             <image
               class="bannerImg"
@@ -121,7 +128,11 @@
               >
             </view>
           </view>
-          <load-more :status="loadStatus"></load-more>
+          <load-more
+            :status="loadStatus"
+            :contentText="contentText"
+            :color="color"
+          ></load-more>
         </view>
       </view>
     </scroll-view>
@@ -159,9 +170,14 @@ export default {
       loadStatus: 'loading',
       currentPage: 1,
       total: 0,
-      size: 3,
+      size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
+      refresherTriggered: false,
+      color: '#5CBB89',
+      contentText: {
+        contentdown: '加载更多',
+      },
     }
   },
   computed: {
@@ -195,7 +211,6 @@ export default {
   methods: {
     init() {
       if (!this.MEDICALINSTITUTION) return
-
       institutionAPI
         .getInstitutionInfo({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
@@ -241,7 +256,19 @@ export default {
             this.loadStatus = 'noMore'
           }
         })
-      uni.stopPullDownRefresh()
+      this.refresherTriggered = false
+    },
+    bannerToUrl(url) {
+      if (url.indexOf(`http`) !== -1) {
+        this.toUrl(`/pages/index/webView?url=${url}`)
+      } else {
+        this.toUrl(url)
+      }
+    },
+    onRefresh() {
+      if (this.refresherTriggered) return
+      this.refresherTriggered = true
+      this.init()
     },
     loadMoreList() {
       if (this.loadStatus === 'loading') return
