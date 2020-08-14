@@ -89,7 +89,7 @@ export default {
       display: flex;
       align-items: center;
       color: #fff;
-      padding: 32rpx 64rpx;
+      padding: 32rpx 60rpx;
       border-bottom: 2rpx solid #595959;
       font-size: 34rpx;
       white-space: nowrap;
