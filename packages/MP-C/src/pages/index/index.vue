@@ -241,6 +241,9 @@ export default {
             this.showMoreBtn = false
           }
         })
+      //初始化重置list和page
+      this.storeList = []
+      this.currentPage = 1
       institutionAPI
         .getStoreList({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
