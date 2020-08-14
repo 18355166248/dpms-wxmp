@@ -51,7 +51,7 @@
         </view>
       </view>
     </view>
-    <fixed-footer>
+    <fixed-footer v-if="isHeaderWithLargeArea">
       <view class="button-group">
         <template v-if="statusEnumKey === 'APPOINTMENT'">
           <button
@@ -109,6 +109,7 @@ import appointmentAPI from '@/APIS/appointment/appointment.api'
 import card from '@/components/card/card.vue'
 import requestError from '@/components/request-error/request-error.vue'
 import { globalEventKeys } from '@/config/global.eventKeys'
+import { frontAuthUtil } from '@/utils/frontAuth.util'
 
 export default {
   data() {
@@ -123,6 +124,9 @@ export default {
       dataSource: {},
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
       REGISTER_ENUM: this.$utils.getEnums('Register'),
+      isHeaderWithLargeArea: frontAuthUtil.check(
+        '预约中心/预约视图/新建修改、取消、日志',
+      ),
     }
   },
   components: {
