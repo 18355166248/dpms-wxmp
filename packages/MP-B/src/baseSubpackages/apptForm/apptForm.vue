@@ -345,12 +345,12 @@ export default {
 
             // 如果是从预约视图的 编辑预约进入, 那么开始时间和持续时间需要用地址栏paramsObj参数进行初始化
             if (type === 'editAppt') {
-              const option = this.paramsObj
-              const startTime = moment(Number(option.startTimeStamp))
-              const endTime = moment(Number(option.endTimeStamp))
-              const duration = endTime.diff(startTime, 'minute')
+              // const option = this.paramsObj
+              // const startTime = moment(Number(option.startTimeStamp))
+              // const endTime = moment(Number(option.endTimeStamp))
+              // const duration = endTime.diff(startTime, 'minute')
 
-              form.duration = duration
+              // form.duration = duration
 
               this.getAppointmentItemList().then(() => {
                 this.updateApptItemCheckedText(form)

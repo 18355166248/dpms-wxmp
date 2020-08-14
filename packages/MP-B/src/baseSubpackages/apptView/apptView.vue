@@ -1,7 +1,7 @@
 <template>
   <view class="apptViewPage">
     <view v-if="accessMedicalInstitution === -1" class="emptyInstitution">
-      无下属直营诊所，无法查看预约视图
+      <span>无下属直营诊所，无法查看预约视图</span>
     </view>
     <view class="apptView" v-else>
       <dpmsDrawer maskClose ref="dpmsDrawer" :width="750">
@@ -61,17 +61,18 @@
             <view
               class="doctorName mr-10 text-ellipsis"
               v-if="isHeaderWithLargeArea"
-              >诊室：{{
-                accessMedicalInstitution &&
-                accessMedicalInstitution.medicalInstitutionSimpleCode
+              >诊所：{{
+                (accessMedicalInstitution &&
+                  accessMedicalInstitution.medicalInstitutionSimpleCode) ||
+                ''
               }}</view
             >
             <view
               class="doctorName doctorSelect"
               :style="{ width: isHeaderWithLargeArea ? '50%' : '100%' }"
             >
-              <span class="doctorName text-ellipsis">
-                医生：{{ doctor.staffName }}674645654645ssdsdsadasdass大电风扇
+              <span class="text-ellipsis doctorShowName">
+                医生：{{ doctor.staffName || '' }}
               </span>
               <span @click="openDrawer" class="pl-20 changeDoctorIcon">
                 <span class="iconfont icon-new-weet" />
@@ -119,6 +120,7 @@
         :retract="retract"
         @createAppt="createAppt"
         @editAppt="editAppt"
+        @changeCard="changeCard"
       />
     </view>
   </view>
@@ -138,18 +140,6 @@ import { apptFormUtil } from '@/baseSubpackages/apptForm/apptForm.util'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { apptViewUtil } from './apptView.util'
 import { mapState } from 'vuex'
-
-const enums = uni.getStorageSync('enums')
-const staff = uni.getStorageSync('staff')
-const STAFF_POSITION_ENUM = enums.StaffPosition
-const STAFF_STATUS_ENUM = enums.StaffStatus
-const INSTITUTION_CHAIN_TYPE_ENUM = enums.InstitutionChainType
-
-const doctorValue = STAFF_POSITION_ENUM && STAFF_POSITION_ENUM.DOCTOR.value
-
-// 1、如果当前登录人为医生，则 默认为当前登录人员的预约视图
-// 2、如果当前登录人不是医生，则默认为WEB端，排名第一的医生（不包含未指定医生）
-const isDoctorWithLogin = staff.position === doctorValue
 
 export default {
   name: 'apptView',
@@ -175,6 +165,12 @@ export default {
       institutionList: [], // 总部/大区 诊所列表
       accessMedicalInstitution: {}, // 获取总部/大区时 预约视图诊所选择 如果后台返回-1表示没有直营诊所 则提示：“无下属直营诊所，无法查看预约视图”
       institutionCanSelectList: [], // 总部/大区 诊所列表 可编辑id(medicalInstitutionId)
+      STAFF_POSITION_ENUM: this.$utils.getEnums('StaffPosition'),
+      STAFF_STATUS_ENUM: this.$utils.getEnums('StaffStatus'),
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
+      staff: uni.getStorageSync('staff'),
+      doctorValue: null,
+      isDoctorWithLogin: true,
     }
   },
   computed: {
@@ -188,6 +184,12 @@ export default {
     this.refreshDoctorWithApptList()
   },
   onLoad() {
+    this.doctorValue =
+      this.STAFF_POSITION_ENUM && this.STAFF_POSITION_ENUM.DOCTOR.value
+
+    // 1、如果当前登录人为医生，则 默认为当前登录人员的预约视图
+    // 2、如果当前登录人不是医生，则默认为WEB端，排名第一的医生（不包含未指定医生）
+    this.isDoctorWithLogin = this.staff.position === this.doctorValue
     this.init()
 
     uni.$on(
@@ -210,6 +212,7 @@ export default {
       this.searchValueWithAppt = ''
 
       this.getApptList()
+      this.getApptScheduleInfo()
       this.refreshDoctorWithApptList()
     },
     showSearch(newVal) {
@@ -229,9 +232,9 @@ export default {
           institutionAPI.getInstitutionList({
             medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
             institutionChainTypes:
-              INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value +
+              this.INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value +
               ',' +
-              INSTITUTION_CHAIN_TYPE_ENUM.REGIONAL.value,
+              this.INSTITUTION_CHAIN_TYPE_ENUM.REGIONAL.value,
           }),
         )
 
@@ -276,7 +279,7 @@ export default {
         this.institutionCanSelectList = canSelectList
       } else {
         this.getDoctor()
-          .then((res) => {
+          .then(() => {
             this.getApptScheduleInfo()
             this.getApptList()
           })
@@ -287,30 +290,35 @@ export default {
     },
     // 获取医生详情
     getDoctor() {
-      return new Promise((resolve) => {
-        if (isDoctorWithLogin) {
-          if (!staff) reject()
-          this.doctor = staff
+      return new Promise((resolve, reject) => {
+        if (this.isDoctorWithLogin) {
+          if (!this.staff) reject()
+          this.doctor = this.staff
           resolve()
         }
 
         // 获取在职医生列表
+        this.getDoctorListByPosition().then(() => resolve())
+      })
+    },
+    // 获取在职医生列表
+    getDoctorListByPosition() {
+      return new Promise((resolve, reject) => {
         institutionAPI
           .getStaffListByPosition({
-            position: doctorValue,
-            workStatus: STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
+            position: this.doctorValue,
+            workStatus: this.STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
             includeUnspecified: true,
             medicalInstitutionId: this.accessMedicalInstitution
               .medicalInstitutionId,
           })
           .then((res) => {
-            !isDoctorWithLogin && (this.doctor = res.data[1])
+            !this.isDoctorWithLogin && (this.doctor = res.data[1])
             this.doctorList = res.data
-
-            resolve()
+            resolve(res)
           })
-          .catch(() => {
-            reject()
+          .catch((err) => {
+            reject(err)
           })
       })
     },
@@ -323,7 +331,7 @@ export default {
           appointmentEndTime: this.endTimeStamp,
           medicalInstitutionId: this.accessMedicalInstitution
             .medicalInstitutionId,
-          position: doctorValue,
+          position: this.doctorValue,
           staffId: this.doctor.staffId,
           staffIds: this.doctor.staffId,
         })
@@ -380,7 +388,7 @@ export default {
             appointmentBeginTime: this.startTimeStamp,
             appointmentEndTime: this.endTimeStamp,
             medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
-            position: doctorValue,
+            position: this.doctorValue,
             staffIds: this.doctorList.map((doctor) => doctor.staffId).join(','),
           })
           .then((res) => {
@@ -419,6 +427,7 @@ export default {
       this.apptSearchList = []
     },
     openDrawer() {
+      // 获取在职医生列表
       this.$refs.dpmsDrawer.open()
     },
     changeCalendar({ fulldate }) {
@@ -476,17 +485,16 @@ export default {
         medicalInstitutionId: value.id,
       })
       // 获取在职医生列表
-      institutionAPI
-        .getStaffListByPosition({
-          position: doctorValue,
-          workStatus: STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
-          includeUnspecified: true,
-          medicalInstitutionId: this.accessMedicalInstitution
-            .medicalInstitutionId,
+      this.getDoctorListByPosition()
+    },
+    changeCard({ meet, type }) {
+      console.log('编辑改变', type, meet)
+      appointmentAPI
+        .updateAppointment({
+          appointmentJsonStr: JSON.stringify(meet),
         })
-        .then((res) => {
-          !isDoctorWithLogin && (this.doctor = res.data[1])
-          this.doctorList = res.data
+        .then(() => {
+          this.getApptList()
         })
         .catch()
     },
@@ -510,8 +518,9 @@ page {
   .emptyInstitution {
     width: 100%;
     height: 100%;
-    text-align: center;
-    line-height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .apptView {
     width: 100%;
@@ -547,16 +556,18 @@ page {
           padding-right: 20rpx;
           .doctorName {
             font-size: 28rpx;
-            width: 50%;
+            flex: 1;
             display: inline-block;
             overflow: hidden;
+            .doctorShowName {
+              overflow: hidden;
+              max-width: calc(100% - 60rpx);
+            }
           }
           .doctorSelect {
             display: flex;
             align-items: center;
-            .doctorName {
-              flex: 1;
-            }
+
             .changeDoctorIcon {
               display: flex;
             }
