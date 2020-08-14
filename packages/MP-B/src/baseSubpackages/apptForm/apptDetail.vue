@@ -124,6 +124,7 @@ export default {
       appointmentId: null,
       dataSource: {},
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      STAFF_POSITION_ENUM: this.$utils.getEnums('StaffPosition'),
       REGISTER_ENUM: this.$utils.getEnums('Register'),
       isHeaderWithLargeArea: frontAuthUtil.check(
         '预约中心/预约视图/新建修改、取消、日志',
@@ -212,10 +213,31 @@ export default {
     staff() {
       if (Array.isArray(this.dataSource?.appointmentResourceMap?.STAFF)) {
         const staff = this.dataSource.appointmentResourceMap.STAFF
+        const doctorValue = this.STAFF_POSITION_ENUM.DOCTOR.value
+        const consultantValue = this.STAFF_POSITION_ENUM.CONSULTANT.value
+        const assistantManagerValue = this.STAFF_POSITION_ENUM.ASSISTANT_MANAGER
+          .value
+
+        let doctor
+        let consultant
+        let assistant
+
+        staff.forEach((item) => {
+          if (item.position === doctorValue) {
+            doctor = item.staffName
+          }
+          if (item.position === consultantValue) {
+            consultant = item.staffName
+          }
+          if (item.position === assistantManagerValue) {
+            assistant = item.staffName
+          }
+        })
+
         return {
-          doctor: staff[0].staffName,
-          consultant: staff[2].staffName,
-          assistant: staff[3].staffName,
+          doctor,
+          consultant,
+          assistant,
         }
       }
       return {
