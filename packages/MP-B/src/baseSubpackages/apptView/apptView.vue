@@ -141,6 +141,14 @@ import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { apptViewUtil } from './apptView.util'
 import { mapState } from 'vuex'
 
+const defaultScheduleList = [
+  {
+    allowAppointmentStatus: 1,
+    beginTimeMilliSecond: 0,
+    endTimeMilliSecond: 86340000,
+  },
+]
+
 export default {
   name: 'apptView',
   data() {
@@ -401,6 +409,13 @@ export default {
     // 获取排班详情
     getApptScheduleInfo() {
       return new Promise((resolve, reject) => {
+        if (this.doctor.staffId === -1) {
+          this.scheduleList = defaultScheduleList
+          resolve()
+
+          return
+        }
+
         institutionAPI
           .getApptScheduleListByStaff({
             scheduleBeginTime: this.startTimeStamp,
@@ -511,13 +526,7 @@ export default {
       this.getApptList()
 
       if (doctor.staffId === -1) {
-        this.scheduleList = [
-          {
-            allowAppointmentStatus: 1,
-            beginTimeMilliSecond: 0,
-            endTimeMilliSecond: 86340000,
-          },
-        ]
+        this.scheduleList = defaultScheduleList
       } else {
         this.getApptScheduleInfo()
       }

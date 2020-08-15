@@ -30,9 +30,9 @@
 
     <div class="mt-56">
       <dpmsButton @click="onSave" v-if="list && list.length" />
-      <button class="button" @click.stop="this.$utils.back()" v-else>
+      <!-- <button class="button" @click.stop="this.$utils.back()" v-else>
         取消
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
