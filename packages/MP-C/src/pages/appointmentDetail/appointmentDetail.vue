@@ -30,10 +30,6 @@
         <span>{{ detailInfo.personnelName }}</span>
       </div>
       <div>
-        <span>预约备注</span>
-        <span>{{ detailInfo.appointmentMemo || '--' }}</span>
-      </div>
-      <div>
         <span>状态</span>
         <span>
           {{
@@ -103,6 +99,7 @@
       </div>
       <div class="btn">
         <button
+          class="amend"
           @click="amend"
           v-if="
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
@@ -110,6 +107,7 @@
           "
         >修改</button>
         <button
+          class="cancel"
           @click="delAppoint"
           v-if="
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
@@ -296,12 +294,12 @@ export default {
       border: none;
       font-size: 36rpx;
     }
-    button:first-child {
+    .amend {
       background: #5cbb89;
       color: #fff;
       margin-bottom: 24rpx;
     }
-    button:last-child {
+    .cancel {
       color: #5cbb89;
       border: 2rpx solid #5cbb89;
     }
