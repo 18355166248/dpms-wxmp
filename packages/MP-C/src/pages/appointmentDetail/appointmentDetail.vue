@@ -15,7 +15,9 @@
       </div>
       <div>
         <span>预约项目</span>
-        <span>{{ arrObjKeys(detailInfo.networkAppointmentItemList,'itemName',',') }}</span>
+        <span>{{
+          arrObjKeys(detailInfo.networkAppointmentItemList, 'itemName', ',')
+        }}</span>
       </div>
       <div>
         <span>预约日期</span>
@@ -33,9 +35,12 @@
         <span>状态</span>
         <span>
           {{
-          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-          .zh_CN?NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-          .zh_CN:''
+            NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+              .zh_CN
+              ? NETWORL_APPOINTMENT_STATUS.properties[
+                  detailInfo.appointmentStatus
+                ].zh_CN
+              : ''
           }}
         </span>
       </div>
@@ -55,9 +60,11 @@
         "
       >
         提醒：您的预约{{
-        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-        .zh_CN
-        }}，请耐心等待诊所审核确认，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
+          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+            .zh_CN
+        }}，请耐心等待诊所审核确认，有任何问题可拨打电话：{{
+          detailInfo.shopMobile || ''
+        }}
       </div>
       <div
         class="reminder"
@@ -69,9 +76,9 @@
         "
       >
         您的预约{{
-        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-        .zh_CN
-        }}，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
+          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+            .zh_CN
+        }}，有任何问题可拨打电话：{{ detailInfo.shopMobile || '' }}
       </div>
       <div
         class="reminder"
@@ -81,9 +88,9 @@
         "
       >
         您的预约{{
-        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-        .zh_CN
-        }}没有及时就诊，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
+          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+            .zh_CN
+        }}没有及时就诊，有任何问题可拨打电话：{{ detailInfo.shopMobile || '' }}
       </div>
       <div
         class="reminder"
@@ -93,9 +100,9 @@
         "
       >
         您{{
-        NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
-        .zh_CN
-        }}，请及时就诊，有任何问题可拨打电话：{{detailInfo.shopMobile||''}}
+          NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
+            .zh_CN
+        }}，请及时就诊，有任何问题可拨打电话：{{ detailInfo.shopMobile || '' }}
       </div>
       <div class="btn">
         <button
@@ -105,7 +112,9 @@
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
               .zh_CN == '待确认'
           "
-        >修改</button>
+        >
+          修改
+        </button>
         <button
           class="cancel"
           @click="delAppoint"
@@ -115,7 +124,9 @@
             NETWORL_APPOINTMENT_STATUS.properties[detailInfo.appointmentStatus]
               .zh_CN == '已预约'
           "
-        >取消</button>
+        >
+          取消
+        </button>
       </div>
     </div>
     <modal
@@ -128,8 +139,7 @@
       <view style="padding: 32rpx 24rpx;">
         <view>1. 停诊将会短信通知您，请保持电话畅通；</view>
         <view>
-          2.
-          您的预约信息作为登陆信息，在诊所核实确认时有权取消您的预约信息；
+          2. 您的预约信息作为登陆信息，在诊所核实确认时有权取消您的预约信息；
         </view>
         <view>3. 实名制预约，就诊人信息不符合没法就诊；</view>
       </view>
@@ -263,6 +273,11 @@ export default {
       right: 32rpx;
       color: rgba($color: #000000, $alpha: 0.5);
       font-size: 34rpx;
+      max-width: 70%;
+      text-align: right;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
