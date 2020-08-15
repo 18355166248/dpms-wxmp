@@ -280,7 +280,20 @@ export default {
       this.getDefaultTable()
       this.isTodayFun(this.chooseDateProp)
       setTimeout(() => {
-        this.scrollTop = this.unitHeight * 36 + 15 // 默认9点开始
+        if (Array.isArray(newVal) && newVal.length > 0) {
+          let beginWorkTime =
+            moment(this.chooseDateProp).startOf('day').valueOf() +
+            newVal[0].beginTimeMilliSecond
+          beginWorkTime = moment(beginWorkTime)
+
+          const hour = beginWorkTime.hour()
+          const minutes = beginWorkTime.minute()
+          const scale = hour * 4 + minutes / 15
+
+          this.scrollTop = scale * this.unitHeight + 15
+        } else {
+          this.scrollTop = this.unitHeight * 36 + 15 // 默认9点开始
+        }
       })
     },
     retract() {

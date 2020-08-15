@@ -148,6 +148,7 @@ import patientAvatar from 'businessComponents/patientAvatar/patientAvatar'
 import { dataDictUtil } from 'utils/dataDict.util'
 import { apptDataService } from './apptData.service'
 import { globalEventKeys } from 'config/global.eventKeys.js'
+import { mapState } from 'vuex'
 
 function getTxtFromArr(Arr, key) {
   return Arr.map((val) => val[key]).join(',')
@@ -165,8 +166,6 @@ const notGet =
   staffListInfo.CONSULTANT_LIST ||
   staffListInfo.ASSISTANT_MANAGER_LIST ||
   staffListInfo.NURSE_LIST
-
-const medicalInstitution = uni.getStorageSync('medicalInstitution')
 
 // 地址栏参数配置
 const paramsConfig = {
@@ -237,6 +236,9 @@ export default {
     },
   },
   computed: {
+    ...mapState('workbenchStore', {
+      medicalInstitution: (state) => state.medicalInstitution,
+    }),
     isAppt() {
       return (
         this.paramsObj.type === 'createAppt' ||
@@ -308,6 +310,24 @@ export default {
     'form.doctor'(newVal) {
       // 通过医生数据获取当前诊所信息
       if (!this.isAppt) return
+
+      if (newVal === -1) {
+        this.$set(this.form, 'medicalInstitution', {
+          appointmentMedicalInstitutionId: this.medicalInstitution
+            .medicalInstitutionId,
+          ...this.medicalInstitution,
+        })
+
+        return
+      }
+
+      this.getMedicalInstitutionRequest().then((res) => {
+        this.$set(this.form, 'medicalInstitution', res.data[0])
+      })
+    },
+    'form.appointmentBeginTimeStamp'(newVal) {
+      // 通过医生数据获取当前诊所信息
+      if (!this.isAppt || this.form.doctor === -1) return
 
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
@@ -402,37 +422,26 @@ export default {
           workStatus: 1,
         })
         .then((res) => {
-          if (Array.isArray(res.data.DOCTOR)) {
-            this.DOCTOR_LIST = [
-              { staffId: -1, staffName: '未指定医生', position: 2 },
-              ...res.data.DOCTOR,
-            ]
-          }
-          if (Array.isArray(res.data.DENTIST)) {
-            this.DENTIST_LIST = [
-              { staffId: -1, staffName: '未指定洁牙师', position: 3 },
-              ...res.data.DENTIST,
-            ]
-          }
-          if (Array.isArray(res.data.CONSULTANT)) {
-            this.CONSULTANT_LIST = [
-              { staffId: -1, staffName: '未指定咨询师', position: 4 },
-              ...res.data.CONSULTANT,
-            ]
-          }
-          if (Array.isArray(res.data.ASSISTANT_MANAGER)) {
-            this.ASSISTANT_MANAGER_LIST = [
-              { staffId: -1, staffName: '未指定助理', position: 5 },
-              ...res.data.ASSISTANT_MANAGER,
-            ]
-          }
-          if (Array.isArray(res.data.NURSE)) {
-            this.NURSE_LIST = [
-              { staffId: -1, staffName: '未指定护士', position: 6 },
-              ...res.data.NURSE,
-            ]
-          }
-
+          this.DOCTOR_LIST = [
+            { staffId: -1, staffName: '未指定医生', position: 2 },
+            ...(res.data.DOCTOR || []),
+          ]
+          this.DENTIST_LIST = [
+            { staffId: -1, staffName: '未指定洁牙师', position: 3 },
+            ...(res.data.DENTIST || []),
+          ]
+          this.CONSULTANT_LIST = [
+            { staffId: -1, staffName: '未指定咨询师', position: 4 },
+            ...(res.data.CONSULTANT || []),
+          ]
+          this.ASSISTANT_MANAGER_LIST = [
+            { staffId: -1, staffName: '未指定助理', position: 5 },
+            ...(res.data.ASSISTANT_MANAGER || []),
+          ]
+          this.NURSE_LIST = [
+            { staffId: -1, staffName: '未指定护士', position: 6 },
+            ...(res.data.NURSE || []),
+          ]
           uni.setStorageSync('staffListInfo', {
             DOCTOR_LIST: this.DOCTOR_LIST,
             DENTIST_LIST: this.DENTIST_LIST,
@@ -529,10 +538,10 @@ export default {
           resolve({
             data: [
               {
-                medicalInstitutionSimpleCode:
-                  medicalInstitution.medicalInstitutionSimpleCode,
-                appointmentMedicalInstitutionId:
-                  medicalInstitution.medicalInstitutionId,
+                medicalInstitutionSimpleCode: this.medicalInstitution
+                  .medicalInstitutionSimpleCode,
+                appointmentMedicalInstitutionId: this.medicalInstitution
+                  .medicalInstitutionId,
                 isCurrentInstitutionFlag: true, // 表示是当前诊所
               },
             ],
@@ -552,8 +561,8 @@ export default {
 
       if (this.isAppt) {
         if (
-          medicalInstitution.institutionChainType === 4 &&
-          medicalInstitution.medicalInstitutionId !==
+          this.medicalInstitution.institutionChainType === 4 &&
+          this.medicalInstitution.medicalInstitutionId !==
             this.form.medicalInstitution.appointmentMedicalInstitutionId
         ) {
           this.$utils.show('不可预约到其他诊所')
@@ -568,8 +577,8 @@ export default {
         }
 
         if (
-          medicalInstitution.institutionChainType === 2 &&
-          medicalInstitution.topParentId !== 0
+          this.medicalInstitution.institutionChainType === 2 &&
+          this.medicalInstitution.topParentId !== 0
         ) {
           if (this.form.medicalInstitution.institutionChainType === 4) {
             this.$utils.show('不可预约到加盟诊所')

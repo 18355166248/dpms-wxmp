@@ -48,8 +48,8 @@
     "chain-package_other-role_work-in-other_in-franchise": true
   },
   "预约中心/预约视图/诊所的查询条件": {
-    "single-package_superadmin-role": true,
-    "single-package_other-role": true,
+    "single-package_superadmin-role": false,
+    "single-package_other-role": false,
     "chain-package_superadmin-role_in-hq": true,
     "chain-package_superadmin-role_in-region": true,
     "chain-package_superadmin-role_in-direct": false,
