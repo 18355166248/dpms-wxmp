@@ -7,13 +7,17 @@
           <div>还可添加{{ 10 - personList.length }}人</div>
         </div>
         <div class="personList">
-          <div class="item" v-for="val of personList" @click="personDetail(val.id)" :key="val.id">
+          <div
+            class="item"
+            v-for="val of personList"
+            @click="personDetail(val.id)"
+            :key="val.id"
+          >
             <div class="name">
               {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
-              <span
-                class="self"
-                v-if="val.contactLabel == 1"
-              >本人</span>
+              <span class="self">{{
+                CONTACT_LABEL.properties[val.contactLabel].zh_CN
+              }}</span>
             </div>
             <div class="phone">手机：{{ val.mobile }}</div>
             <span class="iconfont icon-right"></span>
@@ -39,6 +43,7 @@ export default {
       personList: [],
       showEmpty: false,
       staff: getStorage(STORAGE_KEY.STAFF),
+      CONTACT_LABEL: this.$utils.getEnums('ContactLabel'),
     }
   },
   mounted() {},
