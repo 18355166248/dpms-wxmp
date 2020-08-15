@@ -223,7 +223,10 @@ export default {
         .then((res) => {
           this.bannerList = res.data.bannerList
           this.institutionIntroduce = res.data.institutionIntroduce
-          if (this.institutionIntroduce.briefIntroduction.length > 70) {
+          if (
+            this.institutionIntroduce.briefIntroduction &&
+            this.institutionIntroduce.briefIntroduction.length > 70
+          ) {
             this.institutionIntroduce.briefIntroduction =
               this.institutionIntroduce.briefIntroduction.substring(0, 70) +
               `...`
