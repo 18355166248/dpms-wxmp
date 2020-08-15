@@ -363,21 +363,18 @@ export default {
                 moment(form.appointmentEndTimeStamp + 1).format('HH:mm')
             }
 
-            // 如果是从预约视图的 编辑预约进入, 那么开始时间和持续时间需要用地址栏paramsObj参数进行初始化
+            // 初始化预约项目选中文本
             if (type === 'editAppt') {
-              // const option = this.paramsObj
-              // const startTime = moment(Number(option.startTimeStamp))
-              // const endTime = moment(Number(option.endTimeStamp))
-              // const duration = endTime.diff(startTime, 'minute')
-
-              // form.duration = duration
-
               this.getAppointmentItemList().then(() => {
                 this.updateApptItemCheckedText(form)
               })
             }
 
             this.form = JSON.parse(JSON.stringify(form))
+            // 更新诊所信息
+            this.getMedicalInstitutionRequest().then((res) => {
+              this.$set(this.form, 'medicalInstitution', res.data[0])
+            })
             this.initCheckedText(form.helpNameList, form.nurseList)
           })
       }
@@ -385,7 +382,7 @@ export default {
       if (this.isAppt) {
         this.getAppointmentItemList()
       }
-      // 通过医生数据获取当前诊所信息
+
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
       })
@@ -560,6 +557,11 @@ export default {
       }
 
       if (this.isAppt) {
+        console.log(
+          'this.medicalInstitution',
+          this.medicalInstitution,
+          this.form,
+        )
         if (
           this.medicalInstitution.institutionChainType === 4 &&
           this.medicalInstitution.medicalInstitutionId !==
