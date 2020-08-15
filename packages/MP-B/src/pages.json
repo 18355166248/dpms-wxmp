@@ -167,6 +167,7 @@
     "selectedColor": "#5CBB89",
     "borderStyle": "black",
     "backgroundColor": "#ffffff",
+    "height": "58px",
     "list": [
       {
         "pagePath": "pages/home/home",
