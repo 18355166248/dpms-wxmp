@@ -1,7 +1,7 @@
 <template>
   <scroll-view class="knowUs" scroll-y>
     <view class="knowUs-title">
-      <text>详情介绍</text>
+      <text>{{ medicalInstitutionName }}</text>
     </view>
     <view class="knowUs-detail">
       <rich-text :nodes="introduceDetail"></rich-text>
@@ -55,6 +55,7 @@ export default {
       introduceDetail: '',
       storeList: [],
       introduceImgs: [],
+      medicalInstitutionName: '',
     }
   },
   onLoad() {
@@ -63,6 +64,8 @@ export default {
   methods: {
     init() {
       const medicalInstitution = uni.getStorageSync('medicalInstitution')
+      this.medicalInstitutionName =
+        medicalInstitution.medicalInstitutionDTO.medicalInstitutionName
       introduceAPI
         .getIntroduceInfo({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
@@ -103,6 +106,7 @@ export default {
     font-size: 34rpx;
     font-family: PingFangSC, PingFangSC-Medium;
     margin-bottom: 32rpx;
+    text-align: center;
   }
   .knowUs-detail {
     margin-bottom: 48rpx;
