@@ -141,6 +141,14 @@ import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { apptViewUtil } from './apptView.util'
 import { mapState } from 'vuex'
 
+const defaultScheduleList = [
+  {
+    allowAppointmentStatus: 1,
+    beginTimeMilliSecond: 0,
+    endTimeMilliSecond: 86340000,
+  },
+]
+
 export default {
   name: 'apptView',
   data() {
@@ -184,6 +192,8 @@ export default {
     this.refreshDoctorWithApptList()
   },
   onLoad() {
+    this.$utils.showPageLoading()
+
     this.doctorValue =
       this.STAFF_POSITION_ENUM && this.STAFF_POSITION_ENUM.DOCTOR.value
 
@@ -191,6 +201,15 @@ export default {
     // 2、如果当前登录人不是医生，则默认为WEB端，排名第一的医生（不包含未指定医生）
     this.isDoctorWithLogin = this.staff.position === this.doctorValue
     this.init()
+      .finally(() => {
+        console.log('finally')
+        setTimeout(() => {
+          this.$utils.hidePageLoading()
+        }, 50)
+      })
+      .catch((err) => {
+        console.error('初始化错误', err)
+      })
 
     uni.$on(
       globalEventKeys.apptFormWithSaveSuccess,
@@ -228,7 +247,7 @@ export default {
     async init() {
       // 如果是总部/大区 需要获取诊所列表
       if (this.isHeaderWithLargeArea) {
-        const [err, res] = await this.$utils.asyncTasks(
+        let [err, res] = await this.$utils.asyncTasks(
           institutionAPI.getInstitutionList({
             medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
             institutionChainTypes:
@@ -238,36 +257,47 @@ export default {
           }),
         )
 
-        if (err) return
+        if (err) return Promise.reject(err)
 
         this.institutionList = [res.data]
-
         // 获取预约视图总部/大区时 诊所选择的值
-        appointmentAPI
-          .getLastAccessMedicalInstitution()
-          .then((res) => {
-            this.accessMedicalInstitution = res.data
+        ;[err, res] = await this.$utils.asyncTasks(
+          appointmentAPI.getLastAccessMedicalInstitution(),
+        )
 
-            if (this.accessMedicalInstitution !== -1) {
-              const info = apptViewUtil.findSelectInfo(
-                _.cloneDeep(this.institutionList),
-                'medicalInstitutionId',
-                'childMedicalInstitutionList',
-                this.accessMedicalInstitution,
-              )
-              this.accessMedicalInstitution = info
+        if (err) return Promise.reject(err)
 
-              this.getDoctor()
-                .then((res) => {
-                  this.getApptScheduleInfo()
-                  this.getApptList()
-                })
-                .catch((err) => {
-                  console.log('staff not found')
-                })
-            }
-          })
-          .catch()
+        this.accessMedicalInstitution = res.data
+
+        console.log('res.data', res.data, this.institutionList)
+
+        if (this.accessMedicalInstitution !== -1) {
+          const info = apptViewUtil.findSelectInfo(
+            _.cloneDeep(this.institutionList),
+            'medicalInstitutionId',
+            'childMedicalInstitutionList',
+            this.accessMedicalInstitution,
+          )
+          this.accessMedicalInstitution = info
+          ;[err, res] = await this.$utils.asyncTasks(this.getDoctor())
+
+          if (err) return Promise.reject('staff not found', err)
+
+          try {
+            this.getApptList()
+            ;[err, res] = await this.$utils.asyncTasks(
+              this.getApptScheduleInfo(),
+            )
+
+            if (err) return Promise.reject(err)
+
+            return true
+          } catch (err) {
+            return Promise.reject(err)
+          }
+        } else {
+          return true
+        }
 
         const canSelectList = apptViewUtil.findCanSelectId(
           this.institutionList,
@@ -278,14 +308,20 @@ export default {
 
         this.institutionCanSelectList = canSelectList
       } else {
-        this.getDoctor()
-          .then(() => {
-            this.getApptScheduleInfo()
-            this.getApptList()
-          })
-          .catch((err) => {
-            console.log('staff not found')
-          })
+        let [err, res] = await this.$utils.asyncTasks(this.getDoctor())
+
+        if (err) return Promise.reject('staff not found', err)
+
+        try {
+          this.getApptList()
+          ;[err, res] = await this.$utils.asyncTasks(this.getApptScheduleInfo())
+
+          if (err) return Promise.reject(err)
+
+          return true
+        } catch (err) {
+          return Promise.reject(err)
+        }
       }
     },
     // 获取医生详情
@@ -313,7 +349,22 @@ export default {
               .medicalInstitutionId,
           })
           .then((res) => {
-            !this.isDoctorWithLogin && (this.doctor = res.data[1])
+            if (!this.isDoctorWithLogin) {
+              let doctor = []
+              if (res.data.length === 0) {
+                doctor = { staffId: -1, staffName: '未指定医生', position: 2 }
+              }
+
+              if (res.data.length === 1) {
+                doctor = res.data[0]
+              }
+
+              if (res.data.length > 1) {
+                doctor = res.data[1]
+              }
+              this.doctor = doctor
+            }
+
             this.doctorList = res.data
             resolve(res)
           })
@@ -357,28 +408,41 @@ export default {
     }, 300),
     // 获取排班详情
     getApptScheduleInfo() {
-      institutionAPI
-        .getApptScheduleListByStaff({
-          scheduleBeginTime: this.startTimeStamp,
-          scheduleEndTime: this.endTimeStamp,
-          medicalInstitutionId: this.accessMedicalInstitution
-            .medicalInstitutionId,
-          staffId: this.doctor.staffId,
-        })
-        .then((res) => {
-          if (
-            Array.isArray(res.data) &&
-            res.data[0] &&
-            _.isPlainObject(res.data[0].institutionScheduleTableMap) &&
-            Array.isArray(
-              res.data[0].institutionScheduleTableMap[this.startTimeStamp],
-            )
-          ) {
-            this.scheduleList =
-              res.data[0].institutionScheduleTableMap[this.startTimeStamp]
-          }
-        })
-        .catch()
+      return new Promise((resolve, reject) => {
+        if (this.doctor.staffId === -1) {
+          this.scheduleList = defaultScheduleList
+          resolve()
+
+          return
+        }
+
+        institutionAPI
+          .getApptScheduleListByStaff({
+            scheduleBeginTime: this.startTimeStamp,
+            scheduleEndTime: this.endTimeStamp,
+            medicalInstitutionId: this.accessMedicalInstitution
+              .medicalInstitutionId,
+            staffId: this.doctor.staffId,
+          })
+          .then((res) => {
+            if (
+              Array.isArray(res.data) &&
+              res.data[0] &&
+              _.isPlainObject(res.data[0].institutionScheduleTableMap) &&
+              Array.isArray(
+                res.data[0].institutionScheduleTableMap[this.startTimeStamp],
+              )
+            ) {
+              this.scheduleList =
+                res.data[0].institutionScheduleTableMap[this.startTimeStamp]
+            }
+
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
+      })
     },
     // 获取全部在职医生的预约列表
     getAllDoctorWithApptList() {
@@ -454,12 +518,18 @@ export default {
     },
     // 抽屉医生选择
     onSelected(doctor) {
-      if (doctor.staffId === this.doctor.staffId)
+      if (this.doctor && doctor.staffId === this.doctor.staffId)
         return this.$refs.dpmsDrawer.close()
       this.doctor = doctor
       this.$refs.dpmsDrawer.close()
+      this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
       this.getApptList()
-      this.getApptScheduleInfo()
+
+      if (doctor.staffId === -1) {
+        this.scheduleList = defaultScheduleList
+      } else {
+        this.getApptScheduleInfo()
+      }
     },
     refreshDoctorWithApptList() {
       this.getAllDoctorWithApptList()

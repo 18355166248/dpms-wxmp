@@ -35,7 +35,7 @@
           v-model="form.mobile"
           placeholder="请输入联系电话"
         />
-        <div class="info" v-show="needAuthCode">
+        <div class="info" v-show="needAuthCode&&form.mobile.length==11">
           <span>验证码</span>
           <input v-model="form.verificationCode" class="ipt" />
           <span

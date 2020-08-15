@@ -12,7 +12,7 @@ lerna bootstrap
 
 ## 公共方法
 
-调用就是当前 vue 页面使用 this.show 进行调用
+调用就是当前 vue 页面使用 this.\$utils.show 进行调用
 
 | 方法              | 参数               | 说明                                                        |
 | ----------------- | ------------------ | ----------------------------------------------------------- |
@@ -26,3 +26,8 @@ lerna bootstrap
 | flyUtil.reLaunch  | { url }            | 关闭所有页面并调跳到某页面                                  |
 | flyUtil.switchtab | { url }            | 跳转到其他 tabbar 页面，并且关闭所有非 tabbar 页面          |
 | getPagesInfo      | index (number)     | 获取页面数据, 默认获取当前页 需要上一页数据传入-1, 以此类推 |
+| showNavBarLoading |                    | 显示导航栏 loading                                          |
+| hideNavBarLoading |                    | 隐藏导航栏 loading                                          |
+| hideHomeButton    |                    | 隐藏返回首页按钮                                            |
+| showPageLoading   |                    | 显示 loading 和导航栏 loading                               |
+| hidePageLoading   |                    | 隐藏 loading 和导航栏 loading                               |
