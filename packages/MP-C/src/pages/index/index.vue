@@ -1,13 +1,6 @@
 <template>
   <movable-area>
-    <scroll-view
-      class="content"
-      scroll-y
-      @scrolltolower="loadMoreList"
-      refresher-enabled
-      @refresherrefresh="onRefresh"
-      :refresher-triggered="refresherTriggered"
-    >
+    <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
@@ -102,18 +95,30 @@
           >
             <view class="storeCard">
               <view class="storeCardTitle">
-                <text>{{ s.institutionName }}</text>
+                <text>{{
+                  s.institutionName.length > 6
+                    ? s.institutionName.substring(0, 6) + `...`
+                    : s.institutionName
+                }}</text>
                 <text style="float: right;">{{
                   s.institutionPhoneNumber
                 }}</text>
               </view>
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
-                {{ s.institutionAddress }}
+                {{
+                  s.institutionAddress.length > 14
+                    ? s.institutionAddress.substring(0, 14) + `...`
+                    : s.institutionAddress
+                }}
               </view>
               <view class="storeCardTime">
                 <span class="iconfont icon-time"></span>
-                {{ s.businessHours }}
+                {{
+                  s.businessHours.length > 14
+                    ? s.businessHours.substring(0, 14) + `...`
+                    : s.businessHours
+                }}
               </view>
               <view
                 class="storeCardAptmt"
@@ -235,12 +240,15 @@ export default {
           } else {
             this.displayMultipleItems = 1
           }
-          if (this.itemList.length > 3) {
+          if (res.data.total > 3) {
             this.showMoreBtn = true
           } else {
             this.showMoreBtn = false
           }
         })
+      //初始化重置list和page
+      this.storeList = []
+      this.currentPage = 1
       institutionAPI
         .getStoreList({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
@@ -370,7 +378,7 @@ export default {
 .compDesc {
   width: 750rpx;
   height: 192rpx;
-  /* margin-top: 64rpx; */
+  z-index: 9999;
 }
 .compDescImg {
   width: 750rpx;
