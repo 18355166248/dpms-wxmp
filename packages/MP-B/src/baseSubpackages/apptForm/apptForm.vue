@@ -475,10 +475,14 @@ export default {
       })
     },
     onBlurWithDuration(value) {
-      if (value < 15) return this.$set(this.form, 'duration', 15)
+      if (value < 30) return this.$set(this.form, 'duration', 30)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
       if (value % 15 !== 0) {
-        return this.$set(this.form, 'duration', Math.ceil(value / 15) * 15)
+        return this.$set(
+          this.form,
+          'duration',
+          Math.max(Math.ceil(value / 15) * 15, 30),
+        )
       }
     },
     // 跳转选择助理页面
