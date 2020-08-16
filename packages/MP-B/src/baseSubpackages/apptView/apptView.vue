@@ -4,39 +4,9 @@
       <span>无下属直营诊所，无法查看预约视图</span>
     </view>
     <view class="apptView" v-else>
-      <dpmsDrawer maskClose ref="dpmsDrawer" :width="750">
-        <dpmsCell
-          v-if="isHeaderWithLargeArea"
-          title="诊所"
-          isLink
-          :value="accessMedicalInstitution.medicalInstitutionSimpleCode"
-          @click.native="openSelectMedicalInstitution"
-        />
-        <view class="pv-32 ph-24 selectDrawer">
-          <view class="title mb-32 ml-8">医生</view>
-          <div class="doctorList">
-            <view
-              :class="{
-                doctorDetail: true,
-                selected: doctorItem.staffId === doctor.staffId,
-              }"
-              v-for="doctorItem in doctorList"
-              :key="doctorItem.staffId"
-              @click="onSelected(doctorItem)"
-            >
-              {{ doctorItem.staffName }}
-            </view>
-          </div>
-        </view>
-      </dpmsDrawer>
+      <!-- <dpmsDrawer maskClose ref="dpmsDrawer" :width="750">
 
-      <selectMedicalInstitution
-        v-if="isHeaderWithLargeArea"
-        ref="selectMedicalInstitution"
-        @confirm="selectInstitution"
-        :list="institutionList"
-        :workList="institutionCanSelectList"
-      />
+      </dpmsDrawer> -->
 
       <calendar
         :value="date"
@@ -218,9 +188,15 @@ export default {
         this.getApptList()
       },
     )
-  },
-  onUnload() {
-    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
+    // 预约视图选择医生后返回预约视图页面
+    uni.$on(globalEventKeys.onSelectedDcotorWithApptView, (doctor) => {
+      this.onSelected(doctor)
+    })
+    uni.$on(globalEventKeys.getDoctorListByPosition, () => {
+      this.getDoctorListByPosition().then(() => {
+        uni.$emit(globalEventKeys.updateDoctorListByPosition)
+      })
+    })
   },
   watch: {
     date(newVal) {
@@ -242,6 +218,32 @@ export default {
     medicalInstitution(newVal) {
       this.accessMedicalInstitution = newVal
     },
+    accessMedicalInstitution(newVal) {
+      console.log('accessMedicalInstitution', newVal)
+      uni.setStorageSync('accessMedicalInstitution', newVal)
+    },
+    doctorList(newVal) {
+      uni.setStorageSync('doctorList', newVal)
+    },
+    doctor(newVal) {
+      uni.setStorageSync('apptViewdoctor', newVal)
+    },
+    institutionList(newVal) {
+      uni.setStorageSync('institutionList', newVal)
+    },
+    institutionCanSelectList(newVal) {
+      uni.setStorageSync('institutionCanSelectList', newVal)
+    },
+  },
+  onUnload() {
+    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
+    uni.$off(globalEventKeys.onSelectedDcotorWithApptView)
+    uni.$off(globalEventKeys.getDoctorListByPosition)
+    uni.removeStorageSync('accessMedicalInstitution')
+    uni.removeStorageSync('doctorList')
+    uni.removeStorageSync('apptViewdoctor')
+    uni.removeStorageSync('institutionList')
+    uni.removeStorageSync('institutionCanSelectList')
   },
   methods: {
     async init() {
@@ -269,7 +271,15 @@ export default {
 
         this.accessMedicalInstitution = res.data
 
-        console.log('res.data', res.data, this.institutionList)
+        const canSelectList = apptViewUtil.findCanSelectId(
+          this.institutionList,
+          'medicalInstitutionId',
+          'childMedicalInstitutionList',
+          frontAuthUtil.canSelect,
+        )
+
+        this.institutionCanSelectList = canSelectList
+        uni.setStorageSync('institutionCanSelectList', canSelectList)
 
         if (this.accessMedicalInstitution !== -1) {
           const info = apptViewUtil.findSelectInfo(
@@ -298,15 +308,6 @@ export default {
         } else {
           return true
         }
-
-        const canSelectList = apptViewUtil.findCanSelectId(
-          this.institutionList,
-          'medicalInstitutionId',
-          'childMedicalInstitutionList',
-          frontAuthUtil.canSelect,
-        )
-
-        this.institutionCanSelectList = canSelectList
       } else {
         let [err, res] = await this.$utils.asyncTasks(this.getDoctor())
 
@@ -491,8 +492,8 @@ export default {
       this.apptSearchList = []
     },
     openDrawer() {
-      // 获取在职医生列表
-      this.$refs.dpmsDrawer.open()
+      // this.$refs.dpmsDrawer.open()
+      this.$utils.push({ url: '/baseSubpackages/apptView/doctorList' })
     },
     changeCalendar({ fulldate }) {
       this.$refs.apptTable.clearCreateMeet()
@@ -518,12 +519,23 @@ export default {
     },
     // 抽屉医生选择
     onSelected(doctor) {
+      this.accessMedicalInstitution = uni.getStorageSync(
+        'accessMedicalInstitution',
+      )
+
       if (this.doctor && doctor.staffId === this.doctor.staffId)
-        return this.$refs.dpmsDrawer.close()
+        return this.$utils.back()
       this.doctor = doctor
-      this.$refs.dpmsDrawer.close()
+      this.$utils.back()
       this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
       this.getApptList()
+
+      // 选择完医生后记录最后一次选择诊所id
+      if (this.isHeaderWithLargeArea)
+        appointmentAPI.updateAccessMedicalInstitution({
+          medicalInstitutionId: this.accessMedicalInstitution
+            .medicalInstitutionId,
+        })
 
       if (doctor.staffId === -1) {
         this.scheduleList = defaultScheduleList
@@ -537,25 +549,6 @@ export default {
           this.search({ value: this.searchValueWithAppt })
         })
         .catch()
-    },
-    // 打开选择诊所弹窗
-    openSelectMedicalInstitution() {
-      this.$refs.selectMedicalInstitution.show()
-    },
-    // 总部/大区 筛选医生 选择医生回调
-    selectInstitution(value) {
-      if (value.id === this.accessMedicalInstitution.medicalInstitutionId)
-        return
-
-      this.accessMedicalInstitution = {
-        medicalInstitutionSimpleCode: value.name,
-        medicalInstitutionId: value.id,
-      }
-      appointmentAPI.updateAccessMedicalInstitution({
-        medicalInstitutionId: value.id,
-      })
-      // 获取在职医生列表
-      this.getDoctorListByPosition()
     },
     changeCard({ meet, type }) {
       console.log('编辑改变', type, meet)
@@ -660,31 +653,6 @@ page {
       .emptyPatient {
         color: rgba(0, 0, 0, 0.65);
         font-size: 28rpx;
-      }
-    }
-  }
-}
-
-.selectDrawer {
-  .title {
-    color: rgba($color: #000000, $alpha: 0.9);
-    font-size: 34rpx;
-  }
-  .doctorList {
-    .doctorDetail {
-      margin: 0 8rpx 24rpx 8rpx;
-      display: inline-block;
-      border-radius: 2rpx;
-      height: 68rpx;
-      line-height: 68rpx;
-      background: #f5f5f5;
-      font-size: 28rpx;
-      text-align: center;
-      padding: 0 32rpx;
-      &.selected {
-        color: rgba(92, 187, 137, 1);
-        background-color: rgba(227, 251, 238, 1);
-        background: #e3fbee;
       }
     }
   }

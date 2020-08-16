@@ -9,6 +9,12 @@ const globalEventKeys = {
   selectPatientCardFromSearchPatient: 'selectPatientCardFromSearchPatient',
   // 新建患者
   newPatient: 'newPatient',
+  // 预约视图选择医生后返回预约视图页面
+  onSelectedDcotorWithApptView: 'onSelectedDcotorWithApptView',
+  // 预约视图获取在职医生列表
+  getDoctorListByPosition: 'getDoctorListByPosition',
+  // 预约视图通知医生页面更新在职医生列表
+  updateDoctorListByPosition: 'updateDoctorListByPosition',
 }
 
 export { globalEventKeys }
