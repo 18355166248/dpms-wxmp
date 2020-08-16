@@ -2,7 +2,7 @@
   <div class="apptForm">
     <scroll-view scroll-y class="h100">
       <div class="bg" />
-      <div class="patientInfo tc pt-48">
+      <div class="patientInfo tc pt-48 mb-48">
         <div
           :class="['patientCard', form.patient ? 'hasPatient' : '']"
           @click="selectPatient"
@@ -802,7 +802,6 @@ export default {
   }
   .patientInfo {
     box-sizing: border-box;
-    height: 296rpx;
     .patientCard {
       width: 702rpx;
       height: 184rpx;
