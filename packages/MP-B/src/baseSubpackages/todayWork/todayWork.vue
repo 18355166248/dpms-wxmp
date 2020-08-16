@@ -756,7 +756,6 @@ export default {
 <style lang="scss" scoped>
 .todayWork-page-view {
   height: 100%;
-  background: #fff;
 
   .error-wrapper {
     height: 100%;
@@ -775,7 +774,6 @@ export default {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    background: rgba(0, 0, 0, 0.04);
 
     .button {
       display: inline-block;
