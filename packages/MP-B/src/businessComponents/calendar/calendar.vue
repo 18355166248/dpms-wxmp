@@ -21,6 +21,7 @@
       @change="change_date"
     >
       <swiper-item>
+        <view v-if="!retract" class="curMonthTxt">{{ nowMonth }}</view>
         <view
           class="date_dl"
           v-show="!retract || index == to_prev_week_index"
@@ -39,7 +40,7 @@
                 vo.today ? 'today' : '',
                 vo.type == 'month' ? 'month' : retract ? '' : 'disabled',
               ]"
-              >{{ vo.day }}</view
+              >{{ now_date === vo.date ? '今' : vo.day }}</view
             >
             <view
               v-show="vo.dot && (vo.type == 'month' || retract)"
@@ -49,6 +50,7 @@
         </view>
       </swiper-item>
       <swiper-item>
+        <view v-if="!retract" class="curMonthTxt">{{ nowMonth }}</view>
         <view
           class="date_dl"
           v-show="!retract || index == to_week_index"
@@ -67,7 +69,7 @@
                 vo.today ? 'today' : '',
                 vo.type == 'month' ? 'month' : retract ? '' : 'disabled',
               ]"
-              >{{ vo.day }}</view
+              >{{ now_date === vo.date ? '今' : vo.day }}</view
             >
             <view
               v-show="vo.dot && (vo.type == 'month' || retract)"
@@ -77,6 +79,7 @@
         </view>
       </swiper-item>
       <swiper-item>
+        <view v-if="!retract" class="curMonthTxt">{{ nowMonth }}</view>
         <view
           class="date_dl"
           v-show="!retract || index == to_next_week_index"
@@ -95,7 +98,7 @@
                 vo.today ? 'today' : '',
                 vo.type == 'month' ? 'month' : retract ? '' : 'disabled',
               ]"
-              >{{ vo.day }}</view
+              >{{ now_date === vo.date ? '今' : vo.day }}</view
             >
             <view
               v-show="vo.dot && (vo.type == 'month' || retract)"
@@ -116,6 +119,8 @@
 </template>
 
 <script>
+import utils from 'mpcommon/utils/utils.js'
+
 export default {
   props: {
     value: {
@@ -177,6 +182,9 @@ export default {
     },
   },
   created() {
+    const { YYYY, M, D } = utils.formatDate(new Date())
+    this.now_date = YYYY + '-' + M + '-' + D
+
     this.init()
   },
   methods: {
@@ -699,5 +707,17 @@ $color_border: #f5f5f5;
       transform: translateX(-50%);
     }
   }
+}
+.curMonthTxt {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 360rpx;
+  font-weight: 500;
+  color: rgba(92, 187, 137, 0.08);
 }
 </style>
