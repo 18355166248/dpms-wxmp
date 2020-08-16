@@ -111,6 +111,12 @@
             "navigationBarTitleText": "预约视图",
             "disableScroll": true
           }
+        },
+        {
+          "path": "doctorList",
+          "style": {
+            "navigationBarTitleText": "医生"
+          }
         }
       ]
     },

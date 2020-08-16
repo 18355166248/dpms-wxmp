@@ -32,8 +32,8 @@ const apptDataService = {
           return uni.showModal({
             title: `预约时段内 ${businessNameSplit} 有Block事件，预约失败，请通知患者更改预约时间`,
             showCancel: false,
-            success: () => {
-              _.isFunction(onCancelOk) && onCancelOk()
+            success: ({ confirm, cancel }) => {
+              _.isFunction(onCancelOk) && cancel && onCancelOk()
             },
           })
         }

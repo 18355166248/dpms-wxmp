@@ -336,6 +336,8 @@ export default {
   },
   methods: {
     init() {
+      this.$utils.showLoading()
+
       // 如果地址栏有appointmentId并且type为editRegister或者editAppt才去获取预约详情
       const type = this.paramsObj.type
 
@@ -410,6 +412,7 @@ export default {
         .catch()
 
       if (notGet) {
+        this.$utils.clearLoading()
         return
       }
 
@@ -447,6 +450,9 @@ export default {
             NURSE_LIST: this.NURSE_LIST,
           })
         })
+        .finally(() => {
+          this.$utils.clearLoading()
+        })
         .catch()
     },
     // 获取预约项目列表
@@ -469,10 +475,14 @@ export default {
       })
     },
     onBlurWithDuration(value) {
-      if (value < 15) return this.$set(this.form, 'duration', 15)
+      if (value < 30) return this.$set(this.form, 'duration', 30)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
       if (value % 15 !== 0) {
-        return this.$set(this.form, 'duration', Math.ceil(value / 15) * 15)
+        return this.$set(
+          this.form,
+          'duration',
+          Math.max(Math.ceil(value / 15) * 15, 30),
+        )
       }
     },
     // 跳转选择助理页面
@@ -550,6 +560,8 @@ export default {
     },
     // 保存
     onSave() {
+      if (this.saveLoading) return
+
       if (!this.form.patient || Object.keys(this.form.patient).length === 0) {
         this.$utils.show('暂无患者信息, 请先选择患者信息')
 
@@ -557,11 +569,6 @@ export default {
       }
 
       if (this.isAppt) {
-        console.log(
-          'this.medicalInstitution',
-          this.medicalInstitution,
-          this.form,
-        )
         if (
           this.medicalInstitution.institutionChainType === 4 &&
           this.medicalInstitution.medicalInstitutionId !==
@@ -593,22 +600,26 @@ export default {
           uni.showModal({
             title: `确定要把患者${this.form.patient.patientName}预约到${this.form.medicalInstitution?.appointmentMedicalInstitutionName}吗？`,
             showCancel: true,
-            success: () => {
-              this.getApptVerify()
+            success: ({ confirm, cancel }) => {
+              confirm && this.getApptVerify()
             },
+            can,
           })
 
           return
         }
-      }
 
-      this.getApptVerify()
+        if (!this.saveLoading) {
+          this.saveLoading = true
+          this.getApptVerify()
+        }
+      } else {
+        this.getApptVerify()
+      }
     },
     // 预约提交之前需要校验
     getApptVerify() {
       let values = this.form
-
-      this.saveLoading = true
 
       values.patientId = this.form.patient.patientId
 
@@ -642,12 +653,12 @@ export default {
       apptDataService.getApptVerify(
         formatValue,
         () => this.updateApptCb(formatValue),
-        null,
         () => (this.saveLoading = false),
       )
     },
     // 新建/更新预约 | 挂号调用接口
     updateApptCb(formatValue) {
+      this.saveLoading = true
       const type = this.paramsObj.type
 
       let dept
