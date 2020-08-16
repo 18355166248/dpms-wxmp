@@ -121,7 +121,7 @@ $amount: 0.1;
   border-width: 1rpx;
   border-style: solid;
   border-color: $uni-bg-color-grey;
-  margin-right: 16rpx;
+  margin-right: 8rpx;
 }
 
 .tag--circle {

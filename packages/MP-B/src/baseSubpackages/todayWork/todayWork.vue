@@ -16,7 +16,9 @@
               :range="roleNames"
             >
               <view class="todayWork-header">
-                <text>当前角色：{{ roles[roleIndex].name || '--' }}</text>
+                <text class="fz-34"
+                  >当前角色：{{ roles[roleIndex].name || '--' }}</text
+                >
 
                 <text class="todayWork-header-txt">
                   <text class="iconfont icon-retweet"></text>
@@ -24,15 +26,17 @@
                 </text>
               </view>
             </picker>
-            <dpmsSearch
-              @change="searchChange"
-              @search="emitPullDownRefresh"
-              @clear="handleClear"
-              type="text"
-              v-model="patientSearchKey"
-              confirmType="search"
-              placeholder="搜索患者"
-            ></dpmsSearch>
+            <view class="pv-12">
+              <dpmsSearch
+                @change="searchChange"
+                @search="emitPullDownRefresh"
+                @clear="handleClear"
+                type="text"
+                v-model="patientSearchKey"
+                confirmType="search"
+                placeholder="搜索患者"
+              ></dpmsSearch>
+            </view>
           </view>
         </fixed-filter>
 
@@ -52,6 +56,7 @@
                   })
                 "
                 :cornerMarker="item.acrossInstitutionAppointmentFlag"
+                :marginConfig="{ position: ['left', 'right', 'bottom'] }"
                 :name="item.patientDTO.patientName"
                 :avatarUrl="item.patientDTO.avatarUrl"
                 :gender="item.patientDTO.gender"
@@ -751,6 +756,7 @@ export default {
 <style lang="scss" scoped>
 .todayWork-page-view {
   height: 100%;
+  background: #fff;
 
   .error-wrapper {
     height: 100%;
@@ -777,13 +783,12 @@ export default {
       padding: 0 32rpx;
       height: 56rpx;
       line-height: 56rpx;
-
       border-radius: 28rpx;
-
       font-size: 28rpx;
-
       color: $dpms-color-primary;
       border: 2rpx solid $dpms-color-primary;
+      background: #fff;
+
       &::after {
         border: none;
       }
