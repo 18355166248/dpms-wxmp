@@ -72,6 +72,8 @@ export default {
         'accessMedicalInstitution',
         this.accessMedicalInstitution,
       )
+      uni.setStorageSync('doctorList', this.doctorList)
+      uni.setStorageSync('apptViewdoctor', this.apptViewdoctor)
       uni.$emit(globalEventKeys.onSelectedDcotorWithApptView, doctor)
     },
     // 总部/大区 筛选医生
