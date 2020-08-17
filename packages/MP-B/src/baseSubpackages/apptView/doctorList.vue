@@ -55,11 +55,8 @@ export default {
   },
   onLoad() {
     console.log('institutionCanSelectList', this.institutionCanSelectList)
-    uni.$on(globalEventKeys.updateDoctorListByPosition, () => {
-      this.doctorList = uni.getStorageSync('doctorList')
-
-      // 更新了医生列表数据 默认选中第一条
-      this.apptViewdoctor = this.doctorList[0]
+    uni.$on(globalEventKeys.updateDoctorListByPosition, (doctorList) => {
+      this.doctorList = doctorList
     })
   },
   onUnload() {
@@ -71,6 +68,10 @@ export default {
       this.$refs.selectMedicalInstitution.show()
     },
     onSelected(doctor) {
+      uni.setStorageSync(
+        'accessMedicalInstitution',
+        this.accessMedicalInstitution,
+      )
       uni.$emit(globalEventKeys.onSelectedDcotorWithApptView, doctor)
     },
     // 总部/大区 筛选医生
@@ -78,18 +79,18 @@ export default {
       if (value.id === this.accessMedicalInstitution.medicalInstitutionId)
         return
 
+      this.apptViewdoctor = {}
+
       this.accessMedicalInstitution = {
         medicalInstitutionSimpleCode: value.name,
         medicalInstitutionId: value.id,
       }
 
-      uni.setStorageSync(
-        'accessMedicalInstitution',
+      // 获取在职医生列表
+      uni.$emit(
+        globalEventKeys.getDoctorListByPosition,
         this.accessMedicalInstitution,
       )
-
-      // 获取在职医生列表
-      uni.$emit(globalEventKeys.getDoctorListByPosition)
     },
   },
 }
