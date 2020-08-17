@@ -350,8 +350,8 @@ export default {
       })
     },
     'form.medicalInstitution'(newVal) {
-      console.log('form.medicalInstitution', newVal)
-      this.isCurrentInstitutionFlag = newVal.isCurrentInstitutionFlag
+      newVal &&
+        (this.isCurrentInstitutionFlag = newVal.isCurrentInstitutionFlag)
     },
   },
   methods: {
@@ -839,11 +839,13 @@ export default {
           padding-left: 32rpx;
           flex: 1;
           text-align: left;
+          overflow: hidden;
           .patientTop {
             width: 100%;
             font-size: 34rpx;
             font-weight: 500;
             color: rgba(0, 0, 0, 0.9);
+            overflow: hidden;
           }
           .patientC {
             font-size: 26rpx;
