@@ -1,5 +1,5 @@
 <template>
-  <div class="dpms-cell" @click="$emit('cellclick')">
+  <div class="dpms-cell" @click="cellClick">
     <div :class="['dpms-cell__title', required ? 'required' : '']">
       {{ title }}
     </div>
@@ -38,6 +38,16 @@ export default {
       required: false,
     },
     placeholder: String,
+    disabled: {
+      type: Boolean,
+      required: false,
+    },
+  },
+  methods: {
+    cellClick() {
+      if (this.disabled) return
+      this.$emit('cellclick')
+    },
   },
 }
 </script>

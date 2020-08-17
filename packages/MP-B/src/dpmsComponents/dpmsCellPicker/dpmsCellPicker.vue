@@ -7,11 +7,12 @@
     :mode="mode"
     :end="end"
     :header-text="headerText"
+    :disabled="disabled"
   >
     <dpmsCell
       :title="title"
       :required="required"
-      isLink
+      :isLink="!disabled"
       :placeholder="placeholder"
       :value="pickerValue"
     />
@@ -53,6 +54,10 @@ export default {
     },
     end: String,
     headerText: String,
+    disabled: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
     pickerValue() {
