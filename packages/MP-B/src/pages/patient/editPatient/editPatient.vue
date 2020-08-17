@@ -49,6 +49,8 @@ export default {
         medicalInstitutionId: this.staff.belongsInstitutionId,
         mobile: form.mobile,
         patientName: form.patientName,
+        customerId: form.customerId,
+        patientId: form.patientId,
       })
       // if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
       //   delete scrmPatientInfo.customerId
