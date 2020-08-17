@@ -54,7 +54,7 @@
 
         <template v-if="infos.length > 0">
           <view v-for="(infoItem, index) in infos" :key="index">
-            <template v-if="infoItem.value">
+            <template v-if="isTrustVal(infoItem.value)">
               <text class="mr-6">{{ infoItem.label }}：</text>
               <text>{{ formatVal(infoItem.value) }}</text>
             </template>
@@ -291,6 +291,16 @@ export default {
   },
 
   methods: {
+    isTrustVal(val) {
+      if (Array.isArray(val)) {
+        const isTrue = val.every((item) => !!item)
+        if (isTrue) {
+          return true
+        }
+        return false
+      }
+      return !!val
+    },
     formatVal(val) {
       if (Array.isArray(val)) {
         return `${moment(val[0]).format('HH:mm')} ~ ${moment(val[1]).format(
