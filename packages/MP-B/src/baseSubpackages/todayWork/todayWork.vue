@@ -228,26 +228,26 @@
               :status="dataSourceStatus.status"
               iconSize="20"
             ></load-more>
-            <view v-if="isShowNewBtn">
-              <fixed-footer :bgColor="primaryColor">
-                <button
-                  v-if="isShowNewBtn"
-                  class="todayWork-new"
-                  @click="
-                    toPage('/baseSubpackages/apptForm/apptForm', {
-                      type: 'createRegister',
-                    })
-                  "
-                >
-                  新建挂号
-                </button>
-              </fixed-footer>
-            </view>
           </template>
 
           <template v-else>
             <empty :disabled="true" text="暂无今日就诊数据"></empty>
           </template>
+          <view v-if="isShowNewBtn">
+            <fixed-footer :bgColor="primaryColor">
+              <button
+                v-if="isShowNewBtn"
+                class="todayWork-new"
+                @click="
+                  toPage('/baseSubpackages/apptForm/apptForm', {
+                    type: 'createRegister',
+                  })
+                "
+              >
+                新建挂号
+              </button>
+            </fixed-footer>
+          </view>
         </view>
 
         <view
@@ -259,7 +259,7 @@
       </view>
 
       <view v-else class="h100">
-        <empty @click="loadCurrentStaff"></empty>
+        <empty :disabled="true"></empty>
       </view>
     </view>
 
@@ -565,13 +565,14 @@ export default {
         if (type === 'createRegister') {
           const newRowData = {
             ...appt,
-            appointmentBeginTimestamp: appt.appointmentBeginTimeStamp,
-            appointmentEndTimestamp: appt.appointmentEndTimeStamp,
             registerStatus: this.REGISTER_ENUM.REGISTER_REGISTERED.value,
             patientDTO: appt.patient,
             doctorOperated: false,
             consultedOperated: false,
           }
+          delete newRowData.appointmentBeginTimeStamp
+          delete newRowData.appointmentEndTimeStamp
+
           this.dataSource = [newRowData, ...this.dataSource]
           console.log('this.dataSource:', this.dataSource)
         }
