@@ -17,7 +17,11 @@
     <fixed-footer v-if="!isHeadquartersAndRegion" :bgColor="primaryColor">
       <button
         class="button-new"
-        @click="toPage('/baseSubpackages/apptView/apptView')"
+        @click="
+          toPage('/baseSubpackages/apptForm/apptForm', {
+            type: 'createAppt',
+          })
+        "
       >
         新建预约
       </button>
@@ -51,9 +55,11 @@ export default {
 
   methods: {
     // 页面跳转
-    toPage(url) {
+    toPage(url, params) {
       this.$utils.push({
-        url,
+        url: `${url}?${qs.stringify(params, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+        })}`,
       })
     },
 
