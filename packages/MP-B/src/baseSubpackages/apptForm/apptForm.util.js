@@ -341,8 +341,8 @@ const apptFormUtil = {
     )
 
     if (CONSULTING_ROOM) {
-      CONSULTING_ROOM.institutionConsultingRoomName =
-        CONSULTING_ROOM.institutionConsultingRoomName[lang]
+      // CONSULTING_ROOM.institutionConsultingRoomName =
+      //   CONSULTING_ROOM.institutionConsultingRoomName[lang]
 
       if (
         consultingRoomCache.institutionConsultingRoomId ===
