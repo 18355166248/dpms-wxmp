@@ -14,7 +14,7 @@
     <template v-else>
       <empty :disabled="true" text="暂无预约数据"></empty>
     </template>
-    <fixed-footer :bgColor="primaryColor">
+    <fixed-footer v-if="!isHeadquartersAndRegion" :bgColor="primaryColor">
       <button
         class="button-new"
         @click="toPage('/baseSubpackages/apptView/apptView')"
@@ -31,6 +31,7 @@ import qs from 'qs'
 import patientAPI from '@/APIS/patient/patient.api'
 import apptCard from '@/businessComponents/apptCard/apptCard.vue'
 import empty from '@/components/empty/empty.vue'
+import { mapState } from 'vuex'
 
 export default {
   data() {
@@ -38,6 +39,7 @@ export default {
       patientId: '',
       patient: {},
       dataSource: [],
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
     }
   },
   onLoad(params) {
@@ -46,6 +48,7 @@ export default {
   onReady() {
     this.init()
   },
+
   methods: {
     // 页面跳转
     toPage(url) {
@@ -81,6 +84,28 @@ export default {
     getDoctor(val) {
       let doctor = val.filter((v) => v.position === 2 && v.staffId !== -1)[0]
       return doctor ? doctor : { staffName: '未指定医生' }
+    },
+  },
+  computed: {
+    ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
+    institutionChainTypeKey() {
+      if (this.INSTITUTION_CHAIN_TYPE_ENUM && this.medicalInstitution) {
+        if (
+          this.INSTITUTION_CHAIN_TYPE_ENUM.properties &&
+          this.medicalInstitution.institutionChainType
+        ) {
+          return this.INSTITUTION_CHAIN_TYPE_ENUM.properties[
+            this.medicalInstitution.institutionChainType
+          ].key
+        }
+      }
+    },
+    isHeadquartersAndRegion() {
+      return (
+        (this.institutionChainTypeKey === 'CHAIN' &&
+          Number(this.medicalInstitution.topParentId) === 0) ||
+        this.institutionChainTypeKey === 'REGIONAL'
+      )
     },
   },
   components: {
