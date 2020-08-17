@@ -248,7 +248,7 @@ export default {
     this.unitHeight = parseInt(this.hourHeight / 4) || 16 //16px
     this.unitMinute = parseInt(this.uMinute) || 15 //15分钟
     this.showMinute = parseInt(this.showMin) || 60 //60分钟
-    this.defaultChoose = parseInt(this.defaultChooseLong / 15) || 4 //60分钟
+    this.defaultChoose = parseInt(this.defaultChooseLong / 15) || 2 //30分钟
     this.minMute = parseInt(this.showMin) || 1
 
     this.minRatio = this.showMinute / this.unitMinute // 4 一个显示的时间段分几块
@@ -385,6 +385,9 @@ export default {
 
         if (i % rat === 0) {
           time = hour + ':00'
+          timeClass = 'hasTime' // 整点添加类名
+        } else if (i % rat === 2) {
+          time = hour + ':30'
           timeClass = 'hasTime' // 整点添加类名
         } else {
           time = hour + ':' + (i % rat) * self.unitMinute
@@ -533,12 +536,12 @@ export default {
       let endTime = ''
       if (id < 2) {
         id = 2
-      } else if (id > 91) {
+      } else if (id > 93) {
         // endId = 96;
-        id = 90
-        stId = 92
+        id = 92
+        stId = 94
       } else {
-        stId = id - 2
+        stId = id - 1
         // endId = id + 6;
       }
 

@@ -2,7 +2,7 @@
   <div class="apptForm">
     <scroll-view scroll-y class="h100">
       <div class="bg" />
-      <div class="patientInfo tc pt-48">
+      <div class="patientInfo tc pt-48 mb-48">
         <div
           :class="['patientCard', form.patient ? 'hasPatient' : '']"
           @click="selectPatient"
@@ -84,15 +84,17 @@
           placeholder="请选择助理"
           title="助理"
           :value="HELP_CHECKED_TEXT"
-          isLink
-          @click.native="onSelectStaff(5)"
+          :isLink="isCurrentInstitutionFlag"
+          :disabled="!isCurrentInstitutionFlag"
+          @cellclick="onSelectStaff(5)"
         />
         <dpmsCell
           placeholder="请选择护士"
           title="护士"
           :value="NURSE_CHECKED_TEXT"
-          isLink
-          @click.native="onSelectStaff(6)"
+          :isLink="isCurrentInstitutionFlag"
+          :disabled="!isCurrentInstitutionFlag"
+          @cellclick="onSelectStaff(6)"
         />
         <dpmsCellPicker
           :list="DENTIST_LIST"
@@ -100,6 +102,7 @@
           defaultType="staffId"
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           title="洁牙师"
+          :disabled="!isCurrentInstitutionFlag"
           placeholder="请选择洁牙师"
         />
         <dpmsCellPicker
@@ -108,6 +111,7 @@
           defaultType="staffId"
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           title="咨询师"
+          :disabled="!isCurrentInstitutionFlag"
           placeholder="请选择咨询师"
         />
         <dpmsCellPicker
@@ -119,6 +123,7 @@
             value: 'institutionConsultingRoomId',
           }"
           title="诊室"
+          :disabled="!isCurrentInstitutionFlag"
           placeholder="请选择诊室"
         />
         <dpmsCell
@@ -234,6 +239,7 @@ export default {
 
       selectListCache: [[]], // 0科室, 1诊室, 2医生, 3洁牙师, 4咨询师, 5助理, 6预约项目 7诊所 8护士
       apptInfoCache: {}, // 缓存编辑/挂号预约详情
+      isCurrentInstitutionFlag: true, // 是否为当前诊所
     }
   },
   filters: {
@@ -342,6 +348,10 @@ export default {
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
       })
+    },
+    'form.medicalInstitution'(newVal) {
+      console.log('form.medicalInstitution', newVal)
+      this.isCurrentInstitutionFlag = newVal.isCurrentInstitutionFlag
     },
   },
   methods: {
@@ -802,7 +812,6 @@ export default {
   }
   .patientInfo {
     box-sizing: border-box;
-    height: 296rpx;
     .patientCard {
       width: 702rpx;
       height: 184rpx;

@@ -409,20 +409,23 @@ export default {
         height: $height;
         background: $frontColor;
         border-radius: 8rpx;
-        padding-left: 80rpx;
+        padding-left: 66rpx;
         margin-left: 32rpx;
         color: rgba(0, 0, 0, 0.25);
         &-input {
           width: 100%;
           height: $height;
           line-height: $height;
+          font-size: 28rpx;
         }
         .iconfont {
           position: absolute;
-          left: 28rpx;
+          left: 16rpx;
           top: 50%;
           transform: translateY(-50%);
           font-size: 40rpx;
+          font-weight: 700;
+          color: rgba($color: #000000, $alpha: 0.25);
         }
       }
       .btn-new {

@@ -151,6 +151,7 @@ export default {
 
 .dpms-collapse-cell--hide {
   height: 82rpx;
+  border-bottom: 1rpx solid rgba($color: #000000, $alpha: 0.15);
 }
 
 .dpms-collapse-cell--animation {

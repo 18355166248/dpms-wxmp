@@ -77,7 +77,7 @@ export default {
     .appt {
       height: 112rpx;
       line-height: 112rpx;
-      border-top: 1px solid rgba($color: #000000, $alpha: 0.15);
+      border-top: 1rpx solid rgba($color: #000000, $alpha: 0.15);
       color: rgba($color: #000000, $alpha: 0.9);
       font-size: 34rpx;
 

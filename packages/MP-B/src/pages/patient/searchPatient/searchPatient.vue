@@ -130,7 +130,7 @@ export default {
     },
     async getPatients() {
       uni.showLoading({
-        title: '搜索患者中',
+        title: '数据加载中',
         mask: true,
       })
 

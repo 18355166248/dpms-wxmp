@@ -176,6 +176,10 @@ export default {
   .field__left-icon {
     margin-right: 10rpx;
     font-weight: 700;
+    .icon-search {
+      font-size: 40rpx;
+      color: rgba($color: #000000, $alpha: 0.25);
+    }
   }
 
   .icon {
