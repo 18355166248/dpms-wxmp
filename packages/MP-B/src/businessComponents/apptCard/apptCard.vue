@@ -40,7 +40,12 @@
           >联系电话：{{ appt.patient.mobile }}</view
         >
         <view>预约时间：{{ getApptTime() }}</view>
-        <view>预约诊所：{{ appt.medicalInstitutionSimpleCode }}</view>
+        <view class="institution">
+          <text class="institutionLabel">预约诊所：</text>
+          <text class="text-ellipsis institutionName">{{
+            appt.medicalInstitutionSimpleCode
+          }}</text>
+        </view>
         <view>预约医生：{{ doctor.staffName }}</view>
       </view>
     </view>
@@ -133,6 +138,8 @@ $fontColor: rgba(
   .right {
     padding-left: 24rpx;
     flex: 1 1 100%;
+    overflow: hidden;
+
     .title {
       font-size: 34rpx;
       font-weight: 700;
@@ -165,6 +172,17 @@ $fontColor: rgba(
     .apptDetail {
       color: $fontColor;
       font-size: 28rpx;
+
+      .institution {
+        display: flex;
+        .institutionLabel {
+          flex: 0 0 auto;
+        }
+        .institutionName {
+          flex: 1 1 100%;
+          overflow: hidden;
+        }
+      }
 
       > view {
         margin-bottom: 8rpx;
