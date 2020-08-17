@@ -72,6 +72,7 @@
     "chain-package_superadmin-role_in-franchise": true,
     "chain-package_other-role_work-in-own_in-hq": false,
     "chain-package_other-role_work-in-own_in-region": false,
+    "chain-package_admin-role_work-in-own_in-direct": true,
     "chain-package_other-role_work-in-own_in-direct": true,
     "chain-package_other-role_work-in-own_in-franchise": true,
     "chain-package_other-role_work-in-other_in-hq": false,
