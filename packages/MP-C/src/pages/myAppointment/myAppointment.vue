@@ -1,67 +1,69 @@
 <template>
   <movable-area>
     <view>
-      <scroll-view scroll-y>
-        <div class="tab">
-          <div class="recentAppointment" @click="getRecent">
-            <span :class="recent">近期预约</span>
-          </div>
-          <div class="historyAppointment" @click="getHistory">
-            <span :class="history">历史预约</span>
-          </div>
+      <div class="tab">
+        <div class="recentAppointment" @click="getRecent">
+          <span :class="recent">近期预约</span>
         </div>
-        <div class="appointmentList">
-          <div
-            class="item"
-            v-for="val of appointList"
-            :key="val.networkAppointmentId"
-            @click="appointmentDetail(val.networkAppointmentId)"
-          >
-            <image class="watch" src="/static/watch.svg" />
-            <div class="statusType">
-              <span class="iconfont icon-time" style="margin-right: 16rpx;"></span>
-              <span>{{ time(val.appointmentBeginTime) }}</span>
-              <span class="colorAndName">
-                <span
-                  class="statusColor"
-                  :style="{
-                background:
+        <div class="historyAppointment" @click="getHistory">
+          <span :class="history">历史预约</span>
+        </div>
+      </div>
+      <div class="appointmentList">
+        <div
+          class="item"
+          v-for="val of appointList"
+          :key="val.networkAppointmentId"
+          @click="appointmentDetail(val.networkAppointmentId)"
+        >
+          <image class="watch" src="/static/watch.svg" />
+          <div class="statusType">
+            <span
+              class="iconfont icon-time"
+              style="margin-right: 16rpx;"
+            ></span>
+            <span>{{ time(val.appointmentBeginTime) }}</span>
+            <span class="colorAndName">
+              <span
+                class="statusColor"
+                :style="{
+                  background:
+                    NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus]
+                      .zh_CN == '已预约'
+                      ? '#5CBB89'
+                      : NETWORL_APPOINTMENT_STATUS.properties[
+                          val.appointmentStatus
+                        ].zh_CN == '已挂号'
+                      ? '#F2647C'
+                      : NETWORL_APPOINTMENT_STATUS.properties[
+                          val.appointmentStatus
+                        ].zh_CN == '待确认'
+                      ? '#FBD438'
+                      : '#B1B0B0',
+                }"
+              ></span>
+              <span class="statusName">
+                {{
                   NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus]
-                    .zh_CN == '已预约'
-                    ? '#5CBB89'
-                    : NETWORL_APPOINTMENT_STATUS.properties[
-                        val.appointmentStatus
-                      ].zh_CN == '已挂号'
-                    ? '#F2647C'
-                    : NETWORL_APPOINTMENT_STATUS.properties[
-                        val.appointmentStatus
-                      ].zh_CN == '待确认'
-                    ? '#FBD438'
-                    : '#B1B0B0',
-              }"
-                ></span>
-                <span class="statusName">
-                  {{
-                  NETWORL_APPOINTMENT_STATUS.properties[val.appointmentStatus].zh_CN
-                  }}
-                </span>
-              </span>
-            </div>
-            <div class="appointmentInfo">
-              <div>门店:{{ val.shopName || '' }}</div>
-              <div>医生:{{ val.doctorName || '' }}</div>
-              <div>
-                预约项目:{{
-                val.networkAppointmentItemList
-                ? arrObjKeys(val.networkAppointmentItemList,'itemName',',')
-                : ''
+                    .zh_CN
                 }}
-              </div>
-              <div>患者姓名:{{ val.personnelName || '' }}</div>
+              </span>
+            </span>
+          </div>
+          <div class="appointmentInfo">
+            <div>门店:{{ val.shopName || '' }}</div>
+            <div>医生:{{ val.doctorName || '' }}</div>
+            <div>
+              预约项目:{{
+                val.networkAppointmentItemList
+                  ? arrObjKeys(val.networkAppointmentItemList, 'itemName', ',')
+                  : ''
+              }}
             </div>
+            <div>患者姓名:{{ val.personnelName || '' }}</div>
           </div>
         </div>
-      </scroll-view>
+      </div>
     </view>
     <div class="empty" v-show="showEmpty">
       <image class="emptyImg" src="/static/empty.svg" />

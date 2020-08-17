@@ -9,7 +9,7 @@
         ><text class="iconfont next icon-fanhui"
       /></view>
     </view> -->
-    <view class="date_dl">
+    <view class="date_dl weekTitleList">
       <view class="dd" v-for="(item, index) in week" :key="index">{{
         item
       }}</view>
@@ -614,12 +614,18 @@ export default {
 
 <style lang="scss">
 $color: $common-color;
-$color_disabled: #f1f1f1;
+$color_disabled: rgba(
+  $color: #000000,
+  $alpha: 0.25,
+);
 $color_standard: #333;
 $color_border: #f5f5f5;
 .date {
   width: 750rpx;
   background-color: #fff;
+  .weekTitleList {
+    color: rgba($color: #000000, $alpha: 0.5);
+  }
 }
 .head {
   display: flex;
@@ -645,7 +651,7 @@ $color_border: #f5f5f5;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 30rpx;
+  height: 32rpx;
   .iconfont {
     color: rgba(0, 0, 0, 0.25);
     transition: transform 300ms;
