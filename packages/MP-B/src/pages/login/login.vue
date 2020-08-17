@@ -247,12 +247,15 @@ export default {
       border-bottom-style: solid;
       border-bottom-color: rgba(0, 0, 0, 0.15);
       position: relative;
+      padding-right: 90rpx;
     }
     .btn-clear {
       position: absolute;
       right: 0;
       z-index: 2;
-      padding: 0 10rpx;
+      width: 80rpx;
+      height: 100rpx;
+      text-align: right;
       .iconfont {
         opacity: 0.25;
       }
