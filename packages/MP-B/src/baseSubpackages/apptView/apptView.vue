@@ -193,6 +193,8 @@ export default {
       this.accessMedicalInstitution = uni.getStorageSync(
         'accessMedicalInstitution',
       )
+      this.doctorList = uni.getStorageSync('doctorList')
+      this.doctor = uni.getStorageSync('apptViewdoctor')
       this.onSelected(doctor)
     })
     uni.$on(
