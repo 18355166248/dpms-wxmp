@@ -65,7 +65,6 @@
         :memberCode="loginForm.memberCode"
         :username="loginForm.username"
         @confirm="login"
-        @onDisList="isLoading = false"
       ></selectMedicalInstitution>
     </view>
   </view>
@@ -114,6 +113,9 @@ export default {
       title: '北极熊',
       content: '医疗服务云',
     })
+  },
+  onUnload() {
+    this.isLoading = false
   },
   methods: {
     clearForLoginForm(field) {
