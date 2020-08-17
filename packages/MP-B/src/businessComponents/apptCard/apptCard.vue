@@ -104,8 +104,8 @@ export default {
     },
     getApptTime() {
       return `${moment(this.appt.appointmentBeginTimeStamp).format(
-        'HH:mm',
-      )} - ${moment(this.appt.appointmentEndTimeStamp + 1).format('HH:mm')}`
+        'YYYY-MM-DD HH:mm',
+      )} ~ ${moment(this.appt.appointmentEndTimeStamp + 1).format('HH:mm')}`
     },
   },
 }
