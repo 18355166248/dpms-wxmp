@@ -1,29 +1,27 @@
 <template>
   <movable-area>
     <view>
-      <scroll-view scroll-y>
-        <div v-if="personList.length < 10" class="add" @click="addPerson">
-          <div class="iconfont icon-add"></div>
-          <div>还可添加{{ 10 - personList.length }}人</div>
-        </div>
-        <div class="personList">
-          <div
-            class="item"
-            v-for="val of personList"
-            @click="personDetail(val.id)"
-            :key="val.id"
-          >
-            <div class="name">
-              {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
-              <span class="self">{{
-                CONTACT_LABEL.properties[val.contactLabel].zh_CN
-              }}</span>
-            </div>
-            <div class="phone">手机：{{ val.mobile }}</div>
-            <span class="iconfont icon-right"></span>
+      <div v-if="personList.length < 10" class="add" @click="addPerson">
+        <div class="iconfont icon-add"></div>
+        <div>还可添加{{ 10 - personList.length }}人</div>
+      </div>
+      <div class="personList">
+        <div
+          class="item"
+          v-for="val of personList"
+          @click="personDetail(val.id)"
+          :key="val.id"
+        >
+          <div class="name">
+            {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
+            <span class="self">{{
+              CONTACT_LABEL.properties[val.contactLabel].zh_CN
+            }}</span>
           </div>
+          <div class="phone">手机：{{ val.mobile }}</div>
+          <span class="iconfont icon-right"></span>
         </div>
-      </scroll-view>
+      </div>
     </view>
     <div class="empty" v-show="showEmpty">
       <image class="emptyImg" src="/static/empty.svg" />

@@ -32,6 +32,10 @@
         <span>{{ detailInfo.personnelName }}</span>
       </div>
       <div>
+        <span>预约备注</span>
+        <span>{{ detailInfo.appointmentMemo || '--' }}</span>
+      </div>
+      <div>
         <span>状态</span>
         <span>
           {{

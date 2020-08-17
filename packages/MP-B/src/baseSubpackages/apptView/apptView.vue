@@ -29,7 +29,7 @@
         <view v-else class="curCardInfo">
           <view class="leftCardInfo">
             <view
-              class="doctorName mr-10 text-ellipsis"
+              class="doctorName pr-48 text-ellipsis"
               v-if="isHeaderWithLargeArea"
               >诊所：{{
                 (accessMedicalInstitution &&
@@ -39,7 +39,7 @@
             >
             <view
               class="doctorName doctorSelect"
-              :style="{ width: isHeaderWithLargeArea ? '50%' : '100%' }"
+              :style="{ maxWidth: isHeaderWithLargeArea ? '50%' : '100%' }"
             >
               <span class="text-ellipsis doctorShowName">
                 医生：{{ doctor.staffName || '' }}
@@ -633,7 +633,7 @@ page {
           padding-right: 20rpx;
           .doctorName {
             font-size: 28rpx;
-            flex: 1;
+            max-width: 50%;
             display: inline-block;
             overflow: hidden;
             .doctorShowName {
