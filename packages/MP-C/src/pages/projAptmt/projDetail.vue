@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="content" scroll-y>
+  <view class="content">
     <view class="compDesc">
       <view class="compDescContent">
         <p class="projTitle">
@@ -67,7 +67,7 @@
         <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
       </view>
     </view>
-  </scroll-view>
+  </view>
 </template>
 
 <script>
