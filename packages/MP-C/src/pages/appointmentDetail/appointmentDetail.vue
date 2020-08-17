@@ -33,7 +33,7 @@
       </div>
       <div>
         <span>预约备注</span>
-        <span>{{ detailInfo.appointmentMemo || '--' }}</span>
+        <span>{{ detailInfo.appointmentMemo || '' }}</span>
       </div>
       <div>
         <span>状态</span>
@@ -51,7 +51,12 @@
     </div>
     <div class="operation">
       <div class="protocol">
-        <checkbox class="check" checked @click="agree"></checkbox>
+        <dpmsCheckbox
+          style="margin-right: 10rpx;"
+          disabled
+          value="true"
+          @change="(v) => (btnDisabled = !v)"
+        />
         <span>我已知悉并同意</span>
         <span @click="showContent = true">《预约服务协议》</span>
       </div>

@@ -4,29 +4,50 @@
     <view class="content">
       <view class="login">
         <label>
-          <text class="iconfont icon-institutions" />
+          <text class="iconfont icon-institutions mr-20" />
           <input
             placeholder="请输入会员名"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.memberCode"
           />
+          <view
+            class="btn-clear"
+            v-if="loginForm.memberCode.trim() !== ''"
+            @click="clear('memberCode')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
         </label>
         <label>
-          <text class="iconfont icon-user" />
+          <text class="iconfont icon-user mr-20" />
           <input
             placeholder="请输入用户名"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.username"
           />
+          <view
+            class="btn-clear"
+            v-if="loginForm.username.trim() !== ''"
+            @click="clear('username')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
         </label>
         <label>
-          <text class="iconfont icon-password" />
+          <text class="iconfont icon-password mr-20" />
           <input
             password
             placeholder="请输入密码"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.password"
           />
+          <view
+            class="btn-clear"
+            v-if="loginForm.password.trim() !== ''"
+            @click="clear('password')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
         </label>
         <button
           class="submit"
@@ -95,6 +116,9 @@ export default {
     })
   },
   methods: {
+    clear(field) {
+      this.loginForm[field] = ''
+    },
     login(val) {
       authAPI
         .login({
@@ -197,9 +221,11 @@ export default {
       border-bottom-style: solid;
       border-bottom-color: rgba(0, 0, 0, 0.15);
     }
-    text.iconfont {
+    .btn-clear {
+      padding: 0 10rpx;
+    }
+    .iconfont {
       font-size: 40rpx;
-      margin-right: 20rpx;
       color: #000;
       opacity: 0.65;
     }

@@ -102,10 +102,7 @@ export default {
         appointmentAPI.updateAppointmentStatus({
           appointmentId: this.appointmentId,
           appointmentStatus: this.APPOINTMENT_STATUS_ENUM.CANCELED.value,
-          appointmentMemo: this.appointmentMemo.replace(
-            /\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g,
-            '',
-          ),
+          appointmentMemo: this.appointmentMemo,
         }),
       )
 
