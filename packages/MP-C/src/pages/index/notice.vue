@@ -84,6 +84,7 @@ export default {
       background-position: center;
       overflow: auto;
       height: 700rpx;
+      word-break: break-word;
       .tit {
         color: rgba(0, 0, 0, 0.9);
         font-size: 34rpx;
