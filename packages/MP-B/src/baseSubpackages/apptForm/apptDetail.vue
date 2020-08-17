@@ -300,7 +300,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .appt-detail {
-  padding-top: 162rpx;
   height: 100%;
   box-sizing: border-box;
   position: relative;
@@ -333,16 +332,14 @@ export default {
   &-wrapper {
     height: 100%;
     box-sizing: border-box;
-    padding-top: 182rpx;
     position: relative;
+    z-index: 2;
     &-info-card {
       width: 100%;
-      position: absolute;
-      left: 0;
-      top: 0;
-      transform: translateY(-50%);
+      padding-top: 48rpx;
     }
     &-main-cotent {
+      margin-top: 48rpx;
       padding: 0 32rpx;
       color: $common-text-color;
       font-size: $dpms-font-size-base;

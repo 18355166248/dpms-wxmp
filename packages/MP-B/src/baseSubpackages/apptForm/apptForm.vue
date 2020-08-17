@@ -1,27 +1,37 @@
 <template>
   <div class="apptForm">
-    <div class="bg"></div>
     <scroll-view scroll-y class="h100">
+      <div class="bg" />
       <div class="patientInfo tc pt-48">
-        <div class="patientCard">
+        <div
+          :class="['patientCard', form.patient ? 'hasPatient' : '']"
+          @click="selectPatient"
+        >
           <div class="patientDetail">
-            <patientAvatar :patient="form.patient" />
+            <div>
+              <patientAvatar :patient="form.patient" />
+            </div>
             <div v-if="form.patient" class="patientCenter">
-              <div class="patientTop">
-                <span class="patientName">{{ form.patient.patientName }}</span>
-                <span class="age">{{ form.patient.age }}</span>
-                <span class="gender">{{
+              <div class="patientTop text-ellipsis">
+                {{ form.patient.patientName }}
+              </div>
+              <div class="patientC mt-8 mb-16">
+                <span class="gender mr-8">{{
                   (form.patient && form.patient.gender) | getGenderText
                 }}</span>
+                <span class="age">{{ form.patient.age }}</span>
               </div>
               <div class="patientBottom">
                 <span>联系方式:</span>
                 <span class="ml-10">{{ form.patient.mobile }}</span>
               </div>
             </div>
-            <div class="patientRight" @click="selectPatient">
+            <div class="patientRight">
               <span v-if="!form.patient">选择患者</span>
-              <span class="iconfont icon-arrow-right"></span>
+              <span
+                class="iconfont icon-arrow-right"
+                :style="{ color: form.patient ? 'rgba(0, 0, 0, 0.25)' : '' }"
+              ></span>
             </div>
           </div>
         </div>
@@ -475,10 +485,14 @@ export default {
       })
     },
     onBlurWithDuration(value) {
-      if (value < 15) return this.$set(this.form, 'duration', 15)
+      if (value < 30) return this.$set(this.form, 'duration', 30)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
       if (value % 15 !== 0) {
-        return this.$set(this.form, 'duration', Math.ceil(value / 15) * 15)
+        return this.$set(
+          this.form,
+          'duration',
+          Math.max(Math.ceil(value / 15) * 15, 30),
+        )
       }
     },
     // 跳转选择助理页面
@@ -766,19 +780,7 @@ export default {
 .apptForm {
   width: 100%;
   height: 100%;
-  position: relative;
   background-color: rgba(0, 0, 0, 0.04);
-
-  .bg {
-    position: absolute;
-    width: 2500rpx;
-    height: 2500rpx;
-    border-radius: 1250rpx;
-    top: -2300rpx;
-    left: -875rpx;
-    background-color: $common-color;
-    z-index: 0;
-  }
 
   .inputRightIcon {
     color: rgba($color: #000000, $alpha: 0.5);
@@ -786,6 +788,17 @@ export default {
 
   scroll-view {
     height: 100%;
+    position: relative;
+    .bg {
+      position: absolute;
+      width: 2500rpx;
+      height: 2500rpx;
+      border-radius: 1250rpx;
+      top: -2300rpx;
+      left: -875rpx;
+      background-color: $common-color;
+      z-index: -1;
+    }
   }
   .patientInfo {
     box-sizing: border-box;
@@ -799,10 +812,14 @@ export default {
       box-sizing: border-box;
       border-radius: 8rpx;
 
+      &.hasPatient {
+        height: 208rpx;
+      }
+
       > .patientDetail {
         display: flex;
         justify-content: space-between;
-        align-items: center;
+        align-items: stretch;
 
         .selectPatient {
           color: $common-color;
@@ -815,55 +832,37 @@ export default {
           flex: 1;
           text-align: left;
           .patientTop {
-            display: flex;
-            .patientName,
+            width: 100%;
+            font-size: 34rpx;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.9);
+          }
+          .patientC {
+            font-size: 26rpx;
             .age,
             .gender {
               vertical-align: middle;
-            }
-            .patientName {
-              font-size: 36rpx;
-              font-weight: 500;
-              color: rgba(0, 0, 0, 0.9);
-              line-height: 47rpx;
-              padding-right: 30rpx;
               display: inline-block;
-              overflow: hidden;
-              box-sizing: border-box;
-            }
-            .age,
-            .gender {
-              display: inline-block;
-              height: 44rpx;
-              line-height: 44rpx;
               background: #fff2e8;
-              border: 1px solid #fa541c;
-              border-radius: 2rpx;
-              text-align: center;
               color: #fa541c;
-              font-size: 28rpx;
-              box-sizing: border-box;
-            }
-            .age {
-              padding: 0 6rpx;
-            }
-            .gender {
-              width: 84rpx;
-              background: #e6f7ff;
-              border: 1px solid #1890ff;
-              margin-left: 16rpx;
-              color: #1890ff;
+              border-radius: 2rpx;
+              height: 40rpx;
+              line-height: 40rpx;
+              text-align: center;
+              padding: 2rpx 16rpx;
+              min-width: 90rpx;
             }
           }
           .patientBottom {
             color: rgba($color: #000000, $alpha: 0.5);
             font-size: 28rpx;
-            margin-top: 16rpx;
           }
         }
 
         .patientRight {
           color: $common-color;
+          display: flex;
+          align-items: center;
         }
       }
     }

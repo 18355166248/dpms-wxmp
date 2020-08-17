@@ -42,7 +42,7 @@
           </view>
         </view>
 
-        <view :class="{ 'mb-16': infos.length > 0 }">
+        <view :class="{ 'mb-8': infos.length > 0 }">
           <template v-if="gender">
             <tag :text="genderTag" :circle="false" type="error"></tag>
           </template>
@@ -365,7 +365,7 @@ export default {
 
     .card-baseInfo {
       position: relative;
-      margin-bottom: 20rpx;
+      margin-bottom: 8rpx;
       &-name {
         color: rgba(0, 0, 0, 0.9);
         font-size: 36rpx;
@@ -379,6 +379,7 @@ export default {
       }
     }
     &-item {
+      line-height: 36rpx;
       margin-bottom: 8rpx;
     }
   }
@@ -386,7 +387,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 40rpx;
+    margin-top: 32rpx;
     &-left {
       min-width: 10rpx;
     }
