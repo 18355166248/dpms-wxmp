@@ -200,7 +200,7 @@ export default {
     })
   },
   onShow() {
-    this.init()
+    uni.startPullDownRefresh()
   },
   onPullDownRefresh() {
     this.init()
