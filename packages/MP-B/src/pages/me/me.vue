@@ -31,7 +31,7 @@
       <view class="li" @click="toUrl('/pages/myProfile/about')">
         <view>
           <image class="logo" src="../../static/icon-mini-logo.png" />
-          关于北吉熊1
+          关于北吉熊
         </view>
         <text class="iconfont icon-right text" />
       </view>

@@ -135,14 +135,15 @@
           placeholder="请选择预约项目"
         />
         <dpmsCell title="预约备注" />
-        <textarea
-          class="appointmentMemo"
-          v-model="form.appointmentMemo"
-          auto-height
-          placeholder="请输入预约备注"
-          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-          :maxlength="500"
-        ></textarea>
+        <view class="appointmentMemo">
+          <textarea
+            v-model="form.appointmentMemo"
+            auto-height
+            placeholder="请输入预约备注"
+            placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+            :maxlength="500"
+          ></textarea>
+        </view>
         <div class="mt-56">
           <dpmsButton @click="onSave" :loading="saveLoading">保 存</dpmsButton>
         </div>
@@ -430,6 +431,8 @@ export default {
           }
         })
         .catch()
+
+      console.log('notGet', notGet)
 
       if (notGet) {
         this.$utils.clearLoading()
@@ -885,6 +888,10 @@ export default {
     padding: 35rpx 32rpx;
     background-color: #fff;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    textarea {
+      width: 100%;
+    }
   }
 }
 </style>
