@@ -113,16 +113,19 @@ export default {
       let key = this.multiIndex
 
       this.$set(this.multiArray, 0, this.filterArr(this.placeArr))
-      this.$set(
-        this.multiArray,
-        1,
-        this.filterArr(this.placeArr[key[0]].children),
-      )
-      this.$set(
-        this.multiArray,
-        2,
-        this.filterArr(this.placeArr[key[0]].children[key[1]].children),
-      )
+
+      if (this.placeArr[key[0]]) {
+        this.$set(
+          this.multiArray,
+          1,
+          this.filterArr(this.placeArr[key[0]].children),
+        )
+        this.$set(
+          this.multiArray,
+          2,
+          this.filterArr(this.placeArr[key[0]].children[key[1]].children),
+        )
+      }
     },
     // 复写数据
     reWrite(arr) {
