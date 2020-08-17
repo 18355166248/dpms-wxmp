@@ -26,7 +26,7 @@
         />
       </view>
     </view>
-    <fixed-footer>
+    <fixed-footer :bgColor="primaryColor">
       <view class="button-group">
         <button
           class="button"
@@ -57,6 +57,7 @@ export default {
         loading: true,
         status: 'loading',
       },
+      primaryColor: this.$commonCss.commonColor,
       appointmentMemo: '',
       appointmentId: null,
       dataSource: {},

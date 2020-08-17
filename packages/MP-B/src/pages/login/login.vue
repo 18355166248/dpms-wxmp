@@ -9,10 +9,15 @@
             placeholder="请输入会员名"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.memberCode"
+            @blur="handleBlur('memberCode')"
+            @focus="handleFocus('memberCode')"
           />
           <view
             class="btn-clear"
-            v-if="loginForm.memberCode.trim() !== ''"
+            v-if="
+              loginForm.memberCode.trim() !== '' &&
+              loginFormFocusFlag.memberCode
+            "
             @click="clearForLoginForm('memberCode')"
           >
             <text class="iconfont icon-close"></text>
@@ -24,10 +29,14 @@
             placeholder="请输入用户名"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.username"
+            @blur="handleBlur('username')"
+            @focus="handleFocus('username')"
           />
           <view
             class="btn-clear"
-            v-if="loginForm.username.trim() !== ''"
+            v-if="
+              loginForm.username.trim() !== '' && loginFormFocusFlag.username
+            "
             @click="clearForLoginForm('username')"
           >
             <text class="iconfont icon-close"></text>
@@ -40,10 +49,14 @@
             placeholder="请输入密码"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.password"
+            @blur="handleBlur('password')"
+            @focus="handleFocus('password')"
           />
           <view
             class="btn-clear"
-            v-if="loginForm.password.trim() !== ''"
+            v-if="
+              loginForm.password.trim() !== '' && loginFormFocusFlag.password
+            "
             @click="clearForLoginForm('password')"
           >
             <text class="iconfont icon-close"></text>
@@ -82,6 +95,11 @@ export default {
       isLoading: false,
       institutionList: [],
       loginInstitutionList: [],
+      loginFormFocusFlag: {
+        memberCode: false,
+        username: false,
+        password: false,
+      },
       loginForm: {
         memberCode: getStorage(STORAGE_KEY.LOGIN_INFO)
           ? getStorage(STORAGE_KEY.LOGIN_INFO).memberCode
@@ -120,6 +138,12 @@ export default {
   methods: {
     clearForLoginForm(field) {
       this.loginForm[field] = ''
+    },
+    handleBlur(field) {
+      this.loginFormFocusFlag[field] = false
+    },
+    handleFocus(field) {
+      this.loginFormFocusFlag[field] = true
     },
     login(val) {
       authAPI
@@ -222,9 +246,16 @@ export default {
       border-bottom-width: 1rpx;
       border-bottom-style: solid;
       border-bottom-color: rgba(0, 0, 0, 0.15);
+      position: relative;
     }
     .btn-clear {
+      position: absolute;
+      right: 0;
+      z-index: 2;
       padding: 0 10rpx;
+      .iconfont {
+        opacity: 0.25;
+      }
     }
     .iconfont {
       font-size: 40rpx;
