@@ -14,16 +14,28 @@
         <view class="storeList" v-for="s in storeList" :key="s.institutionId">
           <view class="storeCard">
             <view class="storeCardTitle">
-              {{ s.institutionName }} &nbsp;&nbsp;&nbsp;
-              {{ s.institutionPhoneNumber || '' }}
+              <text>{{
+                s.institutionName.length > 6
+                  ? s.institutionName.substring(0, 6) + `...`
+                  : s.institutionName
+              }}</text>
+              <text style="float: right;">{{ s.institutionPhoneNumber }}</text>
             </view>
             <View class="storeCardAddress">
               <span class="iconfont icon-location"></span>
-              {{ s.institutionAddress }}
+              {{
+                s.institutionAddress.length > 14
+                  ? s.institutionAddress.substring(0, 14) + `...`
+                  : s.institutionAddress
+              }}
             </View>
             <view class="storeCardTime">
               <span class="iconfont icon-time"></span>
-              {{ s.institutionAddress }}
+              {{
+                s.businessHours.length > 14
+                  ? s.businessHours.substring(0, 14) + `...`
+                  : s.businessHours
+              }}
             </view>
             <view
               class="storeCardAptmt"
