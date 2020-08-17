@@ -78,7 +78,9 @@ export default {
               setTimeout(() => {
                 uni.$emit(globalEventKeys.newPatient)
 
-                that.$utils.back()
+                that.$utils.push({
+                  url: '/pages/patient/patient?patientId=' + res.data.patientId,
+                })
               }, 1000)
             },
           })
