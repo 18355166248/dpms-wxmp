@@ -1,6 +1,6 @@
 <template>
   <movable-area>
-    <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
+    <view class="content" scroll-y>
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
@@ -140,7 +140,7 @@
           ></load-more>
         </view>
       </view>
-    </scroll-view>
+    </view>
     <movable-view
       :x="x"
       :y="y"
@@ -178,10 +178,11 @@ export default {
       size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
-      refresherTriggered: false,
       color: '#5CBB89',
       contentText: {
         contentdown: '加载更多',
+        contentrefresh: '正在加载..',
+        contentnomore: '没有更多数据了',
       },
     }
   },
@@ -212,6 +213,9 @@ export default {
   },
   onPullDownRefresh() {
     this.init()
+  },
+  onReachBottom() {
+    this.loadMoreList()
   },
   methods: {
     init() {
@@ -267,7 +271,7 @@ export default {
             this.loadStatus = 'noMore'
           }
         })
-      this.refresherTriggered = false
+      uni.stopPullDownRefresh()
     },
     bannerToUrl(url) {
       if (url.indexOf(`http`) !== -1) {
@@ -275,11 +279,6 @@ export default {
       } else {
         this.toUrl(url)
       }
-    },
-    onRefresh() {
-      if (this.refresherTriggered) return
-      this.refresherTriggered = true
-      this.init()
     },
     loadMoreList() {
       if (this.loadStatus === 'loading') return
@@ -342,7 +341,6 @@ export default {
           } else {
             this.$utils.show('项目不可预约')
           }
-
           uni.hideLoading()
         })
     },
