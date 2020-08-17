@@ -13,7 +13,7 @@
           <view
             class="btn-clear"
             v-if="loginForm.memberCode.trim() !== ''"
-            @click="clear('memberCode')"
+            @click="clearForLoginForm('memberCode')"
           >
             <text class="iconfont icon-close"></text>
           </view>
@@ -28,7 +28,7 @@
           <view
             class="btn-clear"
             v-if="loginForm.username.trim() !== ''"
-            @click="clear('username')"
+            @click="clearForLoginForm('username')"
           >
             <text class="iconfont icon-close"></text>
           </view>
@@ -44,7 +44,7 @@
           <view
             class="btn-clear"
             v-if="loginForm.password.trim() !== ''"
-            @click="clear('password')"
+            @click="clearForLoginForm('password')"
           >
             <text class="iconfont icon-close"></text>
           </view>
@@ -116,7 +116,7 @@ export default {
     })
   },
   methods: {
-    clear(field) {
+    clearForLoginForm(field) {
       this.loginForm[field] = ''
     },
     login(val) {
