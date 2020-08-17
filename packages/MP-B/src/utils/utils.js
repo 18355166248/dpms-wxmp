@@ -23,8 +23,6 @@ export function omitUndefinedAndNullValue(object) {
     }
 
     if (regEmoji.test(regValue)) {
-      console.log('regValue', regValue)
-
       definedMap[key] = regValue.replace(regEmoji, '')
     } else {
       definedMap[key] = value

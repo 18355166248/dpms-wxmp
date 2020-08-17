@@ -327,8 +327,6 @@ export default {
       // 通过医生数据获取当前诊所信息
       if (!this.isAppt) return
 
-      console.log('newVal.doctor', newVal)
-
       if (newVal === -1) {
         this.$set(this.form, 'medicalInstitution', {
           appointmentMedicalInstitutionId: this.medicalInstitution
@@ -662,8 +660,6 @@ export default {
         APPOINTMENT_TYPE_ENUM,
         this.form.medicalInstitution,
       )
-
-      console.log('formatValue', formatValue)
 
       // 挂号不需要做校验
       if (!this.isAppt) {
