@@ -623,7 +623,6 @@ export default {
             success: ({ confirm, cancel }) => {
               confirm && this.getApptVerify()
             },
-            can,
           })
 
           return
