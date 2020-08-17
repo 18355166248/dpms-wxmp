@@ -20,11 +20,11 @@
     </view>
     <view class="menu">
       <view class="li">
-        <view>
+        <view class="institution">
           <text class="iconfont icon-bank" />
           登录诊所
         </view>
-        <text class="text">{{
+        <text class="text text-ellipsis">{{
           medicalInstitution.medicalInstitutionSimpleCode
         }}</text>
       </view>
@@ -147,6 +147,11 @@ export default {
     font-size: 34rpx;
     border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
 
+    .institution {
+      flex: 0 0 auto;
+      padding-right: 40rpx;
+    }
+
     &:last-child {
       border-bottom: none;
     }
@@ -157,6 +162,7 @@ export default {
     }
     .text {
       color: rgba(0, 0, 0, 0.5);
+      overflow: hidden;
     }
     .text.icon-right {
       color: rgba(0, 0, 0, 0.25);

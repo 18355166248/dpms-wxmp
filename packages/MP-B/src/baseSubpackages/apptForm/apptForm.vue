@@ -241,6 +241,7 @@ export default {
       selectListCache: [[]], // 0科室, 1诊室, 2医生, 3洁牙师, 4咨询师, 5助理, 6预约项目 7诊所 8护士
       apptInfoCache: {}, // 缓存编辑/挂号预约详情
       isCurrentInstitutionFlag: true, // 是否为当前诊所
+      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
     }
   },
   filters: {
@@ -287,6 +288,7 @@ export default {
 
     if (this.paramsObj.type === 'createAppt' && option.patientId) {
       this.getPatientInfoFromServer(option.patientId)
+      this.form.appointmentStatus = this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value
     }
   },
   mounted() {
@@ -576,6 +578,13 @@ export default {
                   .medicalInstitutionSimpleCode,
                 appointmentMedicalInstitutionId: this.medicalInstitution
                   .medicalInstitutionId,
+                institutionChainType: this.medicalInstitution
+                  .institutionChainType,
+                institutionTypeId: this.medicalInstitution.institutionTypeId,
+                parentId: this.medicalInstitution.parentId,
+                staffMedicalInstitutionId: this.medicalInstitution
+                  .staffMedicalInstitutionId,
+                topParentId: this.medicalInstitution.topParentId,
                 isCurrentInstitutionFlag: true, // 表示是当前诊所
               },
             ],
@@ -785,6 +794,7 @@ export default {
         .getPatientDetail({ patientId })
         .then((res) => {
           this.$set(this.form, 'patient', res.data)
+          this.form.patientId = patientId
         })
         .catch()
     },
