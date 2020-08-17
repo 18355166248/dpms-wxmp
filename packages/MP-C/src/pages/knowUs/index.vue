@@ -76,8 +76,8 @@ export default {
   methods: {
     init() {
       const medicalInstitution = uni.getStorageSync('medicalInstitution')
-      this.medicalInstitutionName =
-        medicalInstitution.medicalInstitutionDTO.medicalInstitutionName
+      // this.medicalInstitutionName =
+      //   medicalInstitution.medicalInstitutionDTO.medicalInstitutionName
       introduceAPI
         .getIntroduceInfo({
           medicalInstitutionId: medicalInstitution.medicalInstitutionId || 1,
@@ -86,6 +86,7 @@ export default {
           if (res.code === 0) {
             this.introduceImgs = res.data.introduceImageUrls || []
             this.introduceDetail = res.data.detailIntroduction || ''
+            this.medicalInstitutionName = res.data.medicalInstitutionName
           }
         })
 
