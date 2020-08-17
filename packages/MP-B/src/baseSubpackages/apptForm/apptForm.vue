@@ -661,6 +661,9 @@ export default {
         this.form.medicalInstitution,
       )
 
+      formatValue.appointmentMedicalInstitutionId =
+        formatValue.medicalInstitution.appointmentMedicalInstitutionId
+
       // 挂号不需要做校验
       if (!this.isAppt) {
         this.updateApptCb(formatValue)
