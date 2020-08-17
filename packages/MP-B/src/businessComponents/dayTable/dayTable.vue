@@ -57,7 +57,12 @@
                   backgroundColor: getDocoratorColor(item.appointmentStatus),
                 }"
               />
-              <view class="meeting_content_name">
+              <view
+                :class="[
+                  'meeting_content_name',
+                  item.duration === 1 ? 'mt-32' : '',
+                ]"
+              >
                 {{ item.patient.patientName }}{{ getGenderText(item) }}
               </view>
               <view class="meeting_content_center">
@@ -245,10 +250,10 @@ export default {
       [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
     }
 
-    this.unitHeight = parseInt(this.hourHeight / 4) || 16 //16px
+    this.unitHeight = parseInt(this.hourHeight / 4) || 13.5 //16px
     this.unitMinute = parseInt(this.uMinute) || 15 //15分钟
     this.showMinute = parseInt(this.showMin) || 60 //60分钟
-    this.defaultChoose = parseInt(this.defaultChooseLong / 15) || 4 //60分钟
+    this.defaultChoose = parseInt(this.defaultChooseLong / 15) || 2 //30分钟
     this.minMute = parseInt(this.showMin) || 1
 
     this.minRatio = this.showMinute / this.unitMinute // 4 一个显示的时间段分几块
@@ -386,6 +391,9 @@ export default {
         if (i % rat === 0) {
           time = hour + ':00'
           timeClass = 'hasTime' // 整点添加类名
+        } else if (i % rat === 2) {
+          time = hour + ':30'
+          timeClass = 'hasTime' // 整点添加类名
         } else {
           time = hour + ':' + (i % rat) * self.unitMinute
         }
@@ -439,10 +447,12 @@ export default {
           isFlex: isFlex,
           startId: st,
           endId: ed,
+          duration: ed - st,
           bgClass: bgClass,
           ...meetingList[i],
         })
       }
+      console.log('list', list)
       this.meetingList = list
     },
     //点击会议列表
@@ -533,12 +543,12 @@ export default {
       let endTime = ''
       if (id < 2) {
         id = 2
-      } else if (id > 91) {
+      } else if (id > 93) {
         // endId = 96;
-        id = 90
-        stId = 92
+        id = 92
+        stId = 94
       } else {
-        stId = id - 2
+        stId = id - 1
         // endId = id + 6;
       }
 
@@ -1352,9 +1362,9 @@ $borderColor: #ddd;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    height: 32px;
-    line-height: 32px;
-    flex: 0 0 32px;
+    height: 27px;
+    line-height: 27px;
+    flex: 0 0 27px;
   }
 }
 
@@ -1407,10 +1417,11 @@ $borderColor: #ddd;
       line-height: 0;
       width: 50px;
       text-align: center;
+      color: rgba($color: #000000, $alpha: 0.25);
     }
 
     .right_content {
-      border-top: 1px solid #ffffff;
+      border-top: 1rpx solid #ffffff;
       height: 15px;
       width: calc(100vw - 50px);
     }

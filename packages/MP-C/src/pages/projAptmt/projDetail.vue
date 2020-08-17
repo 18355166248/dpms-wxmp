@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="content" scroll-y>
+  <view class="content">
     <view class="compDesc">
       <view class="compDescContent">
         <p class="projTitle">
@@ -19,16 +19,28 @@
       >
         <view class="storeCard">
           <view class="storeCardTitle">
-            <text>{{ i.institutionName }}</text>
+            <text>{{
+              i.institutionName.length > 6
+                ? i.institutionName.substring(0, 6) + `...`
+                : i.institutionName
+            }}</text>
             <text style="float: right;">{{ i.institutionPhoneNumber }}</text>
           </view>
           <view class="storeCardAddress"
             ><span class="iconfont icon-location"></span>
-            {{ i.institutionAddress }}</view
-          >
+            {{
+              i.institutionAddress.length > 14
+                ? i.institutionAddress.substring(0, 14) + `...`
+                : i.institutionAddress
+            }}
+          </view>
           <view class="storeCardTime" v-if="i.businessHours"
             ><span class="iconfont icon-time"></span>
-            {{ i.businessHours }}</view
+            {{
+              i.businessHours.length > 14
+                ? i.businessHours.substring(0, 14) + `...`
+                : i.businessHours
+            }}</view
           >
           <view
             class="storeCardAptmt"
@@ -55,7 +67,7 @@
         <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
       </view>
     </view>
-  </scroll-view>
+  </view>
 </template>
 
 <script>
@@ -262,6 +274,7 @@ export default {
 .descr {
   width: 394rpx;
   margin-top: 48rpx;
+  margin-bottom: 48rpx;
 }
 .descrTitle {
   width: 136rpx;

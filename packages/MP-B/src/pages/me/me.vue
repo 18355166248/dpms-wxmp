@@ -83,7 +83,7 @@ export default {
 
 <style lang="scss" scoped>
 .content {
-  background-image: url('https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/home-header-bg.png');
+  background-image: url('~@/static/home-bg.png');
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -121,7 +121,7 @@ export default {
       height: 40rpx;
       line-height: 40rpx;
       color: #fff;
-      background: #44a874;
+      background: #25925a;
       border-radius: 2rpx;
     }
   }
@@ -139,11 +139,19 @@ export default {
   background-color: #fff;
   .li {
     height: 112rpx;
+    line-height: 112rpx;
     padding-right: 32rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 34rpx;
     border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+    .icon-right {
+      color: rgba(0, 0, 0, 0.25);
+    }
+    &:last-child {
+      border-bottom: none;
+    }
     text.icon-bank {
       font-size: 38rpx;
       margin-right: 10rpx;

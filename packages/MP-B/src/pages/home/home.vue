@@ -60,7 +60,7 @@
 
     <view class="mt-64">
       <view
-        class="statistics ph-32 mh-32 mb-82"
+        class="statistics ph-32 mh-32 mb-32"
         v-if="!isHeadquartersAndRegion"
       >
         <view class="statistics-header" @click="toggle">

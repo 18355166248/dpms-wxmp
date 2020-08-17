@@ -20,16 +20,28 @@
       >
         <view class="storeCard">
           <view class="storeCardTitle">
-            <text>{{ i.institutionName }}</text>
+            <text>{{
+              i.institutionName.length > 6
+                ? i.institutionName.substring(0, 6) + `...`
+                : i.institutionName
+            }}</text>
             <text style="float: right;">{{ i.institutionPhoneNumber }}</text>
           </view>
           <view class="storeCardAddress"
             ><span class="iconfont icon-location"></span>
-            {{ i.institutionAddress }}</view
-          >
-          <view class="storeCardTime"
+            {{
+              i.institutionAddress.length > 14
+                ? i.institutionAddress.substring(0, 14) + `...`
+                : i.institutionAddress
+            }}
+          </view>
+          <view class="storeCardTime" v-if="i.businessHours"
             ><span class="iconfont icon-time"></span>
-            {{ i.businessHours }}</view
+            {{
+              i.businessHours.length > 14
+                ? i.businessHours.substring(0, 14) + `...`
+                : i.businessHours
+            }}</view
           >
           <view
             class="storeCardAptmt"

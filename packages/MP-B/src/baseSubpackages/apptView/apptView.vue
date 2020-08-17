@@ -190,13 +190,23 @@ export default {
     )
     // 预约视图选择医生后返回预约视图页面
     uni.$on(globalEventKeys.onSelectedDcotorWithApptView, (doctor) => {
+      this.accessMedicalInstitution = uni.getStorageSync(
+        'accessMedicalInstitution',
+      )
+      this.doctorList = uni.getStorageSync('doctorList')
+      this.doctor = uni.getStorageSync('apptViewdoctor')
       this.onSelected(doctor)
     })
-    uni.$on(globalEventKeys.getDoctorListByPosition, () => {
-      this.getDoctorListByPosition().then(() => {
-        uni.$emit(globalEventKeys.updateDoctorListByPosition)
-      })
-    })
+    uni.$on(
+      globalEventKeys.getDoctorListByPosition,
+      (accessMedicalInstitution) => {
+        this.getDoctorListByPosition(
+          accessMedicalInstitution.medicalInstitutionId,
+        ).then((res) => {
+          uni.$emit(globalEventKeys.updateDoctorListByPosition, res.data)
+        })
+      },
+    )
   },
   watch: {
     date(newVal) {
@@ -339,15 +349,16 @@ export default {
       })
     },
     // 获取在职医生列表
-    getDoctorListByPosition() {
+    getDoctorListByPosition(medicalInstitutionId) {
       return new Promise((resolve, reject) => {
         institutionAPI
           .getStaffListByPosition({
             position: this.doctorValue,
             workStatus: this.STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
             includeUnspecified: true,
-            medicalInstitutionId: this.accessMedicalInstitution
-              .medicalInstitutionId,
+            medicalInstitutionId:
+              medicalInstitutionId ||
+              this.accessMedicalInstitution.medicalInstitutionId,
           })
           .then((res) => {
             if (!this.isDoctorWithLogin) {
@@ -361,12 +372,15 @@ export default {
               }
 
               if (res.data.length > 1) {
-                doctor = res.data[1]
+                if (res.data[0].staffId === -1) doctor = res.data[1]
+                else doctor = res.data[0]
               }
-              this.doctor = doctor
+              // 如果是医生页面的话 这个页面的医生选中值是不需要改变的
+              !medicalInstitutionId && (this.doctor = doctor)
             }
 
-            this.doctorList = res.data
+            // 如果是医生页面的话 这个页面的医生列表是不需要改变的
+            !medicalInstitutionId && (this.doctorList = res.data)
             resolve(res)
           })
           .catch((err) => {

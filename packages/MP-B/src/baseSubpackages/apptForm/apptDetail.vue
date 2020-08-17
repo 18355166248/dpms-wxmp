@@ -379,6 +379,7 @@ export default {
       height: 90rpx;
       line-height: 90rpx;
       text-align: center;
+      font-size: 36rpx;
       background-color: $dpms-color-primary;
       color: #fff;
       box-sizing: border-box;

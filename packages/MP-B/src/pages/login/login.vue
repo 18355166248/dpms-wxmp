@@ -166,16 +166,22 @@ export default {
 
 <style lang="scss" scoped>
 .bg {
-  background-image: url('https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo.png');
-  background-size: contain;
-  background-repeat: no-repeat;
+  height: 100%;
+  background: #fff;
 }
 .status_bar {
   height: var(--status-bar-height);
   width: 100%;
+  background: #5cbb8a;
 }
 .content {
-  padding: 432rpx 32rpx 0;
+  height: 100%;
+  padding: 470rpx 32rpx 0;
+  background: #fff
+    url('https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo.png')
+    no-repeat 0 0;
+  background-size: contain;
+
   .login {
     height: 716rpx;
     padding: 64rpx 32rpx 0;
@@ -194,6 +200,8 @@ export default {
     text.iconfont {
       font-size: 40rpx;
       margin-right: 20rpx;
+      color: #000;
+      opacity: 0.65;
     }
     input {
       width: 100%;
