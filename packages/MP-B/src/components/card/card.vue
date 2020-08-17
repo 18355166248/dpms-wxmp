@@ -42,7 +42,7 @@
           </view>
         </view>
 
-        <view :class="{ 'mb-8': infos.length > 0 }">
+        <view :class="{ 'mb-16': infos.length > 0 }">
           <template v-if="gender">
             <tag :text="genderTag" :circle="false" type="error"></tag>
           </template>
