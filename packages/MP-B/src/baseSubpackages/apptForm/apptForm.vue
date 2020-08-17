@@ -284,6 +284,10 @@ export default {
       this.form.duration = duration
       this.form.doctor = Number(option.doctorId)
     }
+
+    if (this.paramsObj.type === 'createAppt' && option.patientId) {
+      this.getPatientInfoFromServer(option.patientId)
+    }
   },
   mounted() {
     // 更新选中员工列表
