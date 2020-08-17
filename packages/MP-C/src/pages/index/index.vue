@@ -1,26 +1,25 @@
 <template>
-  <view>
-    <movable-area>
-      <scroll-view class="content" scroll-y @scrolltolower="loadMoreList">
-        <view class="banner">
-          <swiper class="swiper banner" indicator-dots autoplay>
-            <swiper-item
-              class="alignCenter"
-              v-for="b in bannerList"
-              :key="b.bannerId"
-              @click="bannerToUrl(b.linkUrl)"
-            >
-              <image
-                class="bannerImg"
-                mode="aspectFit"
-                :src="b.imageUrl"
-                :title="b.description"
-              />
-            </swiper-item>
-          </swiper>
-        </view>
-        <view class="compDesc">
-          <!-- <swiper class="swiper compDescImg" autoplay>
+  <movable-area>
+    <view class="content" scroll-y>
+      <view class="banner">
+        <swiper class="swiper banner" indicator-dots autoplay>
+          <swiper-item
+            class="alignCenter"
+            v-for="b in bannerList"
+            :key="b.bannerId"
+            @click="bannerToUrl(b.linkUrl)"
+          >
+            <image
+              class="bannerImg"
+              mode="aspectFit"
+              :src="b.imageUrl"
+              :title="b.description"
+            />
+          </swiper-item>
+        </swiper>
+      </view>
+      <view class="compDesc">
+        <!-- <swiper class="swiper compDescImg" autoplay>
           <swiper-item
             class="alignCenter"
             v-for="(p, i) in institutionIntroduce.introduceImageUrls"
@@ -29,133 +28,132 @@
             <img class="compDescImg" mode="aspectFit" :src="p" />
           </swiper-item>
         </swiper> -->
-          <view class="compDescContent">
-            <p class="compDescContentDesc">
-              {{ institutionIntroduce.briefIntroduction || '' }}
-            </p>
-            <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
-              更多详情 >
-            </p>
-          </view>
+        <view class="compDescContent">
+          <p class="compDescContentDesc">
+            {{ institutionIntroduce.briefIntroduction || '' }}
+          </p>
+          <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
+            更多详情 >
+          </p>
         </view>
-        <view class="proj">
-          <view class="projContent">
-            <text class="projTitle">项目</text>
-            <view
-              class="projBtn"
-              @click="toUrl('/pages/projAptmt/projAptmt')"
-              v-show="showMoreBtn"
-              >更多</view
-            >
-          </view>
-          <view class="cardList">
-            <swiper
-              class="swiper"
-              :display-multiple-items="displayMultipleItems"
-              next-margin="10rpx"
-            >
-              <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
-                <view class="card">
-                  <view
-                    class="cardImg"
-                    @click="
-                      toUrl(
-                        '/pages/projAptmt/projDetail?appointmentItemId=' +
-                          i.appointmentItemId,
-                      )
-                    "
-                  >
-                    <img mode="aspectFit" :src="i.itemThumbnailUrl" />
-                  </view>
-                  <view class="cardContent">
-                    <text class="cardTitle">{{ i.itemName }}</text>
-                    <view
-                      class="cardBtn"
-                      v-show="i.canAppointment"
-                      @click="handleProjAptmt(i)"
-                      >预约</view
-                    >
-                  </view>
-                  <view class="cardDesc">{{
-                    i.itemBriefIntroduction.length > 12
-                      ? i.itemBriefIntroduction.substring(0, 12) + `...`
-                      : i.itemBriefIntroduction
-                  }}</view>
-                </view>
-              </swiper-item>
-            </swiper>
-          </view>
+      </view>
+      <view class="proj">
+        <view class="projContent">
+          <text class="projTitle">项目</text>
+          <view
+            class="projBtn"
+            @click="toUrl('/pages/projAptmt/projAptmt')"
+            v-show="showMoreBtn"
+            >更多</view
+          >
         </view>
-        <view class="store">
-          <view class="storeContent">
-            <text class="storeTitle">门店</text>
-            <view
-              class="storeList"
-              v-for="s in storeList"
-              :key="s.appointmentInstitutionId"
-            >
-              <view class="storeCard">
-                <view class="storeCardTitle">
-                  <text>{{
-                    s.institutionName.length > 6
-                      ? s.institutionName.substring(0, 6) + `...`
-                      : s.institutionName
-                  }}</text>
-                  <text style="float: right;">{{
-                    s.institutionPhoneNumber
-                  }}</text>
-                </view>
-                <view class="storeCardAddress">
-                  <span class="iconfont icon-location"></span>
-                  {{
-                    s.institutionAddress.length > 14
-                      ? s.institutionAddress.substring(0, 14) + `...`
-                      : s.institutionAddress
-                  }}
-                </view>
-                <view class="storeCardTime">
-                  <span class="iconfont icon-time"></span>
-                  {{
-                    s.businessHours.length > 14
-                      ? s.businessHours.substring(0, 14) + `...`
-                      : s.businessHours
-                  }}
-                </view>
+        <view class="cardList">
+          <swiper
+            class="swiper"
+            :display-multiple-items="displayMultipleItems"
+            next-margin="10rpx"
+          >
+            <swiper-item v-for="i in itemList" :key="i.appointmentItemId">
+              <view class="card">
                 <view
-                  class="storeCardAptmt"
-                  v-show="s.canAppointment"
+                  class="cardImg"
                   @click="
                     toUrl(
-                      '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
-                        s.appointmentInstitutionId,
+                      '/pages/projAptmt/projDetail?appointmentItemId=' +
+                        i.appointmentItemId,
                     )
                   "
-                  >预 约</view
                 >
+                  <img mode="aspectFit" :src="i.itemThumbnailUrl" />
+                </view>
+                <view class="cardContent">
+                  <text class="cardTitle">{{ i.itemName }}</text>
+                  <view
+                    class="cardBtn"
+                    v-show="i.canAppointment"
+                    @click="handleProjAptmt(i)"
+                    >预约</view
+                  >
+                </view>
+                <view class="cardDesc">{{
+                  i.itemBriefIntroduction.length > 12
+                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
+                    : i.itemBriefIntroduction
+                }}</view>
               </view>
-            </view>
-            <load-more
-              :status="loadStatus"
-              :contentText="contentText"
-              :color="color"
-            ></load-more>
-          </view>
+            </swiper-item>
+          </swiper>
         </view>
-      </scroll-view>
-      <movable-view
-        :x="x"
-        :y="y"
-        direction="all"
-        @change="onChange"
-        @click="toUrl('/pages/projAptmt/projAptmt')"
-        class="aptmt"
-        v-show="!hide"
-      >
-        <span class="iconfont icon-time"></span>
-      </movable-view>
-      <Notice />
-    </movable-area>
-  </view>
+      </view>
+      <view class="store">
+        <view class="storeContent">
+          <text class="storeTitle">门店</text>
+          <view
+            class="storeList"
+            v-for="s in storeList"
+            :key="s.appointmentInstitutionId"
+          >
+            <view class="storeCard">
+              <view class="storeCardTitle">
+                <text>{{
+                  s.institutionName.length > 6
+                    ? s.institutionName.substring(0, 6) + `...`
+                    : s.institutionName
+                }}</text>
+                <text style="float: right;">{{
+                  s.institutionPhoneNumber
+                }}</text>
+              </view>
+              <view class="storeCardAddress">
+                <span class="iconfont icon-location"></span>
+                {{
+                  s.institutionAddress.length > 14
+                    ? s.institutionAddress.substring(0, 14) + `...`
+                    : s.institutionAddress
+                }}
+              </view>
+              <view class="storeCardTime">
+                <span class="iconfont icon-time"></span>
+                {{
+                  s.businessHours.length > 14
+                    ? s.businessHours.substring(0, 14) + `...`
+                    : s.businessHours
+                }}
+              </view>
+              <view
+                class="storeCardAptmt"
+                v-show="s.canAppointment"
+                @click="
+                  toUrl(
+                    '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
+                      s.appointmentInstitutionId,
+                  )
+                "
+                >预 约</view
+              >
+            </view>
+          </view>
+          <load-more
+            :status="loadStatus"
+            :contentText="contentText"
+            :color="color"
+          ></load-more>
+        </view>
+      </view>
+    </view>
+    <movable-view
+      :x="x"
+      :y="y"
+      direction="all"
+      @change="onChange"
+      @click="toUrl('/pages/projAptmt/projAptmt')"
+      class="aptmt"
+      v-show="!hide"
+    >
+      <span class="iconfont icon-time"></span>
+    </movable-view>
+    <Notice />
+  </movable-area>
 </template>
 
 <script>
@@ -180,10 +178,11 @@ export default {
       size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
-      refresherTriggered: false,
       color: '#5CBB89',
       contentText: {
         contentdown: '加载更多',
+        contentrefresh: '正在加载..',
+        contentnomore: '没有更多数据了',
       },
     }
   },
@@ -214,6 +213,9 @@ export default {
   },
   onPullDownRefresh() {
     this.init()
+  },
+  onReachBottom() {
+    this.loadMoreList()
   },
   methods: {
     init() {
@@ -269,7 +271,7 @@ export default {
             this.loadStatus = 'noMore'
           }
         })
-      this.refresherTriggered = false
+      uni.stopPullDownRefresh()
     },
     bannerToUrl(url) {
       if (url.indexOf(`http`) !== -1) {
@@ -277,11 +279,6 @@ export default {
       } else {
         this.toUrl(url)
       }
-    },
-    onRefresh() {
-      if (this.refresherTriggered) return
-      this.refresherTriggered = true
-      this.init()
     },
     loadMoreList() {
       if (this.loadStatus === 'loading') return
@@ -344,7 +341,6 @@ export default {
           } else {
             this.$utils.show('项目不可预约')
           }
-
           uni.hideLoading()
         })
     },
