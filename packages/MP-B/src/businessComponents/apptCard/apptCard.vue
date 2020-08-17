@@ -33,11 +33,11 @@
         <text class="subTag">{{ appt.patient.age }}</text>
       </view>
       <view class="apptDetail">
-        <view v-if="appt.visType">
+        <view v-if="appt.visType && isVisType">
           就诊类型：{{ VIS_TYPE_ENUM.properties[appt.visType].zh_CN }}
         </view>
         <view v-if="appt.patient.mobile"
-          >联系方式：{{ appt.patient.mobile }}</view
+          >联系电话：{{ appt.patient.mobile }}</view
         >
         <view>预约时间：{{ getApptTime() }}</view>
         <view>预约诊所：{{ appt.medicalInstitutionSimpleCode }}</view>
@@ -58,6 +58,10 @@ export default {
     appt: {
       type: Object,
       required: true,
+    },
+    isVisType: {
+      type: Boolean,
+      default: true,
     },
     doctor: {
       type: Object,

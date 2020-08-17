@@ -6,6 +6,7 @@
           v-for="apptInfo in dataSource"
           :key="apptInfo.appointmentId"
           :appt="apptInfo"
+          :isVisType="false"
           :doctor="getDoctor(apptInfo.appointmentResourceMap.STAFF)"
         />
       </view>
@@ -13,11 +14,20 @@
     <template v-else>
       <empty :disabled="true" text="暂无预约数据"></empty>
     </template>
+    <fixed-footer :bgColor="primaryColor">
+      <button
+        class="button-new"
+        @click="toPage('/baseSubpackages/apptView/apptView')"
+      >
+        新建预约
+      </button>
+    </fixed-footer>
   </view>
 </template>
 
 <script>
 import moment from 'moment'
+import qs from 'qs'
 import patientAPI from '@/APIS/patient/patient.api'
 import apptCard from '@/businessComponents/apptCard/apptCard.vue'
 import empty from '@/components/empty/empty.vue'
@@ -37,6 +47,13 @@ export default {
     this.init()
   },
   methods: {
+    // 页面跳转
+    toPage(url) {
+      this.$utils.push({
+        url,
+      })
+    },
+
     async init() {
       this.$utils.showLoading()
       await this.loadData()
@@ -76,5 +93,19 @@ export default {
 <style lang="scss" scoped>
 .content {
   padding-top: 32rpx;
+  .button-new {
+    width: 100%;
+    height: 90rpx;
+    line-height: 90rpx;
+    text-align: center;
+    font-size: 36rpx;
+    background-color: $dpms-color-primary;
+    color: #fff;
+    border-radius: 0;
+
+    &::after {
+      border: none;
+    }
+  }
 }
 </style>
