@@ -53,11 +53,7 @@
         </view>
 
         <template v-if="infos.length > 0">
-          <view
-            class="card-content-item"
-            v-for="(infoItem, index) in infos"
-            :key="index"
-          >
+          <view v-for="(infoItem, index) in infos" :key="index">
             <template v-if="infoItem.value">
               <text class="mr-6">{{ infoItem.label }}：</text>
               <text>{{ formatVal(infoItem.value) }}</text>
