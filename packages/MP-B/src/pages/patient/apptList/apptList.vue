@@ -21,6 +21,7 @@
           @click="
             toPage('/baseSubpackages/apptForm/apptForm', {
               type: 'createAppt',
+              patientId,
             })
           "
         >
