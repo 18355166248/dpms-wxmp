@@ -397,7 +397,6 @@ export default {
       background-color: #fff;
       color: $dpms-color-primary;
       border: 2rpx solid $dpms-color-primary;
-      border-bottom: none;
     }
   }
 }

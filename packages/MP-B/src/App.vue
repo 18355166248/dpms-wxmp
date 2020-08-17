@@ -15,6 +15,9 @@ page {
   background-color: rgba(0, 0, 0, 0.04);
 }
 
+button::after {
+  border: none;
+}
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
