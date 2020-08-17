@@ -146,9 +146,7 @@ export default {
     align-items: center;
     font-size: 34rpx;
     border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
-    .icon-right {
-      color: rgba(0, 0, 0, 0.25);
-    }
+
     &:last-child {
       border-bottom: none;
     }
@@ -159,6 +157,9 @@ export default {
     }
     .text {
       color: rgba(0, 0, 0, 0.5);
+    }
+    .text.icon-right {
+      color: rgba(0, 0, 0, 0.25);
     }
     .logo {
       width: 40rpx;
