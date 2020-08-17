@@ -218,6 +218,7 @@ export default {
         .then((res) => {
           this.bannerList = res.data.bannerList
           this.institutionIntroduce = res.data.institutionIntroduce
+          setStorage(STORAGE_KEY.INSTITUTION_INFO, res.data.institutionIntroduce)
           if (
             this.institutionIntroduce.briefIntroduction &&
             this.institutionIntroduce.briefIntroduction.length > 70
