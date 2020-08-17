@@ -22,11 +22,19 @@ export default {
   methods: {
     // 检查患者是否已存在scrm系统中
     async checkPatientInScrm(form) {
-      let { data: scrmPatientInfo } = await patientAPI.getPatientInScrm({
-        medicalInstitutionId: this.staff.belongsInstitutionId,
-        mobile: form.mobile,
-        patientName: form.patientName,
-      })
+      const [err, res] = await this.$utils.asyncTasks(
+        patientAPI.getPatientInScrm({
+          medicalInstitutionId: this.staff.belongsInstitutionId,
+          mobile: form.mobile,
+          patientName: form.patientName,
+        }),
+      )
+
+      if (err) {
+        this.$refs.editPatient.showBtn()
+      }
+
+      const { data: scrmPatientInfo } = res
       // if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
       //   delete scrmPatientInfo.customerId
       // }
