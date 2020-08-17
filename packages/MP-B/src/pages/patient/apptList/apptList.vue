@@ -6,6 +6,7 @@
           v-for="apptInfo in dataSource"
           :key="apptInfo.appointmentId"
           :appt="apptInfo"
+          :isVisType="false"
           :doctor="getDoctor(apptInfo.appointmentResourceMap.STAFF)"
         />
       </view>
