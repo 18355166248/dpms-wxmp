@@ -274,6 +274,7 @@ export default {
 .descr {
   width: 394rpx;
   margin-top: 48rpx;
+  margin-bottom: 48rpx;
 }
 .descrTitle {
   width: 136rpx;
