@@ -12,7 +12,9 @@
     </div>
     <view class="right">
       <view class="title mb-8">
-        <text>{{ appt.patient.patientName }}</text>
+        <text class="text-ellipsis patientName">{{
+          appt.patient.patientName
+        }}</text>
         <text class="titleRight">
           <text
             class="iconCircle mr-12"
@@ -146,9 +148,13 @@ $fontColor: rgba(
       color: rgba($color: #000000, $alpha: 0.9);
       display: flex;
       justify-content: space-between;
+      .patientName {
+        overflow: hidden;
+      }
       .titleRight {
         font-size: 28rpx;
         color: $fontColor;
+        flex: 0 0 auto;
         .iconCircle {
           display: inline-block;
           width: 16rpx;
