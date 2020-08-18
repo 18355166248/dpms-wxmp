@@ -61,9 +61,15 @@ export default {
   onPullDownRefresh() {
     this.getCustomer()
   },
+  onShow() {
+    this.getCustomer()
+  },
   methods: {
     getCustomer() {
       let id = this.staff.id
+      uni.showLoading({
+        title: '加载中...',
+      })
       customerAPI
         .getCustomerList({ userId: id })
         .then((res) => {
@@ -74,9 +80,10 @@ export default {
             this.showEmpty = false
           }
           uni.stopPullDownRefresh()
+          uni.hideLoading()
         })
         .catch((error) => {
-          console.log('error', error)
+          uni.hideLoading()
         })
     },
     addPerson() {

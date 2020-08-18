@@ -18,7 +18,7 @@
               loginForm.memberCode.trim() !== '' &&
               loginFormFocusFlag.memberCode
             "
-            @click="clearForLoginForm('memberCode')"
+            @touchstart="clearForLoginForm('memberCode')"
           >
             <text class="iconfont icon-close"></text>
           </view>
@@ -37,7 +37,7 @@
             v-if="
               loginForm.username.trim() !== '' && loginFormFocusFlag.username
             "
-            @click="clearForLoginForm('username')"
+            @touchstart="clearForLoginForm('username')"
           >
             <text class="iconfont icon-close"></text>
           </view>
@@ -57,7 +57,7 @@
             v-if="
               loginForm.password.trim() !== '' && loginFormFocusFlag.password
             "
-            @click="clearForLoginForm('password')"
+            @touchstart="clearForLoginForm('password')"
           >
             <text class="iconfont icon-close"></text>
           </view>
@@ -141,10 +141,10 @@ export default {
       this.loginForm[field] = ''
     },
     handleBlur(field) {
-      this.loginFormFocusFlag[field] = false
+      this.$set(this.loginFormFocusFlag, field, false)
     },
     handleFocus(field) {
-      this.loginFormFocusFlag[field] = true
+      this.$set(this.loginFormFocusFlag, field, true)
     },
     login(val) {
       authAPI
