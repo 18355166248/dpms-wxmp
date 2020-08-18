@@ -5,6 +5,7 @@
       :value="value"
       @input="onChange"
       @blur="onBlur"
+      @focus="onFocus"
       placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
       :placeholder="placeholder"
       :maxlength="max"
@@ -47,6 +48,9 @@ export default {
     },
     onBlur(e) {
       this.$emit('blur', e.detail.value.trim())
+    },
+    onFocus(e) {
+      this.$emit('focus', e.detail.value.trim())
     },
   },
 }
