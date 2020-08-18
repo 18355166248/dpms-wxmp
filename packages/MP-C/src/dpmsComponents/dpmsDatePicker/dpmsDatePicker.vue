@@ -1,6 +1,6 @@
 <template>
   <picker
-    :value="selectIndex"
+    :value="pickerValue"
     @change="onChange"
     mode="date"
     :start="start"

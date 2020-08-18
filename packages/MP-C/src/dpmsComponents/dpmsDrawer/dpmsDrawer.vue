@@ -17,9 +17,11 @@
         'dpms-drawer--left': !rightMode,
         'dpms-drawer__content--visible': showDrawer,
       }"
-      :style="{ width: drawerWidth + 'px' }"
+      :style="{ width: drawerWidth + 'rpx' }"
     >
-      <slot />
+      <scroll-view class="h100" scroll-y>
+        <slot />
+      </scroll-view>
     </view>
   </view>
 </template>
@@ -53,7 +55,7 @@ export default {
     },
     width: {
       type: Number,
-      default: 220,
+      default: 624,
     },
   },
   data() {
@@ -103,7 +105,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-$drawer-width: 220px;
+$drawer-width: 624rpx;
 $dpms-bg-color-mask: rgba(0, 0, 0, 0.3);
 $dpms-bg-color: #fff;
 
@@ -121,6 +123,8 @@ $dpms-bg-color: #fff;
 }
 
 .dpms-drawer__content {
+  height: 100%;
+  overflow: hidden;
   /* #ifndef APP-NVUE */
   display: block;
   /* #endif */

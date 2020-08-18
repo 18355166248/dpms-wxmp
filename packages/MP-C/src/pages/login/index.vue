@@ -62,7 +62,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .wrap {
   padding-top: 96rpx;
   background: url(/static/loginbg1.png) no-repeat 0 12rpx /90rpx auto,
@@ -76,21 +76,24 @@ export default {
 }
 .appName {
   font-size: 34rpx;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.9);
   text-align: center;
   margin-bottom: 180rpx;
 }
 button {
   width: 670rpx;
-  height: 100rpx;
+  line-height: 78rpx;
   background: #5cbb89;
   border: solid 2rpx #5cbb89;
   border-radius: 8rpx;
-  font-size: 40rpx;
+  font-size: 36rpx;
   font-weight: 400;
   text-align: center;
   color: #ffffff;
   margin-bottom: 24rpx;
+  &::after{
+    border: none;
+  }
   &.ghost {
     background: transparent;
     color: #5cbb89;

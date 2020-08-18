@@ -121,9 +121,16 @@ export default {
       uni.stopPullDownRefresh()
     },
     toUrl(url) {
-      this.$utils.push({
-        url,
-      })
+      institutionAPI
+        .checkPorjCanAptmt({
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+          appointmentDoctorId: this.params.appointmentDoctorId,
+        })
+        .then((res) => {
+          this.$utils.push({
+            url,
+          })
+        })
     },
   },
   components: {},
