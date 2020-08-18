@@ -38,7 +38,10 @@
           >
           <view>
             会员等级
-            <span class="icon iconfont icon-rightCircle"></span>
+            <span
+              style="color: rgba(0, 0, 0, 0.25);"
+              class="icon iconfont icon-rightCircle"
+            ></span>
           </view>
         </div>
         <div style="border: none;">
@@ -49,7 +52,14 @@
       <view class="personAppointment">
         <div>
           <span>
-            <span style="color: #fb8e51;" class="iconfont icon-set"></span
+            <span
+              style="
+                background: linear-gradient(139deg, #fb8d51 12%, #feb277 90%);
+                -webkit-background-clip: text;
+                color: transparent;
+              "
+              class="iconfont icon-set"
+            ></span
             >人员管理
           </span>
           <span @click="goPerson">
@@ -60,8 +70,12 @@
         <div>
           <span>
             <span
-              style="color: #4d94fe;"
-              class="iconfont icon-timeCircle"
+              style="
+                background: linear-gradient(321deg, #7ea8f5 12%, #3278de 101%);
+                -webkit-background-clip: text;
+                color: transparent;
+              "
+              class="iconfont icon-time"
             ></span
             >我的预约
           </span>
@@ -71,10 +85,8 @@
           </span>
         </div>
       </view>
-      <view class="logOut" v-if="showLogout">
-        <div class="quit" @click="logOut">退出登录</div>
-        <div class="version">版本号V1.0.0</div>
-      </view>
+      <div v-if="showLogout" class="quit" @click="logOut">退出登录</div>
+      <div class="version">版本号V1.0.0</div>
 
       <movable-view
         :x="x"
@@ -213,8 +225,9 @@ export default {
 .home-view {
   .my {
     position: relative;
-    top: 62rpx;
+    top: 80rpx;
     display: block;
+    font-weight: 500;
     color: white;
     font-size: 36rpx;
     text-align: center;
@@ -248,6 +261,10 @@ export default {
         height: 124rpx;
         margin-right: 32rpx;
       }
+      .userName {
+        font-size: 36rpx;
+        font-weight: 500;
+      }
     }
   }
   .vipInfo {
@@ -263,7 +280,7 @@ export default {
     box-shadow: 0px -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     padding: 32rpx 0;
     div {
-      border-right: 1px dashed rgba(0, 0, 0, 0.15);
+      border-right: 1rpx dashed rgba(0, 0, 0, 0.15);
       width: 33%;
       padding-left: 50rpx;
       view:nth-child(1) {
@@ -286,7 +303,6 @@ export default {
     }
   }
   .personAppointment {
-    border-bottom: #dbdbdb 2rpx solid;
     padding-left: 35rpx;
     position: relative;
     top: 372rpx;
@@ -325,32 +341,30 @@ export default {
       }
     }
     div:first-child {
-      border-bottom: #dbdbdb 2rpx solid;
+      border-bottom: #dbdbdb 1rpx solid;
     }
   }
-  .logOut {
-    margin: 0 64rpx;
-    position: relative;
-    top: 600rpx;
-    .quit {
-      height: 78rpx;
-      line-height: 78rpx;
-      text-align: center;
-      color: white;
-      font-size: 36rpx;
-      font-weight: 400;
-      background: #5cbb89;
-      margin-bottom: 32rpx;
-      border-radius: 8px;
-    }
-    .version {
-      font-weight: 400;
-      text-align: center;
-      font-size: 28rpx;
-      color: rgba(0, 0, 0, 0.5);
-    }
+  .quit {
+    height: 112rpx;
+    width: 100%;
+    background: #ffffff;
+    line-height: 112rpx;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.9);
+    font-size: 34rpx;
+    font-weight: 400;
+    position: absolute;
+    top: 813rpx;
   }
-
+  .version {
+    width: 100%;
+    position: absolute;
+    bottom: 34rpx;
+    text-align: center;
+    font-size: 28rpx;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.5);
+  }
   .aptmt {
     width: 78rpx;
     height: 78rpx;

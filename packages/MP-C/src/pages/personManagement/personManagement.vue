@@ -1,6 +1,13 @@
 <template>
   <movable-area>
-    <view>
+    <view
+      style="
+        background: rgba(0, 0, 0, 0.04);
+        height: 100%;
+        position: absolute;
+        width: 100%;
+      "
+    >
       <div v-if="personList.length < 10" class="add" @click="addPerson">
         <div class="iconfont icon-add"></div>
         <div>还可添加{{ 10 - personList.length }}人</div>
@@ -117,7 +124,6 @@ movable-area {
   display: block;
   height: 100%;
   width: 100%;
-  background: rgba(0, 0, 0, 0.04);
 }
 .add {
   height: 148rpx;
@@ -126,7 +132,6 @@ movable-area {
   font-weight: 400;
   color: #5cbb89;
   background: #feffff;
-  border: 1rpx solid rgba(0, 0, 0, 0.15);
   border-radius: 8rpx;
   text-align: center;
   box-sizing: border-box;
@@ -137,8 +142,6 @@ movable-area {
     box-sizing: border-box;
     padding: 32rpx;
     background: white;
-    border-top: 2rpx #dbdbdb solid;
-    border-bottom: 2rpx #dbdbdb solid;
     margin-bottom: 20rpx;
     position: relative;
     .name {

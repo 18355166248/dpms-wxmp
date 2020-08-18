@@ -1,9 +1,16 @@
 <template>
   <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div class="hint">提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。</div>
+    <div class="hint">
+      提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
+    </div>
     <div class="personInfo">
       <dpmsForm ref="editForm" :model="form" :rules="rules">
-        <dpmsCellInput required title="姓名" v-model="form.personnelName" placeholder="请输入姓名" />
+        <dpmsCellInput
+          required
+          title="姓名"
+          v-model="form.personnelName"
+          placeholder="请输入姓名"
+        />
         <dpmsEnumsPicker
           required
           title="性别"
@@ -35,20 +42,27 @@
           v-model="form.mobile"
           placeholder="请输入联系电话"
         />
-        <div class="info" v-show="needAuthCode&&form.mobile.length==11">
+        <div class="info" v-show="needAuthCode && form.mobile.length == 11">
           <span>验证码</span>
-          <input maxlength="4" type="number" v-model="form.verificationCode" class="ipt" />
+          <input
+            maxlength="4"
+            type="number"
+            v-model="form.verificationCode"
+            class="ipt"
+          />
           <span
             class="getAuthCode"
             :class="{ disabled: !!second }"
             @click="getCode"
-          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span>
+            >{{ second ? `${second}秒后再试` : '获取验证码' }}</span
+          >
         </div>
         <dpmsCellPicker
           title="默认人员"
           placeholder="是否设置为默认人员"
           defaultType="value"
           required
+          hideBorderBottom
           v-model="form.defaultPersonnel"
           :list="defaultType"
         />
@@ -229,7 +243,7 @@ export default {
   height: 98rpx;
   padding: 13rpx 24rpx;
   background: #fff7e6;
-  color: #faad14;
+  color: #f86e21;
   font-size: 26rpx;
   font-weight: 400;
 }
@@ -239,7 +253,7 @@ export default {
 .btn {
   padding: 0 64rpx;
   button {
-    border-radius: 8px;
+    border-radius: 8rpx;
     border: none;
     font-size: 36rpx;
     background: #5cbb89;
@@ -251,7 +265,7 @@ export default {
   position: relative;
   margin-left: 32rpx;
   font-size: 35rpx;
-  border-bottom: 2rpx rgba(0, 0, 0, 0.15) solid;
+  border-bottom: 1rpx rgba(0, 0, 0, 0.15) solid;
   padding: 34rpx 0;
   .icon-right {
     position: absolute;
@@ -265,11 +279,13 @@ export default {
     right: 40rpx;
     display: inline-block;
     color: #5cbb89;
+    height: 16px;
+    line-height: 16px;
     font-size: 34rpx;
     z-index: 999;
     font-weight: 400rpx;
     padding-left: 15rpx;
-    border-left: 2rpx rgba(0, 0, 0, 0.15) solid;
+    border-left: 1rpx rgba(0, 0, 0, 0.15) solid;
     &.disabled {
       color: #999;
       z-index: 0;
