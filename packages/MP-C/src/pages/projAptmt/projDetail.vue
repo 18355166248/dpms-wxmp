@@ -1,5 +1,6 @@
 <template>
   <view class="content">
+    <div class="bg" />
     <view class="compDesc">
       <view class="compDescContent">
         <p class="projTitle">
@@ -29,8 +30,11 @@
           <view class="storeCardAddress"
             ><span class="iconfont icon-location"></span>
             {{
-              i.institutionAddress.length > 14
-                ? i.institutionAddress.substring(0, 14) + `...`
+              i.institutionAddress.length > (i.canAppointment ? 14 : 20)
+                ? i.institutionAddress.substring(
+                    0,
+                    i.canAppointment ? 14 : 20,
+                  ) + `...`
                 : i.institutionAddress
             }}
           </view>
@@ -140,60 +144,55 @@ export default {
   margin: 0 auto;
   width: 750rpx;
 }
+.bg {
+  position: absolute;
+  width: 2500rpx;
+  height: 2500rpx;
+  border-radius: 1250rpx;
+  top: -2300rpx;
+  left: -875rpx;
+  background-color: #5cbb89;
+  z-index: -1;
+}
 .compDesc {
-  width: 750rpx;
-  height: 150rpx;
-  background: #5cbb89;
+  padding: 48rpx 24rpx;
 }
 .compDescContent {
-  width: 686rpx;
-  height: 256rpx;
-  top: 48rpx;
-  left: 32rpx;
-  position: relative;
   background: #feffff;
   border-radius: 8rpx;
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
+  padding: 24rpx;
 }
 .projTitle {
-  width: 204rpx;
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
+  font-weight: bold;
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
-  padding-top: 32rpx;
-  padding-left: 24rpx;
+  margin-bottom: 24rpx;
 }
 .projDesc {
-  width: 654rpx;
-  height: 132rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.65);
   line-height: 44rpx;
-  padding-top: 24rpx;
-  padding-left: 24rpx;
 }
 .storeContent {
   width: 684rpx;
   margin-left: 32rpx;
-  margin-top: 188rpx;
 }
 .storeTitle {
   width: 136rpx;
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
+  font-weight: bold;
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
 }
 .storeBtn {
   height: 36rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   font-weight: 400;
   text-align: right;
   color: rgba(0, 0, 0, 0.5);
@@ -218,7 +217,6 @@ export default {
   width: 450rpx;
   height: 42rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 42rpx;
@@ -228,7 +226,6 @@ export default {
 .storeCardAddress {
   height: 36rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
   line-height: 36rpx;
@@ -238,7 +235,6 @@ export default {
 .storeCardTime {
   height: 36rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
   line-height: 36rpx;
@@ -252,7 +248,6 @@ export default {
   border: 2rpx solid #5cbb89;
   border-radius: 28rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: center;
   color: #5cbb89;
   line-height: 48rpx;
@@ -268,7 +263,7 @@ export default {
   width: 136rpx;
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
+  font-weight: bold;
   line-height: 44rpx;
   color: rgba(0, 0, 0, 0.9);
   margin-left: 24rpx;
@@ -287,7 +282,7 @@ export default {
   width: 136rpx;
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
+  font-weight: bold;
   line-height: 44rpx;
   color: rgba(0, 0, 0, 0.9);
   margin-left: 24rpx;
@@ -298,7 +293,6 @@ export default {
   width: 702rpx;
   margin-left: 24rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.65);
   line-height: 44rpx;
