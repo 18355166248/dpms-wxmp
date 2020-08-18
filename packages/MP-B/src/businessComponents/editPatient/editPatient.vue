@@ -107,9 +107,7 @@
 <script>
 import _ from 'lodash'
 import moment from 'moment'
-import AsyncValidator from 'async-validator'
 import patientAPI from '@/APIS/patient/patient.api'
-import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 const formDefault = {
   patientName: '',
@@ -271,29 +269,27 @@ export default {
         .join(',')
     },
     async submit() {
-      this.validate((err, fileds) => {
-        if (err) {
-          this.$utils.show(err[0]?.message)
-          return
-        }
+      this.$utils.formValidate(
+        this.rules,
+        this.form,
+        (err, fileds, formValue) => {
+          this.form = formValue
+          if (err) {
+            this.$utils.show(err[0]?.message)
+            return
+          }
 
-        //保存患者时，添加禁用和loading效果
-        this.disabledSaveBtn = true
-        this.$emit('submit', this.form)
-      })
+          //保存患者时，添加禁用和loading效果
+          this.disabledSaveBtn = true
+          this.$emit('submit', this.form)
+        },
+      )
     },
     showBtn() {
       this.disabledSaveBtn = false
     },
     hideBtn() {
       this.disabledSaveBtn = true
-    },
-    validate(callback) {
-      let validator = new AsyncValidator(this.rules)
-
-      validator.validate(this.form, (errors, fields) => {
-        _.isFunction(callback) && callback(errors, fields)
-      })
     },
   },
 }
