@@ -15,6 +15,7 @@
       :isLink="!disabled"
       :placeholder="placeholder"
       :value="pickerValue"
+      :hideBorderBottom="hideBorderBottom"
     />
   </picker>
 </template>
@@ -55,6 +56,10 @@ export default {
     end: String,
     headerText: String,
     disabled: {
+      type: Boolean,
+      required: false,
+    },
+    hideBorderBottom: {
       type: Boolean,
       required: false,
     },

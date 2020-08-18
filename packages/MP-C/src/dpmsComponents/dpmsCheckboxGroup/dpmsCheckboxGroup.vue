@@ -5,8 +5,13 @@
 </template>
 
 <script>
+import empty from '@/components/empty/empty.vue'
+
 export default {
   name: 'dpmsCheckboxGroup',
+  components: {
+    empty,
+  },
   props: {
     value: {
       type: Array,

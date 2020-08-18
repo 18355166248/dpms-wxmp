@@ -1,5 +1,8 @@
 <template>
-  <div class="dpms-cell" @click="cellClick">
+  <div
+    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '']"
+    @click="cellClick"
+  >
     <div :class="['dpms-cell__title', required ? 'required' : '']">
       {{ title }}
     </div>
@@ -39,6 +42,10 @@ export default {
     },
     placeholder: String,
     disabled: {
+      type: Boolean,
+      required: false,
+    },
+    hideBorderBottom: {
       type: Boolean,
       required: false,
     },
@@ -106,7 +113,7 @@ export default {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     transform: scaleY(0.5);
   }
-  & .borderless:after {
+  &.hideBorder:after {
     display: none;
   }
 }
