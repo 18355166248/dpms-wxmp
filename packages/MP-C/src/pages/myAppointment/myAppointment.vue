@@ -119,15 +119,15 @@ export default {
     this.getAppointmentList(this.RECENT_APPOINTMENT)
   },
   onShow() {
-    uni.showLoading({
-      title: '加载中...',
-    })
     this.recent = 'active'
     this.history = ''
     this.getAppointmentList(this.RECENT_APPOINTMENT)
   },
   methods: {
     getAppointmentList(type) {
+      uni.showLoading({
+        title: '加载中...',
+      })
       appointmentAPI
         .getAppointmentList({
           userId: getStorage(STORAGE_KEY.STAFF).id,
@@ -142,6 +142,9 @@ export default {
             this.showEmpty = false
           }
           uni.stopPullDownRefresh()
+          uni.hideLoading()
+        })
+        .catch(() => {
           uni.hideLoading()
         })
     },
