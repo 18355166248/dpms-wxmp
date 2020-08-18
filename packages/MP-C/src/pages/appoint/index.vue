@@ -173,6 +173,7 @@ import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
+import institutionAPI from '@/APIS/institution/institution.api'
 import empty from '@/components/empty/empty.vue'
 import modal from '@/components/modal/neil-modal.vue'
 export default {
@@ -221,7 +222,7 @@ export default {
       personnelPickerVisible: false,
       ContactLabel_ENUM: this.$utils.getEnums('ContactLabel'),
       Gender_ENUM: this.$utils.getEnums('Gender'),
-      institutionInfo: getStorage(STORAGE_KEY.INSTITUTION_INFO),
+      institutionInfo: {},
     }
   },
   components: {
@@ -416,6 +417,12 @@ export default {
       this.shopDetail = res.data
       this.getDoctors(this.shopDetail.settingsShopId)
     },
+    async getInstitutionInfo() {
+      const res = await institutionAPI.getInstitutionInfo({
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+      })
+      this.institutionInfo = res.data.institutionIntroduce
+    },
     dockerClick(d) {
       this.form.doctorId = d.doctorId
       if (this.form.date) {
@@ -447,9 +454,12 @@ export default {
     },
     async init() {
       this.$utils.showLoading()
-      await this.getItems()
-      await this.getPersonnelList()
-      await this.getShopDetail()
+      await Promise.all([
+        this.getItems(),
+        this.getPersonnelList(),
+        this.getShopDetail(),
+        this.getInstitutionInfo(),
+      ])
       this.$utils.clearLoading()
     },
   },
