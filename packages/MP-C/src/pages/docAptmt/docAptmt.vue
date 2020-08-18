@@ -89,6 +89,11 @@ export default {
       loadStatus: 'loading',
     }
   },
+  onShareAppMessage(res) {
+    return {
+      path: '/pages/docAptmt/docAptmt',
+    }
+  },
   onLoad() {
     this.init()
   },

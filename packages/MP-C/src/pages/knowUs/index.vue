@@ -70,6 +70,11 @@ export default {
       medicalInstitutionName: '',
     }
   },
+  onShareAppMessage(res) {
+    return {
+      path: '/pages/knowUs/index',
+    }
+  },
   onLoad() {
     this.init()
   },

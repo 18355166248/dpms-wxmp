@@ -4,9 +4,12 @@
     <div class="appName">小程序名称</div>
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
+      <span class="iconfont icon-phone"></span>
       <input placeholder="请输入手机号" v-model="mobile" type="digit" />
+      <span class="iconfont icon-close" @click="mobile = ''"></span>
     </div>
     <div class="formItem">
+      <span class="iconfont icon-verify"></span>
       <input placeholder="请输入验证码" v-model="code" type="digit" />
       <div
         class="btn"
@@ -96,16 +99,30 @@ function countdown(sec, cb) {
 .formItem {
   display: flex;
   align-items: center;
-  border-bottom: solid 2rpx rgba(0, 0, 0, 0.15);
+  border-bottom: solid 1rpx rgba(0, 0, 0, 0.15);
   height: 112rpx;
+  .iconfont{
+    margin-right: 12rpx;
+    font-size: 36rpx;
+  }
+  .icon-close{
+    color: rgba(0,0,0,0.65);
+    margin-right: 0;
+    padding-left: 20rpx;
+  }
   input {
     flex: auto;
+    color: rgba(0,0,0,0.5);
+    .input-placeholder{
+      color: rgba(0,0,0,0.25);
+    }
   }
   .btn {
     color: #5cbb89;
     font-size: 34rpx;
-    border-left: solid 2rpx rgba(0, 0, 0, 0.15);
+    border-left: solid 1rpx rgba(0, 0, 0, 0.15);
     padding-left: 16rpx;
+    line-height: 1;
     white-space: nowrap;
     &.disabled {
       color: #999;
@@ -114,16 +131,19 @@ function countdown(sec, cb) {
 }
 button {
   width: 670rpx;
-  height: 100rpx;
+  line-height: 78rpx;
   background: #5cbb89;
   border: solid 2rpx #5cbb89;
   border-radius: 8rpx;
-  font-size: 40rpx;
+  font-size: 36rpx;
   font-weight: 400;
   text-align: center;
   color: #ffffff;
   margin-bottom: 24rpx;
   margin-top: 90rpx;
+  &::after{
+    border: none;
+  }
   &.ghost {
     background: transparent;
     color: #5cbb89;
