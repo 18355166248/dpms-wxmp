@@ -6,7 +6,7 @@
         <div class="tit">{{notice.announcementTitle}}</div>
         {{notice.announcementContent}}
       </div>
-      <div class="close" @click="visible = false">X</div>
+      <div class="iconfont icon-close" @click="visible = false"></div>
     </div>
   </div>
 </template>
@@ -41,7 +41,7 @@ export default {
     }
   },
   watch: {
-    MEDICALINSTITUTION(newVal) {
+    'MEDICALINSTITUTION.medicalInstitutionId'(newVal) {
       if (!newVal) return
       this.getNotice()
     },
@@ -64,14 +64,13 @@ export default {
   .inner {
     position: fixed;
     z-index: 1;
-    top: 50%;
+    top: 46%;
     left: 50%;
     width: 600rpx;
     transform: translate(-50%, -50%);
     padding: 16rpx;
     background: linear-gradient(315deg, #81dbac, #5cbb89 99%);
     border-radius: 8rpx;
-    margin-bottom: 120rpx;
     .content {
       background: white;
       border-radius: 8rpx;
@@ -92,20 +91,13 @@ export default {
         margin-bottom: 24rpx;
       }
     }
-    .close {
+    .icon-close {
       position: absolute;
-      bottom: -50rpx;
+      bottom: -44rpx;
       left: 50%;
       transform: translate(-50%, 100%);
-      width: 61rpx;
-      height: 61rpx;
-      background: #c2c2c2;
-      color: #666;
-      border-radius: 50%;
-      font-size: 32rpx;
-      font-weight: bold;
-      line-height: 61rpx;
-      text-align: center;
+      color: #c2c2c2;
+      font-size: 70rpx;
     }
   }
 }

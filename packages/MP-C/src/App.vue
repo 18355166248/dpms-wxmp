@@ -70,6 +70,12 @@ page {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-phone::before {
+  content: '\e65c';
+}
+.icon-verify::before {
+  content: '\e65b';
+}
 .icon-location::before {
   content: '\e790';
 }
