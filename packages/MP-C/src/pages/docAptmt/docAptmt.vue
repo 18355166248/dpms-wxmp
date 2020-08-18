@@ -163,7 +163,6 @@ export default {
       uni.showLoading({
         title: '加载中...',
       })
-
       institutionAPI
         .checkDocCanAptmt({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
@@ -174,10 +173,9 @@ export default {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,
             )
-
-            if (canApptInstitutionList.length === 0)
+            if (canApptInstitutionList.length === 0) {
               this.$utils.show('无可约门店')
-
+            }
             if (canApptInstitutionList.length === 1) {
               toUrl(
                 '/pages/appoint/index?doctorId=' +
@@ -186,7 +184,6 @@ export default {
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }
-
             if (canApptInstitutionList.length > 1) {
               toUrl(
                 `/pages/docAptmt/docDetail?appointmentDoctorId=${appointmentDoctorId}`,
@@ -195,7 +192,6 @@ export default {
           } else {
             this.$utils.show('项目不可预约')
           }
-
           uni.hideLoading()
         })
     },

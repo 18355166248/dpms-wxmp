@@ -58,7 +58,11 @@
                   <img mode="aspectFit" :src="i.itemThumbnailUrl" />
                 </view>
                 <view class="cardContent">
-                  <text class="cardTitle">{{ i.itemName }}</text>
+                  <text class="cardTitle">{{
+                    i.itemName.length > 0
+                      ? i.itemName.substring(0, 11) + `...`
+                      : i.itemName
+                  }}</text>
                   <view
                     class="cardBtn"
                     v-show="i.canAppointment"
@@ -67,8 +71,8 @@
                   >
                 </view>
                 <view class="cardDesc">{{
-                  i.itemBriefIntroduction.length > 12
-                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
+                  i.itemBriefIntroduction.length > 11
+                    ? i.itemBriefIntroduction.substring(0, 11) + `...`
                     : i.itemBriefIntroduction
                 }}</view>
               </view>
@@ -218,7 +222,10 @@ export default {
         .then((res) => {
           this.bannerList = res.data.bannerList
           this.institutionIntroduce = res.data.institutionIntroduce
-          setStorage(STORAGE_KEY.INSTITUTION_INFO, res.data.institutionIntroduce)
+          setStorage(
+            STORAGE_KEY.INSTITUTION_INFO,
+            res.data.institutionIntroduce,
+          )
           if (
             this.institutionIntroduce.briefIntroduction &&
             this.institutionIntroduce.briefIntroduction.length > 70
