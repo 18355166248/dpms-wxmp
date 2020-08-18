@@ -12,7 +12,9 @@
     </div>
     <view class="right">
       <view class="title mb-8">
-        <text>{{ appt.patient.patientName }}</text>
+        <text class="text-ellipsis patientName">{{
+          appt.patient.patientName
+        }}</text>
         <text class="titleRight">
           <text
             class="iconCircle mr-12"
@@ -40,7 +42,12 @@
           >联系电话：{{ appt.patient.mobile }}</view
         >
         <view>预约时间：{{ getApptTime() }}</view>
-        <view>预约诊所：{{ appt.medicalInstitutionSimpleCode }}</view>
+        <view class="institution">
+          <text class="institutionLabel">预约诊所：</text>
+          <text class="text-ellipsis institutionName">{{
+            appt.medicalInstitutionSimpleCode
+          }}</text>
+        </view>
         <view>预约医生：{{ doctor.staffName }}</view>
       </view>
     </view>
@@ -104,8 +111,8 @@ export default {
     },
     getApptTime() {
       return `${moment(this.appt.appointmentBeginTimeStamp).format(
-        'HH:mm',
-      )} - ${moment(this.appt.appointmentEndTimeStamp + 1).format('HH:mm')}`
+        'YYYY-MM-DD HH:mm',
+      )} ~ ${moment(this.appt.appointmentEndTimeStamp + 1).format('HH:mm')}`
     },
   },
 }
@@ -133,15 +140,21 @@ $fontColor: rgba(
   .right {
     padding-left: 24rpx;
     flex: 1 1 100%;
+    overflow: hidden;
+
     .title {
       font-size: 34rpx;
       font-weight: 700;
       color: rgba($color: #000000, $alpha: 0.9);
       display: flex;
       justify-content: space-between;
+      .patientName {
+        overflow: hidden;
+      }
       .titleRight {
         font-size: 28rpx;
         color: $fontColor;
+        flex: 0 0 auto;
         .iconCircle {
           display: inline-block;
           width: 16rpx;
@@ -165,6 +178,17 @@ $fontColor: rgba(
     .apptDetail {
       color: $fontColor;
       font-size: 28rpx;
+
+      .institution {
+        display: flex;
+        .institutionLabel {
+          flex: 0 0 auto;
+        }
+        .institutionName {
+          flex: 1 1 100%;
+          overflow: hidden;
+        }
+      }
 
       > view {
         margin-bottom: 8rpx;

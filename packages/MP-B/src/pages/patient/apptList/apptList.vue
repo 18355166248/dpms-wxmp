@@ -14,14 +14,21 @@
     <template v-else>
       <empty :disabled="true" text="暂无预约数据"></empty>
     </template>
-    <fixed-footer v-if="!isHeadquartersAndRegion" :bgColor="primaryColor">
-      <button
-        class="button-new"
-        @click="toPage('/baseSubpackages/apptView/apptView')"
-      >
-        新建预约
-      </button>
-    </fixed-footer>
+    <view v-if="!isHeadquartersAndRegion">
+      <fixed-footer :bgColor="primaryColor">
+        <button
+          class="button-new"
+          @click="
+            toPage('/baseSubpackages/apptForm/apptForm', {
+              type: 'createAppt',
+              patientId,
+            })
+          "
+        >
+          新建预约
+        </button>
+      </fixed-footer>
+    </view>
   </view>
 </template>
 
@@ -37,10 +44,14 @@ export default {
   data() {
     return {
       patientId: '',
+      primaryColor: this.$commonCss.commonColor,
       patient: {},
       dataSource: [],
       INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
     }
+  },
+  onShow() {
+    this.init()
   },
   onLoad(params) {
     this.patientId = params.patientId
@@ -51,9 +62,11 @@ export default {
 
   methods: {
     // 页面跳转
-    toPage(url) {
+    toPage(url, params) {
       this.$utils.push({
-        url,
+        url: `${url}?${qs.stringify(params, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+        })}`,
       })
     },
 

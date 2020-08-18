@@ -20,18 +20,18 @@
     </view>
     <view class="menu">
       <view class="li">
-        <view>
+        <view class="institution">
           <text class="iconfont icon-bank" />
           登录诊所
         </view>
-        <text class="text">{{
+        <text class="text text-ellipsis">{{
           medicalInstitution.medicalInstitutionSimpleCode
         }}</text>
       </view>
       <view class="li" @click="toUrl('/pages/myProfile/about')">
         <view>
           <image class="logo" src="../../static/icon-mini-logo.png" />
-          关于北吉熊1
+          关于北吉熊
         </view>
         <text class="iconfont icon-right text" />
       </view>
@@ -146,9 +146,12 @@ export default {
     align-items: center;
     font-size: 34rpx;
     border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
-    .icon-right {
-      color: rgba(0, 0, 0, 0.25);
+
+    .institution {
+      flex: 0 0 auto;
+      padding-right: 40rpx;
     }
+
     &:last-child {
       border-bottom: none;
     }
@@ -159,6 +162,10 @@ export default {
     }
     .text {
       color: rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .text.icon-right {
+      color: rgba(0, 0, 0, 0.25);
     }
     .logo {
       width: 40rpx;

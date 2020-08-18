@@ -142,17 +142,6 @@
                   <template v-else>
                     <template v-if="item.registerStatus === 1">
                       <button
-                        class="button inverted-button"
-                        @click.stop="
-                          toPage('/baseSubpackages/apptForm/apptForm', {
-                            type: 'editRegister',
-                            appointmentId: item.appointmentId,
-                          })
-                        "
-                      >
-                        挂号
-                      </button>
-                      <button
                         class="button"
                         @click.stop="
                           toPage('/baseSubpackages/apptForm/apptForm', {
@@ -173,11 +162,22 @@
                       >
                         取消
                       </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          toPage('/baseSubpackages/apptForm/apptForm', {
+                            type: 'editRegister',
+                            appointmentId: item.appointmentId,
+                          })
+                        "
+                      >
+                        挂号
+                      </button>
                     </template>
                     <template v-else>
                       <button
                         v-if="item.registerStatus === 2"
-                        class="button inverted-button"
+                        class="button"
                         @click.stop="
                           cancleRegister({
                             registerId: item.registerId,
@@ -366,7 +366,7 @@ export default {
       uni.showModal({
         title: '提示',
         content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
-        success(res) {
+        success: (res) => {
           if (res.confirm) {
             const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
             this.changeStatus(record)

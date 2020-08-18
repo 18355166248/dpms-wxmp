@@ -135,14 +135,15 @@
           placeholder="请选择预约项目"
         />
         <dpmsCell title="预约备注" />
-        <textarea
-          class="appointmentMemo"
-          v-model="form.appointmentMemo"
-          auto-height
-          placeholder="请输入预约备注"
-          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-          :maxlength="500"
-        ></textarea>
+        <view class="appointmentMemo">
+          <textarea
+            v-model="form.appointmentMemo"
+            auto-height
+            placeholder="请输入预约备注"
+            placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+            :maxlength="500"
+          ></textarea>
+        </view>
         <div class="mt-56">
           <dpmsButton @click="onSave" :loading="saveLoading">保 存</dpmsButton>
         </div>
@@ -240,6 +241,7 @@ export default {
       selectListCache: [[]], // 0科室, 1诊室, 2医生, 3洁牙师, 4咨询师, 5助理, 6预约项目 7诊所 8护士
       apptInfoCache: {}, // 缓存编辑/挂号预约详情
       isCurrentInstitutionFlag: true, // 是否为当前诊所
+      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
     }
   },
   filters: {
@@ -282,6 +284,11 @@ export default {
       this.form.appointmentBeginTimeStamp = startTime.format('YYYY-MM-DD HH:mm')
       this.form.duration = duration
       this.form.doctor = Number(option.doctorId)
+    }
+
+    if (this.paramsObj.type === 'createAppt' && option.patientId) {
+      this.getPatientInfoFromServer(option.patientId)
+      this.form.appointmentStatus = this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value
     }
   },
   mounted() {
@@ -431,6 +438,8 @@ export default {
         })
         .catch()
 
+      console.log('notGet', notGet)
+
       if (notGet) {
         this.$utils.clearLoading()
         return
@@ -569,6 +578,13 @@ export default {
                   .medicalInstitutionSimpleCode,
                 appointmentMedicalInstitutionId: this.medicalInstitution
                   .medicalInstitutionId,
+                institutionChainType: this.medicalInstitution
+                  .institutionChainType,
+                institutionTypeId: this.medicalInstitution.institutionTypeId,
+                parentId: this.medicalInstitution.parentId,
+                staffMedicalInstitutionId: this.medicalInstitution
+                  .staffMedicalInstitutionId,
+                topParentId: this.medicalInstitution.topParentId,
                 isCurrentInstitutionFlag: true, // 表示是当前诊所
               },
             ],
@@ -660,6 +676,9 @@ export default {
         APPOINTMENT_TYPE_ENUM,
         this.form.medicalInstitution,
       )
+
+      formatValue.appointmentMedicalInstitutionId =
+        formatValue.medicalInstitution.appointmentMedicalInstitutionId
 
       // 挂号不需要做校验
       if (!this.isAppt) {
@@ -775,6 +794,7 @@ export default {
         .getPatientDetail({ patientId })
         .then((res) => {
           this.$set(this.form, 'patient', res.data)
+          this.form.patientId = patientId
         })
         .catch()
     },
@@ -882,6 +902,10 @@ export default {
     padding: 35rpx 32rpx;
     background-color: #fff;
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    textarea {
+      width: 100%;
+    }
   }
 }
 </style>

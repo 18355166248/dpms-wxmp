@@ -42,27 +42,13 @@
         isLink
         @cellclick="doctorTimePickerVisible = true"
       />
-      <dpmsCellPicker
-        v-if="personnelList.length"
-        defaultType="id"
-        :defaultProps="{
-          label: 'personnelName',
-          value: 'id',
-        }"
-        :list="personnelList"
-        v-model="form.personnelId"
-        title="预约人员"
-        placeholder="请选择预约人员"
-        required
-        isLink
-      />
       <dpmsCell
-        v-else
         title="预约人员"
         placeholder="请选择预约人员"
+        :value="personnel.personnelName"
         required
         isLink
-        @cellclick="personneEmpty = true"
+        @cellclick="personnelPickerVisible = true"
       />
       <dpmsCellInput
         title="预约备注"
@@ -127,6 +113,28 @@
     </dpmsBottomPicker>
     <dpmsBottomPicker
       class="dpmsBottomPicker"
+      :visible.sync="personnelPickerVisible"
+      title="选择预约人员"
+    >
+      <div class="personnel" v-for="p in personnelList" :key="p.id"
+        :class="{ active: form.personnelId === p.id }"
+        @click="personnelClick(p)">
+        <div class="row1">
+          <div>{{p.personnelName}}/{{Gender_ENUM.properties[p.gender].text.zh_CN}}</div>
+          <div>{{ContactLabel_ENUM.properties[p.contactLabel].text.zh_CN}}</div>
+        </div>
+        <div>{{p.mobile}}</div>
+      </div>
+      <empty
+        v-if="!personnelList.length"
+        :disabled="true"
+        text="暂无可预约人员"
+      />
+      <button v-if="personnelList.length < 10" style="margin-bottom: 32rpx"
+        @click="$utils.push({ url: '/pages/personManagement/personManagement' })">新增人员</button>
+    </dpmsBottomPicker>
+    <dpmsBottomPicker
+      class="dpmsBottomPicker"
       :visible.sync="itemPickerVisible"
       title="选择项目"
     >
@@ -154,25 +162,8 @@
       :show-cancel="false"
       @close="showContent = false"
     >
-      <view style="padding: 32rpx 24rpx;">
-        <view>1. 停诊将会短信通知您，请保持电话畅通；</view>
-        <view
-          >2.
-          您的预约信息作为登陆信息，在诊所核实确认时有权取消您的预约信息；</view
-        >
-        <view>3. 实名制预约，就诊人信息不符合没法就诊；</view>
-      </view>
+      <view style="padding: 32rpx 24rpx;" v-html="institutionInfo.bookingInformation"></view>
     </modal>
-    <modal
-      class="personneEmpty"
-      :show="personneEmpty"
-      confirm-text="新增人员"
-      content="暂无可预约人员"
-      align="center"
-      @close="personneEmpty = false"
-      @confirm="addPersonne"
-      confirm-color="#5cbb89"
-    />
   </div>
 </template>
 
@@ -189,7 +180,6 @@ export default {
     return {
       userId: getStorage(STORAGE_KEY.STAFF).id,
       showContent: false,
-      personneEmpty: false,
       shopId: '',
       itemId: '',
       networkAppointmentId: '',
@@ -224,9 +214,14 @@ export default {
       doctorTime: [],
       items: [],
       personnelList: [],
+      personnel: {},
       doctorPickerVisible: false,
       itemPickerVisible: false,
       doctorTimePickerVisible: false,
+      personnelPickerVisible: false,
+      ContactLabel_ENUM: this.$utils.getEnums('ContactLabel'),
+      Gender_ENUM: this.$utils.getEnums('Gender'),
+      institutionInfo: getStorage(STORAGE_KEY.INSTITUTION_INFO),
     }
   },
   components: {
@@ -416,9 +411,6 @@ export default {
       const res = await appointAPI.getPersonnelList({ userId: this.userId })
       this.personnelList = res.data
     },
-    addPersonne() {
-      this.$utils.push({ url: '/pages/personManagement/personManagement' })
-    },
     async getShopDetail() {
       const res = await appointAPI.getShopDetail({ shopId: this.shopId })
       this.shopDetail = res.data
@@ -435,6 +427,11 @@ export default {
     doctorTimeClick(value) {
       this.form.timeStamp = value
       this.doctorTimePickerVisible = false
+    },
+    personnelClick(p) {
+      this.personnel = p
+      this.form.personnelId = p.id
+      this.personnelPickerVisible = false
     },
     itemClick(itm) {
       const selectIndex = this.form.itemList.findIndex(
@@ -579,10 +576,35 @@ button {
     }
   }
 }
+.personnel{
+  margin-bottom: 16rpx;
+  border-radius: 8rpx;
+  box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.09);
+  padding: 32rpx 24rpx;
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 28rpx;
+  line-height: 1.6;
+  overflow: hidden;
+  &.active {
+    border: 1rpx solid #5cbb89;
+    position: relative;
+    ::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-top: 40rpx solid #5cbb89;
+      border-left: 40rpx solid transparent;
+    }
+  }
+  .row1{
+    display: flex;
+    justify-content: space-between;
+  }
+}
 .dpmsBottomPicker .empty {
   padding: 100rpx 0;
-}
-.personneEmpty .empty {
-  padding: 50rpx 0;
 }
 </style>

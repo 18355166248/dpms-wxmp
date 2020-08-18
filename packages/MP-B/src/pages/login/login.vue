@@ -4,29 +4,63 @@
     <view class="content">
       <view class="login">
         <label>
-          <text class="iconfont icon-institutions" />
+          <text class="iconfont icon-institutions mr-20" />
           <input
             placeholder="请输入会员名"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.memberCode"
+            @blur="handleBlur('memberCode')"
+            @focus="handleFocus('memberCode')"
           />
+          <view
+            class="btn-clear"
+            v-if="
+              loginForm.memberCode.trim() !== '' &&
+              loginFormFocusFlag.memberCode
+            "
+            @click="clearForLoginForm('memberCode')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
         </label>
         <label>
-          <text class="iconfont icon-user" />
+          <text class="iconfont icon-user mr-20" />
           <input
             placeholder="请输入用户名"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.username"
+            @blur="handleBlur('username')"
+            @focus="handleFocus('username')"
           />
+          <view
+            class="btn-clear"
+            v-if="
+              loginForm.username.trim() !== '' && loginFormFocusFlag.username
+            "
+            @click="clearForLoginForm('username')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
         </label>
         <label>
-          <text class="iconfont icon-password" />
+          <text class="iconfont icon-password mr-20" />
           <input
             password
             placeholder="请输入密码"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.password"
+            @blur="handleBlur('password')"
+            @focus="handleFocus('password')"
           />
+          <view
+            class="btn-clear"
+            v-if="
+              loginForm.password.trim() !== '' && loginFormFocusFlag.password
+            "
+            @click="clearForLoginForm('password')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
         </label>
         <button
           class="submit"
@@ -44,7 +78,7 @@
         :memberCode="loginForm.memberCode"
         :username="loginForm.username"
         @confirm="login"
-        @onDisList="isLoading = false"
+        @onHide="hide"
       ></selectMedicalInstitution>
     </view>
   </view>
@@ -62,6 +96,11 @@ export default {
       isLoading: false,
       institutionList: [],
       loginInstitutionList: [],
+      loginFormFocusFlag: {
+        memberCode: false,
+        username: false,
+        password: false,
+      },
       loginForm: {
         memberCode: getStorage(STORAGE_KEY.LOGIN_INFO)
           ? getStorage(STORAGE_KEY.LOGIN_INFO).memberCode
@@ -94,7 +133,19 @@ export default {
       content: '医疗服务云',
     })
   },
+  onUnload() {
+    this.isLoading = false
+  },
   methods: {
+    clearForLoginForm(field) {
+      this.loginForm[field] = ''
+    },
+    handleBlur(field) {
+      this.loginFormFocusFlag[field] = false
+    },
+    handleFocus(field) {
+      this.loginFormFocusFlag[field] = true
+    },
     login(val) {
       authAPI
         .login({
@@ -160,6 +211,11 @@ export default {
         _.isFunction(callback) && callback(errors, fields)
       })
     },
+    hide(option) {
+      // 选择诊所的时候loading效果不能消失
+      if (option && option.type === 'select') return
+      this.isLoading = false
+    },
   },
 }
 </script>
@@ -196,10 +252,22 @@ export default {
       border-bottom-width: 1rpx;
       border-bottom-style: solid;
       border-bottom-color: rgba(0, 0, 0, 0.15);
+      position: relative;
+      padding-right: 90rpx;
     }
-    text.iconfont {
+    .btn-clear {
+      position: absolute;
+      right: 0;
+      z-index: 2;
+      width: 80rpx;
+      height: 100rpx;
+      text-align: right;
+      .iconfont {
+        opacity: 0.25;
+      }
+    }
+    .iconfont {
       font-size: 40rpx;
-      margin-right: 20rpx;
       color: #000;
       opacity: 0.65;
     }

@@ -126,9 +126,9 @@ export default {
           this.$emit('onDisList', true)
         })
     },
-    hide() {
+    hide(option) {
       this.showTree = false
-      this.$emit('onHide')
+      this.$emit('onHide', option)
     },
     //扁平化树结构
     renderTreeList(list = [], rank = 0, parentId = [], parents = []) {
@@ -227,7 +227,7 @@ export default {
     treeItemSelect(item, index) {
       if (this.disList.includes(item.id)) {
         this.$emit('confirm', item)
-        this.hide()
+        this.hide({ type: 'select' })
       }
     },
     initTree(range = this.range) {
