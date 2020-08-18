@@ -181,10 +181,7 @@
       :show-cancel="false"
       @close="showContent = false"
     >
-      <view
-        style="padding: 32rpx 24rpx;"
-        v-html="institutionInfo.bookingInformation"
-      ></view>
+      <view class="agreeContent" v-html="institutionInfo.bookingInformation"></view>
     </modal>
   </div>
 </template>
@@ -645,5 +642,11 @@ button {
 }
 .dpmsBottomPicker .empty {
   padding: 100rpx 0;
+}
+.agreeContent{
+  padding: 32rpx 24rpx;
+  max-height: 70vh;
+  overflow: auto;
+  word-break: break-word;
 }
 </style>
