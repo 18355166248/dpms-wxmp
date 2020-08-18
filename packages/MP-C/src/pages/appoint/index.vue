@@ -279,7 +279,7 @@ export default {
       this.createEdit(params.networkAppointmentId)
     }
   },
-  created() {
+  onShow() {
     this.init()
   },
   methods: {
