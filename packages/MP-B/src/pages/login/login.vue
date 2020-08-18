@@ -78,6 +78,7 @@
         :memberCode="loginForm.memberCode"
         :username="loginForm.username"
         @confirm="login"
+        @onHide="hide"
       ></selectMedicalInstitution>
     </view>
   </view>
@@ -209,6 +210,11 @@ export default {
       validator.validate(this.loginForm, (errors, fields) => {
         _.isFunction(callback) && callback(errors, fields)
       })
+    },
+    hide(option) {
+      // 选择诊所的时候loading效果不能消失
+      if (option && option.type === 'select') return
+      this.isLoading = false
     },
   },
 }

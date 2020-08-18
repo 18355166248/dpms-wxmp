@@ -10,7 +10,7 @@ import uatConfig from './uat.env'
 
 const config = {
   development: devConfig,
-  production: prodConfig,
+  prod: prodConfig,
   uat: uatConfig,
   staging: stagingConfig,
 }

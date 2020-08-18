@@ -21,6 +21,7 @@
           @click="
             toPage('/baseSubpackages/apptForm/apptForm', {
               type: 'createAppt',
+              patientId,
             })
           "
         >
@@ -48,6 +49,9 @@ export default {
       dataSource: [],
       INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
     }
+  },
+  onShow() {
+    this.init()
   },
   onLoad(params) {
     this.patientId = params.patientId

@@ -118,6 +118,14 @@ export default {
     this.history = ''
     this.getAppointmentList(this.RECENT_APPOINTMENT)
   },
+  onShow() {
+    uni.showLoading({
+      title: '加载中...',
+    })
+    this.recent = 'active'
+    this.history = ''
+    this.getAppointmentList(this.RECENT_APPOINTMENT)
+  },
   methods: {
     getAppointmentList(type) {
       appointmentAPI
@@ -134,6 +142,7 @@ export default {
             this.showEmpty = false
           }
           uni.stopPullDownRefresh()
+          uni.hideLoading()
         })
     },
     getRecent() {
