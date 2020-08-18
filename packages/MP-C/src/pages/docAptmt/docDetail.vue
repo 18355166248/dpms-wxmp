@@ -146,6 +146,7 @@ export default {
 .content {
   margin: 0 auto;
   height: 100%;
+  overflow: hidden;
 }
 .compDesc {
   width: 750rpx;
@@ -298,7 +299,6 @@ export default {
   margin-top: 32rpx;
   width: 702rpx;
   border-radius: 8rpx;
-  overflow: hidden;
 }
 .descr {
   width: 394rpx;
