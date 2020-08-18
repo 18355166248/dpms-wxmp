@@ -91,13 +91,17 @@
     {
       "path": "pages/login/index",
       "style": {
-        "navigationBarTitleText": "登陆授权"
+        "navigationBarTitleText": "登陆授权",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
       }
     },
     {
       "path": "pages/login/cellphone",
       "style": {
-        "navigationBarTitleText": "手机号登陆"
+        "navigationBarTitleText": "手机号登陆",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
       }
     },
     {

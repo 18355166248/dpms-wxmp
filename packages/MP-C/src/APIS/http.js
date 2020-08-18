@@ -180,7 +180,7 @@ httper.interceptors.response.use(
       return response.data
     }
 
-    if (response.data.code === 1004000000) {
+    if ([1004000000, 1004000100].includes(response.data.code)) {
       // removeStorage(STORAGE_KEY.ACCESS_TOKEN)
       // removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
