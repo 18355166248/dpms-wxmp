@@ -43,10 +43,10 @@ export default {
   },
   methods: {
     onChange(e) {
-      this.$emit('input', e.detail.value)
+      this.$emit('input', e.detail.value.trim())
     },
     onBlur(e) {
-      this.$emit('blur', e.detail.value)
+      this.$emit('blur', e.detail.value.trim())
     },
   },
 }

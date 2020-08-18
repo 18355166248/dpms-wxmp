@@ -242,6 +242,11 @@ export default {
   font-size: 32rpx;
   margin-left: 16rpx;
   color: #333;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 734rpx;
+  white-space: nowrap;
 }
 
 .dpms-checkbox__inner {

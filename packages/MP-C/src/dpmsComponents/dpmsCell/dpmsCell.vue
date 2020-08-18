@@ -1,5 +1,8 @@
 <template>
-  <div class="dpms-cell" @click="$emit('cellclick')">
+  <div
+    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '']"
+    @click="cellClick"
+  >
     <div :class="['dpms-cell__title', required ? 'required' : '']">
       {{ title }}
     </div>
@@ -38,6 +41,20 @@ export default {
       required: false,
     },
     placeholder: String,
+    disabled: {
+      type: Boolean,
+      required: false,
+    },
+    hideBorderBottom: {
+      type: Boolean,
+      required: false,
+    },
+  },
+  methods: {
+    cellClick() {
+      if (this.disabled) return
+      this.$emit('cellclick')
+    },
   },
 }
 </script>
@@ -96,7 +113,7 @@ export default {
     border-bottom: 1px solid rgba(0, 0, 0, 0.15);
     transform: scaleY(0.5);
   }
-  & .borderless:after {
+  &.hideBorder:after {
     display: none;
   }
 }
