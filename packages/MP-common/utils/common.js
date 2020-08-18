@@ -68,12 +68,25 @@ export default {
       return zero;
     }
   },
+  /**
+   * @desc 校验输入框是否含有emoji表情，并将emoji表情设为''
+   * @param string 输入框中的值
+   */
+  omitEmojiValueInString(value) {
+    const regEmoji = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi;
+
+    if (regEmoji.test(value)) {
+      value = value.replace(regEmoji, "");
+    }
+
+    return value;
+  },
 
   /**
    * @desc 校验字段中是否含有emoji表情，并将emoji表情设为''
    * @param object
    */
-  omitEmojiValue(object) {
+  omitEmojiValueInObject(object) {
     const keys = Object.keys(object);
 
     const definedMap = {};
@@ -98,6 +111,7 @@ export default {
 
     return definedMap;
   },
+
   /**
    * @desc 对输入框进行校验
    * @param rules 校验规则
@@ -106,7 +120,7 @@ export default {
   formValidate(rules, formValue, callback) {
     let validator = new AsyncValidator(rules);
 
-    formValue = this.omitEmojiValue(formValue);
+    formValue = this.omitEmojiValueInObject(formValue);
 
     validator.validate(formValue, (errors, fields) => {
       _.isFunction(callback) && callback(errors, fields, formValue);
