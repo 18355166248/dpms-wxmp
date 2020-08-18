@@ -101,7 +101,7 @@ export default {
     height: 112rpx;
     line-height: 112rpx;
     position: relative;
-    border-bottom: rgba($color: #000000, $alpha: 0.15) 2rpx solid;
+    border-bottom: rgba($color: #000000, $alpha: 0.15) 1rpx solid;
     span:first-child {
       color: rgba($color: #000000, $alpha: 0.9);
       font-size: 34rpx;
@@ -113,12 +113,15 @@ export default {
       font-size: 34rpx;
     }
   }
+  div:last-child {
+    border: none;
+  }
 }
 .operation {
   .btn {
     padding: 0 64rpx;
     button {
-      border-radius: 8px;
+      border-radius: 8rpx;
       border: none;
       font-size: 36rpx;
     }
