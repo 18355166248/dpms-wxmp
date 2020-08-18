@@ -289,6 +289,9 @@ export default {
       white-space: nowrap;
     }
   }
+  div:last-child {
+    border: none;
+  }
 }
 .operation {
   .protocol {
@@ -314,7 +317,7 @@ export default {
   .btn {
     padding: 0 64rpx;
     button {
-      border-radius: 8px;
+      border-radius: 8rpx;
       border: none;
       font-size: 36rpx;
     }

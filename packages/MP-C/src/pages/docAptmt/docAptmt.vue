@@ -15,7 +15,7 @@
           :value="selectedIndex"
           @change="onFilterOption"
         >
-          <input class="storePickerInput" :value="pickerText" disabled />
+          <text>{{ pickerText }}</text>
         </picker>
         <span class="iconfont icon-down storePickerIcon"></span>
       </view>
@@ -215,7 +215,14 @@ export default {
   },
   computed: {
     pickerText() {
-      return this.filterStoreList[this.selectedIndex]?.institutionName
+      let text = this.filterStoreList[this.selectedIndex]
+        ? this.filterStoreList[this.selectedIndex].institutionName
+        : ''
+      if (text.length > 4) {
+        return text.substring(0, 3) + '…'
+      } else {
+        return text
+      }
     },
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
@@ -267,6 +274,7 @@ export default {
 }
 .filter {
   margin-top: 24rpx;
+  padding: 0 24rpx;
   display: flex;
 }
 .storePicker {
@@ -274,50 +282,41 @@ export default {
   height: 76rpx;
   background: #ffffff;
   border-radius: 8rpx;
-  margin-left: 24rpx;
+  padding: 0 30rpx 0 32rpx;
+  box-sizing: border-box;
   display: flex;
-}
-.storePickerInput {
-  height: 36rpx;
-  font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
-  text-align: left;
-  color: rgba(0, 0, 0, 0.9);
-  line-height: 36rpx;
-  margin-left: 32rpx;
-  margin-top: 12rpx;
+  justify-content: space-between;
+  align-items: center;
 }
 .storePickerIcon {
+  margin-left: 16rpx;
   color: rgba(0, 0, 0, 0.25);
-  margin-top: 22rpx;
-  margin-right: 4rpx;
 }
 .keyWordInput {
-  height: 36rpx;
+  width: 100%;
+  height: 76rpx;
+  line-height: 76rpx;
   font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
-  line-height: 36rpx;
   margin-left: 24rpx;
-  margin-top: 12rpx;
 }
 .keywords {
-  width: 446rpx;
+  width: 454rpx;
   height: 76rpx;
+  line-height: 76rpx;
   background: #ffffff;
   border-radius: 8rpx;
-  margin-left: 24rpx;
+  margin-left: 16rpx;
   display: flex;
 }
 .keyWordIcon {
-  margin-top: 22rpx;
   margin-left: 18rpx;
   color: rgba(0, 0, 0, 0.25);
 }
 .aptmtCard {
   width: 702rpx;
-  height: 212rpx;
   margin-left: 24rpx;
   background: #feffff;
   border-radius: 8px;
@@ -345,15 +344,12 @@ export default {
   margin-left: 24rpx;
 }
 .cardDesc {
-  width: 446rpx;
+  width: 510rpx;
   height: 88rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
-  text-align: left;
   color: rgba(0, 0, 0, 0.5);
-  line-height: 44rpx;
   margin-left: 24rpx;
-  margin-top: 16rpx;
+  margin-top: 12rpx;
 }
 .aptmtCardContent {
   display: flex;
@@ -371,11 +367,11 @@ export default {
   line-height: 52rpx;
   position: relative;
   top: 25rpx;
-  left: 20rpx;
+  left: 60rpx;
   z-index: 9999;
 }
 .clickableArea {
-  height: 212rpx;
+  height: 180rpx;
   width: 500rpx;
   position: absolute;
   z-index: 9999;

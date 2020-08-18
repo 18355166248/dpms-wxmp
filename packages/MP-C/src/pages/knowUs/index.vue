@@ -157,6 +157,7 @@ export default {
     background-position: 460rpx 0rpx;
     border-radius: 8rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
+    background-color: #fff;
   }
   .storeCardTitle {
     width: 450rpx;
@@ -203,7 +204,7 @@ export default {
     text-align: center;
     color: #5cbb89;
     position: relative;
-    top: -78rpx;
+    top: -90rpx;
     left: 546rpx;
   }
   .knowUs-introduce {
@@ -215,6 +216,9 @@ export default {
       margin-bottom: 14rpx;
       margin-right: 14rpx;
     }
+  }
+  .iconfont {
+    margin-right: 8rpx;
   }
 }
 </style>
