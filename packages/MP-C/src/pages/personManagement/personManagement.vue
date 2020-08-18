@@ -61,6 +61,12 @@ export default {
   onPullDownRefresh() {
     this.getCustomer()
   },
+  onShow() {
+    uni.showLoading({
+      title: '加载中...',
+    })
+    this.getCustomer()
+  },
   methods: {
     getCustomer() {
       let id = this.staff.id
@@ -74,6 +80,7 @@ export default {
             this.showEmpty = false
           }
           uni.stopPullDownRefresh()
+          uni.hideLoading()
         })
         .catch((error) => {
           console.log('error', error)
