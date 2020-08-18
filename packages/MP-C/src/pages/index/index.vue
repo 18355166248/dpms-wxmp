@@ -153,7 +153,7 @@
 
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
-import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
 import Notice from './notice'
 
@@ -227,10 +227,6 @@ export default {
         .then((res) => {
           this.bannerList = res.data.bannerList
           this.institutionIntroduce = res.data.institutionIntroduce
-          setStorage(
-            STORAGE_KEY.INSTITUTION_INFO,
-            res.data.institutionIntroduce,
-          )
           if (
             this.institutionIntroduce.briefIntroduction &&
             this.institutionIntroduce.briefIntroduction.length > 70
