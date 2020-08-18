@@ -38,7 +38,11 @@
         <image :src="p.itemThumbnailUrl" />
         <view>
           <view class="aptmtCardContent">
-            <view class="cardTile">{{ p.itemName }}</view>
+            <view class="cardTile">{{
+              p.itemName.length > 8
+                ? p.itemName.substring(0, 8) + `...`
+                : p.itemName
+            }}</view>
             <view
               class="cardBtn"
               v-show="p.canAppointment"
@@ -243,6 +247,7 @@ export default {
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.04);
   height: 100%;
+  font-size: 30rpx;
 }
 .nav {
   width: 100%;

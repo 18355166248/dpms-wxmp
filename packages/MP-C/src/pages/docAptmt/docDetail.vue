@@ -92,12 +92,15 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: `/pages/docAptmt/docDetail?appointmentDoctorId=${this.params.appointmentDoctorId}`,
+      path: `/pages/docAptmt/docDetail?appointmentDoctorId=${this.params.appointmentDoctorId}&isShare=1`,
     }
   },
   onLoad(params) {
-    this.init(params)
     this.params = params
+    if (params.isShare == 1) {
+      return
+    }
+    this.init(params)
   },
   onPullDownRefresh() {
     this.init(this.params)
@@ -106,6 +109,11 @@ export default {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
     }),
+  },
+  watch: {
+    MEDICALINSTITUTION(newVal) {
+      this.init(this.params)
+    },
   },
   methods: {
     init(params) {

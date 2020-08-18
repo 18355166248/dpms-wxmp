@@ -60,8 +60,8 @@
                 </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{
-                    i.itemName.length > 8
-                      ? i.itemName.substring(0, 8) + `...`
+                    i.itemName.length > 6
+                      ? i.itemName.substring(0, 6) + `...`
                       : i.itemName
                   }}</text>
                   <view
@@ -184,7 +184,7 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: '/pages/index/index',
+      path: '/pages/index/index?isShare=1',
     }
   },
   computed: {
@@ -194,10 +194,7 @@ export default {
   },
   watch: {
     MEDICALINSTITUTION(newVal) {
-      uni.setNavigationBarTitle({
-        title: newVal.medicalInstitutionDTO.medicalInstitutionName,
-      })
-      this.init()
+      uni.startPullDownRefresh()
     },
   },
   created() {
@@ -209,7 +206,10 @@ export default {
       },
     })
   },
-  onShow() {
+  onLoad(params) {
+    if (params.isShare == 1) {
+      return
+    }
     uni.startPullDownRefresh()
   },
   onPullDownRefresh() {
@@ -236,6 +236,9 @@ export default {
               this.institutionIntroduce.briefIntroduction.substring(0, 70) +
               `...`
           }
+          uni.setNavigationBarTitle({
+            title: res.data.institutionIntroduce.medicalInstitutionName,
+          })
         })
       institutionAPI
         .getProjList({

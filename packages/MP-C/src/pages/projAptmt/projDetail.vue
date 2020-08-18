@@ -95,12 +95,15 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: `/pages/projAptmt/projDetail?appointmentItemId=${this.params.appointmentItemId}`,
+      path: `/pages/projAptmt/projDetail?appointmentItemId=${this.params.appointmentItemId}&isShare=1`,
     }
   },
   onLoad(params) {
-    this.init(params)
     this.params = params
+    if (params.isShare == 1) {
+      return
+    }
+    this.init(params)
   },
   onPullDownRefresh() {
     this.init(this.params)
@@ -109,6 +112,11 @@ export default {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
     }),
+  },
+  watch: {
+    MEDICALINSTITUTION(newVal) {
+      this.init(this.params)
+    },
   },
   methods: {
     init(params) {
@@ -176,6 +184,7 @@ export default {
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
   margin-bottom: 24rpx;
+  overflow: hidden;
 }
 .projDesc {
   font-size: 28rpx;
