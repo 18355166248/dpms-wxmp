@@ -89,6 +89,11 @@ export default {
       detailIntroduction: '',
     }
   },
+  onShareAppMessage(res) {
+    return {
+      path: `/pages/projAptmt/projDetail?appointmentItemId=${this.params.appointmentItemId}`,
+    }
+  },
   onLoad(params) {
     this.init(params)
     this.params = params
@@ -261,7 +266,6 @@ export default {
   left: 546rpx;
 }
 .detail {
-  width: 394rpx;
   margin-top: 48rpx;
 }
 .detailTitle {
@@ -278,6 +282,7 @@ export default {
   margin-top: 32rpx;
   width: 702rpx;
   border-radius: 8rpx;
+  overflow: hidden;
 }
 .descr {
   width: 394rpx;

@@ -84,6 +84,11 @@ export default {
       params: '',
     }
   },
+  onShareAppMessage(res) {
+    return {
+      path: '/pages/projAptmt/projAptmt',
+    }
+  },
   onLoad(params) {
     this.params = params
     this.init(params)
