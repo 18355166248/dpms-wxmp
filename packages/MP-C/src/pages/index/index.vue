@@ -59,8 +59,8 @@
                 </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{
-                    i.itemName.length > 0
-                      ? i.itemName.substring(0, 11) + `...`
+                    i.itemName.length > 8
+                      ? i.itemName.substring(0, 8) + `...`
                       : i.itemName
                   }}</text>
                   <view
@@ -71,8 +71,8 @@
                   >
                 </view>
                 <view class="cardDesc">{{
-                  i.itemBriefIntroduction.length > 11
-                    ? i.itemBriefIntroduction.substring(0, 11) + `...`
+                  i.itemBriefIntroduction.length > 12
+                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
                     : i.itemBriefIntroduction
                 }}</view>
               </view>
@@ -179,6 +179,11 @@ export default {
         contentrefresh: '正在加载..',
         contentnomore: '没有更多数据了',
       },
+    }
+  },
+  onShareAppMessage(res) {
+    return {
+      path: '/pages/index/index',
     }
   },
   computed: {
