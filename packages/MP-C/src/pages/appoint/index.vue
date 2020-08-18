@@ -399,6 +399,9 @@ export default {
             })
           }
         })
+        .catch((res) => {
+          this.doctorTime = []
+        })
     },
     async getDoctors(id) {
       const res = await appointAPI.getDoctorList({
