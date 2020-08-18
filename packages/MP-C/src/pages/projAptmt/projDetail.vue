@@ -67,6 +67,7 @@
         <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
       </view>
     </view>
+    <view style="height: 48rpx;"></view>
   </view>
 </template>
 
@@ -118,9 +119,16 @@ export default {
       uni.stopPullDownRefresh()
     },
     toUrl(url) {
-      this.$utils.push({
-        url,
-      })
+      institutionAPI
+        .checkPorjCanAptmt({
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+          appointmentItemId: this.params.appointmentItemId,
+        })
+        .then((res) => {
+          this.$utils.push({
+            url,
+          })
+        })
     },
   },
   components: {},
@@ -130,7 +138,7 @@ export default {
 <style scoped>
 .content {
   margin: 0 auto;
-  height: 100%;
+  width: 750rpx;
 }
 .compDesc {
   width: 750rpx;
@@ -274,7 +282,6 @@ export default {
 .descr {
   width: 394rpx;
   margin-top: 48rpx;
-  margin-bottom: 48rpx;
 }
 .descrTitle {
   width: 136rpx;
