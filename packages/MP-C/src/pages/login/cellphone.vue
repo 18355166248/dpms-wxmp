@@ -4,10 +4,10 @@
     <div class="appName">小程序名称</div>
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
-      <input placeholder="请输入手机号" v-model="mobile" />
+      <input placeholder="请输入手机号" v-model="mobile" type="digit" />
     </div>
     <div class="formItem">
-      <input placeholder="请输入验证码" v-model="code" />
+      <input placeholder="请输入验证码" v-model="code" type="digit" />
       <div
         class="btn"
         :class="{ disabled: !!second }"
@@ -84,7 +84,7 @@ function countdown(sec, cb) {
 }
 .appName {
   font-size: 34rpx;
-  color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.9);
   text-align: center;
   margin-bottom: 180rpx;
 }

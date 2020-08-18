@@ -184,10 +184,9 @@ export default {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,
             )
-
-            if (canApptInstitutionList.length === 0)
+            if (canApptInstitutionList.length === 0) {
               this.$utils.show('无可约门店')
-
+            }
             if (canApptInstitutionList.length === 1) {
               toUrl(
                 '/pages/appoint/index?itemId=' +
@@ -196,7 +195,6 @@ export default {
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }
-
             if (canApptInstitutionList.length > 1) {
               toUrl(
                 '/pages/projAptmt/projDetail?appointmentItemId=' +
@@ -206,7 +204,6 @@ export default {
           } else {
             this.$utils.show('项目不可预约')
           }
-
           uni.hideLoading()
         })
     },
@@ -322,8 +319,8 @@ export default {
   height: 212rpx;
   margin-left: 24rpx;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
   display: flex;
   margin-bottom: 16rpx;
   margin-top: 32rpx;
