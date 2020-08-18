@@ -1,155 +1,153 @@
 <template>
   <div class="apptForm">
-    <scroll-view scroll-y class="h100">
-      <div class="bg" />
-      <div class="patientInfo tc pt-48 mb-48">
-        <div
-          :class="['patientCard', form.patient ? 'hasPatient' : '']"
-          @click="selectPatient"
-        >
-          <div class="patientDetail">
-            <div>
-              <patientAvatar :patient="form.patient" />
+    <div class="bg" />
+    <div class="patientInfo tc pt-48 mb-48">
+      <div
+        :class="['patientCard', form.patient ? 'hasPatient' : '']"
+        @click="selectPatient"
+      >
+        <div class="patientDetail">
+          <div>
+            <patientAvatar :patient="form.patient" />
+          </div>
+          <div v-if="form.patient" class="patientCenter">
+            <div class="patientTop text-ellipsis">
+              {{ form.patient.patientName }}
             </div>
-            <div v-if="form.patient" class="patientCenter">
-              <div class="patientTop text-ellipsis">
-                {{ form.patient.patientName }}
-              </div>
-              <div class="patientC mt-8 mb-16">
-                <span class="gender mr-8">{{
-                  (form.patient && form.patient.gender) | getGenderText
-                }}</span>
-                <span class="age">{{ form.patient.age }}</span>
-              </div>
-              <div class="patientBottom">
-                <span>联系方式:</span>
-                <span class="ml-10">{{ form.patient.mobile }}</span>
-              </div>
+            <div class="patientC mt-8 mb-16">
+              <span class="gender mr-8">{{
+                (form.patient && form.patient.gender) | getGenderText
+              }}</span>
+              <span class="age">{{ form.patient.age }}</span>
             </div>
-            <div class="patientRight">
-              <span v-if="!form.patient">选择患者</span>
-              <span
-                class="iconfont icon-arrow-right"
-                :style="{ color: form.patient ? 'rgba(0, 0, 0, 0.25)' : '' }"
-              ></span>
+            <div class="patientBottom">
+              <span>联系方式:</span>
+              <span class="ml-10">{{ form.patient.mobile }}</span>
             </div>
+          </div>
+          <div class="patientRight">
+            <span v-if="!form.patient">选择患者</span>
+            <span
+              class="iconfont icon-arrow-right"
+              :style="{ color: form.patient ? 'rgba(0, 0, 0, 0.25)' : '' }"
+            ></span>
           </div>
         </div>
       </div>
-      <dpmsForm ref="dpmsForm" :rules="rules">
-        <dpmsCellTimePicker
-          v-if="isAppt"
-          required
-          title="预约开始时间"
-          v-model="form.appointmentBeginTimeStamp"
-        />
-        <!-- 挂号显示预约时间 -->
-        <dpmsCell
-          v-if="paramsObj.type === 'editRegister'"
-          title="预约时间"
-          :value="form.timeRange"
-        />
-        <dpmsCellInput
-          v-if="isAppt"
-          required
-          type="number"
-          title="持续时间"
-          v-model="form.duration"
-          @blur="onBlurWithDuration"
-        >
-          <template v-slot:inputRight>
-            <span class="inputRightIcon">分钟</span>
-          </template>
-        </dpmsCellInput>
-        <dpmsEnumsPicker
-          enumsKey="VisType"
-          v-model="form.visType"
-          title="就诊类型"
-          placeholder="请选择就诊类型"
-        />
-        <dpmsCellPicker
-          :list="DOCTOR_LIST"
-          v-model="form.doctor"
-          defaultType="staffId"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          title="医生"
-          placeholder="请选择医生"
-        />
-        <dpmsCell
-          v-if="isAppt"
-          title="诊所"
-          :value="form.medicalInstitution.medicalInstitutionSimpleCode"
-        />
-        <dpmsCell
-          placeholder="请选择助理"
-          title="助理"
-          :value="HELP_CHECKED_TEXT"
-          :isLink="isCurrentInstitutionFlag"
-          :disabled="!isCurrentInstitutionFlag"
-          @cellclick="onSelectStaff(5)"
-        />
-        <dpmsCell
-          placeholder="请选择护士"
-          title="护士"
-          :value="NURSE_CHECKED_TEXT"
-          :isLink="isCurrentInstitutionFlag"
-          :disabled="!isCurrentInstitutionFlag"
-          @cellclick="onSelectStaff(6)"
-        />
-        <dpmsCellPicker
-          :list="DENTIST_LIST"
-          v-model="form.dentalHygienist"
-          defaultType="staffId"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          title="洁牙师"
-          :disabled="!isCurrentInstitutionFlag"
-          placeholder="请选择洁牙师"
-        />
-        <dpmsCellPicker
-          :list="CONSULTANT_LIST"
-          v-model="form.consultant"
-          defaultType="staffId"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          title="咨询师"
-          :disabled="!isCurrentInstitutionFlag"
-          placeholder="请选择咨询师"
-        />
-        <dpmsCellPicker
-          :list="ConsultingRoomList"
-          v-model="form.institutionConsultingRoomId"
-          defaultType="institutionConsultingRoomId"
-          :defaultProps="{
-            label: 'institutionConsultingRoomName',
-            value: 'institutionConsultingRoomId',
-          }"
-          title="诊室"
-          :disabled="!isCurrentInstitutionFlag"
-          placeholder="请选择诊室"
-        />
-        <dpmsCell
-          v-if="isAppt"
-          title="预约项目"
-          :value="APPT_ITEM_CHECKED_TEXT"
-          isLink
-          @click.native="onSelectApptItem"
-          placeholder="请选择预约项目"
-        />
-        <dpmsCell title="预约备注" />
-        <view class="appointmentMemo">
-          <textarea
-            v-model="form.appointmentMemo"
-            auto-height
-            placeholder="请输入预约备注"
-            placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-            :maxlength="500"
-          ></textarea>
-        </view>
-        <div class="mt-56">
-          <dpmsButton @click="onSave" :loading="saveLoading">保 存</dpmsButton>
-        </div>
-      </dpmsForm>
-      <div class="pv-50"></div>
-    </scroll-view>
+    </div>
+    <dpmsForm ref="dpmsForm" :rules="rules">
+      <dpmsCellTimePicker
+        v-if="isAppt"
+        required
+        title="预约开始时间"
+        v-model="form.appointmentBeginTimeStamp"
+      />
+      <!-- 挂号显示预约时间 -->
+      <dpmsCell
+        v-if="paramsObj.type === 'editRegister'"
+        title="预约时间"
+        :value="form.timeRange"
+      />
+      <dpmsCellInput
+        v-if="isAppt"
+        required
+        type="number"
+        title="持续时间"
+        v-model="form.duration"
+        @blur="onBlurWithDuration"
+      >
+        <template v-slot:inputRight>
+          <span class="inputRightIcon">分钟</span>
+        </template>
+      </dpmsCellInput>
+      <dpmsEnumsPicker
+        enumsKey="VisType"
+        v-model="form.visType"
+        title="就诊类型"
+        placeholder="请选择就诊类型"
+      />
+      <dpmsCellPicker
+        :list="DOCTOR_LIST"
+        v-model="form.doctor"
+        defaultType="staffId"
+        :defaultProps="{ label: 'staffName', value: 'staffId' }"
+        title="医生"
+        placeholder="请选择医生"
+      />
+      <dpmsCell
+        v-if="isAppt"
+        title="诊所"
+        :value="form.medicalInstitution.medicalInstitutionSimpleCode"
+      />
+      <dpmsCell
+        placeholder="请选择助理"
+        title="助理"
+        :value="HELP_CHECKED_TEXT"
+        :isLink="isCurrentInstitutionFlag"
+        :disabled="!isCurrentInstitutionFlag"
+        @cellclick="onSelectStaff(5)"
+      />
+      <dpmsCell
+        placeholder="请选择护士"
+        title="护士"
+        :value="NURSE_CHECKED_TEXT"
+        :isLink="isCurrentInstitutionFlag"
+        :disabled="!isCurrentInstitutionFlag"
+        @cellclick="onSelectStaff(6)"
+      />
+      <dpmsCellPicker
+        :list="DENTIST_LIST"
+        v-model="form.dentalHygienist"
+        defaultType="staffId"
+        :defaultProps="{ label: 'staffName', value: 'staffId' }"
+        title="洁牙师"
+        :disabled="!isCurrentInstitutionFlag"
+        placeholder="请选择洁牙师"
+      />
+      <dpmsCellPicker
+        :list="CONSULTANT_LIST"
+        v-model="form.consultant"
+        defaultType="staffId"
+        :defaultProps="{ label: 'staffName', value: 'staffId' }"
+        title="咨询师"
+        :disabled="!isCurrentInstitutionFlag"
+        placeholder="请选择咨询师"
+      />
+      <dpmsCellPicker
+        :list="ConsultingRoomList"
+        v-model="form.institutionConsultingRoomId"
+        defaultType="institutionConsultingRoomId"
+        :defaultProps="{
+          label: 'institutionConsultingRoomName',
+          value: 'institutionConsultingRoomId',
+        }"
+        title="诊室"
+        :disabled="!isCurrentInstitutionFlag"
+        placeholder="请选择诊室"
+      />
+      <dpmsCell
+        v-if="isAppt"
+        title="预约项目"
+        :value="APPT_ITEM_CHECKED_TEXT"
+        isLink
+        @click.native="onSelectApptItem"
+        placeholder="请选择预约项目"
+      />
+      <dpmsCell title="预约备注" />
+      <view class="appointmentMemo">
+        <textarea
+          v-model="form.appointmentMemo"
+          auto-height
+          placeholder="请输入预约备注"
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          :maxlength="500"
+        ></textarea>
+      </view>
+      <div class="mt-56">
+        <dpmsButton @click="onSave" :loading="saveLoading">保 存</dpmsButton>
+      </div>
+    </dpmsForm>
+    <div class="pv-50"></div>
   </div>
 </template>
 
@@ -810,6 +808,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.04);
+  overflow: auto;
 
   .inputRightIcon {
     color: rgba($color: #000000, $alpha: 0.5);
