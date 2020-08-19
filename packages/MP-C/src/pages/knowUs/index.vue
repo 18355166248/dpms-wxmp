@@ -173,7 +173,7 @@ export default {
   }
   .storeCard {
     position: relative;
-    background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/icon.png)
+    background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
       no-repeat;
     background-size: 160rpx 120rpx;
     height: 186rpx;
