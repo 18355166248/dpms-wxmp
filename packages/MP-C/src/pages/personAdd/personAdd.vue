@@ -10,7 +10,7 @@
           title="姓名"
           v-model="form.personnelName"
           placeholder="请输入姓名"
-          maxlength="50"
+          max="50"
         />
         <dpmsEnumsPicker
           required
