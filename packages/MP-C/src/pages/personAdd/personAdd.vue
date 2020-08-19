@@ -206,46 +206,40 @@ export default {
             this.$utils.show(err[0]?.message)
             return
           }
+          for (let i in this.personList) {
+            if (
+              this.personList[i].personnelName == this.form.personnelName &&
+              this.personList[i].mobile == this.form.mobile
+            ) {
+              this.$utils.show('不可添加相同人员')
+              return
+            }
+          }
+          customerAPI.creatCustomer(this.form).then((res) => {
+            console.log('1111111111', res)
+            if (res.code == 0) {
+              uni.showModal({
+                title: '操作成功',
+                content: '人员信息维护成功，您可以继续进行预约',
+                cancelText: '返回',
+                confirmText: '预约',
+                confirmColor: '#5CBB89',
+                success: (confirm) => {
+                  if (confirm.confirm) {
+                    this.$utils.reLaunch({ url: '/pages/projAptmt/projAptmt' })
+                  } else {
+                    uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+                      isSuccess: true,
+                    })
+                    this.$utils.back()
+                  }
+                },
+              })
+            }
+          })
         },
       )
       return
-      this.$refs.editForm.validate((err, fileds) => {
-        if (err) {
-          this.$utils.show(err[0].message)
-          return
-        }
-        for (let i in this.personList) {
-          if (
-            this.personList[i].personnelName == this.form.personnelName &&
-            this.personList[i].mobile == this.form.mobile
-          ) {
-            this.$utils.show('不可添加相同人员')
-            return
-          }
-        }
-        customerAPI.creatCustomer(this.form).then((res) => {
-          console.log('1111111111', res)
-          if (res.code == 0) {
-            uni.showModal({
-              title: '操作成功',
-              content: '人员信息维护成功，您可以继续进行预约',
-              cancelText: '返回',
-              confirmText: '预约',
-              confirmColor: '#5CBB89',
-              success: (confirm) => {
-                if (confirm.confirm) {
-                  this.$utils.reLaunch({ url: '/pages/projAptmt/projAptmt' })
-                } else {
-                  uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-                    isSuccess: true,
-                  })
-                  this.$utils.back()
-                }
-              },
-            })
-          }
-        })
-      })
     },
   },
 }

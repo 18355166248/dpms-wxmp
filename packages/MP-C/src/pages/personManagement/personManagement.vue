@@ -156,7 +156,7 @@ movable-area {
       display: flex;
     }
     .self {
-      border: 1px solid rgba(0, 0, 0, 0.9);
+      border: 1rpx solid rgba(0, 0, 0, 0.9);
       border-radius: 2rpx;
       font-size: 28rpx;
       font-weight: 400;
