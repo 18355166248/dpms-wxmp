@@ -90,11 +90,14 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: '/pages/projAptmt/projAptmt',
+      path: `/pages/projAptmt/projAptmt?isShare=1&appointmentInstitutionId=${this.params.appointmentInstitutionId}`,
     }
   },
   onLoad(params) {
     this.params = params
+    if (params.isShare == 1) {
+      return
+    }
     this.init(params)
   },
   onPullDownRefresh() {
