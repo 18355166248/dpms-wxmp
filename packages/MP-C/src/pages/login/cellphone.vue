@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <image src="/static/logo.png" class="logo" />
-    <div class="appName">小程序名称</div>
+    <div class="appName">北吉熊DPMS</div>
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
       <span class="iconfont icon-phone"></span>
