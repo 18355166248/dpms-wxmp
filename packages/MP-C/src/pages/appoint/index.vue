@@ -72,7 +72,6 @@
       <text @click="showContent = true">《预约服务协议》</text>
     </div>
     <dpmsButton
-      :disabled="btnDisabled"
       :text="networkAppointmentId ? '修改预约' : '确认预约'"
       @click="submit"
     />
@@ -339,6 +338,11 @@ export default {
         })
     },
     submit() {
+      if (this.btnDisabled) {
+        this.$utils.show('请阅读并同意《预约服务协议》')
+        return
+      }
+
       this.$refs.editForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
