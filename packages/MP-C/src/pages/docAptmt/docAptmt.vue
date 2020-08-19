@@ -395,6 +395,6 @@ export default {
   margin-left: 70rpx;
 }
 .icon-down {
-  margin-left: 20rpx;
+  margin-left: 10rpx;
 }
 </style>
