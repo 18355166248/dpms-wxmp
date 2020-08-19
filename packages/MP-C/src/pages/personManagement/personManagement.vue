@@ -9,7 +9,10 @@
       "
     >
       <div v-if="personList.length < 10" class="add" @click="addPerson">
-        <div class="iconfont icon-add"></div>
+        <div
+          class="iconfont icon-add"
+          style="font-size: 40rpx; height: 40rpx;"
+        ></div>
         <div>还可添加{{ 10 - personList.length }}人</div>
       </div>
       <div class="personList">
@@ -20,10 +23,12 @@
           :key="val.id"
         >
           <div class="name">
-            {{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}
-            <span class="self">{{
-              CONTACT_LABEL.properties[val.contactLabel].zh_CN
-            }}</span>
+            <text
+              >{{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}</text
+            >
+            <div class="self">
+              {{ CONTACT_LABEL.properties[val.contactLabel].zh_CN }}
+            </div>
           </div>
           <div class="phone">手机：{{ val.mobile }}</div>
           <span class="iconfont icon-right"></span>
@@ -148,15 +153,14 @@ movable-area {
       font-size: 34rpx;
       font-weight: 400;
       color: rgba(0, 0, 0, 0.9);
+      display: flex;
     }
     .self {
-      display: inline-block;
-      border: 1rpx solid rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.9);
       border-radius: 2rpx;
       font-size: 28rpx;
       font-weight: 400;
       margin-left: 24rpx;
-      margin-bottom: 16rpx;
       color: rgba(0, 0, 0, 0.9);
       padding: 4rpx 12rpx;
     }
@@ -164,6 +168,7 @@ movable-area {
       font-size: 28rpx;
       font-weight: 400;
       color: rgba(0, 0, 0, 0.5);
+      margin-top: 16rpx;
     }
     .icon-right {
       color: rgba(0, 0, 0, 0.25);

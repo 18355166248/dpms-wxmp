@@ -124,11 +124,19 @@ export default {
       border-radius: 8rpx;
       border: none;
       font-size: 36rpx;
+      height: 78rpx;
+      line-height: 78rpx;
+    }
+    button:first-child::after {
+      border: none;
     }
     button:first-child {
       background: #5cbb89;
       color: #fff;
       margin-bottom: 24rpx;
+    }
+    button:last-child::after {
+      border: none;
     }
     button:last-child {
       color: #5cbb89;

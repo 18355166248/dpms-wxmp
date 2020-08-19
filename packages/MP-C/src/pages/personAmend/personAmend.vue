@@ -214,6 +214,7 @@ export default {
           }
         },
       )
+      return
       this.$refs.editForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
@@ -263,6 +264,9 @@ export default {
 }
 .btn {
   padding: 0 64rpx;
+  button::after {
+    border: none;
+  }
   button {
     border-radius: 8rpx;
     border: none;
@@ -270,6 +274,8 @@ export default {
     background: #5cbb89;
     color: #fff;
     margin-top: 56rpx;
+    height: 78rpx;
+    line-height: 78rpx;
   }
 }
 .info {
