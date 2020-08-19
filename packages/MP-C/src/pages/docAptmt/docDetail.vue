@@ -130,6 +130,7 @@ export default {
           this.detailIntroduction =
             res.data.detailIntroduction ||
             res.data.doctorName.detailIntroduction
+          this.detailIntroduction = this.richTextHander(this.detailIntroduction)
         })
       uni.stopPullDownRefresh()
     },
@@ -144,6 +145,25 @@ export default {
             url,
           })
         })
+    },
+    richTextHander(richText) {
+      const newRichText = richText.replace(
+        /(<img\s)([^>]*)(\/>)/g,
+        (str, r1, r2, r3) => {
+          if (r2.match(/(style=")([^"]*)(")/g)) {
+            const replaceStr = r2.replace(
+              /(style=")([^"]*)(")/g,
+              (rstr, s1, s2, s3) => {
+                return `${s1}width:100%;${s2}${s3}`
+              },
+            )
+            return `${r1}${replaceStr}${r3}`
+          } else {
+            return `${r1}style="width:100%" ${r2}${r3}`
+          }
+        },
+      )
+      return newRichText
     },
   },
   components: {},

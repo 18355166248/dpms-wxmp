@@ -170,6 +170,7 @@ export default {
       displayMultipleItems: 1,
       showMoreBtn: false,
       color: '#5CBB89',
+      appTitle: '',
       contentText: {
         contentdown: '加载更多',
         contentrefresh: '正在加载..',
@@ -396,6 +397,9 @@ export default {
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
   padding: 24rpx;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
 }
 .compDescMore {
   height: 36rpx;
