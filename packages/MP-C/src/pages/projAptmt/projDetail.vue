@@ -95,14 +95,12 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: `/pages/projAptmt/projDetail?appointmentItemId=${this.params.appointmentItemId}&isShare=1`,
+      path: `/pages/projAptmt/projDetail?appointmentItemId=${this.params.appointmentItemId}`,
     }
   },
   onLoad(params) {
     this.params = params
-    if (params.isShare == 1) {
-      return
-    }
+    if (!this.MEDICALINSTITUTION) return
     this.init(params)
   },
   onPullDownRefresh() {

@@ -91,13 +91,11 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: `/pages/docAptmt/docAptmt?isShare=1`,
+      path: `/pages/docAptmt/docAptmt`,
     }
   },
   onLoad(params) {
-    if (params.isShare == 1) {
-      return
-    }
+    if (!this.MEDICALINSTITUTION) return
     this.init()
   },
   onPullDownRefresh() {

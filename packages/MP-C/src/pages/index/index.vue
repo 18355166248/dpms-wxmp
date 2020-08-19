@@ -184,7 +184,7 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: '/pages/index/index?isShare=1',
+      path: '/pages/index/index',
     }
   },
   computed: {
@@ -207,9 +207,7 @@ export default {
     })
   },
   onLoad(params) {
-    if (params.isShare == 1) {
-      return
-    }
+    if (!this.MEDICALINSTITUTION) return
     uni.startPullDownRefresh()
   },
   onPullDownRefresh() {
