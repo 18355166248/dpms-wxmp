@@ -323,9 +323,10 @@ export default {
   background: #feffff;
   display: flex;
   margin-bottom: 16rpx;
+  padding-bottom: 32rpx;
 }
 .aptmtCard > image {
-  margin: 32rpx 0 32rpx 24rpx;
+  margin: 32rpx 0 0 24rpx;
   width: 120rpx;
   height: 120rpx;
   border-radius: 80rpx;
@@ -345,7 +346,6 @@ export default {
 }
 .cardDesc {
   width: 510rpx;
-  height: 80rpx;
   font-size: 28rpx;
   color: rgba(0, 0, 0, 0.5);
   margin-left: 24rpx;

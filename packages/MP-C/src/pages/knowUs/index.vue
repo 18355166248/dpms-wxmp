@@ -39,7 +39,7 @@
             </view>
             <view
               class="storeCardAptmt"
-              v-show="s.canAppointment"
+              v-if="s.canAppointment"
               @click="
                 toUrl(
                   '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +

@@ -21,8 +21,8 @@
         <view class="storeCard">
           <view class="storeCardTitle">
             <text>{{
-              i.institutionName.length > 10
-                ? i.institutionName.substring(0, 10) + `...`
+              i.institutionName.length > 9
+                ? i.institutionName.substring(0, 8) + `...`
                 : i.institutionName
             }}</text>
             <text style="float: right;">{{ i.institutionPhoneNumber }}</text>
@@ -200,11 +200,12 @@ export default {
 .cardDesc {
   height: 88rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
+  word-break: break-all;
   color: rgba(0, 0, 0, 0.5);
   line-height: 44rpx;
   margin-top: 16rpx;
+  overflow: hidden;
 }
 .aptmtCardContent {
   width: 502rpx;
@@ -249,7 +250,7 @@ export default {
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .storeCardTitle {
-  width: 500rpx;
+  width: 520rpx;
   height: 42rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
