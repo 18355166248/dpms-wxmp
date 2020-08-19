@@ -1,6 +1,7 @@
 <template>
   <movable-area>
     <view class="content" scroll-y>
+      <!-- <nav-bar /> -->
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
@@ -170,6 +171,7 @@ export default {
       displayMultipleItems: 1,
       showMoreBtn: false,
       color: '#5CBB89',
+      appTitle: '',
       contentText: {
         contentdown: '加载更多',
         contentrefresh: '正在加载..',
@@ -228,9 +230,7 @@ export default {
               this.institutionIntroduce.briefIntroduction.substring(0, 70) +
               `...`
           }
-          uni.setNavigationBarTitle({
-            title: res.data.institutionIntroduce.medicalInstitutionName,
-          })
+          this.appTitle = res.data.institutionIntroduce.medicalInstitutionName
         })
       institutionAPI
         .getProjList({
