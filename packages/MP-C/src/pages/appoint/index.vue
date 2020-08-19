@@ -45,7 +45,7 @@
       <dpmsCell
         title="预约人员"
         placeholder="请选择预约人员"
-        :value="personnel.personnelName"
+        :value="personnelFilter"
         required
         isLink
         @cellclick="personnelPickerVisible = true"
@@ -54,7 +54,7 @@
         title="预约备注"
         placeholder="请输入备注"
         inputType="text"
-        v-model="form.appointmentMemo"
+        v-model="form.customerMemo"
       />
     </dpmsForm>
     <div class="agree">
@@ -181,7 +181,10 @@
       :show-cancel="false"
       @close="showContent = false"
     >
-      <view class="agreeContent" v-html="institutionInfo.bookingInformation"></view>
+      <view
+        class="agreeContent"
+        v-html="institutionInfo.bookingInformation"
+      ></view>
     </modal>
   </div>
 </template>
@@ -212,7 +215,7 @@ export default {
         date: '',
         timeStamp: '',
         personnelId: '',
-        appointmentMemo: '',
+        customerMemo: '',
       },
       rules: {
         date: {
@@ -234,7 +237,6 @@ export default {
       doctorTime: [],
       items: [],
       personnelList: [],
-      personnel: {},
       doctorPickerVisible: false,
       itemPickerVisible: false,
       doctorTimePickerVisible: false,
@@ -258,6 +260,9 @@ export default {
         label: moment(v.startAvailableDateStamp).format('HH:mm'),
         value: v.startAvailableDateStamp,
       }))
+    },
+    personnelFilter() {
+      return (this.personnelList.find(p => p.id === this.form.personnelId) || {}).personnelName
     },
     startDate() {
       let shopStartDate = moment(
@@ -318,7 +323,7 @@ export default {
             date: moment(data.appointmentBeginTimeStamp).format('YYYY-MM-DD'),
             timeStamp: data.appointmentBeginTimeStamp,
             personnelId: data.personnelId,
-            appointmentMemo: data.appointmentMemo,
+            customerMemo: data.customerMemo,
           }
         })
     },
@@ -355,16 +360,19 @@ export default {
         appointAPI[this.apiUrl]({ appointmentJsonStr: JSON.stringify(param) })
           .then((res) => {
             let that = this
-            this.$utils.show('预约成功', {
-              duration: 1000,
-              complete() {
-                setTimeout(() => {
-                  that.$utils.replace({
-                    url: '/pages/myAppointment/myAppointment',
-                  })
-                }, 1000)
+            this.$utils.show(
+              this.networkAppointmentId ? '修改成功' : '预约成功',
+              {
+                duration: 1000,
+                complete() {
+                  setTimeout(() => {
+                    that.$utils.replace({
+                      url: '/pages/myAppointment/myAppointment',
+                    })
+                  }, 1000)
+                },
               },
-            })
+            )
           })
           .catch(() => {
             this.btnDisabled = false
@@ -458,7 +466,6 @@ export default {
       this.doctorTimePickerVisible = false
     },
     personnelClick(p) {
-      this.personnel = p
       this.form.personnelId = p.id
       this.personnelPickerVisible = false
     },
@@ -643,7 +650,7 @@ button {
 .dpmsBottomPicker .empty {
   padding: 100rpx 0;
 }
-.agreeContent{
+.agreeContent {
   padding: 32rpx 24rpx;
   max-height: 70vh;
   overflow: auto;

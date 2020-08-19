@@ -291,7 +291,6 @@ export default {
   align-items: center;
 }
 .storePickerIcon {
-  margin-left: 16rpx;
   color: rgba(0, 0, 0, 0.25);
 }
 .keyWordInput {

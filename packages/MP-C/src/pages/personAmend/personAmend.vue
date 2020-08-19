@@ -1,9 +1,17 @@
 <template>
   <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
-    <div class="hint">提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。</div>
+    <div class="hint">
+      提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
+    </div>
     <div class="personInfo">
       <dpmsForm ref="editForm" :model="form" :rules="rules">
-        <dpmsCellInput required title="姓名" v-model="form.personnelName" placeholder="请输入姓名" />
+        <dpmsCellInput
+          required
+          title="姓名"
+          max="50"
+          v-model="form.personnelName"
+          placeholder="请输入姓名"
+        />
         <dpmsEnumsPicker
           required
           title="性别"
@@ -35,20 +43,22 @@
           v-model="form.mobile"
           placeholder="请输入联系电话"
         />
-        <div class="info" v-show="needAuthCode&&form.mobile.length==11">
+        <div class="info" v-show="needAuthCode && form.mobile.length == 11">
           <span>验证码</span>
           <input v-model="form.verificationCode" class="ipt" />
           <span
             class="getAuthCode"
             :class="{ disabled: !!second }"
             @click="getCode"
-          >{{ second ? `${second}秒后再试` : '获取验证码' }}</span>
+            >{{ second ? `${second}秒后再试` : '获取验证码' }}</span
+          >
         </div>
         <dpmsCellPicker
           required
           title="默认人员"
           placeholder="是否设置为默认人员"
           defaultType="value"
+          hideBorderBottom
           v-model="form.defaultPersonnel"
           :list="defaultType"
         />
@@ -72,6 +82,8 @@ export default {
       phone: '',
       endDate: moment().format('YYYY-MM-DD'),
       second: 0,
+      staff: getStorage(STORAGE_KEY.STAFF),
+      personList: [],
       defaultType: [
         { label: '开', value: true },
         { label: '关', value: false },
@@ -136,6 +148,7 @@ export default {
     this.form = JSON.parse(info.personDetail)
     this.form.verificationCode = ''
     this.phone = JSON.parse(info.personDetail).mobile
+    this.getCustomer()
     console.log('jjjjjjjjjjjjjjj', this.form)
   },
   watch: {
@@ -170,6 +183,12 @@ export default {
         console.log(res)
       })
     },
+    getCustomer() {
+      let id = this.staff.id
+      customerAPI.getCustomerList({ userId: id }).then((res) => {
+        this.personList = res.data
+      })
+    },
     countdown(sec, cb) {
       clearInterval(this.timer)
       if (sec > 0) {
@@ -183,10 +202,31 @@ export default {
       }
     },
     submit() {
+      this.$utils.formValidate(
+        this.rules,
+        this.form,
+        (err, fileds, formValue) => {
+          console.log(err, fileds, formValue)
+          this.form = formValue
+          if (err) {
+            this.$utils.show(err[0]?.message)
+            return
+          }
+        },
+      )
       this.$refs.editForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
           return
+        }
+        for (let i in this.personList) {
+          if (
+            this.personList[i].personnelName == this.form.personnelName &&
+            this.personList[i].mobile == this.form.mobile
+          ) {
+            this.$utils.show('不可添加相同人员')
+            return
+          }
         }
         delete this.form.patientDTO
         customerAPI.updateCustomer(this.form).then((res) => {
@@ -223,7 +263,7 @@ export default {
 .btn {
   padding: 0 64rpx;
   button {
-    border-radius: 8px;
+    border-radius: 8rpx;
     border: none;
     font-size: 36rpx;
     background: #5cbb89;
@@ -245,15 +285,17 @@ export default {
   }
   .getAuthCode {
     position: absolute;
-    top: 44rpx;
+    top: 38rpx;
     right: 40rpx;
     display: inline-block;
+    height: 16px;
+    line-height: 16px;
     color: #5cbb89;
     font-size: 34rpx;
     z-index: 999;
     font-weight: 400rpx;
     padding-left: 15rpx;
-    border-left: 2rpx rgba(0, 0, 0, 0.15) solid;
+    border-left: 1rpx rgba(0, 0, 0, 0.15) solid;
     &.disabled {
       color: #999;
       z-index: 0;

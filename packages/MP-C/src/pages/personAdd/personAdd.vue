@@ -10,6 +10,7 @@
           title="姓名"
           v-model="form.personnelName"
           placeholder="请输入姓名"
+          max="50"
         />
         <dpmsEnumsPicker
           required
@@ -195,6 +196,18 @@ export default {
       }
     },
     submit() {
+      this.$utils.formValidate(
+        this.rules,
+        this.form,
+        (err, fileds, formValue) => {
+          console.log(err, fileds, formValue)
+          this.form = formValue
+          if (err) {
+            this.$utils.show(err[0]?.message)
+            return
+          }
+        },
+      )
       this.$refs.editForm.validate((err, fileds) => {
         if (err) {
           this.$utils.show(err[0].message)
