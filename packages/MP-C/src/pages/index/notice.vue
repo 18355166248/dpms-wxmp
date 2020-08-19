@@ -3,8 +3,8 @@
     <div class="mask"></div>
     <div class="inner">
       <div class="content" :style="{backgroundImage: `url(${notice.backgroundPictureUrl})`}">
-        <div class="tit">{{notice.announcementTitle}}</div>
-        {{notice.announcementContent}}
+        <div class="tit">{{notice.announcementTitle || ''}}</div>
+        {{notice.announcementContent || ''}}
       </div>
       <div class="iconfont icon-close" @click="visible = false"></div>
     </div>

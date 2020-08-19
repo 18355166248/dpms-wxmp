@@ -181,7 +181,9 @@
       :show-cancel="false"
       @close="showContent = false"
     >
-      <view class="agreeContent" v-html="institutionInfo.bookingInformation"></view>
+      <scroll-view scroll-y class="agreeContent">
+        <div style="padding: 32rpx 24rpx;" v-html="institutionInfo.bookingInformation"></div>
+      </scroll-view>
     </modal>
   </div>
 </template>
@@ -645,9 +647,8 @@ button {
   padding: 100rpx 0;
 }
 .agreeContent{
-  padding: 32rpx 24rpx;
   max-height: 70vh;
-  overflow: auto;
+  box-sizing: border-box;
   word-break: break-word;
 }
 </style>
