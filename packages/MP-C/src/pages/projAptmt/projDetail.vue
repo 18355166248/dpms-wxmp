@@ -253,17 +253,20 @@ export default {
   padding-top: 8rpx;
   padding-left: 24rpx;
 }
+.storeCard .iconfont {
+  margin-right: 8rpx;
+}
 .storeCardAptmt {
   position: absolute;
   width: 130rpx;
   height: 56rpx;
+  line-height: 56rpx;
   background: #ffffff;
   border: 2rpx solid #5cbb89;
   border-radius: 28rpx;
   font-size: 28rpx;
   text-align: center;
   color: #5cbb89;
-  line-height: 48rpx;
   top: calc(50% - 30rpx);
   left: 546rpx;
 }

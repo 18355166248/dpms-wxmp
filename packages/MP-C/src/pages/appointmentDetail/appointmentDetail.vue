@@ -51,14 +51,13 @@
     </div>
     <div class="operation">
       <div class="protocol">
-        <dpmsCheckbox
-          style="margin-right: 10rpx;"
-          disabled
-          value="true"
-          @change="(v) => (btnDisabled = !v)"
-        />
+        <dpmsCheckbox style="margin-right: 10rpx;" disabled value="true">
+          <template v-slot:icon>
+            <dpmsIcons type="check-circle-fill" color="rgba(92,187,137,1)" />
+          </template>
+        </dpmsCheckbox>
         <span>我已知悉并同意</span>
-        <span @click="showContent = true">《预约服务协议》</span>
+        <span class="link" @click="showContent = true">《预约服务协议》</span>
       </div>
 
       <div
@@ -272,7 +271,7 @@ export default {
     height: 112rpx;
     line-height: 112rpx;
     position: relative;
-    border-bottom: rgba($color: #000000, $alpha: 0.15) 2rpx solid;
+    border-bottom: rgba($color: #000000, $alpha: 0.15) 1rpx solid;
     span:first-child {
       color: rgba($color: #000000, $alpha: 0.9);
       font-size: 34rpx;
@@ -299,13 +298,11 @@ export default {
     font-size: 28rpx;
     display: flex;
     align-items: center;
+    color: rgba(0, 0, 0, 0.5);
     .check {
       zoom: 50%;
     }
-    span:first-child {
-      color: #999999;
-    }
-    span:last-child {
+    .link {
       color: #5cbb89;
     }
   }

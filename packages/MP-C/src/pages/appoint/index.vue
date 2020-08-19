@@ -58,10 +58,17 @@
       />
     </dpmsForm>
     <div class="agree">
-      <dpmsCheckbox
-        class="checkbox"
-        @change="(v) => (btnDisabled = !v)"
-      />我已知悉并同意
+      <dpmsCheckbox class="checkbox" @change="(v) => (btnDisabled = !v)">
+        <template v-slot:icon>
+          <dpmsIcons
+            v-if="!btnDisabled"
+            type="check-circle-fill"
+            color="rgba(92,187,137,1)"
+          />
+          <view v-else class="check-circle"></view>
+        </template>
+      </dpmsCheckbox>
+      我已知悉并同意
       <text @click="showContent = true">《预约服务协议》</text>
     </div>
     <dpmsButton
@@ -73,7 +80,6 @@
       class="dpmsBottomPicker"
       :visible.sync="doctorPickerVisible"
       title="选择医生"
-      needCloseBtn
     >
       <div
         class="doctor"
@@ -156,6 +162,7 @@
       :visible.sync="itemPickerVisible"
       title="选择项目"
       needCloseBtn
+      closeTxt="确认"
     >
       <div
         class="item"
@@ -182,7 +189,10 @@
       @close="showContent = false"
     >
       <scroll-view scroll-y class="agreeContent">
-        <div style="padding: 32rpx 24rpx;" v-html="institutionInfo.bookingInformation"></div>
+        <div
+          style="padding: 32rpx 24rpx;"
+          v-html="institutionInfo.bookingInformation"
+        ></div>
       </scroll-view>
     </modal>
   </div>
@@ -261,7 +271,9 @@ export default {
       }))
     },
     personnelFilter() {
-      return (this.personnelList.find(p => p.id === this.form.personnelId) || {}).personnelName
+      return (
+        this.personnelList.find((p) => p.id === this.form.personnelId) || {}
+      ).personnelName
     },
     startDate() {
       let shopStartDate = moment(
@@ -494,6 +506,11 @@ export default {
 }
 </script>
 
+<style>
+page {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+</style>
 <style lang="scss">
 .agree {
   color: rgba(153, 153, 153, 1);
@@ -502,7 +519,16 @@ export default {
   display: flex;
   align-items: center;
   .checkbox {
+    width: 32rpx;
+    height: 32rpx;
     margin-right: 10rpx;
+    .check-circle {
+      width: 30rpx;
+      height: 30rpx;
+      border: 1rpx solid rgba(0, 0, 0, 0.25);
+      border-radius: 50%;
+      background: #fff;
+    }
   }
   text {
     color: rgba(92, 187, 137, 1);
@@ -584,6 +610,7 @@ button {
   image {
     width: 156rpx;
     height: 140rpx;
+    border-radius: 4rpx;
     flex: none;
     margin-right: 24rpx;
   }
@@ -591,6 +618,10 @@ button {
     color: rgba(0, 0, 0, 0.9);
     font-size: 34rpx;
     margin-bottom: 12rpx;
+    height: 44rpx;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
   .txt {
     height: 86rpx;
@@ -649,7 +680,7 @@ button {
 .dpmsBottomPicker .empty {
   padding: 100rpx 0;
 }
-.agreeContent{
+.agreeContent {
   max-height: 70vh;
   box-sizing: border-box;
   word-break: break-word;
