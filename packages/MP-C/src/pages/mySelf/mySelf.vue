@@ -283,8 +283,8 @@ export default {
     box-shadow: 0px -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     padding: 32rpx 0;
     div {
-      border-right: 1px dashed rgba(0, 0, 0, 0.15);
-      width: 33%;
+      border-right: 1rpx solid rgba(0, 0, 0, 0.15);
+      width: calc(33% - 1rpx);
       padding-left: 50rpx;
       view:nth-child(1) {
         margin-bottom: 16rpx;
