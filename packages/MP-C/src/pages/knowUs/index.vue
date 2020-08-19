@@ -90,7 +90,9 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.introduceImgs = res.data.introduceImageUrls || []
-            this.introduceDetail = res.data.detailIntroduction || ''
+            this.introduceDetail = res.data.detailIntroduction
+              ? this.richTextHander(res.data.detailIntroduction)
+              : ''
             this.medicalInstitutionName = res.data.medicalInstitutionName
           }
         })
@@ -110,6 +112,26 @@ export default {
       this.$utils.push({
         url,
       })
+    },
+
+    richTextHander(richText) {
+      const newRichText = richText.replace(
+        /(<img\s)([^>]*)(\/>)/g,
+        (str, r1, r2, r3) => {
+          if (r2.match(/(style=")([^"]*)(")/g)) {
+            const replaceStr = r2.replace(
+              /(style=")([^"]*)(")/g,
+              (rstr, s1, s2, s3) => {
+                return `${s1}width:100%;${s2}${s3}`
+              },
+            )
+            return `${r1}${replaceStr}${r3}`
+          } else {
+            return `${r1}style="width:100%" ${r2}${r3}`
+          }
+        },
+      )
+      return newRichText
     },
   },
 }
@@ -150,7 +172,8 @@ export default {
     margin-top: 32rpx;
   }
   .storeCard {
-    background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/icon.png)
+    position: relative;
+    background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
       no-repeat;
     background-size: 160rpx 120rpx;
     height: 186rpx;
@@ -203,8 +226,8 @@ export default {
     font-family: PingFangSC, PingFangSC-Regular;
     text-align: center;
     color: #5cbb89;
-    position: relative;
-    top: -90rpx;
+    position: absolute;
+    top: calc(50% - 30rpx);
     left: 546rpx;
   }
   .knowUs-introduce {

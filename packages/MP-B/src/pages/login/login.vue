@@ -129,7 +129,7 @@ export default {
   },
   onLoad() {
     uni.showShareMenu({
-      title: '北极熊',
+      title: '北吉熊',
       content: '医疗服务云',
     })
   },
