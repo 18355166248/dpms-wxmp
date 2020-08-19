@@ -533,12 +533,12 @@ export default {
   margin-top: 32rpx;
 }
 .storeCard {
-  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/icon.png)
+  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
     no-repeat;
-  background-size: 160rpx 120rpx;
+  background-size: 152rpx 160rpx;
   height: 186rpx;
   width: 700rpx;
-  background-position: 460rpx 0rpx;
+  background-position: 500rpx -35rpx;
   border-radius: 8rpx;
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
