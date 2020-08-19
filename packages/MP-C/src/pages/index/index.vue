@@ -9,12 +9,7 @@
             :key="b.bannerId"
             @click="bannerToUrl(b.linkUrl)"
           >
-            <image
-              class="bannerImg"
-              mode="aspectFit"
-              :src="b.imageUrl"
-              :title="b.description"
-            />
+            <image class="bannerImg" :src="b.imageUrl" :title="b.description" />
           </swiper-item>
         </swiper>
       </view>
@@ -60,8 +55,8 @@
                 </view>
                 <view class="cardContent">
                   <text class="cardTitle">{{
-                    i.itemName.length > 6
-                      ? i.itemName.substring(0, 6) + `...`
+                    i.itemName.length > 5
+                      ? i.itemName.substring(0, 5) + `...`
                       : i.itemName
                   }}</text>
                   <view
@@ -92,8 +87,8 @@
             <view class="storeCard">
               <view class="storeCardTitle">
                 <text>{{
-                  s.institutionName.length > 6
-                    ? s.institutionName.substring(0, 6) + `...`
+                  s.institutionName.length > 10
+                    ? s.institutionName.substring(0, 10) + `...`
                     : s.institutionName
                 }}</text>
                 <text style="float: right;">{{
@@ -103,16 +98,16 @@
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
                 {{
-                  s.institutionAddress.length > 14
-                    ? s.institutionAddress.substring(0, 14) + `...`
+                  s.institutionAddress.length > 18
+                    ? s.institutionAddress.substring(0, 18) + `...`
                     : s.institutionAddress
                 }}
               </view>
               <view class="storeCardTime">
                 <span class="iconfont icon-time"></span>
                 {{
-                  s.businessHours.length > 14
-                    ? s.businessHours.substring(0, 14) + `...`
+                  s.businessHours.length > 18
+                    ? s.businessHours.substring(0, 18) + `...`
                     : s.businessHours
                 }}
               </view>
@@ -370,10 +365,11 @@ export default {
 }
 .banner {
   width: 750rpx;
-  height: 296rpx;
+  height: 376rpx;
 }
 .bannerImg {
   height: 100%;
+  width: 100%;
 }
 .compDesc {
   width: 750rpx;
@@ -533,17 +529,18 @@ export default {
   margin-top: 32rpx;
 }
 .storeCard {
-  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/icon.png)
+  position: relative;
+  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
     no-repeat;
-  background-size: 160rpx 120rpx;
+  background-size: 152rpx 160rpx;
   height: 186rpx;
   width: 700rpx;
-  background-position: 460rpx 0rpx;
+  background-position: 500rpx -35rpx;
   border-radius: 8rpx;
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .storeCardTitle {
-  width: 450rpx;
+  width: 500rpx;
   height: 42rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
@@ -574,6 +571,7 @@ export default {
   padding-left: 24rpx;
 }
 .storeCardAptmt {
+  position: absolute;
   width: 130rpx;
   height: 56rpx;
   background: #ffffff;
@@ -584,8 +582,7 @@ export default {
   text-align: center;
   color: #5cbb89;
   line-height: 52rpx;
-  position: relative;
-  top: -90rpx;
+  top: calc(50% - 30rpx);
   left: 546rpx;
 }
 .aptmt {
