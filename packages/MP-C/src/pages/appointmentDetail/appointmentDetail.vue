@@ -320,11 +320,19 @@ export default {
       border-radius: 8rpx;
       border: none;
       font-size: 36rpx;
+      height: 78rpx;
+      line-height: 78rpx;
+    }
+    .amend::after {
+      border: none;
     }
     .amend {
       background: #5cbb89;
       color: #fff;
       margin-bottom: 24rpx;
+    }
+    .cancel::after {
+      border: none;
     }
     .cancel {
       color: #5cbb89;
