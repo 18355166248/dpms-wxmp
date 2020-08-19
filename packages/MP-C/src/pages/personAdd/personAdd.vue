@@ -70,8 +70,13 @@
         />
       </dpmsForm>
     </div>
-    <div class="btn" @click="submit">
-      <button>确认</button>
+    <div class="btn">
+      <dpmsButton
+        text="确认"
+        :loading="isLoading"
+        :disabled="isLoading"
+        @click="submit"
+      />
     </div>
   </div>
 </template>
@@ -85,6 +90,7 @@ import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
     return {
+      isLoading: false,
       endDate: moment().format('YYYY-MM-DD'),
       second: 0,
       defaultType: [
@@ -197,6 +203,7 @@ export default {
       }
     },
     submit() {
+      if (this.isLoading) return
       this.$utils.formValidate(
         this.rules,
         this.form,
@@ -204,7 +211,7 @@ export default {
           console.log(err, fileds, formValue)
           this.form = formValue
           if (err) {
-            this.$utils.show(err[0]?.message)
+            this.$utils.show(err[0].message)
             return
           }
           for (let i in this.personList) {
@@ -216,28 +223,38 @@ export default {
               return
             }
           }
-          customerAPI.creatCustomer(this.form).then((res) => {
-            console.log('1111111111', res)
-            if (res.code == 0) {
-              uni.showModal({
-                title: '操作成功',
-                content: '人员信息维护成功，您可以继续进行预约',
-                cancelText: '返回',
-                confirmText: '预约',
-                confirmColor: '#5CBB89',
-                success: (confirm) => {
-                  if (confirm.confirm) {
-                    this.$utils.reLaunch({ url: '/pages/projAptmt/projAptmt' })
-                  } else {
-                    uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-                      isSuccess: true,
-                    })
-                    this.$utils.back()
-                  }
-                },
-              })
-            }
-          })
+          this.isLoading = true
+          customerAPI
+            .creatCustomer(this.form)
+            .then((res) => {
+              if (res.code == 0) {
+                uni.showModal({
+                  title: '操作成功',
+                  content: '人员信息维护成功，您可以继续进行预约',
+                  cancelText: '返回',
+                  confirmText: '预约',
+                  confirmColor: '#5CBB89',
+                  success: (confirm) => {
+                    if (confirm.confirm) {
+                      this.$utils.reLaunch({
+                        url: '/pages/projAptmt/projAptmt',
+                      })
+                    } else {
+                      uni.$emit(
+                        globalEventKeys.updatePersonFormWithSaveSuccess,
+                        {
+                          isSuccess: true,
+                        },
+                      )
+                      this.$utils.back()
+                    }
+                  },
+                })
+              }
+            })
+            .catch((res) => {
+              this.isLoading = false
+            })
         },
       )
       return
@@ -263,20 +280,7 @@ export default {
   background: white;
 }
 .btn {
-  padding: 0 64rpx;
-  button::after {
-    border: none;
-  }
-  button {
-    border-radius: 8rpx;
-    border: none;
-    font-size: 36rpx;
-    background: #5cbb89;
-    color: #fff;
-    margin-top: 56rpx;
-    height: 78rpx;
-    line-height: 78rpx;
-  }
+  padding: 56rpx 64rpx 0;
 }
 .info {
   position: relative;
