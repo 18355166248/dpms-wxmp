@@ -87,8 +87,8 @@
             <view class="storeCard">
               <view class="storeCardTitle">
                 <text>{{
-                  s.institutionName.length > 10
-                    ? s.institutionName.substring(0, 10) + `...`
+                  s.institutionName.length > 9
+                    ? s.institutionName.substring(0, 8) + `...`
                     : s.institutionName
                 }}</text>
                 <text style="float: right;">{{
@@ -544,7 +544,7 @@ export default {
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .storeCardTitle {
-  width: 500rpx;
+  width: 520rpx;
   height: 42rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
