@@ -154,6 +154,8 @@ export default {
 .content {
   margin: 0 auto;
   width: 750rpx;
+  overflow: hidden;
+  position: relative;
 }
 .bg {
   position: absolute;
