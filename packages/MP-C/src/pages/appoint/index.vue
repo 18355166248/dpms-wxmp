@@ -73,6 +73,7 @@
       class="dpmsBottomPicker"
       :visible.sync="doctorPickerVisible"
       title="选择医生"
+      needCloseBtn
     >
       <div
         class="doctor"
@@ -116,27 +117,45 @@
       :visible.sync="personnelPickerVisible"
       title="选择预约人员"
     >
-      <div class="personnel" v-for="p in personnelList" :key="p.id"
+      <div
+        class="personnel"
+        v-for="p in personnelList"
+        :key="p.id"
         :class="{ active: form.personnelId === p.id }"
-        @click="personnelClick(p)">
+        @click="personnelClick(p)"
+      >
         <div class="row1">
-          <div>{{p.personnelName}}/{{Gender_ENUM.properties[p.gender].text.zh_CN}}</div>
-          <div>{{ContactLabel_ENUM.properties[p.contactLabel].text.zh_CN}}</div>
+          <div>
+            {{ p.personnelName }}/{{
+              Gender_ENUM.properties[p.gender].text.zh_CN
+            }}
+          </div>
+          <div>
+            {{ ContactLabel_ENUM.properties[p.contactLabel].text.zh_CN }}
+          </div>
         </div>
-        <div>{{p.mobile}}</div>
+        <div>{{ p.mobile }}</div>
       </div>
       <empty
         v-if="!personnelList.length"
         :disabled="true"
         text="暂无可预约人员"
       />
-      <button v-if="personnelList.length < 10" style="margin-bottom: 32rpx"
-        @click="$utils.push({ url: '/pages/personManagement/personManagement' })">新增人员</button>
+      <button
+        v-if="personnelList.length < 10"
+        style="margin-bottom: 32rpx;"
+        @click="
+          $utils.push({ url: '/pages/personManagement/personManagement' })
+        "
+      >
+        新增人员
+      </button>
     </dpmsBottomPicker>
     <dpmsBottomPicker
       class="dpmsBottomPicker"
       :visible.sync="itemPickerVisible"
       title="选择项目"
+      needCloseBtn
     >
       <div
         class="item"
@@ -150,7 +169,7 @@
         <image :src="itm.itemThumbnailUrl" />
         <div class="info">
           <div class="name">{{ itm.itemName }}</div>
-          <div>{{ itm.itemBriefIntroduction }}</div>
+          <div class="txt">{{ itm.itemBriefIntroduction }}</div>
         </div>
       </div>
       <empty v-if="!items.length" :disabled="true" text="暂无可预约项目" />
@@ -162,7 +181,7 @@
       :show-cancel="false"
       @close="showContent = false"
     >
-      <view style="padding: 32rpx 24rpx;" v-html="institutionInfo.bookingInformation"></view>
+      <view class="agreeContent" v-html="institutionInfo.bookingInformation"></view>
     </modal>
   </div>
 </template>
@@ -173,6 +192,7 @@ import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
+import institutionAPI from '@/APIS/institution/institution.api'
 import empty from '@/components/empty/empty.vue'
 import modal from '@/components/modal/neil-modal.vue'
 export default {
@@ -221,7 +241,7 @@ export default {
       personnelPickerVisible: false,
       ContactLabel_ENUM: this.$utils.getEnums('ContactLabel'),
       Gender_ENUM: this.$utils.getEnums('Gender'),
-      institutionInfo: getStorage(STORAGE_KEY.INSTITUTION_INFO),
+      institutionInfo: {},
     }
   },
   components: {
@@ -376,6 +396,9 @@ export default {
             })
           }
         })
+        .catch((res) => {
+          this.doctorTime = []
+        })
     },
     async getDoctors(id) {
       const res = await appointAPI.getDoctorList({
@@ -416,6 +439,12 @@ export default {
       this.shopDetail = res.data
       this.getDoctors(this.shopDetail.settingsShopId)
     },
+    async getInstitutionInfo() {
+      const res = await institutionAPI.getInstitutionInfo({
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+      })
+      this.institutionInfo = res.data.institutionIntroduce
+    },
     dockerClick(d) {
       this.form.doctorId = d.doctorId
       if (this.form.date) {
@@ -447,9 +476,12 @@ export default {
     },
     async init() {
       this.$utils.showLoading()
-      await this.getItems()
-      await this.getPersonnelList()
-      await this.getShopDetail()
+      await Promise.all([
+        this.getItems(),
+        this.getPersonnelList(),
+        this.getShopDetail(),
+        this.getInstitutionInfo(),
+      ])
       this.$utils.clearLoading()
     },
   },
@@ -516,7 +548,7 @@ button {
   .name {
     color: rgba(0, 0, 0, 0.9);
     font-size: 34rpx;
-    margin-bottom: 8rpx;
+    margin-bottom: 12rpx;
   }
 }
 .item {
@@ -544,7 +576,7 @@ button {
     }
   }
   image {
-    width: 184rpx;
+    width: 156rpx;
     height: 140rpx;
     flex: none;
     margin-right: 24rpx;
@@ -552,7 +584,11 @@ button {
   .name {
     color: rgba(0, 0, 0, 0.9);
     font-size: 34rpx;
-    margin-bottom: 8rpx;
+    margin-bottom: 12rpx;
+  }
+  .txt {
+    height: 86rpx;
+    overflow: hidden;
   }
 }
 .time {
@@ -576,7 +612,7 @@ button {
     }
   }
 }
-.personnel{
+.personnel {
   margin-bottom: 16rpx;
   border-radius: 8rpx;
   box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.09);
@@ -599,12 +635,18 @@ button {
       border-left: 40rpx solid transparent;
     }
   }
-  .row1{
+  .row1 {
     display: flex;
     justify-content: space-between;
   }
 }
 .dpmsBottomPicker .empty {
   padding: 100rpx 0;
+}
+.agreeContent{
+  padding: 32rpx 24rpx;
+  max-height: 70vh;
+  overflow: auto;
+  word-break: break-word;
 }
 </style>

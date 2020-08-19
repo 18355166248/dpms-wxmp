@@ -10,8 +10,6 @@ const STORAGE_KEY = {
   ENUMS: 'enums',
   // openid
   OPENID: 'openid',
-  // 诊所信息
-  INSTITUTION_INFO: 'institution_info'
 }
 
 export { STORAGE_KEY }

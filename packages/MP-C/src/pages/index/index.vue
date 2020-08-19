@@ -24,7 +24,8 @@
             {{ institutionIntroduce.briefIntroduction || '' }}
           </p>
           <p class="compDescMore" @click="toUrl('/pages/knowUs/index')">
-            更多详情 >
+            更多详情
+            <span class="iconfont icon-right" style="font-size: 28rpx;"></span>
           </p>
         </view>
       </view>
@@ -71,8 +72,8 @@
                   >
                 </view>
                 <view class="cardDesc">{{
-                  i.itemBriefIntroduction.length > 12
-                    ? i.itemBriefIntroduction.substring(0, 12) + `...`
+                  i.itemBriefIntroduction.length > 20
+                    ? i.itemBriefIntroduction.substring(0, 20) + `...`
                     : i.itemBriefIntroduction
                 }}</view>
               </view>
@@ -153,7 +154,7 @@
 
 <script>
 import institutionAPI from '@/APIS/institution/institution.api'
-import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
 import Notice from './notice'
 
@@ -227,10 +228,6 @@ export default {
         .then((res) => {
           this.bannerList = res.data.bannerList
           this.institutionIntroduce = res.data.institutionIntroduce
-          setStorage(
-            STORAGE_KEY.INSTITUTION_INFO,
-            res.data.institutionIntroduce,
-          )
           if (
             this.institutionIntroduce.briefIntroduction &&
             this.institutionIntroduce.briefIntroduction.length > 70
@@ -323,10 +320,9 @@ export default {
             const canApptInstitutionList = res.data.institutionList.filter(
               (institution) => institution.canAppointment,
             )
-
-            if (canApptInstitutionList.length === 0)
+            if (canApptInstitutionList.length === 0) {
               this.$utils.show('无可约门店')
-
+            }
             if (canApptInstitutionList.length === 1) {
               toUrl(
                 '/pages/appoint/index?itemId=' +
@@ -335,7 +331,6 @@ export default {
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }
-
             if (canApptInstitutionList.length > 1) {
               toUrl(
                 '/pages/projAptmt/projAptmt?appointmentItemId=' +
@@ -413,13 +408,14 @@ export default {
   text-align: right;
   color: #5cbb89;
   position: absolute;
-  bottom: 20rpx;
+  bottom: 12rpx;
   right: 20rpx;
 }
 .proj {
   margin: 64rpx auto;
   height: 436rpx;
   width: 686rpx;
+  border-radius: 8rpx;
   background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/compBg.png)
     no-repeat center;
 }
@@ -450,7 +446,7 @@ export default {
 }
 .cardList {
   padding-top: 24rpx;
-  padding-right: 24rpx;
+  /* padding-right: 24rpx; */
   padding-left: 24rpx;
 }
 .card {
@@ -459,14 +455,14 @@ export default {
   background: #feffff;
   border-radius: 8rpx;
   box-shadow: 0rpx 0rpx 30rpx 0rpx rgba(0, 0, 0, 0.09);
-  padding-top: 16rpx;
+  padding-top: 8rpx;
 }
 .cardContent {
   width: 274rpx;
   height: 36rpx;
   display: flex;
   margin-left: 16rpx;
-  margin-bottom: 16rpx;
+  margin-bottom: 8rpx;
   margin-top: 18rpx;
 }
 .cardTitle {
@@ -479,7 +475,7 @@ export default {
 }
 .cardBtn {
   width: 96rpx;
-  height: 38rpx;
+  height: 36rpx;
   background: #5cbb89;
   border-radius: 20rpx;
   float: right;
@@ -508,7 +504,6 @@ export default {
   height: 100%;
 }
 .store {
-  height: 464rpx;
   margin-top: 16rpx;
 }
 .storeContent {
@@ -590,7 +585,7 @@ export default {
   color: #5cbb89;
   line-height: 52rpx;
   position: relative;
-  top: -78rpx;
+  top: -90rpx;
   left: 546rpx;
 }
 .aptmt {
@@ -610,13 +605,14 @@ export default {
   left: 18%;
   top: 16%;
 }
-
 movable-area {
   width: 100%;
   height: 100%;
 }
-
 movable-view {
   z-index: 9999;
+}
+.iconfont {
+  margin-right: 4rpx;
 }
 </style>
