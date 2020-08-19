@@ -9,6 +9,7 @@
           required
           title="姓名"
           max="50"
+          @blur="onBlurPersonnelName"
           v-model="form.personnelName"
           placeholder="请输入姓名"
         />
@@ -212,36 +213,35 @@ export default {
             this.$utils.show(err[0]?.message)
             return
           }
+          for (let i in this.personList) {
+            if (
+              this.personList[i].personnelName == this.form.personnelName &&
+              this.personList[i].mobile == this.form.mobile &&
+              this.personList.length > 1
+            ) {
+              this.$utils.show('没有修改任何信息')
+              return
+            }
+          }
+          delete this.form.patientDTO
+          customerAPI.updateCustomer(this.form).then((res) => {
+            console.log('1111111111', res)
+            if (res.code == 0) {
+              uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+                isSuccess: true,
+              })
+              this.$utils.back(2)
+              // this.$utils.replace({
+              //   url: '/pages/personManagement/personManagement',
+              // })
+            }
+          })
         },
       )
-      this.$refs.editForm.validate((err, fileds) => {
-        if (err) {
-          this.$utils.show(err[0].message)
-          return
-        }
-        for (let i in this.personList) {
-          if (
-            this.personList[i].personnelName == this.form.personnelName &&
-            this.personList[i].mobile == this.form.mobile
-          ) {
-            this.$utils.show('不可添加相同人员')
-            return
-          }
-        }
-        delete this.form.patientDTO
-        customerAPI.updateCustomer(this.form).then((res) => {
-          console.log('1111111111', res)
-          if (res.code == 0) {
-            uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-              isSuccess: true,
-            })
-            this.$utils.back(2)
-            // this.$utils.replace({
-            //   url: '/pages/personManagement/personManagement',
-            // })
-          }
-        })
-      })
+      return
+    },
+    onBlurPersonnelName(val) {
+      this.form.personnelName = val
     },
   },
 }
@@ -262,6 +262,9 @@ export default {
 }
 .btn {
   padding: 0 64rpx;
+  button::after {
+    border: none;
+  }
   button {
     border-radius: 8rpx;
     border: none;
@@ -269,6 +272,8 @@ export default {
     background: #5cbb89;
     color: #fff;
     margin-top: 56rpx;
+    height: 78rpx;
+    line-height: 78rpx;
   }
 }
 .info {

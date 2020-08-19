@@ -14,7 +14,7 @@
           mode="widthFix"
         />
       </view>
-      <text class="my">我的</text>
+      <text class="my" :style="{ top: top + 'px' }">我的</text>
       <view class="header-wrapper mh-32 pt-47">
         <view class="header">
           <image class="headerImg" :src="headerImgSrc" />
@@ -117,6 +117,7 @@ export default {
       count: '',
       confirmedCount: '',
       appointCount: '',
+      top: '',
       x: 300,
       y: 360,
       headerImgSrc: '/static/header-img.svg',
@@ -128,6 +129,9 @@ export default {
   },
   onShow() {
     this.load()
+    this.top =
+      wx.getMenuButtonBoundingClientRect().top +
+      wx.getMenuButtonBoundingClientRect().height / 4
   },
   onPullDownRefresh() {
     this.load()
@@ -225,7 +229,6 @@ export default {
 .home-view {
   .my {
     position: relative;
-    top: 80rpx;
     display: block;
     font-weight: 500;
     color: white;
@@ -280,8 +283,8 @@ export default {
     box-shadow: 0px -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     padding: 32rpx 0;
     div {
-      border-right: 1rpx dashed rgba(0, 0, 0, 0.15);
-      width: 33%;
+      border-right: 1rpx solid rgba(0, 0, 0, 0.15);
+      width: calc(33% - 1rpx);
       padding-left: 50rpx;
       view:nth-child(1) {
         margin-bottom: 16rpx;

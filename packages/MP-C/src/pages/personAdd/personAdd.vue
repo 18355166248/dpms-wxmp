@@ -9,6 +9,7 @@
           required
           title="姓名"
           v-model="form.personnelName"
+          @blur="onBlurPersonnelName"
           placeholder="请输入姓名"
           max="50"
         />
@@ -95,9 +96,9 @@ export default {
       form: {
         personnelName: '',
         gender: 2,
-        birthday: '',
+        birthday: moment().format('YYYY-MM-DD'),
         mobile: '',
-        contactLabel: '',
+        contactLabel: 1,
         verificationCode: '',
         defaultPersonnel: '',
         userId: getStorage(STORAGE_KEY.STAFF).id,
@@ -206,45 +207,43 @@ export default {
             this.$utils.show(err[0]?.message)
             return
           }
+          for (let i in this.personList) {
+            if (
+              this.personList[i].personnelName == this.form.personnelName &&
+              this.personList[i].mobile == this.form.mobile
+            ) {
+              this.$utils.show('不可添加相同人员')
+              return
+            }
+          }
+          customerAPI.creatCustomer(this.form).then((res) => {
+            console.log('1111111111', res)
+            if (res.code == 0) {
+              uni.showModal({
+                title: '操作成功',
+                content: '人员信息维护成功，您可以继续进行预约',
+                cancelText: '返回',
+                confirmText: '预约',
+                confirmColor: '#5CBB89',
+                success: (confirm) => {
+                  if (confirm.confirm) {
+                    this.$utils.reLaunch({ url: '/pages/projAptmt/projAptmt' })
+                  } else {
+                    uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
+                      isSuccess: true,
+                    })
+                    this.$utils.back()
+                  }
+                },
+              })
+            }
+          })
         },
       )
-      this.$refs.editForm.validate((err, fileds) => {
-        if (err) {
-          this.$utils.show(err[0].message)
-          return
-        }
-        for (let i in this.personList) {
-          if (
-            this.personList[i].personnelName == this.form.personnelName &&
-            this.personList[i].mobile == this.form.mobile
-          ) {
-            this.$utils.show('不可添加相同人员')
-            return
-          }
-        }
-        customerAPI.creatCustomer(this.form).then((res) => {
-          console.log('1111111111', res)
-          if (res.code == 0) {
-            uni.showModal({
-              title: '操作成功',
-              content: '人员信息维护成功，您可以继续进行预约',
-              cancelText: '返回',
-              confirmText: '预约',
-              confirmColor: '#5CBB89',
-              success: (confirm) => {
-                if (confirm.confirm) {
-                  this.$utils.reLaunch({ url: '/pages/projAptmt/projAptmt' })
-                } else {
-                  uni.$emit(globalEventKeys.updatePersonFormWithSaveSuccess, {
-                    isSuccess: true,
-                  })
-                  this.$utils.back()
-                }
-              },
-            })
-          }
-        })
-      })
+      return
+    },
+    onBlurPersonnelName(val) {
+      this.form.personnelName = val
     },
   },
 }
@@ -265,6 +264,9 @@ export default {
 }
 .btn {
   padding: 0 64rpx;
+  button::after {
+    border: none;
+  }
   button {
     border-radius: 8rpx;
     border: none;
@@ -272,6 +274,8 @@ export default {
     background: #5cbb89;
     color: #fff;
     margin-top: 56rpx;
+    height: 78rpx;
+    line-height: 78rpx;
   }
 }
 .info {

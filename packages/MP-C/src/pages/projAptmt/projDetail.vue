@@ -127,6 +127,7 @@ export default {
           this.tips = res.data.tips
           this.detailIntroduction =
             res.data.detailIntroduction || res.data.item.itemDetailIntroduction
+          this.detailIntroduction = this.richTextHander(this.detailIntroduction)
         })
       uni.stopPullDownRefresh()
     },
@@ -141,6 +142,25 @@ export default {
             url,
           })
         })
+    },
+    richTextHander(richText) {
+      const newRichText = richText.replace(
+        /(<img\s)([^>]*)(\/>)/g,
+        (str, r1, r2, r3) => {
+          if (r2.match(/(style=")([^"]*)(")/g)) {
+            const replaceStr = r2.replace(
+              /(style=")([^"]*)(")/g,
+              (rstr, s1, s2, s3) => {
+                return `${s1}width:100%;${s2}${s3}`
+              },
+            )
+            return `${r1}${replaceStr}${r3}`
+          } else {
+            return `${r1}style="width:100%" ${r2}${r3}`
+          }
+        },
+      )
+      return newRichText
     },
   },
   components: {},
@@ -253,17 +273,20 @@ export default {
   padding-top: 8rpx;
   padding-left: 24rpx;
 }
+.storeCard .iconfont {
+  margin-right: 8rpx;
+}
 .storeCardAptmt {
   position: absolute;
   width: 130rpx;
   height: 56rpx;
+  line-height: 56rpx;
   background: #ffffff;
   border: 2rpx solid #5cbb89;
   border-radius: 28rpx;
   font-size: 28rpx;
   text-align: center;
   color: #5cbb89;
-  line-height: 48rpx;
   top: calc(50% - 30rpx);
   left: 546rpx;
 }

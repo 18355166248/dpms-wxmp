@@ -3,7 +3,10 @@
     @click="clickButton"
     :disabled="disabled"
     :loading="loading"
-    :class="[type === 'primary' ? 'dpms-button-primary' : '']"
+    :class="[
+      type === 'primary' ? 'dpms-button-primary' : '',
+      { disabled: disabled },
+    ]"
   >
     {{ text }}
   </button>
@@ -49,10 +52,23 @@ button {
   background: #fff;
   border: 2rpx solid #5cbb89;
   color: #5cbb89;
+  &.disabled {
+    background: #fff;
+    border: 2rpx solid #5cbb89;
+    color: #5cbb89;
+  }
 }
 .dpms-button-primary {
   background: #5cbb89;
   border: none;
   color: #ffffff;
+  &.disabled {
+    background: #5cbb89;
+    border: none;
+    color: #ffffff;
+  }
+  &::after {
+    border: none;
+  }
 }
 </style>

@@ -316,19 +316,16 @@ export default {
   margin-left: 18rpx;
   color: rgba(0, 0, 0, 0.25);
 }
+.aptmtList {
+  padding-top: 32rpx;
+}
 .aptmtCard {
-  width: 702rpx;
-  margin-left: 24rpx;
   background: #feffff;
-  border-radius: 8px;
-  box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.09);
   display: flex;
   margin-bottom: 16rpx;
-  margin-top: 32rpx;
 }
 .aptmtCard > image {
-  margin-top: 32rpx;
-  margin-left: 24rpx;
+  margin: 32rpx 0 32rpx 24rpx;
   width: 120rpx;
   height: 120rpx;
   border-radius: 80rpx;
@@ -337,20 +334,23 @@ export default {
   width: 320rpx;
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
   margin-top: 32rpx;
   margin-left: 24rpx;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .cardDesc {
   width: 510rpx;
-  height: 88rpx;
+  height: 80rpx;
   font-size: 28rpx;
   color: rgba(0, 0, 0, 0.5);
   margin-left: 24rpx;
-  margin-top: 12rpx;
+  margin-top: 24rpx;
+  overflow: hidden;
 }
 .aptmtCardContent {
   display: flex;
@@ -358,14 +358,13 @@ export default {
 .cardBtn {
   width: 130rpx;
   height: 56rpx;
-  background: #ffffff;
+  line-height: 56rpx;
+  background: #fff;
   border: 2rpx solid #5cbb89;
   border-radius: 28rpx;
   font-size: 32rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: center;
   color: #5cbb89;
-  line-height: 52rpx;
   position: relative;
   top: 25rpx;
   left: 60rpx;
