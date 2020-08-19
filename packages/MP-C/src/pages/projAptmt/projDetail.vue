@@ -218,6 +218,7 @@ export default {
   margin-top: 32rpx;
 }
 .storeCard {
+  position: relative;
   background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
     no-repeat;
   background-size: 152rpx 160rpx;
@@ -256,6 +257,7 @@ export default {
   padding-left: 24rpx;
 }
 .storeCardAptmt {
+  position: absolute;
   width: 130rpx;
   height: 56rpx;
   background: #ffffff;
@@ -265,8 +267,7 @@ export default {
   text-align: center;
   color: #5cbb89;
   line-height: 48rpx;
-  position: relative;
-  top: -78rpx;
+  top: calc(50% - 30rpx);
   left: 546rpx;
 }
 .detail {
