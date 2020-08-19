@@ -108,15 +108,22 @@ export default {
       this.isBlur = bool
     },
     onCancel(e) {
-      this.$emit('cancel', { value: e.detail.value })
+      let value = this.$utils.omitEmojiValueInString(e.detail.value)
+      this.$emit('cancel', { value: value })
     },
     onChange(e) {
+      let value = this.$utils.omitEmojiValueInString(e.detail.value)
+
       // this.inputValue = e.target.value
-      this.$emit('change', { value: e.detail.value })
-      this.$emit('input', e.detail.value)
+      this.$emit('change', { value: value })
+      this.$emit('input', value)
+
+      return value
     },
     onSearch(e) {
-      this.$emit('search', { value: e.detail.value })
+      let value = this.$utils.omitEmojiValueInString(e.detail.value)
+
+      this.$emit('search', { value: value })
     },
     onClear() {
       this.$emit('clear', { value: '' })
