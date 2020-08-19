@@ -204,7 +204,7 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      title: '自定义分享标题',
+      title: '北吉熊',
       path: '/pages/home/home',
     }
   },

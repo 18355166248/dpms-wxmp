@@ -54,7 +54,7 @@
         title="预约备注"
         placeholder="请输入备注"
         inputType="text"
-        v-model="form.appointmentMemo"
+        v-model="form.customerMemo"
       />
     </dpmsForm>
     <div class="agree">
@@ -214,7 +214,7 @@ export default {
         date: '',
         timeStamp: '',
         personnelId: '',
-        appointmentMemo: '',
+        customerMemo: '',
       },
       rules: {
         date: {
@@ -322,7 +322,7 @@ export default {
             date: moment(data.appointmentBeginTimeStamp).format('YYYY-MM-DD'),
             timeStamp: data.appointmentBeginTimeStamp,
             personnelId: data.personnelId,
-            appointmentMemo: data.appointmentMemo,
+            customerMemo: data.customerMemo,
           }
         })
     },
@@ -359,16 +359,19 @@ export default {
         appointAPI[this.apiUrl]({ appointmentJsonStr: JSON.stringify(param) })
           .then((res) => {
             let that = this
-            this.$utils.show('预约成功', {
-              duration: 1000,
-              complete() {
-                setTimeout(() => {
-                  that.$utils.replace({
-                    url: '/pages/myAppointment/myAppointment',
-                  })
-                }, 1000)
+            this.$utils.show(
+              this.networkAppointmentId ? '修改成功' : '预约成功',
+              {
+                duration: 1000,
+                complete() {
+                  setTimeout(() => {
+                    that.$utils.replace({
+                      url: '/pages/myAppointment/myAppointment',
+                    })
+                  }, 1000)
+                },
               },
-            })
+            )
           })
           .catch(() => {
             this.btnDisabled = false
