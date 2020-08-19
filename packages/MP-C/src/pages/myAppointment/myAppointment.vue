@@ -55,7 +55,7 @@
             <div>医生:{{ val.doctorName || '' }}</div>
             <div>
               预约项目:{{
-                val.networkAppointmentItemList
+                val.networkAppointmentItemList.length
                   ? arrObjKeys(val.networkAppointmentItemList, 'itemName', ',')
                   : ''
               }}
@@ -134,8 +134,13 @@ export default {
           appointmentListType: type,
         })
         .then((res) => {
-          console.log('recentListrecentList', res)
-          this.appointList = res.data
+          this.appointList = res.data.map((v) => ({
+            ...v,
+            networkAppointmentItemList: v.networkAppointmentItemList
+              ? v.networkAppointmentItemList
+              : [],
+          }))
+
           if (res.data.length == 0) {
             this.showEmpty = true
           } else {
