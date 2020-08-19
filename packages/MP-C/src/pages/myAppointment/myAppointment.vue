@@ -195,6 +195,7 @@ movable-area {
   div {
     width: 50%;
     text-align: center;
+    color: rgba(0, 0, 0, 0.65);
     .active {
       display: inline-block;
       border-bottom: #5cbb89 4rpx solid;
@@ -246,7 +247,7 @@ movable-area {
       font-weight: 400;
       height: 68rpx;
       line-height: 68rpx;
-      border-bottom: 2rpx rgba(0, 0, 0, 0.15) solid;
+      border-bottom: 1rpx rgba(0, 0, 0, 0.15) solid;
       color: rgba(0, 0, 0, 0.9);
       position: relative;
       .colorAndName {

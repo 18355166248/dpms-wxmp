@@ -57,7 +57,7 @@
           }}</view>
         </view>
       </view>
-      <load-more :status="loadStatus"></load-more>
+      <load-more :status="loadStatus" color="rgba(0,0,0,0.25)"></load-more>
     </view>
     <view class="empty" v-show="total === 0">
       <image
@@ -328,14 +328,12 @@ export default {
   padding-top: 32rpx;
 }
 .aptmtCard {
-  height: 212rpx;
   background: #feffff;
   display: flex;
   margin-bottom: 16rpx;
 }
 .aptmtCard > image {
-  margin-top: 32rpx;
-  margin-left: 24rpx;
+  margin: 32rpx 0 32rpx 24rpx;
   width: 184rpx;
   height: 156rpx;
   border-radius: 4rpx;
@@ -344,18 +342,19 @@ export default {
   width: 350rpx;
   height: 44rpx;
   font-size: 34rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
   margin-top: 32rpx;
   margin-left: 24rpx;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .cardDesc {
   width: 446rpx;
   height: 88rpx;
   font-size: 28rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
   line-height: 44rpx;
@@ -369,13 +368,13 @@ export default {
 .cardBtn {
   width: 130rpx;
   height: 56rpx;
+  line-height: 56rpx;
   background: #ffffff;
   border: 2rpx solid #5cbb89;
   border-radius: 28rpx;
   font-size: 28rpx;
   text-align: center;
   color: #5cbb89;
-  line-height: 52rpx;
   position: relative;
   top: 25rpx;
   z-index: 9999;
