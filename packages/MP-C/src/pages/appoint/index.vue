@@ -45,7 +45,7 @@
       <dpmsCell
         title="预约人员"
         placeholder="请选择预约人员"
-        :value="personnelFilter.personnelName"
+        :value="personnelFilter"
         required
         isLink
         @cellclick="personnelPickerVisible = true"
@@ -259,7 +259,7 @@ export default {
       }))
     },
     personnelFilter() {
-      return this.personnelList.find(p => p.id === this.form.personnelId) || {}
+      return (this.personnelList.find(p => p.id === this.form.personnelId) || {}).personnelName
     },
     startDate() {
       let shopStartDate = moment(
