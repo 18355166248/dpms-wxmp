@@ -104,6 +104,7 @@ export default {
 
       if (regEmoji.test(regValue)) {
         definedMap[key] = regValue.replace(regEmoji, "");
+        definedMap[key] = definedMap[key].trim();
       } else {
         definedMap[key] = value;
       }

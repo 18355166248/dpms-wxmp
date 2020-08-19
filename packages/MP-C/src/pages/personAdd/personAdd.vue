@@ -9,6 +9,7 @@
           required
           title="姓名"
           v-model="form.personnelName"
+          @blur="onBlurPersonnelName"
           placeholder="请输入姓名"
           max="50"
         />
@@ -240,6 +241,9 @@ export default {
         },
       )
       return
+    },
+    onBlurPersonnelName(val) {
+      this.form.personnelName = val
     },
   },
 }
