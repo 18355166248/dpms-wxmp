@@ -21,8 +21,8 @@
         <view class="storeCard">
           <view class="storeCardTitle">
             <text>{{
-              i.institutionName.length > 6
-                ? i.institutionName.substring(0, 6) + `...`
+              i.institutionName.length > 10
+                ? i.institutionName.substring(0, 10) + `...`
                 : i.institutionName
             }}</text>
             <text style="float: right;">{{ i.institutionPhoneNumber }}</text>
@@ -30,16 +30,16 @@
           <view class="storeCardAddress"
             ><span class="iconfont icon-location"></span>
             {{
-              i.institutionAddress.length > 14
-                ? i.institutionAddress.substring(0, 14) + `...`
+              i.institutionAddress.length > 18
+                ? i.institutionAddress.substring(0, 18) + `...`
                 : i.institutionAddress
             }}
           </view>
           <view class="storeCardTime" v-if="i.businessHours"
             ><span class="iconfont icon-time"></span>
             {{
-              i.businessHours.length > 14
-                ? i.businessHours.substring(0, 14) + `...`
+              i.businessHours.length > 18
+                ? i.businessHours.substring(0, 18) + `...`
                 : i.businessHours
             }}</view
           >
@@ -92,12 +92,12 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: `/pages/docAptmt/docDetail?appointmentDoctorId=${this.params.appointmentDoctorId}&isShare=1`,
+      path: `/pages/docAptmt/docDetail?appointmentDoctorId=${this.params.appointmentDoctorId}`,
     }
   },
   onLoad(params) {
     this.params = params
-    if (params.isShare == 1) {
+    if (!this.MEDICALINSTITUTION) {
       return
     }
     this.init(params)
@@ -234,17 +234,18 @@ export default {
   margin-top: 32rpx;
 }
 .storeCard {
-  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/icon.png)
+  position: relative;
+  background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
     no-repeat;
-  background-size: 160rpx 120rpx;
+  background-size: 152rpx 160rpx;
   height: 186rpx;
   width: 700rpx;
-  background-position: 460rpx 0rpx;
+  background-position: 500rpx -35rpx;
   border-radius: 8rpx;
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
 }
 .storeCardTitle {
-  width: 450rpx;
+  width: 500rpx;
   height: 42rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
@@ -285,8 +286,8 @@ export default {
   text-align: center;
   color: #5cbb89;
   line-height: 48rpx;
-  position: relative;
-  top: -78rpx;
+  position: absolute;
+  top: calc(50% - 30rpx);
   left: 546rpx;
 }
 .detail {

@@ -16,8 +16,8 @@
           @change="onFilterOption"
         >
           <text>{{ pickerText }}</text>
+          <span class="iconfont icon-down storePickerIcon"></span>
         </picker>
-        <span class="iconfont icon-down storePickerIcon"></span>
       </view>
       <view class="keywords">
         <span class="iconfont icon-search keyWordIcon"></span>
@@ -393,5 +393,8 @@ export default {
   color: rgba(0, 0, 0, 0.65);
   line-height: 44rpx;
   margin-left: 70rpx;
+}
+.icon-down {
+  margin-left: 10rpx;
 }
 </style>
