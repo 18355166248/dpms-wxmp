@@ -218,7 +218,6 @@ export default {
   },
   methods: {
     init() {
-      if (!this.MEDICALINSTITUTION) return
       institutionAPI
         .getInstitutionInfo({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
