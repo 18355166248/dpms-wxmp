@@ -222,7 +222,8 @@ export default {
         for (let i in this.personList) {
           if (
             this.personList[i].personnelName == this.form.personnelName &&
-            this.personList[i].mobile == this.form.mobile
+            this.personList[i].mobile == this.form.mobile &&
+            this.personList.length > 1
           ) {
             this.$utils.show('不可添加相同人员')
             return
