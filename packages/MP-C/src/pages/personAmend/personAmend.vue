@@ -219,7 +219,7 @@ export default {
               this.personList[i].mobile == this.form.mobile &&
               this.personList.length > 1
             ) {
-              this.$utils.show('不可添加相同人员')
+              this.$utils.show('没有修改任何信息')
               return
             }
           }

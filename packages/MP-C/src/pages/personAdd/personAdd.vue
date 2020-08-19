@@ -96,9 +96,9 @@ export default {
       form: {
         personnelName: '',
         gender: 2,
-        birthday: '',
+        birthday: moment().format('YYYY-MM-DD'),
         mobile: '',
-        contactLabel: '',
+        contactLabel: 1,
         verificationCode: '',
         defaultPersonnel: '',
         userId: getStorage(STORAGE_KEY.STAFF).id,
