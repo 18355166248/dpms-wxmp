@@ -91,10 +91,11 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      path: '/pages/docAptmt/docAptmt',
+      path: `/pages/docAptmt/docAptmt`,
     }
   },
-  onLoad() {
+  onLoad(params) {
+    if (!this.MEDICALINSTITUTION) return
     this.init()
   },
   onPullDownRefresh() {
@@ -239,6 +240,7 @@ export default {
   margin: 0 auto;
   background: rgba(0, 0, 0, 0.04);
   height: 100%;
+  font-size: 32rpx;
 }
 .nav {
   width: 100%;
