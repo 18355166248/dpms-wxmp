@@ -6,7 +6,7 @@
     <div class="formItem">
       <span class="iconfont icon-phone"></span>
       <input placeholder="请输入手机号" v-model="mobile" type="digit" />
-      <span class="iconfont icon-close" @click="mobile = ''"></span>
+      <span v-show="!!mobile" class="iconfont icon-close" @click="mobile = ''"></span>
     </div>
     <div class="formItem">
       <span class="iconfont icon-verify"></span>
@@ -104,9 +104,9 @@ function countdown(sec, cb) {
   .iconfont{
     margin-right: 12rpx;
     font-size: 36rpx;
+    color: rgba(0,0,0,0.25);
   }
   .icon-close{
-    color: rgba(0,0,0,0.65);
     margin-right: 0;
     padding-left: 20rpx;
   }
