@@ -62,7 +62,7 @@
         <rich-text :nodes="detailIntroduction"></rich-text>
       </view>
     </view>
-    <view class="descr">
+    <view class="descr" v-if="tips.length">
       <text class="descrTitle">温馨提示</text>
       <view class="descrContent">
         <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
