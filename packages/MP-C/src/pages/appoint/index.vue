@@ -456,6 +456,13 @@ export default {
     async getPersonnelList() {
       const res = await appointAPI.getPersonnelList({ userId: this.userId })
       this.personnelList = res.data
+
+      if (!this.networkAppointmentId) {
+        let defaultPersonnel = this.personnelList
+          .map((v) => v.defaultPersonnel && v.id)
+          .filter((v) => v)
+        this.form.personnelId = defaultPersonnel[0]
+      }
     },
     async getShopDetail() {
       const res = await appointAPI.getShopDetail({ shopId: this.shopId })
