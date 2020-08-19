@@ -127,10 +127,9 @@ export default {
           this.institutionList = res.data.institutionList
           this.doctor = res.data.doctor
           this.tips = res.data.tips
-          this.detailIntroduction =
-            res.data.detailIntroduction ||
-            res.data.doctorName.detailIntroduction
-          this.detailIntroduction = this.richTextHander(this.detailIntroduction)
+          this.detailIntroduction = res.data.detailIntroduction
+            ? this.richTextHander(res.data.detailIntroduction)
+            : ''
         })
       uni.stopPullDownRefresh()
     },
@@ -147,22 +146,7 @@ export default {
         })
     },
     richTextHander(richText) {
-      const newRichText = richText.replace(
-        /(<img\s)([^>]*)(\/>)/g,
-        (str, r1, r2, r3) => {
-          if (r2.match(/(style=")([^"]*)(")/g)) {
-            const replaceStr = r2.replace(
-              /(style=")([^"]*)(")/g,
-              (rstr, s1, s2, s3) => {
-                return `${s1}width:100%;${s2}${s3}`
-              },
-            )
-            return `${r1}${replaceStr}${r3}`
-          } else {
-            return `${r1}style="width:100%" ${r2}${r3}`
-          }
-        },
-      )
+      const newRichText = richText.replace(/<img/g, '<img width="100%"')
       return newRichText
     },
   },
