@@ -135,7 +135,7 @@ export default {
     },
     toUrl(url) {
       institutionAPI
-        .checkPorjCanAptmt({
+        .checkDocCanAptmt({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
           appointmentDoctorId: this.params.appointmentDoctorId,
         })

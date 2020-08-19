@@ -52,13 +52,16 @@ page {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_ct73ugmont8.eot');
-  src: url('//at.alicdn.com/t/font_1965288_ct73ugmont8.eot?#iefix')
+  src: url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.eot');
+  src: url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_ct73ugmont8.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_ct73ugmont8.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_ct73ugmont8.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_ct73ugmont8.svg#iconfont') format('svg');
+    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.woff2')
+      format('woff2'),
+    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.woff') format('woff'),
+    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.ttf')
+      format('truetype'),
+    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.svg#iconfont')
+      format('svg');
 }
 /*********在线字体代码end*********/
 

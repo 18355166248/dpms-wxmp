@@ -81,6 +81,7 @@ export default {
   data() {
     return {
       phone: '',
+      personnelName: '',
       endDate: moment().format('YYYY-MM-DD'),
       second: 0,
       staff: getStorage(STORAGE_KEY.STAFF),
@@ -149,6 +150,7 @@ export default {
     this.form = JSON.parse(info.personDetail)
     this.form.verificationCode = ''
     this.phone = JSON.parse(info.personDetail).mobile
+    this.personnelName = JSON.parse(info.personDetail).personnelName
     this.getCustomer()
     console.log('jjjjjjjjjjjjjjj', this.form)
   },
@@ -213,15 +215,16 @@ export default {
             this.$utils.show(err[0]?.message)
             return
           }
-          for (let i in this.personList) {
-            if (
-              this.personList[i].personnelName == this.form.personnelName &&
-              this.personList[i].mobile == this.form.mobile &&
-              this.personList.length > 1
-            ) {
-              this.$utils.show('没有修改任何信息')
-              return
-            }
+
+          let personnelNameList = this.personList.map((v) => v.personnelName)
+
+          if (
+            personnelNameList
+              .filter((v) => v != this.personnelName)
+              .includes(this.form.personnelName)
+          ) {
+            this.$utils.show('不可添加相同人员')
+            return
           }
           delete this.form.patientDTO
           customerAPI.updateCustomer(this.form).then((res) => {
