@@ -1,7 +1,6 @@
 <template>
   <movable-area>
     <view class="content" scroll-y>
-      <!-- <nav-bar /> -->
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
@@ -230,7 +229,9 @@ export default {
               this.institutionIntroduce.briefIntroduction.substring(0, 70) +
               `...`
           }
-          this.appTitle = res.data.institutionIntroduce.medicalInstitutionName
+          uni.setNavigationBarTitle({
+            title: res.data.institutionIntroduce.medicalInstitutionName,
+          })
         })
       institutionAPI
         .getProjList({
@@ -396,6 +397,9 @@ export default {
   color: rgba(0, 0, 0, 0.9);
   line-height: 44rpx;
   padding: 24rpx;
+  word-wrap: break-word;
+  word-break: break-all;
+  overflow: hidden;
 }
 .compDescMore {
   height: 36rpx;
