@@ -1,0 +1,96 @@
+<template>
+  <editPatient ref="editPatient" @submit="checkPatientInScrm"></editPatient>
+</template>
+
+<script>
+import { mapState } from 'vuex'
+import editPatient from '@/businessComponents/editPatient/editPatient.vue'
+import patientAPI from '@/APIS/patient/patient.api'
+import { globalEventKeys } from '@/config/global.eventKeys.js'
+
+export default {
+  data() {
+    return {}
+  },
+  components: {
+    editPatient,
+  },
+  computed: {
+    ...mapState('workbenchStore', ['staff']),
+  },
+  created() {},
+  methods: {
+    // 检查患者是否已存在scrm系统中
+    async checkPatientInScrm(form) {
+      const [err, res] = await this.$utils.asyncTasks(
+        patientAPI.getPatientInScrm({
+          medicalInstitutionId: this.staff.belongsInstitutionId,
+          mobile: form.mobile,
+          patientName: form.patientName,
+        }),
+      )
+
+      if (err) {
+        this.$refs.editPatient.showBtn()
+      }
+
+      const { data: scrmPatientInfo } = res
+      // if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
+      //   delete scrmPatientInfo.customerId
+      // }
+      this.createPatient(scrmPatientInfo, form)
+    },
+    async createPatient(scrmPatientInfo, form) {
+      const formValue = _.cloneDeep(form)
+
+      let patientContact = {
+        contactLabel: form.contactLabel,
+        mobile: form.mobile,
+        alternateMobile: form.alternateMobile,
+        weChatId: form.weChatId,
+        qqNum: form.qqNum,
+        province: form.region[0],
+        city: form.region[1],
+        area: form.region[2],
+        address: form.address,
+      }
+
+      delete formValue.contactLabel
+      delete formValue.alternateMobile
+      delete formValue.weChatId
+      delete formValue.qqNum
+      delete formValue.region
+      delete formValue.address
+
+      let that = this
+      patientAPI
+        .createPatient({
+          ...formValue,
+          customerId: scrmPatientInfo.customerId,
+          patientContactStr: JSON.stringify([{ ...patientContact }]),
+        })
+        .then((res) => {
+          that.$refs.editPatient.showBtn()
+
+          that.$utils.show('新增患者成功', {
+            duration: 1000,
+            complete() {
+              setTimeout(() => {
+                uni.$emit(globalEventKeys.newPatient)
+
+                that.$utils.push({
+                  url: '/pages/patient/patient?patientId=' + res.data.patientId,
+                })
+              }, 1000)
+            },
+          })
+        })
+        .catch(() => {
+          that.$refs.editPatient.showBtn()
+        })
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped></style>

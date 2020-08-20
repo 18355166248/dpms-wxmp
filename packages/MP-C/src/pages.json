@@ -1,0 +1,159 @@
+{
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationBarTitleText": "",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/index/webView",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+    {
+      "path": "pages/projAptmt/projAptmt",
+      "style": {
+        "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/projAptmt/projDetail",
+      "style": {
+        "navigationBarTitleText": "项目详情",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/docAptmt/docAptmt",
+      "style": {
+        "navigationBarTitleText": "预约",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/docAptmt/docDetail",
+      "style": {
+        "navigationBarTitleText": "医生详情",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/mySelf/mySelf",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "disableScroll": false,
+        "enablePullDownRefresh": true,
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/appointmentDetail/appointmentDetail",
+      "style": {
+        "navigationBarTitleText": "预约详情"
+      }
+    },
+    {
+      "path": "pages/myAppointment/myAppointment",
+      "style": {
+        "navigationBarTitleText": "我的预约",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/personManagement/personManagement",
+      "style": {
+        "navigationBarTitleText": "人员管理",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/personAdd/personAdd",
+      "style": {
+        "navigationBarTitleText": "新增人员"
+      }
+    },
+    {
+      "path": "pages/personDetail/personDetail",
+      "style": {
+        "navigationBarTitleText": "人员详情"
+      }
+    },
+    {
+      "path": "pages/personAmend/personAmend",
+      "style": {
+        "navigationBarTitleText": "修改人员"
+      }
+    },
+    {
+      "path": "pages/login/index",
+      "style": {
+        "navigationBarTitleText": "登陆授权",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/login/cellphone",
+      "style": {
+        "navigationBarTitleText": "手机号登陆",
+        "navigationBarBackgroundColor": "#ffffff",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/appoint/index",
+      "style": {
+        "navigationBarTitleText": "新建预约"
+      }
+    },
+    {
+      "path": "pages/knowUs/index",
+      "style": {
+        "navigationBarTitleText": "了解我们"
+      }
+    },
+    {
+      "path": "pages/membership/membershipCard",
+      "style": {
+        "navigationBarTitleText": "会员卡"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#5CBB89",
+    "backgroundColor": "#F8F8F8"
+  },
+  "tabBar": {
+    "color": "#070707",
+    "selectedColor": "#5CBB89",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "iconPath": "static/icon-home.png",
+        "selectedIconPath": "static/icon-home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/mySelf/mySelf",
+        "iconPath": "static/icon-me.png",
+        "selectedIconPath": "static/icon-me-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+    }
+  }
+}

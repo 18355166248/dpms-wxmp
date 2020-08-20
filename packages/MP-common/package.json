@@ -1,0 +1,15 @@
+{
+  "name": "mpcommon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@arctic/tools": "git+https://oauth2:3g7zqTDbk5PFG9s32fFf@gitlab.medcloud.cn/pub/arctic-tools.git"
+  }
+}

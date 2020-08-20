@@ -1,0 +1,83 @@
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+
+/* 颜色变量 */
+$common-color: #5cbb89;
+$bg-color: rgba(0, 0, 0, 0.04);
+
+/* 行为相关颜色 */
+$dpms-color-primary: $common-color;
+$dpms-color-success: #4cd964;
+$dpms-color-warning: #f0ad4e;
+$dpms-color-error: #dd524d;
+
+/* 文字基本颜色 */
+$dpms-text-color: #333; //基本色
+$dpms-text-color-inverse: #fff; //反色
+$dpms-text-color-grey: #999; //辅助灰色，如加载更多的提示信息
+$dpms-text-color-placeholder: #808080;
+$dpms-text-color-disable: #c0c0c0;
+
+/* 背景颜色 */
+$dpms-bg-color: #ffffff;
+$dpms-bg-color-grey: #f8f8f8;
+$dpms-bg-color-hover: #41946a; //点击状态颜色
+$dpms-bg-color-disabled: #f5f5f5; //点击状态颜色
+$dpms-bg-color-mask: rgba(0, 0, 0, 0.4); //遮罩颜色
+
+/* 边框颜色 */
+$dpms-border-color: #c8c7cc;
+
+/* 尺寸变量 */
+
+/* 文字尺寸 */
+$dpms-font-size-sm: 24rpx;
+$dpms-font-size-base: 28rpx;
+$dpms-font-size-lg: 32rpx;
+
+/* 图片尺寸 */
+$dpms-img-size-sm: 40rpx;
+$dpms-img-size-base: 52rpx;
+$dpms-img-size-lg: 80rpx;
+
+/* Border Radius */
+$dpms-border-radius-sm: 4rpx;
+$dpms-border-radius-base: 6rpx;
+$dpms-border-radius-lg: 12rpx;
+$dpms-border-radius-circle: 50%;
+
+/* 水平间距 */
+$dpms-spacing-row-sm: 10px;
+$dpms-spacing-row-base: 20rpx;
+$dpms-spacing-row-lg: 30rpx;
+
+/* 垂直间距 */
+$dpms-spacing-col-sm: 8rpx;
+$dpms-spacing-col-base: 16rpx;
+$dpms-spacing-col-lg: 24rpx;
+
+/* 透明度 */
+$dpms-opacity-disabled: 0.3; // 组件禁用态的透明度
+
+/* 文章场景相关 */
+$dpms-color-title: #2c405a; // 文章标题颜色
+$dpms-font-size-title: 40rpx;
+$dpms-color-subtitle: #555555; // 二级标题颜色
+$dpms-font-size-subtitle: 36rpx;
+$dpms-color-paragraph: #3f536e; // 文章段落颜色
+$dpms-font-size-paragraph: 30rpx;
+
+$common-form-text-color: rgba(0, 0, 0, 0.5);
+
+$common-text-color: rgba(0, 0, 0, 0.65);

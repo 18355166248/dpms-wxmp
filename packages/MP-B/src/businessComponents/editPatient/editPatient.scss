@@ -1,0 +1,62 @@
+.page-bg {
+  height: 100%;
+  background: rgba(0, 0, 0, 0.04);
+}
+
+[data-layout-align] {
+  display: flex;
+  justify-content: flex-start;
+  align-content: stretch;
+  align-items: stretch;
+}
+
+[data-layout-align='space-between center'] {
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  max-width: 100%;
+}
+
+.dpms-cell-group {
+  width: 750rpx;
+  height: 112rpx;
+  background: #fff;
+  .dpms-cell {
+    height: 112rpx;
+    margin: 0 32rpx;
+    border-bottom: 2rpx solid rgba(0, 0, 0, 0.15);
+    .dpms-cell-title {
+      width: 211rpx;
+      span {
+        font-size: 34rpx;
+        font-weight: 400;
+        color: rgba(0, 0, 0, 0.9);
+        margin-left: 4rpx;
+      }
+    }
+
+    .dpms-cell-value {
+      font-size: 34rpx;
+      font-weight: 400;
+      text-align: right;
+      color: rgba(0, 0, 0, 0.5);
+      .placeholder-style {
+        color: rgba(0, 0, 0, 0.25);
+      }
+      .iconfont {
+        margin-left: 4rpx;
+        color: rgba(0, 0, 0, 0.25);
+      }
+    }
+  }
+  .dpms-cell:last-child {
+    border-bottom: none;
+  }
+}
+
+.dpms-cell-group-textarea {
+  height: 154rpx;
+  .dpms-cell {
+    height: 154rpx;
+  }
+}
