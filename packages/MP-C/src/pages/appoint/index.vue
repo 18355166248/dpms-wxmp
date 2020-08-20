@@ -476,11 +476,16 @@ export default {
       this.institutionInfo = res.data.institutionIntroduce
     },
     dockerClick(d) {
-      this.form.doctorId = d.doctorId
+      if (this.form.doctorId === d.doctorId) {
+        this.form.doctorId = ''
+        this.doctor = {}
+      } else {
+        this.form.doctorId = d.doctorId
+        this.doctor = d
+      }
       if (this.form.date) {
         this.getDoctorTime(this.form.date)
       }
-      this.doctor = d
       this.doctorPickerVisible = false
     },
     doctorTimeClick(value) {
