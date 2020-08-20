@@ -47,6 +47,7 @@ export default {
 /*每个页面公共css */
 page {
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 /*********在线字体代码start*********/

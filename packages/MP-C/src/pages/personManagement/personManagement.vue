@@ -1,17 +1,10 @@
 <template>
   <movable-area>
-    <view
-      style="
-        background: rgba(0, 0, 0, 0.04);
-        height: 100%;
-        position: absolute;
-        width: 100%;
-      "
-    >
+    <view style="width: 100%; display: flex; flex-direction: column;">
       <div v-if="personList.length < 10" class="add" @click="addPerson">
         <div
           class="iconfont icon-add"
-          style="font-size: 40rpx; height: 40rpx;"
+          style="font-size: 40rpx; height: 40rpx; margin-bottom: 8rpx;"
         ></div>
         <div>还可添加{{ 10 - personList.length }}人</div>
       </div>
@@ -141,6 +134,7 @@ movable-area {
   text-align: center;
   box-sizing: border-box;
   padding-top: 37rpx;
+  padding-bottom: 32rpx;
 }
 .personList {
   .item {
@@ -156,7 +150,7 @@ movable-area {
       display: flex;
     }
     .self {
-      border: 1rpx solid rgba(0, 0, 0, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.9);
       border-radius: 2rpx;
       font-size: 28rpx;
       font-weight: 400;

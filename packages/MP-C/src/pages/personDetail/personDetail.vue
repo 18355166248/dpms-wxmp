@@ -90,8 +90,6 @@ export default {
 <style lang="scss" scoped>
 .content {
   padding-bottom: 118rpx;
-  height: 100%;
-  background: rgba($color: #000000, $alpha: 0.04);
 }
 .personInfo {
   padding-left: 32rpx;
