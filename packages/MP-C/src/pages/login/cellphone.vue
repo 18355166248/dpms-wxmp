@@ -6,7 +6,7 @@
     <div class="formItem">
       <span class="iconfont icon-phone"></span>
       <input placeholder="请输入手机号" v-model="mobile" type="digit" />
-      <span v-show="!!mobile" class="iconfont icon-close" @click="mobile = ''"></span>
+      <span v-show="!!mobile && !mobileSuccess" class="iconfont icon-close" @click="mobile = ''"></span>
     </div>
     <div class="formItem">
       <span class="iconfont icon-verify"></span>
@@ -30,6 +30,11 @@ export default {
       mobile: '',
       code: '',
       second: 0,
+    }
+  },
+  computed: {
+    mobileSuccess() {
+      return /^1[3-9]\d{9}$/.test(this.mobile)
     }
   },
   methods: {
@@ -104,11 +109,12 @@ function countdown(sec, cb) {
   .iconfont{
     margin-right: 12rpx;
     font-size: 36rpx;
-    color: rgba(0,0,0,0.25);
+    color: rgba(0,0,0,0.65);
   }
   .icon-close{
     margin-right: 0;
     padding-left: 20rpx;
+    color: rgba(0,0,0,0.25);
   }
   input {
     flex: auto;
