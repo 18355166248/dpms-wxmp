@@ -1,6 +1,21 @@
 <template>
   <movable-area>
     <view class="content" scroll-y>
+      <view
+        class="nav"
+        :style="{
+          'background-color': backgroundStyle,
+          height: navTop + `px`,
+        }"
+      ></view>
+      <view
+        class="title"
+        :style="{
+          left: '250rpx',
+          'margin-top': Number(navTop) + 12 + `rpx`,
+        }"
+        >{{ appTitle }}</view
+      >
       <view class="banner">
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
@@ -169,13 +184,15 @@ export default {
       size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
-      color: '#5CBB89',
+      color: 'rgb(0, 0, 0, 0.5)',
       appTitle: '',
+      height: '',
       contentText: {
         contentdown: '加载更多',
         contentrefresh: '正在加载..',
         contentnomore: '没有更多数据了',
       },
+      backgroundStyle: 'rgb(92, 187, 137, 0)',
     }
   },
   onShareAppMessage(res) {
@@ -187,11 +204,19 @@ export default {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
     }),
+    menuButtonObject() {
+      return uni.getMenuButtonBoundingClientRect()
+    },
+    navTop: function () {
+      this.height = this.menuButtonObject.top + this.menuButtonObject.height
+      return `${this.menuButtonObject.top + this.menuButtonObject.height + 10}`
+    },
   },
   watch: {
     MEDICALINSTITUTION(newVal) {
       uni.startPullDownRefresh()
     },
+    scrollTop(newVal) {},
   },
   created() {
     uni.getSystemInfo({
@@ -208,6 +233,10 @@ export default {
   },
   onPullDownRefresh() {
     this.init()
+  },
+  onPageScroll({ scrollTop }) {
+    let alpha = scrollTop / this.height
+    this.backgroundStyle = `rgb(92, 187, 137, ${alpha})`
   },
   onReachBottom() {
     this.loadMoreList()
@@ -229,9 +258,13 @@ export default {
               this.institutionIntroduce.briefIntroduction.substring(0, 70) +
               `...`
           }
-          uni.setNavigationBarTitle({
-            title: res.data.institutionIntroduce.medicalInstitutionName,
-          })
+          this.appTitle =
+            res.data.institutionIntroduce.medicalInstitutionName.length > 7
+              ? res.data.institutionIntroduce.medicalInstitutionName.substring(
+                  0,
+                  7,
+                ) + `..`
+              : res.data.institutionIntroduce.medicalInstitutionName
         })
       institutionAPI
         .getProjList({
@@ -360,6 +393,18 @@ export default {
 <style scoped>
 .content {
   height: 100%;
+}
+.nav {
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+}
+.title {
+  color: #ffffff;
+  font-size: 36rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  z-index: 999;
+  position: fixed;
 }
 .alignCenter {
   text-align: center;

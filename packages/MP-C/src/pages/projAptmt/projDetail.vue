@@ -318,5 +318,6 @@ export default {
   line-height: 44rpx;
   margin-top: 24rpx;
   margin-bottom: 58rpx;
+  word-break: break-all;
 }
 </style>

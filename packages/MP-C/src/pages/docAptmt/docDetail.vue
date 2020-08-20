@@ -146,8 +146,7 @@ export default {
         })
     },
     richTextHander(richText) {
-      const newRichText = richText.replace(/<img/g, '<img width="100%"')
-      return newRichText
+      return richText.replace(/<img/g, '<img width="100%"')
     },
   },
   components: {},
@@ -161,7 +160,6 @@ export default {
 }
 .compDesc {
   width: 750rpx;
-  height: 150rpx;
   background: #5cbb89;
 }
 .compDescContent {
@@ -175,7 +173,6 @@ export default {
 }
 .aptmtCard {
   width: 702rpx;
-  height: 224rpx;
   background: #ffffff;
   border-radius: 8rpx;
   box-shadow: 0rpx -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
@@ -189,7 +186,6 @@ export default {
   margin-left: 24rpx;
 }
 .cardTile {
-  height: 44rpx;
   font-size: 34rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
@@ -198,14 +194,13 @@ export default {
   margin-top: 44rpx;
 }
 .cardDesc {
-  height: 88rpx;
   font-size: 28rpx;
   text-align: left;
   word-break: break-all;
   color: rgba(0, 0, 0, 0.5);
   line-height: 44rpx;
   margin-top: 16rpx;
-  overflow: hidden;
+  margin-bottom: 16rpx;
 }
 .aptmtCardContent {
   width: 502rpx;
@@ -214,7 +209,7 @@ export default {
 .storeContent {
   width: 684rpx;
   margin-left: 32rpx;
-  margin-top: 168rpx;
+  margin-top: 88rpx;
 }
 .storeTitle {
   width: 136rpx;
@@ -339,5 +334,6 @@ export default {
   line-height: 44rpx;
   margin-top: 24rpx;
   margin-bottom: 58rpx;
+  word-break: break-all;
 }
 </style>
