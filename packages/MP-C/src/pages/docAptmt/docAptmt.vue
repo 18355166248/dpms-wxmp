@@ -59,7 +59,7 @@
           </view>
         </view>
       </view>
-      <load-more :status="loadStatus"></load-more>
+      <load-more :status="loadStatus" color="rgba(0, 0, 0, 0.5)"></load-more>
     </view>
     <view class="empty" v-show="total === 0">
       <image
@@ -284,7 +284,7 @@ export default {
   height: 76rpx;
   background: #ffffff;
   border-radius: 8rpx;
-  padding: 0 30rpx 0 32rpx;
+  padding: 0 25rpx;
   box-sizing: border-box;
   display: flex;
   justify-content: space-between;
@@ -392,6 +392,9 @@ export default {
   color: rgba(0, 0, 0, 0.65);
   line-height: 44rpx;
   margin-left: 70rpx;
+}
+.iconfont {
+  font-size: 40rpx;
 }
 .icon-down {
   margin-left: 10rpx;

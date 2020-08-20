@@ -184,7 +184,7 @@ export default {
       size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
-      color: '#5CBB89',
+      color: 'rgb(0, 0, 0, 0.5)',
       appTitle: '',
       height: '',
       contentText: {
