@@ -140,7 +140,6 @@ export default {
 <style lang="scss" scoped scroll-y>
 .knowUs {
   box-sizing: border-box;
-  background: rgba($color: #000000, $alpha: 0.04);
   padding: 32rpx 24rpx;
   .knowUs-title {
     font-size: 34rpx;
