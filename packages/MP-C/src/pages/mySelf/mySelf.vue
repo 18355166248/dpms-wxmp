@@ -1,16 +1,10 @@
 <template>
   <movable-area>
-    <view
-      :style="{
-        paddingTop: navHeight + 'px',
-        height: viewHeight,
-      }"
-      class="home-view"
-    >
+    <view class="home-view">
       <view class="home-bg">
         <image
           class="home-bg-img"
-          src="/static/header-bg.png"
+          src="/static/header-bg.svg"
           mode="widthFix"
         />
       </view>
@@ -237,18 +231,6 @@ export default {
     height: 44rpx;
     line-height: 44rpx;
   }
-  .home-bg {
-    width: 100%;
-    height: 420rpx;
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    &-img {
-      width: 100%;
-    }
-  }
   .header-wrapper {
     position: relative;
     .header {
@@ -389,10 +371,21 @@ export default {
 movable-area {
   width: 100%;
   height: 100%;
-  background: rgba($color: #000000, $alpha: 0.04);
 }
 
 movable-view {
   z-index: 9999;
+}
+.home-bg {
+  width: 100%;
+  height: 420rpx;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  &-img {
+    width: 100%;
+  }
 }
 </style>
