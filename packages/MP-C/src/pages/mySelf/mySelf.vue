@@ -235,8 +235,8 @@ export default {
     position: relative;
     .header {
       position: absolute;
-      left: 72rpx;
-      top: 116rpx;
+      left: 34rpx;
+      top: 152rpx;
       display: flex;
       align-items: center;
       color: white;
@@ -257,7 +257,7 @@ export default {
     height: 154rpx;
     background: white;
     position: relative;
-    top: 308rpx;
+    top: 340rpx;
     margin: 0 34rpx;
     display: flex;
     justify-content: space-around;
@@ -290,7 +290,7 @@ export default {
   .personAppointment {
     padding-left: 35rpx;
     position: relative;
-    top: 372rpx;
+    top: 404rpx;
     background: white;
     div {
       height: 112rpx;
@@ -339,7 +339,7 @@ export default {
     font-size: 34rpx;
     font-weight: 400;
     position: absolute;
-    top: 813rpx;
+    top: 845rpx;
   }
   .version {
     width: 100%;
@@ -378,7 +378,7 @@ movable-view {
 }
 .home-bg {
   width: 100%;
-  height: 420rpx;
+  height: 452rpx;
   overflow: hidden;
   position: absolute;
   top: 0;
