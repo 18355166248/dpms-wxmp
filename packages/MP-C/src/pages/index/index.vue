@@ -17,6 +17,7 @@
         >{{ appTitle }}</view
       >
       <view class="banner">
+        <view class="mask"></view>
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
             class="alignCenter"
@@ -304,6 +305,7 @@ export default {
       uni.stopPullDownRefresh()
     },
     bannerToUrl(url) {
+      if (!url) return
       if (url.indexOf(`http`) !== -1) {
         this.toUrl(`/pages/index/webView?url=${url}`)
       } else {
@@ -391,6 +393,9 @@ export default {
 </script>
 
 <style scoped>
+template {
+  background-color: #ffffff;
+}
 .content {
   height: 100%;
 }
@@ -409,9 +414,22 @@ export default {
 .alignCenter {
   text-align: center;
 }
+.mask {
+  position: absolute;
+  width: 750rpx;
+  height: 232rpx;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.53),
+    rgba(216, 216, 216, 0)
+  );
+  z-index: 199;
+  pointer-events: none;
+}
 .banner {
   width: 750rpx;
   height: 376rpx;
+  position: relative;
 }
 .bannerImg {
   height: 100%;
@@ -562,6 +580,7 @@ export default {
   font-size: 36rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   line-height: 44rpx;
+  color: rgba(0, 0, 0);
 }
 .storeBtn {
   height: 36rpx;
@@ -576,6 +595,7 @@ export default {
 .storeList {
   width: 700rpx;
   margin-top: 32rpx;
+  background-color: #ffffff;
 }
 .storeCard {
   position: relative;
@@ -659,6 +679,6 @@ movable-view {
   z-index: 9999;
 }
 .iconfont {
-  margin-right: 4rpx;
+  margin-right: 8rpx;
 }
 </style>
