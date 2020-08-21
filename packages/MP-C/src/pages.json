@@ -64,6 +64,13 @@
       }
     },
     {
+      "path": "pages/myCoupon/myCoupon",
+      "style": {
+        "navigationBarTitleText": "我的优惠券",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
       "path": "pages/personManagement/personManagement",
       "style": {
         "navigationBarTitleText": "人员管理",
