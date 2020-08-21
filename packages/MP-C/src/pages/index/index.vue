@@ -305,6 +305,7 @@ export default {
       uni.stopPullDownRefresh()
     },
     bannerToUrl(url) {
+      if (!url) return
       if (url.indexOf(`http`) !== -1) {
         this.toUrl(`/pages/index/webView?url=${url}`)
       } else {
@@ -423,6 +424,7 @@ template {
     rgba(216, 216, 216, 0)
   );
   z-index: 199;
+  pointer-events: none;
 }
 .banner {
   width: 750rpx;
