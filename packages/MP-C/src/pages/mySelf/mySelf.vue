@@ -112,8 +112,8 @@ export default {
       confirmedCount: '',
       appointCount: '',
       top: '',
-      x: 300,
-      y: 420,
+      x: 0,
+      y: 0,
       headerImgSrc: '/static/header-img.svg',
       mobile: '',
       memberDetails: {},
@@ -129,6 +129,14 @@ export default {
   },
   onPullDownRefresh() {
     this.load()
+  },
+  created() {
+    uni.getSystemInfo({
+      success: (res) => {
+        this.y = res.windowHeight - 60
+        this.x = res.windowWidth
+      },
+    })
   },
   methods: {
     // goMembershipCard() {
