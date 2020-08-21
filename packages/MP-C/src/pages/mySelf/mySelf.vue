@@ -113,7 +113,7 @@ export default {
       appointCount: '',
       top: '',
       x: 300,
-      y: 360,
+      y: 420,
       headerImgSrc: '/static/header-img.svg',
       mobile: '',
       memberDetails: {},
