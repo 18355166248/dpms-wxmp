@@ -19,6 +19,7 @@
             <text
               >{{ val.personnelName }}/{{ val.gender == 1 ? '男' : '女' }}</text
             >
+            <span class="space"></span>
             <div class="self">
               {{ CONTACT_LABEL.properties[val.contactLabel].zh_CN }}
             </div>
@@ -148,9 +149,15 @@ movable-area {
       font-weight: 400;
       color: rgba(0, 0, 0, 0.9);
       display: flex;
+      .space {
+        display: inline-block;
+        width: 1rpx;
+      }
     }
     .self {
-      border: 1px solid rgba(0, 0, 0, 0.9);
+      border: 1rpx solid rgba(0, 0, 0, 0.9);
+      height: 40rpx;
+      line-height: 40rpx;
       border-radius: 2rpx;
       font-size: 28rpx;
       font-weight: 400;
