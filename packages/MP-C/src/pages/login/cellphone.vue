@@ -5,8 +5,8 @@
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
       <span class="iconfont icon-phone"></span>
-      <input placeholder="请输入手机号" v-model="mobile" type="digit" />
-      <span v-show="!!mobile && !mobileSuccess" class="iconfont icon-close" @click="mobile = ''"></span>
+      <input placeholder="请输入手机号" v-model="mobile" type="digit" @focus="handleFocus('mobile')" @blur="handleBlur('mobile')" />
+      <span v-show="!!mobile && isFocus.mobile" class="iconfont icon-close" @click="mobile = ''"></span>
     </div>
     <div class="formItem">
       <span class="iconfont icon-verify"></span>
@@ -30,14 +30,18 @@ export default {
       mobile: '',
       code: '',
       second: 0,
-    }
-  },
-  computed: {
-    mobileSuccess() {
-      return /^1[3-9]\d{9}$/.test(this.mobile)
+      isFocus: {
+        mobile: false,
+      },
     }
   },
   methods: {
+    handleFocus(field) {
+      this.$set(this.isFocus, field, true)
+    },
+    handleBlur(field) {
+      this.$set(this.isFocus, field, false)
+    },
     getCode() {
       if (!/^1[3-9]\d{9}$/.test(this.mobile))
         return this.$utils.show('请输入正确的手机号')
