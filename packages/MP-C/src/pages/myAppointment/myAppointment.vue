@@ -125,9 +125,6 @@ export default {
   },
   onUnload() {
     uni.$off(globalEventKeys.deleteAppointFormWithSaveSuccess)
-    wx.switchTab({
-      url: '/pages/mySelf/mySelf',
-    })
   },
   onPullDownRefresh() {
     this.recent = 'active'
