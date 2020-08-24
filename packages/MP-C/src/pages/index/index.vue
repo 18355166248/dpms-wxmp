@@ -7,15 +7,10 @@
           'background-color': backgroundStyle,
           height: navTop + `px`,
         }"
-      ></view>
-      <view
-        class="title"
-        :style="{
-          left: '250rpx',
-          'margin-top': Number(navTop) + 12 + `rpx`,
-        }"
-        >{{ appTitle }}</view
       >
+        <view class="title">{{ appTitle }}</view>
+      </view>
+
       <view class="banner">
         <view class="mask"></view>
         <swiper class="swiper banner" indicator-dots autoplay>
@@ -408,9 +403,10 @@ template {
 .title {
   color: #ffffff;
   font-size: 36rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
-  z-index: 999;
-  position: fixed;
+  position: absolute;
+  left: 50%;
+  bottom: 20rpx;
+  transform: translateX(-50%);
 }
 .alignCenter {
   text-align: center;
