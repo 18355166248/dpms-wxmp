@@ -52,7 +52,7 @@
         </view>
         <view class="cardList">
           <swiper
-            class="swiper"
+            class="swiper cardListSwiper"
             :display-multiple-items="displayMultipleItems"
             next-margin="10rpx"
           >
@@ -512,6 +512,9 @@ template {
   padding-top: 24rpx;
   /* padding-right: 24rpx; */
   padding-left: 24rpx;
+}
+.cardListSwiper {
+  height: 296rpx;
 }
 .card {
   width: 306rpx;
