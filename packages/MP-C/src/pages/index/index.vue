@@ -52,7 +52,7 @@
         </view>
         <view class="cardList">
           <swiper
-            class="swiper"
+            class="swiper cardListSwiper"
             :display-multiple-items="displayMultipleItems"
             next-margin="10rpx"
           >
@@ -114,8 +114,8 @@
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
                 {{
-                  s.institutionAddress.length > 18
-                    ? s.institutionAddress.substring(0, 18) + `...`
+                  s.institutionAddress.length > 15
+                    ? s.institutionAddress.substring(0, 15) + `...`
                     : s.institutionAddress
                 }}
               </view>
@@ -512,6 +512,9 @@ template {
   padding-top: 24rpx;
   /* padding-right: 24rpx; */
   padding-left: 24rpx;
+}
+.cardListSwiper {
+  height: 296rpx;
 }
 .card {
   width: 306rpx;
