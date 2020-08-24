@@ -196,7 +196,7 @@ httper.interceptors.response.use(
       icon: 'none',
       title: response?.data?.msg || response?.data?.message || '数据请求失败',
     })
-
+    console.log('response', response.data)
     return Promise.reject(response.data)
   },
   function (err) {
