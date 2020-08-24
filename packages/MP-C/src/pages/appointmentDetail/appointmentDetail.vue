@@ -183,17 +183,14 @@ export default {
     this.getDetail()
   },
   methods: {
-    getDetail() {
-      appointmentAPI
-        .getAppointmentDetail({
-          networkAppointmentId: this.networkAppointmentId,
-        })
-        .then((res) => {
-          console.log('kkkkkkkkkkkk', res)
-          this.detailInfo = res.data
-          this.medicalInstitutionId = res.data.medicalInstitutionId
-          this.getInstitutionInfo()
-        })
+    async getDetail() {
+      const res = await appointmentAPI.getAppointmentDetail({
+        networkAppointmentId: this.networkAppointmentId,
+      })
+      console.log('kkkkkkkkkkkk', res)
+      this.detailInfo = res.data
+      this.medicalInstitutionId = res.data.medicalInstitutionId
+      this.getInstitutionInfo()
     },
     async getInstitutionInfo() {
       const res = await appointmentAPI.getInstitutionInfo({
