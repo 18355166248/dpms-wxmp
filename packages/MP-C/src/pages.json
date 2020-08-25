@@ -121,6 +121,12 @@
       "style": {
         "navigationBarTitleText": "会员卡"
       }
+    },
+    {
+      "path": "pages/couponCenter/couponCenter",
+      "style": {
+        "navigationBarTitleText": "领券中心"
+      }
     }
   ],
   "globalStyle": {
