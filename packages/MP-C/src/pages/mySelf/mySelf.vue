@@ -52,15 +52,7 @@
       <view class="personAppointment">
         <div>
           <span>
-            <span
-              style="
-                background: linear-gradient(139deg, #fb8d51 12%, #feb277 90%);
-                -webkit-background-clip: text;
-                color: transparent;
-              "
-              class="iconfont icon-set"
-            ></span
-            >人员管理
+            <span class="iconfont icon-set personnelManagement"></span>人员管理
           </span>
           <span @click="goPerson">
             已添加{{ count || 0 }}人
@@ -69,18 +61,32 @@
         </div>
         <div>
           <span>
-            <span
-              style="
-                background: linear-gradient(321deg, #7ea8f5 12%, #3278de 101%);
-                -webkit-background-clip: text;
-                color: transparent;
-              "
-              class="iconfont icon-time"
-            ></span
-            >我的预约
+            <span class="iconfont icon-time appointment"></span>我的预约
           </span>
-          <span @click="goAppointment('/pages/myAppointment/myAppointment')">
+          <span @click="toUrl('/pages/myAppointment/myAppointment')">
             待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
+            <span class="iconfont icon-right"></span>
+          </span>
+        </div>
+        <div @click="toUrl('')">
+          <span>
+            <span class="iconfont icon-coupons coupons"></span>我的优惠卷
+          </span>
+          <span>
+            <!-- 待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }} -->
+            <span class="iconfont icon-right"></span>
+          </span>
+        </div>
+        <div
+          @click="
+            toUrl('/pages/couponCenter/couponCenter?memberId=' + memberId)
+          "
+        >
+          <span>
+            <span class="iconfont icon-gift couponCentre"></span>领券中心
+          </span>
+          <span>
+            <!-- 待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }} -->
             <span class="iconfont icon-right"></span>
           </span>
         </div>
@@ -93,7 +99,7 @@
         :y="y"
         direction="all"
         @change="onChange"
-        @click="goAppointment('/pages/projAptmt/projAptmt')"
+        @click="toUrl('/pages/projAptmt/projAptmt')"
         class="aptmt"
       >
         <span class="iconfont icon-time"></span>
@@ -125,6 +131,7 @@ export default {
       memberDetails: {},
       memberCardTypeQueryResponse: {},
       showLogout: false,
+      memberId: '',
     }
   },
   onShow() {
@@ -191,6 +198,7 @@ export default {
         .then((res) => {
           console.log('userDetail', res)
           this.mobile = res.data.mobile
+          this.memberId = res.data.memberId
           customerAPI
             .getMemberDetails({ memberId: res.data.memberId })
             .then((re) => {
@@ -209,7 +217,7 @@ export default {
         }
       })
     },
-    goAppointment(url) {
+    toUrl(url) {
       this.$utils.push({ url: url })
     },
     goPerson() {
@@ -342,8 +350,26 @@ export default {
           color: rgba(0, 0, 0, 0.25);
         }
       }
+      span {
+        span {
+          -webkit-background-clip: text;
+          color: transparent;
+        }
+      }
+      .personnelManagement {
+        background: linear-gradient(139deg, #fb8d51 12%, #feb277 90%);
+      }
+      .appointment {
+        background: linear-gradient(321deg, #7ea8f5 12%, #3278de 101%);
+      }
+      .coupons {
+        background: linear-gradient(318deg, #68e2a2 1%, #2ad67c 95%);
+      }
+      .couponCentre {
+        background: linear-gradient(316deg, #fa85c5 0%, #eb2f96 89%);
+      }
     }
-    div:first-child {
+    div:not(:last-child) {
       border-bottom: #dbdbdb 1rpx solid;
     }
   }
@@ -356,8 +382,8 @@ export default {
     color: rgba(0, 0, 0, 0.9);
     font-size: 34rpx;
     font-weight: 400;
-    position: absolute;
-    top: 813rpx;
+    position: relative;
+    top: 392rpx;
   }
   .version {
     width: 100%;
