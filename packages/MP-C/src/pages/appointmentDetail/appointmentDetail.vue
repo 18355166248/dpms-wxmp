@@ -156,6 +156,7 @@
 
 <script>
 import moment from 'moment'
+import { mapState } from 'vuex'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import modal from '@/components/modal/neil-modal.vue'
@@ -171,33 +172,31 @@ export default {
       detailInfo: {},
       showContent: false,
       institutionInfo: {},
-      medicalInstitutionId: '',
     }
   },
   mounted() {},
   components: {
     modal,
   },
+  computed: {
+    ...mapState('loginStore', ['MEDICALINSTITUTION']),
+  },
   onLoad(id) {
     this.networkAppointmentId = id.networkAppointmentId
     this.getDetail()
   },
   methods: {
-    getDetail() {
-      appointmentAPI
-        .getAppointmentDetail({
-          networkAppointmentId: this.networkAppointmentId,
-        })
-        .then((res) => {
-          console.log('kkkkkkkkkkkk', res)
-          this.detailInfo = res.data
-          this.medicalInstitutionId = res.data.medicalInstitutionId
-          this.getInstitutionInfo()
-        })
+    async getDetail() {
+      const res = await appointmentAPI.getAppointmentDetail({
+        networkAppointmentId: this.networkAppointmentId,
+      })
+      console.log('kkkkkkkkkkkk', res)
+      this.detailInfo = res.data
+      this.getInstitutionInfo()
     },
     async getInstitutionInfo() {
       const res = await appointmentAPI.getInstitutionInfo({
-        medicalInstitutionId: this.medicalInstitutionId,
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
       })
       this.institutionInfo = res.data.institutionIntroduce
     },

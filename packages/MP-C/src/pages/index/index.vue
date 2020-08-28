@@ -7,16 +7,12 @@
           'background-color': backgroundStyle,
           height: navTop + `px`,
         }"
-      ></view>
-      <view
-        class="title"
-        :style="{
-          left: '250rpx',
-          'margin-top': Number(navTop) + 12 + `rpx`,
-        }"
-        >{{ appTitle }}</view
       >
+        <view class="title">{{ appTitle }}</view>
+      </view>
+
       <view class="banner">
+        <view class="mask"></view>
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
             class="alignCenter"
@@ -51,7 +47,7 @@
         </view>
         <view class="cardList">
           <swiper
-            class="swiper"
+            class="swiper cardListSwiper"
             :display-multiple-items="displayMultipleItems"
             next-margin="10rpx"
           >
@@ -113,8 +109,8 @@
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
                 {{
-                  s.institutionAddress.length > 18
-                    ? s.institutionAddress.substring(0, 18) + `...`
+                  s.institutionAddress.length > 15
+                    ? s.institutionAddress.substring(0, 15) + `...`
                     : s.institutionAddress
                 }}
               </view>
@@ -243,6 +239,7 @@ export default {
   },
   methods: {
     init() {
+      if (!this.MEDICALINSTITUTION) return
       institutionAPI
         .getInstitutionInfo({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
@@ -304,6 +301,7 @@ export default {
       uni.stopPullDownRefresh()
     },
     bannerToUrl(url) {
+      if (!url) return
       if (url.indexOf(`http`) !== -1) {
         this.toUrl(`/pages/index/webView?url=${url}`)
       } else {
@@ -391,6 +389,9 @@ export default {
 </script>
 
 <style scoped>
+template {
+  background-color: #ffffff;
+}
 .content {
   height: 100%;
 }
@@ -402,16 +403,30 @@ export default {
 .title {
   color: #ffffff;
   font-size: 36rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
-  z-index: 999;
-  position: fixed;
+  position: absolute;
+  left: 50%;
+  bottom: 20rpx;
+  transform: translateX(-50%);
 }
 .alignCenter {
   text-align: center;
 }
+.mask {
+  position: absolute;
+  width: 750rpx;
+  height: 232rpx;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.53),
+    rgba(216, 216, 216, 0)
+  );
+  z-index: 199;
+  pointer-events: none;
+}
 .banner {
   width: 750rpx;
   height: 376rpx;
+  position: relative;
 }
 .bannerImg {
   height: 100%;
@@ -494,6 +509,9 @@ export default {
   /* padding-right: 24rpx; */
   padding-left: 24rpx;
 }
+.cardListSwiper {
+  height: 296rpx;
+}
 .card {
   width: 306rpx;
   height: 296rpx;
@@ -562,6 +580,7 @@ export default {
   font-size: 36rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   line-height: 44rpx;
+  color: rgba(0, 0, 0);
 }
 .storeBtn {
   height: 36rpx;
@@ -576,6 +595,7 @@ export default {
 .storeList {
   width: 700rpx;
   margin-top: 32rpx;
+  background-color: #ffffff;
 }
 .storeCard {
   position: relative;
@@ -659,6 +679,6 @@ movable-view {
   z-index: 9999;
 }
 .iconfont {
-  margin-right: 4rpx;
+  margin-right: 8rpx;
 }
 </style>

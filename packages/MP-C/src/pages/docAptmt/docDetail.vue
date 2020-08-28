@@ -30,8 +30,8 @@
           <view class="storeCardAddress"
             ><span class="iconfont icon-location"></span>
             {{
-              i.institutionAddress.length > 18
-                ? i.institutionAddress.substring(0, 18) + `...`
+              i.institutionAddress.length > 15
+                ? i.institutionAddress.substring(0, 15) + `...`
                 : i.institutionAddress
             }}
           </view>
