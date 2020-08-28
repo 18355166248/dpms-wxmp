@@ -256,8 +256,8 @@ export default {
               `...`
           }
           this.appTitle =
-            res.data.institutionIntroduce.medicalInstitutionName.length > 7
-              ? res.data.institutionIntroduce.medicalInstitutionName.substring(
+            res.data.institutionIntroduce.medicalInstitutionName?.length > 7
+              ? res.data.institutionIntroduce.medicalInstitutionName?.substring(
                   0,
                   7,
                 ) + `..`
