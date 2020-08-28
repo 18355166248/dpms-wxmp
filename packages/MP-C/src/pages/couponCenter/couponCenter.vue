@@ -108,10 +108,16 @@ export default {
         })
         .then((res) => {
           if (res.code === 0) {
-            this.init()
+            const convertList = this.couponList.map((item) => {
+              if (item.couponBatchId === record.couponBatchId) {
+                item.receiveStatus = RECEIVE_STATUS_ENUM.YES.value
+              }
+              return item
+            })
+
+            this.couponList = convertList
           }
         })
-        .catch()
     },
     getVerifiStatusName(item) {
       if (item.receiveStatus === RECEIVE_STATUS_ENUM.YES.value) {
@@ -126,7 +132,9 @@ export default {
       if (item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value) {
         return `领取次日起${item.effectiveDays}天内可用`
       }
-      if (item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value) {
+      if (
+        item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
+      ) {
         return `有效期至：${moment(item.effectiveEndTime).format('YYYY.MM.DD')}`
       }
 
