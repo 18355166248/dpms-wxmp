@@ -11,7 +11,7 @@
           <!-- 标题区域 -->
           <div class="titleBox">
             <span class="title">{{ title }}</span>
-            <slot name="draw"></slot>
+            <slot name="draw" v-bind:coupon="item"></slot>
           </div>
           <!-- 内容区域 -->
           <div class="content">{{ content }}</div>
@@ -34,7 +34,7 @@
             <span v-if="isFold" class="iconfont icon-arrow-up icon"></span>
             <span v-else class="iconfont icon-arrow-down icon"></span>
           </div>
-          <div>有效期至：{{ effectiveEndTime }}</div>
+          <div>{{ effectiveEndTimeStr }}</div>
         </div>
         <div class="explain" v-if="isFold">
           <div>
@@ -59,6 +59,9 @@
 export default {
   name: 'couponsCard',
   props: {
+    item: {
+      type: Object,
+    },
     couponsImgSrc: {
       type: String,
       default: null,
@@ -85,11 +88,11 @@ export default {
     },
     // 失效状态名称
     verifiStatusName: {
-      type: Number,
+      type: String,
       default: null,
     },
     // 有效日期
-    effectiveEndTime: {
+    effectiveEndTimeStr: {
       type: String,
     },
     // 使用须知
@@ -118,6 +121,7 @@ export default {
 .couponsCardBox {
   position: relative;
   width: 100%;
+  margin-bottom: 32rpx;
   filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.09));
 
   .circular {
