@@ -5,8 +5,20 @@
       <div :class="{active: tab === 2}" @click="tabClick(2)">已使用</div>
       <div :class="{active: tab === 3}" @click="tabClick(3)">已失效</div>
     </div>
-    <div>
-      <couponsCard/>
+    <div class="coupons">
+      <div class="box" v-for="(c, i) in coupons" :key="i">
+        <couponsCard
+          :couponsImgSrc="c.cardImage"
+          :title="c.couponName"
+          :content="c.subtitle"
+          :couponsTypeName="c.couponTypeName"
+          :remainingDays="c.effectiveDays"
+          :verifiStatusName="c.verifiStatusName"
+          :effectiveEndTime="c.effectiveDate"
+          :notice="c.useIntro"
+          :noticeMatter="c.attentions"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -17,13 +29,14 @@ import couponApi from '@/APIS/coupon/coupon.api'
 import { mapState } from 'vuex'
 import customerAPI from '@/APIS/customer/customer.api'
 import {getStorage, STORAGE_KEY,} from '@/utils/storage'
+import moment from 'moment'
 export default {
   components: {
     couponsCard,
   },
   data() {
     return {
-      tab: 1,
+      tab: 1, coupons: [],
     }
   },
   computed: {
@@ -41,6 +54,10 @@ export default {
         memberId: userRes.data.memberId,
         status: this.tab
       })
+      this.coupons = res.data.map(d => ({
+        ...d,
+        effectiveDate: moment(d.effectiveEndTime).format('YYYY.MM.DD')
+      }))
     }
   },
   created() {
@@ -53,28 +70,35 @@ export default {
 .myCouponPage{
   height: 100vh;
   background: rgba(0,0,0,0.04);
-}
-.tab{
-  display: flex;
-  line-height: 76rpx;
-  background: white;
-  justify-content: space-evenly;
-  color: rgba(0,0,0,0.65);
-  font-size: 28rpx;
-  font-weight: 500;
-  .active{
-    color: #5cbb89;
-    position: relative;
-    &::before{
-      content: '';
-      position: absolute;
-      width: 58rpx;
-      height: 4rpx;
-      background: #5cbb89;
-      border-radius: 2rpx;
-      top: 100%;
-      left: 50%;
-      transform: translate(-50%);
+  .tab{
+    display: flex;
+    line-height: 76rpx;
+    background: white;
+    justify-content: space-evenly;
+    color: rgba(0,0,0,0.65);
+    font-size: 28rpx;
+    font-weight: 500;
+    .active{
+      color: #5cbb89;
+      position: relative;
+      &::before{
+        content: '';
+        position: absolute;
+        width: 58rpx;
+        height: 4rpx;
+        background: #5cbb89;
+        border-radius: 2rpx;
+        top: 100%;
+        left: 50%;
+        transform: translate(-50%);
+      }
+    }
+  }
+  .coupons{
+    padding: 32rpx 24rpx;
+    padding-bottom: 0;
+    .box{
+      margin-bottom: 32rpx;
     }
   }
 }
