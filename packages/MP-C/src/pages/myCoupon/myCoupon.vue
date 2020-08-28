@@ -5,20 +5,46 @@
       <div :class="{active: tab === 2}" @click="tabClick(2)">已使用</div>
       <div :class="{active: tab === 3}" @click="tabClick(3)">已失效</div>
     </div>
+    <div>
+      <couponsCard/>
+    </div>
   </div>
 </template>
 
 <script>
+import couponsCard from '@/businessComponents/couponsCard/couponsCard'
+import couponApi from '@/APIS/coupon/coupon.api'
+import { mapState } from 'vuex'
+import customerAPI from '@/APIS/customer/customer.api'
+import {getStorage, STORAGE_KEY,} from '@/utils/storage'
 export default {
+  components: {
+    couponsCard,
+  },
   data() {
     return {
       tab: 1,
     }
   },
+  computed: {
+    ...mapState('loginStore', ['MEDICALINSTITUTION']),
+  },
   methods: {
     tabClick(tab) {
       this.tab = tab
+      this.getCoupons()
+    },
+    async getCoupons() {
+      const userRes = await customerAPI.userDetail({ userId: getStorage(STORAGE_KEY.STAFF).id })
+      const res = await couponApi.getCoupons({
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+        memberId: userRes.data.memberId,
+        status: this.tab
+      })
     }
+  },
+  created() {
+    this.getCoupons()
   }
 }
 </script>
