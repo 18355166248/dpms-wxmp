@@ -73,7 +73,6 @@
             <span class="iconfont icon-coupons coupons"></span>我的优惠卷
           </span>
           <span>
-            <!-- 待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }} -->
             <span class="iconfont icon-right"></span>
           </span>
         </div>
@@ -86,7 +85,6 @@
             <span class="iconfont icon-gift couponCentre"></span>领券中心
           </span>
           <span>
-            <!-- 待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }} -->
             <span class="iconfont icon-right"></span>
           </span>
         </div>
@@ -262,7 +260,7 @@ export default {
     .header {
       position: absolute;
       left: 72rpx;
-      top: 116rpx;
+      top: 108rpx;
       display: flex;
       align-items: center;
       color: white;
@@ -283,7 +281,7 @@ export default {
     height: 154rpx;
     background: white;
     position: relative;
-    top: 308rpx;
+    top: 282rpx;
     margin: 0 34rpx;
     display: flex;
     justify-content: space-around;
@@ -316,7 +314,7 @@ export default {
   .personAppointment {
     padding-left: 35rpx;
     position: relative;
-    top: 372rpx;
+    top: 312rpx;
     background: white;
     div {
       height: 112rpx;
@@ -383,7 +381,7 @@ export default {
     font-size: 34rpx;
     font-weight: 400;
     position: relative;
-    top: 392rpx;
+    top: 332rpx;
   }
   .version {
     width: 100%;

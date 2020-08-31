@@ -59,7 +59,7 @@ const institutionAPI = {
     )
   },
   drawCoupon(data) {
-    return httper.get(
+    return httper.post(
       '/institution-customer/coupon/mini-apps/receive-coupon',
       data,
     )
