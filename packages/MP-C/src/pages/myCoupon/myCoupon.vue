@@ -21,7 +21,7 @@
       </div>
     </div>
     <div v-show="coupons && !coupons.length">
-      <empty text="暂无未使用优惠券" disabled></empty>
+      <empty text="暂无数据" disabled></empty>
     </div>
   </scroll-view>
 </template>
