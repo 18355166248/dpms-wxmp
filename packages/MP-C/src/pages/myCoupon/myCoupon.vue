@@ -1,5 +1,5 @@
 <template>
-  <div class="myCouponPage">
+  <scroll-view scroll-y class="myCouponPage">
     <div class="tab">
       <div :class="{active: tab === 1}" @click="tabClick(1)">未使用</div>
       <div :class="{active: tab === 2}" @click="tabClick(2)">已使用</div>
@@ -19,11 +19,11 @@
           :noticeMatter="c.attentions"
         />
       </div>
-      <div v-if="!coupons.length">
-        <empty text="暂无未使用优惠券" disabled></empty>
-      </div>
     </div>
-  </div>
+    <div v-show="coupons && !coupons.length">
+      <empty text="暂无未使用优惠券" disabled></empty>
+    </div>
+  </scroll-view>
 </template>
 
 <script>
