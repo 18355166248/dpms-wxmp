@@ -5,7 +5,7 @@
       <div :class="{active: tab === 2}" @click="tabClick(2)">已使用</div>
       <div :class="{active: tab === 3}" @click="tabClick(3)">已失效</div>
     </div>
-    <div class="coupons">
+    <div class="coupons" v-if="coupons">
       <div class="box" v-for="(c, i) in coupons" :key="i">
         <couponsCard
           :couponsImgSrc="c.cardImage"
@@ -18,6 +18,9 @@
           :notice="c.useIntro"
           :noticeMatter="c.attentions"
         />
+      </div>
+      <div v-if="!coupons.length">
+        <empty text="暂无未使用优惠券" disabled></empty>
       </div>
     </div>
   </div>
@@ -36,7 +39,7 @@ export default {
   },
   data() {
     return {
-      tab: 1, coupons: [],
+      tab: 1, coupons: null,
     }
   },
   computed: {
