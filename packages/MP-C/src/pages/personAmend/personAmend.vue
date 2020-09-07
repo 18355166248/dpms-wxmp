@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 100%; background: rgba(0, 0, 0, 0.04);">
+  <div>
     <div class="hint">
       提示：请如实填写就诊人员信息，如因信息维护产生的后果自行负责。
     </div>
