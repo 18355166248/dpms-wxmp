@@ -1,0 +1,28 @@
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hiddlen;
+  text-overflow: ellipsis;
+}
+[data-flex-none] {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+[data-flex-grow] {
+  flex: 1 1 100%;
+  box-sizing: border-box;
+}
+.tc {
+  text-align: center;
+}
+.hidden {
+  display: none;
+}
+.w100 {
+  width: 100%;
+}
+.h100 {
+  height: 100%;
+}
+.overHidden {
+  overflow: hidden;
+}

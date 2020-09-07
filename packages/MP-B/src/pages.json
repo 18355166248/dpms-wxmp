@@ -1,0 +1,198 @@
+{
+  "pages": [
+    {
+      "path": "pages/home/home",
+      "style": {
+        "navigationBarTitleText": "首页",
+        "navigationStyle": "custom",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/me/me",
+      "style": {
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/login/login",
+      "style": {
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
+    }
+  ],
+  "subPackages": [
+    {
+      "root": "baseSubpackages/todayWork",
+      "name": "todayWork",
+      "pages": [
+        {
+          "path": "todayWork",
+          "style": {
+            "navigationBarTitleText": "今日就诊",
+            "enablePullDownRefresh": true,
+            "onReachBottomDistance": 50
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/myProfile",
+      "name": "myProfile",
+      "pages": [
+        {
+          "path": "myProfile",
+          "style": {
+            "navigationBarTitleText": "我的资料"
+          }
+        },
+        {
+          "path": "about",
+          "style": {
+            "navigationBarTitleText": "关于北吉熊",
+            "navigationBarBackgroundColor": "#fff",
+            "navigationBarTextStyle": "black"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/patient",
+      "name": "patient",
+      "pages": [
+        {
+          "path": "patient",
+          "style": {
+            "navigationBarTitleText": "患者资料",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "createPatient/createPatient",
+          "style": {
+            "navigationBarTitleText": "新建患者"
+          }
+        },
+        {
+          "path": "editPatient/editPatient",
+          "style": {
+            "navigationBarTitleText": "详细信息"
+          }
+        },
+        {
+          "path": "apptList/apptList",
+          "style": {
+            "navigationBarTitleText": "预约记录"
+          }
+        },
+        {
+          "path": "createPatient/personas",
+          "style": {
+            "navigationBarTitleText": "患者标签"
+          }
+        },
+        {
+          "path": "searchPatient/searchPatient",
+          "style": {
+            "navigationBarTitleText": "搜索患者"
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/apptView",
+      "name": "apptView",
+      "pages": [
+        {
+          "path": "apptView",
+          "style": {
+            "navigationBarTitleText": "预约视图",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "doctorList",
+          "style": {
+            "navigationBarTitleText": "医生"
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/apptForm",
+      "name": "apptForm",
+      "pages": [
+        {
+          "path": "apptForm",
+          "style": {
+            "navigationBarTitleText": "新建预约",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "staffList"
+        },
+        {
+          "path": "apptItemList",
+          "style": {
+            "navigationBarTitleText": "预约项目"
+          }
+        },
+        {
+          "path": "apptDetail",
+          "style": {
+            "navigationBarTitleText": "预约详情",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "cancleAppt",
+          "style": {
+            "navigationBarTitleText": "取消预约"
+          }
+        }
+      ]
+    }
+  ],
+  "preloadRule": {
+    "baseSubpackages/apptView/apptView": {
+      "network": "all",
+      "packages": ["apptForm"]
+    }
+  },
+  "globalStyle": {
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#5CBB89",
+    "backgroundColor": "#F8F8F8"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "tabBar": {
+    "color": "#070707",
+    "selectedColor": "#5CBB89",
+    "borderStyle": "black",
+    "backgroundColor": "#ffffff",
+    "list": [
+      {
+        "pagePath": "pages/home/home",
+        "iconPath": "static/icon-home.png",
+        "selectedIconPath": "static/icon-home-active.png",
+        "text": "首页"
+      },
+      {
+        "pagePath": "pages/me/me",
+        "iconPath": "static/icon-me.png",
+        "selectedIconPath": "static/icon-me-active.png",
+        "text": "我的"
+      }
+    ]
+  },
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+    }
+  }
+}
