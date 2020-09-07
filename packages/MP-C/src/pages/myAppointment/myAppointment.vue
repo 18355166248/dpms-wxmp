@@ -51,16 +51,32 @@
             </span>
           </div>
           <div class="appointmentInfo">
-            <div>门店:{{ val.shopName || '' }}</div>
-            <div>医生:{{ val.doctorName || '' }}</div>
             <div>
-              预约项目:{{
-                val.networkAppointmentItemList.length
-                  ? arrObjKeys(val.networkAppointmentItemList, 'itemName', ',')
-                  : ''
-              }}
+              <div style="white-space: nowrap;">门店：</div>
+              <div>{{ val.shopName || '' }}</div>
             </div>
-            <div>患者姓名:{{ val.personnelName || '' }}</div>
+            <div>
+              <div style="white-space: nowrap;">医生：</div>
+              <div>{{ val.doctorName || '' }}</div>
+            </div>
+            <div>
+              <div style="white-space: nowrap;">预约项目：</div>
+              <div>
+                {{
+                  val.networkAppointmentItemList.length
+                    ? arrObjKeys(
+                        val.networkAppointmentItemList,
+                        'itemName',
+                        ',',
+                      )
+                    : ''
+                }}
+              </div>
+            </div>
+            <div>
+              <div style="white-space: nowrap;">患者姓名：</div>
+              <div>{{ val.personnelName || '' }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -109,9 +125,6 @@ export default {
   },
   onUnload() {
     uni.$off(globalEventKeys.deleteAppointFormWithSaveSuccess)
-    wx.switchTab({
-      url: '/pages/mySelf/mySelf',
-    })
   },
   onPullDownRefresh() {
     this.recent = 'active'
@@ -187,7 +200,6 @@ movable-area {
   display: block;
   height: 100%;
   width: 100%;
-  background: rgba(0, 0, 0, 0.04);
 }
 .tab {
   height: 76rpx;
@@ -251,7 +263,8 @@ movable-area {
       font-size: 28rpx;
       font-weight: 400;
       height: 68rpx;
-      line-height: 68rpx;
+      display: flex;
+      align-items: center;
       border-bottom: 1rpx rgba(0, 0, 0, 0.15) solid;
       color: rgba(0, 0, 0, 0.9);
       position: relative;
@@ -272,9 +285,13 @@ movable-area {
     }
     .appointmentInfo {
       margin-top: 17rpx;
-      color: rgba(0, 0, 0, 0.5);
+      color: rgba(0, 0, 0, 0.65);
       font-size: 28rpx;
       font-weight: 400;
+      div {
+        margin-bottom: 4rpx;
+        display: flex;
+      }
     }
   }
 }

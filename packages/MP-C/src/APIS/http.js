@@ -95,7 +95,10 @@ httper.interceptors.request.use((request) => {
         _tenantId: medicalInstitution?.tenantId,
 
         // 连锁机构总部 Id
-        _cmtId: medicalInstitution?.medicalInstitutionDTO?.topParentId === 0 ? medicalInstitution?.medicalInstitutionId : medicalInstitution?.medicalInstitutionDTO?.topParentId,
+        _cmtId:
+          medicalInstitution?.medicalInstitutionDTO?.topParentId === 0
+            ? medicalInstitution?.medicalInstitutionId
+            : medicalInstitution?.medicalInstitutionDTO?.topParentId,
 
         // 连锁机构类型
         _cmtType: medicalInstitution?.institutionChainType,
@@ -196,7 +199,7 @@ httper.interceptors.response.use(
       icon: 'none',
       title: response?.data?.msg || response?.data?.message || '数据请求失败',
     })
-
+    console.log('response', response.data)
     return Promise.reject(response.data)
   },
   function (err) {

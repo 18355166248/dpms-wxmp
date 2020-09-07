@@ -1,16 +1,10 @@
 <template>
   <movable-area>
-    <view
-      :style="{
-        paddingTop: navHeight + 'px',
-        height: viewHeight,
-      }"
-      class="home-view"
-    >
+    <view class="home-view">
       <view class="home-bg">
         <image
           class="home-bg-img"
-          src="/static/header-bg.png"
+          src="/static/header-bg.svg"
           mode="widthFix"
         />
       </view>
@@ -122,8 +116,8 @@ export default {
       confirmedCount: '',
       appointCount: '',
       top: '',
-      x: 300,
-      y: 360,
+      x: 0,
+      y: 0,
       headerImgSrc: '/static/header-img.svg',
       mobile: '',
       memberDetails: {},
@@ -140,6 +134,14 @@ export default {
   },
   onPullDownRefresh() {
     this.load()
+  },
+  created() {
+    uni.getSystemInfo({
+      success: (res) => {
+        this.y = res.windowHeight - 60
+        this.x = res.windowWidth
+      },
+    })
   },
   methods: {
     // goMembershipCard() {
@@ -242,18 +244,6 @@ export default {
     text-align: center;
     height: 44rpx;
     line-height: 44rpx;
-  }
-  .home-bg {
-    width: 100%;
-    height: 420rpx;
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    &-img {
-      width: 100%;
-    }
   }
   .header-wrapper {
     position: relative;
@@ -413,10 +403,21 @@ export default {
 movable-area {
   width: 100%;
   height: 100%;
-  background: rgba($color: #000000, $alpha: 0.04);
 }
 
 movable-view {
   z-index: 9999;
+}
+.home-bg {
+  width: 100%;
+  height: 452rpx;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  &-img {
+    width: 100%;
+  }
 }
 </style>
