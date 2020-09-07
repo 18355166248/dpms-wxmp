@@ -109,8 +109,8 @@
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
                 {{
-                  s.institutionAddress.length > 15
-                    ? s.institutionAddress.substring(0, 15) + `...`
+                  s.institutionAddress.length > 35
+                    ? s.institutionAddress.substring(0, 35) + `...`
                     : s.institutionAddress
                 }}
               </view>
@@ -602,7 +602,7 @@ template {
   background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
     no-repeat;
   background-size: 152rpx 160rpx;
-  height: 186rpx;
+  height: 216rpx;
   width: 700rpx;
   background-position: 500rpx -35rpx;
   border-radius: 8rpx;
@@ -620,8 +620,9 @@ template {
   padding-left: 24rpx;
 }
 .storeCardAddress {
-  height: 36rpx;
+  height: 72rpx;
   font-size: 28rpx;
+  width: 512rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
