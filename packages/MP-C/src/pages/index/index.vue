@@ -619,16 +619,20 @@ template {
   padding-top: 24rpx;
   padding-left: 24rpx;
 }
+.icon-location {
+  position: absolute;
+  left: 24rpx;
+}
 .storeCardAddress {
   height: 72rpx;
   font-size: 28rpx;
-  width: 512rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
+  width: 488rpx;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
   line-height: 36rpx;
   padding-top: 16rpx;
-  padding-left: 24rpx;
+  padding-left: 62rpx;
+  overflow: hidden;
 }
 .storeCardTime {
   height: 36rpx;

@@ -12,7 +12,7 @@ const config = {
       'institution-customer': 'http://10.101.11.93:8449/',
     },
   },
-  DPMSServerUrl: 'http://uat.cloud.api.dental.laoganma.fun/',
+  DPMSServerUrl: 'http://uat-tx.dental.his.laoganma.fun/',
   SCRMServerUrl: 'http://api.scrm.uat.laoganma.fun/',
   iconfontUrl: '//at.alicdn.com/t/font_1575084_5snnlrkarpw.js',
   microAppUrl: 'http://uat.scrm.laoganma.fun/scrm_vue/',
