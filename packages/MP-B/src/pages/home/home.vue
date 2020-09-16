@@ -204,7 +204,7 @@ export default {
   },
   onShareAppMessage(res) {
     return {
-      title: '北吉熊',
+      title: '北吉熊口腔',
       path: '/pages/home/home',
     }
   },

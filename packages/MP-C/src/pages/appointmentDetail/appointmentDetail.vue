@@ -144,19 +144,19 @@
       :show-cancel="false"
       @close="showContent = false"
     >
-      <view style="padding: 32rpx 24rpx;">
-        <view>1. 停诊将会短信通知您，请保持电话畅通；</view>
-        <view>
-          2. 您的预约信息作为登陆信息，在诊所核实确认时有权取消您的预约信息；
-        </view>
-        <view>3. 实名制预约，就诊人信息不符合没法就诊；</view>
-      </view>
+      <scroll-view scroll-y class="agreeContent">
+        <div
+          style="padding: 32rpx 24rpx;"
+          v-html="institutionInfo.bookingInformation"
+        ></div>
+      </scroll-view>
     </modal>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import { mapState } from 'vuex'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import modal from '@/components/modal/neil-modal.vue'
@@ -171,26 +171,34 @@ export default {
       networkAppointmentId: '',
       detailInfo: {},
       showContent: false,
+      institutionInfo: {},
     }
   },
   mounted() {},
   components: {
     modal,
   },
+  computed: {
+    ...mapState('loginStore', ['MEDICALINSTITUTION']),
+  },
   onLoad(id) {
     this.networkAppointmentId = id.networkAppointmentId
     this.getDetail()
   },
   methods: {
-    getDetail() {
-      appointmentAPI
-        .getAppointmentDetail({
-          networkAppointmentId: this.networkAppointmentId,
-        })
-        .then((res) => {
-          console.log('kkkkkkkkkkkk', res)
-          this.detailInfo = res.data
-        })
+    async getDetail() {
+      const res = await appointmentAPI.getAppointmentDetail({
+        networkAppointmentId: this.networkAppointmentId,
+      })
+      console.log('kkkkkkkkkkkk', res)
+      this.detailInfo = res.data
+      this.getInstitutionInfo()
+    },
+    async getInstitutionInfo() {
+      const res = await appointmentAPI.getInstitutionInfo({
+        medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+      })
+      this.institutionInfo = res.data.institutionIntroduce
     },
     delAppoint() {
       uni.showModal({
@@ -261,7 +269,6 @@ export default {
 <style lang="scss" scoped>
 .content {
   padding-bottom: 118rpx;
-  background: rgba($color: #000000, $alpha: 0.04);
 }
 .appointmentInfo {
   padding-left: 32rpx;
@@ -336,5 +343,10 @@ export default {
       border: 2rpx solid #5cbb89;
     }
   }
+}
+.agreeContent {
+  max-height: 70vh;
+  box-sizing: border-box;
+  word-break: break-word;
 }
 </style>

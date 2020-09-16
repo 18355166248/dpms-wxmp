@@ -1,7 +1,18 @@
 <template>
   <movable-area>
     <view class="content" scroll-y>
+      <view
+        class="nav"
+        :style="{
+          'background-color': backgroundStyle,
+          height: navTop + `px`,
+        }"
+      >
+        <view class="title">{{ appTitle }}</view>
+      </view>
+
       <view class="banner">
+        <view class="mask"></view>
         <swiper class="swiper banner" indicator-dots autoplay>
           <swiper-item
             class="alignCenter"
@@ -36,7 +47,7 @@
         </view>
         <view class="cardList">
           <swiper
-            class="swiper"
+            class="swiper cardListSwiper"
             :display-multiple-items="displayMultipleItems"
             next-margin="10rpx"
           >
@@ -98,8 +109,8 @@
               <view class="storeCardAddress">
                 <span class="iconfont icon-location"></span>
                 {{
-                  s.institutionAddress.length > 18
-                    ? s.institutionAddress.substring(0, 18) + `...`
+                  s.institutionAddress.length > 35
+                    ? s.institutionAddress.substring(0, 35) + `...`
                     : s.institutionAddress
                 }}
               </view>
@@ -169,13 +180,15 @@ export default {
       size: 2,
       displayMultipleItems: 1,
       showMoreBtn: false,
-      color: '#5CBB89',
+      color: 'rgb(0, 0, 0, 0.5)',
       appTitle: '',
+      height: '',
       contentText: {
         contentdown: '加载更多',
         contentrefresh: '正在加载..',
         contentnomore: '没有更多数据了',
       },
+      backgroundStyle: 'rgb(92, 187, 137, 0)',
     }
   },
   onShareAppMessage(res) {
@@ -187,11 +200,19 @@ export default {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
     }),
+    menuButtonObject() {
+      return uni.getMenuButtonBoundingClientRect()
+    },
+    navTop: function () {
+      this.height = this.menuButtonObject.top + this.menuButtonObject.height
+      return `${this.menuButtonObject.top + this.menuButtonObject.height + 10}`
+    },
   },
   watch: {
     MEDICALINSTITUTION(newVal) {
       uni.startPullDownRefresh()
     },
+    scrollTop(newVal) {},
   },
   created() {
     uni.getSystemInfo({
@@ -209,11 +230,16 @@ export default {
   onPullDownRefresh() {
     this.init()
   },
+  onPageScroll({ scrollTop }) {
+    let alpha = scrollTop / this.height
+    this.backgroundStyle = `rgb(92, 187, 137, ${alpha})`
+  },
   onReachBottom() {
     this.loadMoreList()
   },
   methods: {
     init() {
+      if (!this.MEDICALINSTITUTION) return
       institutionAPI
         .getInstitutionInfo({
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
@@ -229,9 +255,13 @@ export default {
               this.institutionIntroduce.briefIntroduction.substring(0, 70) +
               `...`
           }
-          uni.setNavigationBarTitle({
-            title: res.data.institutionIntroduce.medicalInstitutionName,
-          })
+          this.appTitle =
+            res.data.institutionIntroduce.medicalInstitutionName?.length > 7
+              ? res.data.institutionIntroduce.medicalInstitutionName?.substring(
+                  0,
+                  7,
+                ) + `..`
+              : res.data.institutionIntroduce.medicalInstitutionName
         })
       institutionAPI
         .getProjList({
@@ -271,6 +301,7 @@ export default {
       uni.stopPullDownRefresh()
     },
     bannerToUrl(url) {
+      if (!url) return
       if (url.indexOf(`http`) !== -1) {
         this.toUrl(`/pages/index/webView?url=${url}`)
       } else {
@@ -358,15 +389,44 @@ export default {
 </script>
 
 <style scoped>
+template {
+  background-color: #ffffff;
+}
 .content {
   height: 100%;
+}
+.nav {
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+}
+.title {
+  color: #ffffff;
+  font-size: 36rpx;
+  position: absolute;
+  left: 50%;
+  bottom: 20rpx;
+  transform: translateX(-50%);
 }
 .alignCenter {
   text-align: center;
 }
+.mask {
+  position: absolute;
+  width: 750rpx;
+  height: 232rpx;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.53),
+    rgba(216, 216, 216, 0)
+  );
+  z-index: 199;
+  pointer-events: none;
+}
 .banner {
   width: 750rpx;
   height: 376rpx;
+  position: relative;
 }
 .bannerImg {
   height: 100%;
@@ -449,6 +509,9 @@ export default {
   /* padding-right: 24rpx; */
   padding-left: 24rpx;
 }
+.cardListSwiper {
+  height: 296rpx;
+}
 .card {
   width: 306rpx;
   height: 296rpx;
@@ -517,6 +580,7 @@ export default {
   font-size: 36rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   line-height: 44rpx;
+  color: rgba(0, 0, 0);
 }
 .storeBtn {
   height: 36rpx;
@@ -531,13 +595,14 @@ export default {
 .storeList {
   width: 700rpx;
   margin-top: 32rpx;
+  background-color: #ffffff;
 }
 .storeCard {
   position: relative;
   background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
     no-repeat;
   background-size: 152rpx 160rpx;
-  height: 186rpx;
+  height: 216rpx;
   width: 700rpx;
   background-position: 500rpx -35rpx;
   border-radius: 8rpx;
@@ -555,8 +620,9 @@ export default {
   padding-left: 24rpx;
 }
 .storeCardAddress {
-  height: 36rpx;
+  height: 72rpx;
   font-size: 28rpx;
+  width: 512rpx;
   font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
@@ -614,6 +680,6 @@ movable-view {
   z-index: 9999;
 }
 .iconfont {
-  margin-right: 4rpx;
+  margin-right: 8rpx;
 }
 </style>

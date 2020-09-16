@@ -58,10 +58,10 @@
       />
     </dpmsForm>
     <div class="agree">
-      <dpmsCheckbox class="checkbox" @change="(v) => (btnDisabled = !v)">
+      <dpmsCheckbox class="checkbox" @change="(v) => (isAgree = !v)">
         <template v-slot:icon>
           <dpmsIcons
-            v-if="!btnDisabled"
+            v-if="isAgree"
             type="check-circle-fill"
             color="rgba(92,187,137,1)"
           />
@@ -239,7 +239,7 @@ export default {
           message: '请选择预约人员',
         },
       },
-      btnDisabled: true,
+      btnDisabled: false,
       doctor: {},
       dockers: [],
       doctorTime: [],
@@ -252,6 +252,7 @@ export default {
       ContactLabel_ENUM: this.$utils.getEnums('ContactLabel'),
       Gender_ENUM: this.$utils.getEnums('Gender'),
       institutionInfo: {},
+      isAgree: false,
     }
   },
   components: {
@@ -338,7 +339,9 @@ export default {
         })
     },
     submit() {
-      if (this.btnDisabled) {
+      if (this.btnDisabled) return
+
+      if (!this.isAgree) {
         this.$utils.show('请阅读并同意《预约服务协议》')
         return
       }
@@ -476,11 +479,16 @@ export default {
       this.institutionInfo = res.data.institutionIntroduce
     },
     dockerClick(d) {
-      this.form.doctorId = d.doctorId
+      if (this.form.doctorId === d.doctorId) {
+        this.form.doctorId = ''
+        this.doctor = {}
+      } else {
+        this.form.doctorId = d.doctorId
+        this.doctor = d
+      }
       if (this.form.date) {
         this.getDoctorTime(this.form.date)
       }
-      this.doctor = d
       this.doctorPickerVisible = false
     },
     doctorTimeClick(value) {
