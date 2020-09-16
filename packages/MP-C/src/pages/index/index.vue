@@ -627,12 +627,12 @@ template {
   height: 72rpx;
   font-size: 28rpx;
   width: 488rpx;
-  font-family: PingFangSC, PingFangSC-Regular;
   text-align: left;
   color: rgba(0, 0, 0, 0.5);
   line-height: 36rpx;
   padding-top: 16rpx;
   padding-left: 62rpx;
+  overflow: hidden;
 }
 .storeCardTime {
   height: 36rpx;
