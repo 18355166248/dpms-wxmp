@@ -1,5 +1,5 @@
 <template>
-  <div class="myCouponPage">
+  <scroll-view scroll-y class="myCouponPage">
     <div class="tab">
       <div :class="{active: tab === 1}" @click="tabClick(1)">未使用</div>
       <div :class="{active: tab === 2}" @click="tabClick(2)">已使用</div>
@@ -8,6 +8,7 @@
     <div class="coupons" v-if="coupons">
       <div class="box" v-for="(c, i) in coupons" :key="i">
         <couponsCard
+          :item="c"
           :couponsImgSrc="c.cardImage"
           :title="c.couponName"
           :content="c.subtitle"
@@ -17,13 +18,14 @@
           :effectiveEndTime="c.effectiveDate"
           :notice="c.useIntro"
           :noticeMatter="c.attentions"
+          :useCouponsType="tab"
         />
       </div>
-      <div v-if="!coupons.length">
-        <empty text="暂无未使用优惠券" disabled></empty>
-      </div>
     </div>
-  </div>
+    <div v-show="coupons && !coupons.length">
+      <empty :text="`暂无${tab === 1 && '未使用' || tab === 2 && '已使用' || tab === 3 && '已失效'}优惠券`" disabled></empty>
+    </div>
+  </scroll-view>
 </template>
 
 <script>
@@ -51,12 +53,17 @@ export default {
       this.getCoupons()
     },
     async getCoupons() {
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
       const userRes = await customerAPI.userDetail({ userId: getStorage(STORAGE_KEY.STAFF).id })
       const res = await couponApi.getCoupons({
         medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         memberId: userRes.data.memberId,
         status: this.tab
       })
+      setTimeout(() => uni.hideLoading(), 300)
       this.coupons = res.data.map(d => ({
         ...d,
         effectiveDate: moment(d.effectiveEndTime).format('YYYY.MM.DD')

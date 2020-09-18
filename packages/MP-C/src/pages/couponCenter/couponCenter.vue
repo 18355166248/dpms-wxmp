@@ -86,7 +86,7 @@ export default {
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
-          uni.hideLoading()
+          setTimeout(() => uni.hideLoading(), 300)
           if (!!res.data.length) {
             this.showNode = false
             this.couponList = res.data
@@ -121,7 +121,7 @@ export default {
     },
     getVerifiStatusName(item) {
       if (item.receiveStatus === RECEIVE_STATUS_ENUM.YES.value) {
-        return '已使用'
+        return '已领取'
       }
       return null
     },

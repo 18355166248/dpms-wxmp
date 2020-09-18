@@ -18,7 +18,7 @@
           <!-- 脚部标签区域 -->
           <div class="footer">
             <span class="label">{{ couponsTypeName }}</span>
-            <span v-show="remainingDays" class="days"
+            <span v-show="useCouponsType === 1 && remainingDays" class="days"
               >剩余{{ remainingDays }}天</span
             >
           </div>
@@ -48,6 +48,7 @@
         </div>
       </div>
     </div>
+    <!-- 状态标签 -->
     <div v-show="verifiStatusName">
       <span class="couponStatusLabel">{{ verifiStatusName }}</span>
       <image class="couponStatusImg" src="../../static/coupon-failure.png" />
@@ -72,6 +73,7 @@ export default {
     content: {
       type: String,
     },
+    //使用状态：（未使用：1，已使用：2，已失效：3）
     useCouponsType: {
       type: Number,
     },
