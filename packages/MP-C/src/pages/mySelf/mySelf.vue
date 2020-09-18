@@ -218,7 +218,14 @@ export default {
       })
     },
     toUrl(url) {
-      this.$utils.push({ url: url })
+      if (this.toUrling) return
+      this.toUrling = true
+      setTimeout(() => this.toUrling = false, 999)
+      if (getStorage(STORAGE_KEY.STAFF).id) {
+        this.$utils.push({ url: url })
+      } else {
+        this.load()
+      }
     },
     goPerson() {
       this.$utils.push({ url: '/pages/personManagement/personManagement' })
