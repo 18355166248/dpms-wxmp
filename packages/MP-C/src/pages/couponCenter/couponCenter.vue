@@ -152,7 +152,7 @@ export default {
 }
 
 .couponCenterBox {
-  background: rgba(0, 0, 0, 0.04);
+  background: #f5f5f5;
   height: 100%;
   padding: 32rpx 24rpx;
 
@@ -169,6 +169,9 @@ export default {
     line-height: 36rpx;
     text-align: center;
     margin: 0;
+    &::after{
+      border: none;
+    }
   }
 }
 </style>

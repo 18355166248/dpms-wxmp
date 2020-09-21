@@ -49,7 +49,7 @@
       </div>
     </div>
     <!-- 状态标签 -->
-    <div v-show="verifiStatusName">
+    <div v-show="verifiStatusName" v-if="useCouponsType !== 1">
       <span class="couponStatusLabel">{{ verifiStatusName }}</span>
       <image class="couponStatusImg" src="../../static/coupon-failure.png" />
     </div>
@@ -124,7 +124,7 @@ export default {
   position: relative;
   width: 100%;
   margin-bottom: 32rpx;
-  filter: drop-shadow(0px 0px 10px rgba(0, 0, 0, 0.09));
+  filter: drop-shadow(0px 0px 51rpx rgba(0, 0, 0, 0.09));
 
   .circular {
     width: 100%;
@@ -184,7 +184,6 @@ export default {
           font-size: 28rpx;
           color: rgba(0, 0, 0, 0.65);
           width: 446rpx;
-          height: 88rpx;
           line-height: 44rpx;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -203,7 +202,7 @@ export default {
             background-color: #fff7e6;
             color: #fa8c16;
             font-size: 26rpx;
-            line-height: 36rpx;
+            line-height: 40rpx;
             padding: 0 16rpx;
             border-radius: 2rpx;
           }
@@ -222,14 +221,13 @@ export default {
     border-bottom-right-radius: 8rpx;
     border-bottom-left-radius: 8rpx;
     .underContent {
-      padding: 8rpx 24rpx 16rpx;
+      padding: 6rpx 20rpx 16rpx;
       .titleBox {
         display: flex;
         justify-content: space-between;
         font-size: 26rpx;
         color: rgba(0, 0, 0, 0.65);
         line-height: 36rpx;
-        margin-bottom: 16rpx;
         .icon {
           margin-left: 8rpx;
           font-size: 24rpx;
@@ -237,6 +235,7 @@ export default {
         }
       }
       .explain {
+        margin-top: 8rpx;
         div {
           display: flex;
           flex-direction: row;
