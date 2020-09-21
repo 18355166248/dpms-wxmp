@@ -79,7 +79,7 @@ export default {
 <style lang="scss" scoped>
 .myCouponPage{
   height: 100vh;
-  background: rgba(0,0,0,0.04);
+  background: #f5f5f5;
   .tab{
     display: flex;
     line-height: 76rpx;
