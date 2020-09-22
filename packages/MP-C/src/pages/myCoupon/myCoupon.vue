@@ -18,7 +18,7 @@
           :effectiveEndTimeStr="getEffectiveEndTime(c)"
           :notice="c.useIntro"
           :noticeMatter="c.attentions"
-          :useCouponsType="tab"
+          :tabCouponsType="tab"
         />
       </div>
     </div>
