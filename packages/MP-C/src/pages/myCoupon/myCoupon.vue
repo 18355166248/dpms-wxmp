@@ -15,7 +15,7 @@
           :couponsTypeName="c.couponTypeName"
           :remainingDays="c.effectiveDays"
           :verifiStatusName="c.verifiStatusName"
-          :effectiveEndTime="c.effectiveDate"
+          :effectiveEndTimeStr="getEffectiveEndTime(c)"
           :notice="c.useIntro"
           :noticeMatter="c.attentions"
           :useCouponsType="tab"
@@ -35,6 +35,9 @@ import { mapState } from 'vuex'
 import customerAPI from '@/APIS/customer/customer.api'
 import {getStorage, STORAGE_KEY,} from '@/utils/storage'
 import moment from 'moment'
+const enums = uni.getStorageSync('enums')
+
+const EFFECTIVE_TIME_TYPE_ENUM = enums.EffectiveTimeType
 export default {
   components: {
     couponsCard,
@@ -51,6 +54,21 @@ export default {
     tabClick(tab) {
       this.tab = tab
       this.getCoupons()
+    },
+    getEffectiveEndTime(item) {
+      if (item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.DAY.value) {
+        return `领取当日起${item.effectiveDays}天内可用`
+      }
+      if (item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value) {
+        return `领取次日起${item.effectiveDays}天内可用`
+      }
+      if (
+        item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
+      ) {
+        return `有效期至：${moment(item.effectiveEndTime).format('YYYY.MM.DD')}`
+      }
+
+      return ''
     },
     async getCoupons() {
       uni.showLoading({
