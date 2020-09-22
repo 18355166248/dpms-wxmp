@@ -22,7 +22,7 @@
         />
       </div>
     </div>
-    <div v-show="coupons && !coupons.length">
+    <div v-if="coupons && !coupons.length">
       <empty :text="`暂无${tab === 1 && '未使用' || tab === 2 && '已使用' || tab === 3 && '已失效'}优惠券`" disabled></empty>
     </div>
   </scroll-view>

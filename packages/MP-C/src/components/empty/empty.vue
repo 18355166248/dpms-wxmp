@@ -48,7 +48,6 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-
   width: 100%;
   padding-top: 25%;
   align-items: center;
@@ -56,11 +55,13 @@ export default {
   font-size: 24rpx;
   background: none;
   &-image {
-    width: 40% !important;
+    width: 406rpx;
+    height: 290rpx;
     margin-bottom: 40rpx;
   }
   &-text {
-    font-size: 30rpx;
+    font-size: 34rpx;
+    font-weight: 400;
     color: rgba(0, 0, 0, 0.65);
   }
   &-btn {
