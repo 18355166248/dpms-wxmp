@@ -239,6 +239,7 @@ export default {
       }
       .explain {
         margin-top: 8rpx;
+        word-break: break-all;
         div {
           display: flex;
           flex-direction: row;

@@ -1,31 +1,35 @@
 <template>
-  <scroll-view scroll-y class="myCouponPage">
-    <div class="tab">
-      <div :class="{active: tab === 1}" @click="tabClick(1)">未使用</div>
-      <div :class="{active: tab === 2}" @click="tabClick(2)">已使用</div>
-      <div :class="{active: tab === 3}" @click="tabClick(3)">已失效</div>
-    </div>
-    <div class="coupons" v-if="coupons">
-      <div class="box" v-for="(c, i) in coupons" :key="i">
-        <couponsCard
-          :item="c"
-          :couponsImgSrc="c.cardImage"
-          :title="c.couponName"
-          :content="c.subtitle"
-          :couponsTypeName="c.couponTypeName"
-          :remainingDays="c.effectiveDays"
-          :verifiStatusName="c.verifiStatusName"
-          :effectiveEndTimeStr="getEffectiveEndTime(c)"
-          :notice="c.useIntro"
-          :noticeMatter="c.attentions"
-          :tabCouponsType="tab"
-        />
-      </div>
-    </div>
-    <div v-if="coupons && !coupons.length">
-      <empty :text="`暂无${tab === 1 && '未使用' || tab === 2 && '已使用' || tab === 3 && '已失效'}优惠券`" disabled></empty>
-    </div>
-  </scroll-view>
+  <div class="myCouponPage">
+    <div class="tab" :class="[`tab${tab}`]">
+      <div :class="{active: tab == 1}" @click="tabClick(1)">未使用</div>
+      <div :class="{active: tab == 2}" @click="tabClick(2)">已使用</div>
+      <div :class="{active: tab == 3}" @click="tabClick(3)">已失效</div>
+    </div>      
+    <swiper style="height:100%" class="coupons" v-if="coupons" @change="swiperChange" :current-item-id="tab">
+      <swiper-item v-for="item in [1,2,3]" :key="item" :item-id="item">
+        <scroll-view scroll-y class="scroll">
+          <div class="box" v-for="(c, i) in coupons" :key="i">
+            <couponsCard
+              :item="c"
+              :couponsImgSrc="c.cardImage"
+              :title="c.couponName"
+              :content="c.subtitle"
+              :couponsTypeName="c.couponTypeName"
+              :remainingDays="c.effectiveDays"
+              :verifiStatusName="c.verifiStatusName"
+              :effectiveEndTimeStr="getEffectiveEndTime(c)"
+              :notice="c.useIntro"
+              :noticeMatter="c.attentions"
+              :tabCouponsType="tab"
+            />
+          </div>
+          <div v-if="coupons && !coupons.length">
+            <empty :text="`暂无${tab == 1 && '未使用' || tab == 2 && '已使用' || tab == 3 && '已失效'}优惠券`" disabled></empty>
+          </div>
+        </scroll-view>
+      </swiper-item>
+    </swiper>
+  </div>
 </template>
 
 <script>
@@ -56,6 +60,9 @@ export default {
       this.tab = tab
       this.getCoupons()
     },
+    swiperChange({detail}) {
+      this.tabClick(detail.currentItemId)
+    },
     getEffectiveEndTime(item) {
       if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DAY.value) {
         return `领取当日起${item.effectiveDays}天内可用`
@@ -83,7 +90,7 @@ export default {
         status: this.tab
       })
       setTimeout(() => uni.hideLoading(), 300)
-      this.coupons = res.data.map(d => ({
+      this.coupons = (res.data || []).map(d => ({
         ...d,
         effectiveDate: moment(d.effectiveEndTime).format('YYYY.MM.DD')
       }))
@@ -107,27 +114,47 @@ export default {
     color: rgba(0,0,0,0.65);
     font-size: 28rpx;
     font-weight: 500;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    border-bottom: solid 1rpx #f5f5f5;
     .active{
       color: #5cbb89;
-      position: relative;
-      &::before{
-        content: '';
-        position: absolute;
-        width: 58rpx;
-        height: 4rpx;
-        background: #5cbb89;
-        border-radius: 2rpx;
-        top: 100%;
-        left: 50%;
-        transform: translate(-50%);
-      }
+    }
+    &::before{
+      content: '';
+      position: absolute;
+      width: 58rpx;
+      height: 4rpx;
+      background: #5cbb89;
+      border-radius: 2rpx;
+      top: 100%;
+      transform: translate(-50%,0);
+      transition: .5s left;
+    }
+    &.tab1::before{
+      left: 22%
+    }
+    &.tab2::before{
+      left: 50%
+    }
+    &.tab3::before{
+      left: 78%
     }
   }
   .coupons{
-    padding: 32rpx 24rpx;
+    padding: 32rpx 0;
     padding-bottom: 0;
+    .scroll{
+      height: 100vh;
+      padding-top: 76rpx;
+      box-sizing: border-box;
+    }
     .box{
       margin-bottom: 32rpx;
+      padding: 0 24rpx;
     }
   }
 }
