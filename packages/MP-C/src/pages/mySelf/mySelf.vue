@@ -64,7 +64,7 @@
         </div>
         <div @click="toUrl('/pages/myCoupon/myCoupon')">
           <span>
-            <span class="iconfont icon-coupons coupons"></span>我的优惠卷
+            <span class="iconfont icon-coupons coupons"></span>我的优惠券
           </span>
           <span>
             <span class="iconfont icon-right"></span>

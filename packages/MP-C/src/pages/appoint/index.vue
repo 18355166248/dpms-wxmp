@@ -64,6 +64,7 @@
             v-if="isAgree"
             type="check-circle-fill"
             color="rgba(92,187,137,1)"
+            class="checked"
           />
           <view v-else class="check-circle"></view>
         </template>
@@ -534,19 +535,27 @@ page {
 .agree {
   color: rgba(153, 153, 153, 1);
   font-size: 24rpx;
-  padding: 20rpx 32rpx;
+  height: 74rpx;
   display: flex;
   align-items: center;
   .checkbox {
-    width: 32rpx;
-    height: 32rpx;
-    margin-right: 10rpx;
+    width: 74rpx;
+    height: 74rpx;
+    /deep/.checked{
+      padding: 22rpx 10rpx 22rpx 32rpx;
+      display: block;
+    }
     .check-circle {
-      width: 30rpx;
-      height: 30rpx;
-      border: 1rpx solid rgba(0, 0, 0, 0.25);
-      border-radius: 50%;
-      background: #fff;
+      padding: 22rpx 10rpx 22rpx 32rpx;
+      &::before{
+        content: '';
+        display: block;
+        border: 1rpx solid rgba(0, 0, 0, 0.25);
+        border-radius: 50%;
+        background: #fff;
+        width: 28rpx;
+        height: 28rpx;
+      }
     }
   }
   text {

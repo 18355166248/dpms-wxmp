@@ -49,7 +49,7 @@
       </div>
     </div>
     <!-- 状态标签 -->
-    <div v-show="verifiStatusName" v-if="tabCouponsType !== 1 || item.verifiStatus !== 1">
+    <div v-show="verifiStatusName" v-if="tabCouponsType !== 1">
       <span class="couponStatusLabel">{{ verifiStatusName }}</span>
       <image class="couponStatusImg" src="../../static/coupon-failure.png" />
     </div>
