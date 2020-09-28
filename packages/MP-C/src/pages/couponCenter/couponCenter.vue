@@ -153,12 +153,11 @@ export default {
 .scroll-view {
   height: 100%;
 }
-
 .couponCenterBox {
   background: #f5f5f5;
   height: 100%;
   padding: 32rpx 24rpx;
-
+  box-sizing: border-box;
   .couponsBtn {
     display: flex;
     justify-content: center;
