@@ -64,19 +64,7 @@ export default {
       this.tabClick(detail.currentItemId)
     },
     getEffectiveEndTime(item) {
-      if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DAY.value) {
-        return `领取当日起${item.effectiveDays}天内可用`
-      }
-      if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value) {
-        return `领取次日起${item.effectiveDays}天内可用`
-      }
-      if (
-        item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
-      ) {
-        return `有效期至：${moment(item.effectiveEndTime).format('YYYY.MM.DD')}`
-      }
-
-      return ''
+      return `有效期至：${moment(item.effectiveEndTime).format('YYYY.MM.DD')}`
     },
     async getCoupons() {
       uni.showLoading({
@@ -145,11 +133,10 @@ export default {
     }
   }
   .coupons{
-    padding: 32rpx 0;
-    padding-bottom: 0;
     .scroll{
       height: 100vh;
-      padding-top: 76rpx;
+      padding-top: 106rpx;
+      padding-bottom: 10rpx;
       box-sizing: border-box;
     }
     .box{
