@@ -5,8 +5,9 @@
       <div :class="{active: tab == 2}" @click="tabClick(2)">已使用</div>
       <div :class="{active: tab == 3}" @click="tabClick(3)">已失效</div>
     </div>      
-    <swiper style="height:100%" class="coupons" v-if="coupons" @change="swiperChange" :current-item-id="tab">
-      <swiper-item v-for="item in [1,2,3]" :key="item" :item-id="item">
+    <div style="height:100%" class="coupons" v-if="coupons" @change="swiperChange" 
+    :current-item-id="tab">
+      <!-- <div v-for="item in [1,2,3]" :key="item" :item-id="item"> -->
         <scroll-view scroll-y class="scroll">
           <div class="box" v-for="(c, i) in coupons" :key="i">
             <couponsCard
@@ -27,8 +28,8 @@
             <empty :text="`暂无${tab == 1 && '未使用' || tab == 2 && '已使用' || tab == 3 && '已失效'}优惠券`" disabled></empty>
           </div>
         </scroll-view>
-      </swiper-item>
-    </swiper>
+      <!-- </div> -->
+    </div>
   </div>
 </template>
 
