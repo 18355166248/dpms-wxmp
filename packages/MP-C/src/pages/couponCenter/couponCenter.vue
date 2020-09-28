@@ -39,11 +39,6 @@ import couponsCard from '@/businessComponents/couponsCard/couponsCard.vue'
 import institutionAPI from '@/APIS/institution/institution.api'
 import { mapState } from 'vuex'
 
-const enums = uni.getStorageSync('enums')
-
-const EFFECTIVE_TIME_TYPE_ENUM = enums.EffectiveTimeType
-const RECEIVE_STATUS_ENUM = enums.ReceiveStatus
-
 export default {
   data() {
     return {
@@ -60,6 +55,8 @@ export default {
   computed: {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
+      EFFECTIVE_TIME_TYPE_ENUM: state => state.ENUMS.EffectiveTimeType,
+      RECEIVE_STATUS_ENUM: state => state.ENUMS.ReceiveStatus,
     }),
   },
   watch: {
@@ -114,7 +111,7 @@ export default {
           if (res.code === 0) {
             const convertList = this.couponList.map((item) => {
               if (item.couponBatchId === record.couponBatchId) {
-                item.receiveStatus = RECEIVE_STATUS_ENUM.YES.value
+                item.receiveStatus = this.RECEIVE_STATUS_ENUM.YES.value
               }
               return item
             })
@@ -126,20 +123,20 @@ export default {
         })
     },
     getVerifiStatusName(item) {
-      if (item.receiveStatus === RECEIVE_STATUS_ENUM.YES.value) {
+      if (item.receiveStatus === this.RECEIVE_STATUS_ENUM.YES.value) {
         return '已领取'
       }
       return null
     },
     getEffectiveEndTime(item) {
-      if (item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.DAY.value) {
+      if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DAY.value) {
         return `领取当日起${item.effectiveDays}天内可用`
       }
-      if (item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value) {
+      if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value) {
         return `领取次日起${item.effectiveDays}天内可用`
       }
       if (
-        item.effectiveTimeType === EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
+        item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
       ) {
         return `有效期至：${moment(item.effectiveEndTime).format('YYYY.MM.DD')}`
       }
