@@ -20,7 +20,6 @@
             v-show="coupon.receiveStatus === 1"
             class="couponsBtn"
             @click="drawCoupon(coupon)"
-            :disabled="pending"
           >
             领取
           </button>
@@ -46,7 +45,6 @@ export default {
       couponList: [],
       showNode: false,
       disabled: true,
-      pending: false,
     }
   },
   components: {
@@ -115,11 +113,10 @@ export default {
               }
               return item
             })
-
             this.couponList = convertList
           }
         }).finally(() => {
-          this.pending = false
+          setTimeout(() => this.pending = false, 99)
         })
     },
     getVerifiStatusName(item) {
