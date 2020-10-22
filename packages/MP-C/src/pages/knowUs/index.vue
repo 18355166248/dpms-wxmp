@@ -24,8 +24,8 @@
             <View class="storeCardAddress">
               <span class="iconfont icon-location"></span>
               {{
-                s.institutionAddress.length > 14
-                  ? s.institutionAddress.substring(0, 14) + `...`
+                s.institutionAddress.length > 35
+                  ? s.institutionAddress.substring(0, 35) + `...`
                   : s.institutionAddress
               }}
             </View>
@@ -175,7 +175,7 @@ export default {
     background: url(https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo-1.png)
       no-repeat;
     background-size: 160rpx 120rpx;
-    height: 186rpx;
+    height: 216rpx;
     background-position: 460rpx 0rpx;
     border-radius: 8rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.09);
@@ -192,15 +192,20 @@ export default {
     padding-top: 24rpx;
     padding-left: 24rpx;
   }
+  .icon-location {
+    position: absolute;
+    left: 24rpx;
+  }
   .storeCardAddress {
-    height: 36rpx;
+    height: 72rpx;
     font-size: 28rpx;
-    font-family: PingFangSC, PingFangSC-Regular;
+    width: 488rpx;
     text-align: left;
     color: rgba(0, 0, 0, 0.5);
     line-height: 36rpx;
     padding-top: 16rpx;
-    padding-left: 24rpx;
+    padding-left: 62rpx;
+    overflow: hidden;
   }
   .storeCardTime {
     height: 36rpx;

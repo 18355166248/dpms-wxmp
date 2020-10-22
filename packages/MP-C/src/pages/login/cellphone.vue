@@ -5,17 +5,25 @@
     <div class="tip">请输入您的手机号，登陆或注册账号</div>
     <div class="formItem">
       <span class="iconfont icon-phone"></span>
-      <input placeholder="请输入手机号" v-model="mobile" type="digit" @focus="handleFocus('mobile')" @blur="handleBlur('mobile')" />
-      <span v-show="!!mobile && isFocus.mobile" class="iconfont icon-close" @click="mobile = ''"></span>
+      <input
+        placeholder="请输入手机号"
+        v-model="mobile"
+        type="digit"
+        @focus="handleFocus('mobile')"
+        @blur="handleBlur('mobile')"
+      />
+      <span
+        v-show="!!mobile && isFocus.mobile"
+        class="iconfont icon-close"
+        @click="mobile = ''"
+      ></span>
     </div>
     <div class="formItem">
       <span class="iconfont icon-verify"></span>
       <input placeholder="请输入验证码" v-model="code" type="digit" />
-      <div
-        class="btn"
-        :class="{ disabled: !!second }"
-        @click="getCode"
-      >{{ second ? `${second}秒后再试` : '获取验证码' }}</div>
+      <div class="btn" :class="{ disabled: !!second }" @click="getCode">
+        {{ second ? `${second}秒后再试` : '获取验证码' }}
+      </div>
     </div>
     <button @click="phoneLogin">确定</button>
   </div>
@@ -110,21 +118,21 @@ function countdown(sec, cb) {
   align-items: center;
   border-bottom: solid 1rpx rgba(0, 0, 0, 0.15);
   height: 112rpx;
-  .iconfont{
+  .iconfont {
     margin-right: 12rpx;
     font-size: 36rpx;
-    color: rgba(0,0,0,0.65);
+    color: rgba(0, 0, 0, 0.65);
   }
-  .icon-close{
+  .icon-close {
     margin-right: 0;
     padding-left: 20rpx;
-    color: rgba(0,0,0,0.25);
+    color: rgba(0, 0, 0, 0.25);
   }
   input {
     flex: auto;
-    color: rgba(0,0,0,0.5);
-    .input-placeholder{
-      color: rgba(0,0,0,0.25);
+    color: rgba(0, 0, 0, 0.5);
+    .input-placeholder {
+      color: rgba(0, 0, 0, 0.25);
     }
   }
   .btn {
@@ -151,7 +159,7 @@ button {
   color: #ffffff;
   margin-bottom: 24rpx;
   margin-top: 90rpx;
-  &::after{
+  &::after {
     border: none;
   }
   &.ghost {

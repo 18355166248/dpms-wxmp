@@ -51,7 +51,19 @@ const institutionAPI = {
   },
   getNotice(data) {
     return httper.get('/institution-customer/home-page/announcement', data)
-  }
+  },
+  getCouponCenterList(data) {
+    return httper.get(
+      '/institution-customer/coupon/mini-apps/select-coupon',
+      data,
+    )
+  },
+  drawCoupon(data) {
+    return httper.post(
+      '/institution-customer/coupon/mini-apps/receive-coupon',
+      data,
+    )
+  },
 }
 
 export default institutionAPI

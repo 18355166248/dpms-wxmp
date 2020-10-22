@@ -179,4 +179,10 @@ page {
 .icon-sliders::before {
   content: '\e7d6';
 }
+.icon-gift::before {
+  content: '\e842';
+}
+.icon-coupons::before {
+  content: '\e612';
+}
 </style>
