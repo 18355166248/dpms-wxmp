@@ -59,6 +59,12 @@
       />
       <dpmsCellInput
         type="number"
+        title="固定电话"
+        placeholder="请输入固定电话"
+        v-model="form.fixedTelephone"
+      />
+      <dpmsCellInput
+        type="number"
         title="备用号码"
         placeholder="请输入备用号码"
         v-model="form.alternateMobile"
@@ -117,6 +123,7 @@ const formDefault = {
   tagIds: [],
   contactLabel: '',
   mobile: '',
+  fixedTelephone: '',
   alternateMobile: '',
   weChatId: '',
   qqNum: '',
@@ -172,6 +179,10 @@ export default {
             message: '联系电话格式不正确',
           },
         ],
+        fixedTelephone: {
+          pattern: /^[\d\-]{1,15}$/,
+          message: '固定电话格式不正确',
+        },
         alternateMobile: {
           pattern: /^\d{11}$/,
           message: '备用号码格式不正确',
