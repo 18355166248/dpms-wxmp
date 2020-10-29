@@ -58,7 +58,6 @@
         v-model="form.mobile"
       />
       <dpmsCellInput
-        type="number"
         title="固定电话"
         placeholder="请输入固定电话"
         v-model="form.fixedTelephone"
