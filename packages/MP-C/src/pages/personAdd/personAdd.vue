@@ -23,7 +23,6 @@
           isLink
         />
         <dpmsDatePicker
-          required
           title="出生日期"
           mode="date"
           placeholder="请选择出生日期"
@@ -128,7 +127,6 @@ export default {
           message: '请选择性别',
         },
         birthday: {
-          required: true,
           message: '请选择出生日期',
         },
         contactLabel: {
