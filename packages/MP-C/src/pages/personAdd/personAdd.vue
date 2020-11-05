@@ -101,7 +101,7 @@ export default {
       form: {
         personnelName: '',
         gender: 2,
-        birthday: moment().format('YYYY-MM-DD'),
+        birthday: '',
         mobile: '',
         contactLabel: 1,
         verificationCode: '',

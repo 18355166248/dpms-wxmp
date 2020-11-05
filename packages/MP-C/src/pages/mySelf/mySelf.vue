@@ -179,7 +179,7 @@ export default {
       customerAPI
         .getPersonCount({ userId: getStorage(STORAGE_KEY.STAFF).id })
         .then((res) => {
-          this.count = res.data
+          this.count = res.data || ''
           uni.hideLoading()
           uni.stopPullDownRefresh()
         })
