@@ -18,7 +18,6 @@
         headerText="选择性别"
       />
       <dpmsDatePicker
-        required
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
@@ -161,7 +160,6 @@ export default {
           message: '请选择性别',
         },
         birthday: {
-          required: true,
           message: '请选择出生日期',
         },
         contactLabel: {
@@ -233,7 +231,7 @@ export default {
 
       uni.setStorageSync(
         'patientTagsList',
-        res.data.filter((v) => v.tagInfoDTOList.length > 0),
+        res.data.filter((v) => v.tagInfoDTOList?.length > 0),
       )
       this.updateTagsCheckedText()
     },
