@@ -89,6 +89,7 @@ export default {
       delete formValue.qqNum
       delete formValue.region
       delete formValue.address
+      delete formValue.weChatInfoList
 
       patientAPI
         .updatePatient({
