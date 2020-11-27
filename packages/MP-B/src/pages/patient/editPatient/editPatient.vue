@@ -2,6 +2,7 @@
   <editPatient
     ref="editPatient"
     :formData="formData"
+    :editType="editType"
     @submit="checkPatientInScrm"
   ></editPatient>
 </template>
@@ -10,11 +11,13 @@
 import { mapState } from 'vuex'
 import editPatient from '@/businessComponents/editPatient/editPatient.vue'
 import patientAPI from '@/APIS/patient/patient.api'
+import { CCDesensitizedUpdateFilterUtil } from '@arctic/tools'
 export default {
   data() {
     return {
       formData: {},
       patientId: '',
+      editType: true,
     }
   },
   components: {
@@ -79,6 +82,11 @@ export default {
         area: form.region[2],
         address: form.address,
       }
+      // 联系方式脱敏
+      const desensitizationData = CCDesensitizedUpdateFilterUtil({
+        currentFormvalue: patientContact,
+        oldFormvalue: formValue.patientContactsList[0],
+      })
 
       delete formValue.patientContactsList
       delete formValue.createTime
@@ -90,13 +98,17 @@ export default {
       delete formValue.region
       delete formValue.address
       delete formValue.weChatInfoList
+      // 固话脱敏
+      if(this.formData.fixedTelephone === formValue.fixedTelephone) {
+        delete formValue.fixedTelephone
+      }
 
       patientAPI
         .updatePatient({
           patientId: this.patientId,
           ...formValue,
           customerId: scrmPatientInfo.customerId,
-          patientContactStr: JSON.stringify([{ ...patientContact }]),
+          patientContactStr: JSON.stringify([{ ...desensitizationData }]),
         })
         .then((res) => {
           let that = this
