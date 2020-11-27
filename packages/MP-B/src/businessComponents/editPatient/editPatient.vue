@@ -18,7 +18,6 @@
         headerText="选择性别"
       />
       <dpmsDatePicker
-        required
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
@@ -56,6 +55,11 @@
         title="联系电话"
         placeholder="请输入联系电话"
         v-model="form.mobile"
+      />
+      <dpmsCellInput
+        title="固定电话"
+        placeholder="请输入固定电话"
+        v-model="form.fixedTelephone"
       />
       <dpmsCellInput
         type="number"
@@ -117,6 +121,7 @@ const formDefault = {
   tagIds: [],
   contactLabel: '',
   mobile: '',
+  fixedTelephone: '',
   alternateMobile: '',
   weChatId: '',
   qqNum: '',
@@ -162,7 +167,6 @@ export default {
           message: '请选择性别',
         },
         birthday: {
-          required: true,
           message: '请选择出生日期',
         },
         contactLabel: {
@@ -179,6 +183,10 @@ export default {
             message: '联系电话格式不正确',
           },
         ],
+        fixedTelephone: {
+          pattern: /^[\d\-]{1,15}$/,
+          message: '固定电话格式不正确',
+        },
         alternateMobile: {
           pattern: /^\d{11}$/,
           message: '备用号码格式不正确',
@@ -230,7 +238,7 @@ export default {
 
       uni.setStorageSync(
         'patientTagsList',
-        res.data.filter((v) => v.tagInfoDTOList.length > 0),
+        res.data.filter((v) => v.tagInfoDTOList?.length > 0),
       )
       this.updateTagsCheckedText()
     },
