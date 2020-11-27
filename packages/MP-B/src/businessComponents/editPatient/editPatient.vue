@@ -184,7 +184,7 @@ export default {
           },
         ],
         fixedTelephone: {
-          pattern: /^[\d\-]{1,15}$/,
+          pattern: /^[^*][\d\-]{1,15}$/,
           message: '固定电话格式不正确',
         },
         alternateMobile: {

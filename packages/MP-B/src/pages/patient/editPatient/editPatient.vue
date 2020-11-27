@@ -98,6 +98,10 @@ export default {
       delete formValue.region
       delete formValue.address
       delete formValue.weChatInfoList
+      // 固话脱敏
+      if(this.formData.fixedTelephone === formValue.fixedTelephone) {
+        delete formValue.fixedTelephone
+      }
 
       patientAPI
         .updatePatient({
