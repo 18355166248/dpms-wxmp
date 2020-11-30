@@ -3,7 +3,7 @@
     ref="editPatient"
     :formData="formData"
     :editType="editType"
-    @submit="checkPatientInScrm"
+    @submit="updatePatient"
   ></editPatient>
 </template>
 
@@ -46,29 +46,7 @@ export default {
           this.$utils.clearLoading()
         })
     },
-    // 检查患者是否已存在scrm系统中
-    async checkPatientInScrm(form) {
-      const [err, res] = await this.$utils.asyncTasks(
-        patientAPI.getPatientInScrm({
-          medicalInstitutionId: this.staff.belongsInstitutionId,
-          mobile: form.mobile,
-          patientName: form.patientName,
-          customerId: form.customerId,
-          patientId: form.patientId,
-        }),
-      )
-
-      if (err) {
-        this.$refs.editPatient.showBtn()
-      }
-
-      const { data: scrmPatientInfo } = res
-      // if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
-      //   delete scrmPatientInfo.customerId
-      // }
-      this.updatePatient(scrmPatientInfo, form)
-    },
-    updatePatient(scrmPatientInfo, form) {
+    updatePatient(form) {
       const formValue = _.cloneDeep(form)
 
       let patientContact = {
@@ -85,7 +63,7 @@ export default {
       // 联系方式脱敏
       const desensitizationData = CCDesensitizedUpdateFilterUtil({
         currentFormvalue: patientContact,
-        oldFormvalue: formValue.patientContactsList[0],
+        oldFormvalue: this.formData?.patientContactsList[0],
       })
 
       delete formValue.patientContactsList
@@ -98,8 +76,9 @@ export default {
       delete formValue.region
       delete formValue.address
       delete formValue.weChatInfoList
+      delete formValue.mobile
       // 固话脱敏
-      if(this.formData.fixedTelephone === formValue.fixedTelephone) {
+      if(this.formData?.fixedTelephone === formValue?.fixedTelephone) {
         delete formValue.fixedTelephone
       }
 
@@ -107,7 +86,6 @@ export default {
         .updatePatient({
           patientId: this.patientId,
           ...formValue,
-          customerId: scrmPatientInfo.customerId,
           patientContactStr: JSON.stringify([{ ...desensitizationData }]),
         })
         .then((res) => {

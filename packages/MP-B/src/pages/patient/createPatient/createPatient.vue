@@ -1,5 +1,5 @@
 <template>
-  <editPatient ref="editPatient" @submit="checkPatientInScrm"></editPatient>
+  <editPatient ref="editPatient" @submit="createPatient"></editPatient>
 </template>
 
 <script>
@@ -20,27 +20,7 @@ export default {
   },
   created() {},
   methods: {
-    // 检查患者是否已存在scrm系统中
-    async checkPatientInScrm(form) {
-      const [err, res] = await this.$utils.asyncTasks(
-        patientAPI.getPatientInScrm({
-          medicalInstitutionId: this.staff.belongsInstitutionId,
-          mobile: form.mobile,
-          patientName: form.patientName,
-        }),
-      )
-
-      if (err) {
-        this.$refs.editPatient.showBtn()
-      }
-
-      const { data: scrmPatientInfo } = res
-      // if (scrmPatientInfo.patientId && scrmPatientInfo.customerId) {
-      //   delete scrmPatientInfo.customerId
-      // }
-      this.createPatient(scrmPatientInfo, form)
-    },
-    async createPatient(scrmPatientInfo, form) {
+    async createPatient(form) {
       const formValue = _.cloneDeep(form)
 
       let patientContact = {
@@ -66,7 +46,6 @@ export default {
       patientAPI
         .createPatient({
           ...formValue,
-          customerId: scrmPatientInfo.customerId,
           patientContactStr: JSON.stringify([{ ...patientContact }]),
         })
         .then((res) => {
