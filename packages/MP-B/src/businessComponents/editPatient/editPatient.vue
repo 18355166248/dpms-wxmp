@@ -296,7 +296,9 @@ export default {
         })
         if (this.changeKeys.length) {
           this.changeKeys.forEach(item => {
-            this.newRules[item] = this.rules[item]
+            if(item !== 'settingsTypeId' && item !== 'tagIds' && item !== 'region') {
+              this.newRules[item] = this.rules[item]
+            }
           })
         }
       } else this.newRules = this.rules
