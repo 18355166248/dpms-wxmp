@@ -59,6 +59,7 @@ export default {
         city: form.region[1],
         area: form.region[2],
         address: form.address,
+        patientContactsId: form?.patientContactsList[0]?.patientContactsId
       }
       // 联系方式脱敏
       const desensitizationData = CCDesensitizedUpdateFilterUtil({
