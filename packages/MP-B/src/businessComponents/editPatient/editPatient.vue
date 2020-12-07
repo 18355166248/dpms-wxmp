@@ -199,7 +199,7 @@ export default {
         },
         address: {
           pattern: /^[^*]{0,100}$/g,
-          message: '详细地址输入不能带*且不超过 100 字',
+          message: '请填写详细地址',
         },
       },
     }
