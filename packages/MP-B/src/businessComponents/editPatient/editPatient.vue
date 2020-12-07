@@ -6,7 +6,7 @@
         required
         title="姓名"
         placeholder="请输入姓名"
-        v-model="form.patientName"        
+        v-model="form.patientName"
       />
       <dpmsEnumsPicker
         required
@@ -33,6 +33,13 @@
         :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
         isLink
       />
+      <dpmsCellInput
+        required
+        title="病历号"
+        :value="medicalRecordNo"
+        placeholder="请输入病历号"
+        v-model="form.medicalRecordNo"
+      />
       <dpmsCell
         title="患者标签"
         placeholder="请选择患者标签"
@@ -51,6 +58,7 @@
       />
       <dpmsCellInput
         required
+        type="number"
         title="联系电话"
         placeholder="请输入联系电话"
         v-model="form.mobile"
@@ -61,6 +69,7 @@
         v-model="form.fixedTelephone"
       />
       <dpmsCellInput
+        type="number"
         title="备用号码"
         placeholder="请输入备用号码"
         v-model="form.alternateMobile"
@@ -71,6 +80,7 @@
         v-model="form.weChatId"
       />
       <dpmsCellInput
+        type="number"
         title="QQ"
         placeholder="请输入QQ"
         v-model="form.qqNum"
@@ -124,6 +134,7 @@ const formDefault = {
   qqNum: '',
   region: [],
   address: '',
+  medicalRecordNo: '',
 }
 
 export default {
@@ -132,21 +143,16 @@ export default {
       type: Object,
       default: formDefault,
     },
-    editType : {
-      type: Boolean,
-      default: false,
-    }
   },
   data() {
     return {
       patientTypeList: [], //患者类型列表
       patientTagsCheckedText: '', //用户画像选中文本
+      medicalRecordNo: '', //病历号
+      settingsTypeId: '', //患者类型
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
-      oldForm: this.filterFormData(this.formData),
-      newRules: {},
-      changeKeys: [],
       rules: {
         patientName: [
           {
@@ -157,6 +163,17 @@ export default {
             min: 1,
             max: 50,
             message: '姓名输入不应该超过 50 字',
+          },
+        ],
+        medicalRecordNo: [
+          {
+            required: true,
+            message: '请输入病历号',
+          },
+          {
+            min: 1,
+            max: 30,
+            message: '病历号输入不应该超过 30 字',
           },
         ],
         gender: {
@@ -181,7 +198,7 @@ export default {
           },
         ],
         fixedTelephone: {
-          pattern: /^[^*][\d\-]{1,15}$/,
+          pattern: /^[\d\-]{1,15}$/,
           message: '固定电话格式不正确',
         },
         alternateMobile: {
@@ -189,17 +206,18 @@ export default {
           message: '备用号码格式不正确',
         },
         weChatId: {
-          pattern: /^[^*]{0,20}$/g,
+          min: 0,
+          max: 20,
           message: '请输入正确的微信号',
         },
         qqNum: {
-          // pattern: /^\d{1,20}$/,
-          pattern: /^[^*]\d{1,20}$/g,
+          pattern: /^\d{1,20}$/,
           message: '请输入正确的QQ格式',
         },
         address: {
-          pattern: /^[^*]{0,100}$/g,
-          message: '详细地址输入不能带*且不超过 100 字',
+          min: 0,
+          max: 100,
+          message: '详细地址输入不应该超过 100 字',
         },
       },
     }
@@ -207,7 +225,6 @@ export default {
   watch: {
     formData(newVal) {
       this.form = this.filterFormData(newVal)
-      this.oldForm = this.filterFormData(newVal)
     },
   },
   created() {
@@ -220,6 +237,7 @@ export default {
 
     this.getPatientTypeList()
     this.getPatientTags()
+    this.getPatientMedicalRecordNo()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
@@ -229,6 +247,7 @@ export default {
     async getPatientTypeList() {
       let res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data
+      this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getPatientTags() {
       let res = await patientAPI.getPatientTags()
@@ -238,6 +257,12 @@ export default {
         res.data.filter((v) => v.tagInfoDTOList?.length > 0),
       )
       this.updateTagsCheckedText()
+    },
+    async getPatientMedicalRecordNo() {
+      let res = await patientAPI.getPatientMedicalRecordNo({
+        patientType: this.form.settingsTypeId,
+      })
+      this.form.medicalRecordNo = res.data
     },
     filterFormData(data) {
       if (_.isEmpty(data)) {
@@ -280,37 +305,9 @@ export default {
         .map((tagItem) => tagItem.name)
         .join(',')
     },
-    contrastForm() {
-      if (this.editType) {
-        let arr = []
-        for(let key in this.oldForm){
-          if (JSON.stringify(this.form[key]) !== JSON.stringify(this.oldForm[key])){
-            arr.push(key)
-          }
-        }
-        this.changeKeys = arr.filter((value,index,self) => {
-          return self.indexOf(value) === index
-        })
-        if (this.changeKeys.length) {
-          this.changeKeys.forEach(item => {
-            if(item !== 'settingsTypeId' && item !== 'tagIds' && item !== 'region') {
-              this.newRules[item] = this.rules[item]
-            }
-          })
-        }
-      } else this.newRules = this.rules
-    },
     async submit() {
-      this.contrastForm()
-      if (this.editType && !this.changeKeys.length) {
-        //保存患者时，添加禁用和loading效果
-        this.disabledSaveBtn = true
-        this.$emit('submit', this.form)
-        return
-      }
-
       this.$utils.formValidate(
-        this.newRules,
+        this.rules,
         this.form,
         (err, fileds, formValue) => {
           this.form = formValue

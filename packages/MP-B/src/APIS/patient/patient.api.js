@@ -48,6 +48,10 @@ const patientAPI = {
   getApptList(data) {
     return httper.get('appointment/appointment/list-patient', data)
   },
+  //获取患者类型列表
+  getPatientMedicalRecordNo(data) {
+    return httper.get('/patient/serial/medical-record/serial', data)
+  },
 }
 
 export default patientAPI
