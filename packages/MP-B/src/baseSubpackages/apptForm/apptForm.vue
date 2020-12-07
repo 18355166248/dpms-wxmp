@@ -511,7 +511,7 @@ export default {
     },
     onBlurWithDuration(value) {
       this.closeBlur()
-      if (value < 30) return this.$set(this.form, 'duration', 30)
+      if (value < 15) return this.$set(this.form, 'duration', 15)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
       if (value % 15 !== 0) {
         return this.$set(
