@@ -53,7 +53,7 @@
     </div>
 
     <!-- 搜索列表 -->
-    <div v-if="searchValue && patientList.length != 0">
+    <div v-if="patientList.length !== 0">
       <div v-for="parient in patientList" :key="parient.patientId">
         <div @click="clickPatientCard(parient.patientId)">
           <card
@@ -106,6 +106,7 @@ export default {
   onLoad(option) {
     this.paramsObj = option
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
+    this.init()
   },
   onReachBottom() {
     if (this.patientList.length < this.total) {
@@ -114,6 +115,10 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.current = 1
+      this.getPatients()
+    },
     toCreatePatient() {
       this.$utils.push({
         url: '/pages/patient/createPatient/createPatient',
@@ -161,6 +166,8 @@ export default {
     //执行搜索
     searchPatients() {
       if (!this.searchValue.trim()) {
+        this.current = 1
+        this.getPatients()
         return
       }
 
@@ -174,6 +181,7 @@ export default {
 
       console.log('----搜索后 历史值----', this.searchRecords)
 
+      this.current = 1
       this.getPatients()
     },
     //取消搜索
