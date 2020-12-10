@@ -10,7 +10,12 @@ import { globalEventKeys } from '@/config/global.eventKeys.js'
 
 export default {
   data() {
-    return {}
+    return {
+      paramsObj: {},
+    }
+  },
+  onLoad(option) {
+    this.paramsObj = option
   },
   components: {
     editPatient,
@@ -22,6 +27,7 @@ export default {
   methods: {
     async createPatient(form) {
       const formValue = _.cloneDeep(form)
+      const { type } = this.paramsObj
 
       let patientContact = {
         contactLabel: form.contactLabel,
@@ -57,9 +63,19 @@ export default {
               setTimeout(() => {
                 uni.$emit(globalEventKeys.newPatient)
 
-                that.$utils.push({
-                  url: '/pages/patient/patient?patientId=' + res.data.patientId,
-                })
+                if (type === 'createRegister') {
+                  that.$utils.push({
+                    url:
+                      '/baseSubpackages/apptForm/apptForm?patient=' +
+                      JSON.stringify(res.data) +
+                      '&type=createRegister',
+                  })
+                } else {
+                  that.$utils.push({
+                    url:
+                      '/pages/patient/patient?patientId=' + res.data.patientId,
+                  })
+                }
               }, 1000)
             },
           })

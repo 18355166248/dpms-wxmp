@@ -121,7 +121,9 @@ export default {
     },
     toCreatePatient() {
       this.$utils.push({
-        url: '/pages/patient/createPatient/createPatient',
+        url:
+          '/pages/patient/createPatient/createPatient?type=' +
+          this.paramsObj.type,
       })
     },
     //更新搜索框的值

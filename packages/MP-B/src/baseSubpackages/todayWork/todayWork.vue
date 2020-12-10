@@ -302,12 +302,9 @@ export default {
         status: 'loading',
         request: 'loading',
       },
-
       scrollTop: 0,
-
       current: 1,
       total: 0,
-
       roleIndex: 0,
       primaryColor: this.$commonCss.commonColor,
       REGISTER_ENUM: this.$utils.getEnums('Register'),
@@ -387,7 +384,6 @@ export default {
     },
     // 页面跳转
     toPage(url, params) {
-      console.log('params:', params)
       this.$utils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2

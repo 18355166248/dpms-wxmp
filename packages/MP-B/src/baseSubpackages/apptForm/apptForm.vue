@@ -291,6 +291,10 @@ export default {
       this.form.doctor = Number(option.doctorId)
     }
 
+    if (option.patient) {
+      this.form.patient = JSON.parse(option.patient)
+    }
+
     if (this.paramsObj.type === 'createAppt' && option.patientId) {
       this.getPatientInfoFromServer(option.patientId)
       this.form.appointmentStatus = this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value
@@ -765,7 +769,10 @@ export default {
             params: this.paramsObj,
             appt: { ...formatValue, ...res.data },
           })
-          this.$utils.back()
+
+          this.$utils.push({
+            url: '/baseSubpackages/todayWork/todayWork',
+          })
         })
         .finally(() => {
           this.saveLoading = false
