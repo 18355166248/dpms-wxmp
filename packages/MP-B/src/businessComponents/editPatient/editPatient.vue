@@ -226,6 +226,9 @@ export default {
     formData(newVal) {
       this.form = this.filterFormData(newVal)
     },
+    'form.settingsTypeId'(e) {
+      this.getPatientMedicalRecordNo()
+    },
   },
   created() {
     // 更新用户画像选中值
