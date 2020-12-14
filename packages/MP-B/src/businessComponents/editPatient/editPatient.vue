@@ -58,7 +58,6 @@
       />
       <dpmsCellInput
         required
-        type="number"
         title="联系电话"
         placeholder="请输入联系电话"
         v-model="form.mobile"
@@ -69,7 +68,6 @@
         v-model="form.fixedTelephone"
       />
       <dpmsCellInput
-        type="number"
         title="备用号码"
         placeholder="请输入备用号码"
         v-model="form.alternateMobile"
@@ -79,12 +77,7 @@
         placeholder="请输入微信号"
         v-model="form.weChatId"
       />
-      <dpmsCellInput
-        type="number"
-        title="QQ"
-        placeholder="请输入QQ"
-        v-model="form.qqNum"
-      />
+      <dpmsCellInput title="QQ" placeholder="请输入QQ" v-model="form.qqNum" />
       <dpmsPlacePicker
         title="家庭住址"
         placeholder="请选择地区"
