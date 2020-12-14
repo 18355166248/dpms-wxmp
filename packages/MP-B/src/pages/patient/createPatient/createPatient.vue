@@ -63,7 +63,7 @@ export default {
               setTimeout(() => {
                 uni.$emit(globalEventKeys.newPatient)
 
-                if (type === 'createRegister') {
+                if (type === 'createRegister' || type === 'createAppt') {
                   that.$utils.push({
                     url:
                       '/baseSubpackages/apptForm/apptForm?patient=' +

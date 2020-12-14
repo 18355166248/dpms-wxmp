@@ -770,9 +770,16 @@ export default {
             appt: { ...formatValue, ...res.data },
           })
 
-          this.$utils.push({
-            url: '/baseSubpackages/todayWork/todayWork',
-          })
+          if (type === 'createRegister' || type === 'editRegister') {
+            this.$utils.push({
+              url: '/baseSubpackages/todayWork/todayWork',
+            })
+          }
+          if (type === 'createAppt' || type === 'editAppt') {
+            this.$utils.push({
+              url: '/baseSubpackages/apptView/apptView',
+            })
+          }
         })
         .finally(() => {
           this.saveLoading = false

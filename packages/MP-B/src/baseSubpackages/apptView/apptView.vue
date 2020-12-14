@@ -566,6 +566,30 @@ export default {
     },
     changeCard({ meet, type }) {
       console.log('编辑改变', type, meet)
+      if (type === 'touchMeeting') {
+        if (
+          this.medicalInstitution.institutionChainType === 4 &&
+          this.medicalInstitution.medicalInstitutionId !==
+            meet.appointmentMedicalInstitutionId
+        ) {
+          return
+          this.$utils.show('不可预约到其他诊所')
+        }
+
+        // if (apptFormUtil.isHeaderWithLargeArea(meet.medicalInstitution)) {
+        //   return this.$utils.show('不可预约到总部/大区')
+        // }
+        // if (
+        //   this.isHeaderWithLargeArea(
+        //     apptViewStore.curMedicalInstitution,
+        //   )
+        // ) {
+        //   return notification.error({
+        //     key: 'isHeaderWithLargeArea',
+        //     message: '不可预约到总部/大区',
+        //   })
+        // }
+      }
       appointmentAPI
         .updateAppointment({
           appointmentJsonStr: JSON.stringify(meet),

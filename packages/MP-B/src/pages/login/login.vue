@@ -152,19 +152,23 @@ export default {
           memberCode: this.loginForm.memberCode,
           username: this.loginForm.username,
           password: this.loginForm.password,
-          mtId: val.id,
+          _mtId: val.id,
+          medicalInstitutionId: val.id,
         })
         .then((res) => {
-          const { access_token, medicalInstitution, staff } = res.data
+          const { _token, medicalInstitution, staff } = res.data
           setStorage(STORAGE_KEY.LOGIN_INFO, {
             memberCode: this.loginForm.memberCode,
             username: this.loginForm.username,
           })
-          setStorage(STORAGE_KEY.ACCESS_TOKEN, access_token)
+          medicalInstitution.memberCode = this.loginForm.memberCode
+          setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
           this.$store.commit(
             'workbenchStore/setMedicalInstitution',
             medicalInstitution,
           )
+          staff.staffName = staff.name
+          staff.username = this.loginForm.username
           this.$store.commit('workbenchStore/setStaff', staff)
           this.getEnums()
         })
@@ -190,13 +194,16 @@ export default {
         // 判断是否单体
         this.isLoading = true
         systemAPI
-          .getInstitutionList({ memberCode: this.loginForm.memberCode })
+          .getInstitutionListScrm({
+            memberName: this.loginForm.memberCode,
+            username: this.loginForm.username,
+          })
           .then((res) => {
-            const { institutionChainType, medicalInstitutionId } = res.data
-            if (institutionChainType === 1) {
-              this.login({ id: medicalInstitutionId })
-            } else {
+            const { medicalInstitutionType, medicalInstitutionId } = res.data[0]
+            if (medicalInstitutionType === 2) {
               this.$refs.selectMedicalInstitution.show()
+            } else {
+              this.login({ id: medicalInstitutionId })
             }
           })
           .catch((res) => {
