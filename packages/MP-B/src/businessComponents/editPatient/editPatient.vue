@@ -143,6 +143,10 @@ export default {
       type: Object,
       default: formDefault,
     },
+    editType: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -153,6 +157,9 @@ export default {
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
+      oldForm: this.filterFormData(this.formData),
+      newRules: {},
+      changeKeys: [],
       rules: {
         patientName: [
           {
@@ -198,7 +205,7 @@ export default {
           },
         ],
         fixedTelephone: {
-          pattern: /^[\d\-]{1,15}$/,
+          pattern: /^[^*][\d\-]{1,15}$/,
           message: '固定电话格式不正确',
         },
         alternateMobile: {
@@ -206,18 +213,17 @@ export default {
           message: '备用号码格式不正确',
         },
         weChatId: {
-          min: 0,
-          max: 20,
+          pattern: /^[^*]{0,20}$/g,
           message: '请输入正确的微信号',
         },
         qqNum: {
-          pattern: /^\d{1,20}$/,
+          // pattern: /^\d{1,20}$/,
+          pattern: /^[^*]\d{1,20}$/g,
           message: '请输入正确的QQ格式',
         },
         address: {
-          min: 0,
-          max: 100,
-          message: '详细地址输入不应该超过 100 字',
+          pattern: /^[^*]{0,100}$/g,
+          message: '请填写详细地址',
         },
       },
     }
@@ -225,6 +231,7 @@ export default {
   watch: {
     formData(newVal) {
       this.form = this.filterFormData(newVal)
+      this.oldForm = this.filterFormData(newVal)
     },
     'form.settingsTypeId'(e) {
       this.getPatientMedicalRecordNo()
@@ -308,9 +315,43 @@ export default {
         .map((tagItem) => tagItem.name)
         .join(',')
     },
+    contrastForm() {
+      if (this.editType) {
+        let arr = []
+        for (let key in this.oldForm) {
+          if (
+            JSON.stringify(this.form[key]) !== JSON.stringify(this.oldForm[key])
+          ) {
+            arr.push(key)
+          }
+        }
+        this.changeKeys = arr.filter((value, index, self) => {
+          return self.indexOf(value) === index
+        })
+        if (this.changeKeys.length) {
+          this.changeKeys.forEach((item) => {
+            if (
+              item !== 'settingsTypeId' &&
+              item !== 'tagIds' &&
+              item !== 'region'
+            ) {
+              this.newRules[item] = this.rules[item]
+            }
+          })
+        }
+      } else this.newRules = this.rules
+    },
     async submit() {
+      this.contrastForm()
+      if (this.editType && !this.changeKeys.length) {
+        //保存患者时，添加禁用和loading效果
+        this.disabledSaveBtn = true
+        this.$emit('submit', this.form)
+        return
+      }
+
       this.$utils.formValidate(
-        this.rules,
+        this.newRules,
         this.form,
         (err, fileds, formValue) => {
           this.form = formValue
