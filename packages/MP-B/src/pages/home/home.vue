@@ -69,20 +69,29 @@
           <text v-else class="iconfont icon-no-eye ml-18"></text>
         </view>
         <view class="statistics-body">
-          <view class="statistics-item">
+          <view
+            class="statistics-item"
+            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+          >
             <view class="statistics-item-header">
               {{ pageData.patientCount }}
             </view>
             <text class="statistics-item-body">新增患者</text>
           </view>
-          <view class="statistics-item">
+          <view
+            class="statistics-item"
+            @click="toUrl('/baseSubpackages/apptView/apptView')"
+          >
             <view class="statistics-item-header">
               {{ pageData.appointmentCount }}
             </view>
 
             <text class="statistics-item-body">新增预约</text>
           </view>
-          <view class="statistics-item">
+          <view
+            class="statistics-item"
+            @click="toUrl('/baseSubpackages/todayWork/todayWork')"
+          >
             <view class="statistics-item-header">
               {{ pageData.registerFirstDiagnosisCount }}
               /
