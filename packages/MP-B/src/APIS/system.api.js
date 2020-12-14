@@ -4,7 +4,7 @@ import scrmHttper from './httpScrm'
 const systemAPI = {
   // 获取全局枚举值
   getDataDict(params) {
-    return httper.get('system/enums', params)
+    return scrmHttper.get('scrm/data-dict/list', params)
   },
 
   // 登录时获取机构列表
