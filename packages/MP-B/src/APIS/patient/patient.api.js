@@ -2,7 +2,7 @@ import httper from '../http'
 
 const patientAPI = {
   getPatientList(data) {
-    return httper.get('patient/patient/page', data, {
+    return httper.get('patient/patient/mini-apps/page', data, {
       headers: {
         'content-type': 'application/json',
       },
