@@ -106,26 +106,23 @@ export default {
   },
   methods: {
     show() {
-      systemAPI
-        .getInstitutionListScrm({
-          memberName: this.memberCode || this.medicalInstitution.memberCode,
-          username: this.username || this.staff.username,
-        })
+      let institutionListPromise = systemAPI.getInstitutionList({
+        memberCode: this.memberCode || this.medicalInstitution.memberCode,
+      })
+      let loginInstitutionListPromise = systemAPI.getLoginInstitutionList({
+        memberCode: this.memberCode || this.medicalInstitution.memberCode,
+        username: this.username || this.staff.username,
+      })
+      Promise.all([institutionListPromise, loginInstitutionListPromise])
         .then((res) => {
-          this.range = this.list.length ? this.list : res.data
-
-          const disList = []
-          JSON.stringify(res.data, (k, v) => {
-            v.medicalInstitutionId && disList.push(v.medicalInstitutionId)
-            return v
-          })
-
-          this.disList = this.workList.length ? this.workList : disList
+          this.range = this.list.length ? this.list : [res[0].data]
+          this.disList = this.workList.length
+            ? this.workList
+            : res[1].data.workMedicalInstitutionIds
           this.showTree = true
           this.$emit('onDisList', true)
         })
         .catch((res) => {
-          console.log('err', res)
           this.$emit('onDisList', true)
         })
     },
@@ -148,16 +145,24 @@ export default {
           show: rank === 0, // 自身是否显示
           hideArr: [],
         })
-        if (Array.isArray(item['children']) && item['children'].length > 0) {
+        if (
+          Array.isArray(item['childMedicalInstitutionList']) &&
+          item['childMedicalInstitutionList'].length > 0
+        ) {
           let parentid = [...parentId],
             parentArr = [...parents]
-          delete parentArr['children']
+          delete parentArr['childMedicalInstitutionList']
           parentid.push(item['medicalInstitutionId'])
           parentArr.push({
             medicalInstitutionId: item['medicalInstitutionId'],
             medicalInstitutionSimpleCode: item['medicalInstitutionSimpleCode'],
           })
-          this.renderTreeList(item['children'], rank + 1, parentid, parentArr)
+          this.renderTreeList(
+            item['childMedicalInstitutionList'],
+            rank + 1,
+            parentid,
+            parentArr,
+          )
         } else {
           this.treeList[this.treeList.length - 1].lastRank = true
         }
