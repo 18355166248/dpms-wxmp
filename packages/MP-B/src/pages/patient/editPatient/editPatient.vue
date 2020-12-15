@@ -77,7 +77,10 @@ export default {
       delete formValue.region
       delete formValue.address
       delete formValue.weChatInfoList
-      delete formValue.mobile
+      // 电话脱敏
+      if(this.formData?.mobile === formValue?.mobile) {
+        delete formValue.mobile
+      }
       // 固话脱敏
       if(this.formData?.fixedTelephone === formValue?.fixedTelephone) {
         delete formValue.fixedTelephone
