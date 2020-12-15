@@ -150,7 +150,7 @@
                 style="background: rgba(0, 0, 0, 0.65);"
               />
               <view class="meeting_content_name">
-                {{ item.businessName }}
+                {{ item.businessName }} (Block)
               </view>
               <view class="meeting_content_center">
                 <view
