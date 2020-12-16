@@ -162,7 +162,7 @@
                 style="background: rgba(0, 0, 0, 0.65);"
               />
               <view class="meeting_content_name">
-                {{ item.businessName }} (Block)
+                {{ item.businessName }} (日程)
               </view>
               <view class="meeting_content_center">
                 <view
@@ -697,7 +697,8 @@ export default {
     },
     // 点击创建
     touchSt(e) {
-      if (!this.isHeaderWithLargeArea) return
+      if (!this.isHeaderWithLargeArea)
+        returnappointment / appointment / mini - apps / create
 
       this.scrollTop = scrollYtop
       let self = this
