@@ -60,7 +60,7 @@
               <view
                 :class="[
                   'meeting_content_name',
-                  item.duration === 1 ? 'mt-32' : '',
+                  item.duration === 1 ? 'durationOne' : '',
                 ]"
               >
                 {{ item.patient.patientName }}{{ getGenderText(item) }}
@@ -123,11 +123,22 @@
 
           <!-- 时间,预约项目,名字显示区 -->
           <view class="metting_content_box hasAppt">
-            <text v-if="createMeet.patient" class="meeting_content_name">
+            <text
+              v-if="createMeet.patient"
+              :class="{
+                meeting_content_name: true,
+                durationOne: createMeet.duration === 1,
+              }"
+            >
               {{ createMeet.patient.patientName
               }}{{ getGenderText(createMeet) }}
             </text>
-            <text v-else class="meeting_content_name">再次点击新建预约</text>
+            <text
+              v-else
+              class="meeting_content_name"
+              :class="{ durationOne: createMeet.duration === 1 }"
+              >再次点击新建预约</text
+            >
             <text class="meeting_content_center" />
             <view class="meeting_content_time">
               {{ createMeet.time }}
@@ -751,12 +762,14 @@ export default {
 
       let stId = topId + nid,
         endId = self.createMeet.idEnd
+
       let top = topId * self.unitHeight + (y - startY) //top值
       let trueTextTop = stId * self.unitHeight - top //字体样式
       let height = (endId - topId) * self.unitHeight - (y - startY) //会议高度
 
       // 订会时间不小于15分钟或者不大于4个小时 height > self.unitHeight * 16
-      if (height < self.minMute * self.unitHeight || stId < 0) {
+      // 这里处理了可以拖拽到15分钟
+      if (height < 5 || stId < 0) {
         return
       }
 
@@ -881,6 +894,7 @@ export default {
           style: style,
           idSt: meeting.idSt,
           idEnd: meeting.idEnd,
+          duration: meeting.idEnd - meeting.idSt,
           length: meeting.length,
           height: trueHeight,
           top: top,
@@ -922,7 +936,8 @@ export default {
       // 计算后的底部id 如果等于97就设为96
       let end = defaultId + nid
       //到最小单元格不允许移动 或者是超过4个小时 height > self.unitHeight * 16
-      if (height < self.minMute * self.unitHeight || end > 96) {
+      // 设置可以拖拽到15分钟
+      if (height < 5 || end > 96) {
         return
       }
 
@@ -1030,6 +1045,7 @@ export default {
           style: style,
           idSt: meeting.idSt,
           idEnd: meeting.idEnd,
+          duration: meeting.idEnd - meeting.idSt,
           length: meeting.length,
           height: trueHeight,
           top: meeting.top,
@@ -1443,6 +1459,11 @@ $borderColor: #ddd;
     height: 27px;
     line-height: 27px;
     flex: 0 0 27px;
+
+    &.durationOne {
+      line-height: 26rpx;
+      font-size: 21rpx;
+    }
   }
 }
 
@@ -1648,6 +1669,10 @@ $borderColor: #ddd;
 
       .hasAppt {
         color: #ffffff;
+
+        .durationOne {
+          line-height: 28rpx;
+        }
       }
 
       .radius {
