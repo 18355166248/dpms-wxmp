@@ -439,6 +439,7 @@ export default {
       return new Promise((resolve, reject) => {
         if (this.doctor.staffId === -1) {
           this.scheduleList = defaultScheduleList
+          this.blockEvent = []
           resolve()
 
           return
@@ -593,6 +594,7 @@ export default {
 
       if (doctor.staffId === -1) {
         this.scheduleList = defaultScheduleList
+        this.blockEvent = []
       } else {
         this.getApptScheduleInfo()
         this.getApptBlockEventInfo()
