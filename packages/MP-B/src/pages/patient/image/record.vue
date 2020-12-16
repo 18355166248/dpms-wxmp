@@ -1,24 +1,22 @@
 <template>
   <div>
     <div v-if="records.length">
-      <div class="record">
+      <div class="record" v-for="r in computedRecords" :key="r.registerId">
         <div class="head">
-          <div>2020/06/26 10:30</div>
-          <div>上海市某某医院</div>
+          <div>{{r.registerLabel}}</div>
+          <div>{{r.storeName}}</div>
         </div>
         <div class="type">
-          <div class="label">全景</div>
-          <div class="imgs">
-            <image src="/static/avatar-male.png"/>
-            <image src="/static/avatar-male.png"/>
-            <image src="/static/avatar-male.png"/>
-            <image src="/static/avatar-male.png"/>
-            <image src="/static/avatar-male.png"/>
-          </div>
-          <div class="label">小牙片</div>
-          <div class="imgs">
-            <image src="/static/avatar-male.png"/>
-            <image src="/static/avatar-male.png"/>
+          <div v-for="it in r.imageTypes" :key="it.value">
+            <div class="label">{{it.label}}</div>
+            <div class="imgs">
+              <image 
+                v-for="img in it.imgs" 
+                :key="img.imageUrl"
+                :src="img.imageUrl"
+                @click="preview(it, img.imageUrl)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -31,14 +29,54 @@
 </template>
 
 <script>
+import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
+import moment from 'moment'
 export default {
   data() {
     return {
-      records: [{}], patientId: '',
+      records: [], patientId: '', imageType: {},
+    }
+  },
+  computed: {
+    imageTypeList() {
+      return Object.values(this.imageType).map(t => ({
+        ...t, label: t.text.zh_CN
+      }))
+    },
+    computedRecords() {
+      return this.records.map(r => ({
+        ...r, imageTypes: this.imageTypeList.filter(_it => r.teethImageList.some(_img => _img.imageType === _it.value))
+        .map(_it => ({
+          ..._it,
+          imgs: r.teethImageList.filter(_img => _img.imageType === _it.value)
+        }))
+      }))
+    }
+  },
+  methods: {
+    async getImageList(param) {
+      const res = await diagnosisAPI.getImageList(param)
+      this.records = res.data.map(d => ({
+        ...d, registerLabel: moment(d.visTime).format('YYYY/MM/DD HH:mm')
+      }))
+    },
+    async getImageEnums() {
+      const res = await diagnosisAPI.getImageEnums()
+      this.imageType = res.data.ImageType
+    },
+    preview({imgs}, current) {
+      uni.previewImage({
+        current,
+        urls: imgs.map(img => img.imageUrl)
+      })
     }
   },
   onLoad({patientId}) {
     this.patientId = patientId
+    this.getImageEnums()
+  },
+  onShow() {
+    this.getImageList({patientId: this.patientId})
   }
 }
 </script>

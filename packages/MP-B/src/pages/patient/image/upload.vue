@@ -86,7 +86,9 @@ export default {
       this.imageType = res.data.ImageType
     },
     async saveImageInfo() {
-      await diagnosisAPI.saveImageInfo(this.form)
+      await diagnosisAPI.saveImageInfo({
+        ...this.form, patientId: this.patientId
+      })
       this.$utils.show('上传成功', {icon: 'success'})
       this.$utils.back()
     },
@@ -104,6 +106,7 @@ export default {
     }
   },
   onLoad({patientId}) {
+    this.patientId = patientId
     this.getRegisterList({patientId})
     this.getImageEnums()
   }

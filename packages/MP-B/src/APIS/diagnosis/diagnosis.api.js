@@ -48,6 +48,10 @@ const diagnosisAPI = {
   saveImageInfo(data) {
     return httper.post('diagnosis/mini-apps/teeth-image/upload', data)
   },
+  // 获取影像列表
+  getImageList(data) {
+    return httper.get('diagnosis/mini-apps/teeth-image/list', data)
+  },
 }
 
 export default diagnosisAPI
