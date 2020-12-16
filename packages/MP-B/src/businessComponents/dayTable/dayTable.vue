@@ -30,8 +30,8 @@
         </view>
       </view>
 
+      <!-- 已预约卡片 -->
       <view class="calendar_meeting">
-        <!-- 已预约卡片 -->
         <view
           v-for="(item, index) in meetingList"
           :key="index"
@@ -136,6 +136,7 @@
         </view>
       </view>
 
+      <!-- block -->
       <view class="calendar_meeting">
         <view
           v-for="(item, index) in blockEventList"
@@ -187,6 +188,7 @@ import { dataDictUtil } from 'utils/dataDict.util'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
 import { numberRangeUtil } from './numberRange.util'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
+import { apptDataService } from '../../../src/baseSubpackages/apptForm/apptData.service'
 
 const windowHeight = uni.getSystemInfoSync().windowHeight
 
@@ -309,10 +311,11 @@ export default {
         this.getMeetingList()
     },
     blockEvent(newVal) {
-      newVal && newVal.length > 0 && this.getBlockEventList()
+      newVal && newVal.length === 0
+        ? (this.blockEventList = [])
+        : this.getBlockEventList()
     },
     scheduleList(newVal) {
-      console.log('newVal', newVal)
       this.getDefaultTable()
       this.isTodayFun(this.chooseDateProp)
       setTimeout(() => {
@@ -487,6 +490,7 @@ export default {
 
       console.log('meetingList', this.meetingList)
     },
+    //block事件列表
     getBlockEventList() {
       const _self = this
       this.blockEventList = this.blockEvent.map((v) => {
@@ -1068,8 +1072,6 @@ export default {
       let idSt = self.meetingTouchIdSt + nid
       let idEnd = idSt + meeting.length
 
-      console.log('idSt', idSt)
-
       if (
         idSt < 0 ||
         idEnd > this.minAll ||
@@ -1176,46 +1178,54 @@ export default {
       // 	self.createMeet = "";
       // 	return;
       // }
-      if (trueTop != meeting.top) {
-        let style = 'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
-        let startTime = self.defaultList[meeting.idSt].timeTitle,
-          endTime = self.defaultList[meeting.idEnd].timeTitle
-        let startTimeShow = startTime,
-          endTimeShow = endTime
-        if (self.isToday == 0) {
-          if (!!self.isHidTime(meeting.idSt)) {
-            startTimeShow = ''
-          }
-          if (!!self.isHidTime(meeting.idEnd)) {
-            endTimeShow = ''
-          }
-        }
-        let NewcreateMeet = {
-          ...meeting,
-          isFlex: meeting.isFlex,
-          trueStyle: 'top:0px;height:' + meeting.height + 'px;',
-          style: style,
-          idSt: meeting.idSt,
-          idEnd: meeting.idEnd,
-          length: meeting.length,
-          height: meeting.height,
-          top: trueTop,
-          ...scheduleTableUtil.formatStartTimeAndEndTime(
-            startTime,
-            endTime,
-            this.chooseDateProp,
-          ),
-          startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow,
-        }
-        self.createMeet = NewcreateMeet
+      apptDataService.getApptVerify(
+        meeting,
+        () => {
+          if (trueTop != meeting.top) {
+            let style = 'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
+            let startTime = self.defaultList[meeting.idSt].timeTitle,
+              endTime = self.defaultList[meeting.idEnd].timeTitle
+            let startTimeShow = startTime,
+              endTimeShow = endTime
+            if (self.isToday == 0) {
+              if (!!self.isHidTime(meeting.idSt)) {
+                startTimeShow = ''
+              }
+              if (!!self.isHidTime(meeting.idEnd)) {
+                endTimeShow = ''
+              }
+            }
+            let NewcreateMeet = {
+              ...meeting,
+              isFlex: meeting.isFlex,
+              trueStyle: 'top:0px;height:' + meeting.height + 'px;',
+              style: style,
+              idSt: meeting.idSt,
+              idEnd: meeting.idEnd,
+              length: meeting.length,
+              height: meeting.height,
+              top: trueTop,
+              ...scheduleTableUtil.formatStartTimeAndEndTime(
+                startTime,
+                endTime,
+                this.chooseDateProp,
+              ),
+              startTimeShow: startTimeShow,
+              endTimeShow: endTimeShow,
+            }
+            self.createMeet = NewcreateMeet
 
-        self.createMeet.patient &&
-          self.$emit('changeCard', {
-            meet: self.createMeet,
-            type: 'touchMeeting',
-          })
-      }
+            self.createMeet.patient &&
+              self.$emit('changeCard', {
+                meet: self.createMeet,
+                type: 'touchMeeting',
+              })
+          }
+        },
+        self.clearCreateMeet(),
+        self.clearCreateMeet(),
+        self.clearCreateMeet(),
+      )
     },
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {

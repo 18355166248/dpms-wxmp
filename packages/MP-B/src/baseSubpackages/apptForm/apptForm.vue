@@ -703,6 +703,8 @@ export default {
         formatValue,
         () => this.updateApptCb(formatValue),
         () => (this.saveLoading = false),
+        () => (this.saveLoading = false),
+        () => (this.saveLoading = false),
       )
     },
     // 新建/更新预约 | 挂号调用接口
