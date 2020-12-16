@@ -1,7 +1,7 @@
 <template>
   <div class="upload">
     <div class="thumbnail" v-for="f in files" :key="f.path">
-      <image :src="f.path"/>
+      <image :src="f.path" @click="preview(files, f.path)"/>
       <div class="close" @click="del(f)">X</div>
     </div>
     <button @click="choose" class="add" v-if="files.length < 6">
@@ -65,6 +65,12 @@ export default {
       this.fileUrls = this.fileUrls.filter(u => u !== f.url)
       this.files = this.files.filter(file => file.url !== f.url)
       this.$emit('input', this.format(this.fileUrls))
+    },
+    preview(imgs, current) {
+      uni.previewImage({
+        current,
+        urls: imgs.map(img => img.path)
+      })
     }
   },
   // watch: {
