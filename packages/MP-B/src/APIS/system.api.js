@@ -17,6 +17,14 @@ const systemAPI = {
   getLoginInstitutionList(params) {
     return httper.get('institution/staff/detail-login', params)
   },
+  // 获取oss参数
+  getOssParam(params) {
+    return httper.get('institution/oss/param', params)
+  },
+  // 通过key获取url
+  getOssUrl(params) {
+    return httper.get('institution/oss/url', params)
+  },
 }
 
 export default systemAPI

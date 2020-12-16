@@ -36,6 +36,18 @@ const diagnosisAPI = {
   updateRegisterStatus(data) {
     return httper.post('diagnosis/register/update-status', data)
   },
+  // 查询就诊记录
+  getRegisterList(data) {
+    return httper.get('diagnosis/register/list-patient', data)
+  },
+  // 获取影像相关的枚举
+  getImageEnums(data) {
+    return httper.get('diagnosis/mini-apps/teeth-image/get-all-image-enums', data)
+  },
+  // 影像上传
+  saveImageInfo(data) {
+    return httper.post('diagnosis/mini-apps/teeth-image/upload', data)
+  },
 }
 
 export default diagnosisAPI
