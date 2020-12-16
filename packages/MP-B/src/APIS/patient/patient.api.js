@@ -2,7 +2,7 @@ import httper from '../http'
 
 const patientAPI = {
   getPatientList(data) {
-    return httper.get('patient/patient/page', data, {
+    return httper.get('patient/patient/mini-apps/page', data, {
       headers: {
         'content-type': 'application/json',
       },
@@ -22,10 +22,10 @@ const patientAPI = {
   },
   //新建患者
   createPatient(data) {
-    return httper.post('patient/patient/create/with/patient-contact', data)
+    return httper.post('patient/patient/mini-apps/create', data)
   },
   details(data) {
-    return httper.get('institution/current/details', data)
+    return httper.get('patient/patient/mini-apps/detail', data)
   },
   // 诊室
   getConsultationRoomList(params) {

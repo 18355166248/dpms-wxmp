@@ -43,6 +43,13 @@ const appointmentAPI = {
       data,
     )
   },
+  //获得block事件
+  getApptBlockListByStaff(params) {
+    return httper.get(
+      'appointment/block-event/mini-apps/select-block-event-by-business-ids',
+      params,
+    )
+  },
 }
 
 export default appointmentAPI

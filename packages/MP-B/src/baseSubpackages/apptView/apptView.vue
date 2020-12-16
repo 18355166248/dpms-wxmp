@@ -88,6 +88,7 @@
         :chooseDateProp="date"
         :scheduleList="scheduleList"
         :retract="retract"
+        :blockEvent="blockEvent"
         @createAppt="createAppt"
         @editAppt="editAppt"
         @changeCard="changeCard"
@@ -149,6 +150,7 @@ export default {
       staff: uni.getStorageSync('staff'),
       doctorValue: null,
       isDoctorWithLogin: true,
+      blockEvent: [],
     }
   },
   computed: {
@@ -218,6 +220,7 @@ export default {
 
       this.getApptList()
       this.getApptScheduleInfo()
+      this.getApptBlockEventInfo()
       this.refreshDoctorWithApptList()
     },
     showSearch(newVal) {
@@ -310,6 +313,11 @@ export default {
             )
 
             if (err) return Promise.reject(err)
+            ;[err, res] = await this.$utils.asyncTasks(
+              this.getApptBlockEventInfo(),
+            )
+
+            if (err) return Promise.reject(err)
 
             return true
           } catch (err) {
@@ -326,6 +334,11 @@ export default {
         try {
           this.getApptList()
           ;[err, res] = await this.$utils.asyncTasks(this.getApptScheduleInfo())
+
+          if (err) return Promise.reject(err)
+          ;[err, res] = await this.$utils.asyncTasks(
+            this.getApptBlockEventInfo(),
+          )
 
           if (err) return Promise.reject(err)
 
@@ -459,6 +472,33 @@ export default {
           })
       })
     },
+    getApptBlockEventInfo() {
+      return new Promise((resolve, reject) => {
+        if (this.doctor.staffId === -1) {
+          this.blockEvent = []
+          return resolve()
+        }
+
+        appointmentAPI
+          .getApptBlockListByStaff({
+            blockBeginTime: moment().startOf('day').valueOf(),
+            blockEndTime: moment().endOf('day').valueOf(),
+            medicalInstitutionId: this.accessMedicalInstitution
+              .medicalInstitutionId,
+            blockEventType: 1,
+            businessIds: this.doctor.staffId,
+          })
+          .then((res) => {
+            if (res.code === 0) {
+              this.blockEvent = res.data
+            }
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
+      })
+    },
     // 获取全部在职医生的预约列表
     getAllDoctorWithApptList() {
       return new Promise((resolve) => {
@@ -555,6 +595,7 @@ export default {
         this.scheduleList = defaultScheduleList
       } else {
         this.getApptScheduleInfo()
+        this.getApptBlockEventInfo()
       }
     },
     refreshDoctorWithApptList() {
@@ -566,30 +607,7 @@ export default {
     },
     changeCard({ meet, type }) {
       console.log('编辑改变', type, meet)
-      if (type === 'touchMeeting') {
-        if (
-          this.medicalInstitution.institutionChainType === 4 &&
-          this.medicalInstitution.medicalInstitutionId !==
-            meet.appointmentMedicalInstitutionId
-        ) {
-          return
-          this.$utils.show('不可预约到其他诊所')
-        }
 
-        // if (apptFormUtil.isHeaderWithLargeArea(meet.medicalInstitution)) {
-        //   return this.$utils.show('不可预约到总部/大区')
-        // }
-        // if (
-        //   this.isHeaderWithLargeArea(
-        //     apptViewStore.curMedicalInstitution,
-        //   )
-        // ) {
-        //   return notification.error({
-        //     key: 'isHeaderWithLargeArea',
-        //     message: '不可预约到总部/大区',
-        //   })
-        // }
-      }
       appointmentAPI
         .updateAppointment({
           appointmentJsonStr: JSON.stringify(meet),

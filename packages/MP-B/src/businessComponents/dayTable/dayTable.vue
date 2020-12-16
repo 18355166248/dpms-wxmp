@@ -86,14 +86,6 @@
             </view>
           </view>
         </view>
-
-        <!-- 				<view v-if="meetingDetail" class='meeting_detail' :class="meetingDetail.class" :style="meetingDetail.style">
-					<view>会议发起人</view>
-					<view>{{meetingDetail.time}}</view>
-					<view>{{meetingDetail.meetingName}}</view>
-					<view>区域/地点</view>
-				</view>
- -->
         <!-- 创建会议 -->
         <view
           id="createApptId"
@@ -144,6 +136,40 @@
         </view>
       </view>
 
+      <view class="calendar_meeting">
+        <view
+          v-for="(item, index) in blockEventList"
+          :key="index"
+          :style="item.style"
+          class="meeting_a blockEvent"
+        >
+          <view class="metting-inner">
+            <view class="metting_content_box meetCard">
+              <view
+                class="docorator"
+                style="background: rgba(0, 0, 0, 0.65);"
+              />
+              <view class="meeting_content_name">
+                {{ item.businessName }} (Block)
+              </view>
+              <view class="meeting_content_center">
+                <view
+                  :key="item.appointmentBlockEventId"
+                  class="apptItem"
+                  style="
+                    background: #f6f6f6;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+                  "
+                >
+                  {{ item.appointmentBlockEventName }}
+                </view>
+              </view>
+              <view class="meeting_content_time">{{ item.time }}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
       <!-- 时间线刻度 -->
       <view v-if="isToday == 0" class="time_now" :style="nowTime.line">
         <view class="left_text_red">{{ nowTime.text }}</view>
@@ -155,9 +181,9 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { scheduleTableUtil } from './dayTable.util.js'
 import { dataDictUtil } from 'utils/dataDict.util'
-import moment from 'moment'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
 import { numberRangeUtil } from './numberRange.util'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
@@ -188,6 +214,7 @@ export default {
     apptList: Array,
     scheduleList: Array, // 排班时间列表
     retract: Boolean, // 日历展开: false 收缩: true 用于更新视图的高度
+    blockEvent: Array, //block事件
   },
   data() {
     return {
@@ -220,6 +247,7 @@ export default {
         '预约中心/预约视图/新建修改、取消、日志',
       ),
       createApptClick: false,
+      blockEventList: [],
     }
   },
   //如果将chooseDateProp放入vuex 监听可使用下面方法
@@ -279,6 +307,9 @@ export default {
       Array.isArray(this.apptList) &&
         this.apptList.length > 0 &&
         this.getMeetingList()
+    },
+    blockEvent(newVal) {
+      newVal && newVal.length > 0 && this.getBlockEventList()
     },
     scheduleList(newVal) {
       console.log('newVal', newVal)
@@ -452,8 +483,45 @@ export default {
           ...meetingList[i],
         })
       }
-      console.log('list', list)
       this.meetingList = list
+
+      console.log('meetingList', this.meetingList)
+    },
+    getBlockEventList() {
+      const _self = this
+      this.blockEventList = this.blockEvent.map((v) => {
+        let startTime = moment(v.blockBeginTime).format('YYYY-MM-DD HH:mm')
+        let endTime = moment(v.blockEndTime).format('YYYY-MM-DD HH:mm')
+        let start = startTime.substring(11, 16).split(':')
+        let end = endTime.substring(11, 16).split(':')
+
+        let st =
+          parseInt(start[0] * _self.minRatio) +
+          parseInt(start[1] / _self.unitMinute)
+        let ed =
+          parseInt(end[0] * _self.minRatio) +
+          parseInt(end[1] / _self.unitMinute)
+
+        let diff = ed - st
+        diff = diff < 2 ? 2 : diff
+
+        let height = 'height:' + diff * _self.unitHeight + 'px;'
+        let top = 'top:' + st * _self.unitHeight + 'px;'
+        let isFlex = ''
+        let bgClass = 'blurBg'
+
+        v.top = st * _self.unitHeight
+        ;(v.style = height + top),
+          (v.time =
+            startTime.substring(11, 16) + '-' + endTime.substring(11, 16))
+        v.isFlex = isFlex
+        v.startId = st
+        v.endId = ed
+        ;(v.duration = ed - st), (v.bgClass = bgClass)
+        return v
+      })
+
+      console.log('blockEventList', this.blockEventList)
     },
     //点击会议列表
     showDetail(index, e) {
@@ -1366,6 +1434,12 @@ $borderColor: #ddd;
     line-height: 27px;
     flex: 0 0 27px;
   }
+}
+
+.blockEvent {
+  width: calc((100% - 50px - 0px) / 1);
+  left: calc(50px + ((100% - 50px - 0px) / 1 + 2px) * 0);
+  background: #f6f6f6 !important;
 }
 
 .meetCard {

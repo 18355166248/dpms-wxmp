@@ -63,19 +63,27 @@ export default {
               setTimeout(() => {
                 uni.$emit(globalEventKeys.newPatient)
 
-                if (type === 'createRegister' || type === 'createAppt') {
-                  that.$utils.push({
+                if (type === 'createRegister') {
+                  return that.$utils.push({
                     url:
                       '/baseSubpackages/apptForm/apptForm?patient=' +
                       JSON.stringify(res.data) +
                       '&type=createRegister',
                   })
-                } else {
-                  that.$utils.push({
+                }
+
+                if (type === 'createAppt') {
+                  return that.$utils.push({
                     url:
-                      '/pages/patient/patient?patientId=' + res.data.patientId,
+                      '/baseSubpackages/apptForm/apptForm?patient=' +
+                      JSON.stringify(res.data) +
+                      '&type=createAppt',
                   })
                 }
+
+                return that.$utils.push({
+                  url: '/pages/patient/patient?patientId=' + res.data.patientId,
+                })
               }, 1000)
             },
           })
