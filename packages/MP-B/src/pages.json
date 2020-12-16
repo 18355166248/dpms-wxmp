@@ -98,6 +98,18 @@
           "style": {
             "navigationBarTitleText": "搜索患者"
           }
+        },
+        {
+          "path": "image/record",
+          "style": {
+            "navigationBarTitleText": "影像记录"
+          }
+        },
+        {
+          "path": "image/upload",
+          "style": {
+            "navigationBarTitleText": "上传影像"
+          }
         }
       ]
     },
