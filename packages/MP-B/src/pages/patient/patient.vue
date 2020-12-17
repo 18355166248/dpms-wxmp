@@ -2,6 +2,7 @@
   <view class="content">
     <div class="bg"></div>
     <card
+      :patient="patient"
       :name="patient.patientName"
       :avatarUrl="patient.avatarUrl"
       :gender="patient.gender"
@@ -39,6 +40,32 @@
           </view>
           <view class="menu-area-item-txt mt-24">
             预约
+          </view>
+        </view>
+        <view
+          class="menu-area-item"
+          @click="
+            toUrl('/pages/patient/image/record?patientId=' + patientId)
+          "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color3">
+            <text class="iconfont icon-yingxiang"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            影像记录
+          </view>
+        </view>
+        <view
+          class="menu-area-item"
+          @click="
+            toUrl('/pages/patient/medicalRecord/record?patientId=' + patientId)
+          "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color4">
+            <text class="iconfont icon-dingdan-mian"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            病历记录
           </view>
         </view>
       </view>
@@ -121,10 +148,13 @@ export default {
   &-body {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     .menu-area-item {
       width: $width;
-      margin-right: 80rpx;
+      min-width: 33.33%;
       text-align: center;
+      color: rgba(0,0,0,0.9);
+      margin-bottom: 64rpx;
       &-icon {
         width: $width;
         height: $width;
@@ -132,6 +162,7 @@ export default {
         border-radius: 40rpx;
         text-align: center;
         color: #fff;
+        margin: auto;
         .iconfont {
           font-size: 60rpx;
         }
@@ -142,6 +173,14 @@ export default {
       }
       &-icon-color2 {
         $values: rgba(254, 178, 119, 1), rgba(251, 141, 81, 1);
+        @include colors($values...);
+      }
+      &-icon-color3 {
+        $values: rgba(179,127,235,1), rgba(114,46,209,1);
+        @include colors($values...);
+      }
+      &-icon-color4 {
+        $values: rgba(255,133,192,1), rgba(235,47,150,1);
         @include colors($values...);
       }
 
