@@ -33,6 +33,7 @@
           :style="{ paddingRight: status ? '120rpx' : 0 }"
         >
           <text class="card-baseInfo-name">{{ name }}</text>
+          <div class="iconfont icon-vip vip" v-if="patient.isMember"></div>
           <view v-if="badgeObj" class="card-baseInfo-extend">
             <badge
               :type="badgeObj.type"
@@ -42,7 +43,7 @@
           </view>
         </view>
 
-        <view :class="{ 'mb-16': infos.length > 0 }">
+        <view :class="{ 'mb-14': infos.length > 0 }">
           <template v-if="gender">
             <tag :text="genderTag" :circle="false" type="error"></tag>
           </template>
@@ -113,6 +114,7 @@ import qs from 'qs'
 export default {
   name: 'card',
   props: {
+    patient: Object,
     disabled: {
       type: Boolean,
       default: false,
@@ -324,7 +326,7 @@ export default {
   position: relative;
   border-radius: $uni-border-radius-base;
   background: $dpms-bg-color;
-  padding: 32rpx 24rpx;
+  padding: 30rpx 24rpx;
   // border-top-width: 12rpx;
   // border-top-style: solid;
   box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
@@ -368,10 +370,12 @@ export default {
     margin-left: 24rpx;
     font-size: 28rpx;
     color: rgba(0, 0, 0, 0.65);
+    line-height: 1.6;
 
     .card-baseInfo {
       position: relative;
-      margin-bottom: 8rpx;
+      display: flex;
+      align-items: center;
       &-name {
         color: rgba(0, 0, 0, 0.9);
         font-size: 36rpx;
@@ -382,6 +386,17 @@ export default {
         right: 0;
         top: 50%;
         transform: translateY(-50%);
+      }
+      .vip{
+        margin-left: 8rpx;
+        background: linear-gradient(180deg, #fbd08c 0%, #cfa147 99%);
+        color: #ffffff;
+        border-radius: 4rpx;
+        width: 32rpx;
+        height: 32rpx;
+        text-align: center;
+        line-height: 32rpx;
+        font-size: 28rpx;
       }
     }
     &-item {
