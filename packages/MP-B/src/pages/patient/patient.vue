@@ -41,6 +41,17 @@
             预约
           </view>
         </view>
+        <view
+          class="menu-area-item"
+          @click="callTel"
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color3">
+            <text class="iconfont icon-phone"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            打电话
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -85,6 +96,11 @@ export default {
         url,
       })
     },
+    callTel() {
+      uni.makePhoneCall({
+        phoneNumber: this.patient?.mobile
+      })
+    }
   },
   components: {
     card,
@@ -142,6 +158,10 @@ export default {
       }
       &-icon-color2 {
         $values: rgba(254, 178, 119, 1), rgba(251, 141, 81, 1);
+        @include colors($values...);
+      }
+      &-icon-color3 {
+        $values: rgba(110, 167, 252, 1), rgba(74, 147, 254, 1);
         @include colors($values...);
       }
 
