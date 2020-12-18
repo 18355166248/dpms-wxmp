@@ -166,6 +166,24 @@
           }
         }
       ]
+    },
+    {
+      "root": "baseSubpackages/statistics",
+      "name": "statistics",
+      "pages": [
+        {
+          "path": "statistics",
+          "style": {
+            "navigationBarTitleText": "诊所运营统计"
+          }
+        },
+        {
+          "path": "detail/detail",
+          "style": {
+            "navigationBarTitleText": "预约项目"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
