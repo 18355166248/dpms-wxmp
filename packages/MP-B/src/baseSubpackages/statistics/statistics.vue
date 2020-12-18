@@ -4,6 +4,7 @@
       v-model="current"
       :scroll="false"
       :tabs="tabs"
+      field="name"
       height="76rpx"
       lineHeight="4rpx"
       activeColor="#5CBB89"
@@ -13,41 +14,41 @@
     />
     <view class="list">
       <view class="tit">新增患者性别分布</view>
-      <view v-if="genderData.length">
+      <view v-show="genderData.length">
         <canvas canvas-id="genderCanvas" id="genderCanvas" class="charts" />
-        <view class="link">查看全部</view>
+        <view class="link" @click="link(1)">查看全部</view>
       </view>
-      <view v-else class="empty">
+      <view v-show="genderData.length === 0" class="empty">
         暂无统计数据
       </view>
     </view>
     <view class="list">
       <view class="tit">到诊类型分布</view>
-      <view v-if="registerCanvas.length">
+      <view v-show="registerData.length">
         <canvas canvas-id="registerCanvas" id="registerCanvas" class="charts" />
-        <view class="link">查看全部</view>
+        <view class="link" @click="link(2)">查看全部</view>
       </view>
-      <view v-else class="empty">
+      <view v-show="registerData.length === 0" class="empty">
         暂无统计数据
       </view>
     </view>
     <view class="list">
       <view class="tit">医生收款分布</view>
-      <view v-if="doctorData.length">
+      <view v-show="doctorData.length">
         <canvas canvas-id="doctorCanvas" id="doctorCanvas" class="charts" />
-        <view class="link">查看全部</view>
+        <view class="link" @click="link(3)">查看全部</view>
       </view>
-      <view v-else class="empty">
+      <view v-show="doctorData.length === 0" class="empty">
         暂无统计数据
       </view>
     </view>
     <view class="list">
       <view class="tit">诊疗项目收款</view>
-      <view v-if="projectData.series.length">
+      <view v-show="projectData.series.length">
         <canvas canvas-id="projectCanvas" id="projectCanvas" class="charts" />
-        <view class="link">查看全部</view>
+        <view class="link" @click="link(4)">查看全部</view>
       </view>
-      <view v-else class="empty">
+      <view v-show="projectData.series.length === 0" class="empty">
         暂无统计数据
       </view>
     </view>
@@ -65,7 +66,11 @@ export default {
   data() {
     return {
       current: 0,
-      tabs: ['昨天', '近七天', '近30天'],
+      tabs: [
+        { name: '昨天', val: 111 },
+        { name: '近七天', val: 222 },
+        { name: '近30天', val: 333 },
+      ],
       cWidth: '',
       cHeight: '',
       pixelRatio: 1,
@@ -87,12 +92,7 @@ export default {
       doctorData: [],
       projectData: {
         categories: ['2012', '2013', '2014', '2015', '2016', '2017'],
-        series: [
-          {
-            name: '',
-            data: [15, 20, 45, 37, 43, 34],
-          },
-        ],
+        series: [15, 20, 45, 37, 43, 34],
       },
     }
   },
@@ -105,8 +105,8 @@ export default {
     this.showColumn('projectCanvas', this.projectData)
   },
   methods: {
-    changeTab(index) {
-      console.log('当前选中的项：' + index)
+    changeTab(i) {
+      console.log('当前选中的值：' + this.tabs[i].val)
     },
     showPie(canvasId, chartData) {
       new uCharts({
@@ -155,7 +155,12 @@ export default {
         padding: [30, 15, 20, 15],
         pixelRatio: this.pixelRatio,
         categories: chartData.categories,
-        series: chartData.series,
+        series: [
+          {
+            name: '',
+            data: chartData.series,
+          },
+        ],
         xAxis: {
           disableGrid: true,
         },
@@ -173,6 +178,16 @@ export default {
               chartData.categories.length,
           },
         },
+      })
+    },
+    link(type) {
+      console.log(111)
+      this.$utils.push({
+        url:
+          '/baseSubpackages/statistics/detail/detail?type=' +
+          type +
+          '&time=' +
+          this.tabs[this.current].val,
       })
     },
   },

@@ -180,7 +180,7 @@
         {
           "path": "detail/detail",
           "style": {
-            "navigationBarTitleText": "预约项目"
+            "navigationBarTitleText": ""
           }
         }
       ]
