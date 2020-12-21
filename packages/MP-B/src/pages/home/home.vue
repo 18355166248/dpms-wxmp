@@ -161,6 +161,7 @@
 import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
+import appointmentAPI from 'APIS/appointment/appointment.api'
 import toggle from '@/components/toggle/toggle'
 import dropDown from './dropDown.vue'
 
@@ -378,9 +379,19 @@ export default {
           'workbenchStore/setMedicalInstitution',
           medicalInstitution,
         )
-
+        this.getApptSetting()
         this.init()
       }
+    },
+    // 获取预约视图设置
+    getApptSetting() {
+      appointmentAPI
+        .getSetting()
+        .then((res) => {
+          const { data } = res
+          this.$store.commit('workbenchStore/setApptSetting', data)
+        })
+        .catch()
     },
   },
 }
