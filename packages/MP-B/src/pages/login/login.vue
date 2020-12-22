@@ -170,6 +170,7 @@ export default {
           this.$store.commit('workbenchStore/setStaff', staff)
           this.getLoginInfo(medicalInstitution, staff, _token)
           this.getApptSetting()
+          this.getMenu(_token)
           this.getEnums()
         })
         .catch((res) => {
@@ -206,10 +207,18 @@ export default {
         })
     },
     //获得菜单
-    getMenu() {
-      // systemAPI.menuAll().then((res) => {
-      //   console.log(res.data)
-      // })
+    getMenu(_token) {
+      systemAPI
+        .menuAll({
+          _token,
+        })
+        .then((res) => {
+          const { data } = res
+          this.$store.commit('workbenchStore/setMenu', data)
+        })
+        .catch((res) => {
+          this.isLoading = false
+        })
     },
     // 获取预约视图设置
     getApptSetting() {
@@ -219,7 +228,9 @@ export default {
           const { data } = res
           this.$store.commit('workbenchStore/setApptSetting', data)
         })
-        .catch()
+        .catch((res) => {
+          this.isLoading = false
+        })
     },
     openSelect() {
       this.validate((err, fileds) => {

@@ -8,8 +8,8 @@ const systemAPI = {
   },
 
   //获得scrm权限
-  menuAll() {
-    return scrmHttper.get('system/menu-all', params)
+  menuAll(params) {
+    return scrmHttper.get('scrm/system/menu-all', params)
   },
 
   // 登录时获取机构列表
