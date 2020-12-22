@@ -52,6 +52,14 @@ const diagnosisAPI = {
   getImageList(data) {
     return httper.get('diagnosis/mini-apps/teeth-image/list', data)
   },
+  // 分页查询电子病历列表
+  getMedicalRecordList(data) {
+    return httper.get('diagnosis/mini-apps/medical-record/page', data)
+  },
+  // 新建病历
+  createMedicalRecord(data) {
+    return httper.post('diagnosis/mini-apps/medical-record/create', data)
+  },
 }
 
 export default diagnosisAPI
