@@ -196,8 +196,8 @@
 import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
-import appointmentAPI from '@/APIS/appointment/appointment.api'
-import institutionAPI from '@/APIS/institution/institution.api'
+import appointmentAPI from 'APIS/appointment/appointment.api'
+import institutionAPI from 'APIS/institution/institution.api'
 
 import toggle from '@/components/toggle/toggle'
 import dropDown from './dropDown.vue'
