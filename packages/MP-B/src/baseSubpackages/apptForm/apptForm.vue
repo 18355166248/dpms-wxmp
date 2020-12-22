@@ -261,6 +261,7 @@ export default {
   computed: {
     ...mapState('workbenchStore', {
       medicalInstitution: (state) => state.medicalInstitution,
+      apptSetting: (state) => state.apptSetting,
     }),
     isAppt() {
       return (
@@ -515,13 +516,14 @@ export default {
     },
     onBlurWithDuration(value) {
       this.closeBlur()
-      if (value < 15) return this.$set(this.form, 'duration', 15)
+      const timeStep = this.apptSetting.appointmentDuration || 15
+      if (value < timeStep) return this.$set(this.form, 'duration', timeStep)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
-      if (value % 15 !== 0) {
+      if (value % timeStep !== 0) {
         return this.$set(
           this.form,
           'duration',
-          Math.max(Math.ceil(value / 15) * 15, 30),
+          Math.max(Math.ceil(value / timeStep) * timeStep, timeStep * 2),
         )
       }
     },

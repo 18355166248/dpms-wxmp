@@ -50,6 +50,10 @@ const appointmentAPI = {
       params,
     )
   },
+  //获取预约视图设置
+  getSetting() {
+    return httper.get('appointment/appointment-view/setting/detail')
+  },
 }
 
 export default appointmentAPI

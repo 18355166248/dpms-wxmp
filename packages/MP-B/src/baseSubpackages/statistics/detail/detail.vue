@@ -16,7 +16,7 @@
     </view>
     <t-table>
       <t-tr class="t-tr" v-for="(item, i) in tableList" :key="i">
-        <t-td v-for="(v, k) in item" :key="i + '-' + k">{{ v }}</t-td>
+        <t-td v-for="(v, k) in item" :key="k">{{ v }}</t-td>
       </t-tr>
     </t-table>
   </view>

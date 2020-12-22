@@ -89,6 +89,7 @@ import _ from 'lodash'
 import AsyncValidator from 'async-validator'
 import systemAPI from '@/APIS/system.api'
 import authAPI from '@/APIS/auth/auth.api'
+import appointmentAPI from 'APIS/appointment/appointment.api'
 import { setStorage, getStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
@@ -169,6 +170,7 @@ export default {
           this.$store.commit('workbenchStore/setStaff', staff)
           this.getLoginInfo(medicalInstitution, staff, _token)
           this.getEnums()
+          this.getApptSetting()
         })
         .catch((res) => {
           this.isLoading = false
@@ -202,6 +204,16 @@ export default {
         .catch((res) => {
           this.isLoading = false
         })
+    },
+    // 获取预约视图设置
+    getApptSetting() {
+      appointmentAPI
+        .getSetting()
+        .then((res) => {
+          const { data } = res
+          this.$store.commit('workbenchStore/setApptSetting', data)
+        })
+        .catch()
     },
     openSelect() {
       this.validate((err, fileds) => {
