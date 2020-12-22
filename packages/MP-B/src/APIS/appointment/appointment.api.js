@@ -7,13 +7,13 @@ const appointmentAPI = {
   },
   // 预约校验
   getAppointmentVerify(data) {
-    return httper.post('appointment/appointment/verify', data)
+    return httper.post('appointment/appointment/mini-apps/verify', data)
   },
   createAppointment(data) {
-    return httper.post('appointment/appointment/create', data)
+    return httper.post('appointment/appointment/mini-apps/create', data)
   },
   updateAppointment(data) {
-    return httper.post('appointment/appointment/update', data)
+    return httper.post('appointment/appointment/mini-apps/update', data)
   },
   // 获取预约详情
   getAppointmentDetail(params) {

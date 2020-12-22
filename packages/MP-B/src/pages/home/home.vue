@@ -110,7 +110,7 @@
 
       <view class="menu-area pt-48 ph-32">
         <view class="menu-area-header">
-          常用功能
+          统计报表
         </view>
         <view class="menu-area-body mt-41">
           <view
@@ -145,6 +145,37 @@
             </view>
             <view class="menu-area-item-txt mt-24">
               患者
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="menu-area pt-48 ph-32">
+        <view class="menu-area-header">
+          常用功能
+        </view>
+        <view class="menu-area-body mt-41">
+          <view
+            v-if="!isHeadquartersAndRegion"
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/statistics/statistics')"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color4">
+              <text class="iconfont icon-statis"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              诊所统计
+            </view>
+          </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/revenueForm/revenueForm')"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color5">
+              <text class="iconfont icon-chart"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              营收报表
             </view>
           </view>
         </view>
@@ -557,6 +588,14 @@ export default {
         }
         &-icon-color3 {
           $values: rgba(110, 167, 252, 1), rgba(74, 147, 254, 1);
+          @include colors($values...);
+        }
+        &-icon-color4 {
+          $values: rgba(179, 127, 235, 1), rgba(114, 46, 209, 1);
+          @include colors($values...);
+        }
+        &-icon-color5 {
+          $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
           @include colors($values...);
         }
 
