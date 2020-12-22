@@ -169,8 +169,8 @@ export default {
           )
           this.$store.commit('workbenchStore/setStaff', staff)
           this.getLoginInfo(medicalInstitution, staff, _token)
-          this.getEnums()
           this.getApptSetting()
+          this.getEnums()
         })
         .catch((res) => {
           this.isLoading = false
