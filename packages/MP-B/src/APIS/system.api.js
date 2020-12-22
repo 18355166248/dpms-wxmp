@@ -7,6 +7,11 @@ const systemAPI = {
     return httper.get('system/enums', params)
   },
 
+  //获得scrm权限
+  menuAll() {
+    return scrmHttper.get('system/menu-all', params)
+  },
+
   // 登录时获取机构列表
   getInstitutionListScrm(params) {
     return scrmHttper.get('scrm/institution/hierarchies', params)
@@ -28,6 +33,16 @@ const systemAPI = {
   //获取登陆信息
   getLoginInfo(params) {
     return scrmHttper.post('scrm/auth/medical-Info', params)
+  },
+
+  // 获取oss参数
+  getOssParam(params) {
+    return httper.get('institution/oss/param', params)
+  },
+
+  // 通过key获取url
+  getOssUrl(params) {
+    return httper.get('institution/oss/url', params)
   },
 }
 

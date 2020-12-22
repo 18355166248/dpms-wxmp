@@ -205,6 +205,12 @@ export default {
           this.isLoading = false
         })
     },
+    //获得菜单
+    getMenu() {
+      // systemAPI.menuAll().then((res) => {
+      //   console.log(res.data)
+      // })
+    },
     // 获取预约视图设置
     getApptSetting() {
       appointmentAPI
