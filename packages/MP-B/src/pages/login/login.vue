@@ -89,6 +89,7 @@ import _ from 'lodash'
 import AsyncValidator from 'async-validator'
 import systemAPI from '@/APIS/system.api'
 import authAPI from '@/APIS/auth/auth.api'
+import appointmentAPI from 'APIS/appointment/appointment.api'
 import { setStorage, getStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   data() {
@@ -152,26 +153,31 @@ export default {
           memberCode: this.loginForm.memberCode,
           username: this.loginForm.username,
           password: this.loginForm.password,
-          mtId: val.id,
+          _mtId: val.id,
+          medicalInstitutionId: val.id,
         })
         .then((res) => {
-          const { access_token, medicalInstitution, staff } = res.data
+          const { _token, medicalInstitution, staff } = res.data
           setStorage(STORAGE_KEY.LOGIN_INFO, {
             memberCode: this.loginForm.memberCode,
             username: this.loginForm.username,
           })
-          setStorage(STORAGE_KEY.ACCESS_TOKEN, access_token)
+          setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
           this.$store.commit(
             'workbenchStore/setMedicalInstitution',
             medicalInstitution,
           )
           this.$store.commit('workbenchStore/setStaff', staff)
+          this.getLoginInfo(medicalInstitution, staff, _token)
+          this.getApptSetting()
+          this.getMenu(_token)
           this.getEnums()
         })
         .catch((res) => {
           this.isLoading = false
         })
     },
+    //获得枚举
     getEnums() {
       systemAPI.getDataDict().then((res) => {
         setStorage(STORAGE_KEY.ENUMS, res.data)
@@ -179,6 +185,52 @@ export default {
           url: '/pages/home/home',
         })
       })
+    },
+    //设置登陆信息
+    getLoginInfo(medicalInstitution, staff, _token) {
+      systemAPI
+        .getLoginInfo({
+          _token,
+        })
+        .then((res) => {
+          this.$store.commit(
+            'workbenchStore/setMedicalInstitution',
+            Object.assign(medicalInstitution, res.data.medicalInstitution),
+          )
+          this.$store.commit(
+            'workbenchStore/setStaff',
+            Object.assign(staff, res.data.staff),
+          )
+        })
+        .catch((res) => {
+          this.isLoading = false
+        })
+    },
+    //获得菜单
+    getMenu(_token) {
+      systemAPI
+        .menuAll({
+          _token,
+        })
+        .then((res) => {
+          const { data } = res
+          this.$store.commit('workbenchStore/setMenu', data)
+        })
+        .catch((res) => {
+          this.isLoading = false
+        })
+    },
+    // 获取预约视图设置
+    getApptSetting() {
+      appointmentAPI
+        .getSetting()
+        .then((res) => {
+          const { data } = res
+          this.$store.commit('workbenchStore/setApptSetting', data)
+        })
+        .catch((res) => {
+          this.isLoading = false
+        })
     },
     openSelect() {
       this.validate((err, fileds) => {
@@ -190,13 +242,16 @@ export default {
         // 判断是否单体
         this.isLoading = true
         systemAPI
-          .getInstitutionList({ memberCode: this.loginForm.memberCode })
+          .getInstitutionListScrm({
+            memberName: this.loginForm.memberCode,
+            username: this.loginForm.username,
+          })
           .then((res) => {
-            const { institutionChainType, medicalInstitutionId } = res.data
-            if (institutionChainType === 1) {
-              this.login({ id: medicalInstitutionId })
-            } else {
+            const { medicalInstitutionType, medicalInstitutionId } = res.data[0]
+            if (medicalInstitutionType === 2) {
               this.$refs.selectMedicalInstitution.show()
+            } else {
+              this.login({ id: medicalInstitutionId })
             }
           })
           .catch((res) => {

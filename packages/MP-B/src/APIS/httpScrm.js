@@ -54,7 +54,7 @@ scrmHttper.interceptors.request.use((request) => {
     // 默认参数
     (request) => {
       const staff = getStorage(STORAGE_KEY.STAFF)
-
+      const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
       const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
       // 默认参数
       const defaultDatas = {
@@ -119,6 +119,9 @@ scrmHttper.interceptors.request.use((request) => {
 
         // 语言
         _lang: 'zh_CN',
+
+        //token
+        _token: token,
       }
 
       const newBody = { ...defaultDatas, ...(request.body || {}) }

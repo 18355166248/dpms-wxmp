@@ -84,6 +84,7 @@
           width: '100%',
           height: retract ? 'calc(100% - 286rpx)' : 'calc(100% - 686rpx)',
         }"
+        :uMinute="apptSetting.appointmentDuration || 15"
         :apptList="list"
         :chooseDateProp="date"
         :scheduleList="scheduleList"
@@ -156,6 +157,7 @@ export default {
   computed: {
     ...mapState('workbenchStore', {
       medicalInstitution: (state) => state.medicalInstitution,
+      apptSetting: (state) => state.apptSetting,
     }),
   },
   onShow() {
