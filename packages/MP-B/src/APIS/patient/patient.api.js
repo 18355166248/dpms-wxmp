@@ -24,9 +24,6 @@ const patientAPI = {
   createPatient(data) {
     return httper.post('patient/patient/mini-apps/create', data)
   },
-  details(data) {
-    return httper.get('patient/patient/mini-apps/detail', data)
-  },
   // 诊室
   getConsultationRoomList(params) {
     return httper.get('institution/institution-consulting-room/list', params)
@@ -38,7 +35,7 @@ const patientAPI = {
   },
   // 获取患者信息
   getPatientDetail(data) {
-    return httper.get('patient/patient/detail', data)
+    return httper.get('patient/patient/mini-apps/detail', data)
   },
   // 更新患者信息
   updatePatient(data) {

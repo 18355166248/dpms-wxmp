@@ -197,6 +197,8 @@ import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
+import institutionAPI from 'APIS/institution/institution.api'
+
 import toggle from '@/components/toggle/toggle'
 import dropDown from './dropDown.vue'
 
@@ -413,7 +415,7 @@ export default {
       this.switchClinicStatus = 'loading'
 
       const [err, res] = await this.$utils.asyncTasks(
-        patientApi.details({
+        institutionAPI.details({
           _mtId: val.source.medicalInstitutionId,
           _cmtId: val.source.topParentId,
           _cmtType: val.source.institutionChainType,
