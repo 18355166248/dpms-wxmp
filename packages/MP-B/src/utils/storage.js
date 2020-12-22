@@ -12,6 +12,8 @@ const STORAGE_KEY = {
   LOGIN_INFO: 'loginInfo',
   // 预约视图设置
   APPTSETTING: 'apptSetting',
+  //scrm菜单
+  MENU: 'menu',
 }
 
 export { STORAGE_KEY }

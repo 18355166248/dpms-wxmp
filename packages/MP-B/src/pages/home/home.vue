@@ -150,15 +150,18 @@
         </view>
       </view>
 
-      <view class="menu-area pt-48 ph-32">
+      <view
+        class="menu-area pt-48 ph-32"
+        v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
+      >
         <view class="menu-area-header">
           常用功能
         </view>
         <view class="menu-area-body mt-41">
           <view
-            v-if="!isHeadquartersAndRegion"
             class="menu-area-item"
             @click="toUrl('/baseSubpackages/statistics/statistics')"
+            v-if="iconShow.isStatisticsShow"
           >
             <view class="menu-area-item-icon menu-area-item-icon-color4">
               <text class="iconfont icon-statis"></text>
@@ -170,6 +173,7 @@
           <view
             class="menu-area-item"
             @click="toUrl('/baseSubpackages/revenueForm/revenueForm')"
+            v-if="iconShow.isReportShow"
           >
             <view class="menu-area-item-icon menu-area-item-icon-color5">
               <text class="iconfont icon-chart"></text>
@@ -241,6 +245,10 @@ export default {
         registerCount: 0,
         actualIncome: 0,
       },
+      iconShow: {
+        isStatisticsShow: false,
+        isReportShow: false,
+      },
     }
   },
   onShareAppMessage(res) {
@@ -266,7 +274,25 @@ export default {
     this.pullDownLoadData()
   },
   computed: {
-    ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
+    ...mapState('workbenchStore', ['medicalInstitution', 'staff', 'menu']),
+    initIconShow() {
+      const { menuList } = this.menu
+      const findObj =
+        menuList &&
+        menuList.find((v) => {
+          return v.enumValue === 'report-center'
+        })
+      this.iconShow.isStatisticsShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'clinic'
+        }) > -1
+      this.iconShow.isReportShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'marketing-report'
+        }) > -1
+    },
     institutionChainTypeKey() {
       if (this.INSTITUTION_CHAIN_TYPE_ENUM && this.medicalInstitution) {
         if (
@@ -298,7 +324,6 @@ export default {
       )
     },
     staffName() {
-      console.log('this.staff :', this.staff)
       return this.staff ? this.staff.staffName : '--'
     },
     medicalInstitutionSimpleCode() {
