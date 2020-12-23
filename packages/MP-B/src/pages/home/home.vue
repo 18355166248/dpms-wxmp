@@ -99,13 +99,11 @@
             </view>
             <text class="statistics-item-body">今日就诊</text>
           </view>
-          <view class="statistics-item">
+          <view class="statistics-item" @click="jumpStatistics">
             <view class="statistics-item-header">
               <toggle :text="price" :isVisible="visible"></toggle>
             </view>
-            <text @click="jumpStatistics" class="statistics-item-body"
-              >实收金额</text
-            >
+            <text class="statistics-item-body">实收金额</text>
           </view>
         </view>
       </view>
