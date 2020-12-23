@@ -99,7 +99,7 @@
             </view>
             <text class="statistics-item-body">今日就诊</text>
           </view>
-          <view class="statistics-item">
+          <view class="statistics-item" @click="jumpStatistics">
             <view class="statistics-item-header">
               <toggle :text="price" :isVisible="visible"></toggle>
             </view>
@@ -197,10 +197,11 @@ import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
+import institutionAPI from 'APIS/institution/institution.api'
+
 import toggle from '@/components/toggle/toggle'
 import dropDown from './dropDown.vue'
 
-import patientApi from '@/APIS/patient/patient.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { mapState } from 'vuex'
 
@@ -369,6 +370,11 @@ export default {
         url,
       })
     },
+    jumpStatistics() {
+      if (this.iconShow.isStatisticsShow) {
+        this.toUrl('/baseSubpackages/statistics/statistics')
+      }
+    },
     toggle() {
       this.visible = !this.visible
     },
@@ -413,7 +419,7 @@ export default {
       this.switchClinicStatus = 'loading'
 
       const [err, res] = await this.$utils.asyncTasks(
-        patientApi.details({
+        institutionAPI.details({
           _mtId: val.source.medicalInstitutionId,
           _cmtId: val.source.topParentId,
           _cmtType: val.source.institutionChainType,

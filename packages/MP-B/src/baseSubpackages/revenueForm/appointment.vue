@@ -20,31 +20,19 @@
         <view class="pre">复诊</view>
       </view>
       <view class="listContent">
+        <view class="title">预约人次</view>
+        <view class="total">0</view>
+        <view class="first">0</view>
+        <view class="pre">0</view>
+      </view>
+      <view class="listContent">
         <view class="title">到诊人次</view>
         <view class="total">0</view>
         <view class="first">0</view>
         <view class="pre">0</view>
       </view>
       <view class="listContent">
-        <view class="title">预约到诊人次</view>
-        <view class="total">0</view>
-        <view class="first">0</view>
-        <view class="pre">0</view>
-      </view>
-      <view class="listContent">
-        <view class="title">预约到诊占比</view>
-        <view class="total">0</view>
-        <view class="first">0</view>
-        <view class="pre">0</view>
-      </view>
-      <view class="listContent">
-        <view class="title">自然到诊人次</view>
-        <view class="total">0</view>
-        <view class="first">0</view>
-        <view class="pre">0</view>
-      </view>
-      <view class="listContent">
-        <view class="title">自然到诊占比</view>
+        <view class="title">到诊率</view>
         <view class="total">0</view>
         <view class="first">0</view>
         <view class="pre">0</view>
@@ -67,6 +55,12 @@
         <view class="first">0</view>
         <view class="pre">0</view>
       </view>
+      <view class="listContent">
+        <view class="title">现金收款</view>
+        <view class="total">0</view>
+        <view class="first">0</view>
+        <view class="pre">0</view>
+      </view>
     </view>
   </view>
 </template>
@@ -83,17 +77,17 @@ export default {
     }
   },
   mounted() {
-    this.diagnosisList(this.pickerValue)
+    this.getAppointmentList(this.pickerValue)
   },
   methods: {
     onChange(e) {
       this.pickerValue = e.detail.value
-      this.diagnosisList(this.pickerValue)
+      this.getAppointmentList(this.pickerValue)
     },
-    diagnosisList(date) {
+    getAppointmentList(date) {
       billAPI
-        .diagnosisList({
-          date: moment(date).format('X'),
+        .appointmentList({
+          date: moment(date).format('x'),
         })
         .then((res) => {
           console.log(res)
@@ -105,14 +99,14 @@ export default {
       this.pickerValue = moment(this.pickerValue)
         .add(-1, 'days')
         .format('YYYY-MM-DD')
-      this.diagnosisList(this.pickerValue)
+      this.getAppointmentList(this.pickerValue)
     },
     shiftNextDate(e) {
       e.stopPropagation()
       this.pickerValue = moment(this.pickerValue)
         .add(1, 'days')
         .format('YYYY-MM-DD')
-      this.diagnosisList(this.pickerValue)
+      this.getAppointmentList(this.pickerValue)
     },
   },
 }
