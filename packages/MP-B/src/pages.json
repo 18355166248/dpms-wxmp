@@ -21,6 +21,12 @@
         "navigationStyle": "custom",
         "disableScroll": true
       }
+    },
+    {
+      "path": "businessComponents/TeethSelect/Selector",
+      "style": {
+        "navigationBarTitleText": "选择牙位"
+      }
     }
   ],
   "subPackages": [
@@ -109,6 +115,24 @@
           "path": "image/upload",
           "style": {
             "navigationBarTitleText": "上传影像"
+          }
+        },
+        {
+          "path": "medicalRecord/record",
+          "style": {
+            "navigationBarTitleText": "病历记录"
+          }
+        },
+        {
+          "path": "medicalRecord/create",
+          "style": {
+            "navigationBarTitleText": "新建病历"
+          }
+        },
+        {
+          "path": "medicalRecord/Textarea",
+          "style": {
+            "navigationBarTitleText": ""
           }
         }
       ]
