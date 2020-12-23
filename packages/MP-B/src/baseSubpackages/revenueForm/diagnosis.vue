@@ -124,7 +124,11 @@ export default {
           registerDate: moment(date).format('x'),
         })
         .then((res) => {
-          this.data = res.data ? res.data : this.data
+          this.data = res.data
+            ? res.data
+            : {
+                detail: [],
+              }
         })
         .catch((res) => {})
       uni.hideLoading()
