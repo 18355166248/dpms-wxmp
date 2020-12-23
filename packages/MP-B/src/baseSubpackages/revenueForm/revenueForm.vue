@@ -13,8 +13,9 @@
       @change="changeTab"
     />
 
-    <promotion v-if="currentTab === 1" />
-    <diagnosis v-if="currentTab === 0" />
+    <promotion v-if="currentTab === 0" />
+    <diagnosis v-if="currentTab === 1" />
+    <appointment v-if="currentTab === 2" />
   </view>
 </template>
 
@@ -23,12 +24,14 @@ import moment from 'moment'
 import tabs from '@/components/tabs/tabs.vue'
 import promotion from './promotion'
 import diagnosis from './diagnosis'
+import appointment from './appointment'
 
 export default {
   components: {
     tabs,
     promotion,
     diagnosis,
+    appointment,
   },
   data() {
     return {

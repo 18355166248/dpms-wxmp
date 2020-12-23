@@ -103,7 +103,9 @@
             <view class="statistics-item-header">
               <toggle :text="price" :isVisible="visible"></toggle>
             </view>
-            <text class="statistics-item-body">实收金额</text>
+            <text @click="jumpStatistics" class="statistics-item-body"
+              >实收金额</text
+            >
           </view>
         </view>
       </view>
@@ -369,6 +371,11 @@ export default {
       this.$utils.push({
         url,
       })
+    },
+    jumpStatistics() {
+      if (this.iconShow.isStatisticsShow) {
+        this.toUrl('/baseSubpackages/statistics/statistics')
+      }
     },
     toggle() {
       this.visible = !this.visible
