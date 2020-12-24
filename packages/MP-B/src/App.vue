@@ -141,6 +141,9 @@ button::after {
 .icon-dingdan-mian::before {
   content: '\e629';
 }
+.icon-plus-circle::before {
+  content: '\e781';
+}
 /* iconfont图标 end */
 </style>
 

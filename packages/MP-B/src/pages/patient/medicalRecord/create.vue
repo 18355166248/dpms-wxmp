@@ -38,9 +38,92 @@
         <switch/>
       </dpmsCell> -->
       <dpmsCell title="口腔检查" wrap>
-        <TeethSelect v-model="form.medicalRecordCheckNormalVOList" style="margin-top:60rpx"/>
+        <div style="margin-top:40rpx">
+          <div class="teeth-select" v-for="(v0, i) in form.medicalRecordCheckNormalVOList" :key="i">
+            <TeethSelect class="handle" :value="v0.checkNormalToothPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordCheckNormalVOList.${i}.checkNormalToothPosition`)"/>
+            <button class="btn" v-if="form.medicalRecordCheckNormalVOList.length > 1" @click="delTeeth(form.medicalRecordCheckNormalVOList, i)">删除</button>
+            <div class="text" data-placeholder="请输入口腔检查"
+              @click="openTextarea({title: '口腔检查', value: v0.checkNormalSymptoms, key: `medicalRecordCheckNormalVOList.${i}.checkNormalSymptoms`})"
+            >{{v0.checkNormalSymptoms}}</div>
+          </div>
+          <div class="bottom-func" @click="form.medicalRecordCheckNormalVOList.push({})">
+            <div class="iconfont icon-plus-circle"/>添加牙位
+          </div>
+        </div>
+      </dpmsCell>
+      <div style="height:20rpx"></div>
+      <dpmsCell title="辅助检查" wrap>
+        <div style="margin-top:40rpx">
+          <div class="teeth-select" v-for="(v0, i) in form.medicalRecordCheckRayVOList" :key="i">
+            <TeethSelect class="handle" :value="v0.checkRayToothPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordCheckRayVOList.${i}.checkRayToothPosition`)"/>
+            <button class="btn" v-if="form.medicalRecordCheckRayVOList.length > 1" @click="delTeeth(form.medicalRecordCheckRayVOList, i)">删除</button>
+            <div class="text" data-placeholder="请输入辅助检查"
+              @click="openTextarea({title: '辅助检查', value: v0.checkRaySymptoms, key: `medicalRecordCheckRayVOList.${i}.checkRaySymptoms`})"
+            >{{v0.checkRaySymptoms}}</div>
+          </div>
+          <div class="bottom-func" @click="form.medicalRecordCheckRayVOList.push({})">
+            <div class="iconfont icon-plus-circle"/>添加牙位
+          </div>
+        </div>
+      </dpmsCell>
+      <div style="height:20rpx"></div>
+      <dpmsCell title="诊断" wrap>
+        <div style="margin-top:40rpx">
+          <div class="teeth-select" v-for="(v0, i) in form.medicalRecordDiagnosisVOList" :key="i">
+            <TeethSelect class="handle" :value="v0.diagnosisPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordDiagnosisVOList.${i}.diagnosisPosition`)"/>
+            <button class="btn" v-if="form.medicalRecordDiagnosisVOList.length > 1" @click="delTeeth(form.medicalRecordDiagnosisVOList, i)">删除</button>
+            <div class="text" data-placeholder="请输入诊断"
+              @click="openTextarea({title: '诊断', value: v0.diagnosisDesc, key: `medicalRecordDiagnosisVOList.${i}.diagnosisDesc`})"
+            >{{v0.diagnosisDesc}}</div>
+          </div>
+          <div class="bottom-func" @click="form.medicalRecordDiagnosisVOList.push({})">
+            <div class="iconfont icon-plus-circle"/>添加牙位
+          </div>
+        </div>
+      </dpmsCell>
+      <div style="height:20rpx"></div>
+      <dpmsCell title="治疗方案" wrap>
+        <div style="margin-top:40rpx">
+          <div class="teeth-select" v-for="(v0, i) in form.medicalRecordTreatmentProgramVOList" :key="i">
+            <TeethSelect class="handle" :value="v0.treatmentProgramPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordTreatmentProgramVOList.${i}.treatmentProgramPosition`)"/>
+            <button class="btn" v-if="form.medicalRecordTreatmentProgramVOList.length > 1" @click="delTeeth(form.medicalRecordTreatmentProgramVOList, i)">删除</button>
+            <div class="text" data-placeholder="请输入治疗方案"
+              @click="openTextarea({title: '治疗方案', value: v0.treatmentProgram, key: `medicalRecordTreatmentProgramVOList.${i}.treatmentProgram`})"
+            >{{v0.treatmentProgram}}</div>
+          </div>
+          <div class="bottom-func" @click="form.medicalRecordTreatmentProgramVOList.push({})">
+            <div class="iconfont icon-plus-circle"/>添加牙位
+          </div>
+        </div>
+      </dpmsCell>
+      <div style="height:20rpx"></div>
+      <dpmsCell title="处置" wrap>
+        <div style="margin-top:40rpx">
+          <div class="teeth-select" v-for="(v0, i) in form.medicalRecordDisposeVOList" :key="i">
+            <TeethSelect class="handle" :value="v0.disposePosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordDisposeVOList.${i}.disposePosition`)"/>
+            <button class="btn" v-if="form.medicalRecordDisposeVOList.length > 1" @click="delTeeth(form.medicalRecordDisposeVOList, i)">删除</button>
+            <div class="text" data-placeholder="请输入处置"
+              @click="openTextarea({title: '处置', value: v0.dispose, key: `medicalRecordDisposeVOList.${i}.dispose`})"
+            >{{v0.dispose}}</div>
+          </div>
+          <div class="bottom-func" @click="form.medicalRecordDisposeVOList.push({})">
+            <div class="iconfont icon-plus-circle"/>添加牙位
+          </div>
+        </div>
+      </dpmsCell>
+      <div style="height:20rpx"></div>
+      <dpmsCell
+        title="医嘱"
+        wrap
+      >
+        <div class="text" data-placeholder="请输入医嘱"
+          @click="openTextarea({title: '医嘱', value: form.doctorAdvice, key: 'doctorAdvice'})"
+        >{{form.doctorAdvice}}</div>
       </dpmsCell>
     </dpmsForm>
+    <div class="bottom">
+      <button @click="save">保 存</button>
+    </div>
   </div>
 </template>
 
@@ -48,12 +131,17 @@
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
+import {mapState} from 'vuex'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
+
 export default {
   components: {TeethSelect},
   data() {
     return {
       form: {registerId: '', mainComplaint: '', presentIllnessHistory: '', pastIllnessHistory: '',
-        medicalRecordCheckNormalVOList: {teeth: {}}
+        medicalRecordCheckNormalVOList: [{}], medicalRecordCheckRayVOList: [{}], 
+        medicalRecordDiagnosisVOList: [{}], medicalRecordTreatmentProgramVOList: [{}],
+        medicalRecordDisposeVOList: [{}], doctorAdvice: '',
       }, 
       rules: {},
       registerList: [],
@@ -69,19 +157,49 @@ export default {
         this.form.registerId = this.registerList[0].registerId
       }
     },
-    onMainComplaint() {
+    onTextareaChange() {
       uni.$on('medicalRecordTextareaChange', ({value, key}) => {
-        this.form[key] = value
+        if (/^\w+\.\d+\.\w+$/.test(key)) {
+          const ks = key.split('.')
+          this.$set(this.form[ks[0]], ks[1], {...this.form[ks[0]][ks[1]], [ks[2]]: value})
+        } else {
+          this.$set(this.form, key, value)
+        }
       })
     },
     openTextarea({title='', value='', key=''}) {
       this.$utils.push({url: `/pages/patient/medicalRecord/Textarea?title=${title}&value=${value || ''}&key=${key}`})
+    },
+    setTeethSelect(value, key) {
+      const ks = key.split('.')
+      this.$set(this.form[ks[0]], ks[1], {...this.form[ks[0]][ks[1]], [ks[2]]: value})
+    },
+    delTeeth(list, i) {
+      list.splice(i, 1)
+    },
+    save() {
+      const inputed = Object.keys(this.form).reduce((r, k) => {
+        let result = false
+        if (k === 'registerId') {
+          result = false
+        } else if (typeof this.form[k] === 'string') {
+          result = !!this.form[k]
+        } else {
+          result = this.form[k].reduce((_r, _v) => _r || !!Object.keys(_v).length, false)
+        }
+        return r || result
+      }, false)
+      if (!inputed) return this.$utils.show('请至少填写一项内容')
+      diagnosisAPI.createMedicalRecord({
+        medicalInstitutionId: getStorage(STORAGE_KEY.MEDICALINSTITUTION).medicalInstitutionId,
+        ...this.form,
+      })
     }
   },
   onLoad({patientId}) {
     this.patientId = patientId
     this.getRegisterList({patientId})
-    this.onMainComplaint()
+    this.onTextareaChange()
   }
 }
 </script>
@@ -92,11 +210,58 @@ export default {
   box-sizing: border-box;
   min-height: 62rpx;
   white-space: normal;
+  width: 100%;
   &:empty{
     &::before{
       content: attr(data-placeholder);
       color: rgba(0,0,0,0.3);
     }
+  }
+}
+.teeth-select{
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-bottom: 32rpx;
+  border-bottom: rgba(0,0,0,0.15) solid 1rpx;
+  .handle{
+    padding: 32rpx 0;
+    width: 570rpx;
+  }
+  .btn{
+    flex: none;
+    font-size: 28rpx;
+    color: #5cbb89;
+    background: none;
+    padding: 0;
+    margin: 0 0 0 60rpx;
+  }
+}
+.bottom-func{
+  padding-top: 32rpx;
+  color: #5cbb89;
+  font-size: 34rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .iconfont{
+    font-size: inherit;
+    margin-right: 16rpx;
+  }
+}
+.bottom{
+  height: 90rpx;
+  button{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 90rpx;
+    background: #5cbb89;
+    color: #ffffff;
+    font-size: 36rpx;
+    border-radius: 0;
   }
 }
 </style>
