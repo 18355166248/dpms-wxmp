@@ -1,22 +1,31 @@
 <template>
   <view class="content">
-    <view v-if="type === '1'" class="tit">新增患者性别分布</view>
-    <view v-else-if="type === '2'" class="tit">到诊类型分布</view>
-    <view v-else-if="type === '3'" class="tit">医生收款分布</view>
-    <view v-else-if="type === '4'" class="tit">诊疗项目收款</view>
+    <view v-if="type === 'genderData'" class="tit">新增患者性别分布</view>
+    <view v-else-if="type === 'registerData'" class="tit">到诊类型分布</view>
+    <view v-else-if="type === 'doctorData'" class="tit">医生收款分布</view>
+    <view v-else-if="type === 'projectData'" class="tit">诊疗项目收款</view>
     <view class="count">
       <view v-if="time === '1'">昨天</view>
       <view v-else-if="time === '7'">近七天</view>
       <view v-else-if="time === '30'">近30天</view>
       <view>
         <text>总计 </text>
-        <text class="num" v-if="type === '1' || type === '2'">{{ 20 }}人</text>
-        <text v-else>{{ $utils.formatPrice(2000) }}</text>
+        <text
+          class="num"
+          v-if="type === 'genderData' || type === 'registerData'"
+          >{{ total }}人</text
+        >
+        <text v-else>{{ $utils.formatPrice(total) }}</text>
       </view>
     </view>
     <t-table>
       <t-tr class="t-tr" v-for="(item, i) in tableList" :key="i">
-        <t-td v-for="(v, k) in item" :key="k">{{ v }}</t-td>
+        <t-td>{{ item.name }}</t-td>
+        <t-td v-if="type === 'genderData' || type === 'registerData'"
+          >{{ item.data }}人</t-td
+        >
+        <t-td v-else>{{ $utils.formatPrice(item.data) }}</t-td>
+        <t-td>{{ Math.round((item.data / total) * 100) }}%</t-td>
       </t-tr>
     </t-table>
   </view>
@@ -26,6 +35,7 @@
 import tTable from '@/components/t-table/t-table.vue'
 import tTr from '@/components/t-table/t-tr.vue'
 import tTd from '@/components/t-table/t-td.vue'
+import { getStorage } from '@/utils/storage'
 
 export default {
   components: {
@@ -37,28 +47,20 @@ export default {
     return {
       type: '',
       time: '',
-      tableList: [
-        {
-          name: '张三',
-          age: '19',
-          hobby: '游泳',
-        },
-        {
-          name: '李四',
-          age: '21',
-          hobby: '绘画',
-        },
-        {
-          name: '王二',
-          age: '29',
-          hobby: '滑板',
-        },
-      ],
+      tableList: [],
     }
   },
   onLoad(params) {
     this.type = params.type
     this.time = params.time
+    this.tableList = getStorage('statistics_detail').map((v) =>
+      _.pick(v, ['name', 'data']),
+    )
+  },
+  computed: {
+    total() {
+      return this.tableList.reduce((acc, val) => acc + val.data, 0)
+    },
   },
   methods: {},
 }
