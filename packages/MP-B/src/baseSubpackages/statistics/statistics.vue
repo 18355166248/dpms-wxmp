@@ -16,7 +16,7 @@
       <view class="tit">新增患者性别分布</view>
       <view v-if="genderData.length">
         <canvas canvas-id="genderCanvas" id="genderCanvas" class="charts" />
-        <view class="link" @click="link(1)">查看全部</view>
+        <view class="link" @click="link('genderData')">查看全部</view>
       </view>
       <view v-else class="empty">
         暂无统计数据
@@ -26,7 +26,7 @@
       <view class="tit">到诊类型分布</view>
       <view v-if="registerData.length">
         <canvas canvas-id="registerCanvas" id="registerCanvas" class="charts" />
-        <view class="link" @click="link(2)">查看全部</view>
+        <view class="link" @click="link('registerData')">查看全部</view>
       </view>
       <view v-else class="empty">
         暂无统计数据
@@ -36,7 +36,7 @@
       <view class="tit">医生收款分布</view>
       <view v-if="doctorData.length">
         <canvas canvas-id="doctorCanvas" id="doctorCanvas" class="charts" />
-        <view class="link" @click="link(3)">查看全部</view>
+        <view class="link" @click="link('doctorData')">查看全部</view>
       </view>
       <view v-else class="empty">
         暂无统计数据
@@ -44,9 +44,9 @@
     </view>
     <view class="list">
       <view class="tit">诊疗项目收款</view>
-      <view v-if="projectData.series.length">
+      <view v-if="projectData.length">
         <canvas canvas-id="projectCanvas" id="projectCanvas" class="charts" />
-        <view class="link" @click="link(4)">查看全部</view>
+        <view class="link" @click="link('projectData')">查看全部</view>
       </view>
       <view v-else class="empty">
         暂无统计数据
@@ -59,6 +59,7 @@
 import statisticsAPI from '@/APIS/statistics.api'
 import tabs from '@/components/tabs/tabs.vue'
 import uCharts from '@/components/u-charts/u-charts.min.js'
+import { setStorage, removeStorage } from '@/utils/storage'
 
 var _self
 var genderCanvas = null
@@ -84,10 +85,7 @@ export default {
       genderData: [],
       registerData: [],
       doctorData: [],
-      projectData: {
-        categories: [],
-        series: [],
-      },
+      projectData: [],
     }
   },
   onLoad() {
@@ -115,7 +113,7 @@ export default {
                 name: v.product,
                 data: v.count,
                 format(val) {
-                  return v.count + '人 ' + val + '%'
+                  return v.count + '人 ' + Math.round(val * 100) + '%'
                 },
               }
             })
@@ -129,7 +127,7 @@ export default {
                 name: v.product,
                 data: v.count,
                 format(val) {
-                  return v.count + '人 ' + val + '%'
+                  return v.count + '人 ' + Math.round(val * 100) + '%'
                 },
               }
             })
@@ -142,13 +140,22 @@ export default {
               name: v.product,
               data: v.count,
               format(val) {
-                return _self.$utils.formatPrice(val)
+                return (
+                  _self.$utils.formatPrice(v.count) +
+                  ' ' +
+                  Math.round(val * 100) +
+                  '%'
+                )
               },
             }
           })
 
-          this.projectData.categories = data.project.map((v) => v.product)
-          this.projectData.series = data.project.map((v) => v.count)
+          this.projectData = data.project.map((v) => {
+            return {
+              name: v.product,
+              data: v.count,
+            }
+          })
 
           this.changeData()
         })
@@ -165,11 +172,11 @@ export default {
         series: this.doctorData,
       })
       projectCanvas.updateData({
-        categories: this.projectData.categories,
+        categories: this.projectData.map((v) => v.name),
         series: [
           {
             name: '',
-            data: this.projectData.series,
+            data: this.projectData.map((v) => v.data),
             format(val) {
               return _self.$utils.formatPrice(val)
             },
@@ -255,20 +262,20 @@ export default {
           column: {
             type: 'group',
             width:
-              (this.cWidth * this.pixelRatio * 0.45) /
-              this.projectData.categories.length,
+              (this.cWidth * this.pixelRatio * 0.45) / this.projectData.length,
           },
         },
       })
     },
     link(type) {
-      uni.navigateTo({
+      setStorage('statistics_detail', this[type])
+
+      this.$utils.push({
         url:
           '/baseSubpackages/statistics/detail/detail?type=' +
           type +
           '&time=' +
           this.tabs[this.current].val,
-        animationType: 'slide-in-right',
       })
     },
   },
