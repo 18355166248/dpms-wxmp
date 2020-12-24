@@ -102,7 +102,7 @@ export default {
     return {
       pickerValue: moment().format('YYYY-MM-DD'),
       data: {
-        detail: [],
+        detail: [{}, {}],
       },
     }
   },
@@ -124,11 +124,13 @@ export default {
           registerDate: moment(date).format('x'),
         })
         .then((res) => {
-          this.data = res.data
-            ? res.data
-            : {
-                detail: [],
-              }
+          if (!!res.data.detail) {
+            this.data = res.data
+          } else {
+            this.data = {
+              detail: [{}, {}],
+            }
+          }
         })
         .catch((res) => {})
       uni.hideLoading()
