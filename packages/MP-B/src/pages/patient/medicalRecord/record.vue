@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="records" v-if="records.length">
-      <div class="record">
+      <div class="record" @click="toDetail">
         <div class="head">
           <div class="iconfont icon-time-circle"></div>2020-10-12 12:30
         </div>
@@ -38,6 +38,9 @@ export default {
     async getMedicalRecordList(param) {
       const res = await diagnosisAPI.getMedicalRecordList(param)
     },
+    toDetail() {
+      this.$utils.push({url: '/pages/patient/medicalRecord/detail'})
+    }
   },
   onLoad({patientId}) {
     this.patientId = patientId
