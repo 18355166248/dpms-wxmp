@@ -21,7 +21,8 @@ export default {
         return {teeth: {}}
       }
     },
-    index: Number
+    index: Number,
+    disabled: Boolean,
   },
   data() {
     return {
@@ -40,6 +41,7 @@ export default {
   },
   methods: {
     openSelector() {
+      if (this.disabled) return
       this.$utils.push({url: `/businessComponents/TeethSelect/Selector?value=${JSON.stringify(this.dataValue)}&uid=${this._uid}`})
     },
     onChange() {

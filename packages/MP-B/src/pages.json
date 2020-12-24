@@ -130,6 +130,12 @@
           }
         },
         {
+          "path": "medicalRecord/detail",
+          "style": {
+            "navigationBarTitleText": "病历详情"
+          }
+        },
+        {
           "path": "medicalRecord/Textarea",
           "style": {
             "navigationBarTitleText": ""
