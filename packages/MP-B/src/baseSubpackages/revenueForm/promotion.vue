@@ -16,15 +16,15 @@
       <view class="tit">现金收款</view>
       <view class="flex">
         <view class="title">总收款：</view>
-        <view class="fee">{{ data.firstVisitAdvance }}</view>
+        <view class="fee">{{ formatPrice(data.firstVisitAdvance) }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊现金收款：</view>
-        <view class="fee">{{ data.nextVisitAdvance }}</view>
+        <view class="fee">{{ formatPrice(data.nextVisitAdvance) }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊现金收款：</view>
-        <view class="fee">{{ data.totalAdvance }}</view>
+        <view class="fee">{{ formatPrice(data.totalAdvance) }}</view>
       </view>
       <view style="height: 32rpx;"></view>
     </view>
@@ -32,15 +32,15 @@
       <view class="tit">营业收入</view>
       <view class="flex">
         <view class="title">总收入：</view>
-        <view class="fee">{{ data.totalIncome }}</view>
+        <view class="fee">{{ formatPrice(data.totalIncome) }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊收入：</view>
-        <view class="fee">{{ data.firstVisitPerson }}</view>
+        <view class="fee">{{ formatPrice(data.firstVisitPerson) }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊收入：</view>
-        <view class="fee">{{ data.nextVisitIncome }}</view>
+        <view class="fee">{{ formatPrice(data.nextVisitIncome) }}</view>
       </view>
       <view style="height: 32rpx;"></view>
     </view>
@@ -48,15 +48,15 @@
       <view class="tit">到诊统计：</view>
       <view class="flex">
         <view class="title">到诊人次：</view>
-        <view class="fee">{{ data.totalVisitPerson }}</view>
+        <view class="fee">{{ data.totalVisitPerson || 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊人次：</view>
-        <view class="fee">{{ data.firstVisitPerson }}</view>
+        <view class="fee">{{ data.firstVisitPerson || 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊人次：</view>
-        <view class="fee">{{ data.nextVisitPerson }}</view>
+        <view class="fee">{{ data.nextVisitPerson || 0 }}</view>
       </view>
       <view style="height: 32rpx;"></view>
     </view>
@@ -64,35 +64,39 @@
       <view class="tit">到诊成交统计：</view>
       <view class="flex">
         <view class="title">成交人次：</view>
-        <view class="fee">{{ data.dealPerson }}</view>
+        <view class="fee">{{ data.dealPerson || 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">成交率：</view>
-        <view class="fee">{{ data.dealRate }}</view>
+        <view class="fee">{{ data.dealRate ? data.dealRate + '%' : '-' }}</view>
       </view>
       <view class="flex">
         <view class="title">成交单体：</view>
-        <view class="fee">{{ data.dealAverage }}</view>
+        <view class="fee">{{ data.dealAverage || 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊成交人次：</view>
-        <view class="fee">{{ data.firstVisitDealPerson }}</view>
+        <view class="fee">{{ data.firstVisitDealPerson || 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊成交人次：</view>
-        <view class="fee">{{ data.nextVisitDealPerson }}</view>
+        <view class="fee">{{ data.nextVisitDealPerson || 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊成交率：</view>
-        <view class="fee">{{ data.firstVisitDealRate }}</view>
+        <view class="fee">{{
+          data.firstVisitDealRate ? data.firstVisitDealRate + '%' : '-'
+        }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊成交率：</view>
-        <view class="fee">{{ data.nextVisitDealRate }}</view>
+        <view class="fee">{{
+          data.nextVisitDealRate ? data.nextVisitDealRate + '%' : '-'
+        }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊单体：</view>
-        <view class="fee">{{ firstVisitAverage }}</view>
+        <view class="fee">{{ data.firstVisitAverage || 0 }}</view>
       </view>
       <view style="height: 32rpx;"></view>
     </view>
@@ -126,7 +130,6 @@ export default {
       this.getRevenueList(this.pickerValue)
     },
     getRevenueList(date) {
-      const _self = this
       uni.showLoading({
         title: '数据加载中',
         mask: true,
@@ -136,9 +139,8 @@ export default {
           date: moment(date).format('x'),
         })
         .then((res) => {
-          res.records.length > 0
-            ? _self.formatdata(res.records[0])
-            : (this.data = {})
+          const { records } = res.data
+          this.data = records.length > 0 ? records[0] : {}
         })
         .catch((res) => {})
       uni.hideLoading()
@@ -149,9 +151,6 @@ export default {
         .add(1, 'days')
         .format('YYYY-MM-DD')
       this.getRevenueList(this.pickerValue)
-    },
-    formatdata(data) {
-      this.data = data
     },
     formatPrice(money, sysmbol = '¥', places = 2) {
       const zero = `${sysmbol}0.00`
