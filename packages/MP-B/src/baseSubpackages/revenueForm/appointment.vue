@@ -85,7 +85,10 @@ export default {
       this.getAppointmentList(this.pickerValue)
     },
     getAppointmentList(date) {
-      const _self = this
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
       billAPI
         .appointmentList({
           appointmentDate: moment(date).format('x'),
@@ -100,6 +103,7 @@ export default {
           }
         })
         .catch((res) => {})
+      uni.hideLoading()
     },
     shiftPrevDate(e) {
       e.stopPropagation()
