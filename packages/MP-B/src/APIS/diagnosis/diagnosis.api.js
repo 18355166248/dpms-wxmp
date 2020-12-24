@@ -58,7 +58,9 @@ const diagnosisAPI = {
   },
   // 新建病历
   createMedicalRecord(data) {
-    return httper.post('diagnosis/mini-apps/medical-record/create', data)
+    return httper.post('diagnosis/mini-apps/medical-record/create', data, {
+      headers: {'Content-Type': 'application/json'}
+    })
   },
 }
 

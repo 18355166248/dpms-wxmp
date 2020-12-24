@@ -100,7 +100,7 @@ export default {
         r.teeth[`${s.position}`] = this.areaSelected.reduce((r, _a) => ({...r, [_a]: true}), {})
         return r
       }, {teeth: {}})
-      uni.$emit('teethSelectChange', result)
+      uni.$emit(`teethSelectChange${this.uid}`, result)
       this.$utils.back()
     },
     initValue({teeth}) {
@@ -112,7 +112,8 @@ export default {
       }
     }
   },
-  onLoad({value}) {
+  onLoad({value, uid}) {
+    this.uid = uid
     this.initValue(JSON.parse(value))
   },
   watch: {
