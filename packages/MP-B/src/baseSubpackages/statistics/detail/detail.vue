@@ -5,9 +5,9 @@
     <view v-else-if="type === '3'" class="tit">医生收款分布</view>
     <view v-else-if="type === '4'" class="tit">诊疗项目收款</view>
     <view class="count">
-      <view v-if="time === '111'">昨天</view>
-      <view v-else-if="time === '222'">近七天</view>
-      <view v-else-if="time === '333'">近30天</view>
+      <view v-if="time === '1'">昨天</view>
+      <view v-else-if="time === '7'">近七天</view>
+      <view v-else-if="time === '30'">近30天</view>
       <view>
         <text>总计 </text>
         <text class="num" v-if="type === '1' || type === '2'">{{ 20 }}人</text>
@@ -59,7 +59,6 @@ export default {
   onLoad(params) {
     this.type = params.type
     this.time = params.time
-    console.log('params', params)
   },
   methods: {},
 }
