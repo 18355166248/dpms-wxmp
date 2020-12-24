@@ -35,7 +35,7 @@
 import tTable from '@/components/t-table/t-table.vue'
 import tTr from '@/components/t-table/t-tr.vue'
 import tTd from '@/components/t-table/t-td.vue'
-import { getStorage, removeStorage } from '@/utils/storage'
+import { getStorage } from '@/utils/storage'
 
 export default {
   components: {

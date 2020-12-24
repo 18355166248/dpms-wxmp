@@ -59,7 +59,7 @@
 import statisticsAPI from '@/APIS/statistics.api'
 import tabs from '@/components/tabs/tabs.vue'
 import uCharts from '@/components/u-charts/u-charts.min.js'
-import { setStorage, removeStorage } from '@/utils/storage'
+import { setStorage } from '@/utils/storage'
 
 var _self
 var genderCanvas = null
