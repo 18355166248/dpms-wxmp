@@ -87,7 +87,7 @@ export default {
     getAppointmentList(date) {
       billAPI
         .appointmentList({
-          date: moment(date).format('x'),
+          appointmentDate: moment(date).format('x'),
         })
         .then((res) => {
           console.log(res)
