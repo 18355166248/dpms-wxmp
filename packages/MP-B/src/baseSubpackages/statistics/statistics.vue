@@ -86,6 +86,12 @@ export default {
       registerData: [],
       doctorData: [],
       projectData: [],
+      color: {
+        男: '#5AD8A6',
+        女: '#5D7092',
+        初诊: '#5AD8A6',
+        复诊: '#5D7092',
+      },
     }
   },
   onLoad() {
@@ -100,6 +106,7 @@ export default {
       this.getStatistics(i)
     },
     getStatistics(i) {
+      const _self = this
       statisticsAPI
         .getStatistics({
           type: this.tabs[i].val,
@@ -112,6 +119,7 @@ export default {
               return {
                 name: v.product,
                 data: v.count,
+                color: _self.color[v.product],
                 format(val) {
                   return v.count + '人 ' + Math.round(val * 100) + '%'
                 },
@@ -126,6 +134,7 @@ export default {
               return {
                 name: v.product,
                 data: v.count,
+                color: _self.color[v.product],
                 format(val) {
                   return v.count + '人 ' + Math.round(val * 100) + '%'
                 },
@@ -140,12 +149,7 @@ export default {
               name: v.product,
               data: v.count,
               format(val) {
-                return (
-                  _self.$utils.formatPrice(v.count) +
-                  ' ' +
-                  Math.round(val * 100) +
-                  '%'
-                )
+                return v.product + ' ' + Math.round(val * 100) + '%'
               },
             }
           })
@@ -154,6 +158,7 @@ export default {
             return {
               name: v.product,
               data: v.count,
+              color: '#5B8FF9',
             }
           })
 
