@@ -77,18 +77,17 @@ export default {
       this.registerList = (res.data || []).map(d => ({
         ...d, registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm')
       }))
-      if (this.registerList.length) {
-        this.form.registerId = this.registerList[0].registerId
-      }
     },
     async getImageEnums() {
       const res = await diagnosisAPI.getImageEnums()
       this.imageType = res.data.ImageType
     },
     async saveImageInfo() {
+      this.$utils.showLoading('请稍后...')
       await diagnosisAPI.saveImageInfo({
         ...this.form, patientId: this.patientId
       })
+      this.$utils.clearLoading()
       this.$utils.show('上传成功', {icon: 'success'})
       this.$utils.back()
     },

@@ -117,7 +117,7 @@ export default {
     },
     deleteMedicalRecord() {
       uni.showModal({
-        title: '确定删除？',
+        title: '确认删除这条病历吗？',
         success: async ({confirm}) => {
           if (confirm) {
             this.$utils.showLoading('请稍后...')

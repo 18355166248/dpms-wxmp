@@ -55,7 +55,9 @@ export default {
   },
   methods: {
     async getImageList(param) {
+      this.$utils.showLoading('加载中...')
       const res = await diagnosisAPI.getImageList(param)
+      this.$utils.clearLoading()
       this.records = res.data.map(d => ({
         ...d, registerLabel: moment(d.visTime).format('YYYY/MM/DD HH:mm')
       }))
