@@ -1,24 +1,24 @@
 <template>
   <div>
-    <div class="records" v-if="records.length">
-      <div class="record" @click="toDetail">
+    <scroll-view class="records" v-if="records.length" scroll-y @scrolltolower="getMedicalRecordList">
+      <div class="record" v-for="r in records" :key="r.medicalRecordId" @click="toDetail(r)">
         <div class="head">
-          <div class="iconfont icon-time-circle"></div>2020-10-12 12:30
+          <div class="iconfont icon-time-circle"></div>{{r.createTimeFormated}}
         </div>
         <div class="row">
-          就诊信息：<span class="content">2020/06/26 10:30 上海医院</span>
+          就诊信息：<span class="content">{{r.visTimeFormated}} {{r.medicalInstitutionSimpleCode}}</span>
         </div>
         <div class="row">
-          就诊信息：<span class="content">2020/06/26 10:30 上海医院</span>
+          医生：<span class="content">{{r.doctorStaffName}}</span>
         </div>
         <div class="row">
-          就诊信息：<span class="content">2020/06/26 10:30 上海医院</span>
+          主诉：<span class="content">{{r.mainComplaint}}</span>
         </div>
         <div class="row">
-          就诊信息：<span class="content">2020/06/26 10:30 上海医院</span>
+          现病史：<span class="content">{{r.presentIllnessHistory}}</span>
         </div>
       </div>
-    </div>
+    </scroll-view>
     <empty :disabled="true" text="无影像记录" v-else />
     <div class="bottom">
       <button @click="$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${patientId}`})">新建病历</button>
@@ -28,23 +28,44 @@
 
 <script>
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
+import moment from 'moment'
 export default {
   data() {
     return {
-      records: [{}]
+      records: []
     }
   },
   methods: {
-    async getMedicalRecordList(param) {
-      const res = await diagnosisAPI.getMedicalRecordList(param)
+    async getMedicalRecordList() {
+      if (this.total && this.total <= this.current * 10) return this.$utils.show('没有更多了')
+      this.$utils.showLoading('加载中...')
+      const res = await diagnosisAPI.getMedicalRecordList({
+        patientId: this.patientId, current: this.current,
+      })
+      this.$utils.clearLoading()
+      ++this.current
+      this.total = res.data.total
+      this.records = res.data.records.map(r => ({
+        ...r, visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
+        createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
+      }))
     },
-    toDetail() {
-      this.$utils.push({url: '/pages/patient/medicalRecord/detail'})
+    toDetail({medicalRecordId}) {
+      this.$utils.push({url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`})
+    },
+    onUpdate() {
+      uni.$on('medicalRecordListUpdate', () => {
+        this.current = 1
+        this.total = 0
+        this.getMedicalRecordList()
+      })
     }
   },
   onLoad({patientId}) {
     this.patientId = patientId
-    this.getMedicalRecordList({patientId})
+    this.current = 1
+    this.getMedicalRecordList()
+    this.onUpdate()
   },
 }
 </script>
@@ -53,6 +74,8 @@ export default {
 .records{
   padding: 32rpx;
   padding-bottom: 0;
+  height: calc(100vh - 90rpx);
+  box-sizing: border-box;
 }
 .record{
   background: #ffffff;

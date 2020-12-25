@@ -56,11 +56,21 @@ const diagnosisAPI = {
   getMedicalRecordList(data) {
     return httper.get('diagnosis/mini-apps/medical-record/page', data)
   },
+  // 查询电子病历详情
+  getMedicalRecordDetail(data) {
+    return httper.get('diagnosis/mini-apps/medical-record/detail', data)
+  },
+  // 删除电子病历
+  deleteMedicalRecord(data) {
+    return httper.get('diagnosis/mini-apps/medical-record/delete', data)
+  },
   // 新建病历
   createMedicalRecord(data) {
-    return httper.post('diagnosis/mini-apps/medical-record/create', data, {
-      headers: {'Content-Type': 'application/json'}
-    })
+    return httper.post('diagnosis/mini-apps/medical-record/create', data)
+  },
+  // 编辑病历
+  updateMedicalRecord(data) {
+    return httper.post('diagnosis/mini-apps/medical-record/update', data)
   },
 }
 

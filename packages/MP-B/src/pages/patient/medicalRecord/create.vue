@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dpmsForm ref="form" :model="form" :rules="rules">
+    <dpmsForm ref="form" :model="form" :rules="rules" v-if="form">
       <dpmsCellPicker
         title="就诊信息"
         placeholder="暂无就诊信息"
@@ -177,7 +177,7 @@ export default {
     delTeeth(list, i) {
       list.splice(i, 1)
     },
-    save() {
+    async save() {
       const inputed = Object.keys(this.form).reduce((r, k) => {
         let result = false
         if (k === 'registerId') {
@@ -190,16 +190,59 @@ export default {
         return r || result
       }, false)
       if (!inputed) return this.$utils.show('请至少填写一项内容')
-      diagnosisAPI.createMedicalRecord({
-        medicalInstitutionId: getStorage(STORAGE_KEY.MEDICALINSTITUTION).medicalInstitutionId,
-        ...this.form,
+      this.$utils.showLoading('请稍后...')
+      await diagnosisAPI[this.medicalRecordId ? 'updateMedicalRecord' : 'createMedicalRecord']({
+        medicalRecordVOJson: JSON.stringify({
+          medicalRecordId: this.medicalRecordId,
+          patientId: this.patientId,
+          medicalInstitutionId: getStorage(STORAGE_KEY.MEDICALINSTITUTION).medicalInstitutionId,
+          ...this.form,
+        })
       })
-    }
+      this.$utils.clearLoading()
+      this.$utils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {icon: 'success'})
+      uni.$emit(this.medicalRecordId ? 'medicalRecordDetailUpdate' : 'medicalRecordListUpdate')
+      this.$utils.back()
+    },
+    onEdit() {
+      if (!this.medicalRecordId) return
+      uni.setNavigationBarTitle({
+        title: '编辑病历'
+      });
+      this.getMedicalRecordDetail()
+    },
+    async getMedicalRecordDetail() {
+      this.$utils.showLoading('加载中...')
+      const res = await diagnosisAPI.getMedicalRecordDetail({medicalRecordId: this.medicalRecordId})
+      this.$utils.clearLoading()
+      const formKeys = Object.keys(this.form)
+      this.form = null
+      this.$nextTick(() => {
+        this.form = formKeys.reduce((r, k) => {
+          if (k.endsWith('VOList')) {
+            res.data[k] = res.data[k].map((v0, i0) => {
+              v0 = Object.keys(v0).reduce((_r, _k) => {
+                if (_k.endsWith('Position')) {
+                  v0[_k] = JSON.parse(v0[_k] || 'null')
+                }
+                _r[_k] = v0[_k]
+                return _r
+              }, {})
+              return v0
+            })
+          }
+          r[k] = res.data[k]
+          return r
+        }, {})
+      })
+    },
   },
-  onLoad({patientId}) {
+  onLoad({patientId, medicalRecordId}) {
     this.patientId = patientId
+    this.medicalRecordId = medicalRecordId
     this.getRegisterList({patientId})
     this.onTextareaChange()
+    this.onEdit()
   }
 }
 </script>
