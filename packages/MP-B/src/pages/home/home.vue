@@ -325,7 +325,7 @@ export default {
       )
     },
     staffName() {
-      return this.staff ? this.staff.staffName : '--'
+      return this.staff ? this.staff.name : '--'
     },
     medicalInstitutionSimpleCode() {
       if (this.switchClinicStatus === 'loading') {
