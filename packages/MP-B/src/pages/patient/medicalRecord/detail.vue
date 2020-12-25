@@ -1,56 +1,93 @@
 <template>
-  <div class="container">
+  <div class="container" v-if="detail.medicalRecordId">
     <div class="time">
-      <div class="iconfont icon-time-circle"></div>2020-10-12 12:30
+      <div class="iconfont icon-time-circle"></div>{{detail.createTimeFormated}}
     </div>
     <div class="rows">
       <div class="row">
         <div class="label">就诊信息：</div>
-        2020/06/26 10:30 上海医院
+        {{detail.visTimeFormated}} {{detail.medicalInstitutionSimpleCode}}
       </div>
       <div class="row">
         <div class="label">医生：</div>
-        李三
+        {{detail.doctorStaffName}}
       </div>
       <div class="row">
         <div class="label">主诉：</div>
-        主诉内容主诉内容，主诉内容主诉内容主诉内容，主诉内容主诉内容主诉内容主诉内容主诉内容，主诉内容主诉内容。
+        {{detail.mainComplaint}}
       </div>
       <div class="row">
         <div class="label">现病史：</div>
-        现病史内容现病史内容，现病史内容现病史内容现病史内容现病史内容。
+        {{detail.presentIllnessHistory}}
       </div>
       <div class="row">
         <div class="label">既往史：</div>
-        既往史内容，既往史内容既往史内容。
+        {{detail.pastIllnessHistory}}
       </div>
       <div class="row">
         <div class="label">口腔检查：</div>
-        <div class="teeth-content">
-          <div>
-            <TeethSelect disabled/>
+        <div>
+          <div class="teeth-content" v-for="(v0, i) in detail.medicalRecordCheckNormalVOList" :key="i">
+            <div>
+              <TeethSelect :value="JSON.parse(v0.checkNormalToothPosition || 'null')" disabled/>
+            </div>
+            <div>{{v0.checkNormalSymptoms}}</div>
           </div>
-          <div>口腔检查内容口腔检查内容，口腔检查内容口腔检查内容，口腔检查内容口腔检查内容口腔检查内容口腔检查内容。</div>
-          <div>
-            <TeethSelect disabled/>
-          </div>
-          <div>口腔检查内容。</div>
         </div>
       </div>
       <div class="row">
         <div class="label">辅助检查：</div>
-        <div class="teeth-content">
-          <div>
-            <TeethSelect disabled/>
+        <div>
+          <div class="teeth-content" v-for="(v0, i) in detail.medicalRecordCheckRayVOList" :key="i">
+            <div>
+              <TeethSelect :value="JSON.parse(v0.checkRayToothPosition || 'null')" disabled/>
+            </div>
+            <div>{{v0.checkRaySymptoms}}</div>
           </div>
-          <div>辅助检查内容，辅助检查内容辅助检查内容。</div>
         </div>
+      </div>
+      <div class="row">
+        <div class="label">诊断：</div>
+        <div>
+          <div class="teeth-content" v-for="(v0, i) in detail.medicalRecordDiagnosisVOList" :key="i">
+            <div>
+              <TeethSelect :value="JSON.parse(v0.diagnosisPosition || 'null')" disabled/>
+            </div>
+            <div>{{v0.diagnosisDesc}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">治疗方案：</div>
+        <div>
+          <div class="teeth-content" v-for="(v0, i) in detail.medicalRecordTreatmentProgramVOList" :key="i">
+            <div>
+              <TeethSelect :value="JSON.parse(v0.treatmentProgramPosition || 'null')" disabled/>
+            </div>
+            <div>{{v0.treatmentProgram}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">处置：</div>
+        <div>
+          <div class="teeth-content" v-for="(v0, i) in detail.medicalRecordDisposeVOList" :key="i">
+            <div>
+              <TeethSelect :value="JSON.parse(v0.disposePosition || 'null')" disabled/>
+            </div>
+            <div>{{v0.dispose}}</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="label">医嘱：</div>
+        {{detail.doctorAdvice}}
       </div>
     </div>
     <div class="bottom">
       <div>
-        <button @click="$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${patientId}`})">删 除</button>
-        <button @click="$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${patientId}`})">编 辑</button>
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
       </div>
     </div>
   </div>
@@ -58,8 +95,57 @@
 
 <script>
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
+import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
+import moment from 'moment'
 export default {
   components: {TeethSelect},
+  data() {
+    return {
+      detail: {},
+    }
+  },
+  methods: {
+    async getMedicalRecordDetail() {
+      this.$utils.showLoading('加载中...')
+      const res = await diagnosisAPI.getMedicalRecordDetail({medicalRecordId: this.medicalRecordId})
+      this.$utils.clearLoading()
+      this.detail = {visTimeFormated: moment(res.data.visTime).format('YYYY-MM-DD HH:mm'),
+        createTimeFormated: moment(res.data.createTime).format('YYYY-MM-DD HH:mm'),
+        doctorStaffName: '',
+        ...res.data
+      }
+    },
+    deleteMedicalRecord() {
+      uni.showModal({
+        title: '确定删除？',
+        success: async ({confirm}) => {
+          if (confirm) {
+            this.$utils.showLoading('请稍后...')
+            const res = await diagnosisAPI.deleteMedicalRecord({medicalRecordId: this.medicalRecordId})
+            this.$utils.clearLoading()
+            this.$utils.show('删除成功', {icon: 'success'})
+            uni.$emit('medicalRecordListUpdate')
+            this.$utils.back()
+          }
+        }
+      })
+    },
+    toEdit() {
+      this.$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${this.patientId}&medicalRecordId=${this.medicalRecordId}`})
+    },
+    onUpdate() {
+      uni.$on('medicalRecordDetailUpdate', () => {
+        this.getMedicalRecordDetail()
+        uni.$emit('medicalRecordListUpdate')
+      })
+    }
+  },
+  onLoad({medicalRecordId, patientId}) {
+    this.medicalRecordId = medicalRecordId
+    this.patientId = patientId
+    this.getMedicalRecordDetail()
+    this.onUpdate()
+  }
 }
 </script>
 
@@ -92,6 +178,9 @@ export default {
     white-space: nowrap;
     color: rgba(0,0,0,0.9);
     text-align: right;
+    &+div{
+      flex: auto;
+    }
   }
   .teeth-content{
     >div{
