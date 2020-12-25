@@ -19,7 +19,7 @@
         </div>
       </div>
     </scroll-view>
-    <empty :disabled="true" text="无影像记录" v-else />
+    <empty :disabled="true" text="无病历记录" v-else />
     <div class="bottom">
       <button @click="$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${patientId}`})">新建病历</button>
     </div>
@@ -45,10 +45,10 @@ export default {
       this.$utils.clearLoading()
       ++this.current
       this.total = res.data.total
-      this.records = res.data.records.map(r => ({
+      this.records = [...this.records, ...res.data.records.map(r => ({
         ...r, visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
         createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
-      }))
+      }))]
     },
     toDetail({medicalRecordId}) {
       this.$utils.push({url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`})
@@ -57,6 +57,7 @@ export default {
       uni.$on('medicalRecordListUpdate', () => {
         this.current = 1
         this.total = 0
+        this.records = []
         this.getMedicalRecordList()
       })
     }

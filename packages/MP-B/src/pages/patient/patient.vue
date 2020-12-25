@@ -98,6 +98,9 @@ export default {
         .then((res) => {
           let { data } = res
           this.patient = data
+          if (this.patient.tagList.length > 3) {
+            this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
+          }
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
