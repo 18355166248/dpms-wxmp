@@ -163,6 +163,7 @@ export default {
             username: this.loginForm.username,
           })
           setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
+          medicalInstitution.memberCode = this.loginForm.memberCode
           this.$store.commit(
             'workbenchStore/setMedicalInstitution',
             medicalInstitution,
