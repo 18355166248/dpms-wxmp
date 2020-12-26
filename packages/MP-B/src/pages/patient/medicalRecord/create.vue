@@ -153,9 +153,6 @@ export default {
       this.registerList = (res.data || []).map(d => ({
         ...d, registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm')
       }))
-      if (this.registerList.length) {
-        this.form.registerId = this.registerList[0].registerId
-      }
     },
     onTextareaChange() {
       uni.$on('medicalRecordTextareaChange', ({value, key}) => {
@@ -254,6 +251,7 @@ export default {
   min-height: 62rpx;
   white-space: normal;
   width: 100%;
+  color: rgba(0,0,0,0.65);
   &:empty{
     &::before{
       content: attr(data-placeholder);
