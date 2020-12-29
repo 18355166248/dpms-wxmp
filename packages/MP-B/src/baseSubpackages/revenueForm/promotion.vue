@@ -16,15 +16,15 @@
       <view class="tit">现金收款</view>
       <view class="flex">
         <view class="title">总收款：</view>
-        <view class="fee">{{ formatPrice(data.firstVisitAdvance) }}</view>
+        <view class="fee">{{ formatPrice(data.totalAdvance) }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊现金收款：</view>
-        <view class="fee">{{ formatPrice(data.nextVisitAdvance) }}</view>
+        <view class="fee">{{ formatPrice(data.firstVisitAdvance) }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊现金收款：</view>
-        <view class="fee">{{ formatPrice(data.totalAdvance) }}</view>
+        <view class="fee">{{ formatPrice(data.nextVisitAdvance) }}</view>
       </view>
       <view style="height: 32rpx;"></view>
     </view>
@@ -36,7 +36,7 @@
       </view>
       <view class="flex">
         <view class="title">初诊收入：</view>
-        <view class="fee">{{ formatPrice(data.firstVisitPerson) }}</view>
+        <view class="fee">{{ formatPrice(data.firstVisitIncome) }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊收入：</view>

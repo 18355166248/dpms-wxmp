@@ -484,8 +484,10 @@ export default {
 
         appointmentAPI
           .getApptBlockListByStaff({
-            blockBeginTime: moment().startOf('day').valueOf(),
-            blockEndTime: moment().endOf('day').valueOf(),
+            blockBeginTime: moment(this.startTimeStamp)
+              .startOf('day')
+              .valueOf(),
+            blockEndTime: moment(this.endTimeStamp).endOf('day').valueOf(),
             medicalInstitutionId: this.accessMedicalInstitution
               .medicalInstitutionId,
             blockEventType: 1,
