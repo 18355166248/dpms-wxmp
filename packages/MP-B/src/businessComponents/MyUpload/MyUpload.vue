@@ -4,7 +4,7 @@
       <image :src="f.path" @click="preview(files, f.path)"/>
       <div class="close" @click="del(f)">X</div>
     </div>
-    <button @click="choose" class="add" v-if="files.length < 6">
+    <button @click="choose" class="add">
       <image src="/static/icon-upload.png"/>
     </button>
   </div>
@@ -30,9 +30,9 @@ export default {
   methods: {
     choose() {
       uni.chooseImage({
-        count: 6,
+        count: 6, sourceType: ['album', 'camera'],
         success: async ({tempFiles}) => {
-          const targetFiles = tempFiles.slice(0, 6 - this.files.length)
+          const targetFiles = tempFiles
           this.files = [...this.files, ...targetFiles]
           await Promise.all(targetFiles.map(async f => {
             const ossParam = await this.getOssParam()

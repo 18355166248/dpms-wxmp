@@ -84,7 +84,7 @@
         {{detail.doctorAdvice}}
       </div>
     </div>
-    <div class="bottom">
+    <div class="bottom" v-if="detail.isEdit">
       <div>
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>

@@ -34,9 +34,10 @@
         >{{form.pastIllnessHistory}}</div>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <!-- <dpmsCell title="同步牙位">
-        <switch/>
-      </dpmsCell> -->
+      <dpmsCell title="同步牙位">
+        <switch :checked="teethSync" @change="teethSyncChange"/>
+      </dpmsCell>
+      <div style="height:20rpx"></div>
       <dpmsCell title="口腔检查" wrap>
         <div style="margin-top:40rpx">
           <div class="teeth-select" v-for="(v0, i) in form.medicalRecordCheckNormalVOList" :key="i">
@@ -143,7 +144,7 @@ export default {
         medicalRecordDiagnosisVOList: [{}], medicalRecordTreatmentProgramVOList: [{}],
         medicalRecordDisposeVOList: [{}], doctorAdvice: '',
       }, 
-      rules: {},
+      rules: {}, teethSync: true,
       registerList: [],
     }
   },
@@ -153,9 +154,6 @@ export default {
       this.registerList = (res.data || []).map(d => ({
         ...d, registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm')
       }))
-      if (this.registerList.length) {
-        this.form.registerId = this.registerList[0].registerId
-      }
     },
     onTextareaChange() {
       uni.$on('medicalRecordTextareaChange', ({value, key}) => {
@@ -173,6 +171,18 @@ export default {
     setTeethSelect(value, key) {
       const ks = key.split('.')
       this.$set(this.form[ks[0]], ks[1], {...this.form[ks[0]][ks[1]], [ks[2]]: value})
+      if (this.teethSync && ks[1] == 0) {
+        const formKeys = [
+          ['medicalRecordCheckNormalVOList', 'checkNormalToothPosition'],
+          ['medicalRecordCheckRayVOList', 'checkRayToothPosition'],
+          ['medicalRecordDiagnosisVOList', 'diagnosisPosition'],
+          ['medicalRecordTreatmentProgramVOList', 'treatmentProgramPosition'],
+          ['medicalRecordDisposeVOList', 'disposePosition'],
+        ].filter(_ks => _ks[0] !== ks[0])
+        formKeys.forEach(fk => {
+          this.$set(this.form[fk[0]], 0, {...this.form[fk[0]][0], [fk[1]]: value})
+        })
+      }
     },
     delTeeth(list, i) {
       list.splice(i, 1)
@@ -216,26 +226,26 @@ export default {
       const res = await diagnosisAPI.getMedicalRecordDetail({medicalRecordId: this.medicalRecordId})
       this.$utils.clearLoading()
       const formKeys = Object.keys(this.form)
-      this.form = null
-      this.$nextTick(() => {
-        this.form = formKeys.reduce((r, k) => {
-          if (k.endsWith('VOList')) {
-            res.data[k] = res.data[k].map((v0, i0) => {
-              v0 = Object.keys(v0).reduce((_r, _k) => {
-                if (_k.endsWith('Position')) {
-                  v0[_k] = JSON.parse(v0[_k] || 'null')
-                }
-                _r[_k] = v0[_k]
-                return _r
-              }, {})
-              return v0
-            })
-          }
-          r[k] = res.data[k]
-          return r
-        }, {})
-      })
+      this.form = formKeys.reduce((r, k) => {
+        if (k.endsWith('VOList')) {
+          res.data[k] = res.data[k].map((v0, i0) => {
+            v0 = Object.keys(v0).reduce((_r, _k) => {
+              if (_k.endsWith('Position')) {
+                v0[_k] = JSON.parse(v0[_k] || 'null')
+              }
+              _r[_k] = v0[_k]
+              return _r
+            }, {})
+            return v0
+          })
+        }
+        r[k] = res.data[k]
+        return r
+      }, {})
     },
+    teethSyncChange({detail}) {
+      this.teethSync = detail.value
+    }
   },
   onLoad({patientId, medicalRecordId}) {
     this.patientId = patientId
@@ -254,6 +264,7 @@ export default {
   min-height: 62rpx;
   white-space: normal;
   width: 100%;
+  color: rgba(0,0,0,0.65);
   &:empty{
     &::before{
       content: attr(data-placeholder);
