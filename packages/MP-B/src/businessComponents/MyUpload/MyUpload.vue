@@ -30,7 +30,7 @@ export default {
   methods: {
     choose() {
       uni.chooseImage({
-        count: 6,
+        count: 6, sourceType: ['album', 'camera'],
         success: async ({tempFiles}) => {
           const targetFiles = tempFiles
           this.files = [...this.files, ...targetFiles]
