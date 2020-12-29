@@ -58,7 +58,7 @@ export default {
       this.$utils.showLoading('加载中...')
       const res = await diagnosisAPI.getImageList(param)
       this.$utils.clearLoading()
-      this.records = res.data.map(d => ({
+      this.records = res.data.filter(d => d.teethImageList).map(d => ({
         ...d, registerLabel: moment(d.visTime).format('YYYY/MM/DD HH:mm')
       }))
     },
