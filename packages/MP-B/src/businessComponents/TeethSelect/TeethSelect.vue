@@ -53,6 +53,12 @@ export default {
   },
   created() {
     this.onChange()
+  },
+  watch: {
+    value(newVal, oldVal) {
+      if (newVal === oldVal) return
+      this.dataValue = this.value || {teeth: {}}
+    }
   }
 }
 </script>
