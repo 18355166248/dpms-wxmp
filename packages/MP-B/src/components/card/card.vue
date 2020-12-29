@@ -33,7 +33,7 @@
           :style="{ paddingRight: status ? '120rpx' : 0 }"
         >
           <text class="card-baseInfo-name">{{ name }}</text>
-          <div class="iconfont icon-vip vip" v-if="patient.isMember"></div>
+          <div class="iconfont icon-vip vip" v-if="patient.isShowMemberVip"></div>
           <view v-if="badgeObj" class="card-baseInfo-extend">
             <badge
               :type="badgeObj.type"
