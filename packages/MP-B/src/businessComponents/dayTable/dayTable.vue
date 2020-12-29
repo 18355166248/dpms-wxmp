@@ -152,8 +152,8 @@
         <view
           v-for="(item, index) in blockEventList"
           :key="index"
-          :style="item.style"
-          class="meeting_a blockEvent"
+          :style="item.style + item.$config.style"
+          class="meeting_a"
         >
           <view class="metting-inner">
             <view class="metting_content_box meetCard">
@@ -316,15 +316,17 @@ export default {
       .exec()
   },
   watch: {
+    //日程和预约需要一起计算宽度
     apptList(newVal) {
       Array.isArray(this.apptList) &&
         this.apptList.length > 0 &&
-        this.getMeetingList()
+        this.getMeetingList(newVal, this.blockEventList)
     },
+    //日程和预约需要一起计算宽度
     blockEvent(newVal) {
       newVal && newVal.length === 0
         ? (this.blockEventList = [])
-        : this.getBlockEventList()
+        : this.getMeetingList(this.apptList, newVal)
     },
     scheduleList(newVal) {
       this.getDefaultTable()
@@ -452,9 +454,10 @@ export default {
       this.defaultList = list
     },
     //整理会议列表数据
-    getMeetingList() {
-      let meetingList = JSON.parse(JSON.stringify(this.apptList))
+    getMeetingList(applist, blockEventList) {
+      let meetingList = JSON.parse(JSON.stringify(applist))
 
+      //此处计算卡片位置
       meetingList = scheduleTableUtil.getUnitAndOffset(meetingList)
 
       meetingList = meetingList[0][1].list
@@ -497,14 +500,16 @@ export default {
           ...meetingList[i],
         })
       }
-      this.meetingList = list
 
-      console.log('meetingList', this.meetingList)
+      //此处计算block的位置
+      this.meetingList = this.getBlockEventList(list, blockEventList)
     },
     //block事件列表
-    getBlockEventList() {
+    getBlockEventList(list, blockEventList) {
       const _self = this
-      this.blockEventList = this.blockEvent.map((v) => {
+
+      //常规处理
+      blockEventList = blockEventList.map((v) => {
         let startTime = moment(v.blockBeginTime).format('YYYY-MM-DD HH:mm')
         let endTime = moment(v.blockEndTime).format('YYYY-MM-DD HH:mm')
         let start = startTime.substring(11, 16).split(':')
@@ -521,12 +526,13 @@ export default {
         diff = diff < 2 ? 2 : diff
 
         let height = 'height:' + diff * _self.unitHeight + 'px;'
+        let color = 'background: #f6f6f6 !important;'
         let top = 'top:' + st * _self.unitHeight + 'px;'
         let isFlex = ''
         let bgClass = 'blurBg'
 
         v.top = st * _self.unitHeight
-        ;(v.style = height + top),
+        ;(v.style = height + top + color),
           (v.time =
             startTime.substring(11, 16) + '-' + endTime.substring(11, 16))
         v.isFlex = isFlex
@@ -536,7 +542,15 @@ export default {
         return v
       })
 
-      console.log('blockEventList', this.blockEventList)
+      //此处需要赋予宽度width
+      const [
+        appList,
+        finalblockEventList,
+      ] = scheduleTableUtil.calcBlockPosition(list, blockEventList)
+
+      this.blockEventList = finalblockEventList
+
+      return appList
     },
     //点击会议列表
     showDetail(index, e) {
@@ -1468,11 +1482,11 @@ $borderColor: #ddd;
   }
 }
 
-.blockEvent {
-  width: calc((100% - 50px - 0px) / 1);
-  left: calc(50px + ((100% - 50px - 0px) / 1 + 2px) * 0);
-  background: #f6f6f6 !important;
-}
+// .blockEvent {
+//   width: calc((100% - 50px - 0px) / 1);
+//   left: calc(50px + ((100% - 50px - 0px) / 1 + 2px) * 0);
+//   background: #f6f6f6 !important;
+// }
 
 .meetCard {
   position: relative;

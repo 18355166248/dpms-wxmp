@@ -306,6 +306,55 @@ const scheduleTableUtil = {
       appointmentEndTimeStamp: endStamp,
     }
   },
+
+  /**
+   *  根据时间对比，如果时间段内重合多，重新计算calcStyle
+   * @param {*} list
+   * @param {*} blockEventList
+   */
+  calcBlockPosition(list, blockEventList) {
+    const tempList = _.cloneDeep(list)
+    const tempBlockEventList = _.cloneDeep(blockEventList)
+    let $config
+
+    tempBlockEventList.forEach((b, i) => {
+      b.$config = {
+        unit: 1,
+      }
+      tempList.forEach((l, ii) => {
+        //时间相交判断
+        if (
+          (b.blockBeginTime >= l.appointmentBeginTime &&
+            b.blockBeginTime <= l.appointmentEndTime) ||
+          (b.blockEndTime >= l.appointmentBeginTime &&
+            b.blockEndTime <= l.appointmentEndTime) ||
+          (b.blockBeginTime >= l.appointmentBeginTime &&
+            b.blockEndTime <= l.appointmentEndTime) ||
+          (b.blockBeginTime <= l.appointmentBeginTime &&
+            b.blockEndTime >= l.appointmentEndTime)
+        ) {
+          l.$config.unit += 1
+
+          $config = l.$config
+          l.$config = {
+            style: scheduleTableUtil.calcStyle($config),
+            ...$config,
+          }
+
+          b.$config.unit += 1
+        }
+      })
+      b.$config.offset = b.$config.unit - 1
+
+      $config = b.$config
+      b.$config = {
+        style: scheduleTableUtil.calcStyle($config),
+        ...$config,
+      }
+    })
+
+    return [tempList, tempBlockEventList]
+  },
 }
 
 export { scheduleTableUtil }
