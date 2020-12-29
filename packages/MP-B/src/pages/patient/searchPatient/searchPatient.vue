@@ -192,6 +192,7 @@ export default {
       this.isSearchedValue = ''
       this.current = 1
       this.patientList = []
+      this.getPatients()
     },
     //选择搜索历史中某一个历史
     chooseSearchRecord(searchRecord, index) {
