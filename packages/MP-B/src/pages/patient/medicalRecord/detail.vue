@@ -133,18 +133,13 @@ export default {
     toEdit() {
       this.$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${this.patientId}&medicalRecordId=${this.medicalRecordId}`})
     },
-    onUpdate() {
-      uni.$on('medicalRecordDetailUpdate', () => {
-        this.getMedicalRecordDetail()
-        uni.$emit('medicalRecordListUpdate')
-      })
-    }
   },
   onLoad({medicalRecordId, patientId}) {
     this.medicalRecordId = medicalRecordId
     this.patientId = patientId
+  },
+  onShow() {
     this.getMedicalRecordDetail()
-    this.onUpdate()
   }
 }
 </script>
