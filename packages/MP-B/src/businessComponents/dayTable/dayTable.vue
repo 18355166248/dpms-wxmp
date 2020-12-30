@@ -279,7 +279,6 @@ export default {
   //   ...mapState([
   //     'chooseDateProp'
   //   ]),
-
   // },
   created() {
     this.appointmentStatusColorMap = {
@@ -1254,6 +1253,7 @@ export default {
                 type: 'touchMeeting',
               })
           }
+          self.clearCreateMeet()
         },
         self.clearCreateMeet(),
         self.clearCreateMeet(),
