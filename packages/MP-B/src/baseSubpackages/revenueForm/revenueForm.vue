@@ -71,11 +71,9 @@ export default {
       let deltaY = e.changedTouches[0].clientY - this.touchStartY
       if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
         if (deltaX >= 0) {
-          console.log('右滑')
-          this.currentTab = this.currentTab === 2 ? 0 : this.currentTab + 1
-        } else {
-          console.log('左滑')
           this.currentTab = this.currentTab === 0 ? 2 : this.currentTab - 1
+        } else {
+          this.currentTab = this.currentTab === 2 ? 0 : this.currentTab + 1
         }
       } else if (Math.abs(deltaY) > 50 && Math.abs(deltaX) < Math.abs(deltaY)) {
         if (deltaY < 0) {
