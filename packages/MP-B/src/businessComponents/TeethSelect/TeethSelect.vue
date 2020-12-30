@@ -12,6 +12,7 @@
 </template>
 
 <script>
+const ru = ['A', 'B', 'C', 'D', 'E']
 export default {
   props: {
     style: [Object, String],
@@ -34,7 +35,7 @@ export default {
       const teeth = this.dataValue.teeth
       return Object.keys(teeth).reduce((r, k) => {
         const quadrant = k[0] % 4 || 4
-        r[quadrant - 1].push({label: k[1], area: Object.keys(teeth[k] || {})})
+        r[quadrant - 1].push({label: k[0] > 4 ? ru[k[1] - 1] : k[1], area: Object.keys(teeth[k] || {})})
         return r
       }, Array.from({length: 4}, () => []))
     }
