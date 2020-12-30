@@ -33,6 +33,7 @@
         "
         @click="shiftNextDate"
       ></view>
+      <view class="lineHr"></view>
     </view>
     <view class="list">
       <view class="listTitle">
@@ -179,6 +180,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.lineHr {
+  width: 686rpx;
+  height: 2rpx;
+  margin-left: 32rpx;
+  background: rgba(0, 0, 0, 0.15);
+}
 .date {
   margin-top: 20rpx;
   height: 96rpx;
@@ -195,13 +202,13 @@ export default {
     top: 28rpx;
   }
   .datePicker {
-    width: 737rpx;
+    width: 300rpx;
+    margin-left: 225rpx;
     .dateTitle {
-      width: 686rpx;
-      margin-left: 32rpx;
+      width: 280rpx;
+      margin-left: 10rpx;
       height: 90rpx;
       line-height: 90rpx;
-      border-bottom: 2rpx solid rgba(0, 0, 0, 0.15);
       text-align: center;
     }
   }
