@@ -9,8 +9,30 @@
       >
         <view class="dateTitle">{{ pickerValue }}</view>
       </picker>
-      <text class="iconfont icon-arrow-left" @click="shiftPrevDate" />
-      <text class="iconfont icon-arrow-right" @click="shiftNextDate" />
+      <text class="iconfont icon-arrow-left" />
+      <view
+        style="
+          position: absolute;
+          position: absolute;
+          height: 80rpx;
+          width: 80rpx;
+          top: 0rpx;
+          left: 178rpx;
+        "
+        @click="shiftPrevDate"
+      ></view>
+      <text class="iconfont icon-arrow-right" />
+      <view
+        style="
+          position: absolute;
+          position: absolute;
+          height: 80rpx;
+          width: 80rpx;
+          top: 0rpx;
+          right: 178rpx;
+        "
+        @click="shiftNextDate"
+      ></view>
     </view>
     <view class="list">
       <view class="tit">现金收款</view>
