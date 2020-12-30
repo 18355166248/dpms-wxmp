@@ -779,9 +779,16 @@ export default {
               url: '/baseSubpackages/todayWork/todayWork',
             })
           }
-          if (type === 'createAppt' || type === 'editAppt') {
+          if (type === 'createAppt') {
             this.$utils.push({
               url: '/baseSubpackages/apptView/apptView',
+            })
+          }
+          if (type === 'editAppt') {
+            this.$utils.push({
+              url:
+                '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
+                this.paramsObj.appointmentId,
             })
           }
         })
