@@ -29,14 +29,10 @@
     </div>
 
     <!-- 历史搜索 -->
-    <div class="mt-64 history-search-section" v-if="patientList.length === 0">
+    <div class="mt-64 history-search-section" v-if="searchRecords.length !== 0">
       <div data-layout-align="space-between center">
         <span class="title">历史搜索</span>
-        <span
-          class="iconfont icon-delete"
-          @click="clearHistorySearch"
-          v-if="searchRecords.length !== 0"
-        ></span>
+        <span class="iconfont icon-delete" @click="clearHistorySearch"></span>
       </div>
       <span
         class="history-search-text"
