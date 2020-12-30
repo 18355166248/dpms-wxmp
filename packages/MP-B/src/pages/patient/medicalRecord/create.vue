@@ -211,7 +211,7 @@ export default {
       })
       this.$utils.clearLoading()
       this.$utils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {icon: 'success'})
-      uni.$emit(this.medicalRecordId ? 'medicalRecordDetailUpdate' : 'medicalRecordListUpdate')
+      uni.$emit('medicalRecordListUpdate')
       this.$utils.back()
     },
     onEdit() {

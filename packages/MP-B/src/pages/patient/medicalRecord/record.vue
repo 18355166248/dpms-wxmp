@@ -54,6 +54,7 @@ export default {
       this.$utils.push({url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`})
     },
     onUpdate() {
+      uni.$off('medicalRecordListUpdate')
       uni.$on('medicalRecordListUpdate', () => {
         this.current = 1
         this.total = 0
