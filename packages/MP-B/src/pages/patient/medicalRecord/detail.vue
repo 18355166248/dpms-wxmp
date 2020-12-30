@@ -183,6 +183,7 @@ export default {
     }
   }
   .teeth-content{
+    width: 570rpx;
     >div{
       margin-bottom: 16rpx;
       &:last-child{

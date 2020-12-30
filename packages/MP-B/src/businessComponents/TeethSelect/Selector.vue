@@ -93,7 +93,7 @@ export default {
       }
     },
     setClick(...yas) {
-      this.teethSelected = yas.flat()
+      this.teethSelected = [...this.teethSelected, ...yas.flat()]
     },
     save() {
       const result = this.teethSelected.reduce((r, s) => {
