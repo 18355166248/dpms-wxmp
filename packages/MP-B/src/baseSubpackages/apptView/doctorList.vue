@@ -26,12 +26,9 @@
 
     <!-- 选择诊所弹窗 -->
     <selectMedicalInstitution
-      v-if="isHeaderWithLargeArea"
       ref="selectMedicalInstitution"
       @confirm="selectInstitution"
-      :list="institutionList"
-      :workList="institutionCanSelectList"
-    />
+    ></selectMedicalInstitution>
   </view>
 </template>
 
