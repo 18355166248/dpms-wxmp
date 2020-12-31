@@ -56,6 +56,7 @@ export default {
     this.tableList = getStorage('statistics_detail').map((v) =>
       _.pick(v, ['name', 'data']),
     )
+    console.log(this.tableList)
   },
   computed: {
     total() {

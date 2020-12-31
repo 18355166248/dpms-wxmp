@@ -73,7 +73,7 @@ export default {
   },
   data() {
     return {
-      current: 0,
+      current: 1,
       tabs: [
         { name: '昨天', val: 1 },
         { name: '近七天', val: 7 },
@@ -99,7 +99,7 @@ export default {
     this.cWidth = uni.upx2px(750)
     this.cHeight = uni.upx2px(608)
     this.setCharts()
-    this.getStatistics(0)
+    this.getStatistics(this.current)
   },
   methods: {
     changeTab(i) {
@@ -114,6 +114,16 @@ export default {
         .then((res) => {
           const { data } = res
 
+          data.patient = data.patient.sort((a, b) => {
+            if (a.businessId === 0) {
+              a.businessId = 99
+            }
+            if (b.businessId === 0) {
+              b.businessId = 99
+            }
+            return a.businessId - b.businessId
+          })
+
           if (data.patient.reduce((acc, val) => acc + val.count, 0)) {
             this.genderData = data.patient.map((v) => {
               return {
@@ -121,13 +131,23 @@ export default {
                 data: v.count,
                 color: _self.color[v.product],
                 format(val) {
-                  return v.count + '人 ' + Math.round(val * 100) + '%'
+                  return v.product + ' ' + (val * 100).toFixed(2) + '%'
                 },
               }
             })
           } else {
             this.genderData = []
           }
+
+          data.register = data.register.sort((a, b) => {
+            if (a.businessId === 0) {
+              a.businessId = 99
+            }
+            if (b.businessId === 0) {
+              b.businessId = 99
+            }
+            return a.businessId - b.businessId
+          })
 
           if (data.register.reduce((acc, val) => acc + val.count, 0)) {
             this.registerData = data.register.map((v) => {
@@ -136,7 +156,7 @@ export default {
                 data: v.count,
                 color: _self.color[v.product],
                 format(val) {
-                  return v.count + '人 ' + Math.round(val * 100) + '%'
+                  return v.product + ' ' + (val * 100).toFixed(2) + '%'
                 },
               }
             })
@@ -149,7 +169,7 @@ export default {
               name: v.product,
               data: v.count,
               format(val) {
-                return v.product + ' ' + Math.round(val * 100) + '%'
+                return v.product + ' ' + (val * 100).toFixed(2) + '%'
               },
             }
           })
