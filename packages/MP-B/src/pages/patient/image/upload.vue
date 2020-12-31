@@ -83,19 +83,28 @@ export default {
       this.imageType = res.data.ImageType
     },
     async saveImageInfo() {
-      this.$utils.showLoading('请稍后...')
       await diagnosisAPI.saveImageInfo({
         ...this.form, patientId: this.patientId
       })
       this.$utils.clearLoading()
       this.$utils.show('上传成功', {icon: 'success'})
       this.$utils.back()
+      this.$nextTick(() => {
+        this.pending = false
+      })
     },
     submit() {
+      if (this.pending) return
+      this.pending = true
+      this.$utils.showLoading('请稍后...')
       this.$utils.formValidate(
         this.rules, this.form,
         (err) => {
-          if (err) return this.$utils.show(err[0].message)
+          if (err) {
+            this.pending = false
+            this.$utils.clearLoading()
+            return this.$utils.show(err[0].message)
+          }
           this.saveImageInfo()
         }
       )
