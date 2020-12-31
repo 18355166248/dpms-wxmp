@@ -28,6 +28,7 @@
     <selectMedicalInstitution
       ref="selectMedicalInstitution"
       @confirm="selectInstitution"
+      :medicalInstitutionType="2"
     ></selectMedicalInstitution>
   </view>
 </template>

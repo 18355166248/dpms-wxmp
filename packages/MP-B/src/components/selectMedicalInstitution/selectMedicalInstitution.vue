@@ -92,6 +92,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    medicalInstitutionType: {
+      //只显示直营
+      type: Number,
+      default: 0,
+    },
   },
   data() {
     return {
@@ -115,10 +120,20 @@ export default {
           this.range = this.list.length ? this.list : res.data
 
           const disList = []
-          JSON.stringify(res.data, (k, v) => {
-            v.medicalInstitutionId && disList.push(v.medicalInstitutionId)
-            return v
-          })
+          if (this.medicalInstitutionType > 0) {
+            JSON.stringify(res.data, (k, v) => {
+              v.medicalInstitutionId &&
+                v.parentId !== 0 &&
+                v.medicalInstitutionType === this.medicalInstitutionType &&
+                disList.push(v.medicalInstitutionId)
+              return v
+            })
+          } else {
+            JSON.stringify(res.data, (k, v) => {
+              v.medicalInstitutionId && disList.push(v.medicalInstitutionId)
+              return v
+            })
+          }
 
           this.disList = this.workList.length ? this.workList : disList
           this.showTree = true
