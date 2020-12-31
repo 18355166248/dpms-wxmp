@@ -110,7 +110,7 @@
 
       <view class="menu-area pt-48 ph-32">
         <view class="menu-area-header">
-          统计报表
+          常用功能
         </view>
         <view class="menu-area-body mt-41">
           <view
@@ -155,7 +155,7 @@
         v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
       >
         <view class="menu-area-header">
-          常用功能
+          统计报表
         </view>
         <view class="menu-area-body mt-41">
           <view
@@ -315,10 +315,14 @@ export default {
       }
     },
     isHeadquartersAndRegion() {
+      // console.log(
+      //   this.INSTITUTION_CHAIN_TYPE_ENUM,
+      //   this.medicalInstitution.institutionChainType,
+      // )
       return (
-        (this.institutionChainTypeKey === 'CHAIN' &&
-          Number(this.medicalInstitution.topParentId) === 0) ||
-        this.institutionChainTypeKey === 'REGIONAL'
+        (this.medicalInstitution.topParentId === 0 &&
+          this.medicalInstitution.institutionChainType === 2) ||
+        this.medicalInstitution.institutionChainType === 3
       )
     },
     capsuleHeight() {
