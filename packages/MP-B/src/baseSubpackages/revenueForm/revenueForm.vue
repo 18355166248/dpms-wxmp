@@ -50,6 +50,7 @@ export default {
       },
     }
   },
+  onLoad() {},
   methods: {
     changeTab(i) {
       this.currentTab = this.tabs[i].val
