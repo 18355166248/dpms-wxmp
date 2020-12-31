@@ -15,6 +15,7 @@
     <view class="menu-area">
       <view class="menu-area-body mt-48">
         <view
+          v-if="menu.pageElementsList.some(m => m.enumValue === 'detailed-infos')"
           class="menu-area-item"
           @click="
             toUrl(
@@ -30,6 +31,7 @@
           </view>
         </view>
         <view
+          v-if="menu.pageElementsList.some(m => m.enumValue === 'treatment-record')"
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/apptList/apptList?patientId=' + patientId)
@@ -43,6 +45,7 @@
           </view>
         </view>
         <view
+          v-if="menu.pageElementsList.some(m => m.enumValue === 'image')"
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/image/record?patientId=' + patientId)
@@ -56,6 +59,7 @@
           </view>
         </view>
         <view
+          v-if="menu.pageElementsList.some(m => m.enumValue === 'electronic-medical-record')"
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/medicalRecord/record?patientId=' + patientId)
@@ -76,13 +80,18 @@
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import card from '@/components/card/card.vue'
-
+import {mapState} from 'vuex'
 export default {
   data() {
     return {
       patientId: '',
       patient: {},
     }
+  },
+  computed: {
+    ...mapState({
+      menu: state => state.workbenchStore.menu
+    })
   },
   onLoad(params) {
     this.patientId = params.patientId
@@ -98,9 +107,9 @@ export default {
         .then((res) => {
           let { data } = res
           this.patient = data
-          if (this.patient.tagList.length > 3) {
-            this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
-          }
+          // if (this.patient.tagList.length > 3) {
+          //   this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
+          // }
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
