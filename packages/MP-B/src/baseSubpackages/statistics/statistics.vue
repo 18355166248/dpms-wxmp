@@ -12,7 +12,10 @@
       lineScale="0.2"
       @change="changeTab"
     />
-    <view class="list">
+    <view
+      class="list"
+      v-if="menu.pageElementsList.some((m) => m.enumValue === '11002')"
+    >
       <view class="tit">新增患者性别分布</view>
       <view v-if="genderData.length">
         <canvas canvas-id="genderCanvas" id="genderCanvas" class="charts" />
@@ -22,7 +25,10 @@
         暂无统计数据
       </view>
     </view>
-    <view class="list">
+    <view
+      class="list"
+      v-if="menu.pageElementsList.some((m) => m.enumValue === '11003')"
+    >
       <view class="tit">到诊类型分布</view>
       <view v-if="registerData.length">
         <canvas canvas-id="registerCanvas" id="registerCanvas" class="charts" />
@@ -32,7 +38,10 @@
         暂无统计数据
       </view>
     </view>
-    <view class="list">
+    <view
+      class="list"
+      v-if="menu.pageElementsList.some((m) => m.enumValue === '11004')"
+    >
       <view class="tit">医生收款分布</view>
       <view v-if="doctorData.length">
         <canvas canvas-id="doctorCanvas" id="doctorCanvas" class="charts" />
@@ -42,7 +51,10 @@
         暂无统计数据
       </view>
     </view>
-    <view class="list">
+    <view
+      class="list"
+      v-if="menu.pageElementsList.some((m) => m.enumValue === '11001')"
+    >
       <view class="tit">诊疗项目收款</view>
       <view v-if="projectData.length">
         <canvas canvas-id="projectCanvas" id="projectCanvas" class="charts" />
@@ -60,6 +72,7 @@ import statisticsAPI from '@/APIS/statistics.api'
 import tabs from '@/components/tabs/tabs.vue'
 import uCharts from '@/components/u-charts/u-charts.min.js'
 import { setStorage } from '@/utils/storage'
+import { mapState } from 'vuex'
 
 var _self
 var genderCanvas = null
@@ -94,6 +107,11 @@ export default {
       },
     }
   },
+  computed: {
+    ...mapState({
+      menu: (state) => state.workbenchStore.menu,
+    }),
+  },
   onLoad() {
     _self = this
     this.cWidth = uni.upx2px(750)
@@ -112,6 +130,7 @@ export default {
           type: this.tabs[i].val,
         })
         .then((res) => {
+          const that = this
           const { data } = res
 
           data.patient = data.patient.sort((a, b) => {
@@ -124,14 +143,23 @@ export default {
             return a.businessId - b.businessId
           })
 
-          if (data.patient.reduce((acc, val) => acc + val.count, 0)) {
+          const genderDataCount = data.patient.reduce(
+            (acc, val) => acc + val.count,
+            0,
+          )
+          if (genderDataCount) {
             this.genderData = data.patient.map((v) => {
               return {
                 name: v.product,
                 data: v.count,
                 color: _self.color[v.product],
                 format(val) {
-                  return v.product + ' ' + (val * 100).toFixed(2) + '%'
+                  return (
+                    v.product +
+                    ' ' +
+                    ((v.count / genderDataCount) * 100).toFixed(2) +
+                    '%'
+                  )
                 },
               }
             })
@@ -149,14 +177,23 @@ export default {
             return a.businessId - b.businessId
           })
 
-          if (data.register.reduce((acc, val) => acc + val.count, 0)) {
+          const registerDataCount = data.register.reduce(
+            (acc, val) => acc + val.count,
+            0,
+          )
+          if (registerDataCount) {
             this.registerData = data.register.map((v) => {
               return {
                 name: v.product,
                 data: v.count,
                 color: _self.color[v.product],
                 format(val) {
-                  return v.product + ' ' + (val * 100).toFixed(2) + '%'
+                  return (
+                    v.product +
+                    ' ' +
+                    ((v.count / registerDataCount) * 100).toFixed(2) +
+                    '%'
+                  )
                 },
               }
             })
@@ -164,12 +201,21 @@ export default {
             this.registerData = []
           }
 
+          const doctorDataCount = data.doctor.reduce(
+            (acc, val) => acc + val.count,
+            0,
+          )
           this.doctorData = data.doctor.map((v) => {
             return {
               name: v.product,
               data: v.count,
               format(val) {
-                return v.product + ' ' + (val * 100).toFixed(2) + '%'
+                return (
+                  that.nameFilter(v.product) +
+                  ' ' +
+                  ((v.count / doctorDataCount) * 100).toFixed(2) +
+                  '%'
+                )
               },
             }
           })
@@ -182,7 +228,9 @@ export default {
             }
           })
 
-          this.changeData()
+          this.$nextTick(() => {
+            this.changeData()
+          })
         })
         .catch()
     },
@@ -254,9 +302,8 @@ export default {
         dataLabel: true,
         extra: {
           pie: {
-            offsetAngle: -45,
             ringWidth: 40 * this.pixelRatio,
-            lableWidth: 15,
+            lableWidth: 5,
           },
         },
       })
@@ -276,6 +323,7 @@ export default {
         ],
         xAxis: {
           disableGrid: true,
+          rotateLabel: true,
         },
         yAxis: {
           //disabled:true
@@ -291,6 +339,12 @@ export default {
           },
         },
       })
+    },
+    nameFilter(txt) {
+      if (txt.length > 4) {
+        return txt.slice(0, 3) + '…'
+      }
+      return txt
     },
     link(type) {
       setStorage('statistics_detail', this[type])
