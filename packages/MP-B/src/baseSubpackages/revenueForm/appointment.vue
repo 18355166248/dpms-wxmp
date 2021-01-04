@@ -56,9 +56,9 @@
       </view>
       <view class="listContent">
         <view class="title">到诊率</view>
-        <view class="total">{{ data.rateOfRegister || '-' }}</view>
-        <view class="first">{{ data.detail[0].rateOfRegister || '-' }}</view>
-        <view class="pre">{{ data.detail[1].rateOfRegister || '-' }}</view>
+        <view class="total">{{ data.rateOfRegister || 0 }}</view>
+        <view class="first">{{ data.detail[0].rateOfRegister || 0 }}</view>
+        <view class="pre">{{ data.detail[1].rateOfRegister || 0 }}</view>
       </view>
       <view class="listContent">
         <view class="title">成交人次</view>

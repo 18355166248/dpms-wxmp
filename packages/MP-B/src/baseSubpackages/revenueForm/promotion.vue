@@ -91,7 +91,7 @@
       </view>
       <view class="flex">
         <view class="title">成交率：</view>
-        <view class="fee">{{ data.dealRate ? data.dealRate + '%' : '-' }}</view>
+        <view class="fee">{{ data.dealRate ? data.dealRate + '%' : 0 }}</view>
       </view>
       <view class="flex">
         <view class="title">成交单体：</view>
@@ -108,13 +108,13 @@
       <view class="flex">
         <view class="title">初诊成交率：</view>
         <view class="fee">{{
-          data.firstVisitDealRate ? data.firstVisitDealRate + '%' : '-'
+          data.firstVisitDealRate ? data.firstVisitDealRate + '%' : 0
         }}</view>
       </view>
       <view class="flex">
         <view class="title">复诊成交率：</view>
         <view class="fee">{{
-          data.nextVisitDealRate ? data.nextVisitDealRate + '%' : '-'
+          data.nextVisitDealRate ? data.nextVisitDealRate + '%' : 0
         }}</view>
       </view>
       <view class="flex">

@@ -60,12 +60,12 @@
       </view>
       <view class="listContent">
         <view class="title">预约到诊占比</view>
-        <view class="total">{{ data.rateOfAppointmentRegister || '-' }}</view>
+        <view class="total">{{ data.rateOfAppointmentRegister || 0 }}</view>
         <view class="first">{{
-          data.detail[0].rateOfAppointmentRegister || '-'
+          data.detail[0].rateOfAppointmentRegister || 0
         }}</view>
         <view class="pre">{{
-          data.detail[1].rateOfAppointmentRegister || '-'
+          data.detail[1].rateOfAppointmentRegister || 0
         }}</view>
       </view>
       <view class="listContent">
@@ -80,14 +80,12 @@
       </view>
       <view class="listContent">
         <view class="title">自然到诊占比</view>
-        <view class="total">{{
-          data.rateOfNonappointmentRegister || '-'
-        }}</view>
+        <view class="total">{{ data.rateOfNonappointmentRegister || 0 }}</view>
         <view class="first">{{
-          data.detail[0].rateOfNonappointmentRegister || '-'
+          data.detail[0].rateOfNonappointmentRegister || 0
         }}</view>
         <view class="pre">{{
-          data.detail[1].rateOfNonappointmentRegister || '-'
+          data.detail[1].rateOfNonappointmentRegister || 0
         }}</view>
       </view>
       <view class="listContent">
