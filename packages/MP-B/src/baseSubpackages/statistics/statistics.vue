@@ -157,8 +157,7 @@ export default {
                   return (
                     v.product +
                     ' ' +
-                    ((v.count / genderDataCount) * 100).toFixed(2) +
-                    '%'
+                    that.numFilter((v.count / genderDataCount) * 100)
                   )
                 },
               }
@@ -191,8 +190,7 @@ export default {
                   return (
                     v.product +
                     ' ' +
-                    ((v.count / registerDataCount) * 100).toFixed(2) +
-                    '%'
+                    that.numFilter((v.count / registerDataCount) * 100)
                   )
                 },
               }
@@ -213,8 +211,7 @@ export default {
                 return (
                   that.nameFilter(v.product) +
                   ' ' +
-                  ((v.count / doctorDataCount) * 100).toFixed(2) +
-                  '%'
+                  that.numFilter((v.count / doctorDataCount) * 100)
                 )
               },
             }
@@ -345,6 +342,12 @@ export default {
         return txt.slice(0, 3) + '…'
       }
       return txt
+    },
+    numFilter(txt) {
+      if (Number.isInteger(txt)) {
+        return txt.toFixed() + '%'
+      }
+      return txt.toFixed(2) + '%'
     },
     link(type) {
       setStorage('statistics_detail', this[type])
