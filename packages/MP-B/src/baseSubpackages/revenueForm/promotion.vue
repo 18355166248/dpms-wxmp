@@ -95,7 +95,7 @@
       </view>
       <view class="flex">
         <view class="title">成交单体：</view>
-        <view class="fee">{{ data.dealAverage || 0 }}</view>
+        <view class="fee">{{ formatPrice(data.dealAverage) }}</view>
       </view>
       <view class="flex">
         <view class="title">初诊成交人次：</view>
@@ -119,7 +119,7 @@
       </view>
       <view class="flex">
         <view class="title">初诊单体：</view>
-        <view class="fee">{{ data.firstVisitAverage || 0 }}</view>
+        <view class="fee">{{ formatPrice(data.firstVisitAverage) }}</view>
       </view>
       <view style="height: 32rpx;"></view>
     </view>
