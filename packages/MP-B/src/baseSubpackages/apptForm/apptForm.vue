@@ -774,16 +774,16 @@ export default {
             appt: { ...formatValue, ...res.data },
           })
 
+          if (type === 'createAppt') {
+            return this.$utils.push({
+              url: '/baseSubpackages/apptView/apptView',
+            })
+          }
           this.$utils.back()
 
           // if (type === 'createRegister' || type === 'editRegister') {
           //   this.$utils.push({
           //     url: '/baseSubpackages/todayWork/todayWork',
-          //   })
-          // }
-          // if (type === 'createAppt') {
-          //   this.$utils.push({
-          //     url: '/baseSubpackages/apptView/apptView',
           //   })
           // }
           // if (type === 'editAppt') {
