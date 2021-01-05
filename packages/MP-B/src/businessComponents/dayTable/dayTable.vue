@@ -505,7 +505,10 @@ export default {
     },
     //block事件列表
     getBlockEventList(list, blockEventList) {
-      if (blockEventList.length < 1) return list
+      if (blockEventList.length < 1) {
+        this.blockEventList = []
+        return list
+      }
 
       const _self = this
 
