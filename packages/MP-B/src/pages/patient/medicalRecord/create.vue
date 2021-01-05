@@ -27,18 +27,18 @@
       </dpmsCell>
       <dpmsCell
         title="既往史"
-        wrap
+        wrap hideBorderBottom
       >
         <div class="text" data-placeholder="请输入既往史"
           @click="openTextarea({title: '既往史', value: form.pastIllnessHistory, key: 'pastIllnessHistory'})"
         >{{form.pastIllnessHistory}}</div>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <dpmsCell title="同步牙位">
+      <dpmsCell title="同步牙位" hideBorderBottom>
         <switch :checked="teethSync" @change="teethSyncChange"/>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <dpmsCell title="口腔检查" wrap>
+      <dpmsCell title="口腔检查" wrap hideBorderBottom>
         <div style="margin-top:40rpx">
           <div class="teeth-select" v-for="(v0, i) in form.medicalRecordCheckNormalVOList" :key="i">
             <TeethSelect class="handle" :value="v0.checkNormalToothPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordCheckNormalVOList.${i}.checkNormalToothPosition`)"/>
@@ -53,7 +53,7 @@
         </div>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <dpmsCell title="辅助检查" wrap>
+      <dpmsCell title="辅助检查" wrap hideBorderBottom>
         <div style="margin-top:40rpx">
           <div class="teeth-select" v-for="(v0, i) in form.medicalRecordCheckRayVOList" :key="i">
             <TeethSelect class="handle" :value="v0.checkRayToothPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordCheckRayVOList.${i}.checkRayToothPosition`)"/>
@@ -68,7 +68,7 @@
         </div>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <dpmsCell title="诊断" wrap>
+      <dpmsCell title="诊断" wrap hideBorderBottom>
         <div style="margin-top:40rpx">
           <div class="teeth-select" v-for="(v0, i) in form.medicalRecordDiagnosisVOList" :key="i">
             <TeethSelect class="handle" :value="v0.diagnosisPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordDiagnosisVOList.${i}.diagnosisPosition`)"/>
@@ -83,7 +83,7 @@
         </div>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <dpmsCell title="治疗方案" wrap>
+      <dpmsCell title="治疗方案" wrap hideBorderBottom>
         <div style="margin-top:40rpx">
           <div class="teeth-select" v-for="(v0, i) in form.medicalRecordTreatmentProgramVOList" :key="i">
             <TeethSelect class="handle" :value="v0.treatmentProgramPosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordTreatmentProgramVOList.${i}.treatmentProgramPosition`)"/>
@@ -98,7 +98,7 @@
         </div>
       </dpmsCell>
       <div style="height:20rpx"></div>
-      <dpmsCell title="处置" wrap>
+      <dpmsCell title="处置" wrap hideBorderBottom>
         <div style="margin-top:40rpx">
           <div class="teeth-select" v-for="(v0, i) in form.medicalRecordDisposeVOList" :key="i">
             <TeethSelect class="handle" :value="v0.disposePosition" :index="i" @input="(val, i) => setTeethSelect(val, `medicalRecordDisposeVOList.${i}.disposePosition`)"/>
@@ -115,7 +115,7 @@
       <div style="height:20rpx"></div>
       <dpmsCell
         title="医嘱"
-        wrap
+        wrap hideBorderBottom
       >
         <div class="text" data-placeholder="请输入医嘱"
           @click="openTextarea({title: '医嘱', value: form.doctorAdvice, key: 'doctorAdvice'})"
