@@ -21,13 +21,13 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_45ih79onqyb.eot');
-  src: url('//at.alicdn.com/t/font_1965288_45ih79onqyb.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.eot');
+  src: url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_45ih79onqyb.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_45ih79onqyb.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_45ih79onqyb.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_45ih79onqyb.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.svg#iconfont') format('svg');
 }
 /*********在线字体代码end*********/
 
