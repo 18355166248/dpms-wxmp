@@ -6,7 +6,7 @@
         required
         title="姓名"
         placeholder="请输入姓名"
-        v-model="form.patientName"        
+        v-model="form.patientName"
       />
       <dpmsEnumsPicker
         required
@@ -32,6 +32,13 @@
         defaultType="settingsTypeId"
         :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
         isLink
+      />
+      <dpmsCellInput
+        required
+        title="病历号"
+        :value="medicalRecordNo"
+        placeholder="请输入病历号"
+        v-model="form.medicalRecordNo"
       />
       <dpmsCell
         title="患者标签"
@@ -70,11 +77,7 @@
         placeholder="请输入微信号"
         v-model="form.weChatId"
       />
-      <dpmsCellInput
-        title="QQ"
-        placeholder="请输入QQ"
-        v-model="form.qqNum"
-      />
+      <dpmsCellInput title="QQ" placeholder="请输入QQ" v-model="form.qqNum" />
       <dpmsPlacePicker
         title="家庭住址"
         placeholder="请选择地区"
@@ -124,6 +127,7 @@ const formDefault = {
   qqNum: '',
   region: [],
   address: '',
+  medicalRecordNo: '',
 }
 
 export default {
@@ -132,15 +136,17 @@ export default {
       type: Object,
       default: formDefault,
     },
-    editType : {
+    editType: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   data() {
     return {
       patientTypeList: [], //患者类型列表
       patientTagsCheckedText: '', //用户画像选中文本
+      medicalRecordNo: '', //病历号
+      settingsTypeId: '', //患者类型
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
@@ -157,6 +163,17 @@ export default {
             min: 1,
             max: 50,
             message: '姓名输入不应该超过 50 字',
+          },
+        ],
+        medicalRecordNo: [
+          {
+            required: true,
+            message: '请输入病历号',
+          },
+          {
+            min: 1,
+            max: 30,
+            message: '病历号输入不应该超过 30 字',
           },
         ],
         gender: {
@@ -209,6 +226,9 @@ export default {
       this.form = this.filterFormData(newVal)
       this.oldForm = this.filterFormData(newVal)
     },
+    'form.settingsTypeId'(e) {
+      this.getPatientMedicalRecordNo()
+    },
   },
   created() {
     // 更新用户画像选中值
@@ -220,6 +240,7 @@ export default {
 
     this.getPatientTypeList()
     this.getPatientTags()
+    this.getPatientMedicalRecordNo()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
@@ -229,6 +250,7 @@ export default {
     async getPatientTypeList() {
       let res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data
+      this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getPatientTags() {
       let res = await patientAPI.getPatientTags()
@@ -238,6 +260,12 @@ export default {
         res.data.filter((v) => v.tagInfoDTOList?.length > 0),
       )
       this.updateTagsCheckedText()
+    },
+    async getPatientMedicalRecordNo() {
+      let res = await patientAPI.getPatientMedicalRecordNo({
+        patientType: this.form.settingsTypeId,
+      })
+      this.form.medicalRecordNo = res.data
     },
     filterFormData(data) {
       if (_.isEmpty(data)) {
@@ -283,17 +311,23 @@ export default {
     contrastForm() {
       if (this.editType) {
         let arr = []
-        for(let key in this.oldForm){
-          if (JSON.stringify(this.form[key]) !== JSON.stringify(this.oldForm[key])){
+        for (let key in this.oldForm) {
+          if (
+            JSON.stringify(this.form[key]) !== JSON.stringify(this.oldForm[key])
+          ) {
             arr.push(key)
           }
         }
-        this.changeKeys = arr.filter((value,index,self) => {
+        this.changeKeys = arr.filter((value, index, self) => {
           return self.indexOf(value) === index
         })
         if (this.changeKeys.length) {
-          this.changeKeys.forEach(item => {
-            if(item !== 'settingsTypeId' && item !== 'tagIds' && item !== 'region') {
+          this.changeKeys.forEach((item) => {
+            if (
+              item !== 'settingsTypeId' &&
+              item !== 'tagIds' &&
+              item !== 'region'
+            ) {
               this.newRules[item] = this.rules[item]
             }
           })
