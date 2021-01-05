@@ -144,6 +144,12 @@ button::after {
 .icon-plus-circle::before {
   content: '\e781';
 }
+.icon-phone:before {
+  content: '\e698';
+}
+.icon-sms:before {
+  content: '\e60a';
+}
 /* iconfont图标 end */
 </style>
 
