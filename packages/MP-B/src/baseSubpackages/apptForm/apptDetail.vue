@@ -65,7 +65,7 @@
             确认
           </button>
           <button
-            class="button button-ghost"
+            class="button button-ghost no-right-border"
             @click="
               toPage('/baseSubpackages/apptForm/cancleAppt', {
                 appointmentId: appointmentId,
@@ -454,6 +454,9 @@ export default {
       background-color: #fff;
       color: $dpms-color-primary;
       border: 2rpx solid $dpms-color-primary;
+    }
+    .no-right-border {
+      border-right: none;
     }
   }
 }
