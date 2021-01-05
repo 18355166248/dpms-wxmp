@@ -33,11 +33,13 @@ export default {
   computed: {
     computedValue() {
       const teeth = this.dataValue.teeth
-      return Object.keys(teeth).reduce((r, k) => {
+      const value = Object.keys(teeth).reduce((r, k) => {
         const quadrant = k[0] % 4 || 4
         r[quadrant - 1].push({label: k[0] > 4 ? ru[k[1] - 1] : k[1], area: Object.keys(teeth[k] || {})})
         return r
       }, Array.from({length: 4}, () => []))
+      value.splice(2, 0, value[3])
+      return value.slice(0, 4)
     }
   },
   methods: {
