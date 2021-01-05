@@ -72,6 +72,17 @@
             病历记录
           </view>
         </view>
+        <view
+          class="menu-area-item"
+          @click="callTel"
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color5">
+            <text class="iconfont icon-phone"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            打电话
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -124,6 +135,11 @@ export default {
         url,
       })
     },
+    callTel() {
+      uni.makePhoneCall({
+        phoneNumber: this.patient?.mobile
+      })
+    }
   },
   components: {
     card,
@@ -193,6 +209,10 @@ export default {
       }
       &-icon-color4 {
         $values: rgba(255,133,192,1), rgba(235,47,150,1);
+        @include colors($values...);
+      }
+      &-icon-color5 {
+        $values: rgba(110, 167, 252, 1), rgba(74, 147, 254, 1);
         @include colors($values...);
       }
 
