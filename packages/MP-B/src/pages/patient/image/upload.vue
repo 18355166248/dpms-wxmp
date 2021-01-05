@@ -8,6 +8,7 @@
         :list="registerList"
         defaultType="registerId"
         :defaultProps="{label: 'registerLabel', value: 'registerId'}"
+        :disabled="!registerList.length"
       />
       <dpmsCellPicker
         required

@@ -1,6 +1,6 @@
 <template>
   <div
-    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '', wrap ? 'wrap' : '']"
+    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '', wrap ? 'wrap' : '', disabled ? 'disabled' : '']"
     @click="cellClick"
   >
     <div :class="['dpms-cell__title', required ? 'required' : '']">
@@ -78,7 +78,11 @@ export default {
   &.wrap{
     flex-wrap: wrap;
   }
-
+  &.disabled{
+    .dpms-cell__title {
+      color: rgba(0,0,0,0.5);
+    }
+  }
   .dpms-cell__title {
     position: relative;
     padding-right: 48rpx;

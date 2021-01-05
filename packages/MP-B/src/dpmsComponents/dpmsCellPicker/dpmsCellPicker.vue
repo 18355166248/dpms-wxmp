@@ -16,6 +16,7 @@
       :placeholder="placeholder"
       :value="pickerValue"
       :hideBorderBottom="hideBorderBottom"
+      :disabled="disabled"
     />
   </picker>
 </template>
