@@ -164,9 +164,11 @@ export default {
         .then((res) => {
           const { records } = res.data
           this.data = records.length > 0 ? records[0] : {}
+          uni.hideLoading()
         })
-        .catch((res) => {})
-      uni.hideLoading()
+        .catch((res) => {
+          uni.hideLoading()
+        })
     },
     shiftNextDate(e) {
       e.stopPropagation()
