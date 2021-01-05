@@ -152,9 +152,11 @@ export default {
               detail: [{}, {}],
             }
           }
+          uni.hideLoading()
         })
-        .catch((res) => {})
-      uni.hideLoading()
+        .catch((res) => {
+          uni.hideLoading()
+        })
     },
     shiftPrevDate(e) {
       e.stopPropagation()
