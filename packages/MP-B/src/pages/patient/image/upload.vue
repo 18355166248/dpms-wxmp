@@ -126,7 +126,7 @@ export default {
   padding-top: 28rpx;
 }
 .textarea{
-  padding-top: 18rpx;
+  padding: 18rpx 0 0;
   height: 160rpx;
 }
 .count{
