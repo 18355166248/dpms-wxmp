@@ -1,6 +1,6 @@
 <template>
   <div>
-    <dpmsForm ref="form" :model="form" :rules="rules" v-if="form">
+    <dpmsForm ref="form" :model="form" :rules="rules">
       <dpmsCellPicker
         title="就诊信息"
         placeholder="暂无就诊信息"
@@ -146,7 +146,7 @@ export default {
         medicalRecordDisposeVOList: [{}], doctorAdvice: '',
       }, 
       rules: {}, teethSync: true,
-      registerList: [],
+      registerList: null,
     }
   },
   methods: {

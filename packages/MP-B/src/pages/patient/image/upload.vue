@@ -61,7 +61,7 @@ export default {
         imageUrlStr: [
           {required: true, message: '请上传影像'}
         ]
-      }, registerList: [],
+      }, registerList: null,
       imageType: {},
     }
   },

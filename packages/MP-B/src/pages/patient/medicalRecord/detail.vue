@@ -10,19 +10,19 @@
       </div>
       <div class="row">
         <div class="label">医生：</div>
-        {{detail.doctorStaffName}}
+        {{detail.doctorStaffName || ''}}
       </div>
       <div class="row">
         <div class="label">主诉：</div>
-        {{detail.mainComplaint}}
+        {{detail.mainComplaint || ''}}
       </div>
       <div class="row">
         <div class="label">现病史：</div>
-        {{detail.presentIllnessHistory}}
+        {{detail.presentIllnessHistory || ''}}
       </div>
       <div class="row">
         <div class="label">既往史：</div>
-        {{detail.pastIllnessHistory}}
+        {{detail.pastIllnessHistory || ''}}
       </div>
       <div class="row">
         <div class="label">口腔检查：</div>
@@ -81,7 +81,7 @@
       </div>
       <div class="row">
         <div class="label">医嘱：</div>
-        {{detail.doctorAdvice}}
+        {{detail.doctorAdvice || ''}}
       </div>
     </div>
     <div class="bottom" v-if="detail.isEdit">
@@ -111,7 +111,6 @@ export default {
       this.$utils.clearLoading()
       this.detail = {visTimeFormated: moment(res.data.visTime).format('YYYY-MM-DD HH:mm'),
         createTimeFormated: moment(res.data.createTime).format('YYYY-MM-DD HH:mm'),
-        doctorStaffName: '',
         ...res.data
       }
     },
