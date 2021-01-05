@@ -323,9 +323,9 @@ export default {
     },
     //日程和预约需要一起计算宽度
     blockEvent(newVal) {
-      newVal && newVal.length === 0
-        ? (this.blockEventList = [])
-        : this.getMeetingList(this.apptList, newVal)
+      Array.isArray(this.apptList) &&
+        this.apptList.length > 0 &&
+        this.getMeetingList(this.apptList, newVal)
     },
     scheduleList(newVal) {
       this.getDefaultTable()

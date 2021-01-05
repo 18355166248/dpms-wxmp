@@ -200,6 +200,8 @@ export default {
         return r || result
       }, false)
       if (!inputed) return this.$utils.show('请至少填写一项内容')
+      if (this.pending) return
+      this.pending = true
       this.$utils.showLoading('请稍后...')
       await diagnosisAPI[this.medicalRecordId ? 'updateMedicalRecord' : 'createMedicalRecord']({
         medicalRecordVOJson: JSON.stringify({
@@ -213,6 +215,11 @@ export default {
       this.$utils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {icon: 'success'})
       uni.$emit('medicalRecordListUpdate')
       this.$utils.back()
+      setTimeout(() => {
+        this.$nextTick(() => {
+          this.pending = false
+        })
+      }, 100)
     },
     onEdit() {
       if (!this.medicalRecordId) return
