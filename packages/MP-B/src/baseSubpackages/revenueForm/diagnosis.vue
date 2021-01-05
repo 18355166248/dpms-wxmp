@@ -262,15 +262,15 @@ export default {
     font-weight: 500;
     line-height: 28rpx;
     padding-top: 24rpx;
-    margin-bottom: 40rpx;
+    margin-bottom: 24rpx;
   }
   .listContent {
     display: flex;
     font-size: 28rpx;
     font-weight: 300;
-    line-height: 18rpx;
+    line-height: 30rpx;
     padding-top: 24rpx;
-    height: 28rpx;
+    height: 30rpx;
   }
   .title {
     padding-left: 32rpx;
