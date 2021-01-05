@@ -73,8 +73,8 @@ export default {
   line-height: 51rpx;
   font-size: 22rpx;
   >div{
-    border-bottom: solid 1rpx #5cbb89;
-    border-right: solid 1rpx #5cbb89;
+    border-bottom: solid 2rpx #5cbb89;
+    border-right: solid 2rpx #5cbb89;
     width: 50%;
     height: 50%;
     box-sizing: border-box;

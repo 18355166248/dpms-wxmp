@@ -285,7 +285,7 @@ export default {
   flex-wrap: wrap;
   justify-content: space-between;
   padding-bottom: 32rpx;
-  border-bottom: rgba(0,0,0,0.15) solid 1rpx;
+  border-bottom: rgba(0,0,0,0.15) solid 2rpx;
   .handle{
     padding: 32rpx 0;
     width: 570rpx;
