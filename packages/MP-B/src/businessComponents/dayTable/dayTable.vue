@@ -1213,55 +1213,60 @@ export default {
       // 	self.createMeet = "";
       // 	return;
       // }
-      apptDataService.getApptVerify(
-        meeting,
-        () => {
-          if (trueTop != meeting.top) {
-            let style = 'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
-            let startTime = self.defaultList[meeting.idSt].timeTitle,
-              endTime = self.defaultList[meeting.idEnd].timeTitle
-            let startTimeShow = startTime,
-              endTimeShow = endTime
-            if (self.isToday == 0) {
-              if (!!self.isHidTime(meeting.idSt)) {
-                startTimeShow = ''
-              }
-              if (!!self.isHidTime(meeting.idEnd)) {
-                endTimeShow = ''
-              }
-            }
-            let NewcreateMeet = {
-              ...meeting,
-              isFlex: meeting.isFlex,
-              trueStyle: 'top:0px;height:' + meeting.height + 'px;',
-              style: style,
-              idSt: meeting.idSt,
-              idEnd: meeting.idEnd,
-              length: meeting.length,
-              height: meeting.height,
-              top: trueTop,
-              ...scheduleTableUtil.formatStartTimeAndEndTime(
-                startTime,
-                endTime,
-                this.chooseDateProp,
-              ),
-              startTimeShow: startTimeShow,
-              endTimeShow: endTimeShow,
-            }
-            self.createMeet = NewcreateMeet
+      // console.log('meeting', meeting)
 
-            self.createMeet.patient &&
-              self.$emit('changeCard', {
-                meet: self.createMeet,
-                type: 'touchMeeting',
-              })
-          }
-          self.clearCreateMeet()
-        },
-        self.clearCreateMeet(),
-        self.clearCreateMeet(),
-        self.clearCreateMeet(),
-      )
+      if (meeting && meeting.patientId) {
+        apptDataService.getApptVerify(
+          meeting,
+          () => {
+            if (trueTop != meeting.top) {
+              let style =
+                'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
+              let startTime = self.defaultList[meeting.idSt].timeTitle,
+                endTime = self.defaultList[meeting.idEnd].timeTitle
+              let startTimeShow = startTime,
+                endTimeShow = endTime
+              if (self.isToday == 0) {
+                if (!!self.isHidTime(meeting.idSt)) {
+                  startTimeShow = ''
+                }
+                if (!!self.isHidTime(meeting.idEnd)) {
+                  endTimeShow = ''
+                }
+              }
+              let NewcreateMeet = {
+                ...meeting,
+                isFlex: meeting.isFlex,
+                trueStyle: 'top:0px;height:' + meeting.height + 'px;',
+                style: style,
+                idSt: meeting.idSt,
+                idEnd: meeting.idEnd,
+                length: meeting.length,
+                height: meeting.height,
+                top: trueTop,
+                ...scheduleTableUtil.formatStartTimeAndEndTime(
+                  startTime,
+                  endTime,
+                  this.chooseDateProp,
+                ),
+                startTimeShow: startTimeShow,
+                endTimeShow: endTimeShow,
+              }
+              self.createMeet = NewcreateMeet
+
+              self.createMeet.patient &&
+                self.$emit('changeCard', {
+                  meet: self.createMeet,
+                  type: 'touchMeeting',
+                })
+            }
+            self.clearCreateMeet()
+          },
+          self.clearCreateMeet(),
+          self.clearCreateMeet(),
+          self.clearCreateMeet(),
+        )
+      }
     },
     // 长按卡片新增编辑卡片
     longTapWithEdit(e, meetInfo) {
