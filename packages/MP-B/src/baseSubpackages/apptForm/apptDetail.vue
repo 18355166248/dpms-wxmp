@@ -60,6 +60,46 @@
         <template v-if="statusEnumKey === 'APPOINTMENT'">
           <button
             class="button button-ghost"
+            @click="confirmAppointment"
+          >
+            确认
+          </button>
+          <button
+            class="button button-ghost"
+            @click="
+              toPage('/baseSubpackages/apptForm/cancleAppt', {
+                appointmentId: appointmentId,
+              })
+            "
+          >
+            取消
+          </button>
+          <button
+            class="button button-ghost"
+            @click="
+              toPage('/baseSubpackages/apptForm/apptForm', {
+                type: 'editRegister',
+                appointmentId: appointmentId,
+              })
+            "
+          >
+            挂号
+          </button>
+          <button
+            class="button"
+            @click="
+              toPage('/baseSubpackages/apptForm/apptForm', {
+                type: 'editAppt',
+                appointmentId: appointmentId,
+              })
+            "
+          >
+            编辑
+          </button>
+        </template>
+        <template v-if="statusEnumKey === 'CONFIRM'">
+          <button
+            class="button button-ghost"
             @click="
               toPage('/baseSubpackages/apptForm/cancleAppt', {
                 appointmentId: appointmentId,
@@ -176,6 +216,22 @@ export default {
           .catch()
       }
     },
+    confirmAppointment(){
+      appointmentAPI
+      .confirmAppointmentStatus({
+        appointmentId: this.dataSource.appointmentId,
+      })
+      .then((res) => {
+        if (res.code === 0) {
+          uni.showToast({
+            icon: 'success',
+            title: '已确认预约',
+          })
+          this.loadData()
+        }
+      })
+      .catch()
+    },
     // 页面跳转
     toPage(url, params) {
       this.$utils.push({
@@ -252,12 +308,13 @@ export default {
     },
     statusBadge() {
       const appointmentStatusColorMap = {
-        [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
+        [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#FED700',
         [this.APPOINTMENT_STATUS_ENUM.REGISTERED.value]: '#f04965',
         [this.APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
         [this.APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
         [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
         [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
+        [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
       }
 
       return {

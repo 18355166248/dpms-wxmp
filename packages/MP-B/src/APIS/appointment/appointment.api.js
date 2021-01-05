@@ -43,6 +43,9 @@ const appointmentAPI = {
       data,
     )
   },
+  confirmAppointmentStatus(params){
+    return httper.get('appointment/appointment/confirm_appointment', params)
+  }
 }
 
 export default appointmentAPI
