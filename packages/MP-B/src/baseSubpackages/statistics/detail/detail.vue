@@ -18,14 +18,14 @@
         <text v-else>{{ $utils.formatPrice(total) }}</text>
       </view>
     </view>
-    <t-table>
-      <t-tr class="t-tr" v-for="(item, i) in tableList" :key="i">
-        <t-td>{{ item.name }}</t-td>
+    <t-table border-color="#d9d9d9">
+      <t-tr class="t-tr" v-for="(item, i) in tableList" align="right" :key="i">
+        <t-td align="left">{{ item.name }}</t-td>
         <t-td v-if="type === 'genderData' || type === 'registerData'"
           >{{ item.data }}人</t-td
         >
         <t-td v-else>{{ $utils.formatPrice(item.data) }}</t-td>
-        <t-td>{{ Math.round((item.data / total) * 100) }}%</t-td>
+        <t-td>{{ ((item.data / total) * 100) | numFilter }}</t-td>
       </t-tr>
     </t-table>
   </view>
@@ -49,6 +49,14 @@ export default {
       time: '',
       tableList: [],
     }
+  },
+  filters: {
+    numFilter(txt) {
+      if (Number.isInteger(txt)) {
+        return txt.toFixed() + '%'
+      }
+      return txt.toFixed(2) + '%'
+    },
   },
   onLoad(params) {
     this.type = params.type
@@ -88,6 +96,10 @@ export default {
   }
   .t-tr {
     background: none !important;
+    /deep/ .t-td {
+      color: rgba(0, 0, 0, 0.9);
+      padding: 32rpx 30rpx;
+    }
   }
 }
 </style>
