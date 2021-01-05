@@ -92,6 +92,7 @@ export default {
   background: #feffff;
   .head{
     height: 84rpx;
+    color: rgba(0,0,0,0.9);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -100,7 +101,7 @@ export default {
   .type{
     padding: 10rpx 0 12rpx;
     .label{
-      color: rgba(0,0,0,0.5);
+      color: rgba(0,0,0,0.7);
       line-height: 66rpx;
     }
     .imgs{

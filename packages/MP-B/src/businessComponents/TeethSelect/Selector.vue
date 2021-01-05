@@ -142,7 +142,7 @@ export default {
   padding: 0 32rpx;
   >div{
     line-height: 48rpx;
-    border: 1rpx solid rgba(0,0,0,0.15);
+    border: 2rpx solid rgba(0,0,0,0.15);
     border-radius: 4rpx;
     text-align: center;
   }
@@ -198,7 +198,7 @@ export default {
       }
     }
     >div{
-      border: 1rpx solid rgba(0,0,0,0.15);
+      border: 2rpx solid rgba(0,0,0,0.15);
       border-radius: 4rpx;
       width: 72rpx;
       height: 72rpx;
@@ -232,7 +232,7 @@ export default {
     >div{
       width: 84rpx;
       height: 64rpx;
-      border: 1rpx solid rgba(0,0,0,0.15);
+      border: 2rpx solid rgba(0,0,0,0.15);
       margin-left: -2rpx;
       &:first-child{
         border-radius: 8rpx 0 0 8rpx;
