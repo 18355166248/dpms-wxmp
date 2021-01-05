@@ -79,7 +79,8 @@ export default {
     flex-wrap: wrap;
   }
   &.disabled{
-    .dpms-cell__title {
+    .dpms-cell__title, 
+    .dpms-cell__value .dpms-cell-placeholder{
       color: rgba(0,0,0,0.5);
     }
   }

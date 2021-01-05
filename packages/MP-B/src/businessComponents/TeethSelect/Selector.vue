@@ -232,7 +232,7 @@ export default {
     >div{
       width: 84rpx;
       height: 64rpx;
-      border: 2rpx solid rgba(0,0,0,0.15);
+      border: 2rpx solid #d9d9d9;
       margin-left: -2rpx;
       &:first-child{
         border-radius: 8rpx 0 0 8rpx;
