@@ -195,7 +195,7 @@ export default {
           result = false
         } else if (typeof this.form[k] === 'string') {
           result = !!this.form[k]
-        } else {
+        } else if (Array.isArray(this.form[k])) {
           result = this.form[k].reduce((_r, _v) => _r || !!Object.keys(_v).length, false)
         }
         return r || result
