@@ -688,6 +688,7 @@ export default {
         this.apptInfoCache,
         APPOINTMENT_TYPE_ENUM,
         this.form.medicalInstitution,
+        this.APPOINTMENT_STATUS_ENUM,
       )
 
       formatValue.appointmentMedicalInstitutionId =
