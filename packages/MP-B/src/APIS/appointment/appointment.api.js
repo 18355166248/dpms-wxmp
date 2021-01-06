@@ -7,13 +7,13 @@ const appointmentAPI = {
   },
   // 预约校验
   getAppointmentVerify(data) {
-    return httper.post('appointment/appointment/verify', data)
+    return httper.post('appointment/appointment/mini-apps/verify', data)
   },
   createAppointment(data) {
-    return httper.post('appointment/appointment/create', data)
+    return httper.post('appointment/appointment/mini-apps/create', data)
   },
   updateAppointment(data) {
-    return httper.post('appointment/appointment/update', data)
+    return httper.post('appointment/appointment/mini-apps/update', data)
   },
   // 获取预约详情
   getAppointmentDetail(params) {
@@ -42,6 +42,17 @@ const appointmentAPI = {
       'appointment/appointment/chang-staff-access-record',
       data,
     )
+  },
+  //获得block事件
+  getApptBlockListByStaff(params) {
+    return httper.get(
+      'appointment/block-event/mini-apps/select-block-event-by-business-ids',
+      params,
+    )
+  },
+  //获取预约视图设置
+  getSetting() {
+    return httper.get('appointment/appointment-view/setting/detail')
   },
   confirmAppointmentStatus(params){
     return httper.get('appointment/appointment/confirm_appointment', params)

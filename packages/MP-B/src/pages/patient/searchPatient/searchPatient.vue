@@ -29,14 +29,10 @@
     </div>
 
     <!-- 历史搜索 -->
-    <div class="mt-64 history-search-section" v-if="patientList.length === 0">
+    <div class="mt-64 history-search-section" v-if="searchRecords.length !== 0">
       <div data-layout-align="space-between center">
         <span class="title">历史搜索</span>
-        <span
-          class="iconfont icon-delete"
-          @click="clearHistorySearch"
-          v-if="searchRecords.length !== 0"
-        ></span>
+        <span class="iconfont icon-delete" @click="clearHistorySearch"></span>
       </div>
       <span
         class="history-search-text"
@@ -53,7 +49,7 @@
     </div>
 
     <!-- 搜索列表 -->
-    <div v-if="searchValue && patientList.length != 0">
+    <div v-if="patientList.length !== 0">
       <div v-for="parient in patientList" :key="parient.patientId">
         <div @click="clickPatientCard(parient.patientId)">
           <card
@@ -106,6 +102,7 @@ export default {
   onLoad(option) {
     this.paramsObj = option
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
+    this.init()
   },
   onReachBottom() {
     if (this.patientList.length < this.total) {
@@ -114,9 +111,15 @@ export default {
     }
   },
   methods: {
+    init() {
+      this.current = 1
+      this.getPatients()
+    },
     toCreatePatient() {
       this.$utils.push({
-        url: '/pages/patient/createPatient/createPatient',
+        url:
+          '/pages/patient/createPatient/createPatient?type=' +
+          this.paramsObj.type,
       })
     },
     //更新搜索框的值
@@ -161,6 +164,8 @@ export default {
     //执行搜索
     searchPatients() {
       if (!this.searchValue.trim()) {
+        this.current = 1
+        this.getPatients()
         return
       }
 
@@ -174,6 +179,7 @@ export default {
 
       console.log('----搜索后 历史值----', this.searchRecords)
 
+      this.current = 1
       this.getPatients()
     },
     //取消搜索
@@ -182,6 +188,7 @@ export default {
       this.isSearchedValue = ''
       this.current = 1
       this.patientList = []
+      this.getPatients()
     },
     //选择搜索历史中某一个历史
     chooseSearchRecord(searchRecord, index) {

@@ -190,7 +190,6 @@ export default {
       const res = await appointmentAPI.getAppointmentDetail({
         networkAppointmentId: this.networkAppointmentId,
       })
-      console.log('kkkkkkkkkkkk', res)
       this.detailInfo = res.data
       this.getInstitutionInfo()
     },
