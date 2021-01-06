@@ -36,6 +36,42 @@ const diagnosisAPI = {
   updateRegisterStatus(data) {
     return httper.post('diagnosis/register/update-status', data)
   },
+  // 查询就诊记录
+  getRegisterList(data) {
+    return httper.get('diagnosis/register/list-patient', data)
+  },
+  // 获取影像相关的枚举
+  getImageEnums(data) {
+    return httper.get('diagnosis/mini-apps/teeth-image/get-all-image-enums', data)
+  },
+  // 影像上传
+  saveImageInfo(data) {
+    return httper.post('diagnosis/mini-apps/teeth-image/upload', data)
+  },
+  // 获取影像列表
+  getImageList(data) {
+    return httper.get('diagnosis/mini-apps/teeth-image/list', data)
+  },
+  // 分页查询电子病历列表
+  getMedicalRecordList(data) {
+    return httper.get('diagnosis/mini-apps/medical-record/page', data)
+  },
+  // 查询电子病历详情
+  getMedicalRecordDetail(data) {
+    return httper.get('diagnosis/mini-apps/medical-record/detail', data)
+  },
+  // 删除电子病历
+  deleteMedicalRecord(data) {
+    return httper.get('diagnosis/mini-apps/medical-record/delete', data)
+  },
+  // 新建病历
+  createMedicalRecord(data) {
+    return httper.post('diagnosis/mini-apps/medical-record/create', data)
+  },
+  // 编辑病历
+  updateMedicalRecord(data) {
+    return httper.post('diagnosis/mini-apps/medical-record/update', data)
+  },
 }
 
 export default diagnosisAPI

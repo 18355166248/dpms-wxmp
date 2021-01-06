@@ -33,6 +33,9 @@ const institutionAPI = {
   getInstitutionList(params) {
     return httper.get('institution/medical-institution/detail-child-id', params)
   },
+  details(data) {
+    return httper.get('institution/current/details', data)
+  },
 }
 
 export default institutionAPI

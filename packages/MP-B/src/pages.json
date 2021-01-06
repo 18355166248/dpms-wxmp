@@ -21,6 +21,12 @@
         "navigationStyle": "custom",
         "disableScroll": true
       }
+    },
+    {
+      "path": "businessComponents/TeethSelect/Selector",
+      "style": {
+        "navigationBarTitleText": "选择牙位"
+      }
     }
   ],
   "subPackages": [
@@ -98,6 +104,42 @@
           "style": {
             "navigationBarTitleText": "搜索患者"
           }
+        },
+        {
+          "path": "image/record",
+          "style": {
+            "navigationBarTitleText": "影像记录"
+          }
+        },
+        {
+          "path": "image/upload",
+          "style": {
+            "navigationBarTitleText": "上传影像"
+          }
+        },
+        {
+          "path": "medicalRecord/record",
+          "style": {
+            "navigationBarTitleText": "病历记录"
+          }
+        },
+        {
+          "path": "medicalRecord/create",
+          "style": {
+            "navigationBarTitleText": "新建病历"
+          }
+        },
+        {
+          "path": "medicalRecord/detail",
+          "style": {
+            "navigationBarTitleText": "病历详情"
+          }
+        },
+        {
+          "path": "medicalRecord/Textarea",
+          "style": {
+            "navigationBarTitleText": ""
+          }
         }
       ]
     },
@@ -151,6 +193,36 @@
           "path": "cancleAppt",
           "style": {
             "navigationBarTitleText": "取消预约"
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/statistics",
+      "name": "statistics",
+      "pages": [
+        {
+          "path": "statistics",
+          "style": {
+            "navigationBarTitleText": "诊所运营统计"
+          }
+        },
+        {
+          "path": "detail/detail",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/revenueForm",
+      "name": "revenueForm",
+      "pages": [
+        {
+          "path": "revenueForm",
+          "style": {
+            "navigationBarTitleText": "营收报表"
           }
         }
       ]

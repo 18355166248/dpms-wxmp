@@ -69,20 +69,29 @@
           <text v-else class="iconfont icon-no-eye ml-18"></text>
         </view>
         <view class="statistics-body">
-          <view class="statistics-item">
+          <view
+            class="statistics-item"
+            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+          >
             <view class="statistics-item-header">
               {{ pageData.patientCount }}
             </view>
             <text class="statistics-item-body">新增患者</text>
           </view>
-          <view class="statistics-item">
+          <view
+            class="statistics-item"
+            @click="toUrl('/baseSubpackages/apptView/apptView')"
+          >
             <view class="statistics-item-header">
               {{ pageData.appointmentCount }}
             </view>
 
             <text class="statistics-item-body">新增预约</text>
           </view>
-          <view class="statistics-item">
+          <view
+            class="statistics-item"
+            @click="toUrl('/baseSubpackages/todayWork/todayWork')"
+          >
             <view class="statistics-item-header">
               {{ pageData.registerFirstDiagnosisCount }}
               /
@@ -90,7 +99,7 @@
             </view>
             <text class="statistics-item-body">今日就诊</text>
           </view>
-          <view class="statistics-item">
+          <view class="statistics-item" @click="jumpStatistics">
             <view class="statistics-item-header">
               <toggle :text="price" :isVisible="visible"></toggle>
             </view>
@@ -140,6 +149,41 @@
           </view>
         </view>
       </view>
+
+      <view
+        class="menu-area pt-48 ph-32"
+        v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
+      >
+        <view class="menu-area-header">
+          统计报表
+        </view>
+        <view class="menu-area-body mt-41">
+          <view
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/statistics/statistics')"
+            v-if="iconShow.isStatisticsShow"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color4">
+              <text class="iconfont icon-statis"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              诊所统计
+            </view>
+          </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/revenueForm/revenueForm')"
+            v-if="iconShow.isReportShow"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color5">
+              <text class="iconfont icon-chart"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              营收报表
+            </view>
+          </view>
+        </view>
+      </view>
     </view>
     <selectMedicalInstitution
       ref="selectMedicalInstitution"
@@ -152,10 +196,12 @@
 import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
+import appointmentAPI from 'APIS/appointment/appointment.api'
+import institutionAPI from 'APIS/institution/institution.api'
+
 import toggle from '@/components/toggle/toggle'
 import dropDown from './dropDown.vue'
 
-import patientApi from '@/APIS/patient/patient.api'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { mapState } from 'vuex'
 
@@ -200,6 +246,10 @@ export default {
         registerCount: 0,
         actualIncome: 0,
       },
+      iconShow: {
+        isStatisticsShow: false,
+        isReportShow: false,
+      },
     }
   },
   onShareAppMessage(res) {
@@ -225,7 +275,33 @@ export default {
     this.pullDownLoadData()
   },
   computed: {
-    ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
+    ...mapState('workbenchStore', ['medicalInstitution', 'staff', 'menu']),
+    initIconShow() {
+      const { menuList, pageElementsList } = this.menu
+      this.iconShow.isStatisticsShow =
+        pageElementsList.findIndex((v) => {
+          return v.enumValue === '11004'
+        }) > -1 ||
+        pageElementsList.findIndex((v) => {
+          return v.enumValue === '11003'
+        }) > -1 ||
+        pageElementsList.findIndex((v) => {
+          return v.enumValue === '11002'
+        }) > -1 ||
+        pageElementsList.findIndex((v) => {
+          return v.enumValue === '11001'
+        }) > -1
+      const findObj =
+        menuList &&
+        menuList.find((v) => {
+          return v.enumValue === 'report-center'
+        })
+      this.iconShow.isReportShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'marketing-report'
+        }) > -1
+    },
     institutionChainTypeKey() {
       if (this.INSTITUTION_CHAIN_TYPE_ENUM && this.medicalInstitution) {
         if (
@@ -239,10 +315,14 @@ export default {
       }
     },
     isHeadquartersAndRegion() {
+      // console.log(
+      //   this.INSTITUTION_CHAIN_TYPE_ENUM,
+      //   this.medicalInstitution.institutionChainType,
+      // )
       return (
-        (this.institutionChainTypeKey === 'CHAIN' &&
-          Number(this.medicalInstitution.topParentId) === 0) ||
-        this.institutionChainTypeKey === 'REGIONAL'
+        (this.medicalInstitution.topParentId === 0 &&
+          this.medicalInstitution.institutionChainType === 2) ||
+        this.medicalInstitution.institutionChainType === 3
       )
     },
     capsuleHeight() {
@@ -257,8 +337,7 @@ export default {
       )
     },
     staffName() {
-      console.log('this.staff :', this.staff)
-      return this.staff ? this.staff.staffName : '--'
+      return this.staff ? this.staff.name : '--'
     },
     medicalInstitutionSimpleCode() {
       if (this.switchClinicStatus === 'loading') {
@@ -302,6 +381,11 @@ export default {
       this.$utils.push({
         url,
       })
+    },
+    jumpStatistics() {
+      if (this.iconShow.isStatisticsShow) {
+        this.toUrl('/baseSubpackages/statistics/statistics')
+      }
     },
     toggle() {
       this.visible = !this.visible
@@ -347,7 +431,7 @@ export default {
       this.switchClinicStatus = 'loading'
 
       const [err, res] = await this.$utils.asyncTasks(
-        patientApi.details({
+        institutionAPI.details({
           _mtId: val.source.medicalInstitutionId,
           _cmtId: val.source.topParentId,
           _cmtType: val.source.institutionChainType,
@@ -369,9 +453,19 @@ export default {
           'workbenchStore/setMedicalInstitution',
           medicalInstitution,
         )
-
+        this.getApptSetting()
         this.init()
       }
+    },
+    // 获取预约视图设置
+    getApptSetting() {
+      appointmentAPI
+        .getSetting()
+        .then((res) => {
+          const { data } = res
+          this.$store.commit('workbenchStore/setApptSetting', data)
+        })
+        .catch()
     },
   },
 }
@@ -537,6 +631,14 @@ export default {
         }
         &-icon-color3 {
           $values: rgba(110, 167, 252, 1), rgba(74, 147, 254, 1);
+          @include colors($values...);
+        }
+        &-icon-color4 {
+          $values: rgba(179, 127, 235, 1), rgba(114, 46, 209, 1);
+          @include colors($values...);
+        }
+        &-icon-color5 {
+          $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
           @include colors($values...);
         }
 
