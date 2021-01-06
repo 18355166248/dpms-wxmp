@@ -54,6 +54,9 @@ const appointmentAPI = {
   getSetting() {
     return httper.get('appointment/appointment-view/setting/detail')
   },
+  confirmAppointmentStatus(params){
+    return httper.get('appointment/appointment/confirm_appointment', params)
+  }
 }
 
 export default appointmentAPI
