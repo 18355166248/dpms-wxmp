@@ -140,7 +140,11 @@
                   </template>
 
                   <template v-else>
-                    <template v-if="item.registerStatus === 1">
+                    <template
+                      v-if="
+                        item.registerStatus === 1 || item.registerStatus === 9
+                      "
+                    >
                       <button
                         class="button"
                         @click.stop="
