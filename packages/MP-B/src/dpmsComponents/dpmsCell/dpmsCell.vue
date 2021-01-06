@@ -1,12 +1,12 @@
 <template>
   <div
-    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '']"
+    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '', wrap ? 'wrap' : '', disabled ? 'disabled' : '']"
     @click="cellClick"
   >
     <div :class="['dpms-cell__title', required ? 'required' : '']">
       {{ title }}
     </div>
-    <div class="dpms-cell__value text-ellipsis">
+    <div class="dpms-cell__value text-ellipsis" :class="{wrap: wrap}">
       <text
         class="dpms-cell-placeholder"
         v-if="placeholder && (!value && value !== 0)"
@@ -49,6 +49,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    wrap: {
+      type: Boolean,
+      default: false,
+    }
   },
   methods: {
     cellClick() {
@@ -71,7 +75,15 @@ export default {
   color: #323233;
   font-size: 34rpx;
   background-color: #fff;
-
+  &.wrap{
+    flex-wrap: wrap;
+  }
+  &.disabled{
+    .dpms-cell__title, 
+    .dpms-cell__value .dpms-cell-placeholder{
+      color: rgba(0,0,0,0.5);
+    }
+  }
   .dpms-cell__title {
     position: relative;
     padding-right: 48rpx;
@@ -90,7 +102,11 @@ export default {
     color: rgba(0, 0, 0, 0.5);
     padding-right: 10rpx;
     overflow: hidden;
-
+    &.wrap{
+      flex:none;
+      width:100%;
+      text-align: left;
+    }
     .dpms-cell-placeholder {
       color: rgba(0, 0, 0, 0.25);
     }

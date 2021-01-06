@@ -16,6 +16,7 @@
       :placeholder="placeholder"
       :value="pickerValue"
       :hideBorderBottom="hideBorderBottom"
+      :disabled="disabled"
     />
   </picker>
 </template>
@@ -37,7 +38,7 @@ export default {
       default: 'label',
     },
     defaultProps: {
-      typre: Object,
+      type: Object,
       default: { label: 'label', value: 'value' },
     },
     placeholder: String,

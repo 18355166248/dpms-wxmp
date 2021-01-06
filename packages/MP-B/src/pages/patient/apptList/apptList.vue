@@ -72,8 +72,8 @@ export default {
 
     async init() {
       this.$utils.showLoading()
-      await this.loadData()
       await this.getPatient()
+      await this.loadData()
       this.$utils.clearLoading()
     },
     // 获取列表数据
@@ -86,6 +86,11 @@ export default {
         ...data.beforeList,
         ...data.currentList,
       ]
+
+      this.dataSource = this.dataSource.map((v) => ({
+        patient: this.patient,
+        ...v,
+      }))
     },
     // 获取患者信息
     async getPatient() {
