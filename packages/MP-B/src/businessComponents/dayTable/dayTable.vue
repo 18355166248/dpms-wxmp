@@ -1434,9 +1434,11 @@ export default {
     // 判断预约卡片是否支持编辑
     isDisabled(appt) {
       // 非预约状态不可编辑
-      const notApptStatus =
-        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !==
-        appt.appointmentStatus
+      const notApptStatus = !(
+        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value ===
+          appt.appointmentStatus ||
+        this.APPOINTMENT_STATUS_ENUM.CONFIRM.value === appt.appointmentStatus
+      )
 
       const isCurInstitution = appt.acrossInstitutionAppointmentFlag
       return notApptStatus || isCurInstitution
