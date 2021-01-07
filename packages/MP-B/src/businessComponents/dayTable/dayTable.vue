@@ -282,12 +282,13 @@ export default {
   // },
   created() {
     this.appointmentStatusColorMap = {
-      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
+      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#FED700',
       [this.APPOINTMENT_STATUS_ENUM.REGISTERED.value]: '#f04965',
       [this.APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
       [this.APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
       [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
       [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
+      [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
     }
 
     this.unitHeight = parseInt(this.hourHeight / 4) || 13.5 //16px
@@ -1433,9 +1434,11 @@ export default {
     // 判断预约卡片是否支持编辑
     isDisabled(appt) {
       // 非预约状态不可编辑
-      const notApptStatus =
-        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !==
-        appt.appointmentStatus
+      const notApptStatus = !(
+        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value ===
+          appt.appointmentStatus ||
+        this.APPOINTMENT_STATUS_ENUM.CONFIRM.value === appt.appointmentStatus
+      )
 
       const isCurInstitution = appt.acrossInstitutionAppointmentFlag
       return notApptStatus || isCurInstitution

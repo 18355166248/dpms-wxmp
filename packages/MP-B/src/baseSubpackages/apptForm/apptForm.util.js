@@ -20,6 +20,7 @@ const apptFormUtil = {
     apptInfoCache,
     APPOINTMENT_TYPE_ENUM,
     curMedicalInstitution,
+    APPOINTMENT_STATUS_ENUM,
   ) {
     const values = _.cloneDeep(formValues)
     const selectList = _.cloneDeep(selectListCache)
@@ -47,7 +48,12 @@ const apptFormUtil = {
     if (method === 'edit' && APPOINTMENT_TYPE_ENUM) {
       if (apptInfoCache.appointmentType !== formValues.appointmentType) {
         if (formValues.appointmentType === APPOINTMENT_TYPE_ENUM.COMMON.value) {
-          values.appointmentStatus = 2
+          if (
+            formValues.appointmentStatus !==
+            APPOINTMENT_STATUS_ENUM.CONFIRM.value
+          ) {
+            values.appointmentStatus = 2
+          }
         }
 
         if (
