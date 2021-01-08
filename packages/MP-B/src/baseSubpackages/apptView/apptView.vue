@@ -686,7 +686,7 @@ page {
             overflow: hidden;
             .doctorShowName {
               overflow: hidden;
-              max-width: calc(100% - 60rpx);
+              max-width: calc(100% - 50rpx);
             }
           }
           .doctorSelect {
