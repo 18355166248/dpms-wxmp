@@ -47,7 +47,7 @@ export default {
       if (res.code !== 0) return Promise.reject()
       return {
         ...res.data,
-        'key': `${res.data.directory}${String(Math.random()).slice(2)}.jpg`,
+        'key': `${res.data.directory}${String(Math.random()).slice(2).padEnd(18, String(Math.random()).slice(2))}.jpg`,
       };
     },
     async uploadOss({key, policy, accessKeyId, signature, host}, file) {
