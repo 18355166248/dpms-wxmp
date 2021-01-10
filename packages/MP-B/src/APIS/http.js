@@ -42,10 +42,10 @@ httper.interceptors.request.use((request) => {
     // token
     (request) => {
       if (!request?.isNoNeedAuth) {
-        const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
-        if (token) {
-          request.headers['Authorization'] = `Bearer ${token}`
-        }
+        // const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
+        // if (token) {
+        //   request.headers['Authorization'] = `Bearer ${token}`
+        // }
       } else {
         delete request.isNoNeedAuth
       }
@@ -54,11 +54,13 @@ httper.interceptors.request.use((request) => {
     // 默认参数
     (request) => {
       const staff = getStorage(STORAGE_KEY.STAFF)
+      const token = getStorage(STORAGE_KEY.ACCESS_TOKEN)
 
       const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
       // 默认参数
       const defaultDatas = {
         // ██████ 鉴权 ██████
+        _token: token,
         // 用户 ID
         _uid: staff?.staffId,
 
@@ -171,9 +173,21 @@ httper.interceptors.response.use(
       title: response?.data?.msg || response?.data?.message || '数据请求失败',
     })
 
-    if (
-      response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value
-    ) {
+    const errCodes = [
+      CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value,
+      401,
+      1001001001,
+      1001001002,
+      1001001004,
+      1001001005,
+      1001001006,
+      1001001007,
+      1001001100,
+      1001001101,
+      1001001102,
+    ]
+
+    if (errCodes.includes(response.data.code)) {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
