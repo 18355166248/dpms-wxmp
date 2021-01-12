@@ -162,8 +162,6 @@ httper.interceptors.request.use((request) => {
 
 httper.interceptors.response.use(
   function (response) {
-    console.log('response:', response)
-
     if (response?.data?.code === 0) {
       return response.data
     }

@@ -1,11 +1,12 @@
 import httper from '../http'
+import scrmHttper from '../httpScrm'
 
 const institutionAPI = {
   getStaffDetail(data) {
     return httper.get('institution/staff/detail', data)
   },
   updateStaff(data) {
-    return httper.post('institution/staff/update', data)
+    return scrmHttper.post('scrm/staff/staff-update-base', data)
   },
   getAllPlace(data) {
     return httper.get('institution/system/all/place', data, {
