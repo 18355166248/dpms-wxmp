@@ -40,9 +40,9 @@
           <div>{{ effectiveEndTimeStr }}</div>
         </div>
         <div class="explain" v-if="isFold">
-          <div>
+          <div v-if="shareMember === true">
             <span class="icon iconfont icon-team" style="color:rgba(0,0,0,0.65)"></span>
-            <span style="margin-left: 2px">来自{{sharedName}}的共享</span>
+            <span style="margin-left: 2px">来自{{shareMemberName}}的共享</span>
           </div>
           <div>
             <span>使用须知：</span>
@@ -117,6 +117,9 @@ export default {
     },
     shareMember: {
       type: Boolean,
+    },
+    shareMemberName: {
+      type: String,
     }
   },
   data() {

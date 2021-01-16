@@ -16,6 +16,7 @@
               :title="c.couponName"
               :content="c.subtitle"
               :shareMember="c.shareMember"
+              :shareMemberName="c.shareMemberName"
               :couponsTypeName="c.couponTypeName"
               :remainingDays="c.effectiveDays"
               :verifiStatusName="c.verifiStatusName"
