@@ -52,17 +52,13 @@ page {
 
 /*********在线字体代码start*********/
 @font-face {
-  font-family: 'iconfont'; /* project id 1965288 */
-  src: url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.eot');
-  src: url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.eot?#iefix')
-      format('embedded-opentype'),
-    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.woff2')
-      format('woff2'),
-    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.woff') format('woff'),
-    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.ttf')
-      format('truetype'),
-    url('https://at.alicdn.com/t/font_1965288_ct73ugmont8.svg#iconfont')
-      format('svg');
+  font-family: 'iconfont';  /* project id 1965288 */
+  src: url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.eot');
+  src: url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.svg#iconfont') format('svg');
 }
 /*********在线字体代码end*********/
 
@@ -184,5 +180,8 @@ page {
 }
 .icon-coupons::before {
   content: '\e612';
+}
+.icon-team::before{
+  content: '\e7ae';
 }
 </style>

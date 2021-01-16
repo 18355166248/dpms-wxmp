@@ -28,8 +28,12 @@
               white-space: nowrap;
               text-overflow: ellipsis;
             "
-            >{{ memberCardTypeQueryResponse.cardTypeName || '--' }}</view
-          >
+            >{{ memberCardTypeQueryResponse.cardTypeName || '--' }}
+            <span v-if="shareMember === true"
+                style="color: rgba(0, 0, 0, 0.65);font-size: 14px"
+                class="icon iconfont icon-team"
+            ></span>
+          </view>
           <view>
             会员等级
             <span
@@ -122,6 +126,7 @@ export default {
       mobile: '',
       memberDetails: {},
       memberCardTypeQueryResponse: {},
+      shareMember: false,
       showLogout: false,
       memberId: '',
     }
@@ -200,12 +205,14 @@ export default {
           this.mobile = res.data.mobile
           this.memberId = res.data.memberId
           customerAPI
-            .getMemberDetails({ memberId: res.data.memberId })
+            .getMemberDetails({ memberId: res.data.memberId,userBaseId: res.data.userBaseId})
             .then((re) => {
               console.log('MemberDetails', re)
               this.memberDetails = re.data.memberDetailResponse
               this.memberCardTypeQueryResponse =
                 re.data.memberCardTypeQueryResponse
+              console.log('xxx',this.memberCardTypeQueryResponse)
+              this.shareMember = re.data.memberDetailResponse === undefined ? false : re.data.memberDetailResponse.shareInfo.shareMember
             })
         })
     },
@@ -288,7 +295,8 @@ export default {
     div {
       border-right: 1rpx solid rgba(0, 0, 0, 0.15);
       width: calc(33% - 1rpx);
-      padding-left: 50rpx;
+      /*padding-left: 50rpx;*/
+      padding-left: 30rpx;
       view:nth-child(1) {
         margin-bottom: 16rpx;
         font-weight: 500;

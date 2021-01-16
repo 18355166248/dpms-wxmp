@@ -15,6 +15,7 @@
               :couponsImgSrc="c.cardImage"
               :title="c.couponName"
               :content="c.subtitle"
+              :shareMember="c.shareMember"
               :couponsTypeName="c.couponTypeName"
               :remainingDays="c.effectiveDays"
               :verifiStatusName="c.verifiStatusName"
@@ -76,6 +77,7 @@ export default {
       const res = await couponApi.getCoupons({
         medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         memberId: userRes.data.memberId,
+        userBaseId: userRes.data.userBaseId,
         status: this.tab
       })
       setTimeout(() => uni.hideLoading(), 300)
