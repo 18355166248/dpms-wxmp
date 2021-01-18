@@ -22,6 +22,9 @@ const genderConfig = {
   2: {
     path: '../../static/avatar-female.png',
   },
+  3: {
+    path: '../../static/avatar-neutral.png',
+  },
 }
 export default {
   name: 'patientAvatar',

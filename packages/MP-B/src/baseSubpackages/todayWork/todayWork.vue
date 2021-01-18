@@ -140,7 +140,11 @@
                   </template>
 
                   <template v-else>
-                    <template v-if="item.registerStatus === 1">
+                    <template
+                      v-if="
+                        item.registerStatus === 1 || item.registerStatus === 9
+                      "
+                    >
                       <button
                         class="button"
                         @click.stop="
@@ -302,12 +306,9 @@ export default {
         status: 'loading',
         request: 'loading',
       },
-
       scrollTop: 0,
-
       current: 1,
       total: 0,
-
       roleIndex: 0,
       primaryColor: this.$commonCss.commonColor,
       REGISTER_ENUM: this.$utils.getEnums('Register'),
@@ -387,7 +388,6 @@ export default {
     },
     // 页面跳转
     toPage(url, params) {
-      console.log('params:', params)
       this.$utils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2

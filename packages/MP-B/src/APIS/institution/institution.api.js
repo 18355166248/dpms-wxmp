@@ -1,11 +1,12 @@
 import httper from '../http'
+import scrmHttper from '../httpScrm'
 
 const institutionAPI = {
   getStaffDetail(data) {
     return httper.get('institution/staff/detail', data)
   },
   updateStaff(data) {
-    return httper.post('institution/staff/update', data)
+    return scrmHttper.post('scrm/staff/staff-update-base', data)
   },
   getAllPlace(data) {
     return httper.get('institution/system/all/place', data, {
@@ -32,6 +33,9 @@ const institutionAPI = {
   // 机构ID 获取连锁诊所（树状结构）
   getInstitutionList(params) {
     return httper.get('institution/medical-institution/detail-child-id', params)
+  },
+  details(data) {
+    return httper.get('institution/current/details', data)
   },
 }
 

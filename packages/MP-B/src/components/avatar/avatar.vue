@@ -41,6 +41,7 @@ export default {
       const genderAvatar = {
         MALE: require('../../static/avatar-male.png'),
         FEMALE: require('../../static/avatar-female.png'),
+        UNKNOWN: require('../../static/avatar-neutral.png'),
       }
 
       if (this.src) {

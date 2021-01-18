@@ -261,6 +261,7 @@ export default {
   computed: {
     ...mapState('workbenchStore', {
       medicalInstitution: (state) => state.medicalInstitution,
+      apptSetting: (state) => state.apptSetting,
     }),
     isAppt() {
       return (
@@ -289,6 +290,10 @@ export default {
       this.form.appointmentBeginTimeStamp = startTime.format('YYYY-MM-DD HH:mm')
       this.form.duration = duration
       this.form.doctor = Number(option.doctorId)
+    }
+
+    if (option.patient) {
+      this.form.patient = JSON.parse(option.patient)
     }
 
     if (this.paramsObj.type === 'createAppt' && option.patientId) {
@@ -511,13 +516,14 @@ export default {
     },
     onBlurWithDuration(value) {
       this.closeBlur()
-      if (value < 30) return this.$set(this.form, 'duration', 30)
+      const timeStep = this.apptSetting.appointmentDuration || 15
+      if (value < timeStep) return this.$set(this.form, 'duration', timeStep)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
-      if (value % 15 !== 0) {
+      if (value % timeStep !== 0) {
         return this.$set(
           this.form,
           'duration',
-          Math.max(Math.ceil(value / 15) * 15, 30),
+          Math.max(Math.ceil(value / timeStep) * timeStep, timeStep * 2),
         )
       }
     },
@@ -682,6 +688,7 @@ export default {
         this.apptInfoCache,
         APPOINTMENT_TYPE_ENUM,
         this.form.medicalInstitution,
+        this.APPOINTMENT_STATUS_ENUM,
       )
 
       formatValue.appointmentMedicalInstitutionId =
@@ -698,6 +705,8 @@ export default {
       apptDataService.getApptVerify(
         formatValue,
         () => this.updateApptCb(formatValue),
+        () => (this.saveLoading = false),
+        () => (this.saveLoading = false),
         () => (this.saveLoading = false),
       )
     },
@@ -765,7 +774,26 @@ export default {
             params: this.paramsObj,
             appt: { ...formatValue, ...res.data },
           })
+
+          if (type === 'createAppt') {
+            return this.$utils.push({
+              url: '/baseSubpackages/apptView/apptView',
+            })
+          }
           this.$utils.back()
+
+          // if (type === 'createRegister' || type === 'editRegister') {
+          //   this.$utils.push({
+          //     url: '/baseSubpackages/todayWork/todayWork',
+          //   })
+          // }
+          // if (type === 'editAppt') {
+          //   this.$utils.push({
+          //     url:
+          //       '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
+          //       this.paramsObj.appointmentId,
+          //   })
+          // }
         })
         .finally(() => {
           this.saveLoading = false

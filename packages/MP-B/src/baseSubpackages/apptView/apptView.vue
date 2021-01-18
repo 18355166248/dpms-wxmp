@@ -84,10 +84,12 @@
           width: '100%',
           height: retract ? 'calc(100% - 286rpx)' : 'calc(100% - 686rpx)',
         }"
+        :uMinute="apptSetting.appointmentDuration || 15"
         :apptList="list"
         :chooseDateProp="date"
         :scheduleList="scheduleList"
         :retract="retract"
+        :blockEvent="blockEvent"
         @createAppt="createAppt"
         @editAppt="editAppt"
         @changeCard="changeCard"
@@ -149,11 +151,13 @@ export default {
       staff: uni.getStorageSync('staff'),
       doctorValue: null,
       isDoctorWithLogin: true,
+      blockEvent: [],
     }
   },
   computed: {
     ...mapState('workbenchStore', {
       medicalInstitution: (state) => state.medicalInstitution,
+      apptSetting: (state) => state.apptSetting,
     }),
   },
   onShow() {
@@ -218,6 +222,7 @@ export default {
 
       this.getApptList()
       this.getApptScheduleInfo()
+      this.getApptBlockEventInfo()
       this.refreshDoctorWithApptList()
     },
     showSearch(newVal) {
@@ -310,6 +315,11 @@ export default {
             )
 
             if (err) return Promise.reject(err)
+            ;[err, res] = await this.$utils.asyncTasks(
+              this.getApptBlockEventInfo(),
+            )
+
+            if (err) return Promise.reject(err)
 
             return true
           } catch (err) {
@@ -326,6 +336,11 @@ export default {
         try {
           this.getApptList()
           ;[err, res] = await this.$utils.asyncTasks(this.getApptScheduleInfo())
+
+          if (err) return Promise.reject(err)
+          ;[err, res] = await this.$utils.asyncTasks(
+            this.getApptBlockEventInfo(),
+          )
 
           if (err) return Promise.reject(err)
 
@@ -426,6 +441,7 @@ export default {
       return new Promise((resolve, reject) => {
         if (this.doctor.staffId === -1) {
           this.scheduleList = defaultScheduleList
+          this.blockEvent = []
           resolve()
 
           return
@@ -452,6 +468,35 @@ export default {
                 res.data[0].institutionScheduleTableMap[this.startTimeStamp]
             }
 
+            resolve()
+          })
+          .catch(() => {
+            reject()
+          })
+      })
+    },
+    getApptBlockEventInfo() {
+      return new Promise((resolve, reject) => {
+        if (this.doctor.staffId === -1) {
+          this.blockEvent = []
+          return resolve()
+        }
+
+        appointmentAPI
+          .getApptBlockListByStaff({
+            blockBeginTime: moment(this.startTimeStamp)
+              .startOf('day')
+              .valueOf(),
+            blockEndTime: moment(this.endTimeStamp).endOf('day').valueOf(),
+            medicalInstitutionId: this.accessMedicalInstitution
+              .medicalInstitutionId,
+            blockEventType: 1,
+            businessIds: this.doctor.staffId,
+          })
+          .then((res) => {
+            if (res.code === 0) {
+              this.blockEvent = res.data
+            }
             resolve()
           })
           .catch(() => {
@@ -553,8 +598,10 @@ export default {
 
       if (doctor.staffId === -1) {
         this.scheduleList = defaultScheduleList
+        this.blockEvent = []
       } else {
         this.getApptScheduleInfo()
+        this.getApptBlockEventInfo()
       }
     },
     refreshDoctorWithApptList() {
@@ -566,6 +613,7 @@ export default {
     },
     changeCard({ meet, type }) {
       console.log('编辑改变', type, meet)
+
       appointmentAPI
         .updateAppointment({
           appointmentJsonStr: JSON.stringify(meet),
@@ -638,7 +686,7 @@ page {
             overflow: hidden;
             .doctorShowName {
               overflow: hidden;
-              max-width: calc(100% - 60rpx);
+              max-width: calc(100% - 50rpx);
             }
           }
           .doctorSelect {

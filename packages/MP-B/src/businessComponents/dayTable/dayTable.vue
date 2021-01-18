@@ -30,8 +30,8 @@
         </view>
       </view>
 
+      <!-- 已预约卡片 -->
       <view class="calendar_meeting">
-        <!-- 已预约卡片 -->
         <view
           v-for="(item, index) in meetingList"
           :key="index"
@@ -60,7 +60,7 @@
               <view
                 :class="[
                   'meeting_content_name',
-                  item.duration === 1 ? 'mt-32' : '',
+                  item.duration === 1 ? 'durationOne' : '',
                 ]"
               >
                 {{ item.patient.patientName }}{{ getGenderText(item) }}
@@ -86,14 +86,6 @@
             </view>
           </view>
         </view>
-
-        <!-- 				<view v-if="meetingDetail" class='meeting_detail' :class="meetingDetail.class" :style="meetingDetail.style">
-					<view>会议发起人</view>
-					<view>{{meetingDetail.time}}</view>
-					<view>{{meetingDetail.meetingName}}</view>
-					<view>区域/地点</view>
-				</view>
- -->
         <!-- 创建会议 -->
         <view
           id="createApptId"
@@ -131,14 +123,60 @@
 
           <!-- 时间,预约项目,名字显示区 -->
           <view class="metting_content_box hasAppt">
-            <text v-if="createMeet.patient" class="meeting_content_name">
+            <text
+              v-if="createMeet.patient"
+              :class="{
+                meeting_content_name: true,
+                durationOne: createMeet.duration === 1,
+              }"
+            >
               {{ createMeet.patient.patientName
               }}{{ getGenderText(createMeet) }}
             </text>
-            <text v-else class="meeting_content_name">再次点击新建预约</text>
+            <text
+              v-else
+              class="meeting_content_name"
+              :class="{ durationOne: createMeet.duration === 1 }"
+              >再次点击新建预约</text
+            >
             <text class="meeting_content_center" />
             <view class="meeting_content_time">
               {{ createMeet.time }}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- block -->
+      <view class="calendar_meeting">
+        <view
+          v-for="(item, index) in blockEventList"
+          :key="index"
+          :style="item.style + item.$config.style"
+          class="meeting_a"
+        >
+          <view class="metting-inner">
+            <view class="metting_content_box meetCard">
+              <view
+                class="docorator"
+                style="background: rgba(0, 0, 0, 0.65);"
+              />
+              <view class="meeting_content_name">
+                {{ item.businessName }} (日程)
+              </view>
+              <view class="meeting_content_center">
+                <view
+                  :key="item.appointmentBlockEventId"
+                  class="apptItem"
+                  style="
+                    background: #f6f6f6;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+                  "
+                >
+                  {{ item.appointmentBlockEventName }}
+                </view>
+              </view>
+              <view class="meeting_content_time">{{ item.time }}</view>
             </view>
           </view>
         </view>
@@ -155,12 +193,13 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { scheduleTableUtil } from './dayTable.util.js'
 import { dataDictUtil } from 'utils/dataDict.util'
-import moment from 'moment'
 import { colorNumberList } from '@/baseSubpackages/apptForm/colorNumberList.js'
 import { numberRangeUtil } from './numberRange.util'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
+import { apptDataService } from '../../../src/baseSubpackages/apptForm/apptData.service'
 
 const windowHeight = uni.getSystemInfoSync().windowHeight
 
@@ -181,13 +220,14 @@ export default {
   props: {
     chooseDateProp: String,
     hourHeight: Number, //表格单元高度
-    // uMinute: Number, //表格单元时长
+    uMinute: Number, //表格单元时长
     // showMin: Number, //显示单元时长
     defaultChooseLong: Number, //默认点击所占时长
     scrollHeight: String,
     apptList: Array,
     scheduleList: Array, // 排班时间列表
     retract: Boolean, // 日历展开: false 收缩: true 用于更新视图的高度
+    blockEvent: Array, //block事件
   },
   data() {
     return {
@@ -220,6 +260,7 @@ export default {
         '预约中心/预约视图/新建修改、取消、日志',
       ),
       createApptClick: false,
+      blockEventList: [],
     }
   },
   //如果将chooseDateProp放入vuex 监听可使用下面方法
@@ -238,16 +279,16 @@ export default {
   //   ...mapState([
   //     'chooseDateProp'
   //   ]),
-
   // },
   created() {
     this.appointmentStatusColorMap = {
-      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
+      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#FED700',
       [this.APPOINTMENT_STATUS_ENUM.REGISTERED.value]: '#f04965',
       [this.APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
       [this.APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
       [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
       [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
+      [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
     }
 
     this.unitHeight = parseInt(this.hourHeight / 4) || 13.5 //16px
@@ -275,13 +316,19 @@ export default {
       .exec()
   },
   watch: {
+    //日程和预约需要一起计算宽度
     apptList(newVal) {
       Array.isArray(this.apptList) &&
         this.apptList.length > 0 &&
-        this.getMeetingList()
+        this.getMeetingList(newVal, this.blockEventList)
+    },
+    //日程和预约需要一起计算宽度
+    blockEvent(newVal) {
+      Array.isArray(this.apptList) &&
+        this.apptList.length > 0 &&
+        this.getMeetingList(this.apptList, newVal)
     },
     scheduleList(newVal) {
-      console.log('newVal', newVal)
       this.getDefaultTable()
       this.isTodayFun(this.chooseDateProp)
       setTimeout(() => {
@@ -407,9 +454,10 @@ export default {
       this.defaultList = list
     },
     //整理会议列表数据
-    getMeetingList() {
-      let meetingList = JSON.parse(JSON.stringify(this.apptList))
+    getMeetingList(applist, blockEventList) {
+      let meetingList = JSON.parse(JSON.stringify(applist))
 
+      //此处计算卡片位置
       meetingList = scheduleTableUtil.getUnitAndOffset(meetingList)
 
       meetingList = meetingList[0][1].list
@@ -452,8 +500,62 @@ export default {
           ...meetingList[i],
         })
       }
-      console.log('list', list)
-      this.meetingList = list
+
+      //此处计算block的位置
+      this.meetingList = this.getBlockEventList(list, blockEventList)
+    },
+    //block事件列表
+    getBlockEventList(list, blockEventList) {
+      if (blockEventList.length < 1) {
+        this.blockEventList = []
+        return list
+      }
+
+      const _self = this
+
+      //常规处理
+      blockEventList = blockEventList.map((v) => {
+        let startTime = moment(v.blockBeginTime).format('YYYY-MM-DD HH:mm')
+        let endTime = moment(v.blockEndTime).format('YYYY-MM-DD HH:mm')
+        let start = startTime.substring(11, 16).split(':')
+        let end = endTime.substring(11, 16).split(':')
+
+        let st =
+          parseInt(start[0] * _self.minRatio) +
+          parseInt(start[1] / _self.unitMinute)
+        let ed =
+          parseInt(end[0] * _self.minRatio) +
+          parseInt(end[1] / _self.unitMinute)
+
+        let diff = ed - st
+        diff = diff < 2 ? 2 : diff
+
+        let height = 'height:' + diff * _self.unitHeight + 'px;'
+        let color = 'background: #f6f6f6 !important;'
+        let top = 'top:' + st * _self.unitHeight + 'px;'
+        let isFlex = ''
+        let bgClass = 'blurBg'
+
+        v.top = st * _self.unitHeight
+        ;(v.style = height + top + color),
+          (v.time =
+            startTime.substring(11, 16) + '-' + endTime.substring(11, 16))
+        v.isFlex = isFlex
+        v.startId = st
+        v.endId = ed
+        ;(v.duration = ed - st), (v.bgClass = bgClass)
+        return v
+      })
+
+      //此处需要赋予宽度width
+      const [
+        appList,
+        finalblockEventList,
+      ] = scheduleTableUtil.calcBlockPosition(list, blockEventList)
+
+      this.blockEventList = finalblockEventList
+
+      return appList
     },
     //点击会议列表
     showDetail(index, e) {
@@ -614,7 +716,8 @@ export default {
     },
     // 点击创建
     touchSt(e) {
-      if (!this.isHeaderWithLargeArea) return
+      if (!this.isHeaderWithLargeArea)
+        returnappointment / appointment / mini - apps / create
 
       this.scrollTop = scrollYtop
       let self = this
@@ -679,12 +782,14 @@ export default {
 
       let stId = topId + nid,
         endId = self.createMeet.idEnd
+
       let top = topId * self.unitHeight + (y - startY) //top值
       let trueTextTop = stId * self.unitHeight - top //字体样式
       let height = (endId - topId) * self.unitHeight - (y - startY) //会议高度
 
       // 订会时间不小于15分钟或者不大于4个小时 height > self.unitHeight * 16
-      if (height < self.minMute * self.unitHeight || stId < 0) {
+      // 这里处理了可以拖拽到15分钟
+      if (height < 5 || stId < 0) {
         return
       }
 
@@ -809,6 +914,7 @@ export default {
           style: style,
           idSt: meeting.idSt,
           idEnd: meeting.idEnd,
+          duration: meeting.idEnd - meeting.idSt,
           length: meeting.length,
           height: trueHeight,
           top: top,
@@ -850,7 +956,8 @@ export default {
       // 计算后的底部id 如果等于97就设为96
       let end = defaultId + nid
       //到最小单元格不允许移动 或者是超过4个小时 height > self.unitHeight * 16
-      if (height < self.minMute * self.unitHeight || end > 96) {
+      // 设置可以拖拽到15分钟
+      if (height < 5 || end > 96) {
         return
       }
 
@@ -958,6 +1065,7 @@ export default {
           style: style,
           idSt: meeting.idSt,
           idEnd: meeting.idEnd,
+          duration: meeting.idEnd - meeting.idSt,
           length: meeting.length,
           height: trueHeight,
           top: meeting.top,
@@ -999,8 +1107,6 @@ export default {
 
       let idSt = self.meetingTouchIdSt + nid
       let idEnd = idSt + meeting.length
-
-      console.log('idSt', idSt)
 
       if (
         idSt < 0 ||
@@ -1108,45 +1214,59 @@ export default {
       // 	self.createMeet = "";
       // 	return;
       // }
-      if (trueTop != meeting.top) {
-        let style = 'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
-        let startTime = self.defaultList[meeting.idSt].timeTitle,
-          endTime = self.defaultList[meeting.idEnd].timeTitle
-        let startTimeShow = startTime,
-          endTimeShow = endTime
-        if (self.isToday == 0) {
-          if (!!self.isHidTime(meeting.idSt)) {
-            startTimeShow = ''
-          }
-          if (!!self.isHidTime(meeting.idEnd)) {
-            endTimeShow = ''
-          }
-        }
-        let NewcreateMeet = {
-          ...meeting,
-          isFlex: meeting.isFlex,
-          trueStyle: 'top:0px;height:' + meeting.height + 'px;',
-          style: style,
-          idSt: meeting.idSt,
-          idEnd: meeting.idEnd,
-          length: meeting.length,
-          height: meeting.height,
-          top: trueTop,
-          ...scheduleTableUtil.formatStartTimeAndEndTime(
-            startTime,
-            endTime,
-            this.chooseDateProp,
-          ),
-          startTimeShow: startTimeShow,
-          endTimeShow: endTimeShow,
-        }
-        self.createMeet = NewcreateMeet
+      // console.log('meeting', meeting)
 
-        self.createMeet.patient &&
-          self.$emit('changeCard', {
-            meet: self.createMeet,
-            type: 'touchMeeting',
-          })
+      if (meeting && meeting.patientId) {
+        apptDataService.getApptVerify(
+          meeting,
+          () => {
+            if (trueTop != meeting.top) {
+              let style =
+                'top:' + trueTop + 'px;height:' + meeting.height + 'px;'
+              let startTime = self.defaultList[meeting.idSt].timeTitle,
+                endTime = self.defaultList[meeting.idEnd].timeTitle
+              let startTimeShow = startTime,
+                endTimeShow = endTime
+              if (self.isToday == 0) {
+                if (!!self.isHidTime(meeting.idSt)) {
+                  startTimeShow = ''
+                }
+                if (!!self.isHidTime(meeting.idEnd)) {
+                  endTimeShow = ''
+                }
+              }
+              let NewcreateMeet = {
+                ...meeting,
+                isFlex: meeting.isFlex,
+                trueStyle: 'top:0px;height:' + meeting.height + 'px;',
+                style: style,
+                idSt: meeting.idSt,
+                idEnd: meeting.idEnd,
+                length: meeting.length,
+                height: meeting.height,
+                top: trueTop,
+                ...scheduleTableUtil.formatStartTimeAndEndTime(
+                  startTime,
+                  endTime,
+                  this.chooseDateProp,
+                ),
+                startTimeShow: startTimeShow,
+                endTimeShow: endTimeShow,
+              }
+              self.createMeet = NewcreateMeet
+
+              self.createMeet.patient &&
+                self.$emit('changeCard', {
+                  meet: self.createMeet,
+                  type: 'touchMeeting',
+                })
+            }
+            self.clearCreateMeet()
+          },
+          self.clearCreateMeet(),
+          self.clearCreateMeet(),
+          self.clearCreateMeet(),
+        )
       }
     },
     // 长按卡片新增编辑卡片
@@ -1314,9 +1434,11 @@ export default {
     // 判断预约卡片是否支持编辑
     isDisabled(appt) {
       // 非预约状态不可编辑
-      const notApptStatus =
-        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value !==
-        appt.appointmentStatus
+      const notApptStatus = !(
+        this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value ===
+          appt.appointmentStatus ||
+        this.APPOINTMENT_STATUS_ENUM.CONFIRM.value === appt.appointmentStatus
+      )
 
       const isCurInstitution = appt.acrossInstitutionAppointmentFlag
       return notApptStatus || isCurInstitution
@@ -1365,8 +1487,19 @@ $borderColor: #ddd;
     height: 27px;
     line-height: 27px;
     flex: 0 0 27px;
+
+    &.durationOne {
+      line-height: 26rpx;
+      font-size: 21rpx;
+    }
   }
 }
+
+// .blockEvent {
+//   width: calc((100% - 50px - 0px) / 1);
+//   left: calc(50px + ((100% - 50px - 0px) / 1 + 2px) * 0);
+//   background: #f6f6f6 !important;
+// }
 
 .meetCard {
   position: relative;
@@ -1564,6 +1697,10 @@ $borderColor: #ddd;
 
       .hasAppt {
         color: #ffffff;
+
+        .durationOne {
+          line-height: 28rpx;
+        }
       }
 
       .radius {

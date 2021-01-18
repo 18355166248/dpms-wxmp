@@ -86,12 +86,13 @@ export default {
   },
   created() {
     this.appointmentStatusColorMap = {
-      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#5cbb89',
+      [this.APPOINTMENT_STATUS_ENUM.APPOINTMENT.value]: '#FED700',
       [this.APPOINTMENT_STATUS_ENUM.REGISTERED.value]: '#f04965',
       [this.APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
       [this.APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
       [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
       [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
+      [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
     }
   },
   computed: {},
