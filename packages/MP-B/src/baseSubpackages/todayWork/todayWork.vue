@@ -1,13 +1,7 @@
 <template>
-  <view v-if="!currentStaffStatus.loading" class="todayWork-page-view">
-    <view v-if="currentStaffStatus.request !== 'error'" class="h100">
-      <view
-        class="todayWork"
-        v-if="
-          selectedRole.roleTodayWorkRelationList &&
-          selectedRole.roleTodayWorkRelationList.length > 0
-        "
-      >
+  <view class="todayWork-page-view">
+    <view class="h100">
+      <view class="todayWork" v-if="roles && roles.length > 0">
         <fixed-filter :scrollTop="scrollTop">
           <view class="todayWork-header-wrapper">
             <picker
@@ -17,7 +11,7 @@
             >
               <view class="todayWork-header">
                 <text class="fz-34"
-                  >当前角色：{{ roles[roleIndex].name || '--' }}</text
+                  >当前角色：{{ roles[roleIndex].displayName || '--' }}</text
                 >
 
                 <text class="todayWork-header-txt">
@@ -266,10 +260,6 @@
         <empty :disabled="true"></empty>
       </view>
     </view>
-
-    <view v-else class="error-wrapper">
-      <request-error @click="loadCurrentStaff"></request-error>
-    </view>
   </view>
 </template>
 
@@ -285,6 +275,14 @@ import fixedFilter from '@/components/fixed-filter/fixed-filter.vue'
 import qs from 'qs'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import { globalEventKeys } from '@/config/global.eventKeys.js'
+import { mapState } from 'vuex'
+
+/**
+ * 重大重构：调整了员工的权限
+ *
+ * 由于3.4.9调整了权限控制，所有的角色权限通过统一的menu-all接口获取。
+ *
+ **/
 
 export default {
   data() {
@@ -295,11 +293,6 @@ export default {
       surplusRoles: [],
       dataSource: [],
       patientSearchKey: '',
-      // 角色列表的状态
-      currentStaffStatus: {
-        loading: true,
-        request: 'loading',
-      },
       // 数据列表的状态
       dataSourceStatus: {
         loading: true,
@@ -311,22 +304,25 @@ export default {
       total: 0,
       roleIndex: 0,
       primaryColor: this.$commonCss.commonColor,
+      enumValue: ['switch-consultant', 'switch-receptionist', 'switch-doctor'], // 用于筛选当前角色可以请求
+      enumMap: {
+        'switch-consultant': 'CONSULTANT',
+        'switch-receptionist': 'RECEPTIONIST',
+        'switch-doctor': 'DOCTOR',
+      }, // 菜单权限与枚举映射关系
       REGISTER_ENUM: this.$utils.getEnums('Register'),
       TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
     }
   },
   onLoad() {
-    console.log('APPOINTMENT_STATUS_ENUM:', this.APPOINTMENT_STATUS_ENUM)
-    console.log('REGISTER_ENUM:', this.REGISTER_ENUM)
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.loadCurrentStaff()
 
     uni.$on(globalEventKeys.apptFormWithSaveSuccess, (apptData) => {
-      console.log('apptData:', apptData)
-
       this.updateAppt(apptData)
     })
+
     // 监听事件
     uni.$on(globalEventKeys.cancleApptSuccess, (val) => {
       const rowIndex = this.dataSource.findIndex(
@@ -453,48 +449,10 @@ export default {
     // 初始化默认选中项
     initSelectedRole(distinctRoles) {
       if (distinctRoles.length > 0) {
-        if (distinctRoles.length === 1) {
-          this.selectedRole = distinctRoles[0]
-        } else {
-          // 当前选中的角色
-          let index
-          // 前台
-          const highLevelIndex = distinctRoles.findIndex(
-            (item) =>
-              Number(item.todayWorkRoleType) ===
-              this.TODAY_WORK_ROLE_TYPE_ENUM?.RECEPTIONIST?.value,
-          )
-          // 咨询师
-          const secondLevelIndex = distinctRoles.findIndex(
-            (item) =>
-              Number(item.todayWorkRoleType) ===
-              this.TODAY_WORK_ROLE_TYPE_ENUM?.CONSULTANT?.value,
-          )
-          // 医生
-          const thirdLevelIndex = distinctRoles.findIndex(
-            (item) =>
-              Number(item.todayWorkRoleType) ===
-              this.TODAY_WORK_ROLE_TYPE_ENUM?.DOCTOR?.value,
-          )
-
-          if (highLevelIndex > -1) {
-            this.selectedRole = distinctRoles[highLevelIndex]
-
-            index = highLevelIndex
-          } else if (secondLevelIndex > -1) {
-            this.selectedRole = distinctRoles[secondLevelIndex]
-
-            index = secondLevelIndex
-          } else {
-            this.selectedRole = distinctRoles[thirdLevelIndex]
-
-            index = thirdLevelIndex
-          }
-        }
+        this.selectedRole = distinctRoles[0]
         // picker 选中的index
         this.roleIndex = this.roles.findIndex(
-          (item) =>
-            item.todayWorkRoleType === this.selectedRole.todayWorkRoleType,
+          (item) => item.enumValue === this.selectedRole.enumValue,
         )
       }
     },
@@ -646,20 +604,18 @@ export default {
     },
     // 获取列表数据
     async loadData() {
-      if (this.selectedRole.todayWorkRoleType) {
+      if (this.selectedRole) {
         this.dataSourceStatus.loading = true
         this.dataSourceStatus.status = 'loading'
 
         const urlMap = {
-          [this.TODAY_WORK_ROLE_TYPE_ENUM?.RECEPTIONIST
-            ?.value]: 'getTodayReceptionistList',
-          [this.TODAY_WORK_ROLE_TYPE_ENUM?.DOCTOR?.value]: 'getTodayDoctorList',
-          [this.TODAY_WORK_ROLE_TYPE_ENUM?.CONSULTANT
-            ?.value]: 'getTodayConsultant',
+          'switch-receptionist': 'getTodayReceptionistList',
+          'switch-doctor': 'getTodayDoctorList',
+          'switch-consultant': 'getTodayConsultant',
         }
 
         const [listErr, listRes] = await this.$utils.asyncTasks(
-          diagnosisApi[urlMap[this.selectedRole.todayWorkRoleType]]({
+          diagnosisApi[urlMap[this.selectedRole.enumValue]]({
             beginTime: moment().startOf('day').valueOf(),
             endTime: moment().endOf('day').valueOf(),
             current: this.current,
@@ -691,27 +647,19 @@ export default {
     // 获取角色列表
     async loadCurrentStaff() {
       // 今日工作的角色枚举
+      const { pageElementsList } = this.menu
 
-      this.currentStaffStatus.loading = true
-      uni.showNavigationBarLoading()
+      console.log('TODAY_WORK_ROLE_TYPE_ENUM:', this.TODAY_WORK_ROLE_TYPE_ENUM)
+      // 需要筛选的菜单枚举值enumValue
+      const roles = pageElementsList
+        .filter((element) => this.enumValue.includes(element.enumValue))
+        .sort((prev, next) => prev.sort - next.sort)
 
-      const [err, res] = await this.$utils.asyncTasks(roleApi.getCurrentStaff())
+      this.roles = roles
+      console.log('roles:', roles)
+      this.initSelectedRole(roles)
 
-      if (err) {
-        this.currentStaffStatus.request = 'error'
-      } else if (res) {
-        const nonDuplicateData = this.useConsolidateData(res.data)
-
-        this.roles = nonDuplicateData
-
-        this.initSelectedRole(nonDuplicateData)
-        this.current = 1
-
-        this.currentStaffStatus.request = 'success'
-        uni.startPullDownRefresh()
-      }
-      this.currentStaffStatus.loading = false
-      uni.hideNavigationBarLoading()
+      uni.startPullDownRefresh()
     },
     // 角色切换
     bindPickerChange(e) {
@@ -729,19 +677,20 @@ export default {
     fixedFooter,
   },
   computed: {
+    ...mapState('workbenchStore', ['menu']),
     curRoleKey() {
       if (
         this.TODAY_WORK_ROLE_TYPE_ENUM?.properties &&
-        this.selectedRole.todayWorkRoleType
+        this.selectedRole.enumValue
       ) {
-        return this.TODAY_WORK_ROLE_TYPE_ENUM?.properties[
-          this.selectedRole.todayWorkRoleType
-        ].key
+        const propKey = this.enumMap[this.selectedRole.enumValue]
+
+        return this.TODAY_WORK_ROLE_TYPE_ENUM?.[propKey].key
       }
       return null
     },
     roleNames() {
-      return this.roles.map((item) => item.name)
+      return this.roles.map((item) => item.displayName)
     },
 
     isShowNewBtn() {
