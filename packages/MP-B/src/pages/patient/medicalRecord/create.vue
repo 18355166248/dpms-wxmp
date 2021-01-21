@@ -97,7 +97,7 @@
                 })
               "
             >
-              {{ v0.checkNormalSymptoms }}
+              {{ v0.checkNormalSymptoms || '' }}
             </div>
           </div>
           <div
@@ -147,7 +147,7 @@
                 })
               "
             >
-              {{ v0.checkRaySymptoms }}
+              {{ v0.checkRaySymptoms || '' }}
             </div>
           </div>
           <div
@@ -197,7 +197,7 @@
                 })
               "
             >
-              {{ v0.diagnosisDesc }}
+              {{ v0.diagnosisDesc || '' }}
             </div>
           </div>
           <div
@@ -247,7 +247,7 @@
                 })
               "
             >
-              {{ v0.treatmentProgram }}
+              {{ v0.treatmentProgram || '' }}
             </div>
           </div>
           <div
@@ -297,7 +297,7 @@
                 })
               "
             >
-              {{ v0.dispose }}
+              {{ v0.dispose || '' }}
             </div>
           </div>
           <div
