@@ -22,7 +22,7 @@
             })
           "
         >
-          {{ form.mainComplaint }}
+          {{ form.mainComplaint || '' }}
         </div>
       </dpmsCell>
       <dpmsCell title="现病史" wrap>
@@ -37,7 +37,7 @@
             })
           "
         >
-          {{ form.presentIllnessHistory }}
+          {{ form.presentIllnessHistory || '' }}
         </div>
       </dpmsCell>
       <dpmsCell title="既往史" wrap hideBorderBottom>
@@ -52,7 +52,7 @@
             })
           "
         >
-          {{ form.pastIllnessHistory }}
+          {{ form.pastIllnessHistory || '' }}
         </div>
       </dpmsCell>
       <div style="height: 20rpx;"></div>
@@ -322,7 +322,7 @@
             })
           "
         >
-          {{ form.doctorAdvice }}
+          {{ form.doctorAdvice || '' }}
         </div>
       </dpmsCell>
     </dpmsForm>
