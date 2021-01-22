@@ -694,10 +694,11 @@ export default {
     },
 
     isShowNewBtn() {
-      return (
-        this.selectedRole.todayWorkRoleType ===
-        this.TODAY_WORK_ROLE_TYPE_ENUM?.RECEPTIONIST?.value
-      )
+      if (this.selectedRole && this.TODAY_WORK_ROLE_TYPE_ENUM?.RECEPTIONIST) {
+        const propKey = this.enumMap[this.selectedRole.enumValue]
+
+        return propKey === this.TODAY_WORK_ROLE_TYPE_ENUM?.RECEPTIONIST?.key
+      }
     },
   },
 }
