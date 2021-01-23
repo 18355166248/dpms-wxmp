@@ -101,8 +101,8 @@ httper.interceptors.request.use((request) => {
             : medicalInstitution?.medicalInstitutionDTO?.topParentId,
 
         // 连锁机构类型
-        _cmtType:
-          medicalInstitution?.medicalInstitutionDTO?.institutionChainType,
+        // _cmtType:
+        //   medicalInstitution?.medicalInstitutionDTO?.institutionChainType,
 
         // 请求时间
         _ct: Date.now(),
