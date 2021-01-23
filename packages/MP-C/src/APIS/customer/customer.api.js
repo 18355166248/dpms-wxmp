@@ -1,4 +1,5 @@
 import httper from '../http'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
   getCustomerList(param) {
