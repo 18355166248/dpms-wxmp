@@ -40,9 +40,9 @@
           <div>{{ effectiveEndTimeStr }}</div>
         </div>
         <div class="explain" v-if="isFold">
-          <div v-if="shareMember === true">
+          <div v-if="shareMember === true" class="sharePeople" style=" display:inline-block;">
             <span class="icon iconfont icon-team" style="color:rgba(0,0,0,0.65)"></span>
-            <span style="margin-left: 2px">来自{{shareMemberName}}的共享</span>
+            <span style="margin-left: 2px">来自{{shareMemberName }}的共享</span>
           </div>
           <div>
             <span>使用须知：</span>
@@ -255,6 +255,12 @@ export default {
       .explain {
         margin-top: 8rpx;
         word-break: break-all;
+        .sharePeople {
+          padding: 0 8rpx;
+          height: 42rpx;
+          line-height: 32rpx;
+          background: rgba(0,0,0,0.02);
+        }
         div {
           display: flex;
           flex-direction: row;
