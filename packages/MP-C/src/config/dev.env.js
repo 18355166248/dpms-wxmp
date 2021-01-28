@@ -26,8 +26,8 @@ const config = {
     isWorkInOther: false,
   },
   enableNotReleaseCode: true,
-  DPMSServerUrl: 'http://dev.cloud.api.dental.laoganma.fun/',
-  SCRMServerUrl: 'http://api.scrm.dev.laoganma.fun/',
+  DPMSServerUrl: 'http://dev-tower.laoganma.fun/api/his/',
+  SCRMServerUrl: 'http://dev-tower.laoganma.fun/api/',
   useServerUrlRedirection: {
     open: false,
     pathMap: {

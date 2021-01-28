@@ -22,7 +22,7 @@
             })
           "
         >
-          {{ form.mainComplaint }}
+          {{ form.mainComplaint || '' }}
         </div>
       </dpmsCell>
       <dpmsCell title="现病史" wrap>
@@ -37,7 +37,7 @@
             })
           "
         >
-          {{ form.presentIllnessHistory }}
+          {{ form.presentIllnessHistory || '' }}
         </div>
       </dpmsCell>
       <dpmsCell title="既往史" wrap hideBorderBottom>
@@ -52,7 +52,7 @@
             })
           "
         >
-          {{ form.pastIllnessHistory }}
+          {{ form.pastIllnessHistory || '' }}
         </div>
       </dpmsCell>
       <div style="height: 20rpx;"></div>
@@ -97,7 +97,7 @@
                 })
               "
             >
-              {{ v0.checkNormalSymptoms }}
+              {{ v0.checkNormalSymptoms || '' }}
             </div>
           </div>
           <div
@@ -147,7 +147,7 @@
                 })
               "
             >
-              {{ v0.checkRaySymptoms }}
+              {{ v0.checkRaySymptoms || '' }}
             </div>
           </div>
           <div
@@ -197,7 +197,7 @@
                 })
               "
             >
-              {{ v0.diagnosisDesc }}
+              {{ v0.diagnosisDesc || '' }}
             </div>
           </div>
           <div
@@ -247,7 +247,7 @@
                 })
               "
             >
-              {{ v0.treatmentProgram }}
+              {{ v0.treatmentProgram || '' }}
             </div>
           </div>
           <div
@@ -297,7 +297,7 @@
                 })
               "
             >
-              {{ v0.dispose }}
+              {{ v0.dispose || '' }}
             </div>
           </div>
           <div
@@ -322,7 +322,7 @@
             })
           "
         >
-          {{ form.doctorAdvice }}
+          {{ form.doctorAdvice || '' }}
         </div>
       </dpmsCell>
     </dpmsForm>

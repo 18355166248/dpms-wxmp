@@ -1,4 +1,5 @@
 import httper from '../http'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
   getCustomerList(param) {
@@ -35,6 +36,11 @@ export default {
     )
   },
   creatCustomer(data) {
+    // TODO 暂时只给新建员工传_cmtType 其他地方不传 后面需要修改业务逻辑
+
+    const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+    data._cmtType =
+      medicalInstitution?.medicalInstitutionDTO?.institutionChainType
     return httper.post('institution-customer/personnel/create', data)
   },
   deleteCustomer(data) {
