@@ -11,6 +11,9 @@
           <!-- 标题区域 -->
           <div class="titleBox">
             <span class="title">{{ title }}</span>
+            <span v-if="shareMember === true" style="color: rgba(0, 0, 0, 0.65);margin-top: 4px"
+                class="icon iconfont icon-team"
+            ></span>
             <slot name="draw" v-bind:coupon="item"></slot>
           </div>
           <!-- 内容区域 -->
@@ -37,6 +40,10 @@
           <div>{{ effectiveEndTimeStr }}</div>
         </div>
         <div class="explain" v-if="isFold">
+          <div v-if="shareMember === true" class="sharePeople" style=" display:inline-block;">
+            <span class="icon iconfont icon-team" style="color:rgba(0,0,0,0.65)"></span>
+            <span style="margin-left: 2px">来自{{shareMemberName }}的共享</span>
+          </div>
           <div>
             <span>使用须知：</span>
             <span>{{ notice }}</span>
@@ -108,10 +115,17 @@ export default {
     noticeMatter: {
       type: String,
     },
+    shareMember: {
+      type: Boolean,
+    },
+    shareMemberName: {
+      type: String,
+    }
   },
   data() {
     return {
       isFold: false,
+      sharedName: '张三'
     }
   },
   methods: {
@@ -172,12 +186,13 @@ export default {
       .contentRight {
         .titleBox {
           display: flex;
-          justify-content: space-between;
+          /*justify-content: space-between;*/
+          justify-content: flex-start;
           margin-bottom: 16rpx;
           .title {
             color: rgba(0, 0, 0, 0.9);
             font-size: 34rpx;
-            width: 302rpx;
+            max-width: 302rpx;
             overflow: hidden;
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -240,6 +255,12 @@ export default {
       .explain {
         margin-top: 8rpx;
         word-break: break-all;
+        .sharePeople {
+          padding: 0 8rpx;
+          height: 42rpx;
+          line-height: 32rpx;
+          background: rgba(0,0,0,0.02);
+        }
         div {
           display: flex;
           flex-direction: row;
