@@ -128,8 +128,7 @@
           placeholder="请选择诊室"
         />
         <dpmsCell
-          v-if="isAppt"
-          title="预约项目"
+          :title="isAppt ? '预约项目' : '就诊项目'"
           :value="APPT_ITEM_CHECKED_TEXT"
           isLink
           @click.native="onSelectApptItem"
@@ -419,9 +418,9 @@ export default {
           })
       }
 
-      if (this.isAppt) {
-        this.getAppointmentItemList()
-      }
+      // if (this.isAppt) {
+      this.getAppointmentItemList()
+      // }
 
       this.getMedicalInstitutionRequest().then((res) => {
         this.$set(this.form, 'medicalInstitution', res.data[0])
@@ -739,6 +738,7 @@ export default {
           teethCleanedStaffId: this.form.dentalHygienist, // 洁牙师ID
           institutionConsultingRoomId: this.form.institutionConsultingRoomId, // 诊室ID
           nurseStaffIds: this.form.nurse.join(), // 护士ID集合
+          visItemIds: this.form.COMMON_DATA_APPOINTMENT_ITEM.join(','),
           memo: this.form.appointmentMemo, // 备注
         }
 
