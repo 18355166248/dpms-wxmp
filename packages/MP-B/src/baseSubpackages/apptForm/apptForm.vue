@@ -19,7 +19,7 @@
                 <span class="gender mr-8">{{
                   (form.patient && form.patient.gender) | getGenderText
                 }}</span>
-                <span class="age">{{ form.patient.age }}</span>
+                <span class="age">{{ form.patient.medicalRecordNo }}</span>
               </div>
               <div class="patientBottom">
                 <span>联系方式:</span>
