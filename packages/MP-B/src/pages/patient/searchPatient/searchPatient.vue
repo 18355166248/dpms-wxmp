@@ -56,7 +56,7 @@
             :name="parient.patientName"
             :avatarUrl="parient.avatarUrl"
             :gender="parient.gender"
-            :age="parient.age"
+            :medicalRecordNo="parient.medicalRecordNo"
             :infos="[{ label: '联系电话', value: parient.mobile }]"
           />
         </div>

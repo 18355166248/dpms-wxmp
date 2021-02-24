@@ -48,8 +48,8 @@
             <tag :text="genderTag" :circle="false" type="error"></tag>
           </template>
 
-          <template v-if="age">
-            <tag :text="age" :circle="false" type="error"></tag>
+          <template v-if="medicalRecordNo">
+            <tag :text="medicalRecordNo" :circle="false" type="error"></tag>
           </template>
         </view>
 
@@ -95,7 +95,7 @@ import qs from 'qs'
  * @property {String} name 患者姓名
  * @property {String} avatarUrl 患者头像（如果不传，则会根据性别，显示默认头像）
  * @property {Number} gender 患者性别
- * @property {String} age 患者年龄
+ * @property {String} medicalRecordNo 病例号
  * @property {Number|Object} status 卡片状态
  * @value { Number } 挂号状态，会自动生成对应的文本，颜色，类型
  * @value { Object } {type: 徽章类型(根据不同类型生成不同的颜色和特效), color: 徽章颜色，会改变默认type类型的颜色, text: 徽章文本} 自定义徽章信息
@@ -134,7 +134,7 @@ export default {
       type: Number,
       default: 0,
     },
-    age: {
+    medicalRecordNo: {
       type: String,
       default: null,
     },
@@ -387,7 +387,7 @@ export default {
         top: 50%;
         transform: translateY(-50%);
       }
-      .vip{
+      .vip {
         margin-left: 8rpx;
         background: linear-gradient(180deg, #fbd08c 0%, #cfa147 99%);
         color: #ffffff;

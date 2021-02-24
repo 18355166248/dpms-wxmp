@@ -9,7 +9,7 @@
           :name="dataSource.patient.patientName"
           :avatarUrl="dataSource.patient.avatarUrl"
           :gender="dataSource.patient.gender"
-          :age="dataSource.patient.age"
+          :medicalRecordNo="dataSource.patient.medicalRecordNo"
           :status="statusBadge"
           :infos="[{ label: '联系方式', value: dataSource.patient.mobile }]"
         >
@@ -58,10 +58,7 @@
     >
       <view class="button-group">
         <template v-if="statusEnumKey === 'APPOINTMENT'">
-          <button
-            class="button button-ghost"
-            @click="confirmAppointment"
-          >
+          <button class="button button-ghost" @click="confirmAppointment">
             确认
           </button>
           <button
@@ -216,21 +213,21 @@ export default {
           .catch()
       }
     },
-    confirmAppointment(){
+    confirmAppointment() {
       appointmentAPI
-      .confirmAppointmentStatus({
-        appointmentId: this.dataSource.appointmentId,
-      })
-      .then((res) => {
-        if (res.code === 0) {
-          uni.showToast({
-            icon: 'success',
-            title: '已确认预约',
-          })
-          this.loadData()
-        }
-      })
-      .catch()
+        .confirmAppointmentStatus({
+          appointmentId: this.dataSource.appointmentId,
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            uni.showToast({
+              icon: 'success',
+              title: '已确认预约',
+            })
+            this.loadData()
+          }
+        })
+        .catch()
     },
     // 页面跳转
     toPage(url, params) {

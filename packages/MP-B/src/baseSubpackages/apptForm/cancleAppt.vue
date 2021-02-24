@@ -9,7 +9,7 @@
           :name="dataSource.patient.patientName"
           :avatarUrl="dataSource.patient.avatarUrl"
           :gender="dataSource.patient.gender"
-          :age="dataSource.patient.age"
+          :medicalRecordNo="dataSource.patient.medicalRecordNo"
           :status="statusBadge"
           :infos="[{ label: '联系方式', value: dataSource.patient.mobile }]"
         >

@@ -6,7 +6,7 @@
       :name="patient.patientName"
       :avatarUrl="patient.avatarUrl"
       :gender="patient.gender"
-      :age="patient.age"
+      :medicalRecordNo="patient.medicalRecordNo"
       :infos="[
         { label: '联系方式', value: patient.mobile },
         { label: '患者标签', value: patient.tagListTxt },
@@ -15,7 +15,9 @@
     <view class="menu-area">
       <view class="menu-area-body mt-48">
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'detailed-infos')"
+          v-if="
+            menu.pageElementsList.some((m) => m.enumValue === 'detailed-infos')
+          "
           class="menu-area-item"
           @click="
             toUrl(
@@ -31,7 +33,11 @@
           </view>
         </view>
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'treatment-record')"
+          v-if="
+            menu.pageElementsList.some(
+              (m) => m.enumValue === 'treatment-record',
+            )
+          "
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/apptList/apptList?patientId=' + patientId)
@@ -45,11 +51,9 @@
           </view>
         </view>
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'image')"
+          v-if="menu.pageElementsList.some((m) => m.enumValue === 'image')"
           class="menu-area-item"
-          @click="
-            toUrl('/pages/patient/image/record?patientId=' + patientId)
-          "
+          @click="toUrl('/pages/patient/image/record?patientId=' + patientId)"
         >
           <view class="menu-area-item-icon menu-area-item-icon-color3">
             <text class="iconfont icon-yingxiang"></text>
@@ -59,7 +63,11 @@
           </view>
         </view>
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'electronic-medical-record')"
+          v-if="
+            menu.pageElementsList.some(
+              (m) => m.enumValue === 'electronic-medical-record',
+            )
+          "
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/medicalRecord/record?patientId=' + patientId)
@@ -72,10 +80,7 @@
             病历记录
           </view>
         </view>
-        <view
-          class="menu-area-item"
-          @click="callTel"
-        >
+        <view class="menu-area-item" @click="callTel">
           <view class="menu-area-item-icon menu-area-item-icon-color5">
             <text class="iconfont icon-phone"></text>
           </view>
@@ -91,7 +96,7 @@
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import card from '@/components/card/card.vue'
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
@@ -101,8 +106,8 @@ export default {
   },
   computed: {
     ...mapState({
-      menu: state => state.workbenchStore.menu
-    })
+      menu: (state) => state.workbenchStore.menu,
+    }),
   },
   onLoad(params) {
     this.patientId = params.patientId
@@ -137,9 +142,9 @@ export default {
     },
     callTel() {
       uni.makePhoneCall({
-        phoneNumber: this.patient?.mobile
+        phoneNumber: this.patient?.mobile,
       })
-    }
+    },
   },
   components: {
     card,
@@ -181,7 +186,7 @@ export default {
       width: $width;
       min-width: 33.33%;
       text-align: center;
-      color: rgba(0,0,0,0.9);
+      color: rgba(0, 0, 0, 0.9);
       margin-bottom: 64rpx;
       &-icon {
         width: $width;
@@ -204,11 +209,11 @@ export default {
         @include colors($values...);
       }
       &-icon-color3 {
-        $values: rgba(179,127,235,1), rgba(114,46,209,1);
+        $values: rgba(179, 127, 235, 1), rgba(114, 46, 209, 1);
         @include colors($values...);
       }
       &-icon-color4 {
-        $values: rgba(255,133,192,1), rgba(235,47,150,1);
+        $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
         @include colors($values...);
       }
       &-icon-color5 {
