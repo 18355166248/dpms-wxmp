@@ -775,11 +775,11 @@ export default {
             appt: { ...formatValue, ...res.data },
           })
 
-          if (type === 'createAppt') {
-            return this.$utils.push({
-              url: '/baseSubpackages/apptView/apptView',
-            })
-          }
+          // if (type === 'createAppt') {
+          //   return this.$utils.replace({
+          //     url: '/baseSubpackages/apptView/apptView',
+          //   })
+          // }
           this.$utils.back()
 
           // if (type === 'createRegister' || type === 'editRegister') {
