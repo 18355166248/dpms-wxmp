@@ -64,7 +64,7 @@ export default {
                 uni.$emit(globalEventKeys.newPatient)
 
                 if (type === 'createRegister') {
-                  return that.$utils.push({
+                  return that.$utils.replace({
                     url:
                       '/baseSubpackages/apptForm/apptForm?patient=' +
                       JSON.stringify(res.data) +
@@ -73,7 +73,7 @@ export default {
                 }
 
                 if (type === 'createAppt') {
-                  return that.$utils.push({
+                  return that.$utils.replace({
                     url:
                       '/baseSubpackages/apptForm/apptForm?patient=' +
                       JSON.stringify(res.data) +
@@ -81,7 +81,7 @@ export default {
                   })
                 }
 
-                return that.$utils.push({
+                return that.$utils.replace({
                   url: '/pages/patient/patient?patientId=' + res.data.patientId,
                 })
               }, 1000)
