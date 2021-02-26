@@ -49,4 +49,12 @@ export default {
   updateCustomer(data) {
     return httper.post('institution-customer/personnel/update', data)
   },
+  // 获取绑定客户list
+  getBindCustomerList(param) {
+    return httper.get('institution-customer/customer/bindCustomerList', param)
+  },
+  // 确认绑定人员
+  bindCustomer(param) {
+    return httper.get('institution-customer/customer/bindCustomer', param)
+  },
 }

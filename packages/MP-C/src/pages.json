@@ -135,6 +135,13 @@
         "navigationBarTitleText": "领券中心"
       }
     }
+    ,
+    {
+      "path": "pages/switchUser/switchUser",
+      "style": {
+        "navigationBarTitleText": "选择绑定人员"
+      }
+    }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",
