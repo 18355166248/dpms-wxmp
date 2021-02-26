@@ -277,7 +277,9 @@ export default {
   computed: {
     ...mapState('workbenchStore', ['medicalInstitution', 'staff', 'menu']),
     initIconShow() {
+      let findObj
       const { menuList, pageElementsList } = this.menu
+
       this.iconShow.isStatisticsShow =
         pageElementsList.findIndex((v) => {
           return v.enumValue === '11004'
@@ -291,7 +293,19 @@ export default {
         pageElementsList.findIndex((v) => {
           return v.enumValue === '11001'
         }) > -1
-      const findObj =
+
+      findObj =
+        menuList &&
+        menuList.find((v) => {
+          return v.enumValue === 'patient-center'
+        })
+      this.iconShow.isChargeShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'patient-manage'
+        }) > -1
+
+      findObj =
         menuList &&
         menuList.find((v) => {
           return v.enumValue === 'report-center'
