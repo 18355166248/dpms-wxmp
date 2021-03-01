@@ -11,6 +11,18 @@
         </p>
       </view>
     </view>
+    <view class="detail">
+      <text class="detailTitle">详情介绍</text>
+      <view class="richText">
+        <rich-text :nodes="detailIntroduction"></rich-text>
+      </view>
+    </view>
+    <view class="descr" v-if="tips.length">
+      <text class="descrTitle">温馨提示</text>
+      <view class="descrContent">
+        <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
+      </view>
+    </view>
     <view class="storeContent">
       <text class="storeTitle">可用门店</text>
       <view
@@ -56,18 +68,8 @@
         </view>
       </view>
     </view>
-    <view class="detail">
-      <text class="detailTitle">详情介绍</text>
-      <view class="richText">
-        <rich-text :nodes="detailIntroduction"></rich-text>
-      </view>
-    </view>
-    <view class="descr" v-if="tips.length">
-      <text class="descrTitle">温馨提示</text>
-      <view class="descrContent">
-        <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
-      </view>
-    </view>
+
+
     <view style="height: 48rpx;"></view>
   </view>
 </template>
@@ -197,6 +199,7 @@ export default {
 .storeContent {
   width: 684rpx;
   margin-left: 32rpx;
+  margin-top: 48rpx;
 }
 .storeTitle {
   width: 136rpx;
@@ -282,7 +285,7 @@ export default {
   left: 546rpx;
 }
 .detail {
-  margin-top: 48rpx;
+  
 }
 .detailTitle {
   width: 136rpx;
