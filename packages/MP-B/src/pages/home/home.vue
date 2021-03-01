@@ -147,6 +147,18 @@
               患者
             </view>
           </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+            v-if="iconShow.isChargeShow"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color6">
+              <text class="iconfont icon-renmingbi"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              收费
+            </view>
+          </view>
         </view>
       </view>
 
@@ -653,6 +665,10 @@ export default {
         }
         &-icon-color5 {
           $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
+          @include colors($values...);
+        }
+        &-icon-color6 {
+          $values: rgba(255, 132, 135, 1), rgba(255, 77, 79, 1);
           @include colors($values...);
         }
 
