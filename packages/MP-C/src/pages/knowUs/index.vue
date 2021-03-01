@@ -6,6 +6,10 @@
     <view class="knowUs-detail">
       <rich-text :nodes="introduceDetail"></rich-text>
     </view>
+
+    <view class="knowUs-introduce">
+      <img mode="scaleToFill" v-for="src in introduceImgs" :src="src" />
+    </view>
     <view class="store">
       <view class="storeContent">
         <view class="storeTop">
@@ -52,9 +56,6 @@
           </view>
         </view>
       </view>
-    </view>
-    <view class="knowUs-introduce">
-      <img mode="scaleToFill" v-for="src in introduceImgs" :src="src" />
     </view>
   </scroll-view>
 </template>
@@ -151,6 +152,7 @@ export default {
     margin-bottom: 48rpx;
   }
   .store {
+      margin-top: 48rpx;
   }
   .storeTop {
     display: flex;
@@ -199,7 +201,7 @@ export default {
   .storeCardAddress {
     height: 72rpx;
     font-size: 28rpx;
-    width: 488rpx;
+    width: 486rpx;
     text-align: left;
     color: rgba(0, 0, 0, 0.5);
     line-height: 36rpx;
@@ -235,7 +237,7 @@ export default {
     left: 546rpx;
   }
   .knowUs-introduce {
-    margin-top: 48rpx;
+    
     width: 716rpx;
     img {
       width: 344rpx;
