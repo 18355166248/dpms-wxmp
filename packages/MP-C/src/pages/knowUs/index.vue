@@ -8,7 +8,7 @@
     </view>
 
     <view class="knowUs-introduce">
-      <img mode="scaleToFill" v-for="src in introduceImgs" :src="src" />
+      <img mode="scaleToFill" v-for="src in introduceImgs" :key="src" :src="src" />
     </view>
     <view class="store">
       <view class="storeContent">
