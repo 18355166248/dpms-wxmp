@@ -58,6 +58,7 @@
             :gender="parient.gender"
             :medicalRecordNo="parient.medicalRecordNo"
             :infos="[{ label: '联系电话', value: parient.mobile }]"
+            :patient="patient"
           />
         </div>
       </div>

@@ -66,6 +66,7 @@
                     ],
                   },
                 ]"
+                :patient="patient"
               >
                 <template v-slot:footer-right>
                   <template v-if="curRoleKey === 'DOCTOR'">
