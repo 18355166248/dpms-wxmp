@@ -149,7 +149,7 @@
           </view>
           <view
             class="menu-area-item"
-            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+            @click="toUrl('/pages/charge/chargeForm')"
             v-if="iconShow.isChargeShow"
           >
             <view class="menu-area-item-icon menu-area-item-icon-color6">
