@@ -26,7 +26,9 @@
         </dpmsCollapseItem>
       </dpmsCollapse>
     </dpmsCheckboxGroup>
-    <empty :disabled="true" text="暂无预约项目" v-else />
+
+    <empty :disabled="true" v-if="isAppt" text="暂无预约项目" />
+    <empty :disabled="true" v-else text="暂无就诊项目" />
 
     <div class="mt-56">
       <dpmsButton @click="onSave" v-if="list && list.length" />
@@ -49,9 +51,11 @@ export default {
     return {
       list: this.formatList(uni.getStorageSync('apptItemList')),
       checked: [],
+      isAppt: false,
     }
   },
-  onLoad({ checked }) {
+  onLoad({ checked,isAppt }) {
+    this.isAppt = isAppt=="true";    
     if (checked) {
       this.checked = checked.split(',').map((v) => Number(v))
     }
