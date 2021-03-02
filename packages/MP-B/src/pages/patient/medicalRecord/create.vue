@@ -1,7 +1,30 @@
 <template>
   <div>
     <dpmsForm ref="form" :model="form" :rules="rules">
-      <dpmsCellPicker
+      <dpmsCell title="就诊信息" :isLink="registerList">
+        <template #title>
+          <div class="title">
+            就诊信息
+            <dpmsDatetimePicker isCell @change="registNew">
+              <span class="iconfont icon-plus-circle addRegist" />
+            </dpmsDatetimePicker>
+          </div>
+        </template>
+        <picker
+          mode="selector"
+          :range="registerList"
+          range-key="registerLabel"
+          :disabled="!registerList"
+          :value="form.registerId"
+          @change="registerChange"
+        >
+          <div>
+            <div v-if="!registerList">暂无就诊信息</div>
+            <div v-else>{{ registerText }}</div>
+          </div>
+        </picker>
+      </dpmsCell>
+      <!-- <dpmsCellPicker
         title="就诊信息"
         placeholder="暂无就诊信息"
         v-model="form.registerId"
@@ -9,6 +32,31 @@
         defaultType="registerId"
         :defaultProps="{ label: 'registerLabel', value: 'registerId' }"
         :disabled="!registerList.length"
+      >
+        <template #title>
+          <div @focus="ev => ev.stopPropagation()">
+            就诊信息
+            <dpmsDatetimePicker
+              isCell
+            >
+              <span class="iconfont icon-plus-circle addRegist" />
+            </dpmsDatetimePicker>
+          </div>
+        </template>
+      </dpmsCellPicker> -->
+      <dpmsCellPicker
+        title="医生"
+        placeholder="请选择医生"
+        :list="doctors"
+        :defaultProps="{ label: 'doctorName', value: 'doctorId' }"
+        defaultType="doctorId"
+        v-model="form.doctorId"
+      />
+      <dpmsEnumsPicker
+        enumsKey="VisType"
+        v-model="form.visType"
+        title="就诊类型"
+        placeholder="请选择就诊类型"
       />
       <dpmsCell title="主诉" wrap>
         <div
@@ -25,7 +73,11 @@
           {{ form.mainComplaint || '' }}
         </div>
       </dpmsCell>
-      <dpmsCell title="现病史" wrap>
+      <dpmsCell
+        title="现病史"
+        wrap
+        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
+      >
         <div
           class="text"
           data-placeholder="请输入现病史"
@@ -40,7 +92,12 @@
           {{ form.presentIllnessHistory || '' }}
         </div>
       </dpmsCell>
-      <dpmsCell title="既往史" wrap hideBorderBottom>
+      <dpmsCell
+        title="既往史"
+        wrap
+        hideBorderBottom
+        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
+      >
         <div
           class="text"
           data-placeholder="请输入既往史"
@@ -334,8 +391,8 @@
 
 <script>
 import moment from 'moment'
-import { mapState } from 'vuex'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
+import institutionAPI from '@/APIS/institution/institution.api.js'
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
@@ -345,6 +402,8 @@ export default {
     return {
       form: {
         registerId: '',
+        doctorId: '',
+        visType: '',
         mainComplaint: '',
         presentIllnessHistory: '',
         pastIllnessHistory: '',
@@ -358,9 +417,25 @@ export default {
       rules: {},
       teethSync: true,
       registerList: null,
+      doctors: [],
+      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
     }
   },
+  computed: {
+    registerText() {
+      return (
+        (this.registerList &&
+          this.registerList.find((l) => l.registerId === this.form.registerId)
+            .registerLabel) ||
+        ''
+      )
+    },
+  },
   methods: {
+    async getDoctors() {
+      const res = await institutionAPI.getDoctors()
+      this.doctors = res.data
+    },
     async getRegisterList(param) {
       const res = await diagnosisAPI.getRegisterList(param)
       this.registerList = (res.data || []).map((d) => ({
@@ -369,6 +444,9 @@ export default {
       }))
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
+        this.form.visType = this.VIS_TYPE_ENUM.REVISIT.value
+      } else {
+        this.form.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
       }
     },
     onTextareaChange() {
@@ -492,6 +570,28 @@ export default {
     teethSyncChange({ detail }) {
       this.teethSync = detail.value
     },
+    registNew({ dt }) {
+      const registerId = -1
+      const registerTime = moment(dt).valueOf()
+      const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
+      const newRegisterIndex = this.registerList.indexOf(
+        (l) => l.registerId === registerId,
+      )
+      if (newRegisterIndex !== -1) {
+        this.registerList = this.registerList.filter(
+          (l) => l.registerId !== registerId,
+        )
+      }
+      this.registerList = [
+        ...(this.registerList || []),
+        { registerId, registerTime, registerLabel },
+      ]
+      this.form.registerId = registerId
+      this.form.registerTime = registerLabel
+    },
+    registerChange({ detail }) {
+      this.form.registerId = registerList[detail.value].registerId
+    },
   },
   onLoad({ patientId, medicalRecordId }) {
     this.patientId = patientId
@@ -499,11 +599,22 @@ export default {
     this.getRegisterList({ patientId })
     this.onTextareaChange()
     this.onEdit()
+    this.getDoctors()
+    console.log(this.VIS_TYPE_ENUM)
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.title {
+  display: flex;
+  align-items: center;
+}
+.addRegist {
+  color: #5cbb89;
+  margin-left: 10rpx;
+  font-size: 36rpx;
+}
 .text {
   padding-top: 18rpx;
   box-sizing: border-box;

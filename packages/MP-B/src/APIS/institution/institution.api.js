@@ -37,6 +37,9 @@ const institutionAPI = {
   details(data) {
     return httper.get('institution/current/details', data)
   },
+  getDoctors(data) {
+    return httper.get('/institution-customer-mgt/mini-app/doctor/doctor', data)
+  },
 }
 
 export default institutionAPI
