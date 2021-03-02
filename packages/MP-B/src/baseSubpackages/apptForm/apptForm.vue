@@ -132,7 +132,7 @@
           :value="APPT_ITEM_CHECKED_TEXT"
           isLink
           @click.native="onSelectApptItem"
-          placeholder="请选择预约项目"
+          :placeholder="isAppt ? '请选择预约项目' : '请选择就诊项目'"
         />
         <dpmsCell title="预约备注" />
         <view class="appointmentMemo">
