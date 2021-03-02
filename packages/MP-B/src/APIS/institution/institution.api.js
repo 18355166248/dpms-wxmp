@@ -28,7 +28,7 @@ const institutionAPI = {
   },
   // 获取预约排班列表
   getApptScheduleListByStaff(params) {
-    return httper.get('/institution/schedule/select/one-staff', params)
+    return httper.get('institution/schedule/select/one-staff', params)
   },
   // 机构ID 获取连锁诊所（树状结构）
   getInstitutionList(params) {
@@ -36,6 +36,9 @@ const institutionAPI = {
   },
   details(data) {
     return httper.get('institution/current/details', data)
+  },
+  getStaffListByPositionFromAllInstitution(data) {
+    return httper.get('institution/staff/list/position-all-institution', data)
   },
   getDoctors(data) {
     return httper.get('/institution-customer-mgt/mini-app/doctor/doctor', data)

@@ -156,6 +156,12 @@ button::after {
 .icon-arrea:before {
   content: '\e64d';
 }
+.icon-open:before {
+  content: '\e64e';
+}
+.icon-close:before {
+  content: '\e654';
+}
 /* iconfont图标 end */
 </style>
 
