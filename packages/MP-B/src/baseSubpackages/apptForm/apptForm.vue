@@ -541,11 +541,11 @@ export default {
       })
     },
     // 选择预约项目
-    onSelectApptItem() {
+    onSelectApptItem() {      
       this.$utils.push({
         url:
           '/baseSubpackages/apptForm/apptItemList?checked=' +
-          this.form.COMMON_DATA_APPOINTMENT_ITEM.join(','),
+          this.form.COMMON_DATA_APPOINTMENT_ITEM.join(',')+'&isAppt=' + this.isAppt,
       })
     },
     updateApptItemCheckedText(form) {
