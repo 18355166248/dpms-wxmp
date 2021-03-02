@@ -2,7 +2,10 @@
   <view v-if="requestStatus.status === 'success'" class="appt-detail">
     <view class="circular-arc-top"></view>
     <view class="appt-detail-wrapper">
-      <view class="appt-detail-wrapper-info-card">
+      <view
+        class="appt-detail-wrapper-info-card"
+        @click="toPatient(dataSource.patient.patientId)"
+      >
         <card
           :cornerMarker="dataSource.acrossInstitutionAppointmentFlag"
           :marginConfig="{ position: ['left', 'right'] }"
@@ -258,6 +261,11 @@ export default {
       }
 
       uni.hideNavigationBarLoading()
+    },
+    toPatient(id) {
+      this.$utils.push({
+        url: '/pages/patient/patient?patientId=' + id,
+      })
     },
   },
   computed: {
