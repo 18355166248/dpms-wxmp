@@ -1,20 +1,68 @@
 <template>
   <view class="content">
     <view class="list">
-      <view class="tit">现金收款</view>
-      <view class="flex">
-        <view class="title">总收款：</view>
-        <view class="fee">{{ formatPrice(data.totalAdvance) }}</view>
+      <view class="listTitle">
+        <view class="datetime"
+          ><view class="iconfont icon-time-circle"></view> 2020-10-12
+          12:30</view
+        >
+        <view class="pending">待收费</view>
       </view>
-      <view class="flex">
-        <view class="title">初诊现金收款：</view>
-        <view class="fee">{{ formatPrice(data.firstVisitAdvance) }}</view>
+      <view class="lineHr"></view>
+      <view class="listContent">
+        <view class="listLine">
+          <view class="ml-32">普通收费</view>
+          <view class="totalFee">总计金额：$950.00 </view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32">北极熊南京分店</view>
+          <view class="chargeFee"
+            >应收金额：
+            <view class="feeRed">$950.00</view>
+          </view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32 remark"
+            >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
+          >
+        </view>
+        <view class="listLine">
+          <view class="ml-32 date">创建时间：2021-09-08 10:20:30</view>
+          <view class="user">季冰宇</view>
+        </view>
       </view>
-      <view class="flex">
-        <view class="title">复诊现金收款：</view>
-        <view class="fee">{{ formatPrice(data.nextVisitAdvance) }}</view>
+    </view>
+    <view class="list">
+      <view class="listTitle">
+        <view class="datetime"
+          ><view class="iconfont icon-time-circle"></view> 2020-10-12
+          12:30</view
+        >
+        <view class="refund">待退费</view>
       </view>
-      <view style="height: 32rpx;"></view>
+      <view class="lineHr"></view>
+      <view class="listContent">
+        <view class="listLine">
+          <view class="ml-32">普通收费</view>
+          <view class="totalFee">总计金额：$950.00 </view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32">北极熊南京分店</view>
+          <view class="chargeFee"
+            >应退金额：
+            <view class="feeGreen">$950.00</view>
+          </view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32 remark"
+            >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
+          >
+        </view>
+        <view class="listLine">
+          <view class="ml-32 date">创建时间：2021-09-08 10:20:30</view>
+          <view class="user">季冰宇</view>
+        </view>
+      </view>
     </view>
   </view>
 </template>
@@ -114,74 +162,106 @@ export default {
   margin-left: 32rpx;
   background: rgba(0, 0, 0, 0.15);
 }
-.date {
-  margin-top: 20rpx;
-  height: 96rpx;
-  background-color: #fff;
-  position: relative;
-  .icon-arrow-left {
-    position: absolute;
-    top: 28rpx;
-    left: 200rpx;
-  }
-  .icon-arrow-right {
-    position: absolute;
-    right: 200rpx;
-    top: 28rpx;
-  }
-  .datePicker {
-    width: 300rpx;
-    margin-left: 225rpx;
-    .dateTitle {
-      width: 280rpx;
-      margin-left: 10rpx;
-      height: 90rpx;
-      line-height: 90rpx;
-      text-align: center;
-    }
-  }
-}
-
-.flex {
-  display: flex;
-  margin-bottom: 16rpx;
-}
 .line {
   width: 80%;
   height: 2rpx;
   background: rgba(0, 0, 0, 0.15);
   margin-left: 10%;
 }
+.ml-32 {
+  margin-left: 32rpx;
+}
 .list {
   background-color: #fff;
   margin-bottom: 20rpx;
-  margin-top: 8rpx;
-  .tit {
-    font-size: 36rpx;
-    font-weight: 500;
-    text-align: left;
-    color: rgba(0, 0, 0, 0.9);
-    line-height: 44rpx;
-    padding-left: 32rpx;
-    padding-top: 20rpx;
-    margin-bottom: 36rpx;
+  margin-top: 16rpx;
+  height: 410rpx;
+  .listTitle {
+    height: 84rpx;
+    display: flex;
+    align-items: center;
   }
-  .title {
-    width: 30%;
-    padding-left: 32rpx;
+  .datetime {
+    display: flex;
+    width: 400rpx;
+    align-items: center;
     font-size: 28rpx;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.7);
-    line-height: 36rpx;
+    color: #595959;
   }
-  .fee {
-    width: 70%;
-    padding-right: 32rpx;
+  .icon-time-circle {
+    margin-left: 28rpx;
+    margin-right: 14rpx;
+  }
+  .pending {
+    width: 116rpx;
+    height: 40rpx;
+    background: #fff7e6;
+    border: 2rpx solid #fa8c16;
+    border-radius: 6rpx;
+    text-align: center;
+    color: #fa8c16;
+    line-height: 40rpx;
+    font-size: 28rpx;
+    margin-left: 202rpx;
+  }
+  .refund {
+    width: 116rpx;
+    height: 40rpx;
+    background: #f6ffed;
+    border: 2rpx solid #52c41a;
+    border-radius: 6rpx;
+    text-align: center;
+    color: #52c41a;
+    line-height: 40rpx;
+    font-size: 28rpx;
+    margin-left: 202rpx;
+  }
+  .listContent {
+    height: 204rpx;
+  }
+  .listLine {
+    margin-top: 24rpx;
+    display: flex;
+    font-size: 28rpx;
+  }
+  .totalFee {
+    margin-left: 86px;
+    float: right;
+    width: 400rpx;
     text-align: right;
-    font-weight: 400;
-    color: rgba(0, 0, 0, 0.7);
     font-size: 28rpx;
-    line-height: 36rpx;
+  }
+  .chargeFee {
+    margin-left: 90rpx;
+    width: 400rpx;
+    font-size: 28rpx;
+    line-height: 48rpx;
+    display: flex;
+    justify-content: flex-end;
+  }
+  .feeRed {
+    font-size: 34rpx;
+    color: #fa5151;
+  }
+  .feeGreen {
+    font-size: 34rpx;
+    color: #52c41a;
+  }
+  .remark {
+    height: 72rpx;
+    width: 690rpx;
+    overflow: hidden;
+    color: #595959;
+  }
+  .user {
+    color: #595959;
+    text-align: right;
+    width: 200rpx;
+    margin-left: 40rpx;
+  }
+  .date {
+    color: #595959;
+    width: 440rpx;
   }
 }
 </style>
