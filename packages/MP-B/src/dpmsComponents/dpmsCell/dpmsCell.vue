@@ -1,12 +1,17 @@
 <template>
   <div
-    :class="['dpms-cell', hideBorderBottom ? 'hideBorder' : '', wrap ? 'wrap' : '', disabled ? 'disabled' : '']"
+    :class="[
+      'dpms-cell',
+      hideBorderBottom ? 'hideBorder' : '',
+      wrap ? 'wrap' : '',
+      disabled ? 'disabled' : '',
+    ]"
     @click="cellClick"
   >
     <div :class="['dpms-cell__title', required ? 'required' : '']">
-      {{ title }}
+      <slot name="title">{{ title }}</slot>
     </div>
-    <div class="dpms-cell__value text-ellipsis" :class="{wrap: wrap}">
+    <div class="dpms-cell__value text-ellipsis" :class="{ wrap: wrap }">
       <text
         class="dpms-cell-placeholder"
         v-if="placeholder && (!value && value !== 0)"
@@ -52,7 +57,7 @@ export default {
     wrap: {
       type: Boolean,
       default: false,
-    }
+    },
   },
   methods: {
     cellClick() {
@@ -75,13 +80,13 @@ export default {
   color: #323233;
   font-size: 34rpx;
   background-color: #fff;
-  &.wrap{
+  &.wrap {
     flex-wrap: wrap;
   }
-  &.disabled{
-    .dpms-cell__title, 
-    .dpms-cell__value .dpms-cell-placeholder{
-      color: rgba(0,0,0,0.5);
+  &.disabled {
+    .dpms-cell__title,
+    .dpms-cell__value .dpms-cell-placeholder {
+      color: rgba(0, 0, 0, 0.5);
     }
   }
   .dpms-cell__title {
@@ -102,9 +107,9 @@ export default {
     color: rgba(0, 0, 0, 0.5);
     padding-right: 10rpx;
     overflow: hidden;
-    &.wrap{
-      flex:none;
-      width:100%;
+    &.wrap {
+      flex: none;
+      width: 100%;
       text-align: left;
     }
     .dpms-cell-placeholder {

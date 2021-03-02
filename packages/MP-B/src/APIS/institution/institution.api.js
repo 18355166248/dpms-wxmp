@@ -40,6 +40,9 @@ const institutionAPI = {
   getStaffListByPositionFromAllInstitution(data) {
     return httper.get('institution/staff/list/position-all-institution', data)
   },
+  getDoctors(data) {
+    return httper.get('/institution-customer-mgt/mini-app/doctor/doctor', data)
+  },
 }
 
 export default institutionAPI
