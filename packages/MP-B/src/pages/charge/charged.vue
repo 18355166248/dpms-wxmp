@@ -1,5 +1,51 @@
 <template>
   <view class="content">
+    <view class="filter">
+      <view class="uni-list-cell">
+        <picker
+          @change="billSettlementChange"
+          :value="billSettlementIndex"
+          :range="billSettlementArray"
+          range-key="zh_CN"
+        >
+          <view class="uni-input"
+            >{{ billSettlementPickerText }}
+            <view class="iconfont icon-close"></view
+          ></view>
+        </picker>
+      </view>
+      <view class="uni-list-cell">
+        <picker
+          @change="billingTypeChange"
+          :value="billSupperTypeTypeIndex"
+          :range="billSupperTypeArray"
+          range-key="zh_CN"
+        >
+          <view class="uni-input"
+            >{{ billTypePickerText }} <view class="iconfont icon-close"></view
+          ></view>
+        </picker>
+      </view>
+      <view class="uni-list-cell">
+        <picker
+          @change="doctorChange"
+          :value="doctorIndex"
+          :range="doctorList"
+          range-key="staffName"
+        >
+          <view class="uni-input"
+            >{{ doctoPickerText }} <view class="iconfont icon-close"></view
+          ></view>
+        </picker>
+      </view>
+      <view class="uni-list-cell">
+        <picker @change="bindPickerChange" :value="index" :range="array">
+          <view class="uni-input"
+            >{{ array[index] }} <view class="iconfont icon-close"></view
+          ></view>
+        </picker>
+      </view>
+    </view>
     <view class="list">
       <view class="listTitle">
         <view class="datetime"
@@ -75,61 +121,78 @@ export default {
   data() {
     return {
       data: {},
+      billSettlementArray: this.initEnumArray(
+        this.$utils.getEnums('BillSettlement'),
+      ),
+      billSettlementIndex: 0,
+      billSupperTypeArray: this.initEnumArray(
+        this.$utils.getEnums('BillSupperType'),
+      ),
+      billSupperTypeTypeIndex: 0,
+      doctorList: uni.getStorageSync('allDoctorList'),
+      doctorIndex: 0,
     }
   },
+  computed: {
+    billSettlementPickerText() {
+      return this.billSettlementArray[this.billSettlementIndex].zh_CN
+    },
+    billTypePickerText() {
+      return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
+    },
+    doctoPickerText() {
+      return this.doctorList[this.doctorIndex].staffName
+    },
+  },
   mounted() {
-    // this.getRevenueList(this.pickerValue)
+    // console.log(this.billSettlementArray)
   },
   methods: {
-    formatPrice(money, sysmbol = '¥', places = 2) {
-      const zero = `${sysmbol}0.00`
-
-      if (isNaN(money) || money === '') return zero
-
-      if (money && money != null) {
-        money = `${money}`
-        let left = money.split('.')[0] // 小数点左边部分
-        let right = money.split('.')[1] // 小数点右边
-        // 保留places位小数点，当长度没有到places时，用0补足。
-        right = right
-          ? right.length >= places
-            ? '.' + right.substr(0, places)
-            : '.' + right + '0'.repeat(places - right.length)
-          : '.' + '0'.repeat(places)
-        var temp = left
-          .split('')
-          .reverse()
-          .join('')
-          .match(/(\d{1,3})/g) // 分割反向转为字符串然后最多3个，最少1个，将匹配的值放进数组返回
-        const numericalSymbols = Number(money) < 0 ? '-' : ''
-        return (
-          sysmbol +
-          numericalSymbols +
-          temp.join(',').split('').reverse().join('') +
-          right
-        ) // 补齐正负号和货币符号，数组转为字符串，通过逗号分隔，再分割（包含逗号也分割）反向转为字符串变回原来的顺序
-      } else if (money === 0) {
-        return zero
-      } else {
-        return zero
-      }
+    billSettlementChange: function (e) {
+      this.billSettlementIndex = e.detail.value
+    },
+    billingTypeChange: function (e) {
+      this.billSupperTypeTypeIndex = e.detail.value
+    },
+    doctorChange: function (e) {
+      this.doctorIndex = e.detail.value
+    },
+    initEnumArray: function (obj) {
+      if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
+      let array = Object.values(obj.properties)
+      array.unshift({ value: -1, zh_CN: '全部' })
+      return array
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.filter {
+  display: flex;
+  background-color: #fff;
+  margin-bottom: 16rpx;
+  margin-top: 2rpx;
+  height: 80rpx;
+  font-size: 28rpx;
+  color: #595959;
+  .iconfont {
+    font-size: 24rpx;
+    margin-left: 8rpx;
+  }
+  .uni-list-cell {
+    line-height: 80rpx;
+  }
+  .uni-input {
+    display: flex;
+    justify-content: center;
+  }
+}
 .lineHr {
   width: 686rpx;
   height: 2rpx;
   margin-left: 32rpx;
   background: rgba(0, 0, 0, 0.15);
-}
-.line {
-  width: 80%;
-  height: 2rpx;
-  background: rgba(0, 0, 0, 0.15);
-  margin-left: 10%;
 }
 .ml-32 {
   margin-left: 32rpx;
@@ -226,5 +289,8 @@ export default {
     color: #595959;
     width: 440rpx;
   }
+}
+.uni-list-cell {
+  width: 186rpx;
 }
 </style>
