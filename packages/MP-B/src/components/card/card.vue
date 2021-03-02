@@ -34,6 +34,10 @@
         >
           <text class="card-baseInfo-name">{{ name }}</text>
           <!-- <div class="iconfont icon-vip vip" v-if="patient.isShowMemberVip"></div> -->
+          <div
+            class="iconfont icon-arrea arrea"
+            v-if="patient.arrearsFlag"
+          ></div>
           <view v-if="badgeObj" class="card-baseInfo-extend">
             <badge
               :type="badgeObj.type"
@@ -107,7 +111,6 @@ import qs from 'qs'
  * @value position { Array|String } 间隙方向如: "left", ["left"], ["left", "top"],["left", "right", "top", "bottom"]
  * @property {Array} infos 主要信息内容数组
  * @value [ {label: 标签, value: 标签值} ]
- *
  * @event {Function} click 卡片点击事件函数
  */
 
@@ -390,6 +393,17 @@ export default {
       .vip {
         margin-left: 8rpx;
         background: linear-gradient(180deg, #fbd08c 0%, #cfa147 99%);
+        color: #ffffff;
+        border-radius: 4rpx;
+        width: 32rpx;
+        height: 32rpx;
+        text-align: center;
+        line-height: 32rpx;
+        font-size: 28rpx;
+      }
+      .arrea {
+        margin-left: 8rpx;
+        background: linear-gradient(180deg, #fca6ac 0%, #f84b54 99%);
         color: #ffffff;
         border-radius: 4rpx;
         width: 32rpx;

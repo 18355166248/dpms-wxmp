@@ -226,6 +226,18 @@
           }
         }
       ]
+    },
+    {
+      "root": "pages/charge",
+      "name": "charge",
+      "pages": [
+        {
+          "path": "chargeForm",
+          "style": {
+            "navigationBarTitleText": "收费"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {

@@ -147,6 +147,18 @@
               患者
             </view>
           </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/pages/charge/chargeForm')"
+            v-if="iconShow.isChargeShow"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color6">
+              <text class="iconfont icon-renmingbi"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              收费
+            </view>
+          </view>
         </view>
       </view>
 
@@ -277,7 +289,9 @@ export default {
   computed: {
     ...mapState('workbenchStore', ['medicalInstitution', 'staff', 'menu']),
     initIconShow() {
+      let findObj
       const { menuList, pageElementsList } = this.menu
+
       this.iconShow.isStatisticsShow =
         pageElementsList.findIndex((v) => {
           return v.enumValue === '11004'
@@ -291,7 +305,19 @@ export default {
         pageElementsList.findIndex((v) => {
           return v.enumValue === '11001'
         }) > -1
-      const findObj =
+
+      findObj =
+        menuList &&
+        menuList.find((v) => {
+          return v.enumValue === 'patient-center'
+        })
+      this.iconShow.isChargeShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'patient-manage'
+        }) > -1
+
+      findObj =
         menuList &&
         menuList.find((v) => {
           return v.enumValue === 'report-center'
@@ -639,6 +665,10 @@ export default {
         }
         &-icon-color5 {
           $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
+          @include colors($values...);
+        }
+        &-icon-color6 {
+          $values: rgba(255, 132, 135, 1), rgba(255, 77, 79, 1);
           @include colors($values...);
         }
 
