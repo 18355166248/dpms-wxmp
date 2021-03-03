@@ -134,6 +134,12 @@
       "style": {
         "navigationBarTitleText": "领券中心"
       }
+    },
+    {
+      "path": "pages/StoreCardDealRecordchild/StoreCardDealRecordchild",
+      "style": {
+        "navigationBarTitleText": "储值卡明细"
+      }
     }
   ],
   "globalStyle": {

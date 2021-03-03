@@ -15,38 +15,68 @@
           <view class="userName">{{ mobile || '未登录' }}</view>
         </view>
       </view>
-      <view class="vipInfo">
-        <div>
-          <view>￥{{ memberDetails.balance || 0 }}</view>
-          <view>储值卡余额</view>
-        </div>
-        <div>
+
+      <view class="vipInfo" v-show="configNumber === 0">
+        <div
+          :class="{
+            mySelf1: configNumber === 1,
+            mySelf2: configNumber === 2,
+            mySelf3: configNumber === 3,
+          }"
+          v-if="storedCardAccount === 1"
+        >
+          <view>￥{{ memberDetails.balance || 0.0 }}</view>
           <view
-            style="
-              overflow: hidden;
-              width: 90%;
-              white-space: nowrap;
-              text-overflow: ellipsis;
+            @click="
+              toUrl(
+                '/pages/StoreCardDealRecordchild/StoreCardDealRecordchild',
+                1,
+              )
             "
-            >{{ memberCardTypeQueryResponse.cardTypeName || '--' }}
-            <span v-if="shareMember === true"
-                style="color: rgba(0, 0, 0, 0.65);font-size: 14px"
-                class="icon iconfont icon-team"
-            ></span>
-          </view>
-          <view>
-            会员等级
-            <span
+            >储值卡余额<span
+              v-if="storedCardDetail === 1"
               style="color: rgba(0, 0, 0, 0.25);"
               class="icon iconfont icon-rightCircle"
-            ></span>
-          </view>
+            ></span
+          ></view>
         </div>
-        <div style="border: none;">
+        <div
+          :class="{
+            mySelf1: configNumber === 1,
+            mySelf2: configNumber === 2,
+            mySelf3: configNumber === 3,
+          }"
+          v-if="memberCardLevel === 1"
+        >
+          <view
+            >{{ memberCardTypeQueryResponse.cardTypeName || '--'
+            }}<span
+              v-if="shareMember === true"
+              class="icon iconfont icon-team"
+            ></span
+          ></view>
+          <view @click="toUrl('/pages/membership/membershipCard', 2)"
+            >会员等级??{{}}<span
+              v-if="memberCardDetail === 1"
+              style="color: rgba(0, 0, 0, 0.25);"
+              class="icon iconfont icon-rightCircle"
+            ></span
+          ></view>
+        </div>
+        <div
+          :class="{
+            mySelf1: configNumber === 1,
+            mySelf2: configNumber === 2,
+            mySelf3: configNumber === 3,
+          }"
+          v-if="integral === 1"
+          style="border: none;"
+        >
           <view>{{ memberDetails.currentPoints || 0 }}</view>
           <view>积分</view>
         </div>
       </view>
+
       <view class="personAppointment">
         <div>
           <span>
@@ -61,12 +91,15 @@
           <span>
             <span class="iconfont icon-time appointment"></span>我的预约
           </span>
-          <span @click="toUrl('/pages/myAppointment/myAppointment')">
+          <span @click="toUrl('/pages/myAppointment/myAppointment', 4)">
             待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
             <span class="iconfont icon-right"></span>
           </span>
         </div>
-        <div @click="toUrl('/pages/myCoupon/myCoupon')">
+        <div
+          v-if="myCoupon === 1"
+          @click="toUrl('/pages/myCoupon/myCoupon', 5)"
+        >
           <span>
             <span class="iconfont icon-coupons coupons"></span>我的优惠券
           </span>
@@ -75,8 +108,9 @@
           </span>
         </div>
         <div
+          v-if="couponCenter === 1"
           @click="
-            toUrl('/pages/couponCenter/couponCenter?memberId=' + memberId)
+            toUrl('/pages/couponCenter/couponCenter?memberId=' + memberId, 6)
           "
         >
           <span>
@@ -87,6 +121,7 @@
           </span>
         </div>
       </view>
+
       <div v-if="showLogout" class="quit" @click="logOut">退出登录</div>
       <div class="version">版本号V1.0.0</div>
 
@@ -95,7 +130,7 @@
         :y="y"
         direction="all"
         @change="onChange"
-        @click="toUrl('/pages/projAptmt/projAptmt')"
+        @click="toUrl('/pages/projAptmt/projAptmt', 7)"
         class="aptmt"
       >
         <span class="iconfont icon-time"></span>
@@ -129,6 +164,23 @@ export default {
       shareMember: false,
       showLogout: false,
       memberId: '',
+      billDetail: 1,
+      billOverview: 1,
+      couponCenter: 1,
+      doctorAppointment: 1,
+      electronicMedicalRecord: 1,
+      imaging: 1,
+      integral: 1,
+      medicalRecord: 1,
+      memberCardDetail: 1,
+      memberCardLevel: 1,
+      miniAppsFunctionConfigId: 1,
+      myCoupon: 1,
+      projectAppointment: 1,
+      quickAppointment: 1,
+      storedCardAccount: 1,
+      storedCardDetail: 4,
+      configNumber: 3,
     }
   },
   onShow() {
@@ -158,6 +210,7 @@ export default {
         this.getCount()
         this.getAppointCount()
         this.getUserDetail()
+        // this.getfunctionConfigDetail()
       } else {
         this.mobile = ''
         this.memberDetails = {}
@@ -197,6 +250,39 @@ export default {
           this.confirmedCount = res.data.undeterminedCount
         })
     },
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        console.log('getfunctionConfigDetail', res)
+        this.billDetail = res.data.billDetail
+        this.billOverview = res.data.billOverview
+        this.couponCenter = res.data.couponCenter
+        this.doctorAppointment = res.data.doctorAppointment
+        this.electronicMedicalRecord = res.data.electronicMedicalRecord
+        this.imaging = res.data.imaging
+        this.integral = res.data.integral
+        this.medicalRecord = res.data.medicalRecord
+        this.memberCardDetail = res.data.memberCardDetail
+        this.memberCardLevel = res.data.memberCardLevel
+        this.miniAppsFunctionConfigId = res.data.miniAppsFunctionConfigId
+        this.myCoupon = res.data.myCoupon
+        this.projectAppointment = res.data.projectAppointment
+        this.quickAppointment = res.data.quickAppointment
+        this.storedCardAccount = res.data.storedCardAccount
+        this.storedCardDetail = res.data.storedCardDetail
+        let configNumber = 0
+        if (this.memberCardLevel === 1) {
+          configNumber++
+        }
+        if (this.storedCardAccount === 1) {
+          configNumber++
+        }
+        if (this.integral === 1) {
+          configNumber++
+        }
+        this.configNumber = configNumber
+        console.log('this.configNumber', this.configNumber)
+      })
+    },
     getUserDetail() {
       customerAPI
         .userDetail({ userId: getStorage(STORAGE_KEY.STAFF).id })
@@ -205,14 +291,20 @@ export default {
           this.mobile = res.data.mobile
           this.memberId = res.data.memberId
           customerAPI
-            .getMemberDetails({ memberId: res.data.memberId,userBaseId: res.data.userBaseId})
+            .getMemberDetails({
+              memberId: res.data.memberId,
+              userBaseId: res.data.userBaseId,
+            })
             .then((re) => {
               console.log('MemberDetails', re)
               this.memberDetails = re.data.memberDetailResponse
               this.memberCardTypeQueryResponse =
                 re.data.memberCardTypeQueryResponse
-              console.log('xxx',this.memberCardTypeQueryResponse)
-              this.shareMember = re.data.memberDetailResponse === undefined ? false : re.data.memberDetailResponse.shareInfo.shareMember
+              console.log('xxx', this.memberCardTypeQueryResponse)
+              this.shareMember =
+                re.data.memberDetailResponse === undefined
+                  ? false
+                  : re.data.memberDetailResponse.shareInfo.shareMember
             })
         })
     },
@@ -224,11 +316,13 @@ export default {
         }
       })
     },
-    toUrl(url) {
+    toUrl(url, num) {
       if (this.toUrling) return
       this.toUrling = true
-      setTimeout(() => this.toUrling = false, 999)
+      setTimeout(() => (this.toUrling = false), 999)
       if (getStorage(STORAGE_KEY.STAFF).id) {
+        if (num === 1 && this.storedCardDetail !== 1) return //点储值卡余额但没配置储值卡明细
+        if (num === 2 && this.memberCardDetail !== 1) return //点会员等级但没配置会员详情
         this.$utils.push({ url: url })
       } else {
         this.load()
@@ -292,18 +386,75 @@ export default {
     border-radius: 8rpx;
     box-shadow: 0px -8rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     padding: 32rpx 0;
-    div {
-      border-right: 1rpx solid rgba(0, 0, 0, 0.15);
-      width: calc(33% - 1rpx);
-      /*padding-left: 50rpx;*/
-      padding-left: 30rpx;
+    .mySelf1 {
+      width: 100%;
+      display: flex;
+      flex-direction: row-reverse;
+      height: 102rpx;
+      line-height: 102rpx;
+      view:nth-child(2) {
+        width: calc(50% - 32rpx);
+        text-align: left;
+        font-weight: 400;
+        font-size: 34rpx;
+        padding-left: 32px;
+        color: rgba(0, 0, 0, 0.5);
+      }
       view:nth-child(1) {
+        width: calc(50% - 32rpx);
+        text-align: right;
+        font-weight: 400;
+        font-size: 34rpx;
+        padding-right: 32px;
+        color: rgba(0, 0, 0, 0.9);
+      }
+      .icon {
+        display: inline-block;
+        margin-left: 10rpx;
+        border-radius: 50%;
+        font-size: 25rpx;
+      }
+    }
+    .mySelf2 {
+      &:nth-child(1) {
+        border-right: 1rpx solid rgba(0, 0, 0, 0.15);
+      }
+      width: calc(50% - 1rpx);
+      view:nth-child(1) {
+        text-align: center;
         margin-bottom: 16rpx;
         font-weight: 500;
         font-size: 34rpx;
         color: rgba(0, 0, 0, 0.9);
       }
       view:nth-child(2) {
+        text-align: center;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: rgba(0, 0, 0, 0.45);
+      }
+      .icon {
+        display: inline-block;
+        margin-left: 10rpx;
+        border-radius: 50%;
+        font-size: 25rpx;
+      }
+    }
+    .mySelf3 {
+      &:nth-child(1),
+      &:nth-child(2) {
+        border-right: 1rpx solid rgba(0, 0, 0, 0.15);
+      }
+      width: calc(33% - 1rpx);
+      view:nth-child(1) {
+        text-align: center;
+        margin-bottom: 16rpx;
+        font-weight: 500;
+        font-size: 34rpx;
+        color: rgba(0, 0, 0, 0.9);
+      }
+      view:nth-child(2) {
+        text-align: center;
         font-weight: 400;
         font-size: 24rpx;
         color: rgba(0, 0, 0, 0.45);
@@ -372,6 +523,7 @@ export default {
         background: linear-gradient(316deg, #fa85c5 0%, #eb2f96 89%);
       }
     }
+
     div:not(:last-child) {
       border-bottom: #dbdbdb 1rpx solid;
     }

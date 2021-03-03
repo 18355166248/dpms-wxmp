@@ -1,5 +1,14 @@
 <template>
   <div>
+    <view class="nav">
+      <view class="leftNav">快速预约<view class="selected"></view></view>
+      <view class="centerNav" @click="jump('/pages/projAptmt/projAptmt')"
+        >按项目预约</view
+      >
+      <view class="rightNav" @click="jump('/pages/docAptmt/docAptmt')"
+        >按医生预约</view
+      >
+    </view>
     <dpmsForm ref="editForm" :model="form" :rules="rules">
       <dpmsCell
         title="预约门店"
@@ -532,6 +541,39 @@ page {
 }
 </style>
 <style lang="scss">
+.nav {
+  width: 100%;
+  height: 76rpx;
+  background: #ffffff;
+  display: flex;
+}
+.leftNav {
+  width: 33.3%;
+  font-size: 30rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: #5cbb89;
+  line-height: 36rpx;
+  padding-top: 20rpx;
+}
+.selected {
+  width: 58rpx;
+  height: 4rpx;
+  background: #5cbb89;
+  border-radius: 2rpx;
+  margin: 0 auto;
+  margin-top: 16rpx;
+}
+.rightNav,
+.centerNav {
+  width: 33.3%;
+  font-size: 30rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 36rpx;
+  padding-top: 20rpx;
+}
 .agree {
   color: rgba(153, 153, 153, 1);
   font-size: 24rpx;
@@ -541,13 +583,13 @@ page {
   .checkbox {
     width: 74rpx;
     height: 74rpx;
-    /deep/.checked{
+    /deep/.checked {
       padding: 22rpx 10rpx 22rpx 32rpx;
       display: block;
     }
     .check-circle {
       padding: 22rpx 10rpx 22rpx 32rpx;
-      &::before{
+      &::before {
         content: '';
         display: block;
         border: 1rpx solid rgba(0, 0, 0, 0.25);

@@ -23,6 +23,12 @@ export default {
   userDetail(param) {
     return httper.get('institution-customer/user/mini-apps/detail', param)
   },
+  getfunctionConfigDetail(param) {
+    return httper.get(
+      'institution-customer/mini-app/function-config/detail',
+      param,
+    )
+  },
   getMemberDetails(param) {
     return httper.get(
       'institution-customer/user/mini-apps/select/member-details',

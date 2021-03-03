@@ -1,7 +1,10 @@
 <template>
   <view class="content">
     <view class="nav">
-      <view class="leftNav">按项目预约<view class="selected"></view></view>
+      <view class="leftNav" @click="jump('/pages/docAptmt/docAptmt')"
+        >快速预约</view
+      >
+      <view class="centerNav">按项目预约<view class="selected"></view></view>
       <view class="rightNav" @click="jump('/pages/docAptmt/docAptmt')"
         >按医生预约</view
       >
@@ -256,7 +259,7 @@ export default {
   display: flex;
 }
 .leftNav {
-  width: 50%;
+  width: 33.3%;
   font-size: 30rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   text-align: center;
@@ -272,8 +275,9 @@ export default {
   margin: 0 auto;
   margin-top: 16rpx;
 }
-.rightNav {
-  width: 50%;
+.rightNav,
+.centerNav {
+  width: 33.3%;
   font-size: 30rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   text-align: center;
