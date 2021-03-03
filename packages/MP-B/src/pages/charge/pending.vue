@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="chargeContentPending">
     <view class="list">
       <view class="listTitle">
         <view class="datetime"

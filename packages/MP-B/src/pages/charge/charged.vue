@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="chargeContent">
     <view class="filterlistCharged">
       <view class="uni-list-cell">
         <picker
@@ -46,7 +46,7 @@
         </picker>
       </view>
     </view>
-    <view class="listCharged">
+    <view class="listCharged" @click="toPage('/pages/charge/chargeDetail', {})">
       <view class="listTitle">
         <view class="datetime"
           ><view class="iconfont icon-time-circle"></view> 2020-10-12
@@ -94,6 +94,7 @@
 <script>
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
+import qs from 'qs'
 
 export default {
   data() {
@@ -145,6 +146,13 @@ export default {
       let array = Object.values(obj.properties)
       array.unshift({ value: -1, zh_CN: '全部' })
       return array
+    },
+    toPage(url, params) {
+      this.$utils.push({
+        url: `${url}?${qs.stringify(params, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+        })}`,
+      })
     },
   },
 }

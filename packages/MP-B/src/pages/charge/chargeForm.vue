@@ -1,5 +1,10 @@
 <template>
-  <view @touchstart="touchStart" @touchend="touchEnd" style="height: 100vh;">
+  <view
+    class="chargeForm"
+    @touchstart="touchStart"
+    @touchend="touchEnd"
+    style="height: 100vh;"
+  >
     <tabs
       :value="currentTab"
       :scroll="false"
@@ -96,4 +101,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.chargeForm {
+  background: rgba(0, 0, 0, 0.04);
+}
+</style>
