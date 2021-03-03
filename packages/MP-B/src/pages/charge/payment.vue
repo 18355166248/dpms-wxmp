@@ -1,19 +1,6 @@
 <template>
   <view class="content">
-    <view class="filterlistCharged">
-      <view class="uni-list-cell">
-        <picker
-          @change="billSettlementChange"
-          :value="billSettlementIndex"
-          :range="billSettlementArray"
-          range-key="zh_CN"
-        >
-          <view class="uni-input"
-            >{{ billSettlementPickerText }}
-            <view class="iconfont icon-close"></view
-          ></view>
-        </picker>
-      </view>
+    <view class="filterlistPayment">
       <view class="uni-list-cell">
         <picker
           @change="billingTypeChange"
@@ -46,35 +33,25 @@
         </picker>
       </view>
     </view>
-    <view class="listCharged">
+    <view class="listPayment">
       <view class="listTitle">
         <view class="datetime"
           ><view class="iconfont icon-time-circle"></view> 2020-10-12
           12:30</view
         >
-        <view class="pending">欠费</view>
+        <view class="pending">收费</view>
       </view>
       <view class="lineHr"></view>
       <view class="listContent">
         <view class="listLine">
-          <view class="ml-32">BO636202010270009</view>
-        </view>
-        <view class="listLine">
           <view class="ml-32">普通收费</view>
-          <view class="totalFee">总计金额：$950.00 </view>
+          <view class="totalFee"></view>
         </view>
         <view class="listLine">
           <view class="ml-32">北极熊南京分店</view>
           <view class="chargeFee"
-            >应收金额：
+            >实收：
             <view class="feeRed">$950.00</view>
-          </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">张医生</view>
-          <view class="arrFee"
-            >欠费：
-            <view class="feeGreen">$950.00</view>
           </view>
         </view>
         <view class="listLine">
@@ -83,7 +60,7 @@
           >
         </view>
         <view class="listLine">
-          <view class="ml-32 date">创建时间：2021-09-08 10:20:30</view>
+          <view class="ml-32 date"></view>
           <view class="user">季冰宇</view>
         </view>
       </view>
@@ -99,24 +76,17 @@ export default {
   data() {
     return {
       data: {},
-      billSettlementArray: this.initEnumArray(
-        this.$utils.getEnums('BillSettlement'),
-      ),
-      billSettlementIndex: 0,
       billSupperTypeArray: this.initEnumArray(
-        this.$utils.getEnums('BillSupperType'),
+        this.$utils.getEnums('PayTradeType'),
       ),
       billSupperTypeTypeIndex: 0,
-      doctorList: uni.getStorageSync('allDoctorList'),
+      doctorList: uni.getStorageSync('allStaffList'),
       doctorIndex: 0,
       dateIndex: 0,
       dateList: ['全部', '今天', '近一周', '近一月'],
     }
   },
   computed: {
-    billSettlementPickerText() {
-      return this.billSettlementArray[this.billSettlementIndex].zh_CN
-    },
     billTypePickerText() {
       return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
     },
@@ -128,9 +98,6 @@ export default {
     // console.log(this.billSettlementArray)
   },
   methods: {
-    billSettlementChange: function (e) {
-      this.billSettlementIndex = e.detail.value
-    },
     billingTypeChange: function (e) {
       this.billSupperTypeTypeIndex = e.detail.value
     },
@@ -151,7 +118,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.filterlistCharged {
+.filterlistPayment {
   display: flex;
   background-color: #fff;
   margin-bottom: 16rpx;
@@ -160,7 +127,7 @@ export default {
   font-size: 28rpx;
   color: #595959;
   .uni-list-cell {
-    width: 186rpx;
+    width: 250rpx;
   }
   .iconfont {
     font-size: 24rpx;
@@ -183,11 +150,11 @@ export default {
 .ml-32 {
   margin-left: 32rpx;
 }
-.listCharged {
+.listPayment {
   background-color: #fff;
   margin-bottom: 20rpx;
   margin-top: 18rpx;
-  height: 490rpx;
+  height: 380rpx;
   .listTitle {
     height: 84rpx;
     display: flex;
@@ -207,11 +174,14 @@ export default {
   .pending {
     width: 116rpx;
     height: 40rpx;
+    background: #fff7e6;
+    border: 2rpx solid #fa8c16;
+    border-radius: 6rpx;
     text-align: center;
-    color: #52c41a;
+    color: #fa8c16;
     line-height: 40rpx;
     font-size: 28rpx;
-    margin-left: 232rpx;
+    margin-left: 202rpx;
   }
   .listContent {
     height: 204rpx;
