@@ -1,5 +1,10 @@
 <template>
-  <view @touchstart="touchStart" @touchend="touchEnd" style="height: 100vh;">
+  <view
+    class="chargeForm"
+    @touchstart="touchStart"
+    @touchend="touchEnd"
+    style="height: 100vh;"
+  >
     <tabs
       :value="currentTab"
       :scroll="false"
@@ -40,7 +45,7 @@ export default {
         { name: '已收费账单', val: 1 },
         { name: '支付记录', val: 2 },
       ],
-      currentTab: 2,
+      currentTab: 0,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
     }
@@ -96,4 +101,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.chargeForm {
+  background: rgba(0, 0, 0, 0.04);
+}
+</style>

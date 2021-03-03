@@ -1,5 +1,5 @@
 <template>
-  <view class="content">
+  <view class="chargeContentPayment">
     <view class="filterlistPayment">
       <view class="uni-list-cell">
         <picker
