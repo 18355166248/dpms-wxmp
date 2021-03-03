@@ -137,8 +137,8 @@ export default {
 .list {
   background-color: #fff;
   margin-bottom: 20rpx;
-  margin-top: 16rpx;
-  height: 410rpx;
+  margin-top: 18rpx;
+  height: 380rpx;
   .listTitle {
     height: 84rpx;
     display: flex;
@@ -183,7 +183,7 @@ export default {
     height: 204rpx;
   }
   .listLine {
-    margin-top: 24rpx;
+    margin-top: 18rpx;
     display: flex;
     font-size: 28rpx;
   }
@@ -223,7 +223,7 @@ export default {
     margin-left: 40rpx;
   }
   .date {
-    color: #595959;
+    color: #7f7f7f;
     width: 440rpx;
   }
 }

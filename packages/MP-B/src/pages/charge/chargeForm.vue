@@ -15,6 +15,7 @@
 
     <pending v-if="currentTab === 0" />
     <charged v-if="currentTab === 1" />
+    <payment v-if="currentTab === 2" />
   </view>
 </template>
 
@@ -22,6 +23,7 @@
 import tabs from '@/components/tabs/tabs.vue'
 import pending from './pending'
 import charged from './charged'
+import payment from './payment'
 import institutionAPI from 'APIS/institution/institution.api'
 
 export default {
@@ -29,6 +31,7 @@ export default {
     tabs,
     pending,
     charged,
+    payment,
   },
   data() {
     return {
@@ -37,7 +40,7 @@ export default {
         { name: '已收费账单', val: 1 },
         { name: '支付记录', val: 2 },
       ],
-      currentTab: 1,
+      currentTab: 2,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
     }
@@ -58,6 +61,10 @@ export default {
           res.data.unshift({ staffId: 0, staffName: '全部' })
           uni.setStorageSync('allDoctorList', res.data)
         })
+      institutionAPI.getStaffs().then((res) => {
+        res.data.unshift({ staffId: 0, staffName: '全部' })
+        uni.setStorageSync('allStaffList', res.data)
+      })
     },
     changeTab(i) {
       this.currentTab = this.tabs[i].val
