@@ -45,7 +45,7 @@ export default {
         { name: '已收费账单', val: 1 },
         { name: '支付记录', val: 2 },
       ],
-      currentTab: 2,
+      currentTab: 0,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
     }
