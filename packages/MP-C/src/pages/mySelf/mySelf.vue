@@ -13,6 +13,11 @@
         <view class="header">
           <image class="headerImg" :src="headerImgSrc" />
           <view class="userName">{{ mobile || '未登录' }}</view>
+          <span class="iconfont icon-switch-user"
+            style="height: 40rpx; width: 36rpx; font-size: 44rpx; margin-left: 20rpx; font-weight: 500;"
+            @click="toUrl('/pages/switchUser/switchUser')"
+            >
+          </span>
         </view>
       </view>
 
@@ -312,6 +317,7 @@ export default {
       customerAPI.logOut().then((res) => {
         if (res.code == 0) {
           removeStorage(STORAGE_KEY.STAFF)
+          removeStorage(STORAGE_KEY.CUSTOMERID)
           this.$utils.reLaunch({ url: '/pages/login/index?param=myself' })
         }
       })

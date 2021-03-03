@@ -141,6 +141,13 @@
         "navigationBarTitleText": "储值卡明细"
       }
     }
+    ,
+    {
+      "path": "pages/switchUser/switchUser",
+      "style": {
+        "navigationBarTitleText": "选择绑定人员"
+      }
+    }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "white",

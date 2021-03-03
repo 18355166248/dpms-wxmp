@@ -69,8 +69,19 @@ export default {
         code: this.code,
         openId: getStorage(STORAGE_KEY.OPENID),
       })
-      setStorage(STORAGE_KEY.STAFF, res.data)
-      setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
+      if (res.code === 0) {
+        setStorage(STORAGE_KEY.STAFF, res.data)
+        setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
+        loginApi.getWhetherBindCustomer({
+          userId: res.data?.id
+        }).then((info) => {
+          setStorage(STORAGE_KEY.CUSTOMERID, info.data?.bindedCustomerId)
+          if(info.code === 0 && info.data?.need) {
+            this.$utils.reLaunch({ url: '/pages/switchUser/switchUser' })
+            return
+          }
+        })
+      }
       if (getCurrentPages().slice(-2)[0].route.includes('pages/login')) {
         this.$utils.reLaunch({ url: '/pages/index/index' })
       } else {
