@@ -1,32 +1,37 @@
 <template>
   <div class="apptDpmsList">
     <div v-if="list.length !== 0">
-      <dpmsCheckboxGroup v-model="checked">
-        <dpmsCollapse class="mb-56">
-          <dpmsCollapseItem
-            v-for="patientTag in list"
-            :key="patientTag.name"
-            :title="patientTag.name"
-            showAnimation
-            open
-          >
-            <div class="apptCollapse">
+      <div class="tagContent" v-for="patientTag in list" :key="patientTag.id">
+        <div class="tagTitle">
+          {{ patientTag.name }}
+        </div>
+        <div class="tagBody">
+          <div class="plus">
+            <text class="iconfont icon-plus" />
+          </div>
+          <div class="tagList">
+            <div v-for="tag in patientTag.tagInfoDTOList" :key="tag.id">
               <div
-                v-for="(tag, index) in patientTag.tagInfoDTOList"
-                :key="tag.id"
-                :class="['appt', index === 0 && 'first']"
+                class="tag"
+                @click="insertId(tag.id)"
+                v-if="!checked.includes(tag.id)"
               >
-                <dpmsCheckbox shape="square" :key="tag.id" :label="tag.id">
-                  {{ tag.name }}
-                </dpmsCheckbox>
+                {{ tag.name }}
+              </div>
+              <div
+                class="tagChecked"
+                @click="removeId(tag.id)"
+                v-if="checked.includes(tag.id)"
+              >
+                {{ tag.name }}
               </div>
             </div>
-          </dpmsCollapseItem>
-        </dpmsCollapse>
-      </dpmsCheckboxGroup>
-      <div class="mt-56">
-        <dpmsButton @click="onSave" />
+          </div>
+        </div>
       </div>
+      <button class="ensurebutton" @click="onSave">
+        保存
+      </button>
     </div>
     <div v-else>
       <empty :disabled="true" text="暂无患者标签数据"></empty>
@@ -59,6 +64,14 @@ export default {
       uni.$emit('updateTagsCheckedList', this.checked)
       this.$utils.back()
     },
+    insertId(id) {
+      this.checked.push(Number(id))
+    },
+    removeId(id) {
+      this.checked = this.checked.filter((v) => {
+        return v !== Number(id)
+      })
+    },
     async loadPatientTags() {
       let res = await patientAPI.getPatientTags()
       let patientTagsList = res.data.filter((v) => v.tagInfoDTOList?.length > 0)
@@ -71,19 +84,71 @@ export default {
 
 <style lang="scss" scoped>
 .apptDpmsList {
-  height: 100%;
-  .apptCollapse {
-    padding-left: 32rpx;
-    .appt {
-      height: 112rpx;
-      line-height: 112rpx;
-      border-top: 1rpx solid rgba($color: #000000, $alpha: 0.15);
-      color: rgba($color: #000000, $alpha: 0.9);
-      font-size: 34rpx;
-
-      &.first {
-        border-top: none;
-      }
+  .ensurebutton {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    height: 90rpx;
+    color: #ffffff;
+    text-align: center;
+    font-size: 36rpx;
+    background: #5cbb89;
+    border-radius: 0;
+  }
+  .tagContent {
+    background: #fff;
+    margin-bottom: 20rpx;
+    .tagTitle {
+      font-size: 30rpx;
+      padding-top: 32rpx;
+      padding-left: 32rpx;
+      color: #595959;
+    }
+    .tagBody {
+      display: flex;
+      margin-top: 16rpx;
+      padding-bottom: 20rpx;
+    }
+    .plus {
+      margin-left: 32rpx;
+      width: 68rpx;
+      height: 68rpx;
+      background: #5cbb89;
+      border-radius: 4rpx;
+    }
+    .tagList {
+      display: flex;
+      width: 600rpx;
+      flex-wrap: wrap;
+    }
+    .tag {
+      width: 148rpx;
+      height: 68rpx;
+      border: 2rpx solid rgba(0, 0, 0, 0.15);
+      border-radius: 10rpx;
+      line-height: 65rpx;
+      text-align: center;
+      margin-left: 16rpx;
+      margin-bottom: 16rpx;
+      color: #595959;
+    }
+    .tagChecked {
+      width: 148rpx;
+      height: 68rpx;
+      background: #eef8f3;
+      border: 2rpx solid #5cbb89;
+      border-radius: 10rpx;
+      line-height: 65rpx;
+      color: #5cbb89;
+      text-align: center;
+      margin-left: 16rpx;
+      margin-bottom: 16rpx;
+    }
+    .icon-plus {
+      color: #fff;
+      position: relative;
+      top: 12rpx;
+      left: 18rpx;
     }
   }
 }
