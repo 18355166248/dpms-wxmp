@@ -1,10 +1,5 @@
 <template>
-  <view
-    class="chargeForm"
-    @touchstart="touchStart"
-    @touchend="touchEnd"
-    style="height: 100vh;"
-  >
+  <view class="chargeForm" @touchstart="touchStart" @touchend="touchEnd">
     <tabs
       :value="currentTab"
       :scroll="false"
@@ -18,9 +13,9 @@
       @change="changeTab"
     />
 
-    <pending v-if="currentTab === 0" />
-    <charged v-if="currentTab === 1" />
-    <payment v-if="currentTab === 2" />
+    <pending v-if="currentTab === 0" :patientId="patientId" />
+    <charged v-if="currentTab === 1" patientId />
+    <payment v-if="currentTab === 2" patientId />
   </view>
 </template>
 
@@ -48,10 +43,12 @@ export default {
       currentTab: 0,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
+      patientId: 0,
     }
   },
-  onLoad() {
+  onLoad(params) {
     this.init()
+    this.patientId = Number(params.patientId)
   },
   methods: {
     init() {
@@ -104,5 +101,6 @@ export default {
 <style lang="scss" scoped>
 .chargeForm {
   background: rgba(0, 0, 0, 0.04);
+  height: 100vh;
 }
 </style>

@@ -51,6 +51,18 @@
           </view>
         </view>
         <view
+          v-if="iconShow.isChargeShow"
+          class="menu-area-item"
+          @click="toUrl('/pages/charge/chargeForm=' + patientId)"
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color6">
+            <text class="iconfont icon-renmingbi"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            收费
+          </view>
+        </view>
+        <view
           v-if="menu.pageElementsList.some((m) => m.enumValue === 'image')"
           class="menu-area-item"
           @click="toUrl('/pages/patient/image/record?patientId=' + patientId)"
@@ -102,6 +114,9 @@ export default {
     return {
       patientId: '',
       patient: {},
+      iconShow: {
+        isChargeShow: false,
+      },
     }
   },
   computed: {
@@ -111,6 +126,18 @@ export default {
   },
   onLoad(params) {
     this.patientId = params.patientId
+    const { menuList } = this.menu
+
+    const findObj =
+      menuList &&
+      menuList.find((v) => {
+        return v.enumValue === 'patient-center'
+      })
+    this.iconShow.isChargeShow =
+      findObj &&
+      findObj.children.findIndex((v) => {
+        return v.enumValue === 'patient-manage'
+      }) > -1
   },
   onShow() {
     this.getPatient()
@@ -218,6 +245,10 @@ export default {
       }
       &-icon-color5 {
         $values: rgba(110, 167, 252, 1), rgba(74, 147, 254, 1);
+        @include colors($values...);
+      }
+      &-icon-color6 {
+        $values: rgba(255, 132, 135, 1), rgba(255, 77, 79, 1);
         @include colors($values...);
       }
 
