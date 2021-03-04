@@ -49,6 +49,17 @@ const patientAPI = {
   getPatientMedicalRecordNo(data) {
     return httper.get('/patient/serial/medical-record/serial', data)
   },
+  //查询病例模板
+  getMedicalTemplateTypes(data) {
+    return httper.get(
+      'patient/settings/medical-record/template-type/select',
+      data,
+    )
+  },
+  //查询病例模板内容
+  getMedicalTemplates(data) {
+    return httper.get('/patient/settings/medical-record/template/select', data)
+  },
 }
 
 export default patientAPI
