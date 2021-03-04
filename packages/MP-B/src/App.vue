@@ -156,6 +156,12 @@ button::after {
 .icon-arrea:before {
   content: '\e64d';
 }
+.icon-lishibingli1:before {
+  content: '\e64c';
+}
+.icon-moban1:before {
+  content: '\e653';
+}
 /* iconfont图标 end */
 </style>
 

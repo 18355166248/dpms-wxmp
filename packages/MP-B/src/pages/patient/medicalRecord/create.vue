@@ -384,8 +384,29 @@
       </dpmsCell>
     </dpmsForm>
     <div class="bottom">
-      <button @click="save">保 存</button>
+      <div class="inner">
+        <div class="funcs">
+          <div @click="historyMedicalVisible = true">
+            <div class="iconfont icon-lishibingli1" />
+            历史病历
+          </div>
+          <div @click="templateMedicalVisible = true">
+            <div class="iconfont icon-moban1" />
+            模板
+          </div>
+        </div>
+        <button @click="save">保 存</button>
+      </div>
     </div>
+    <HistoryMedicalSelect
+      :visible.sync="historyMedicalVisible"
+      :patientId="patientId"
+      @change="historyMedicalChange"
+    />
+    <TemplateMedicalSelect
+      :visible.sync="templateMedicalVisible"
+      @change="templateMedicalChange"
+    />
   </div>
 </template>
 
@@ -394,10 +415,12 @@ import moment from 'moment'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import institutionAPI from '@/APIS/institution/institution.api.js'
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
+import HistoryMedicalSelect from '@/businessComponents/MedicalSelect/HistorySelect.vue'
+import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSelect.vue'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
-  components: { TeethSelect },
+  components: { TeethSelect, HistoryMedicalSelect, TemplateMedicalSelect },
   data() {
     return {
       form: {
@@ -419,6 +442,9 @@ export default {
       registerList: null,
       doctors: [],
       VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
+      historyMedicalVisible: false,
+      patientId: '',
+      templateMedicalVisible: false,
     }
   },
   computed: {
@@ -571,13 +597,13 @@ export default {
       this.teethSync = detail.value
     },
     registNew({ dt }) {
-      const registerId = -1
+      const registerId = null
       const registerTime = moment(dt).valueOf()
       const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
       const newRegisterIndex = this.registerList.indexOf(
         (l) => l.registerId === registerId,
       )
-      if (newRegisterIndex !== -1) {
+      if (newRegisterIndex !== null) {
         this.registerList = this.registerList.filter(
           (l) => l.registerId !== registerId,
         )
@@ -592,6 +618,66 @@ export default {
     registerChange({ detail }) {
       this.form.registerId = registerList[detail.value].registerId
     },
+    historyMedicalChange(contents) {
+      const keyP = {
+        symptom: 'medicalRecordCheckNormalVOList.0.checkNormalSymptoms',
+        rayExamination: 'medicalRecordCheckRayVOList.0.checkRaySymptoms',
+        diagnosisDesc: 'medicalRecordDiagnosisVOList.0.diagnosisDesc',
+        treatmentProgram:
+          'medicalRecordTreatmentProgramVOList.0.treatmentProgramn',
+        dispose: 'medicalRecordDisposeVOList.0.dispose',
+      }
+      contents.forEach((c) => {
+        const k = keyP[c.key] || c.key
+        if (/^\w+\.\d+\.\w+$/.test(k)) {
+          const ks = k.split('.')
+          this.$set(this.form[ks[0]], ks[1], {
+            ...this.form[ks[0]][ks[1]],
+            [ks[2]]: c.content,
+          })
+        } else {
+          this.$set(this.form, k, c.content)
+        }
+      })
+    },
+    templateMedicalChange(t) {
+      const keyPs = [
+        ['chiefComplaint', 'mainComplaint'],
+        [
+          'dentalExamination',
+          'medicalRecordCheckNormalVOList.0.checkNormalSymptoms',
+        ],
+        [
+          'auxiliaryExamination',
+          'medicalRecordCheckRayVOList.0.checkRaySymptoms',
+        ],
+        ['diagnosis', 'medicalRecordDiagnosisVOList.0.diagnosisDesc'],
+        [
+          'treatmentPlan',
+          'medicalRecordTreatmentProgramVOList.0.treatmentProgramn',
+        ],
+        ['disposal', 'medicalRecordDisposeVOList.0.dispose'],
+      ]
+      const formKeys = Object.keys(this.form)
+      Object.keys(t).forEach((tk) => {
+        if (formKeys.includes(tk)) {
+          this.$set(this.form, tk, t[tk])
+        } else {
+          const kps = keyPs.find((ks) => ks[0] === tk)
+          if (kps) {
+            if (/^\w+\.\d+\.\w+$/.test(kps[1])) {
+              const ks = kps[1].split('.')
+              this.$set(this.form[ks[0]], ks[1], {
+                ...this.form[ks[0]][ks[1]],
+                [ks[2]]: t[tk],
+              })
+            } else {
+              this.$set(this.form, kps[1], t[tk])
+            }
+          }
+        }
+      })
+    },
   },
   onLoad({ patientId, medicalRecordId }) {
     this.patientId = patientId
@@ -600,7 +686,6 @@ export default {
     this.onTextareaChange()
     this.onEdit()
     this.getDoctors()
-    console.log(this.VIS_TYPE_ENUM)
   },
 }
 </script>
@@ -663,12 +748,32 @@ export default {
 }
 .bottom {
   height: 90rpx;
-  button {
+  .inner {
+    display: flex;
     position: fixed;
     right: 0;
     bottom: 0;
     left: 0;
     height: 90rpx;
+  }
+  .funcs {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    color: #4c4c4c;
+    font-size: 24rpx;
+    background: white;
+    border-top: rgba(0, 0, 0, 0.15) solid 2rpx;
+    text-align: center;
+    .iconfont {
+      color: #5cbb89;
+      font-size: 36rpx;
+    }
+  }
+  button {
+    width: 50%;
+    height: 100%;
     background: #5cbb89;
     color: #ffffff;
     font-size: 36rpx;
