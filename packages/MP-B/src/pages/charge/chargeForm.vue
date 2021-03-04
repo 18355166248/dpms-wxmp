@@ -1,5 +1,5 @@
 <template>
-  <view @touchstart="touchStart" @touchend="touchEnd" style="height: 100vh;">
+  <view class="chargeForm" @touchstart="touchStart" @touchend="touchEnd">
     <tabs
       :value="currentTab"
       :scroll="false"
@@ -13,20 +13,25 @@
       @change="changeTab"
     />
 
-    <pending v-if="currentTab === 0" />
+    <pending v-if="currentTab === 0" :patientId="patientId" />
+    <charged v-if="currentTab === 1" patientId />
+    <payment v-if="currentTab === 2" patientId />
   </view>
 </template>
 
 <script>
-import moment from 'moment'
 import tabs from '@/components/tabs/tabs.vue'
 import pending from './pending'
-import { mapState } from 'vuex'
+import charged from './charged'
+import payment from './payment'
+import institutionAPI from 'APIS/institution/institution.api'
 
 export default {
   components: {
     tabs,
     pending,
+    charged,
+    payment,
   },
   data() {
     return {
@@ -38,12 +43,31 @@ export default {
       currentTab: 0,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
+      patientId: 0,
     }
   },
-  computed: {
-    ...mapState('workbenchStore', ['menu']),
+  onLoad(params) {
+    this.init()
+    this.patientId = Number(params.patientId)
   },
   methods: {
+    init() {
+      institutionAPI
+        .getStaffListByPositionFromAllInstitution({
+          workStatus:
+            this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+              ?.value || 1,
+          position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
+        })
+        .then((res) => {
+          res.data.unshift({ staffId: 0, staffName: '全部' })
+          uni.setStorageSync('allDoctorList', res.data)
+        })
+      institutionAPI.getStaffs().then((res) => {
+        res.data.unshift({ staffId: 0, staffName: '全部' })
+        uni.setStorageSync('allStaffList', res.data)
+      })
+    },
     changeTab(i) {
       this.currentTab = this.tabs[i].val
     },
@@ -74,4 +98,9 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.chargeForm {
+  background: rgba(0, 0, 0, 0.04);
+  height: 100vh;
+}
+</style>

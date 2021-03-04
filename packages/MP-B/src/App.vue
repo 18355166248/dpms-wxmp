@@ -21,14 +21,15 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_5imv6tyd0gx.eot');
-  src: url('//at.alicdn.com/t/font_1965288_5imv6tyd0gx.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.eot');
+  src: url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_5imv6tyd0gx.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_5imv6tyd0gx.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_5imv6tyd0gx.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_5imv6tyd0gx.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.svg#iconfont') format('svg');
 }
+
 /*********在线字体代码end*********/
 
 .iconfont {
@@ -161,6 +162,12 @@ button::after {
 }
 .icon-moban1:before {
   content: '\e653';
+}
+.icon-open:before {
+  content: '\e64e';
+}
+.icon-close:before {
+  content: '\e654';
 }
 /* iconfont图标 end */
 </style>

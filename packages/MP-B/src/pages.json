@@ -236,6 +236,12 @@
           "style": {
             "navigationBarTitleText": "收费"
           }
+        },
+        {
+          "path": "chargeDetail",
+          "style": {
+            "navigationBarTitleText": "账单明细"
+          }
         }
       ]
     }
