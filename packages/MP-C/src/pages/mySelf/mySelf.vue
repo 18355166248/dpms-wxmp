@@ -13,10 +13,17 @@
         <view class="header">
           <image class="headerImg" :src="headerImgSrc" />
           <view class="userName">{{ mobile || '未登录' }}</view>
-          <span class="iconfont icon-switch-user"
-            style="height: 40rpx; width: 36rpx; font-size: 44rpx; margin-left: 20rpx; font-weight: 500;"
+          <span
+            class="iconfont icon-switch-user"
+            style="
+              height: 40rpx;
+              width: 36rpx;
+              font-size: 44rpx;
+              margin-left: 20rpx;
+              font-weight: 500;
+            "
             @click="toUrl('/pages/switchUser/switchUser')"
-            >
+          >
           </span>
         </view>
       </view>
@@ -84,33 +91,47 @@
 
       <view class="personAppointment">
         <div>
-          <span>
-            <span class="iconfont icon-set personnelManagement"></span>人员管理
-          </span>
-          <span @click="goPerson">
-            已添加{{ count || 0 }}人
+          <span
+            ><span class="iconfont icon-set personnelManagement"></span
+            >人员管理</span
+          >
+          <span @click="goPerson"
+            >已添加{{ count || 0 }}人<span class="iconfont icon-right"></span
+          ></span>
+        </div>
+        <div>
+          <span
+            ><span class="iconfont icon-time appointment"></span>我的预约</span
+          >
+          <span @click="toUrl('/pages/myAppointment/myAppointment', 4)"
+            >待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
             <span class="iconfont icon-right"></span>
           </span>
         </div>
         <div>
-          <span>
-            <span class="iconfont icon-time appointment"></span>我的预约
-          </span>
-          <span @click="toUrl('/pages/myAppointment/myAppointment', 4)">
-            待确认:{{ confirmedCount || 0 }} /已预约:{{ appointCount || 0 }}
-            <span class="iconfont icon-right"></span>
-          </span>
+          <span
+            ><span class="iconfont icon-time appointment"></span>我的账单</span
+          >
+          <span @click="toUrl('/pages/myBill/myBill')"
+            ><span class="iconfont icon-right"></span
+          ></span>
+        </div>
+        <div>
+          <span
+            ><span class="iconfont icon-time appointment"></span>健康档案</span
+          >
+          <span @click="onHandeleSelectPerson"
+            ><span class="iconfont icon-right"></span
+          ></span>
         </div>
         <div
           v-if="myCoupon === 1"
           @click="toUrl('/pages/myCoupon/myCoupon', 5)"
         >
-          <span>
-            <span class="iconfont icon-coupons coupons"></span>我的优惠券
-          </span>
-          <span>
-            <span class="iconfont icon-right"></span>
-          </span>
+          <span
+            ><span class="iconfont icon-coupons coupons"></span>我的优惠券</span
+          >
+          <span><span class="iconfont icon-right"></span></span>
         </div>
         <div
           v-if="couponCenter === 1"
@@ -118,12 +139,10 @@
             toUrl('/pages/couponCenter/couponCenter?memberId=' + memberId, 6)
           "
         >
-          <span>
-            <span class="iconfont icon-gift couponCentre"></span>领券中心
-          </span>
-          <span>
-            <span class="iconfont icon-right"></span>
-          </span>
+          <span
+            ><span class="iconfont icon-gift couponCentre"></span>领券中心</span
+          >
+          <span><span class="iconfont icon-right"></span></span>
         </div>
       </view>
 
@@ -141,6 +160,46 @@
         <span class="iconfont icon-time"></span>
       </movable-view>
     </view>
+    <dpmsBottomPicker
+      class="dpmsBottomPicker"
+      :visible.sync="itemPickerSelectPersonVisible"
+      title="选择人员"
+    >
+      <div>
+        <div
+          class="item"
+          v-for="(item, index) in selectPersonData"
+          :key="item.patientId"
+          @click="onHandleItemClick(item)"
+        >
+          <div class="itemContent">
+            <div class="itemContentLeft">
+              <div>
+                <span class="labelContentText">姓名：</span
+                ><span class="textContentName">{{ item.patientName }}</span>
+              </div>
+              <div>
+                <span class="labelContentText">病历号：</span
+                ><span class="textContentName">{{ item.patientNo }}</span>
+              </div>
+            </div>
+            <div class="itemContentRight">
+              <span>
+                <span
+                  class="iconfont icon-right"
+                  style="color: #4c4c4c;"
+                ></span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <empty
+        v-if="!selectPersonData.length"
+        :disabled="true"
+        text="暂无可可选择人员"
+      />
+    </dpmsBottomPicker>
   </movable-area>
 </template>
 
@@ -169,6 +228,9 @@ export default {
       shareMember: false,
       showLogout: false,
       memberId: '',
+      itemPickerSelectPersonVisible: false,
+      selectPersonData: [],
+      selectPersonCurrentIndex: 0,
       billDetail: 1,
       billOverview: 1,
       couponCenter: 1,
@@ -307,7 +369,8 @@ export default {
                 re.data.memberCardTypeQueryResponse
               console.log('xxx', this.memberCardTypeQueryResponse)
               this.shareMember =
-                re.data.memberDetailResponse === undefined
+                re.data.memberDetailResponse === undefined ||
+                re.data.memberDetailResponse.shareInfo === undefined
                   ? false
                   : re.data.memberDetailResponse.shareInfo.shareMember
             })
@@ -342,6 +405,27 @@ export default {
         this.x = e.detail.x
         this.y = e.detail.y
       })
+    },
+    getPeopleList() {
+      customerAPI
+        .healthRecordsSelectUserList({
+          userId: getStorage(STORAGE_KEY.STAFF).id,
+        })
+        .then((res) => {
+          this.selectPersonData = res.data
+        })
+    },
+    onHandeleSelectPerson() {
+      this.itemPickerSelectPersonVisible = true
+      this.getPeopleList()
+    },
+    onHandleItemClick(item, index) {
+      console.log('item', item)
+      this.selectPersonCurrentIndex = index
+      this.$utils.push({
+        url: '/pages/healthFile/healthFile?patientId=' + item.patientId,
+      })
+      this.itemPickerSelectPersonVisible = false
     },
   },
 }
@@ -592,5 +676,49 @@ movable-view {
   &-img {
     width: 100%;
   }
+}
+.item {
+  .itemContent {
+    padding: 24rpx 16rpx 24rpx 32rpx;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border-radius: 8rpx;
+    box-shadow: 0 18rpx 56rpx 16rpx rgba(0, 0, 0, 0.05),
+      0 12rpx 32rpx 0 rgba(0, 0, 0, 0.08),
+      0 6rpx 12rpx -8rpx rgba(0, 0, 0, 0.12);
+    margin-bottom: 32rpx;
+    .labelContentText {
+      font-size: 28rpx;
+      color: rgba(0, 0, 0, 0.9);
+    }
+    .textContentName {
+      font-size: 28rpx;
+      color: rgba(0, 0, 0, 0.7);
+    }
+    .itemContentRight {
+      .defaultContent {
+        margin-right: 24rpx;
+        padding: 0 16rpx;
+        height: 40rpx;
+        font-size: 28rpx;
+        font-family: SanFranciscoDisplay, SanFranciscoDisplay-Regular,
+          sans-serif;
+        font-weight: 400;
+        text-align: center;
+        color: #1890ff;
+        line-height: 36rpx;
+        background: #e6f7ff;
+        border: 2rpx solid #91d5ff;
+        border-radius: 6rpx;
+      }
+    }
+  }
+}
+
+.dpmsBottomPicker .empty {
+  padding: 100rpx 0;
 }
 </style>
