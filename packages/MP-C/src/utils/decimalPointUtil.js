@@ -1,5 +1,4 @@
-
-function formatPriceDecimal (money, sysmbol = '¥', places = 2)  {
+function formatPriceDecimal(money, sysmbol = '¥', places = 2) {
   const zero = `${sysmbol}0.00`
 
   if (isNaN(money) || money === '') return zero
@@ -15,10 +14,10 @@ function formatPriceDecimal (money, sysmbol = '¥', places = 2)  {
         : '.' + right + '0'.repeat(places - right.length)
       : '.' + '0'.repeat(places)
     var temp = left
-    .split('')
-    .reverse()
-    .join('')
-    .match(/(\d{1,3})/g) // 分割反向转为字符串然后最多3个，最少1个，将匹配的值放进数组返回
+      .split('')
+      .reverse()
+      .join('')
+      .match(/(\d{1,3})/g) // 分割反向转为字符串然后最多3个，最少1个，将匹配的值放进数组返回
     const numericalSymbols = Number(money) < 0 ? '-' : ''
     return (
       sysmbol +
@@ -33,5 +32,4 @@ function formatPriceDecimal (money, sysmbol = '¥', places = 2)  {
   }
 }
 
-export { formatPriceDecimal };
-
+export { formatPriceDecimal }

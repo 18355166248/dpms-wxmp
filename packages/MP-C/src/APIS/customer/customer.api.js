@@ -23,6 +23,12 @@ export default {
   userDetail(param) {
     return httper.get('institution-customer/user/mini-apps/detail', param)
   },
+  getfunctionConfigDetail(param) {
+    return httper.get(
+      'institution-customer/mini-app/function-config/detail',
+      param,
+    )
+  },
   getMemberDetails(param) {
     return httper.get(
       'institution-customer/user/mini-apps/select/member-details',
@@ -64,15 +70,27 @@ export default {
     return httper.get('institution-customer/bill/goods', param)
   },
   healthRecordsSelectUserList(param) {
-    return httper.get('/institution-customer/mini-app/health-records/select-user', param)
+    return httper.get(
+      '/institution-customer/mini-app/health-records/select-user',
+      param,
+    )
   },
-  healthRecordsList (param) {
-    return httper.get('institution-customer/mini-app/health-records/list', param)
+  healthRecordsList(param) {
+    return httper.get(
+      'institution-customer/mini-app/health-records/list',
+      param,
+    )
   },
-  healthRecordsImageList (param) {
-    return httper.get('institution-customer/mini-app/health-records/image-list', param)
+  healthRecordsImageList(param) {
+    return httper.get(
+      'institution-customer/mini-app/health-records/image-list',
+      param,
+    )
   },
-  healthRecordsMedicalRecord (param) {
-    return httper.get('institution-customer/mini-app/health-records/e-medical-record', param)
-  }
+  healthRecordsMedicalRecord(param) {
+    return httper.get(
+      'institution-customer/mini-app/health-records/e-medical-record',
+      param,
+    )
+  },
 }
