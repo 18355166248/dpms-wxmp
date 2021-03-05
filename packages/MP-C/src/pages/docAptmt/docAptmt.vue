@@ -1,12 +1,24 @@
 <template>
   <view class="content">
-    <view class="nav">
-      <view class="leftNav" @click="jump('pages/appoint/index')">快速预约</view>
-      <view class="centerNav" @click="jump('/pages/projAptmt/projAptmt')"
-        >按项目预约</view
+    <div class="nav">
+      <div
+        v-if="quickAppointment === 1"
+        class="navItem leftNav"
+        @click="jump('/pages/appoint/index')"
       >
-      <view class="rightNav">按医生预约<view class="selected"></view></view>
-    </view>
+        快速预约
+      </div>
+      <div
+        v-if="projectAppointment === 1"
+        class="navItem centerNav"
+        @click="jump('/pages/projAptmt/projAptmt')"
+      >
+        按项目预约
+      </div>
+      <div v-if="doctorAppointment === 1" class="navItem rightNav">
+        按医生预约<view class="selected"></view>
+      </div>
+    </div>
     <view class="filter">
       <view class="storePicker">
         <picker
@@ -76,7 +88,7 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-
+import customerAPI from '@/APIS/customer/customer.api'
 export default {
   data() {
     return {
@@ -88,6 +100,9 @@ export default {
       total: -1,
       size: 10,
       loadStatus: 'loading',
+      doctorAppointment: 1,
+      projectAppointment: 1,
+      quickAppointment: 1,
     }
   },
   onShareAppMessage(res) {
@@ -98,6 +113,7 @@ export default {
   onLoad(params) {
     if (!this.MEDICALINSTITUTION) return
     this.init()
+    this.getfunctionConfigDetail()
   },
   onPullDownRefresh() {
     this.currentPage = 1
@@ -119,6 +135,13 @@ export default {
     },
   },
   methods: {
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        this.doctorAppointment = res.data.doctorAppointment
+        this.projectAppointment = res.data.projectAppointment
+        this.quickAppointment = res.data.quickAppointment
+      })
+    },
     init() {
       institutionAPI
         .getFilterStoreList({
@@ -248,16 +271,10 @@ export default {
   height: 76rpx;
   background: #ffffff;
   display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
-.leftNav {
-  width: 33.3%;
-  font-size: 30rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
-  text-align: center;
-  color: rgba(0, 0, 0, 0.65);
-  line-height: 36rpx;
-  padding-top: 20rpx;
-}
+
 .selected {
   width: 58rpx;
   height: 4rpx;
@@ -266,15 +283,17 @@ export default {
   margin: 0 auto;
   margin-top: 16rpx;
 }
-.rightNav,
-.centerNav {
-  width: 33.3%;
-  font-size: 30rpx;
+.navItem {
+  width: 140rpx;
+  font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   text-align: center;
-  color: #5cbb89;
+  color: rgba(0, 0, 0, 0.65);
   line-height: 36rpx;
   padding-top: 20rpx;
+}
+.rightNav {
+  color: #5cbb89;
 }
 .filter {
   margin-top: 24rpx;

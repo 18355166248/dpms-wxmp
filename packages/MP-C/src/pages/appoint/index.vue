@@ -1,14 +1,24 @@
 <template>
   <div>
-    <view class="nav">
-      <view class="leftNav">快速预约<view class="selected"></view></view>
-      <view class="centerNav" @click="jump('/pages/projAptmt/projAptmt')"
-        >按项目预约</view
+    <div class="nav">
+      <div class="navItem leftNav" v-if="quickAppointment === 1">
+        快速预约<view class="selected"></view>
+      </div>
+      <div
+        class="navItem centerNav"
+        v-if="projectAppointment === 1"
+        @click="jump('/pages/projAptmt/projAptmt')"
       >
-      <view class="rightNav" @click="jump('/pages/docAptmt/docAptmt')"
-        >按医生预约</view
+        按项目预约
+      </div>
+      <div
+        class="navItem rightNav"
+        v-if="doctorAppointment === 1"
+        @click="jump('/pages/docAptmt/docAptmt')"
       >
-    </view>
+        按医生预约
+      </div>
+    </div>
     <dpmsForm ref="editForm" :model="form" :rules="rules">
       <dpmsCell
         title="预约门店"
@@ -83,6 +93,7 @@
     </div>
     <dpmsButton
       :text="networkAppointmentId ? '修改预约' : '确认预约'"
+      :class="{ buttonIsAgree: !isAgree }"
       @click="submit"
     />
     <dpmsBottomPicker
@@ -212,6 +223,7 @@ import moment from 'moment'
 import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
+import customerAPI from '@/APIS/customer/customer.api'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import institutionAPI from '@/APIS/institution/institution.api'
 import empty from '@/components/empty/empty.vue'
@@ -263,6 +275,9 @@ export default {
       Gender_ENUM: this.$utils.getEnums('Gender'),
       institutionInfo: {},
       isAgree: false,
+      doctorAppointment: 1,
+      projectAppointment: 1,
+      quickAppointment: 1,
     }
   },
   components: {
@@ -285,6 +300,7 @@ export default {
         this.personnelList.find((p) => p.id === this.form.personnelId) || {}
       ).personnelName
     },
+
     startDate() {
       let shopStartDate = moment(
         this.shopDetail.preAdvanceDayOfAppointmentTime,
@@ -315,20 +331,35 @@ export default {
     },
   },
   onLoad(params) {
-    this.shopId = params.shopId
-    this.itemId = params.itemId
-    this.form.doctorId = params.doctorId
+    if (params.shopId) {
+      this.shopId = params.shopId
+    }
+    if (params.doctorId) {
+      this.form.doctorId = params.doctorId
+    }
+    if (params.itemId) {
+      this.itemId = params.itemId
+    }
+
     // 编辑模式
     if (params.networkAppointmentId) {
       this.networkAppointmentId = params.networkAppointmentId
       this.apiUrl = 'updateAppt'
       this.createEdit(params.networkAppointmentId)
     }
+    this.getfunctionConfigDetail()
   },
   onShow() {
     this.init()
   },
   methods: {
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        this.doctorAppointment = res.data.doctorAppointment
+        this.projectAppointment = res.data.projectAppointment
+        this.quickAppointment = res.data.quickAppointment
+      })
+    },
     createEdit(id) {
       uni.setNavigationBarTitle({ title: '修改预约' })
       appointmentAPI
@@ -348,9 +379,12 @@ export default {
           }
         })
     },
+    jump(url) {
+      uni.redirectTo({ url })
+    },
     submit() {
+      if (!this.isAgree) return
       if (this.btnDisabled) return
-
       if (!this.isAgree) {
         this.$utils.show('请阅读并同意《预约服务协议》')
         return
@@ -546,16 +580,11 @@ page {
   height: 76rpx;
   background: #ffffff;
   display: flex;
+  margin-bottom: 20rpx;
+  flex-direction: row;
+  justify-content: space-around;
 }
-.leftNav {
-  width: 33.3%;
-  font-size: 30rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
-  text-align: center;
-  color: #5cbb89;
-  line-height: 36rpx;
-  padding-top: 20rpx;
-}
+
 .selected {
   width: 58rpx;
   height: 4rpx;
@@ -564,15 +593,18 @@ page {
   margin: 0 auto;
   margin-top: 16rpx;
 }
-.rightNav,
-.centerNav {
-  width: 33.3%;
-  font-size: 30rpx;
+.navItem {
+  width: 140rpx;
+  font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   text-align: center;
   color: rgba(0, 0, 0, 0.65);
   line-height: 36rpx;
   padding-top: 20rpx;
+}
+
+.leftNav {
+  color: #5cbb89;
 }
 .agree {
   color: rgba(153, 153, 153, 1);
@@ -754,5 +786,9 @@ button {
   max-height: 70vh;
   box-sizing: border-box;
   word-break: break-word;
+}
+/deep/ .buttonIsAgree .dpms-button-primary {
+  background: #f5f5f5 !important;
+  color: rgba(0, 0, 0, 0.25) !important;
 }
 </style>

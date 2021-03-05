@@ -68,7 +68,7 @@
             ></span
           ></view>
           <view @click="toUrl('/pages/membership/membershipCard', 2)"
-            >会员等级??{{}}<span
+            >会员等级<span
               v-if="memberCardDetail === 1"
               style="color: rgba(0, 0, 0, 0.25);"
               class="icon iconfont icon-rightCircle"
@@ -108,21 +108,15 @@
             <span class="iconfont icon-right"></span>
           </span>
         </div>
-        <div>
-          <span
-            ><span class="iconfont icon-time appointment"></span>我的账单</span
-          >
-          <span @click="toUrl('/pages/myBill/myBill')"
-            ><span class="iconfont icon-right"></span
-          ></span>
+        <div v-if="billOverview === 1" @click="toUrl('/pages/myBill/myBill')">
+          <span><span class="iconfont icon-bill bill"></span>我的账单</span>
+          <span><span class="iconfont icon-right"></span></span>
         </div>
-        <div>
+        <div v-if="medicalRecord === 1" @click="onHandeleSelectPerson">
           <span
-            ><span class="iconfont icon-time appointment"></span>健康档案</span
+            ><span class="iconfont icon-archives archives"></span>健康档案</span
           >
-          <span @click="onHandeleSelectPerson"
-            ><span class="iconfont icon-right"></span
-          ></span>
+          <span><span class="iconfont icon-right"></span></span>
         </div>
         <div
           v-if="myCoupon === 1"
@@ -145,15 +139,21 @@
           <span><span class="iconfont icon-right"></span></span>
         </div>
       </view>
-
-      <div v-if="showLogout" class="quit" @click="logOut">退出登录</div>
       <div class="version">版本号V1.0.0</div>
+      <div v-if="showLogout" class="quit" @click="logOut">退出登录</div>
 
       <movable-view
         :x="x"
         :y="y"
         direction="all"
         @change="onChange"
+        v-show="
+          !(
+            doctorAppointment !== 1 &&
+            projectAppointment !== 1 &&
+            quickAppointment !== 1
+          )
+        "
         @click="toUrl('/pages/projAptmt/projAptmt', 7)"
         class="aptmt"
       >
@@ -562,6 +562,7 @@ export default {
     position: relative;
     top: 312rpx;
     background: white;
+    margin-bottom: 100rpx;
     div {
       height: 112rpx;
       line-height: 112rpx;
@@ -606,6 +607,12 @@ export default {
       .appointment {
         background: linear-gradient(321deg, #7ea8f5 12%, #3278de 101%);
       }
+      .bill {
+        background: linear-gradient(321deg, #f5222d 12%, #ff7875 101%);
+      }
+      .archives {
+        background: linear-gradient(321deg, #b37feb 12%, #d3adf7 101%);
+      }
       .coupons {
         background: linear-gradient(318deg, #68e2a2 1%, #2ad67c 95%);
       }
@@ -632,8 +639,9 @@ export default {
   }
   .version {
     width: 100%;
-    position: absolute;
-    bottom: 34rpx;
+    position: relative;
+    top: 300rpx;
+    margin: 0;
     text-align: center;
     font-size: 28rpx;
     font-weight: 400;

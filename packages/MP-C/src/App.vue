@@ -83,6 +83,14 @@ page {
 .icon-time::before {
   content: '\e784';
 }
+
+.icon-bill::before {
+  content: '\e640';
+}
+.icon-archives::before {
+  content: '\e63e';
+}
+
 .icon-right::before {
   content: '\e7eb';
 }

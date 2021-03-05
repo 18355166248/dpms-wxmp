@@ -43,7 +43,7 @@
           </p>
         </view>
         <!-- 项目 -->
-        <view class="projectWrap">
+        <view class="projectWrap" v-if="projectAppointment === 1">
           <view class="project">项目</view>
           <view class="projectList">
             <view
@@ -67,7 +67,7 @@
                   <view class="">{{ item.itemName }}</view>
                   <view
                     class="appointBtn"
-                    v-show="item.canAppointment"
+                    v-show="item.canAppointment && projectAppointment === 1"
                     @click.stop="handleProjAptmt(item)"
                     >预约</view
                   >
@@ -111,7 +111,14 @@
               </view>
               <view
                 class="appointBtn"
-                v-show="s.canAppointment"
+                v-show="
+                  s.canAppointment &&
+                  !(
+                    doctorAppointment !== 1 &&
+                    projectAppointment !== 1 &&
+                    quickAppointment !== 1
+                  )
+                "
                 @click="
                   toUrl(
                     '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
@@ -138,7 +145,14 @@
       @change="onChange"
       @click="toUrl('/pages/projAptmt/projAptmt')"
       class="aptmt"
-      v-show="!hide"
+      v-show="
+        !hide ||
+        !(
+          doctorAppointment !== 1 &&
+          projectAppointment !== 1 &&
+          quickAppointment !== 1
+        )
+      "
     >
       <span class="iconfont icon-time"></span>
     </movable-view>
@@ -147,6 +161,7 @@
 </template>
 
 <script>
+import customerAPI from '@/APIS/customer/customer.api'
 import institutionAPI from '@/APIS/institution/institution.api'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
@@ -177,6 +192,9 @@ export default {
         contentnomore: '没有更多数据了',
       },
       backgroundStyle: 'rgb(92, 187, 137, 0)',
+      doctorAppointment: 1,
+      projectAppointment: 1,
+      quickAppointment: 1,
     }
   },
   onShareAppMessage(res) {
@@ -216,6 +234,7 @@ export default {
     uni.startPullDownRefresh()
     // 测试
     this.init()
+    this.getfunctionConfigDetail()
   },
   onPullDownRefresh() {
     this.init()
@@ -228,6 +247,13 @@ export default {
     this.loadMoreList()
   },
   methods: {
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        this.doctorAppointment = res.data.doctorAppointment
+        this.projectAppointment = res.data.projectAppointment
+        this.quickAppointment = res.data.quickAppointment
+      })
+    },
     init() {
       if (!this.MEDICALINSTITUTION) return
       institutionAPI
@@ -463,7 +489,6 @@ template {
       background-color: #ffffff;
       padding: 0 24rpx;
       border-radius: 8rpx;
-      border-radius: 8r px;
       box-shadow: 0px 0px 20rpx 0px rgba(0, 0, 0, 0.09);
       .projectItem {
         display: flex;
