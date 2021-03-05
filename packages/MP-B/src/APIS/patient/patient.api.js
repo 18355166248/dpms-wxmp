@@ -1,4 +1,5 @@
 import httper from '../http'
+import scrmHttper from '../httpScrm'
 
 const patientAPI = {
   getPatientList(data) {
@@ -59,6 +60,10 @@ const patientAPI = {
   //查询病例模板内容
   getMedicalTemplates(data) {
     return httper.get('/patient/settings/medical-record/template/select', data)
+  },
+  //添加标签
+  addTag(data) {
+    return scrmHttper.post('/scrm/tag/add', data)
   },
 }
 
