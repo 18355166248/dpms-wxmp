@@ -51,7 +51,9 @@
           <template v-if="gender">
             <tag :text="genderTag" :circle="false" type="error"></tag>
           </template>
-
+          <template v-if="visType">
+            <tag :text="visType" :circle="false" type="error"></tag>
+          </template>
           <template v-if="medicalRecordNo">
             <tag :text="medicalRecordNo" :circle="false" type="error"></tag>
           </template>
@@ -138,6 +140,10 @@ export default {
       default: 0,
     },
     medicalRecordNo: {
+      type: String,
+      default: null,
+    },
+    visType: {
       type: String,
       default: null,
     },
