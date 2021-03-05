@@ -132,8 +132,9 @@ export default {
       margin-left: 16rpx;
       margin-bottom: 16rpx;
       color: #595959;
-      padding: 10rpx;
       font-size: 30rpx;
+      padding-left: 30rpx;
+      padding-right: 30rpx;
     }
     .tagChecked {
       background: #eef8f3;
@@ -144,8 +145,9 @@ export default {
       text-align: center;
       margin-left: 16rpx;
       margin-bottom: 16rpx;
-      padding: 10rpx;
       font-size: 30rpx;
+      padding-left: 30rpx;
+      padding-right: 30rpx;
     }
     .icon-plus {
       color: #fff;

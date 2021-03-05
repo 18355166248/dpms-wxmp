@@ -50,8 +50,9 @@ export default {
 
 <style lang="scss" scoped>
 .addPersonas {
+  width: 100vw;
   .uni-form-item {
-    width: 100%;
+    width: 686rpx;
     background: #ffffff;
     padding: 32rpx;
   }
