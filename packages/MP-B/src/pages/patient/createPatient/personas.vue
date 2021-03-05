@@ -1,12 +1,12 @@
 <template>
-  <div class="apptDpmsList">
+  <div class="personas">
     <div v-if="list.length !== 0">
       <div class="tagContent" v-for="patientTag in list" :key="patientTag.id">
         <div class="tagTitle">
           {{ patientTag.name }}
         </div>
         <div class="tagBody">
-          <div class="plus">
+          <div class="plus" @click="jumpAdd(patientTag.id)">
             <text class="iconfont icon-plus" />
           </div>
           <div class="tagList">
@@ -55,9 +55,7 @@ export default {
     }
   },
   onShow() {
-    if (!uni.getStorageSync('patientTagsList').length) {
-      this.loadPatientTags()
-    }
+    this.loadPatientTags()
   },
   methods: {
     onSave() {
@@ -72,6 +70,11 @@ export default {
         return v !== Number(id)
       })
     },
+    jumpAdd(groupId) {
+      this.$utils.push({
+        url: '/pages/patient/createPatient/addPersonas?groupId=' + groupId,
+      })
+    },
     async loadPatientTags() {
       let res = await patientAPI.getPatientTags()
       let patientTagsList = res.data.filter((v) => v.tagInfoDTOList?.length > 0)
@@ -83,7 +86,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.apptDpmsList {
+.personas {
   .ensurebutton {
     width: 100%;
     position: fixed;
@@ -122,8 +125,6 @@ export default {
       flex-wrap: wrap;
     }
     .tag {
-      width: 148rpx;
-      height: 68rpx;
       border: 2rpx solid rgba(0, 0, 0, 0.15);
       border-radius: 10rpx;
       line-height: 65rpx;
@@ -131,10 +132,10 @@ export default {
       margin-left: 16rpx;
       margin-bottom: 16rpx;
       color: #595959;
+      padding: 10rpx;
+      font-size: 30rpx;
     }
     .tagChecked {
-      width: 148rpx;
-      height: 68rpx;
       background: #eef8f3;
       border: 2rpx solid #5cbb89;
       border-radius: 10rpx;
@@ -143,6 +144,8 @@ export default {
       text-align: center;
       margin-left: 16rpx;
       margin-bottom: 16rpx;
+      padding: 10rpx;
+      font-size: 30rpx;
     }
     .icon-plus {
       color: #fff;
