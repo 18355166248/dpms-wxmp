@@ -45,7 +45,7 @@ import patientAPI from '@/APIS/patient/patient.api'
 export default {
   data() {
     return {
-      list: uni.getStorageSync('patientTagsList'),
+      list: [],
       checked: [],
     }
   },
