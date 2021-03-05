@@ -40,7 +40,7 @@ export default {
 <style lang="scss" scoped>
 .modal {
   position: relative;
-  z-index: 2;
+  z-index: 10000;
   .mask {
     position: fixed;
     top: 0;

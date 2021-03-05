@@ -193,4 +193,10 @@ page {
 .icon-bill::before{
   content: '\e640';
 }
+.icontime-circle::before{
+  content: '\e784';
+}
+.iconkong::before {
+  content:'\e62c';
+}
 </style>
