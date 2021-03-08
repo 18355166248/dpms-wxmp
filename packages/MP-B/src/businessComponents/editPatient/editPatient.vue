@@ -273,12 +273,6 @@ export default {
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
-    'form.age'(val) {
-      // console.log(1111)
-      // this.form.birthday =
-      //   moment().weekYear() - val + '-' + moment().format('MM-DD')
-      // console.log(this.form.birthday)
-    },
   },
   created() {
     // 更新用户画像选中值
