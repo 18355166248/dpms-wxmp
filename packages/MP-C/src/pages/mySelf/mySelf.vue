@@ -277,7 +277,7 @@ export default {
         this.getCount()
         this.getAppointCount()
         this.getUserDetail()
-        // this.getfunctionConfigDetail()
+        this.getfunctionConfigDetail()
       } else {
         this.mobile = ''
         this.memberDetails = {}
