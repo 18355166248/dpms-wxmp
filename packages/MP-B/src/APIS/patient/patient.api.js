@@ -23,7 +23,7 @@ const patientAPI = {
   },
   //新建患者
   createPatient(data) {
-    return httper.post('patient/patient/mini-apps/create', data)
+    return httper.post('patient/patient/create/with/patient-contact', data)
   },
   // 诊室
   getConsultationRoomList(params) {

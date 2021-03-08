@@ -17,12 +17,48 @@
         isLink
         headerText="选择性别"
       />
+      <dpmsCellInput
+        title="个性称呼"
+        placeholder="请输入个性称呼"
+        v-model="form.nickName"
+      />
+      <dpmsCellInput
+        type="idcard"
+        title="身份证号"
+        placeholder="请输入身份证号"
+        v-model="form.certificatesNo"
+      />
+      <!-- <dpmsCellPicker
+        title="患者来源"
+        placeholder="请选择患者来源"
+        v-model="form.settingsTypeId"
+        :list="patientTypeList"
+        defaultType="settingsTypeId"
+        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        isLink
+      />
+      <dpmsCellPicker
+        title="介绍人"
+        placeholder="请选择介绍人"
+        v-model="form.settingsTypeId"
+        :list="patientTypeList"
+        defaultType="settingsTypeId"
+        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        isLink
+      /> -->
       <dpmsDatePicker
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
         :end="endDate"
         headerText="选择出生日期"
+      />
+      <dpmsCellInput
+        title="年龄"
+        placeholder="请输入年龄"
+        v-model="form.age"
+        type="number"
+        @blur="ageBlur"
       />
       <dpmsCellPicker
         title="患者类型"
@@ -95,6 +131,8 @@
           />
         </div>
       </div>
+      <dpmsFormTitle />
+
       <div class="pt-56 pb-82">
         <dpmsButton
           @click="submit"
@@ -102,7 +140,6 @@
           :disabled="disabledSaveBtn"
           :loading="disabledSaveBtn"
         />
-        <!-- <dpmsButton @click="submit" text="取消" /> -->
       </div>
     </dpmsForm>
   </div>
@@ -183,6 +220,10 @@ export default {
         birthday: {
           message: '请选择出生日期',
         },
+        age: {
+          pattern: /^(?:[1-9][0-9]?|1[01][0-9]|140)$/,
+          message: '年龄不合法',
+        },
         contactLabel: {
           required: true,
           message: '请选择联系电话标签',
@@ -229,6 +270,15 @@ export default {
     'form.settingsTypeId'(e) {
       this.getPatientMedicalRecordNo()
     },
+    'form.birthday'(val) {
+      this.form.age = moment().weekYear() - moment(val).weekYear()
+    },
+    'form.age'(val) {
+      // console.log(1111)
+      // this.form.birthday =
+      //   moment().weekYear() - val + '-' + moment().format('MM-DD')
+      // console.log(this.form.birthday)
+    },
   },
   created() {
     // 更新用户画像选中值
@@ -266,6 +316,12 @@ export default {
         patientType: this.form.settingsTypeId,
       })
       this.form.medicalRecordNo = res.data
+    },
+    ageBlur(val) {
+      if (val !== '') {
+        this.form.birthday =
+          Number(moment().weekYear()) - val + '-' + moment().format('MM-DD')
+      }
     },
     filterFormData(data) {
       if (_.isEmpty(data)) {
