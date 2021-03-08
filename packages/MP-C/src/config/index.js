@@ -12,7 +12,7 @@ import uat01Config from './uat01.env'
 
 const config = {
   development: devConfig,
-  development01: dev01Config,
+  dev01: dev01Config,
   prod: prodConfig,
   uat: uatConfig,
   uat01: uat01Config,

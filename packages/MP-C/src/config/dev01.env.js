@@ -1,5 +1,5 @@
 const config = {
-  env: 'development01',
+  env: 'dev01',
   debug: {
     http: false,
     websocket: false,
