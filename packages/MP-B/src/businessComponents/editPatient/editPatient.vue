@@ -17,12 +17,39 @@
         isLink
         headerText="选择性别"
       />
+      <dpmsCellInput
+        title="个性称呼"
+        placeholder="请输入个性称呼"
+        v-model="form.nickName"
+      />
+      <dpmsCellInput
+        type="idcard"
+        title="身份证号"
+        placeholder="请输入身份证号"
+        v-model="form.certificatesNo"
+      />
+      <dpmsCellPicker
+        title="患者来源"
+        placeholder="请选择患者来源"
+        v-model="form.settingsTypeId"
+        :list="patientTypeList"
+        defaultType="settingsTypeId"
+        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        isLink
+      />
       <dpmsDatePicker
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
         :end="endDate"
         headerText="选择出生日期"
+      />
+      <dpmsCellInput
+        title="年龄"
+        placeholder="请输入年龄"
+        v-model="form.age"
+        type="number"
+        @blur="ageBlur"
       />
       <dpmsCellPicker
         title="患者类型"
@@ -33,13 +60,16 @@
         :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
         isLink
       />
-      <dpmsCellInput
-        required
-        title="病历号"
-        :value="medicalRecordNo"
-        placeholder="请输入病历号"
-        v-model="form.medicalRecordNo"
-      />
+      <view style="display: relative;">
+        <dpmsCellInput
+          required
+          title="病历号"
+          :value="medicalRecordNo"
+          placeholder="请输入病历号"
+          v-model="form.medicalRecordNo"
+        />
+        <view class="iconfont icon-sync" @click="onSyncClick"></view>
+      </view>
       <dpmsCell
         title="患者标签"
         placeholder="请选择患者标签"
@@ -49,7 +79,6 @@
       />
       <dpmsFormTitle title="联系方式" />
       <dpmsEnumsPicker
-        required
         title="联系电话标签"
         placeholder="请选择联系电话标签"
         v-model="form.contactLabel"
@@ -57,7 +86,6 @@
         isLink
       />
       <dpmsCellInput
-        required
         title="联系电话"
         placeholder="请输入联系电话"
         v-model="form.mobile"
@@ -95,15 +123,16 @@
           />
         </div>
       </div>
-      <div class="pt-56 pb-82">
-        <dpmsButton
-          @click="submit"
-          type="primary"
-          :disabled="disabledSaveBtn"
-          :loading="disabledSaveBtn"
-        />
-        <!-- <dpmsButton @click="submit" text="取消" /> -->
-      </div>
+      <dpmsFormTitle />
+
+      <button
+        class="ensurebutton"
+        @click="submit"
+        :disabled="disabledSaveBtn"
+        :loading="disabledSaveBtn"
+      >
+        保&nbsp;&nbsp;存
+      </button>
     </dpmsForm>
   </div>
 </template>
@@ -183,15 +212,23 @@ export default {
         birthday: {
           message: '请选择出生日期',
         },
-        contactLabel: {
-          required: true,
-          message: '请选择联系电话标签',
+        age: {
+          pattern: /^(?:[1-9][0-9]?|1[01][0-9]|140)$/,
+          message: '年龄不合法',
         },
+        certificatesNo: {
+          pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/,
+          message: '身份证不合法',
+        },
+        // contactLabel: {
+        //   required: true,
+        //   message: '请选择联系电话标签',
+        // },
         mobile: [
-          {
-            required: true,
-            message: '请输入联系电话',
-          },
+          // {
+          //   required: true,
+          //   message: '请输入联系电话',
+          // },
           {
             pattern: /^\d{11}$/,
             message: '联系电话格式不正确',
@@ -210,7 +247,6 @@ export default {
           message: '请输入正确的微信号',
         },
         qqNum: {
-          // pattern: /^\d{1,20}$/,
           pattern: /^[^*]\d{1,20}$/g,
           message: '请输入正确的QQ格式',
         },
@@ -229,15 +265,16 @@ export default {
     'form.settingsTypeId'(e) {
       this.getPatientMedicalRecordNo()
     },
+    'form.birthday'(val) {
+      this.form.age = moment().weekYear() - moment(val).weekYear()
+    },
   },
   created() {
     // 更新用户画像选中值
     uni.$on('updateTagsCheckedList', (checked) => {
       this.form.tagIds = checked
-
       this.updateTagsCheckedText()
     })
-
     this.getPatientTypeList()
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
@@ -254,7 +291,6 @@ export default {
     },
     async getPatientTags() {
       let res = await patientAPI.getPatientTags()
-
       uni.setStorageSync(
         'patientTagsList',
         res.data.filter((v) => v.tagInfoDTOList?.length > 0),
@@ -267,11 +303,21 @@ export default {
       })
       this.form.medicalRecordNo = res.data
     },
+    ageBlur(val) {
+      if (val !== '') {
+        this.form.birthday =
+          Number(moment().weekYear()) - val + '-' + moment().format('MM-DD')
+      } else {
+        this.form.birthday = ''
+      }
+    },
+    onSyncClick() {
+      this.getPatientMedicalRecordNo()
+    },
     filterFormData(data) {
       if (_.isEmpty(data)) {
         return formDefault
       }
-
       // 格式化formData
       data = data.patientContactsList
         ? { ...formDefault, ...data, ...data.patientContactsList[0] }
@@ -281,7 +327,6 @@ export default {
         data.tagIds = data.tagList.map((v) => v.id)
         this.patientTagsCheckedText = data.tagList.map((v) => v.name).join(',')
       }
-
       return data
     },
     onSelectTags() {
@@ -293,17 +338,14 @@ export default {
     },
     updateTagsCheckedText() {
       let patientTagsList = uni.getStorageSync('patientTagsList')
-
       let newPaientTagsList = []
       patientTagsList.map((item) => {
         newPaientTagsList = [...newPaientTagsList, ...item.tagInfoDTOList]
         return item
       })
-
       newPaientTagsList = newPaientTagsList.filter((tagItem) =>
         this.form.tagIds.includes(tagItem.id),
       )
-
       this.patientTagsCheckedText = newPaientTagsList
         .map((tagItem) => tagItem.name)
         .join(',')
@@ -342,7 +384,6 @@ export default {
         this.$emit('submit', this.form)
         return
       }
-
       this.$utils.formValidate(
         this.newRules,
         this.form,
@@ -352,7 +393,6 @@ export default {
             this.$utils.show(err[0]?.message)
             return
           }
-
           //保存患者时，添加禁用和loading效果
           this.disabledSaveBtn = true
           this.$emit('submit', this.form)
@@ -391,7 +431,7 @@ export default {
   .dpms-cell {
     height: 112rpx;
     margin: 0 32rpx;
-    border-bottom: 2rpx solid rgba(0, 0, 0, 0.15);
+    border-bottom: 2rpx solid rgba(22, 18, 18, 0.15);
     .dpms-cell-title {
       width: 211rpx;
       span {
@@ -401,7 +441,6 @@ export default {
         margin-left: 4rpx;
       }
     }
-
     .dpms-cell-value {
       font-size: 34rpx;
       font-weight: 400;
@@ -426,5 +465,30 @@ export default {
   .dpms-cell {
     height: 154rpx;
   }
+}
+
+.icon-sync {
+  position: absolute;
+  top: 137.5vw;
+  left: 20vw;
+  font-size: 32rpx;
+  color: #5cbb89;
+  width: 100rpx;
+  height: 100rpx;
+  text-align: center;
+  line-height: 10vw;
+  z-index: 9;
+}
+
+.ensurebutton {
+  height: 80rpx;
+  background: #5cbb89;
+  border-radius: 0;
+  margin-top: 320rpx;
+  color: #fff;
+  line-height: 80rpx;
+  position: fixed;
+  bottom: 0;
+  width: 750rpx;
 }
 </style>

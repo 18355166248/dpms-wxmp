@@ -169,6 +169,9 @@ button::after {
 .icon-close:before {
   content: '\e654';
 }
+.icon-sync:before {
+  content: '\e655';
+}
 /* iconfont图标 end */
 </style>
 

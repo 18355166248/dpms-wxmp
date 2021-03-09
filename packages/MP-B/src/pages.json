@@ -100,6 +100,12 @@
           }
         },
         {
+          "path": "createPatient/addPersonas",
+          "style": {
+            "navigationBarTitleText": "添加标签"
+          }
+        },
+        {
           "path": "searchPatient/searchPatient",
           "style": {
             "navigationBarTitleText": "搜索患者"

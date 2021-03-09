@@ -7,7 +7,12 @@
       :avatarUrl="patient.avatarUrl"
       :gender="patient.gender"
       :medicalRecordNo="patient.medicalRecordNo"
+      :visType="patient.visType ? visType[patient.visType] : `未到诊`"
       :infos="[
+        {
+          label: '出生日期',
+          value: patient.age ? `${patient.birthday}（${patient.age}）` : '',
+        },
         { label: '联系方式', value: patient.mobile },
         { label: '患者标签', value: patient.tagListTxt },
       ]"
@@ -116,6 +121,10 @@ export default {
       patient: {},
       iconShow: {
         isChargeShow: false,
+      },
+      visType: {
+        1: '初诊',
+        2: '复诊',
       },
     }
   },
