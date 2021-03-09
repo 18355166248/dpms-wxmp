@@ -15,8 +15,13 @@
         <view v-if="item.patientNo" class="medical-record">病历号：<span>{{item.patientNo}}</span></view>
         <image v-if="currentImg === item.customerId"  class="icon-checked" :src="checkdUrl">
       </view>
+      <empty
+        v-if="!customerList.length"
+        :disabled="true"
+        text="暂无可绑定人员"
+      />
     </view>
-    <view class="switch-btn">
+    <view v-if="customerList.length" class="switch-btn">
       <a @click="selectUser">确认绑定</a> 
     </view>
   </view>
@@ -79,6 +84,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
     .switch-title {
       height: 80rpx;
       padding: 32rpx 0 24rpx;
