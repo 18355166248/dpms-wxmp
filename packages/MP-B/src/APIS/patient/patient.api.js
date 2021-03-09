@@ -65,6 +65,10 @@ const patientAPI = {
   addTag(data) {
     return scrmHttper.post('/scrm/tag/add', data)
   },
+  //刷新病例
+  refreshSerial(data) {
+    return httper.get('patient/serial/medical-record/serial', data)
+  },
 }
 
 export default patientAPI
