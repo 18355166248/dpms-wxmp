@@ -123,7 +123,26 @@
           />
         </div>
       </div>
-      <dpmsFormTitle />
+      <view class="space"></view>
+      <div style="background: #ffffff; width: 375px; height: 160px;">
+        <view
+          style="
+            font-size: 35rpx;
+            color: #4c4c4c;
+            line-height: 20px;
+            padding-left: 32rpx;
+            padding-top: 32rpx;
+          "
+          >备注</view
+        >
+        <textarea
+          style="padding: 32rpx; width: 686rpx; overflow-y: scroll;"
+          placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
+          placeholder="请输入备注"
+          maxlength="500"
+          v-model="form.memo"
+        />
+      </div>
 
       <button
         class="ensurebutton"
@@ -131,7 +150,7 @@
         :disabled="disabledSaveBtn"
         :loading="disabledSaveBtn"
       >
-        保&nbsp;&nbsp;存
+        保存
       </button>
     </dpmsForm>
   </div>
@@ -490,5 +509,12 @@ export default {
   position: fixed;
   bottom: 0;
   width: 750rpx;
+  z-index: 9;
+}
+
+.space {
+  width: 100%;
+  height: 16rpx;
+  background: rgba(0, 0, 0, 0.04);
 }
 </style>
