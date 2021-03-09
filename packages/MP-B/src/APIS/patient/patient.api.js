@@ -69,6 +69,10 @@ const patientAPI = {
   refreshSerial(data) {
     return httper.get('patient/serial/medical-record/serial', data)
   },
+  //患者来源
+  patientSource(data) {
+    return httper.get('patient/settings/patient/source/list/all', data)
+  },
 }
 
 export default patientAPI
