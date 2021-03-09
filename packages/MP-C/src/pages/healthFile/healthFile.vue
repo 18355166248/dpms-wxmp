@@ -114,6 +114,9 @@ export default {
       color: rgba(0, 0, 0, 0.7);
       .textContent2 {
         width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
         span {
           display: inline-block;
         }
