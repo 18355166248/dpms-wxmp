@@ -1,5 +1,5 @@
 <template>
-  <div class="h100">
+  <div class="h100 editPatientForm">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
       <dpmsCellInput
@@ -31,10 +31,13 @@
       <dpmsCellPicker
         title="患者来源"
         placeholder="请选择患者来源"
-        v-model="form.settingsTypeId"
-        :list="patientTypeList"
-        defaultType="settingsTypeId"
-        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        v-model="form.settingsPatientSourceId"
+        :list="settingsPatientSourceList"
+        defaultType="settingsPatientSourceId"
+        :defaultProps="{
+          label: 'settingsPatientSourceName',
+          value: 'settingsPatientSourceId',
+        }"
         isLink
       />
       <dpmsDatePicker
@@ -123,7 +126,17 @@
           />
         </div>
       </div>
-      <dpmsFormTitle />
+      <view class="space"></view>
+      <div class="remark">
+        <view class="title">备注</view>
+        <textarea
+          class="txt"
+          placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
+          placeholder="请输入备注"
+          maxlength="500"
+          v-model="form.memo"
+        />
+      </div>
 
       <button
         class="ensurebutton"
@@ -131,7 +144,7 @@
         :disabled="disabledSaveBtn"
         :loading="disabledSaveBtn"
       >
-        保&nbsp;&nbsp;存
+        保存
       </button>
     </dpmsForm>
   </div>
@@ -147,8 +160,10 @@ const formDefault = {
   gender: '',
   birthday: '',
   settingsTypeId: '',
+  settingsPatientSourceId: '',
+  sourceName: '',
   tagIds: [],
-  contactLabel: '',
+  contactLabel: 1,
   mobile: '',
   fixedTelephone: '',
   alternateMobile: '',
@@ -173,9 +188,11 @@ export default {
   data() {
     return {
       patientTypeList: [], //患者类型列表
+      settingsPatientSourceList: [],
       patientTagsCheckedText: '', //用户画像选中文本
       medicalRecordNo: '', //病历号
       settingsTypeId: '', //患者类型
+      settingsPatientSourceId: '',
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
@@ -268,6 +285,15 @@ export default {
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
+    // 'form.settingsPatientSourceId'(e) {
+    //   const obj = this.settingsPatientSourceList.find((v) => {
+    //     return v.settingsPatientSourceId == e
+    //   })
+    //   if (!obj) return
+    //   // this.form.sourceName = obj.settingsPatientSourceName
+    //   // this.form.systemInner = obj.systemInner
+    //   this.form.settingsPatientSourceId = obj.settingsPatientSourceId
+    // },
   },
   created() {
     // 更新用户画像选中值
@@ -278,6 +304,7 @@ export default {
     this.getPatientTypeList()
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
+    this.getSettingsPatientSourceList()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
@@ -288,6 +315,16 @@ export default {
       let res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
+    },
+    async getSettingsPatientSourceList() {
+      let res = await patientAPI.patientSource()
+      let arr = []
+      res.data?.forEach((v) => {
+        v.childSourceTypeList?.forEach((v) => {
+          arr.push(...v.patientSourceList)
+        })
+      })
+      this.settingsPatientSourceList = arr
     },
     async getPatientTags() {
       let res = await patientAPI.getPatientTags()
@@ -410,6 +447,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.editPatientForm {
+  .remark {
+    background: #ffffff;
+    width: 375px;
+    height: 160px;
+  }
+  .title {
+    font-size: 35rpx;
+    color: #4c4c4c;
+    line-height: 20px;
+    padding-left: 32rpx;
+    padding-top: 32rpx;
+  }
+  .txt {
+    padding: 32rpx;
+    width: 686rpx;
+    overflow-y: scroll;
+  }
+}
+
 [data-layout-align] {
   display: flex;
   justify-content: flex-start;
@@ -490,5 +547,12 @@ export default {
   position: fixed;
   bottom: 0;
   width: 750rpx;
+  z-index: 9;
+}
+
+.space {
+  width: 100%;
+  height: 16rpx;
+  background: rgba(0, 0, 0, 0.04);
 }
 </style>
