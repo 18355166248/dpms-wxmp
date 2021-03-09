@@ -81,18 +81,21 @@
         @click.native="onSelectTags"
       />
       <dpmsFormTitle title="联系方式" />
-      <dpmsEnumsPicker
-        title="联系电话标签"
-        placeholder="请选择联系电话标签"
-        v-model="form.contactLabel"
-        enumsKey="ContactLabel"
-        isLink
-      />
-      <dpmsCellInput
-        title="联系电话"
-        placeholder="请输入联系电话"
-        v-model="form.mobile"
-      />
+      <view class="group">
+        <view style="width: 375rpx;">
+          <dpmsEnumsPicker
+            title="电话标签"
+            placeholder="请选择电话标签"
+            v-model="form.contactLabel"
+            enumsKey="ContactLabel"
+            isLink
+          />
+        </view>
+        <!-- <view style="width: 2rpx; height: 80rpx; background: #d8d8d8;"></view> -->
+        <view style="width: 375rpx; padding-top: 2px; background: #fff;">
+          <dpmsCellInput placeholder="请输入联系电话" v-model="form.mobile" />
+        </view>
+      </view>
       <dpmsCellInput
         title="固定电话"
         placeholder="请输入固定电话"
@@ -118,7 +121,12 @@
       <div class="dpms-cell-group dpms-cell-group-textarea">
         <div class="dpms-cell" data-layout-align="space-between center">
           <textarea
-            style="height: 142rpx; padding: 6rpx 0; width: 686rpx;"
+            style="
+              height: 142rpx;
+              padding: 6rpx 0;
+              width: 686rpx;
+              margin-top: 30rpx;
+            "
             placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
             placeholder="请输入详细住址"
             maxlength="100"
@@ -451,7 +459,7 @@ export default {
   .remark {
     background: #ffffff;
     width: 375px;
-    height: 160px;
+    margin-bottom: 30rpx;
   }
   .title {
     font-size: 35rpx;
@@ -479,6 +487,12 @@ export default {
   align-items: center;
   align-content: center;
   max-width: 100%;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 
 .dpms-cell-group {
