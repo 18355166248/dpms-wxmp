@@ -23,7 +23,7 @@ const patientAPI = {
   },
   //新建患者
   createPatient(data) {
-    return httper.post('patient/patient/mini-apps/create', data)
+    return httper.post('patient/patient/create/with/patient-contact', data)
   },
   // 诊室
   getConsultationRoomList(params) {
@@ -64,6 +64,10 @@ const patientAPI = {
   //添加标签
   addTag(data) {
     return scrmHttper.post('/scrm/tag/add', data)
+  },
+  //刷新病例
+  refreshSerial(data) {
+    return httper.get('patient/serial/medical-record/serial', data)
   },
 }
 
