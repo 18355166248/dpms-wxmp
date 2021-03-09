@@ -60,6 +60,62 @@ const patientAPI = {
   getMedicalTemplates(data) {
     return httper.get('/patient/settings/medical-record/template/select', data)
   },
+  //获取主诉词条
+  getMainComplaintDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/chief-complaint-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取现病史词条
+  getPresentIllnessHistoryDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/present-illness-history-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取医嘱词条
+  getDoctorAdviceDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/doctor-advice-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取处置词条
+  getDisposeDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/dispose-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取既往史词条
+  getPastIllnessHistoryDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/past-illness-history-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取辅助检查词条
+  getExaminationDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/examination-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取治疗方案词条
+  getTreatmentPlanDict(data) {
+    return httper.get(
+      'patient/settings/medical-record/treatment-plan-dict/select/secondLevel',
+      data,
+    )
+  },
+  //获取病例模板
+  getPatientRecordTemplate(data) {
+    return httper.get(
+      'patient/settings/medical-record/get-select-patient-record-template',
+      data,
+    )
+  },
 }
 
 export default patientAPI
