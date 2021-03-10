@@ -40,10 +40,7 @@ export default {
         let d = times.getDate()
         let h = times.getHours()
         let mm = times.getMinutes()
-        let s = times.getSeconds()
-        t = `${y}-${m}-${d}  ${h}:${mm < 10 ? '0' + mm : mm}:${
-          s < 10 ? '0' + s : s
-        }`
+        t = `${y}-${m}-${d}  ${h}:${mm < 10 ? '0' + mm : mm}`
         arr.push({
           createTime: t,
           id: item.id,

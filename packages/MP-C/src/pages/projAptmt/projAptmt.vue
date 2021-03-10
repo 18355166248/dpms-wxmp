@@ -232,7 +232,7 @@ export default {
               toUrl(
                 '/pages/appoint/index?itemId=' +
                   itemId +
-                  '&shopId=' +
+                  '&isShowTab=2&shopId=' +
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }

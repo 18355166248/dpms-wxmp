@@ -56,7 +56,6 @@ export default {
     uni.$on(
       globalEventKeys.updatePersonFormWithSaveSuccess,
       ({ isSuccess }) => {
-        console.log('isSuccess', isSuccess)
         this.getCustomer()
       },
     )

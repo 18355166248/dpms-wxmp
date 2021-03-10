@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="nav">
+    <div class="nav" v-if="isShowTab === 1">
       <div class="navItem leftNav" v-if="quickAppointment === 1">
         快速预约<view class="selected"></view>
       </div>
@@ -278,6 +278,7 @@ export default {
       doctorAppointment: 1,
       projectAppointment: 1,
       quickAppointment: 1,
+      isShowTab: 1,
     }
   },
   components: {
@@ -331,8 +332,12 @@ export default {
     },
   },
   onLoad(params) {
+    console.log('------', params)
     if (params.shopId) {
       this.shopId = params.shopId
+    }
+    if (params.isShowTab && params.isShowTab == 2) {
+      this.isShowTab = 2
     }
     if (params.doctorId) {
       this.form.doctorId = params.doctorId

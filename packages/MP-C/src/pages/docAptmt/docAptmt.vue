@@ -210,7 +210,7 @@ export default {
               toUrl(
                 '/pages/appoint/index?doctorId=' +
                   doctorId +
-                  '&shopId=' +
+                  '&isShowTab=2&shopId=' +
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }
