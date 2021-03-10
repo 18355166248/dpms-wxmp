@@ -154,7 +154,7 @@
             quickAppointment !== 1
           )
         "
-        @click="toUrl('/pages/projAptmt/projAptmt', 7)"
+        @click="toAppoint"
         class="aptmt"
       >
         <span class="iconfont icon-time"></span>
@@ -308,6 +308,15 @@ export default {
           uni.hideLoading()
           uni.stopPullDownRefresh()
         })
+    },
+    toAppoint() {
+      if (this.quickAppointment === 1) {
+        this.$utils.push({ url: '/pages/appoint/index' })
+      } else if (this.projectAppointment === 1) {
+        this.$utils.push({ url: '/pages/projAptmt/projAptmt' })
+      } else {
+        this.$utils.push({ url: '/pages/docAptmt/docAptmt' })
+      }
     },
     getAppointCount() {
       customerAPI
@@ -542,6 +551,10 @@ export default {
         font-weight: 500;
         font-size: 34rpx;
         color: rgba(0, 0, 0, 0.9);
+        max-width: 220rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       view:nth-child(2) {
         text-align: center;

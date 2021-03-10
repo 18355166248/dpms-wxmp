@@ -121,7 +121,7 @@
                 "
                 @click="
                   toUrl(
-                    '/pages/projAptmt/projAptmt?appointmentInstitutionId=' +
+                    '/pages/projAptmt/projAptmt?&isShowTab=2appointmentInstitutionId=' +
                       s.appointmentInstitutionId,
                   )
                 "
@@ -143,10 +143,9 @@
       :y="y"
       direction="all"
       @change="onChange"
-      @click="toUrl('/pages/projAptmt/projAptmt')"
+      @click="toAppoint"
       class="aptmt"
-      v-show="
-        !hide ||
+      v-if="
         !(
           doctorAppointment !== 1 &&
           projectAppointment !== 1 &&
@@ -239,6 +238,7 @@ export default {
   onPullDownRefresh() {
     this.init()
   },
+
   onPageScroll({ scrollTop }) {
     let alpha = scrollTop / this.height
     this.backgroundStyle = `rgb(92, 187, 137, ${alpha})`
@@ -316,6 +316,15 @@ export default {
         })
       uni.stopPullDownRefresh()
     },
+    toAppoint() {
+      if (this.quickAppointment === 1) {
+        this.$utils.push({ url: '/pages/appoint/index' })
+      } else if (this.projectAppointment === 1) {
+        this.$utils.push({ url: '/pages/projAptmt/projAptmt' })
+      } else {
+        this.$utils.push({ url: '/pages/docAptmt/docAptmt' })
+      }
+    },
     bannerToUrl(url) {
       if (!url) return
       if (url.indexOf(`http`) !== -1) {
@@ -370,7 +379,7 @@ export default {
               toUrl(
                 '/pages/appoint/index?itemId=' +
                   itemId +
-                  '&shopId=' +
+                  '&isShowTab=2&shopId=' +
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }
