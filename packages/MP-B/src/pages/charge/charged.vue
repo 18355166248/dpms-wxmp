@@ -46,48 +46,58 @@
         </picker>
       </view>
     </view>
-    <view class="listCharged" @click="toPage('/pages/charge/chargeDetail', {})">
+    <view
+      class="listCharged"
+      @click="toPage('/pages/charge/chargeDetail', {})"
+      v-for="order in chargedList"
+      :key="order.billOrderId"
+    >
       <view class="listTitle">
         <view class="datetime"
-          ><view class="iconfont icon-time-circle"></view> 2020-10-12
-          12:30</view
+          ><view class="iconfont icon-time-circle"></view>
+          {{ order.consultTimeDate }}</view
         >
-        <view class="pending">欠费</view>
+        <view class="pending" v-if="order.arrearageAmount > 0">欠费</view>
       </view>
       <view class="lineHr"></view>
       <view class="listContent">
         <view class="listLine">
-          <view class="ml-32">BO636202010270009</view>
+          <view class="ml-32">{{ order.billSerialNo }}</view>
         </view>
         <view class="listLine">
-          <view class="ml-32">普通收费</view>
-          <view class="totalFee">总计金额：$950.00 </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">北极熊南京分店</view>
-          <view class="chargeFee"
-            >应收金额：
-            <view class="feeRed">$950.00</view>
-          </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">张医生</view>
-          <view class="arrFee"
-            >欠费：
-            <view class="feeGreen">$950.00</view>
-          </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32 remark"
-            >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
+          <view class="ml-32">{{ order.billTypeText }}</view>
+          <view class="totalFee"
+            >总计金额：{{ $utils.formatPrice(order.totalAmount) }}</view
           >
         </view>
         <view class="listLine">
-          <view class="ml-32 date">创建时间：2021-09-08 10:20:30</view>
-          <view class="user">季冰宇</view>
+          <view class="ml-32">{{ order.medicalInstitutionName }}</view>
+          <view class="chargeFee"
+            >应收金额：
+            <view class="feeRed">{{
+              $utils.formatPrice(order.receivableAmount)
+            }}</view>
+          </view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32">{{ order.doctorName }}</view>
+          <view class="arrFee"
+            >欠费：
+            <view class="feeGreen">{{
+              $utils.formatPrice(order.arrearageAmount)
+            }}</view>
+          </view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32 date">创建时间：{{ order.createTimeDate }}</view>
+          <view class="user">{{ order.createStaffName }}</view>
         </view>
       </view>
     </view>
+    <load-more :status="dataSourceStatus.status" />
   </view>
 </template>
 
@@ -95,11 +105,12 @@
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import qs from 'qs'
+import loadMore from '@/components/load-more/load-more.vue'
 
 export default {
+  props: ['patientId', 'customerId'],
   data() {
     return {
-      data: {},
       billSettlementArray: this.initEnumArray(
         this.$utils.getEnums('BillSettlement'),
       ),
@@ -112,6 +123,16 @@ export default {
       doctorIndex: 0,
       dateIndex: 0,
       dateList: ['全部', '今天', '近一周', '近一月'],
+      chargedList: [],
+      current: 1,
+      total: 1,
+      size: 5,
+      dataSourceStatus: {
+        // 数据列表的状态
+        loading: true,
+        status: 'loading',
+        request: 'loading',
+      },
     }
   },
   computed: {
@@ -126,20 +147,24 @@ export default {
     },
   },
   mounted() {
-    // console.log(this.billSettlementArray)
+    this.init()
   },
   methods: {
     billSettlementChange: function (e) {
       this.billSettlementIndex = e.detail.value
+      this.getChargedOrder()
     },
     billingTypeChange: function (e) {
       this.billSupperTypeTypeIndex = e.detail.value
+      this.getChargedOrder()
     },
     doctorChange: function (e) {
       this.doctorIndex = e.detail.value
+      this.getChargedOrder()
     },
     datePickerChange: function (e) {
       this.dateIndex = e.detail.value
+      this.getChargedOrder()
     },
     initEnumArray: function (obj) {
       if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
@@ -153,6 +178,54 @@ export default {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,
       })
+    },
+    init() {
+      this.current = 1
+      this.getChargedOrder()
+    },
+    async getChargedOrder() {
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
+
+      const {
+        data: { total, current, records },
+      } = await billAPI.chargedOrderList({
+        patientId: this.patientId,
+        customerId: this.customerId,
+        current: this.current,
+        size: this.size,
+      })
+
+      uni.hideLoading()
+
+      records &&
+        records.forEach((element) => {
+          element.createTimeDate = moment(element.createTime).format(
+            'YYYY-MM-DD HH:mm:ss',
+          )
+          element.consultTimeDate = moment(element.consultTime).format(
+            'YYYY-MM-DD HH:mm:ss',
+          )
+          const findObj = this.billSupperTypeArray.find((v) => {
+            return v.value === element.billType
+          })
+          element.billTypeText = findObj?.zh_CN
+        })
+
+      if (current === 1) {
+        this.chargedList = records
+      } else {
+        this.chargedList = this.chargedList.concat(records)
+      }
+      this.total = total
+
+      if (total === this.chargedList.length) {
+        this.dataSourceStatus.status = 'noMore'
+      } else {
+        this.dataSourceStatus.status = 'more'
+      }
     },
   },
 }
@@ -228,27 +301,28 @@ export default {
     margin-top: 18rpx;
     display: flex;
     font-size: 28rpx;
+    justify-content: space-between;
   }
   .totalFee {
-    margin-left: 86px;
     float: right;
     width: 400rpx;
     text-align: right;
     font-size: 28rpx;
+    margin-right: 32rpx;
   }
   .chargeFee {
-    margin-left: 90rpx;
     width: 400rpx;
     font-size: 28rpx;
     display: flex;
     justify-content: flex-end;
+    margin-right: 32rpx;
   }
   .arrFee {
-    margin-left: 200rpx;
     width: 400rpx;
     font-size: 28rpx;
     display: flex;
     justify-content: flex-end;
+    margin-right: 32rpx;
   }
   .feeRed {
     color: #fa5151;
@@ -266,7 +340,7 @@ export default {
     color: #595959;
     text-align: right;
     width: 200rpx;
-    margin-left: 40rpx;
+    margin-right: 32rpx;
   }
   .date {
     color: #7f7f7f;

@@ -13,8 +13,12 @@
       @change="changeTab"
     />
 
-    <pending v-if="currentTab === 0" :patientId="patientId" />
-    <charged v-if="currentTab === 1" patientId />
+    <pending
+      v-if="currentTab === 0"
+      :patientId="patientId"
+      :customerId="customerId"
+    />
+    <charged v-if="currentTab === 1" :patientId="patientId" />
     <payment v-if="currentTab === 2" patientId />
   </view>
 </template>
@@ -40,15 +44,18 @@ export default {
         { name: '已收费账单', val: 1 },
         { name: '支付记录', val: 2 },
       ],
-      currentTab: 0,
+      currentTab: 1,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
       patientId: 0,
+      customerId: 0,
     }
   },
   onLoad(params) {
     this.init()
     this.patientId = Number(params.patientId)
+    this.customerId = Number(params.customerId)
+    console.log(this.patientId, this.customerId)
   },
   methods: {
     init() {

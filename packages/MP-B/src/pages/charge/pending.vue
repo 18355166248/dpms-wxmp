@@ -1,69 +1,46 @@
 <template>
   <view class="chargeContentPending">
-    <view class="list">
+    <view class="list" v-for="order in pendingList" :key="order.billOrderId">
       <view class="listTitle">
         <view class="datetime"
-          ><view class="iconfont icon-time-circle"></view> 2020-10-12
-          12:30</view
+          ><view class="iconfont icon-time-circle"></view>
+          {{ order.consultTimeDate }}</view
         >
-        <view class="pending">待收费</view>
+        <view class="pending" v-if="order.billStatus === 0">待收费</view>
+        <view class="refund" v-if="order.billStatus === 1">待退费</view>
       </view>
       <view class="lineHr"></view>
       <view class="listContent">
         <view class="listLine">
           <view class="ml-32">普通收费</view>
-          <view class="totalFee">总计金额：$950.00 </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">北极熊南京分店</view>
-          <view class="chargeFee"
-            >应收金额：
-            <view class="feeRed">$950.00</view>
+          <view class="totalFee"
+            >总计金额：{{ $utils.formatPrice(order.totalAmount) }}
           </view>
         </view>
         <view class="listLine">
-          <view class="ml-32 remark"
-            >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
-          >
+          <view class="ml-32">{{ order.medicalInstitutionName }}</view>
+          <view class="chargeFee" v-if="order.billStatus === 0"
+            >应收金额：
+            <view class="feeRed">
+              {{ $utils.formatPrice(order.receivableAmount) }}</view
+            >
+          </view>
+          <view class="chargeFee" v-if="order.billStatus === 1"
+            >应退金额：
+            <view class="feeGreen">{{
+              $utils.formatPrice(order.receivableAmount)
+            }}</view>
+          </view>
         </view>
         <view class="listLine">
-          <view class="ml-32 date">创建时间：2021-09-08 10:20:30</view>
-          <view class="user">季冰宇</view>
+          <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
+        </view>
+        <view class="listLine">
+          <view class="ml-32 date">创建时间：{{ order.createTimeDate }}</view>
+          <view class="user">{{ order.createStaffName }}</view>
         </view>
       </view>
     </view>
-    <!-- <view class="list">
-      <view class="listTitle">
-        <view class="datetime"
-          ><view class="iconfont icon-time-circle"></view> 2020-10-12
-          12:30</view
-        >
-        <view class="refund">待退费</view>
-      </view>
-      <view class="lineHr"></view>
-      <view class="listContent">
-        <view class="listLine">
-          <view class="ml-32">普通收费</view>
-          <view class="totalFee">总计金额：$950.00 </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">北极熊南京分店</view>
-          <view class="chargeFee"
-            >应退金额：
-            <view class="feeGreen">$950.00</view>
-          </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32 remark"
-            >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
-          >
-        </view>
-        <view class="listLine">
-          <view class="ml-32 date">创建时间：2021-09-08 10:20:30</view>
-          <view class="user">季冰宇</view>
-        </view>
-      </view>
-    </view> -->
     <load-more :status="dataSourceStatus.status" />
   </view>
 </template>
@@ -74,7 +51,7 @@ import billAPI from '@/APIS/bill/bill.api'
 import loadMore from '@/components/load-more/load-more.vue'
 
 export default {
-  props: ['patientId'],
+  props: ['patientId', 'customerId'],
   data() {
     return {
       pendingList: [],
@@ -113,12 +90,22 @@ export default {
         data: { total, current, records },
       } = await billAPI.pendingOrderList({
         patientId: this.patientId,
+        customerId: this.customerId,
         current: this.current,
         size: this.size,
       })
 
-      this.isSearchedValue = this.searchValue
       uni.hideLoading()
+
+      records &&
+        records.forEach((element) => {
+          element.createTimeDate = moment(element.createTime).format(
+            'YYYY-MM-DD HH:mm:ss',
+          )
+          element.consultTimeDate = moment(element.consultTime).format(
+            'YYYY-MM-DD HH:mm:ss',
+          )
+        })
 
       if (current === 1) {
         this.pendingList = records

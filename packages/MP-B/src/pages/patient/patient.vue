@@ -58,7 +58,14 @@
         <view
           v-if="iconShow.isChargeShow"
           class="menu-area-item"
-          @click="toUrl('/pages/charge/chargeForm=' + patientId)"
+          @click="
+            toUrl(
+              '/pages/charge/chargeForm?patientId=' +
+                patientId +
+                '&customerId=' +
+                customerId,
+            )
+          "
         >
           <view class="menu-area-item-icon menu-area-item-icon-color6">
             <text class="iconfont icon-renmingbi"></text>
@@ -118,6 +125,7 @@ export default {
   data() {
     return {
       patientId: '',
+      customerId: '',
       patient: {},
       iconShow: {
         isChargeShow: false,
@@ -162,6 +170,7 @@ export default {
           // if (this.patient.tagList.length > 3) {
           //   this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
           // }
+          this.customerId = data.customerId
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
@@ -172,6 +181,7 @@ export default {
         })
     },
     toUrl(url) {
+      console.log(url)
       this.$utils.push({
         url,
       })
