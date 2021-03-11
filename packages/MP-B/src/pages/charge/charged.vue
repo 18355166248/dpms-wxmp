@@ -49,7 +49,11 @@
     <view v-if="chargedList.length > 0">
       <view
         class="listCharged"
-        @click="toPage('/pages/charge/chargeDetail', {})"
+        @click="
+          toPage('/pages/charge/chargeDetail', {
+            billSerialNo: order.billSerialNo,
+          })
+        "
         v-for="order in chargedList"
         :key="order.billOrderId"
       >

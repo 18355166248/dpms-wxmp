@@ -1,54 +1,44 @@
 <template>
   <view class="chargeContentDetail">
-    <view class="paymentTitle">账单号：BO636202010270009</view>
-    <view class="listChargeDetail">
-      <view class="listTitle">松动牙拔出</view>
+    <view class="paymentTitle">账单号：{{ data.billSerialNo }}</view>
+    <view
+      class="listChargeDetail"
+      v-for="item in data.orderItemVOList"
+      :key="item.billOrderItemId"
+    >
+      <view class="listTitle">{{ item.itemName }}</view>
       <view class="listLine grey">
-        <view>$950.00&nbsp;&nbsp;&nbsp;× 2（颗） </view>
-        <view>$950.00 </view>
+        <view
+          >{{ $utils.formatPrice(item.unitAmount) }}&nbsp;&nbsp;&nbsp;×
+          {{ item.itemNum }}（{{ item.unit || '-' }}）
+        </view>
+        <view>{{ $utils.formatPrice(item.totalAmount) }} </view>
       </view>
       <view class="listLine">
         <view>应收金额：</view>
-        <view> $950.00</view>
+        <view> {{ $utils.formatPrice(item.receivableAmount) }}</view>
       </view>
       <view class="listLineBottom">
-        <view>医生：季冰宇</view>
-        <view>护士：季冰宇</view>
-        <view>其他：季冰宇</view>
-      </view>
-      <view class="lineHr"></view>
-    </view>
-    <view class="listChargeDetail">
-      <view class="listTitle">松动牙拔出</view>
-      <view class="listLine grey">
-        <view>$950.00&nbsp;&nbsp;&nbsp;× 2（颗） </view>
-        <view>$950.00 </view>
-      </view>
-      <view class="listLine">
-        <view>应收金额：</view>
-        <view> $950.00</view>
-      </view>
-      <view class="listLineBottom">
-        <view>医生：季冰宇</view>
-        <view>护士：季冰宇</view>
-        <view>其他：季冰宇</view>
+        <view>医生：{{ item.doctorNameStr }}</view>
+        <view>护士：{{ item.nurseNameStr }}</view>
+        <view>其他：{{ item.otherNameStr }}</view>
       </view>
       <view class="lineHr"></view>
     </view>
     <view class="listChargeTotal">
       <view class="line">
-        <view>总计应收金额</view>
-        <view>$950.00 </view>
+        <view>总计金额</view>
+        <view>{{ $utils.formatPrice(data.totalAmount) }} </view>
       </view>
       <view class="line">
         <view>整单折扣</view>
-        <view>100%</view>
+        <view>{{ data.mainOrderDiscount }}%</view>
       </view>
       <view class="lineTotal">
         <view style="display: flex;"
           >应收金额：<view
             style="color: red; font-size: 36rpx; line-height: 36rpx;"
-            >$950.00</view
+            >{{ $utils.formatPrice(data.receivableAmount) }}</view
           ></view
         >
       </view>
@@ -57,19 +47,30 @@
 </template>
 
 <script>
-import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 
 export default {
   data() {
     return {
+      billSerialNo: '',
       data: {},
     }
   },
-  mounted() {
-    // console.log(this.billSettlementArray)
+  onLoad(params) {
+    this.billSerialNo = params.billSerialNo
+    this.init()
   },
-  methods: {},
+  methods: {
+    init() {
+      billAPI
+        .orderDetail({
+          billSerialNo: this.billSerialNo,
+        })
+        .then((res) => {
+          this.data = res.data
+        })
+    },
+  },
 }
 </script>
 

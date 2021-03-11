@@ -27,6 +27,10 @@ const billAPI = {
   chargedOrderList(data) {
     return httper.get('billing/bill/order/page', data)
   },
+  //账单详情
+  orderDetail(data) {
+    return httper.get('billing/bill/order/item', data)
+  },
 }
 
 export default billAPI
