@@ -96,7 +96,7 @@
           <view class="listLine">
             <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
           </view>
-          <view class="listLine">
+          <view class="listLine" style="padding-bottom: 32rpx;">
             <view class="ml-32 date">创建时间：{{ order.createTimeDate }}</view>
             <view class="user">{{ order.createStaffName }}</view>
           </view>
@@ -278,119 +278,116 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.filterlistCharged {
-  display: flex;
-  background-color: #fff;
-  margin-bottom: 16rpx;
-  margin-top: 2rpx;
-  height: 80rpx;
-  font-size: 28rpx;
-  color: #595959;
-  .uni-list-cell {
-    width: 186rpx;
-  }
-  .iconfont {
-    font-size: 24rpx;
-    margin-left: 8rpx;
-  }
-  .uni-list-cell {
-    line-height: 80rpx;
-  }
-  .uni-input {
+.chargeContent {
+  .filterlistCharged {
     display: flex;
-    justify-content: center;
-  }
-}
-.lineHr {
-  width: 686rpx;
-  height: 2rpx;
-  margin-left: 32rpx;
-  background: rgba(0, 0, 0, 0.15);
-}
-.ml-32 {
-  margin-left: 32rpx;
-}
-.listCharged {
-  background-color: #fff;
-  margin-bottom: 20rpx;
-  margin-top: 18rpx;
-  height: 490rpx;
-  .listTitle {
-    height: 84rpx;
-    display: flex;
-    align-items: center;
-  }
-  .datetime {
-    display: flex;
-    width: 400rpx;
-    align-items: center;
+    background-color: #fff;
+    margin-bottom: 16rpx;
+    margin-top: 2rpx;
+    height: 80rpx;
     font-size: 28rpx;
     color: #595959;
+    .uni-list-cell {
+      width: 186rpx;
+    }
+    .iconfont {
+      font-size: 24rpx;
+      margin-left: 8rpx;
+    }
+    .uni-list-cell {
+      line-height: 80rpx;
+    }
+    .uni-input {
+      display: flex;
+      justify-content: center;
+    }
   }
-  .icon-time-circle {
-    margin-left: 28rpx;
-    margin-right: 14rpx;
+  .lineHr {
+    width: 686rpx;
+    height: 2rpx;
+    margin-left: 32rpx;
+    background: rgba(0, 0, 0, 0.15);
   }
-  .pending {
-    width: 116rpx;
-    height: 40rpx;
-    text-align: center;
-    color: #52c41a;
-    line-height: 40rpx;
-    font-size: 28rpx;
-    margin-left: 232rpx;
+  .ml-32 {
+    margin-left: 32rpx;
   }
-  .listContent {
-    height: 204rpx;
-  }
-  .listLine {
+  .listCharged {
+    background-color: #fff;
+    margin-bottom: 20rpx;
     margin-top: 18rpx;
-    display: flex;
-    font-size: 28rpx;
-    justify-content: space-between;
-  }
-  .totalFee {
-    float: right;
-    width: 400rpx;
-    text-align: right;
-    font-size: 28rpx;
-    margin-right: 32rpx;
-  }
-  .chargeFee {
-    width: 400rpx;
-    font-size: 28rpx;
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 32rpx;
-  }
-  .arrFee {
-    width: 400rpx;
-    font-size: 28rpx;
-    display: flex;
-    justify-content: flex-end;
-    margin-right: 32rpx;
-  }
-  .feeRed {
-    color: #fa5151;
-  }
-  .feeGreen {
-    color: #52c41a;
-  }
-  .remark {
-    height: 72rpx;
-    width: 690rpx;
-    overflow: hidden;
-    color: #595959;
-  }
-  .user {
-    color: #595959;
-    text-align: right;
-    width: 200rpx;
-    margin-right: 32rpx;
-  }
-  .date {
-    color: #7f7f7f;
-    width: 440rpx;
+    .listTitle {
+      height: 84rpx;
+      display: flex;
+      align-items: center;
+    }
+    .datetime {
+      display: flex;
+      width: 400rpx;
+      align-items: center;
+      font-size: 28rpx;
+      color: #595959;
+    }
+    .icon-time-circle {
+      margin-left: 28rpx;
+      margin-right: 14rpx;
+    }
+    .pending {
+      width: 116rpx;
+      height: 40rpx;
+      text-align: center;
+      color: #52c41a;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      margin-left: 232rpx;
+    }
+    .listLine {
+      margin-top: 18rpx;
+      display: flex;
+      font-size: 28rpx;
+      justify-content: space-between;
+    }
+    .totalFee {
+      float: right;
+      width: 400rpx;
+      text-align: right;
+      font-size: 28rpx;
+      margin-right: 32rpx;
+    }
+    .chargeFee {
+      width: 400rpx;
+      font-size: 28rpx;
+      display: flex;
+      justify-content: flex-end;
+      margin-right: 32rpx;
+    }
+    .arrFee {
+      width: 400rpx;
+      font-size: 28rpx;
+      display: flex;
+      justify-content: flex-end;
+      margin-right: 32rpx;
+    }
+    .feeRed {
+      color: #fa5151;
+    }
+    .feeGreen {
+      color: #52c41a;
+    }
+    .remark {
+      width: 690rpx;
+      overflow: hidden;
+      color: #595959;
+    }
+    .user {
+      color: #595959;
+      text-align: right;
+      width: 200rpx;
+      margin-right: 32rpx;
+    }
+    .date {
+      color: #7f7f7f;
+      width: 440rpx;
+    }
   }
 }
 </style>

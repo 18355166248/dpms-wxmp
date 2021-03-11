@@ -35,7 +35,7 @@
         <view class="listLine">
           <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
         </view>
-        <view class="listLine">
+        <view class="listLine" style="padding-bottom: 32rpx;">
           <view class="ml-32 date">创建时间：{{ order.createTimeDate }}</view>
           <view class="user">{{ order.createStaffName }}</view>
         </view>
@@ -141,112 +141,107 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.lineHr {
-  width: 686rpx;
-  height: 2rpx;
-  margin-left: 32rpx;
-  background: rgba(0, 0, 0, 0.15);
-}
-.line {
-  width: 80%;
-  height: 2rpx;
-  background: rgba(0, 0, 0, 0.15);
-  margin-left: 10%;
-}
-.ml-32 {
-  margin-left: 32rpx;
-}
-.list {
-  background-color: #fff;
-  margin-bottom: 20rpx;
-  margin-top: 18rpx;
-  height: 380rpx;
-  .listTitle {
-    height: 84rpx;
-    display: flex;
-    align-items: center;
+.chargeContentPending {
+  .lineHr {
+    width: 686rpx;
+    height: 2rpx;
+    margin-left: 32rpx;
+    background: rgba(0, 0, 0, 0.15);
   }
-  .datetime {
-    display: flex;
-    width: 400rpx;
-    align-items: center;
-    font-size: 28rpx;
-    color: #595959;
+  .line {
+    width: 80%;
+    height: 2rpx;
+    background: rgba(0, 0, 0, 0.15);
+    margin-left: 10%;
   }
-  .icon-time-circle {
-    margin-left: 28rpx;
-    margin-right: 14rpx;
+  .ml-32 {
+    margin-left: 32rpx;
   }
-  .pending {
-    width: 116rpx;
-    height: 40rpx;
-    background: #fff7e6;
-    border: 2rpx solid #fa8c16;
-    border-radius: 6rpx;
-    text-align: center;
-    color: #fa8c16;
-    line-height: 40rpx;
-    font-size: 28rpx;
-    margin-left: 202rpx;
-  }
-  .refund {
-    width: 116rpx;
-    height: 40rpx;
-    background: #f6ffed;
-    border: 2rpx solid #52c41a;
-    border-radius: 6rpx;
-    text-align: center;
-    color: #52c41a;
-    line-height: 40rpx;
-    font-size: 28rpx;
-    margin-left: 202rpx;
-  }
-  .listContent {
-    height: 204rpx;
-  }
-  .listLine {
+  .list {
+    background-color: #fff;
+    margin-bottom: 20rpx;
     margin-top: 18rpx;
-    display: flex;
-    font-size: 28rpx;
-  }
-  .totalFee {
-    margin-left: 86px;
-    float: right;
-    width: 400rpx;
-    text-align: right;
-    font-size: 28rpx;
-  }
-  .chargeFee {
-    margin-left: 90rpx;
-    width: 400rpx;
-    font-size: 28rpx;
-    line-height: 48rpx;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .feeRed {
-    font-size: 34rpx;
-    color: #fa5151;
-  }
-  .feeGreen {
-    font-size: 34rpx;
-    color: #52c41a;
-  }
-  .remark {
-    height: 72rpx;
-    width: 690rpx;
-    overflow: hidden;
-    color: #595959;
-  }
-  .user {
-    color: #595959;
-    text-align: right;
-    width: 200rpx;
-    margin-left: 40rpx;
-  }
-  .date {
-    color: #7f7f7f;
-    width: 440rpx;
+    .listTitle {
+      height: 84rpx;
+      display: flex;
+      align-items: center;
+    }
+    .datetime {
+      display: flex;
+      width: 400rpx;
+      align-items: center;
+      font-size: 28rpx;
+      color: #595959;
+    }
+    .icon-time-circle {
+      margin-left: 28rpx;
+      margin-right: 14rpx;
+    }
+    .pending {
+      width: 116rpx;
+      height: 40rpx;
+      background: #fff7e6;
+      border: 2rpx solid #fa8c16;
+      border-radius: 6rpx;
+      text-align: center;
+      color: #fa8c16;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      margin-left: 202rpx;
+    }
+    .refund {
+      width: 116rpx;
+      height: 40rpx;
+      background: #f6ffed;
+      border: 2rpx solid #52c41a;
+      border-radius: 6rpx;
+      text-align: center;
+      color: #52c41a;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      margin-left: 202rpx;
+    }
+    .listLine {
+      margin-top: 18rpx;
+      display: flex;
+      font-size: 28rpx;
+      justify-content: space-between;
+    }
+    .totalFee {
+      float: right;
+      text-align: right;
+      font-size: 28rpx;
+      margin-right: 32rpx;
+    }
+    .chargeFee {
+      margin-right: 32rpx;
+      font-size: 28rpx;
+      line-height: 48rpx;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .feeRed {
+      font-size: 34rpx;
+      color: #fa5151;
+    }
+    .feeGreen {
+      font-size: 34rpx;
+      color: #52c41a;
+    }
+    .remark {
+      width: 690rpx;
+      overflow: hidden;
+      color: #595959;
+    }
+    .user {
+      color: #595959;
+      text-align: right;
+      margin-right: 32rpx;
+    }
+    .date {
+      color: #7f7f7f;
+      width: 440rpx;
+    }
   }
 }
 </style>

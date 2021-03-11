@@ -41,32 +41,31 @@
       >
         <view class="listTitle">
           <view class="datetime"
-            ><view class="iconfont icon-time-circle"></view> 2020-10-12
-            12:30</view
+            ><view class="iconfont icon-time-circle"></view>
+            {{ order.payTradeDate }}</view
           >
-          <view class="pending">收费</view>
+          <view class="pending">{{ order.payTradeTypeText }}</view>
         </view>
         <view class="lineHr"></view>
         <view class="listContent">
           <view class="listLine">
-            <view class="ml-32">普通收费</view>
-            <view class="totalFee"></view>
+            <view class="ml-32">{{ order.businessTypeName }}</view>
           </view>
           <view class="listLine">
-            <view class="ml-32">北极熊南京分店</view>
+            <view class="ml-32">{{ order.medicalInstitutionName }}</view>
             <view class="chargeFee"
               >实收：
-              <view class="feeRed">$950.00</view>
+              <view class="feeRed">{{
+                $utils.formatPrice(order.receiveAmount)
+              }}</view>
             </view>
           </view>
           <view class="listLine">
-            <view class="ml-32 remark"
-              >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
-            >
+            <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
           </view>
-          <view class="listLine">
+          <view class="listLine" style="padding-bottom: 32rpx;">
             <view class="ml-32 date"></view>
-            <view class="user">季冰宇</view>
+            <view class="user">{{ order.cashierStaffName }}</view>
           </view>
         </view>
       </view>
@@ -87,7 +86,7 @@ export default {
   data() {
     return {
       billSupperTypeArray: this.initEnumArray(
-        this.$utils.getEnums('PayTradeType'),
+        this.$utils.getEnums('BillSupperType'),
       ),
       billSupperTypeTypeIndex: 0,
       doctorList: uni.getStorageSync('allStaffList'),
@@ -105,6 +104,9 @@ export default {
         request: 'loading',
       },
       params: {},
+      payTradeTypeArray: this.initEnumArray(
+        this.$utils.getEnums('PayTradeType'),
+      ),
     }
   },
   computed: {
@@ -153,10 +155,10 @@ export default {
           element.cashierTimeDate = moment(element.cashierDate).format(
             'YYYY-MM-DD HH:mm:ss',
           )
-          const findObj = this.billSupperTypeArray.find((v) => {
-            return v.value === element.billType
+          const findObj = this.payTradeTypeArray.find((v) => {
+            return v.value === element.payTradeType
           })
-          element.billTypeText = findObj?.zh_CN
+          element.payTradeTypeText = findObj?.zh_CN
         })
 
       if (current === 1) {
@@ -192,121 +194,104 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.filterlistPayment {
-  display: flex;
-  background-color: #fff;
-  margin-bottom: 16rpx;
-  margin-top: 2rpx;
-  height: 80rpx;
-  font-size: 28rpx;
-  color: #595959;
-  .uni-list-cell {
-    width: 250rpx;
-  }
-  .iconfont {
-    font-size: 24rpx;
-    margin-left: 8rpx;
-  }
-  .uni-list-cell {
-    line-height: 80rpx;
-  }
-  .uni-input {
+.chargeContentPayment {
+  .filterlistPayment {
     display: flex;
-    justify-content: center;
-  }
-}
-.lineHr {
-  width: 686rpx;
-  height: 2rpx;
-  margin-left: 32rpx;
-  background: rgba(0, 0, 0, 0.15);
-}
-.ml-32 {
-  margin-left: 32rpx;
-}
-.listPayment {
-  background-color: #fff;
-  margin-bottom: 20rpx;
-  margin-top: 18rpx;
-  height: 380rpx;
-  .listTitle {
-    height: 84rpx;
-    display: flex;
-    align-items: center;
-  }
-  .datetime {
-    display: flex;
-    width: 400rpx;
-    align-items: center;
+    background-color: #fff;
+    margin-bottom: 16rpx;
+    margin-top: 2rpx;
+    height: 80rpx;
     font-size: 28rpx;
     color: #595959;
+    .uni-list-cell {
+      width: 250rpx;
+    }
+    .iconfont {
+      font-size: 24rpx;
+      margin-left: 8rpx;
+    }
+    .uni-list-cell {
+      line-height: 80rpx;
+    }
+    .uni-input {
+      display: flex;
+      justify-content: center;
+    }
   }
-  .icon-time-circle {
-    margin-left: 28rpx;
-    margin-right: 14rpx;
+  .lineHr {
+    width: 686rpx;
+    height: 2rpx;
+    margin-left: 32rpx;
+    background: rgba(0, 0, 0, 0.15);
   }
-  .pending {
-    width: 116rpx;
-    height: 40rpx;
-    background: #fff7e6;
-    border: 2rpx solid #fa8c16;
-    border-radius: 6rpx;
-    text-align: center;
-    color: #fa8c16;
-    line-height: 40rpx;
-    font-size: 28rpx;
-    margin-left: 202rpx;
+  .ml-32 {
+    margin-left: 32rpx;
   }
-  .listContent {
-    height: 204rpx;
-  }
-  .listLine {
+  .listPayment {
+    background-color: #fff;
+    margin-bottom: 20rpx;
     margin-top: 18rpx;
-    display: flex;
-    font-size: 28rpx;
-  }
-  .totalFee {
-    margin-left: 86px;
-    float: right;
-    width: 400rpx;
-    text-align: right;
-    font-size: 28rpx;
-  }
-  .chargeFee {
-    margin-left: 90rpx;
-    width: 400rpx;
-    font-size: 28rpx;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .arrFee {
-    margin-left: 200rpx;
-    width: 400rpx;
-    font-size: 28rpx;
-    display: flex;
-    justify-content: flex-end;
-  }
-  .feeRed {
-    color: #fa5151;
-  }
-  .feeGreen {
-    color: #52c41a;
-  }
-  .remark {
-    height: 72rpx;
-    width: 690rpx;
-    overflow: hidden;
-    color: #595959;
-  }
-  .user {
-    color: #595959;
-    text-align: right;
-    width: 200rpx;
-    margin-left: 40rpx;
-  }
-  .date {
-    color: #7f7f7f;
-    width: 440rpx;
+    .listTitle {
+      height: 84rpx;
+      display: flex;
+      align-items: center;
+    }
+    .datetime {
+      display: flex;
+      width: 400rpx;
+      align-items: center;
+      font-size: 28rpx;
+      color: #595959;
+    }
+    .icon-time-circle {
+      margin-left: 28rpx;
+      margin-right: 14rpx;
+    }
+    .pending {
+      width: 116rpx;
+      height: 40rpx;
+      background: #fff7e6;
+      border: 2rpx solid #fa8c16;
+      border-radius: 6rpx;
+      text-align: center;
+      color: #fa8c16;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      margin-left: 202rpx;
+    }
+    .listLine {
+      margin-top: 18rpx;
+      display: flex;
+      font-size: 28rpx;
+      justify-content: space-between;
+    }
+    .chargeFee {
+      font-size: 28rpx;
+      display: flex;
+      justify-content: flex-end;
+      margin-right: 32rpx;
+    }
+    .feeRed {
+      color: #fa5151;
+    }
+    .feeGreen {
+      color: #52c41a;
+    }
+    .remark {
+      width: 690rpx;
+      overflow: hidden;
+      color: #595959;
+    }
+    .user {
+      color: #595959;
+      text-align: right;
+      width: 200rpx;
+      margin-left: 40rpx;
+    }
+    .date {
+      color: #7f7f7f;
+      width: 440rpx;
+    }
   }
 }
 </style>
