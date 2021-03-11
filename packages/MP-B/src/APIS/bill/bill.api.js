@@ -31,6 +31,10 @@ const billAPI = {
   orderDetail(data) {
     return httper.get('billing/bill/order/item', data)
   },
+  //支付记录
+  paymentOrderList(data) {
+    return httper.get('pay/pay-order/page-by-payer-id', data)
+  },
 }
 
 export default billAPI

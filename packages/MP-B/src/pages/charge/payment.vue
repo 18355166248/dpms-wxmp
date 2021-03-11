@@ -33,37 +33,47 @@
         </picker>
       </view>
     </view>
-    <view class="listPayment">
-      <view class="listTitle">
-        <view class="datetime"
-          ><view class="iconfont icon-time-circle"></view> 2020-10-12
-          12:30</view
-        >
-        <view class="pending">收费</view>
-      </view>
-      <view class="lineHr"></view>
-      <view class="listContent">
-        <view class="listLine">
-          <view class="ml-32">普通收费</view>
-          <view class="totalFee"></view>
+    <view v-if="paymentList.length > 0">
+      <view
+        class="listPayment"
+        v-for="order in paymentList"
+        :key="order.businessNo"
+      >
+        <view class="listTitle">
+          <view class="datetime"
+            ><view class="iconfont icon-time-circle"></view> 2020-10-12
+            12:30</view
+          >
+          <view class="pending">收费</view>
         </view>
-        <view class="listLine">
-          <view class="ml-32">北极熊南京分店</view>
-          <view class="chargeFee"
-            >实收：
-            <view class="feeRed">$950.00</view>
+        <view class="lineHr"></view>
+        <view class="listContent">
+          <view class="listLine">
+            <view class="ml-32">普通收费</view>
+            <view class="totalFee"></view>
+          </view>
+          <view class="listLine">
+            <view class="ml-32">北极熊南京分店</view>
+            <view class="chargeFee"
+              >实收：
+              <view class="feeRed">$950.00</view>
+            </view>
+          </view>
+          <view class="listLine">
+            <view class="ml-32 remark"
+              >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
+            >
+          </view>
+          <view class="listLine">
+            <view class="ml-32 date"></view>
+            <view class="user">季冰宇</view>
           </view>
         </view>
-        <view class="listLine">
-          <view class="ml-32 remark"
-            >备注：备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注备注</view
-          >
-        </view>
-        <view class="listLine">
-          <view class="ml-32 date"></view>
-          <view class="user">季冰宇</view>
-        </view>
       </view>
+      <load-more :status="dataSourceStatus.status" />
+    </view>
+    <view v-else>
+      <empty :disabled="true" text="暂无数据"></empty>
     </view>
   </view>
 </template>
@@ -73,9 +83,9 @@ import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 
 export default {
+  props: ['patientId'],
   data() {
     return {
-      data: {},
       billSupperTypeArray: this.initEnumArray(
         this.$utils.getEnums('PayTradeType'),
       ),
@@ -84,6 +94,17 @@ export default {
       doctorIndex: 0,
       dateIndex: 0,
       dateList: ['全部', '今天', '近一周', '近一月'],
+      paymentList: [],
+      current: 1,
+      total: 1,
+      size: 5,
+      dataSourceStatus: {
+        // 数据列表的状态
+        loading: true,
+        status: 'loading',
+        request: 'loading',
+      },
+      params: {},
     }
   },
   computed: {
@@ -95,9 +116,62 @@ export default {
     },
   },
   mounted() {
-    // console.log(this.billSettlementArray)
+    this.init()
+  },
+  onReachBottom() {
+    if (this.pendingList.length < this.total) {
+      this.current += 1
+      this.getPaymentOrder()
+    }
   },
   methods: {
+    init() {
+      this.getPaymentOrder()
+    },
+    async getPaymentOrder(params = {}) {
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
+
+      const {
+        data: { total, current, records },
+      } = await billAPI.paymentOrderList({
+        payerId: this.patientId,
+        current: this.current,
+        size: this.size,
+        ...params,
+      })
+
+      uni.hideLoading()
+
+      records &&
+        records.forEach((element) => {
+          element.payTradeDate = moment(element.payTradeTime).format(
+            'YYYY-MM-DD HH:mm:ss',
+          )
+          element.cashierTimeDate = moment(element.cashierDate).format(
+            'YYYY-MM-DD HH:mm:ss',
+          )
+          const findObj = this.billSupperTypeArray.find((v) => {
+            return v.value === element.billType
+          })
+          element.billTypeText = findObj?.zh_CN
+        })
+
+      if (current === 1) {
+        this.paymentList = records
+      } else {
+        this.paymentList = this.paymentList.concat(records)
+      }
+      this.total = total
+
+      if (total === this.paymentList.length) {
+        this.dataSourceStatus.status = 'noMore'
+      } else {
+        this.dataSourceStatus.status = 'more'
+      }
+    },
     billingTypeChange: function (e) {
       this.billSupperTypeTypeIndex = e.detail.value
     },
