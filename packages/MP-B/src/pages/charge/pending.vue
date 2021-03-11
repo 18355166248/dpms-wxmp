@@ -12,7 +12,7 @@
       <view class="lineHr"></view>
       <view class="listContent">
         <view class="listLine">
-          <view class="ml-32">普通收费</view>
+          <view class="ml-32">{{ order.billTypeText }}</view>
           <view class="totalFee"
             >总计金额：{{ $utils.formatPrice(order.totalAmount) }}
           </view>
@@ -57,6 +57,9 @@ export default {
   props: ['patientId', 'customerId'],
   data() {
     return {
+      billSupperTypeArray: this.initEnumArray(
+        this.$utils.getEnums('BillSupperType'),
+      ),
       pendingList: [],
       current: 1,
       total: 1,
@@ -108,6 +111,10 @@ export default {
           element.consultTimeDate = moment(element.consultTime).format(
             'YYYY-MM-DD HH:mm:ss',
           )
+          const findObj = this.billSupperTypeArray.find((v) => {
+            return v.value === element.billType
+          })
+          element.billTypeText = findObj?.zh_CN
         })
 
       if (current === 1) {
@@ -122,6 +129,12 @@ export default {
       } else {
         this.dataSourceStatus.status = 'more'
       }
+    },
+    initEnumArray: function (obj) {
+      if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
+      let array = Object.values(obj.properties)
+      array.unshift({ value: -1, zh_CN: '全部' })
+      return array
     },
   },
 }

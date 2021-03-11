@@ -19,7 +19,7 @@
       :customerId="customerId"
     />
     <charged v-if="currentTab === 1" :patientId="patientId" />
-    <payment v-if="currentTab === 2" patientId />
+    <payment v-if="currentTab === 2" :patientId="patientId" />
   </view>
 </template>
 
@@ -44,7 +44,7 @@ export default {
         { name: '已收费账单', val: 1 },
         { name: '支付记录', val: 2 },
       ],
-      currentTab: 1,
+      currentTab: 2,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
       patientId: 0,
