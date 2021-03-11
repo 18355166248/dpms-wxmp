@@ -3,9 +3,9 @@
     <view class="filterlistPayment">
       <view class="uni-list-cell">
         <picker
-          @change="billingTypeChange"
-          :value="billSupperTypeTypeIndex"
-          :range="billSupperTypeArray"
+          @change="onPayTradeTypeChange"
+          :value="payTradeTypeIndex"
+          :range="payTradeTypeArray"
           range-key="zh_CN"
         >
           <view class="uni-input"
@@ -85,10 +85,10 @@ export default {
   props: ['patientId'],
   data() {
     return {
-      billSupperTypeArray: this.initEnumArray(
-        this.$utils.getEnums('BillSupperType'),
+      payTradeTypeArray: this.initEnumArray(
+        this.$utils.getEnums('PayTradeType'),
       ),
-      billSupperTypeTypeIndex: 0,
+      payTradeTypeIndex: 0,
       doctorList: uni.getStorageSync('allStaffList'),
       doctorIndex: 0,
       dateIndex: 0,
@@ -111,7 +111,7 @@ export default {
   },
   computed: {
     billTypePickerText() {
-      return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
+      return this.payTradeTypeArray[this.payTradeTypeIndex].zh_CN
     },
     doctoPickerText() {
       return this.doctorList[this.doctorIndex].staffName
@@ -174,14 +174,45 @@ export default {
         this.dataSourceStatus.status = 'more'
       }
     },
-    billingTypeChange: function (e) {
-      this.billSupperTypeTypeIndex = e.detail.value
+    onPayTradeTypeChange: function (e) {
+      this.payTradeTypeIndex = e.detail.value
+      if (Number(this.payTradeTypeIndex) === 0) {
+        delete this.params.payTradeTypeIndex
+      } else {
+        this.params.payTradeType = this.payTradeTypeArray[
+          this.payTradeTypeIndex
+        ].value
+      }
+      this.getPaymentOrder(this.params)
     },
     doctorChange: function (e) {
       this.doctorIndex = e.detail.value
+      if (Number(this.doctorIndex) === 0) {
+        delete this.params.doctorId
+      } else {
+        this.params.doctorId = this.doctorList[this.doctorIndex].staffId
+      }
+      this.getPaymentOrder(this.params)
     },
     datePickerChange: function (e) {
       this.dateIndex = e.detail.value
+      if (Number(this.dateIndex) === 0) {
+        delete this.params.payTimeStartStamp
+        delete this.params.payTimeEndStamp
+      }
+      if (Number(this.dateIndex) === 1) {
+        this.params.payTimeStartStamp = moment().startOf('day').format('x')
+        this.params.payTimeEndStamp = moment().endOf('day').format('x')
+      }
+      if (Number(this.dateIndex) === 2) {
+        this.params.payTimeStartStamp = moment().startOf('week').format('x')
+        this.params.payTimeEndStamp = moment().endOf('week').format('x')
+      }
+      if (Number(this.dateIndex) === 3) {
+        this.params.payTimeStartStamp = moment().startOf('month').format('x')
+        this.params.payTimeEndStamp = moment().endOf('month').format('x')
+      }
+      this.getPaymentOrder(this.params)
     },
     initEnumArray: function (obj) {
       if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
