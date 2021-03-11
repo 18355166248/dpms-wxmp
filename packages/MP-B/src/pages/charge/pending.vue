@@ -1,5 +1,5 @@
 <template>
-  <view class="chargeContentPending">
+  <view class="chargeContentPending" v-if="pendingList.length > 0">
     <view class="list" v-for="order in pendingList" :key="order.billOrderId">
       <view class="listTitle">
         <view class="datetime"
@@ -42,6 +42,9 @@
       </view>
     </view>
     <load-more :status="dataSourceStatus.status" />
+  </view>
+  <view v-else>
+    <empty :disabled="true" text="暂无数据"></empty>
   </view>
 </template>
 

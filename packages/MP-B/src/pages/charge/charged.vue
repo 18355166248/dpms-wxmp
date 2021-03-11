@@ -46,58 +46,63 @@
         </picker>
       </view>
     </view>
-    <view
-      class="listCharged"
-      @click="toPage('/pages/charge/chargeDetail', {})"
-      v-for="order in chargedList"
-      :key="order.billOrderId"
-    >
-      <view class="listTitle">
-        <view class="datetime"
-          ><view class="iconfont icon-time-circle"></view>
-          {{ order.consultTimeDate }}</view
-        >
-        <view class="pending" v-if="order.arrearageAmount > 0">欠费</view>
-      </view>
-      <view class="lineHr"></view>
-      <view class="listContent">
-        <view class="listLine">
-          <view class="ml-32">{{ order.billSerialNo }}</view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">{{ order.billTypeText }}</view>
-          <view class="totalFee"
-            >总计金额：{{ $utils.formatPrice(order.totalAmount) }}</view
+    <view v-if="chargedList.length > 0">
+      <view
+        class="listCharged"
+        @click="toPage('/pages/charge/chargeDetail', {})"
+        v-for="order in chargedList"
+        :key="order.billOrderId"
+      >
+        <view class="listTitle">
+          <view class="datetime"
+            ><view class="iconfont icon-time-circle"></view>
+            {{ order.consultTimeDate }}</view
           >
+          <view class="pending" v-if="order.arrearageAmount > 0">欠费</view>
         </view>
-        <view class="listLine">
-          <view class="ml-32">{{ order.medicalInstitutionName }}</view>
-          <view class="chargeFee"
-            >应收金额：
-            <view class="feeRed">{{
-              $utils.formatPrice(order.receivableAmount)
-            }}</view>
+        <view class="lineHr"></view>
+        <view class="listContent">
+          <view class="listLine">
+            <view class="ml-32">{{ order.billSerialNo }}</view>
           </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32">{{ order.doctorName }}</view>
-          <view class="arrFee"
-            >欠费：
-            <view class="feeGreen">{{
-              $utils.formatPrice(order.arrearageAmount)
-            }}</view>
+          <view class="listLine">
+            <view class="ml-32">{{ order.billTypeText }}</view>
+            <view class="totalFee"
+              >总计金额：{{ $utils.formatPrice(order.totalAmount) }}</view
+            >
           </view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
-        </view>
-        <view class="listLine">
-          <view class="ml-32 date">创建时间：{{ order.createTimeDate }}</view>
-          <view class="user">{{ order.createStaffName }}</view>
+          <view class="listLine">
+            <view class="ml-32">{{ order.medicalInstitutionName }}</view>
+            <view class="chargeFee"
+              >应收金额：
+              <view class="feeRed">{{
+                $utils.formatPrice(order.receivableAmount)
+              }}</view>
+            </view>
+          </view>
+          <view class="listLine">
+            <view class="ml-32">{{ order.doctorName }}</view>
+            <view class="arrFee"
+              >欠费：
+              <view class="feeGreen">{{
+                $utils.formatPrice(order.arrearageAmount)
+              }}</view>
+            </view>
+          </view>
+          <view class="listLine">
+            <view class="ml-32 remark">备注：{{ order.memo || '-' }}</view>
+          </view>
+          <view class="listLine">
+            <view class="ml-32 date">创建时间：{{ order.createTimeDate }}</view>
+            <view class="user">{{ order.createStaffName }}</view>
+          </view>
         </view>
       </view>
+      <load-more :status="dataSourceStatus.status" />
     </view>
-    <load-more :status="dataSourceStatus.status" />
+    <view v-else>
+      <empty :disabled="true" text="暂无数据"></empty>
+    </view>
   </view>
 </template>
 
@@ -133,6 +138,7 @@ export default {
         status: 'loading',
         request: 'loading',
       },
+      params: {},
     }
   },
   computed: {
@@ -152,19 +158,54 @@ export default {
   methods: {
     billSettlementChange: function (e) {
       this.billSettlementIndex = e.detail.value
-      this.getChargedOrder()
+      if (Number(this.billSettlementIndex) === 0) {
+        delete this.params.billSettlementStatus
+      } else {
+        this.params.billSettlementStatus = this.billSettlementArray[
+          this.billSettlementIndex
+        ].value
+      }
+      this.getChargedOrder(this.params)
     },
     billingTypeChange: function (e) {
       this.billSupperTypeTypeIndex = e.detail.value
-      this.getChargedOrder()
+      if (Number(this.billSupperTypeTypeIndex) === 0) {
+        delete this.params.billType
+      } else {
+        this.params.billType = this.billSupperTypeArray[
+          this.billSupperTypeTypeIndex
+        ].value
+      }
+      this.getChargedOrder(this.params)
     },
     doctorChange: function (e) {
       this.doctorIndex = e.detail.value
-      this.getChargedOrder()
+      if (Number(this.doctorIndex) === 0) {
+        delete this.params.doctorId
+      } else {
+        this.params.doctorId = this.doctorList[this.doctorIndex].staffId
+      }
+      this.getChargedOrder(this.params)
     },
     datePickerChange: function (e) {
       this.dateIndex = e.detail.value
-      this.getChargedOrder()
+      if (Number(this.dateIndex) === 0) {
+        delete this.params.updateTimeStart
+        delete this.params.updateTimeEnd
+      }
+      if (Number(this.dateIndex) === 1) {
+        this.params.updateTimeStart = moment().startOf('day').format('x')
+        this.params.updateTimeEnd = moment().endOf('day').format('x')
+      }
+      if (Number(this.dateIndex) === 2) {
+        this.params.updateTimeStart = moment().startOf('week').format('x')
+        this.params.updateTimeEnd = moment().endOf('week').format('x')
+      }
+      if (Number(this.dateIndex) === 3) {
+        this.params.updateTimeStart = moment().startOf('month').format('x')
+        this.params.updateTimeEnd = moment().endOf('month').format('x')
+      }
+      this.getChargedOrder(this.params)
     },
     initEnumArray: function (obj) {
       if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
@@ -183,7 +224,7 @@ export default {
       this.current = 1
       this.getChargedOrder()
     },
-    async getChargedOrder() {
+    async getChargedOrder(params = {}) {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
@@ -196,6 +237,7 @@ export default {
         customerId: this.customerId,
         current: this.current,
         size: this.size,
+        ...params,
       })
 
       uni.hideLoading()
