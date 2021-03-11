@@ -55,7 +55,6 @@ export default {
     this.init()
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
-    console.log(this.patientId, this.customerId)
   },
   methods: {
     init() {
