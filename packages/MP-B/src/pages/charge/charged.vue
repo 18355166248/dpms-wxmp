@@ -86,7 +86,7 @@
           </view>
           <view class="listLine">
             <view class="ml-32">{{ order.doctorName }}</view>
-            <view class="arrFee"
+            <view class="arrFee" v-if="order.arrearageAmount > 0"
               >欠费：
               <view class="feeGreen">{{
                 $utils.formatPrice(order.arrearageAmount)
