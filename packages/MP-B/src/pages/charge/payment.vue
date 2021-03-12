@@ -319,7 +319,7 @@ export default {
       color: #595959;
       text-align: right;
       width: 200rpx;
-      margin-left: 40rpx;
+      margin-right: 40rpx;
     }
     .date {
       color: #7f7f7f;
