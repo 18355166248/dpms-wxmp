@@ -200,7 +200,7 @@ export default {
       patientTagsCheckedText: '', //用户画像选中文本
       medicalRecordNo: '', //病历号
       settingsTypeId: '', //患者类型
-      settingsPatientSourceId: '',
+      settingsPatientSourceId: '', //患者来源
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
@@ -217,6 +217,12 @@ export default {
             min: 1,
             max: 50,
             message: '姓名输入不应该超过 50 字',
+          },
+        ],
+        nickName: [
+          {
+            max: 50,
+            message: '个性称呼输入不应该超过 50 字',
           },
         ],
         medicalRecordNo: [
@@ -279,6 +285,9 @@ export default {
           pattern: /^[^*]{0,100}$/g,
           message: '请填写详细地址',
         },
+        settingsPatientSourceId: {
+          type: 'any',
+        }, //不写validator的rules会变成undefiend要报错啊
       },
     }
   },
@@ -293,15 +302,6 @@ export default {
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
-    // 'form.settingsPatientSourceId'(e) {
-    //   const obj = this.settingsPatientSourceList.find((v) => {
-    //     return v.settingsPatientSourceId == e
-    //   })
-    //   if (!obj) return
-    //   // this.form.sourceName = obj.settingsPatientSourceName
-    //   // this.form.systemInner = obj.systemInner
-    //   this.form.settingsPatientSourceId = obj.settingsPatientSourceId
-    // },
   },
   created() {
     // 更新用户画像选中值
@@ -325,8 +325,13 @@ export default {
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getSettingsPatientSourceList() {
-      let res = await patientAPI.patientSource()
-      let arr = []
+      const res = await patientAPI.patientSource()
+      let arr = [
+        {
+          settingsPatientSourceId: -1,
+          settingsPatientSourceName: '无',
+        },
+      ]
       res.data?.forEach((v) => {
         v.childSourceTypeList?.forEach((v) => {
           arr.push(...v.patientSourceList)
@@ -357,7 +362,7 @@ export default {
       }
     },
     onSyncClick() {
-      this.$utils.showLoading()
+      this.$utils.showLoading('刷新病例号中……')
       this.getPatientMedicalRecordNo()
       this.$utils.clearLoading()
     },

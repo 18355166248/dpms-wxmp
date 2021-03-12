@@ -119,7 +119,8 @@ export default {
    * @param formValue 表单值
    */
   formValidate(rules, formValue, callback) {
-    let validator = new AsyncValidator(rules);
+    const validator = new AsyncValidator(rules);
+    console.log("validator", validator);
 
     formValue = this.omitEmojiValueInObject(formValue);
 
