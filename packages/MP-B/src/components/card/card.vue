@@ -49,13 +49,28 @@
 
         <view :class="{ 'mb-14': infos.length > 0 }">
           <template v-if="gender">
-            <tag :text="genderTag" :circle="false" type="error"></tag>
+            <tag
+              :text="genderTag"
+              :circle="false"
+              type="error"
+              size="small"
+            ></tag>
           </template>
           <template v-if="visType">
-            <tag :text="visType" :circle="false" type="error"></tag>
+            <tag
+              :text="visType"
+              :circle="false"
+              type="error"
+              size="small"
+            ></tag>
           </template>
           <template v-if="medicalRecordNo">
-            <tag :text="medicalRecordNo" :circle="false" type="error"></tag>
+            <tag
+              :text="medicalRecordNo"
+              :circle="false"
+              type="error"
+              size="small"
+            ></tag>
           </template>
         </view>
 
