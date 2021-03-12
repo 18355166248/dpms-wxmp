@@ -29,7 +29,7 @@ export default {
       const formValue = _.cloneDeep(form)
       const { type } = this.paramsObj
 
-      let patientContact = {
+      const patientContact = {
         contactLabel: form.contactLabel,
         mobile: form.mobile,
         alternateMobile: form.alternateMobile,
@@ -39,6 +39,10 @@ export default {
         city: form.region[1],
         area: form.region[2],
         address: form.address,
+      }
+
+      if (Number(formValue.settingsPatientSourceId) < 0) {
+        delete formValue.settingsPatientSourceId
       }
 
       delete formValue.contactLabel
