@@ -251,9 +251,9 @@ export default {
           element.createTimeDate = moment(element.createTime).format(
             'YYYY-MM-DD HH:mm:ss',
           )
-          element.consultTimeDate = moment(element.consultTime).format(
-            'YYYY-MM-DD HH:mm:ss',
-          )
+          element.consultTimeDate = element.consultTime
+            ? moment(element.consultTime).format('YYYY-MM-DD HH:mm:ss')
+            : '-'
           const findObj = this.billSupperTypeArray.find((v) => {
             return v.value === element.billType
           })

@@ -357,7 +357,9 @@ export default {
       }
     },
     onSyncClick() {
+      this.$utils.showLoading()
       this.getPatientMedicalRecordNo()
+      this.$utils.clearLoading()
     },
     filterFormData(data) {
       if (_.isEmpty(data)) {

@@ -266,6 +266,7 @@ export default {
       height: 84rpx;
       display: flex;
       align-items: center;
+      justify-content: space-between;
     }
     .datetime {
       display: flex;
@@ -279,7 +280,6 @@ export default {
       margin-right: 14rpx;
     }
     .pending {
-      width: 116rpx;
       height: 40rpx;
       background: #fff7e6;
       border: 2rpx solid #fa8c16;
@@ -288,7 +288,9 @@ export default {
       color: #fa8c16;
       line-height: 40rpx;
       font-size: 28rpx;
-      margin-left: 202rpx;
+      margin-right: 32rpx;
+      padding-left: 10rpx;
+      padding-right: 10rpx;
     }
     .listLine {
       margin-top: 18rpx;
