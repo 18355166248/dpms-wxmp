@@ -64,6 +64,7 @@
         isLink
       />
       <view style="display: relative;">
+        <view class="iconfont icon-sync" @click="onSyncClick"></view>
         <dpmsCellInput
           required
           title="病历号"
@@ -71,7 +72,6 @@
           placeholder="请输入病历号"
           v-model="form.medicalRecordNo"
         />
-        <view class="iconfont icon-sync" @click="onSyncClick"></view>
       </view>
       <dpmsCell
         title="患者标签"
@@ -547,14 +547,10 @@ export default {
 
 .icon-sync {
   position: absolute;
-  top: 137.5vw;
-  left: 20vw;
+  left: 140rpx;
   font-size: 32rpx;
   color: #5cbb89;
-  width: 100rpx;
-  height: 100rpx;
-  text-align: center;
-  line-height: 10vw;
+  padding: 40rpx;
   z-index: 9;
 }
 
