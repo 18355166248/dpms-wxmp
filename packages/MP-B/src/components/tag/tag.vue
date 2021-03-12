@@ -102,7 +102,7 @@ export default {
 <style lang="scss" scoped>
 $uni-color-primary: #1890ff;
 $uni-color-error: #fa541c;
-$tag-pd: 0px 28rpx;
+$tag-pd: 0px 16rpx;
 $tag-small-pd: 0px 16rpx;
 $amount: 0.1;
 
