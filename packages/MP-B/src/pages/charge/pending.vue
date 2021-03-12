@@ -73,7 +73,9 @@ export default {
     }
   },
   mounted() {
-    this.init()
+    setTimeout(() => {
+      this.init()
+    }, 0)
   },
   onReachBottom() {
     if (this.pendingList.length < this.total) {
@@ -91,6 +93,8 @@ export default {
         title: '数据加载中',
         mask: true,
       })
+
+      console.log('params', this.customerId, this.patientId)
 
       const {
         data: { total, current, records },

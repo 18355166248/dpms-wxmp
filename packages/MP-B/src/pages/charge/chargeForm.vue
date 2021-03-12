@@ -52,9 +52,9 @@ export default {
     }
   },
   onLoad(params) {
-    this.init()
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
+    this.init()
   },
   methods: {
     init() {
