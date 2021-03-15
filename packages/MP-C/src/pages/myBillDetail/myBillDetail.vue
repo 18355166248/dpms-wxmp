@@ -12,7 +12,7 @@
     <div class="billContent">
       <div class="billProjectDetailContent marginBottom20">
         <div class="billProjectDetail">项目明细</div>
-        <div class="lineHr"></div>
+<!--        <div class="lineHr"></div>-->
         <div
           class="billList"
           v-for="item in myBillDetailContent.billOrderItemSalesVOList"
@@ -184,7 +184,7 @@ export default {
         padding: 32rpx;
         .title {
           height: 36rpx;
-          font-size: 28rpx;
+          font-size: 34rpx;
           font-family: PingFangSC, PingFangSC-Medium, sans-serif;
           font-weight: 500;
           text-align: left;
@@ -214,7 +214,7 @@ export default {
             font-size: 28rpx;
             font-family: PingFangSC, PingFangSC-Regular, sans-serif;
             font-weight: 400;
-            color: #4c4c4c;
+            color: #191919;
             line-height: 36rpx;
           }
         }
@@ -230,16 +230,17 @@ export default {
     background: rgba(0, 0, 0, 0.1);
   }
   .colorFont7 {
-    color: rgba(0, 0, 0, 0.7);
+    color: #7f7f7f;
   }
   .colorFont9 {
     color: rgba(0, 0, 0, 0.9);
   }
   .redColor {
+    font-size: 30rpx;
     color: #fa5151;
   }
   .greenColor {
-    color: #5cbb89;
+    color: #5cbb89 !important;
   }
 }
 </style>

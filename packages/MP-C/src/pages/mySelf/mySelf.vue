@@ -174,7 +174,7 @@
         >
           <div class="itemContent">
             <div class="itemContentLeft">
-              <div>
+              <div style="margin-bottom: 24rpx">
                 <span class="labelContentText">姓名：</span
                 ><span class="textContentName">{{ item.patientName }}</span>
               </div>
@@ -723,7 +723,6 @@ movable-view {
       .defaultContent {
         margin-right: 24rpx;
         padding: 0 16rpx;
-        height: 40rpx;
         font-size: 28rpx;
         font-family: SanFranciscoDisplay, SanFranciscoDisplay-Regular,
           sans-serif;
