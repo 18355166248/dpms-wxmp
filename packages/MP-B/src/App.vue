@@ -1,6 +1,13 @@
 <script>
+import store from '@/store'
+import { getSystemInfo } from 'mpcommon/utils/os'
+
 export default {
-  onLaunch: function () {},
+  onLaunch: function () {
+    const articleBoxClass = getSystemInfo()
+    store.commit('systemStore/setSystemScreen', articleBoxClass)
+    console.log('articleBoxClass', articleBoxClass)
+  },
   onShow: function () {},
   onHide: function () {},
 }
