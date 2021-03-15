@@ -452,7 +452,7 @@ export default {
       return (
         (this.registerList &&
           this.registerList.find((l) => l.registerId === this.form.registerId)
-            .registerLabel) ||
+            ?.registerLabel) ||
         ''
       )
     },

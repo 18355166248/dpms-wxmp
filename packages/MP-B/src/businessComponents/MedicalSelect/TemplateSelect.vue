@@ -6,7 +6,7 @@
         选择模板
         <div class="iconfont icon-plus" @click="close" />
       </div>
-      <div class="body">
+      <div class="body" v-if="templateTypes.length">
         <div class="tabs">
           <div
             class="tab"
@@ -37,6 +37,10 @@
             {{ t.patientMedicalRecordTemplateName }}
           </div>
         </div>
+      </div>
+      <div v-else class="empty">
+        <image mode="aspectFit" src="../../static/empty.png" />
+        暂无模板
       </div>
     </div>
   </div>
@@ -123,7 +127,7 @@ export default {
   left: 0;
   background: white;
   border-radius: 24rpx 24rpx 0 0;
-  max-height: 80%;
+  height: 80%;
   animation: open 0.6s;
   .head {
     height: 110rpx;
@@ -132,6 +136,7 @@ export default {
     align-items: center;
     color: #191919;
     font-size: 34rpx;
+    border-bottom: solid 2rpx #e5e5e5;
     .icon-plus {
       position: absolute;
       right: 0;
@@ -143,9 +148,9 @@ export default {
     }
   }
   .body {
-    border-top: solid 2rpx #e5e5e5;
     display: flex;
     font-size: 28rpx;
+    height: calc(100% - 110rpx);
     .tabs {
       background: #f0f0f0;
       width: 250rpx;
@@ -190,6 +195,19 @@ export default {
           background: #eef8f3;
         }
       }
+    }
+  }
+  .empty {
+    color: #7f7f7f;
+    font-size: 34rpx;
+    text-align: center;
+    padding-top: 120rpx;
+    image {
+      width: 320rpx;
+      height: 320rpx;
+      display: block;
+      margin: auto;
+      margin-bottom: 36rpx;
     }
   }
 }
