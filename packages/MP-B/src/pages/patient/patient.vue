@@ -143,7 +143,7 @@ export default {
   },
   onLoad(params) {
     this.patientId = params.patientId
-    const { menuList } = this.menu
+    const { menuList, pageElementsList } = this.menu
 
     const findObj =
       menuList &&
@@ -155,6 +155,14 @@ export default {
       findObj.children.findIndex((v) => {
         return v.enumValue === 'patient-manage'
       }) > -1
+
+    const hasCharge =
+      pageElementsList &&
+      pageElementsList.find((v) => {
+        return v.enumValue === 'billing-tab'
+      })
+
+    this.iconShow.isChargeShow = this.iconShow.isChargeShow && hasCharge
   },
   onShow() {
     this.getPatient()
