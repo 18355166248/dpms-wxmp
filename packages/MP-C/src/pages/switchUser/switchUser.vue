@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       mobile: null,
-      checkdUrl: '/static/icon-checkd.png',
+      checkdUrl: '/static/icon-checkd@2.png',
       currentImg: null,
       customerList: []
     }
@@ -101,6 +101,7 @@ export default {
         height: 40rpx;
         white-space:nowrap;
         & > span {
+          font-weight: 500;
           color: #5cbb89;
         }
       }
@@ -124,6 +125,7 @@ export default {
         border: 2rpx solid transparent;
         overflow: hidden;
         & > .user-name, & > .medical-record {
+          line-height: 50rpx !important;
           font-size: 28rpx;
           color: rgba(0,0,0,0.90);
           & > span {
