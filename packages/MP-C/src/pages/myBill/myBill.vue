@@ -81,7 +81,7 @@ export default {
       contentText: {
         contentdown: '加载更多',
         contentrefresh: '正在加载..',
-        contentnomore: '没有更多数据了',
+        contentnomore: '',
       },
       color: 'rgb(0, 0, 0, 0.5)',
     }

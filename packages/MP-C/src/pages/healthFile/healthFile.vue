@@ -46,7 +46,7 @@
         </div>
       </div>
     </div>
-    <div v-else-if="healthFileDataSource.length === 0" class="emptyContent">
+    <div v-if="healthFileDataSource.length === 0" class="emptyContent">
       <image class="imgContent" src="../../static/empty-icon@2x.png" />
       <div class="emptyText">暂无健康档案数据</div>
     </div>
