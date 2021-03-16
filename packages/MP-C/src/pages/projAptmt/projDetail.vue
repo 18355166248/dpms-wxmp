@@ -60,7 +60,7 @@
             v-show="i.canAppointment"
             @click="
               toUrl(
-                `/pages/appoint/index?itemId=${item.itemId}&shopId=${i.appointmentInstitutionId}`,
+                `/pages/appoint/index?itemId=${item.itemId}&isShowTab=2&shopId=${i.appointmentInstitutionId}`,
               )
             "
             >预 约</view
@@ -68,7 +68,6 @@
         </view>
       </view>
     </view>
-
 
     <view style="height: 48rpx;"></view>
   </view>
@@ -285,7 +284,6 @@ export default {
   left: 546rpx;
 }
 .detail {
-  
 }
 .detailTitle {
   width: 136rpx;
