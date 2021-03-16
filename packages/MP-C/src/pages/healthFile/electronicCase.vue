@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div v-for="(detail, index) in detailList">
+    <div v-if="detailList.length > 0" v-for="(detail, index) in detailList">
       <div v-if="detailList.length > 1" class="titleName">
         电子病例{{ index + 1 }}
       </div>
@@ -128,6 +128,10 @@
         </div>
       </div>
     </div>
+    <div v-if="detailList.length === 0" class="emptyContent">
+      <image class="imgContent" src="../../static/empty-icon@2x.png" />
+      <div class="emptyText">暂无电子病历数据</div>
+    </div>
   </div>
 </template>
 
@@ -231,6 +235,28 @@ export default {
       background: #ffffff;
       color: #5cbb89;
     }
+  }
+}
+.emptyContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 580rpx;
+  background-color: rgba(0, 0, 0, 0.04);
+  .imgContent {
+    margin-top: 176rpx;
+    margin-bottom: 20rpx;
+    width: 320rpx;
+    height: 320rpx;
+    /*background: yellow;*/
+  }
+  .emptyText {
+    width: 100%;
+    font-size: 34rpx;
+    font-family: PingFangSC, PingFangSC-Regular, sans-serif;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.65);
   }
 }
 </style>
