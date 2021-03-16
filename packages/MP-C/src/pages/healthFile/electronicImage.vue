@@ -1,36 +1,42 @@
 <template>
-  <div class="swiperContent">
-    <div class="swiper">
-      <div class="dots">
-        <div v-if="electronicImageSwiperData.length > 1">
-          <span>{{ topSwiperIndex + 1 }}</span
-          ><span style="color: rgba(255, 255, 255, 0.65);"
-            >/{{ electronicImageSwiperData.length }}</span
-          >
-        </div>
-      </div>
-
-      <swiper
-        style="height: 100%;"
-        :indicator-dots="false"
-        :current="topSwiperIndex"
-        @change="topSwiperTab"
-      >
-        <swiper-item
-          v-for="(item, index) in electronicImageSwiperData"
-          :key="index"
-        >
-          <div class="swiper-item">
-            <img :src="item.imageUrl" alt="" />
-            <div class="itemPic">
-              {{ imageTypeFormat(item.imageType) || '-' }}
-            </div>
+<!--  <div>-->
+    <div class="swiperContent">
+      <div v-if="electronicImageSwiperData.length > 0" class="swiper">
+        <div class="dots">
+          <div v-if="electronicImageSwiperData.length > 1">
+            <span>{{ topSwiperIndex + 1 }}</span
+            ><span style="color: rgba(255, 255, 255, 0.65);"
+              >/{{ electronicImageSwiperData.length }}</span
+            >
           </div>
-        </swiper-item>
-      </swiper>
+        </div>
+  
+        <swiper
+          style="height: 100%;"
+          :indicator-dots="false"
+          :current="topSwiperIndex"
+          @change="topSwiperTab"
+        >
+          <swiper-item
+            v-for="(item, index) in electronicImageSwiperData"
+            :key="index"
+          >
+            <div class="swiper-item">
+              <img :src="item.imageUrl" alt="" />
+              <div class="itemPic">
+                {{ imageTypeFormat(item.imageType) || '-' }}
+              </div>
+            </div>
+          </swiper-item>
+        </swiper>
+      </div>
+      <div v-if="electronicImageSwiperData.length > 0" class="saveBtn" @click="onSavePicture">保存到手机</div>
+      <div v-if="electronicImageSwiperData.length === 0" class="emptyContentImage">
+        <image class="imgContent" src="../../static/empty-icon@2x.png" />
+        <div class="emptyText">暂无影像数据</div>
+      </div>
     </div>
-    <div class="saveBtn" @click="onSavePicture">保存到手机</div>
-  </div>
+
 </template>
 
 <script>
@@ -183,6 +189,29 @@ export default {
     line-height: 90rpx;
     background: #5cbb89;
     /*z-index: 99999;*/
+  }
+}
+
+.emptyContentImage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  .imgContent {
+    margin-top: 176rpx;
+    margin-bottom: 20rpx;
+    width: 320rpx;
+    height: 320rpx;
+    /*background: yellow;*/
+  }
+  .emptyText {
+    width: 100%;
+    font-size: 34rpx;
+    font-family: PingFangSC, PingFangSC-Regular, sans-serif;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.65);
   }
 }
 </style>
