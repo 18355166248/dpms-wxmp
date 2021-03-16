@@ -28,7 +28,7 @@
         </view>
       </view>
 
-      <view class="vipInfo" v-show="configNumber === 0">
+      <view class="vipInfo" v-if="configNumber > 0">
         <div
           :class="{
             mySelf1: configNumber === 1,
@@ -69,7 +69,10 @@
           ></view>
           <view @click="toUrl('/pages/membership/membershipCard', 2)"
             >会员等级<span
-              v-if="memberCardDetail === 1"
+              v-if="
+                memberCardDetail === 1 &&
+                memberCardTypeQueryResponse.cardTypeName
+              "
               style="color: rgba(0, 0, 0, 0.25);"
               class="icon iconfont icon-rightCircle"
             ></span
@@ -247,7 +250,7 @@ export default {
       quickAppointment: 1,
       storedCardAccount: 1,
       storedCardDetail: 4,
-      configNumber: 3,
+      configNumber: 0,
     }
   },
   onShow() {
@@ -372,11 +375,9 @@ export default {
               userBaseId: res.data.userBaseId,
             })
             .then((re) => {
-              console.log('MemberDetails', re)
-              this.memberDetails = re.data.memberDetailResponse
+              this.memberDetails = re.data?.memberDetailResponse || {}
               this.memberCardTypeQueryResponse =
                 re.data.memberCardTypeQueryResponse
-              console.log('xxx', this.memberCardTypeQueryResponse)
               this.shareMember =
                 re.data.memberDetailResponse === undefined ||
                 re.data.memberDetailResponse.shareInfo === undefined
@@ -400,7 +401,12 @@ export default {
       setTimeout(() => (this.toUrling = false), 999)
       if (getStorage(STORAGE_KEY.STAFF).id) {
         if (num === 1 && this.storedCardDetail !== 1) return //点储值卡余额但没配置储值卡明细
-        if (num === 2 && this.memberCardDetail !== 1) return //点会员等级但没配置会员详情
+        if (
+          num === 2 &&
+          (this.memberCardDetail !== 1 ||
+            !this.memberCardTypeQueryResponse.cardTypeName)
+        )
+          return //点会员等级但没配置会员详情
         this.$utils.push({ url: url })
       } else {
         this.load()

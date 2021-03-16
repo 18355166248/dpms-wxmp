@@ -60,7 +60,7 @@
             v-show="i.canAppointment"
             @click="
               toUrl(
-                `/pages/appoint/index?doctorId=${doctor.doctorId}&shopId=${i.appointmentInstitutionId}`,
+                `/pages/appoint/index?doctorId=${doctor.doctorId}&isShowTab=2&shopId=${i.appointmentInstitutionId}`,
               )
             "
             >预 约</view
@@ -68,7 +68,6 @@
         </view>
       </view>
     </view>
-    
   </scroll-view>
 </template>
 

@@ -70,6 +70,7 @@
         @cellclick="personnelPickerVisible = true"
       />
       <dpmsCellInput
+        class="dpms-last"
         title="预约备注"
         placeholder="请输入备注"
         inputType="text"
@@ -613,7 +614,7 @@ page {
 }
 .agree {
   color: rgba(153, 153, 153, 1);
-  font-size: 24rpx;
+  font-size: 28rpx;
   height: 74rpx;
   display: flex;
   align-items: center;
@@ -621,7 +622,7 @@ page {
     width: 74rpx;
     height: 74rpx;
     /deep/.checked {
-      padding: 22rpx 10rpx 22rpx 32rpx;
+      padding: 20rpx 10rpx 20rpx 32rpx;
       display: block;
     }
     .check-circle {
@@ -795,5 +796,18 @@ button {
 /deep/ .buttonIsAgree .dpms-button-primary {
   background: #f5f5f5 !important;
   color: rgba(0, 0, 0, 0.25) !important;
+}
+/deep/ .dpms-last .dpms-cell:after {
+  position: absolute;
+  box-sizing: border-box;
+  transform-origin: center;
+  content: ' ';
+  pointer-events: none;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 16px;
+  border-bottom: none !important;
+  transform: scaleY(0.5);
 }
 </style>

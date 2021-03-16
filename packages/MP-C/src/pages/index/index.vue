@@ -58,7 +58,7 @@
               "
             >
               <image
-                mode="aspectFit"
+                mode="aspectFill"
                 :src="item.itemThumbnailUrl"
                 class="image"
               ></image>
@@ -67,7 +67,7 @@
                   <view class="">{{ item.itemName }}</view>
                   <view
                     class="appointBtn"
-                    v-show="item.canAppointment && projectAppointment === 1"
+                    v-if="item.canAppointment && projectAppointment === 1"
                     @click.stop="handleProjAptmt(item)"
                     >预约</view
                   >
@@ -111,7 +111,7 @@
               </view>
               <view
                 class="appointBtn"
-                v-show="
+                v-if="
                   s.canAppointment &&
                   !(
                     doctorAppointment !== 1 &&
@@ -191,9 +191,9 @@ export default {
         contentnomore: '没有更多数据了',
       },
       backgroundStyle: 'rgb(92, 187, 137, 0)',
-      doctorAppointment: 1,
-      projectAppointment: 1,
-      quickAppointment: 1,
+      doctorAppointment: 0,
+      projectAppointment: 0,
+      quickAppointment: 0,
     }
   },
   onShareAppMessage(res) {
@@ -586,6 +586,7 @@ template {
           }
           .storeAddress,
           .storeTime {
+            font-size: 28rpx;
             margin-top: 16rpx;
             display: flex;
             flex-wrap: nowrap;

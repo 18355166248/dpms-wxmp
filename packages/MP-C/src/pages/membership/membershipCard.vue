@@ -5,7 +5,7 @@
         class="mcard-card"
         :style="{
           backgroundColor: backgroundColor,
-          backgroundImage: `url(${backgroundColor})`,
+          backgroundImage: `url(${backgroundImg})`,
         }"
       >
         <view class="card-top">
@@ -195,11 +195,7 @@ export default {
       let d = times.getDate()
       let h = times.getHours()
       let mm = times.getMinutes()
-
-      let s = times.getSeconds()
-      t = `${y}-${m}-${d}  ${h}:${mm < 10 ? '0' + mm : mm}:${
-        s < 10 ? '0' + s : s
-      }`
+      t = `${y}-${m}-${d}  ${h}:${mm < 10 ? '0' + mm : mm}`
       this.openTime = t
     },
   },
@@ -219,6 +215,7 @@ export default {
       border-radius: 26rpx;
       padding: 48rpx 48rpx 32rpx 48rpx;
       color: #ffffff;
+      background-size: 686rpx 412rpx;
       font-family: PingFangSC, PingFangSC-Medium;
       .card-top {
         box-sizing: border-box;
@@ -294,6 +291,7 @@ export default {
   .mcard-mid {
     margin-top: 48rpx;
     .mcard-mid-title {
+      color: #595959;
       font-size: 34rpx;
       margin-bottom: 8rpx;
       font-family: PingFangSC, PingFangSC-Medium;
