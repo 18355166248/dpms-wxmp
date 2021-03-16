@@ -123,6 +123,7 @@ export default {
     },
     activedContents(newVal, oldVal) {
       this.$emit('change', this.activedContents)
+      this.$utils.show('添加成功')
     },
   },
 }
@@ -181,6 +182,7 @@ export default {
       flex: none;
       color: #4c4c4c;
       overflow: auto;
+      overscroll-behavior: contain;
       .tab {
         border-left: 8rpx solid transparent;
         padding-left: 32rpx;
@@ -206,6 +208,7 @@ export default {
       padding: 16rpx;
       flex: auto;
       overflow: auto;
+      overscroll-behavior: contain;
       .flex1 {
         color: #4c4c4c;
         display: flex;

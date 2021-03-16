@@ -98,6 +98,7 @@ export default {
     activedTemplate(newVal) {
       if (newVal) {
         this.$emit('change', newVal)
+        this.$utils.show('添加成功')
       }
     },
   },
@@ -157,6 +158,7 @@ export default {
       flex: none;
       color: #4c4c4c;
       overflow: auto;
+      overscroll-behavior: contain;
       .tab {
         border-left: 8rpx solid transparent;
         padding-left: 32rpx;
@@ -182,6 +184,7 @@ export default {
       padding: 16rpx;
       flex: auto;
       overflow: auto;
+      overscroll-behavior: contain;
       .item {
         padding: 0 16rpx;
         height: 68rpx;
@@ -189,9 +192,9 @@ export default {
         color: #191919;
         border-radius: 8rpx;
         margin-bottom: 16rpx;
-        font-weight: bold;
         &.active {
           color: #5cbb89;
+          font-weight: bold;
           background: #eef8f3;
         }
       }

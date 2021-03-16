@@ -50,11 +50,11 @@
         :list="doctors"
         :defaultProps="{ label: 'doctorName', value: 'doctorId' }"
         defaultType="doctorId"
-        v-model="form.doctorId"
+        v-model="form.doctorStaffId"
       />
       <dpmsEnumsPicker
         enumsKey="VisType"
-        v-model="form.visType"
+        v-model="form.medicalRecordRegisterVO.visType"
         title="就诊类型"
         placeholder="请选择就诊类型"
       />
@@ -76,7 +76,9 @@
       <dpmsCell
         title="现病史"
         wrap
-        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
+        v-if="
+          VIS_TYPE_ENUM.REVISIT.value !== form.medicalRecordRegisterVO.visType
+        "
       >
         <div
           class="text"
@@ -96,7 +98,9 @@
         title="既往史"
         wrap
         hideBorderBottom
-        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
+        v-if="
+          VIS_TYPE_ENUM.REVISIT.value !== form.medicalRecordRegisterVO.visType
+        "
       >
         <div
           class="text"
@@ -425,8 +429,8 @@ export default {
     return {
       form: {
         registerId: '',
-        doctorId: '',
-        visType: '',
+        doctorStaffId: '',
+        doctorStaffName: '',
         mainComplaint: '',
         presentIllnessHistory: '',
         pastIllnessHistory: '',
@@ -436,6 +440,7 @@ export default {
         medicalRecordTreatmentProgramVOList: [{}],
         medicalRecordDisposeVOList: [{}],
         doctorAdvice: '',
+        medicalRecordRegisterVO: { visType: '' },
       },
       rules: {},
       teethSync: true,
@@ -470,9 +475,9 @@ export default {
       }))
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
-        this.form.visType = this.VIS_TYPE_ENUM.REVISIT.value
+        this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
       } else {
-        this.form.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
+        this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
       }
     },
     onTextareaChange() {
@@ -613,7 +618,7 @@ export default {
         { registerId, registerTime, registerLabel },
       ]
       this.form.registerId = registerId
-      this.form.registerTime = registerLabel
+      this.form.medicalRecordRegisterVO.registerTime = registerTime
     },
     registerChange({ detail }) {
       this.form.registerId = registerList[detail.value].registerId
@@ -687,6 +692,23 @@ export default {
     this.onEdit()
     this.getDoctors()
   },
+  watch: {
+    'form.doctorStaffId'(newVal) {
+      if (newVal) {
+        this.form.doctorStaffName = this.doctors.find(
+          (d) => d.doctorId === newVal,
+        )?.doctorName
+        this.form.medicalRecordRegisterVO.doctorStaffId = newVal
+      }
+    },
+    'form.registerId'(newVal) {
+      if (newVal) {
+        this.form.medicalRecordRegisterVO.createRegister = false
+      } else {
+        this.form.medicalRecordRegisterVO.createRegister = true
+      }
+    },
+  },
 }
 </script>
 
@@ -698,7 +720,8 @@ export default {
 .addRegist {
   color: #5cbb89;
   padding: 10rpx;
-  font-size: 38rpx;
+  display: block;
+  font-size: 40rpx;
 }
 .text {
   padding-top: 18rpx;
