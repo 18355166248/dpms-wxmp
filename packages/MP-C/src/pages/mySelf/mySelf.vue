@@ -177,7 +177,7 @@
         >
           <div class="itemContent">
             <div class="itemContentLeft">
-              <div style="margin-bottom: 24rpx">
+              <div>
                 <span class="labelContentText">姓名：</span
                 ><span class="textContentName">{{ item.patientName }}</span>
               </div>
