@@ -12,7 +12,7 @@
         @click="selectInfo(item)"
       >
         <view class="user-name">姓名：<span>{{item.customerName}}</span></view>
-        <view v-if="item.patientNo" class="medical-record">病历号：<span>{{item.patientNo}}</span></view>
+        <view v-if="item.patientNo" :style="{marginTop: '12rpx'}" class="medical-record">病历号：<span>{{item.patientNo}}</span></view>
         <image v-if="currentImg === item.customerId"  class="icon-checked" :src="checkdUrl">
       </view>
       <empty
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       mobile: null,
-      checkdUrl: '/static/icon-checkd.png',
+      checkdUrl: '/static/icon-checkd@2.png',
       currentImg: null,
       customerList: []
     }
@@ -101,6 +101,7 @@ export default {
         height: 40rpx;
         white-space:nowrap;
         & > span {
+          font-weight: 500;
           color: #5cbb89;
         }
       }

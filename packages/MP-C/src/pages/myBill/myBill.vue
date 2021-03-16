@@ -30,7 +30,7 @@
         <div class="leftText">{{ item.patientName }}</div>
         <div class="rightText" @click="onHandleClick(item.id)">
           <span>应收金额：</span
-          ><span style="font-size: 34rpx;"
+          ><span style="font-size: 28rpx;"
             >¥{{ item.receivableAmount || 0 }}</span
           >
         </div>
@@ -46,7 +46,7 @@
         </div>
         <div class="rightText">
           <span>实付金额：</span
-          ><span style="color: #fa5151; font-size: 34rpx;"
+          ><span style="color: #fa5151; font-size: 32rpx;"
             >¥{{ item.receiptAmount || 0 }}</span
           >
         </div>
@@ -164,11 +164,11 @@ export default {
   top: 28rpx;
 }
 
-.colorFont5 {
-  color: rgba(0, 0, 0, 0.5);
+.colorFont {
+  color: rgba(0, 0, 0, 0.65) !important;
 }
 .colorFont9 {
-  color: rgba(0, 0, 0, 0.9);
+  color:#191919;
 }
 
 .list {
@@ -185,7 +185,7 @@ export default {
       padding-left: 32rpx;
       font-size: 28rpx;
       font-weight: 400;
-      color: rgba(0, 0, 0, 0.7);
+      color: #191919;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -195,7 +195,7 @@ export default {
       padding-right: 32rpx;
       text-align: right;
       font-weight: 400;
-      color: rgba(0, 0, 0, 0.7);
+      color: #191919;
       font-size: 28rpx;
       overflow: hidden;
       white-space: nowrap;
