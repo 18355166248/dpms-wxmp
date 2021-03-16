@@ -169,7 +169,7 @@ export default {
           }
         }
         > div {
-          border-bottom: solid 2rpx rgba(0, 0, 0, 0.15);
+          border-bottom: solid 1rpx rgba(0, 0, 0, 0.15);
           height: 100%;
           display: flex;
           align-items: center;

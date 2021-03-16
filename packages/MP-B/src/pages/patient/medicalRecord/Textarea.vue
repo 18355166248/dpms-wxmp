@@ -79,6 +79,7 @@ const keyPs = [
   },
   { key: 'doctorAdvice', func: 'getDoctorAdviceDict', prefix: 'doctorAdvice' },
   { key: 'dispose', func: 'getDisposeDict', prefix: 'dispose' },
+  { key: 'diagnosisDesc', prefix: 'diagnosis' },
   {
     key: 'pastIllnessHistory',
     func: 'getPastIllnessHistoryDict',
@@ -271,7 +272,7 @@ export default {
     }
     .content {
       color: #595959;
-      padding: 32rpx;
+      padding: 24rpx;
       padding-bottom: 0;
       flex: auto;
       height: 100%;
@@ -280,7 +281,6 @@ export default {
       box-sizing: border-box;
       align-content: flex-start;
       flex-wrap: wrap;
-      gap: 16rpx;
       > div {
         flex: auto;
         min-width: 34%;
@@ -293,6 +293,7 @@ export default {
         justify-content: center;
         padding: 16rpx 32rpx;
         word-break: break-all;
+        margin: 8rpx;
         &.active {
           border-color: #5cbb89;
           background: #eef8f3;

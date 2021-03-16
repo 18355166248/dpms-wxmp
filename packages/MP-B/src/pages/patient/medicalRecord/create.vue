@@ -697,8 +697,8 @@ export default {
 }
 .addRegist {
   color: #5cbb89;
-  margin-left: 10rpx;
-  font-size: 36rpx;
+  padding: 10rpx;
+  font-size: 38rpx;
 }
 .text {
   padding-top: 18rpx;
