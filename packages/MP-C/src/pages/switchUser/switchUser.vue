@@ -101,7 +101,7 @@ export default {
         height: 40rpx;
         white-space:nowrap;
         & > span {
-          font-weight: 500;
+          font-weight: 550;
           color: #5cbb89;
         }
       }
