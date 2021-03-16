@@ -77,10 +77,10 @@ export default {
     width: 262rpx;
   }
   .title2 {
-    width: 206rpx;
+    width: 220rpx;
   }
   .title3 {
-    width: 206rpx;
+    width: 192rpx;
     text-align: right;
   }
 }
@@ -106,10 +106,10 @@ export default {
       width: 262rpx;
     }
     .inner2 {
-      width: 206rpx;
+      width: 220rpx;
     }
     .inner3 {
-      width: 206rpx;
+      width: 192rpx;
       text-align: right;
     }
   }

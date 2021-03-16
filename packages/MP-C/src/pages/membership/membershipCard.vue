@@ -299,7 +299,6 @@ export default {
     .mcard-mid-con {
       font-size: 28rpx;
       font-family: PingFangSC, PingFangSC-Regular;
-      opacity: 0.65;
       color: #7f7f7f;
       .cardGiftBag {
         display: flex;
