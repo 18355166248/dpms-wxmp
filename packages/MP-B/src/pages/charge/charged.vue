@@ -72,7 +72,7 @@
           <view class="listLine">
             <view class="ml-32">{{ order.billTypeText }}</view>
             <view class="totalFee"
-              >应收金额：{{ $utils.formatPrice(order.totalAmount) }}</view
+              >应收金额：{{ $utils.formatPrice(order.receivableAmount) }}</view
             >
           </view>
           <view class="listLine">
@@ -80,13 +80,13 @@
             <view class="chargeFee"
               >实收金额：
               <view class="feeRed">{{
-                $utils.formatPrice(order.receivableAmount)
+                $utils.formatPrice(order.receiptAmount)
               }}</view>
             </view>
           </view>
           <view class="listLine">
             <view class="ml-32">{{ order.doctorName }}</view>
-            <view class="arrFee" v-if="order.arrearageAmount > 0"
+            <view class="arrFee"
               >欠费：
               <view class="feeGreen">{{
                 $utils.formatPrice(order.arrearageAmount)
