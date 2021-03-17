@@ -173,7 +173,7 @@ button::after {
 .icon-open:before {
   content: '\e64e';
 }
-.icon-close:before {
+.icon-closed:before {
   content: '\e654';
 }
 .icon-sync:before {

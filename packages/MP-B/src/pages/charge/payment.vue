@@ -9,7 +9,7 @@
           range-key="zh_CN"
         >
           <view class="uni-input"
-            >{{ billTypePickerText }} <view class="iconfont icon-close"></view
+            >{{ billTypePickerText }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
@@ -21,14 +21,14 @@
           range-key="staffName"
         >
           <view class="uni-input"
-            >{{ doctoPickerText }} <view class="iconfont icon-close"></view
+            >{{ doctoPickerText }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
       <view class="uni-list-cell">
         <picker @change="datePickerChange" :value="dateIndex" :range="dateList">
           <view class="uni-input"
-            >{{ dateList[dateIndex] }} <view class="iconfont icon-close"></view
+            >{{ dateList[dateIndex] }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
