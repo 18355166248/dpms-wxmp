@@ -1,6 +1,6 @@
 <template>
   <div class="personas">
-    <div v-if="list.length !== 0">
+    <div v-if="list.length !== 0" style="padding-bottom: 120rpx;">
       <div class="tagContent" v-for="patientTag in list" :key="patientTag.id">
         <div class="tagTitle">
           {{ patientTag.name }}
@@ -114,10 +114,11 @@ export default {
     }
     .plus {
       margin-left: 32rpx;
-      width: 68rpx;
-      height: 68rpx;
+      width: 64rpx;
+      height: 64rpx;
       background: #5cbb89;
       border-radius: 4rpx;
+      position: relative;
     }
     .tagList {
       display: flex;
@@ -125,7 +126,7 @@ export default {
       flex-wrap: wrap;
     }
     .tag {
-      border: 2rpx solid rgba(0, 0, 0, 0.15);
+      border: 1rpx solid rgba(0, 0, 0, 0.15);
       border-radius: 10rpx;
       line-height: 65rpx;
       text-align: center;
@@ -138,7 +139,7 @@ export default {
     }
     .tagChecked {
       background: #eef8f3;
-      border: 2rpx solid #5cbb89;
+      border: 1rpx solid #5cbb89;
       border-radius: 10rpx;
       line-height: 65rpx;
       color: #5cbb89;
@@ -151,9 +152,10 @@ export default {
     }
     .icon-plus {
       color: #fff;
-      position: relative;
-      top: 12rpx;
-      left: 18rpx;
+      position: absolute;
+      top: 14rpx;
+      left: 16rpx;
+      font-size: 32rpx;
     }
   }
 }
