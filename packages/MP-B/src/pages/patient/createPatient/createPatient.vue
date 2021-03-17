@@ -66,24 +66,35 @@ export default {
             complete() {
               setTimeout(() => {
                 uni.$emit(globalEventKeys.newPatient)
-
-                if (type === 'createRegister') {
-                  return that.$utils.replace({
-                    url:
-                      '/baseSubpackages/apptForm/apptForm?patient=' +
-                      JSON.stringify(res.data) +
-                      '&type=createRegister',
-                  })
+                const pages = getCurrentPages()
+                if (
+                  pages[pages.length - 3]?.route ===
+                  'baseSubpackages/apptForm/apptForm'
+                ) {
+                  uni.$emit(
+                    globalEventKeys.selectPatientCardFromSearchPatient,
+                    res.data,
+                  )
+                  that.$utils.back(2)
+                  return
                 }
+                // if (type === 'createRegister') {
+                //   return that.$utils.replace({
+                //     url:
+                //       '/baseSubpackages/apptForm/apptForm?patient=' +
+                //       JSON.stringify(res.data) +
+                //       '&type=createRegister',
+                //   })
+                // }
 
-                if (type === 'createAppt') {
-                  return that.$utils.replace({
-                    url:
-                      '/baseSubpackages/apptForm/apptForm?patient=' +
-                      JSON.stringify(res.data) +
-                      '&type=createAppt',
-                  })
-                }
+                // if (type === 'createAppt') {
+                //   return that.$utils.replace({
+                //     url:
+                //       '/baseSubpackages/apptForm/apptForm?patient=' +
+                //       JSON.stringify(res.data) +
+                //       '&type=createAppt',
+                //   })
+                // }
 
                 return that.$utils.replace({
                   url: '/pages/patient/patient?patientId=' + res.data.patientId,
