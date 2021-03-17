@@ -6,49 +6,51 @@
       v-for="item in myBillData"
       @click="onHandleClick(item)"
     >
-      <div class="flexContent">
-        <div class="leftText">
-          <span class="icon iconfont icontime-circle colorFont"></span
-          ><span class="colorFont" style="margin-left: 14rpx;">{{
-            getUpdateTime(item.lastUpdateTime)
-          }}</span>
+      <div style="padding: 24rpx 0">
+        <div class="flexContent" style="padding-bottom:24rpx">
+          <div class="leftText">
+            <span class="icon iconfont icontime-circle colorFont"></span
+            ><span class="colorFont" style="margin-left: 14rpx;">{{
+              getUpdateTime(item.lastUpdateTime)
+            }}</span>
+          </div>
+          <div class="rightText">
+            <span class="colorFont">{{ item.medicalInstitutionName }}</span>
+          </div>
         </div>
-        <div class="rightText">
-          <span class="colorFont">{{ item.medicalInstitutionName }}</span>
+        <div class="lineHr"></div>
+        <div class="flexContent" style="padding-top: 30rpx">
+          <div class="leftText">
+            <span class="colorFont9">账单号：{{ item.billSerialNo }}</span>
+          </div>
+          <div class="rightText">
+            <span class="colorFont9">{{ billTypeFormat(item.billType) }}</span>
+          </div>
         </div>
-      </div>
-      <div class="lineHr"></div>
-      <div class="flexContent">
-        <div class="leftText">
-          <span class="colorFont9">账单号：{{ item.billSerialNo }}</span>
-        </div>
-        <div class="rightText">
-          <span class="colorFont9">{{ billTypeFormat(item.billType) }}</span>
-        </div>
-      </div>
-      <div class="flexContent">
-        <div class="leftText">{{ item.patientName }}</div>
-        <div class="rightText" @click="onHandleClick(item.id)">
-          <span>应收金额：</span
-          ><span style="font-size: 28rpx;"
-            >¥{{ item.receivableAmount || 0 }}</span
-          >
-        </div>
-      </div>
-      <div class="flexContent">
-        <div class="leftText">
-          <div v-if="item.arrearageAmount !== undefined">
-            <span>欠费：</span
-            ><span style="color: #5cbb89; font-size: 34rpx;"
-              >¥{{ item.arrearageAmount }}</span
+        <div class="flexContent" style="padding-top: 24rpx">
+          <div class="leftText">{{ item.patientName }}</div>
+          <div class="rightText" @click="onHandleClick(item.id)">
+            <span>应收金额：</span
+            ><span style="font-size: 28rpx;"
+              >¥{{ item.receivableAmount || 0 }}</span
             >
           </div>
         </div>
-        <div class="rightText">
-          <span>实付金额：</span
-          ><span style="color: #fa5151; font-size: 32rpx;"
-            >¥{{ item.receiptAmount || 0 }}</span
-          >
+        <div class="flexContent" style="padding-top: 22rpx">
+          <div class="leftText">
+            <div v-if="item.arrearageAmount !== undefined">
+              <span>欠费：</span
+              ><span style="color: #5cbb89; font-size: 34rpx;"
+                >¥{{ item.arrearageAmount }}</span
+              >
+            </div>
+          </div>
+          <div class="rightText">
+            <span>实付金额：</span
+            ><span style="color: #fa5151; font-size: 32rpx;"
+              >¥{{ item.receiptAmount || 0 }}</span
+            >
+          </div>
         </div>
       </div>
     </div>
@@ -178,8 +180,8 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 84rpx;
-    line-height: 84rpx;
+    /*height: 84rpx;*/
+    /*line-height: 84rpx;*/
     .leftText {
       width: 65%;
       padding-left: 32rpx;
