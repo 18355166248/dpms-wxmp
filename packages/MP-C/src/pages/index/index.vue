@@ -235,6 +235,9 @@ export default {
     this.init()
     this.getfunctionConfigDetail()
   },
+  onShow() {
+    this.getfunctionConfigDetail()
+  },
   onPullDownRefresh() {
     this.init()
   },
