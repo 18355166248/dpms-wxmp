@@ -39,10 +39,13 @@ export default {
           groupId: _self.groupId,
           name: _self.name,
         })
-        .then((res) => {
+        .then(() => {
           _self.$utils.back()
+          _self.disabled = false
         })
-        .catch(() => {})
+        .catch(() => {
+          _self.disabled = false
+        })
     },
   },
 }
