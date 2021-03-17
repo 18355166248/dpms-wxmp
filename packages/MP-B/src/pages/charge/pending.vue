@@ -72,16 +72,19 @@ export default {
       },
     }
   },
+  destroyed() {
+    uni.$off('refreshPending')
+  },
   mounted() {
     setTimeout(() => {
       this.init()
+      uni.$on('refreshPending', () => {
+        if (this.pendingList.length < this.total) {
+          this.current += 1
+          this.getPendingOrder()
+        }
+      })
     }, 0)
-  },
-  onReachBottom() {
-    if (this.pendingList.length < this.total) {
-      this.current += 1
-      this.getPendingOrder()
-    }
   },
   methods: {
     init() {

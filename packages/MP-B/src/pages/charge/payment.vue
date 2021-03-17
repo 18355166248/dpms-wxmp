@@ -117,14 +117,17 @@ export default {
       return this.doctorList[this.doctorIndex].staffName
     },
   },
+  destroyed() {
+    uni.$off('refreshPayment')
+  },
   mounted() {
     this.init()
-  },
-  onReachBottom() {
-    if (this.pendingList.length < this.total) {
-      this.current += 1
-      this.getPaymentOrder()
-    }
+    uni.$on('refreshPayment', () => {
+      if (this.paymentList.length < this.total) {
+        this.current += 1
+        this.getPaymentOrder()
+      }
+    })
   },
   methods: {
     init() {

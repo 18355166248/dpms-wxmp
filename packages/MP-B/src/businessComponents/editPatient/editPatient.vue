@@ -84,7 +84,7 @@
       <view class="group">
         <view style="width: 375rpx;">
           <dpmsEnumsPicker
-            title="电话标签"
+            title="联系电话"
             placeholder="请选择电话标签"
             v-model="form.contactLabel"
             enumsKey="ContactLabel"
@@ -160,6 +160,7 @@
 
 <script>
 import _ from 'lodash'
+import { mapState } from 'vuex'
 import moment from 'moment'
 import patientAPI from '@/APIS/patient/patient.api'
 
@@ -302,6 +303,9 @@ export default {
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
+  },
+  computed: {
+    ...mapState('systemStore', ['systemScreen']),
   },
   created() {
     // 更新用户画像选中值

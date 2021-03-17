@@ -156,8 +156,17 @@ export default {
       return this.doctorList[this.doctorIndex].staffName
     },
   },
+  destroyed() {
+    uni.$off('refreshCharged')
+  },
   mounted() {
     this.init()
+    uni.$on('refreshCharged', () => {
+      if (this.chargedList.length < this.total) {
+        this.current += 1
+        this.getChargedOrder()
+      }
+    })
   },
   methods: {
     billSettlementChange: function (e) {

@@ -48,7 +48,7 @@ export default {
         { name: '已收费账单', val: 1 },
         { name: '支付记录', val: 2 },
       ],
-      currentTab: 0,
+      currentTab: 2,
       touchStartX: 0, // 触屏起始点x
       touchStartY: 0, // 触屏起始点y
       patientId: 0,
@@ -59,6 +59,17 @@ export default {
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
     this.init()
+  },
+  onReachBottom() {
+    if (this.currentTab === 0) {
+      return uni.$emit('refreshPending')
+    }
+    if (this.currentTab === 1) {
+      return uni.$emit('refreshCharged')
+    }
+    if (this.currentTab === 2) {
+      return uni.$emit('refreshPayment')
+    }
   },
   methods: {
     init() {
