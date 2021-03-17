@@ -18,7 +18,11 @@
       :patientId="patientId"
       :customerId="customerId"
     />
-    <charged v-if="currentTab === 1" :patientId="patientId" />
+    <charged
+      v-if="currentTab === 1"
+      :patientId="patientId"
+      :customerId="customerId"
+    />
     <payment v-if="currentTab === 2" :patientId="patientId" />
   </view>
 </template>
