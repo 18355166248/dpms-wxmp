@@ -1,5 +1,4 @@
 import httper from '../http'
-import scrmHttper from '../httpScrm'
 
 const patientAPI = {
   getPatientList(data) {
@@ -23,7 +22,7 @@ const patientAPI = {
   },
   //新建患者
   createPatient(data) {
-    return httper.post('patient/patient/create/with/patient-contact', data)
+    return httper.post('patient/patient/mini-apps/create', data)
   },
   // 诊室
   getConsultationRoomList(params) {
@@ -49,85 +48,6 @@ const patientAPI = {
   //获取患者类型列表
   getPatientMedicalRecordNo(data) {
     return httper.get('/patient/serial/medical-record/serial', data)
-  },
-  //查询病例模板
-  getMedicalTemplateTypes(data) {
-    return httper.get(
-      'patient/settings/medical-record/template-type/select',
-      data,
-    )
-  },
-  //查询病例模板内容
-  getMedicalTemplates(data) {
-    return httper.get('/patient/settings/medical-record/template/select', data)
-  },
-  //获取主诉词条
-  getMainComplaintDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/chief-complaint-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取现病史词条
-  getPresentIllnessHistoryDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/present-illness-history-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取医嘱词条
-  getDoctorAdviceDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/doctor-advice-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取处置词条
-  getDisposeDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/dispose-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取既往史词条
-  getPastIllnessHistoryDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/past-illness-history-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取辅助检查词条
-  getExaminationDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/examination-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取治疗方案词条
-  getTreatmentPlanDict(data) {
-    return httper.get(
-      'patient/settings/medical-record/treatment-plan-dict/select/secondLevel',
-      data,
-    )
-  },
-  //获取病例模板
-  getPatientRecordTemplate(data) {
-    return httper.get(
-      'patient/settings/medical-record/get-select-patient-record-template',
-      data,
-    )
-  },
-  //添加标签
-  addTag(data) {
-    return scrmHttper.post('/scrm/tag/add', data)
-  },
-  //刷新病例
-  refreshSerial(data) {
-    return httper.get('patient/serial/medical-record/serial', data)
-  },
-  //患者来源
-  patientSource(data) {
-    return httper.get('patient/settings/patient/source/list/all', data)
   },
 }
 

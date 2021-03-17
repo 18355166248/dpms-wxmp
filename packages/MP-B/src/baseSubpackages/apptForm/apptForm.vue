@@ -19,7 +19,7 @@
                 <span class="gender mr-8">{{
                   (form.patient && form.patient.gender) | getGenderText
                 }}</span>
-                <span class="age">{{ form.patient.medicalRecordNo }}</span>
+                <span class="age">{{ form.patient.age }}</span>
               </div>
               <div class="patientBottom">
                 <span>联系方式:</span>
@@ -775,11 +775,11 @@ export default {
             appt: { ...formatValue, ...res.data },
           })
 
-          // if (type === 'createAppt') {
-          //   return this.$utils.replace({
-          //     url: '/baseSubpackages/apptView/apptView',
-          //   })
-          // }
+          if (type === 'createAppt') {
+            return this.$utils.push({
+              url: '/baseSubpackages/apptView/apptView',
+            })
+          }
           this.$utils.back()
 
           // if (type === 'createRegister' || type === 'editRegister') {

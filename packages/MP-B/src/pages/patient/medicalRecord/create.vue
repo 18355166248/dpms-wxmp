@@ -1,30 +1,7 @@
 <template>
   <div>
     <dpmsForm ref="form" :model="form" :rules="rules">
-      <dpmsCell title="就诊信息" :isLink="registerList">
-        <template #title>
-          <div class="title">
-            就诊信息
-            <dpmsDatetimePicker isCell @change="registNew">
-              <span class="iconfont icon-plus-circle addRegist" />
-            </dpmsDatetimePicker>
-          </div>
-        </template>
-        <picker
-          mode="selector"
-          :range="registerList"
-          range-key="registerLabel"
-          :disabled="!registerList"
-          :value="form.registerId"
-          @change="registerChange"
-        >
-          <div>
-            <div v-if="!registerList">暂无就诊信息</div>
-            <div v-else>{{ registerText }}</div>
-          </div>
-        </picker>
-      </dpmsCell>
-      <!-- <dpmsCellPicker
+      <dpmsCellPicker
         title="就诊信息"
         placeholder="暂无就诊信息"
         v-model="form.registerId"
@@ -32,31 +9,6 @@
         defaultType="registerId"
         :defaultProps="{ label: 'registerLabel', value: 'registerId' }"
         :disabled="!registerList.length"
-      >
-        <template #title>
-          <div @focus="ev => ev.stopPropagation()">
-            就诊信息
-            <dpmsDatetimePicker
-              isCell
-            >
-              <span class="iconfont icon-plus-circle addRegist" />
-            </dpmsDatetimePicker>
-          </div>
-        </template>
-      </dpmsCellPicker> -->
-      <dpmsCellPicker
-        title="医生"
-        placeholder="请选择医生"
-        :list="doctors"
-        :defaultProps="{ label: 'doctorName', value: 'doctorId' }"
-        defaultType="doctorId"
-        v-model="form.doctorStaffId"
-      />
-      <dpmsEnumsPicker
-        enumsKey="VisType"
-        v-model="form.medicalRecordRegisterVO.visType"
-        title="就诊类型"
-        placeholder="请选择就诊类型"
       />
       <dpmsCell title="主诉" wrap>
         <div
@@ -73,13 +25,7 @@
           {{ form.mainComplaint || '' }}
         </div>
       </dpmsCell>
-      <dpmsCell
-        title="现病史"
-        wrap
-        v-if="
-          VIS_TYPE_ENUM.REVISIT.value !== form.medicalRecordRegisterVO.visType
-        "
-      >
+      <dpmsCell title="现病史" wrap>
         <div
           class="text"
           data-placeholder="请输入现病史"
@@ -94,14 +40,7 @@
           {{ form.presentIllnessHistory || '' }}
         </div>
       </dpmsCell>
-      <dpmsCell
-        title="既往史"
-        wrap
-        hideBorderBottom
-        v-if="
-          VIS_TYPE_ENUM.REVISIT.value !== form.medicalRecordRegisterVO.visType
-        "
-      >
+      <dpmsCell title="既往史" wrap hideBorderBottom>
         <div
           class="text"
           data-placeholder="请输入既往史"
@@ -388,49 +327,24 @@
       </dpmsCell>
     </dpmsForm>
     <div class="bottom">
-      <div class="inner">
-        <div class="funcs">
-          <div @click="historyMedicalVisible = true">
-            <div class="iconfont icon-lishibingli1" />
-            历史病历
-          </div>
-          <div @click="templateMedicalVisible = true">
-            <div class="iconfont icon-moban1" />
-            模板
-          </div>
-        </div>
-        <button @click="save">保 存</button>
-      </div>
+      <button @click="save">保 存</button>
     </div>
-    <HistoryMedicalSelect
-      :visible.sync="historyMedicalVisible"
-      :patientId="patientId"
-      @change="historyMedicalChange"
-    />
-    <TemplateMedicalSelect
-      :visible.sync="templateMedicalVisible"
-      @change="templateMedicalChange"
-    />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import { mapState } from 'vuex'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
-import institutionAPI from '@/APIS/institution/institution.api.js'
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
-import HistoryMedicalSelect from '@/businessComponents/MedicalSelect/HistorySelect.vue'
-import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSelect.vue'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
-  components: { TeethSelect, HistoryMedicalSelect, TemplateMedicalSelect },
+  components: { TeethSelect },
   data() {
     return {
       form: {
         registerId: '',
-        doctorStaffId: '',
-        doctorStaffName: '',
         mainComplaint: '',
         presentIllnessHistory: '',
         pastIllnessHistory: '',
@@ -440,33 +354,13 @@ export default {
         medicalRecordTreatmentProgramVOList: [{}],
         medicalRecordDisposeVOList: [{}],
         doctorAdvice: '',
-        medicalRecordRegisterVO: { visType: '' },
       },
       rules: {},
       teethSync: true,
       registerList: null,
-      doctors: [],
-      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
-      historyMedicalVisible: false,
-      patientId: '',
-      templateMedicalVisible: false,
     }
   },
-  computed: {
-    registerText() {
-      return (
-        (this.registerList &&
-          this.registerList.find((l) => l.registerId === this.form.registerId)
-            ?.registerLabel) ||
-        ''
-      )
-    },
-  },
   methods: {
-    async getDoctors() {
-      const res = await institutionAPI.getDoctors()
-      this.doctors = res.data
-    },
     async getRegisterList(param) {
       const res = await diagnosisAPI.getRegisterList(param)
       this.registerList = (res.data || []).map((d) => ({
@@ -475,9 +369,6 @@ export default {
       }))
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
-        this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
-      } else {
-        this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
       }
     },
     onTextareaChange() {
@@ -601,88 +492,6 @@ export default {
     teethSyncChange({ detail }) {
       this.teethSync = detail.value
     },
-    registNew({ dt }) {
-      const registerId = null
-      const registerTime = moment(dt).valueOf()
-      const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
-      const newRegisterIndex = this.registerList.indexOf(
-        (l) => l.registerId === registerId,
-      )
-      if (newRegisterIndex !== null) {
-        this.registerList = this.registerList.filter(
-          (l) => l.registerId !== registerId,
-        )
-      }
-      this.registerList = [
-        ...(this.registerList || []),
-        { registerId, registerTime, registerLabel },
-      ]
-      this.form.registerId = registerId
-      this.form.medicalRecordRegisterVO.registerTime = registerTime
-    },
-    registerChange({ detail }) {
-      this.form.registerId = registerList[detail.value].registerId
-    },
-    historyMedicalChange(contents) {
-      const keyP = {
-        symptom: 'medicalRecordCheckNormalVOList.0.checkNormalSymptoms',
-        rayExamination: 'medicalRecordCheckRayVOList.0.checkRaySymptoms',
-        diagnosisDesc: 'medicalRecordDiagnosisVOList.0.diagnosisDesc',
-        treatmentProgram:
-          'medicalRecordTreatmentProgramVOList.0.treatmentProgramn',
-        dispose: 'medicalRecordDisposeVOList.0.dispose',
-      }
-      contents.forEach((c) => {
-        const k = keyP[c.key] || c.key
-        if (/^\w+\.\d+\.\w+$/.test(k)) {
-          const ks = k.split('.')
-          this.$set(this.form[ks[0]], ks[1], {
-            ...this.form[ks[0]][ks[1]],
-            [ks[2]]: c.content,
-          })
-        } else {
-          this.$set(this.form, k, c.content)
-        }
-      })
-    },
-    templateMedicalChange(t) {
-      const keyPs = [
-        ['chiefComplaint', 'mainComplaint'],
-        [
-          'dentalExamination',
-          'medicalRecordCheckNormalVOList.0.checkNormalSymptoms',
-        ],
-        [
-          'auxiliaryExamination',
-          'medicalRecordCheckRayVOList.0.checkRaySymptoms',
-        ],
-        ['diagnosis', 'medicalRecordDiagnosisVOList.0.diagnosisDesc'],
-        [
-          'treatmentPlan',
-          'medicalRecordTreatmentProgramVOList.0.treatmentProgramn',
-        ],
-        ['disposal', 'medicalRecordDisposeVOList.0.dispose'],
-      ]
-      const formKeys = Object.keys(this.form)
-      Object.keys(t).forEach((tk) => {
-        if (formKeys.includes(tk)) {
-          this.$set(this.form, tk, t[tk])
-        } else {
-          const kps = keyPs.find((ks) => ks[0] === tk)
-          if (kps) {
-            if (/^\w+\.\d+\.\w+$/.test(kps[1])) {
-              const ks = kps[1].split('.')
-              this.$set(this.form[ks[0]], ks[1], {
-                ...this.form[ks[0]][ks[1]],
-                [ks[2]]: t[tk],
-              })
-            } else {
-              this.$set(this.form, kps[1], t[tk])
-            }
-          }
-        }
-      })
-    },
   },
   onLoad({ patientId, medicalRecordId }) {
     this.patientId = patientId
@@ -690,39 +499,11 @@ export default {
     this.getRegisterList({ patientId })
     this.onTextareaChange()
     this.onEdit()
-    this.getDoctors()
-  },
-  watch: {
-    'form.doctorStaffId'(newVal) {
-      if (newVal) {
-        this.form.doctorStaffName = this.doctors.find(
-          (d) => d.doctorId === newVal,
-        )?.doctorName
-        this.form.medicalRecordRegisterVO.doctorStaffId = newVal
-      }
-    },
-    'form.registerId'(newVal) {
-      if (newVal) {
-        this.form.medicalRecordRegisterVO.createRegister = false
-      } else {
-        this.form.medicalRecordRegisterVO.createRegister = true
-      }
-    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.title {
-  display: flex;
-  align-items: center;
-}
-.addRegist {
-  color: #5cbb89;
-  padding: 10rpx;
-  display: block;
-  font-size: 40rpx;
-}
 .text {
   padding-top: 18rpx;
   box-sizing: border-box;
@@ -771,32 +552,12 @@ export default {
 }
 .bottom {
   height: 90rpx;
-  .inner {
-    display: flex;
+  button {
     position: fixed;
     right: 0;
     bottom: 0;
     left: 0;
     height: 90rpx;
-  }
-  .funcs {
-    width: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: space-evenly;
-    color: #4c4c4c;
-    font-size: 24rpx;
-    background: white;
-    border-top: rgba(0, 0, 0, 0.15) solid 2rpx;
-    text-align: center;
-    .iconfont {
-      color: #5cbb89;
-      font-size: 36rpx;
-    }
-  }
-  button {
-    width: 50%;
-    height: 100%;
     background: #5cbb89;
     color: #ffffff;
     font-size: 36rpx;
