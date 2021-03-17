@@ -148,10 +148,10 @@ export default {
         )
       }
       this.dicts = replaceKey(res.data, kp.prefix)
-      this.curDict = this.dicts[0]
+      this.curDict = this.dicts[0] || {}
     },
     tabChange(t) {
-      this.curDict = t
+      this.curDict = t || {}
     },
     contentClick({ settingsDictName }) {
       this.value += this.value ? `，${settingsDictName}` : settingsDictName
@@ -169,7 +169,7 @@ export default {
           settingsDictTitle: l.patientMedicalRecordTemplateName,
         })),
       }))
-      this.curDict = this.dicts[0]
+      this.curDict = this.dicts[0] || {}
     },
   },
   onLoad({ title, value, key }) {
