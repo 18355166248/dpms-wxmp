@@ -219,7 +219,7 @@ export default {
     },
     initEnumArray: function (obj, type) {
       if (type === 'PayTradeType') {
-        type = '交易类型'
+        type = '全部交易类型'
       }
       if (!obj?.properties) return [{ value: -1, zh_CN: type }]
       let array = Object.values(obj.properties)

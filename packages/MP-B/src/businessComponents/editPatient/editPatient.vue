@@ -559,7 +559,7 @@ export default {
   left: 140rpx;
   font-size: 40rpx;
   color: #5cbb89;
-  padding: 32rpx;
+  padding: 35rpx;
   z-index: 9;
 }
 
