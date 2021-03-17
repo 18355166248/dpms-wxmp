@@ -29,7 +29,7 @@ export default {
       const formValue = _.cloneDeep(form)
       const { type } = this.paramsObj
 
-      let patientContact = {
+      const patientContact = {
         contactLabel: form.contactLabel,
         mobile: form.mobile,
         alternateMobile: form.alternateMobile,
@@ -39,6 +39,10 @@ export default {
         city: form.region[1],
         area: form.region[2],
         address: form.address,
+      }
+
+      if (Number(formValue.settingsPatientSourceId) < 0) {
+        delete formValue.settingsPatientSourceId
       }
 
       delete formValue.contactLabel
@@ -64,7 +68,7 @@ export default {
                 uni.$emit(globalEventKeys.newPatient)
 
                 if (type === 'createRegister') {
-                  return that.$utils.push({
+                  return that.$utils.replace({
                     url:
                       '/baseSubpackages/apptForm/apptForm?patient=' +
                       JSON.stringify(res.data) +
@@ -73,7 +77,7 @@ export default {
                 }
 
                 if (type === 'createAppt') {
-                  return that.$utils.push({
+                  return that.$utils.replace({
                     url:
                       '/baseSubpackages/apptForm/apptForm?patient=' +
                       JSON.stringify(res.data) +
@@ -81,7 +85,7 @@ export default {
                   })
                 }
 
-                return that.$utils.push({
+                return that.$utils.replace({
                   url: '/pages/patient/patient?patientId=' + res.data.patientId,
                 })
               }, 1000)

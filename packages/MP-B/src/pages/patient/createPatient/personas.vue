@@ -1,32 +1,37 @@
 <template>
-  <div class="apptDpmsList">
-    <div v-if="list.length !== 0">
-      <dpmsCheckboxGroup v-model="checked">
-        <dpmsCollapse class="mb-56">
-          <dpmsCollapseItem
-            v-for="patientTag in list"
-            :key="patientTag.name"
-            :title="patientTag.name"
-            showAnimation
-            open
-          >
-            <div class="apptCollapse">
+  <div class="personas">
+    <div v-if="list.length !== 0" style="padding-bottom: 120rpx;">
+      <div class="tagContent" v-for="patientTag in list" :key="patientTag.id">
+        <div class="tagTitle">
+          {{ patientTag.name }}
+        </div>
+        <div class="tagBody">
+          <div class="plus" @click="jumpAdd(patientTag.id)">
+            <text class="iconfont icon-plus" />
+          </div>
+          <div class="tagList">
+            <div v-for="tag in patientTag.tagInfoDTOList" :key="tag.id">
               <div
-                v-for="(tag, index) in patientTag.tagInfoDTOList"
-                :key="tag.id"
-                :class="['appt', index === 0 && 'first']"
+                class="tag"
+                @click="insertId(tag.id)"
+                v-if="!checked.includes(tag.id)"
               >
-                <dpmsCheckbox shape="square" :key="tag.id" :label="tag.id">
-                  {{ tag.name }}
-                </dpmsCheckbox>
+                {{ tag.name }}
+              </div>
+              <div
+                class="tagChecked"
+                @click="removeId(tag.id)"
+                v-if="checked.includes(tag.id)"
+              >
+                {{ tag.name }}
               </div>
             </div>
-          </dpmsCollapseItem>
-        </dpmsCollapse>
-      </dpmsCheckboxGroup>
-      <div class="mt-56">
-        <dpmsButton @click="onSave" />
+          </div>
+        </div>
       </div>
+      <button class="ensurebutton" @click="onSave">
+        保存
+      </button>
     </div>
     <div v-else>
       <empty :disabled="true" text="暂无患者标签数据"></empty>
@@ -40,7 +45,7 @@ import patientAPI from '@/APIS/patient/patient.api'
 export default {
   data() {
     return {
-      list: uni.getStorageSync('patientTagsList'),
+      list: [],
       checked: [],
     }
   },
@@ -50,14 +55,25 @@ export default {
     }
   },
   onShow() {
-    if (!uni.getStorageSync('patientTagsList').length) {
-      this.loadPatientTags()
-    }
+    this.loadPatientTags()
   },
   methods: {
     onSave() {
       uni.$emit('updateTagsCheckedList', this.checked)
       this.$utils.back()
+    },
+    insertId(id) {
+      this.checked.push(Number(id))
+    },
+    removeId(id) {
+      this.checked = this.checked.filter((v) => {
+        return v !== Number(id)
+      })
+    },
+    jumpAdd(groupId) {
+      this.$utils.push({
+        url: '/pages/patient/createPatient/addPersonas?groupId=' + groupId,
+      })
     },
     async loadPatientTags() {
       let res = await patientAPI.getPatientTags()
@@ -70,20 +86,76 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.apptDpmsList {
-  height: 100%;
-  .apptCollapse {
-    padding-left: 32rpx;
-    .appt {
-      height: 112rpx;
-      line-height: 112rpx;
-      border-top: 1rpx solid rgba($color: #000000, $alpha: 0.15);
-      color: rgba($color: #000000, $alpha: 0.9);
-      font-size: 34rpx;
-
-      &.first {
-        border-top: none;
-      }
+.personas {
+  .ensurebutton {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    height: 90rpx;
+    color: #ffffff;
+    text-align: center;
+    font-size: 36rpx;
+    background: #5cbb89;
+    border-radius: 0;
+  }
+  .tagContent {
+    background: #fff;
+    margin-bottom: 20rpx;
+    .tagTitle {
+      font-size: 30rpx;
+      padding-top: 32rpx;
+      padding-left: 32rpx;
+      color: #595959;
+    }
+    .tagBody {
+      display: flex;
+      margin-top: 16rpx;
+      padding-bottom: 20rpx;
+    }
+    .plus {
+      margin-left: 32rpx;
+      width: 64rpx;
+      height: 64rpx;
+      background: #5cbb89;
+      border-radius: 4rpx;
+      position: relative;
+    }
+    .tagList {
+      display: flex;
+      width: 600rpx;
+      flex-wrap: wrap;
+    }
+    .tag {
+      border: 1rpx solid rgba(0, 0, 0, 0.15);
+      border-radius: 10rpx;
+      line-height: 65rpx;
+      text-align: center;
+      margin-left: 16rpx;
+      margin-bottom: 16rpx;
+      color: #595959;
+      font-size: 30rpx;
+      padding-left: 30rpx;
+      padding-right: 30rpx;
+    }
+    .tagChecked {
+      background: #eef8f3;
+      border: 1rpx solid #5cbb89;
+      border-radius: 10rpx;
+      line-height: 65rpx;
+      color: #5cbb89;
+      text-align: center;
+      margin-left: 16rpx;
+      margin-bottom: 16rpx;
+      font-size: 30rpx;
+      padding-left: 30rpx;
+      padding-right: 30rpx;
+    }
+    .icon-plus {
+      color: #fff;
+      position: absolute;
+      top: 14rpx;
+      left: 16rpx;
+      font-size: 32rpx;
     }
   }
 }
