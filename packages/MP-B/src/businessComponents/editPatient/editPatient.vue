@@ -135,7 +135,7 @@
         </div>
       </div>
       <view class="space"></view>
-      <div class="remark">
+      <div class="remark" :class="{ 'pb-68': systemScreen === 'screen189' }">
         <view class="title">备注</view>
         <textarea
           class="txt"
