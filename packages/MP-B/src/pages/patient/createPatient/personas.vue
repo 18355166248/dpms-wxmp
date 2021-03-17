@@ -29,9 +29,14 @@
           </div>
         </div>
       </div>
-      <button class="ensurebutton" @click="onSave">
+      <button
+        class="ensurebutton"
+        :class="{ 'bt-68': systemScreen === 'screen189' }"
+        @click="onSave"
+      >
         保存
       </button>
+      <view class="bottomSpace" v-if="systemScreen === 'screen189'"></view>
     </div>
     <div v-else>
       <empty :disabled="true" text="暂无患者标签数据"></empty>
@@ -41,6 +46,7 @@
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
+import { mapState } from 'vuex'
 
 export default {
   data() {
@@ -56,6 +62,9 @@ export default {
   },
   onShow() {
     this.loadPatientTags()
+  },
+  computed: {
+    ...mapState('systemStore', ['systemScreen']),
   },
   methods: {
     onSave() {
@@ -87,6 +96,16 @@ export default {
 
 <style lang="scss" scoped>
 .personas {
+  .bt-68 {
+    bottom: 68rpx !important;
+  }
+  .bottomSpace {
+    height: 34px;
+    background-color: #fff;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+  }
   .ensurebutton {
     width: 100%;
     position: fixed;

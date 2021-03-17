@@ -148,12 +148,14 @@
 
       <button
         class="ensurebutton"
+        :class="{ 'bt-68': systemScreen === 'screen189' }"
         @click="submit"
         :disabled="disabledSaveBtn"
         :loading="disabledSaveBtn"
       >
         保存
       </button>
+      <view class="bottomSpace" v-if="systemScreen === 'screen189'"></view>
     </dpmsForm>
   </div>
 </template>
@@ -317,8 +319,6 @@ export default {
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
     this.getSettingsPatientSourceList()
-
-    console.log('11111', this.systemScreen)
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
@@ -469,6 +469,9 @@ export default {
 
 <style lang="scss" scoped>
 .editPatientForm {
+  .bt-68 {
+    bottom: 68rpx !important;
+  }
   .remark {
     background: #ffffff;
     width: 100vw;
@@ -571,6 +574,14 @@ export default {
   bottom: 0;
   width: 750rpx;
   z-index: 9;
+}
+
+.bottomSpace {
+  height: 34px;
+  background-color: #fff;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
 
 .space {
