@@ -50,15 +50,14 @@
 
     <!-- 搜索列表 -->
     <div v-if="patientList.length !== 0">
-      <div v-for="patient in patientList" :key="patient.patientId">
-        <div @click="clickPatientCard(patient.patientId)">
+      <div v-for="parient in patientList" :key="parient.patientId">
+        <div @click="clickPatientCard(parient.patientId)">
           <card
-            :name="patient.patientName"
-            :avatarUrl="patient.avatarUrl"
-            :gender="patient.gender"
-            :medicalRecordNo="patient.medicalRecordNo"
-            :infos="[{ label: '联系电话', value: patient.mobile }]"
-            :patient="patient"
+            :name="parient.patientName"
+            :avatarUrl="parient.avatarUrl"
+            :gender="parient.gender"
+            :age="parient.age"
+            :infos="[{ label: '联系电话', value: parient.mobile }]"
           />
         </div>
       </div>
@@ -222,7 +221,9 @@ export default {
           params: this.paramsObj,
         })
 
-        return this.$utils.back()
+        this.$utils.back()
+
+        return
       }
 
       this.toPatient(patientId)

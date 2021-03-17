@@ -100,12 +100,6 @@
           }
         },
         {
-          "path": "createPatient/addPersonas",
-          "style": {
-            "navigationBarTitleText": "添加标签"
-          }
-        },
-        {
           "path": "searchPatient/searchPatient",
           "style": {
             "navigationBarTitleText": "搜索患者"
@@ -229,24 +223,6 @@
           "path": "revenueForm",
           "style": {
             "navigationBarTitleText": "营收报表"
-          }
-        }
-      ]
-    },
-    {
-      "root": "pages/charge",
-      "name": "charge",
-      "pages": [
-        {
-          "path": "chargeForm",
-          "style": {
-            "navigationBarTitleText": "收费"
-          }
-        },
-        {
-          "path": "chargeDetail",
-          "style": {
-            "navigationBarTitleText": "账单明细"
           }
         }
       ]

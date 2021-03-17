@@ -17,11 +17,7 @@
       :value="pickerValue"
       :hideBorderBottom="hideBorderBottom"
       :disabled="disabled"
-    >
-      <template #title
-        ><slot name="title">{{ title }}</slot></template
-      >
-    </dpmsCell>
+    />
   </picker>
 </template>
 

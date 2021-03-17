@@ -262,6 +262,8 @@ export default {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.init()
 
+    console.log('this:', this)
+
     uni.$on(globalEventKeys.newPatient, () => {
       this.init()
     })
@@ -276,7 +278,6 @@ export default {
     ...mapState('workbenchStore', ['medicalInstitution', 'staff', 'menu']),
     initIconShow() {
       const { menuList, pageElementsList } = this.menu
-
       this.iconShow.isStatisticsShow =
         pageElementsList.findIndex((v) => {
           return v.enumValue === '11004'
@@ -290,7 +291,6 @@ export default {
         pageElementsList.findIndex((v) => {
           return v.enumValue === '11001'
         }) > -1
-
       const findObj =
         menuList &&
         menuList.find((v) => {

@@ -59,7 +59,7 @@ export default {
         city: form.region[1],
         area: form.region[2],
         address: form.address,
-        patientContactsId: form?.patientContactsList[0]?.patientContactsId,
+        patientContactsId: form?.patientContactsList[0]?.patientContactsId
       }
       // 联系方式脱敏
       const desensitizationData = CCDesensitizedUpdateFilterUtil({
@@ -78,15 +78,12 @@ export default {
       delete formValue.address
       delete formValue.weChatInfoList
       // 电话脱敏
-      if (this.formData?.mobile === formValue?.mobile) {
+      if(this.formData?.mobile === formValue?.mobile) {
         delete formValue.mobile
       }
       // 固话脱敏
-      if (this.formData?.fixedTelephone === formValue?.fixedTelephone) {
+      if(this.formData?.fixedTelephone === formValue?.fixedTelephone) {
         delete formValue.fixedTelephone
-      }
-      if (Number(this.formData?.settingsPatientSourceId) < 0) {
-        delete formValue.settingsPatientSourceId
       }
 
       patientAPI

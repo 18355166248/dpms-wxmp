@@ -42,10 +42,7 @@ const diagnosisAPI = {
   },
   // 获取影像相关的枚举
   getImageEnums(data) {
-    return httper.get(
-      'diagnosis/mini-apps/teeth-image/get-all-image-enums',
-      data,
-    )
+    return httper.get('diagnosis/mini-apps/teeth-image/get-all-image-enums', data)
   },
   // 影像上传
   saveImageInfo(data) {
@@ -74,10 +71,6 @@ const diagnosisAPI = {
   // 编辑病历
   updateMedicalRecord(data) {
     return httper.post('diagnosis/mini-apps/medical-record/update', data)
-  },
-  // 获取历史病例
-  getMedicalHistories(data) {
-    return httper.get('diagnosis/medical-record/list/history', data)
   },
 }
 
