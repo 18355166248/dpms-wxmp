@@ -188,9 +188,9 @@ export default {
     doctorChange: function (e) {
       this.doctorIndex = e.detail.value
       if (Number(this.doctorIndex) === 0) {
-        delete this.params.doctorId
+        delete this.params.cashierStaffId
       } else {
-        this.params.doctorId = this.doctorList[this.doctorIndex].staffId
+        this.params.cashierStaffId = this.doctorList[this.doctorIndex].staffId
       }
       this.getPaymentOrder(this.params)
     },
