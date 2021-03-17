@@ -465,7 +465,7 @@ export default {
 .editPatientForm {
   .remark {
     background: #ffffff;
-    width: 375px;
+    width: 100vw;
     margin-bottom: 30rpx;
   }
   .title {
@@ -548,9 +548,9 @@ export default {
 .icon-sync {
   position: absolute;
   left: 140rpx;
-  font-size: 32rpx;
+  font-size: 40rpx;
   color: #5cbb89;
-  padding: 40rpx;
+  padding: 32rpx;
   z-index: 9;
 }
 
