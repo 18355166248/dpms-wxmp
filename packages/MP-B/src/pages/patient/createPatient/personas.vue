@@ -1,6 +1,10 @@
 <template>
   <div class="personas">
-    <div v-if="list.length !== 0" style="padding-bottom: 120rpx;">
+    <div
+      v-if="list.length !== 0"
+      class="pb-120"
+      :class="{ 'pb-188': systemScreen === 'screen189' }"
+    >
       <div class="tagContent" v-for="patientTag in list" :key="patientTag.id">
         <div class="tagTitle">
           {{ patientTag.name }}
@@ -96,6 +100,12 @@ export default {
 
 <style lang="scss" scoped>
 .personas {
+  .pb-188 {
+    padding-bottom: 188rpx !important;
+  }
+  .pb-120 {
+    padding-bottom: 120rpx;
+  }
   .bt-68 {
     bottom: 68rpx !important;
   }
