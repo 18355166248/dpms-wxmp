@@ -208,6 +208,8 @@ export default {
       margin-bottom: 16rpx;
       &:last-child {
         margin-bottom: none;
+        word-wrap:break-word;
+        word-break:normal;
       }
     }
   }
