@@ -317,6 +317,8 @@ export default {
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
     this.getSettingsPatientSourceList()
+
+    console.log('11111', this.systemScreen)
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')

@@ -81,11 +81,11 @@ export default {
           position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
         })
         .then((res) => {
-          res.data.unshift({ staffId: 0, staffName: '全部' })
+          res.data.unshift({ staffId: 0, staffName: '医生' })
           uni.setStorageSync('allDoctorList', res.data)
         })
       institutionAPI.getStaffs().then((res) => {
-        res.data.unshift({ staffId: 0, staffName: '全部' })
+        res.data.unshift({ staffId: 0, staffName: '收费人' })
         uni.setStorageSync('allStaffList', res.data)
       })
     },

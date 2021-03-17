@@ -87,6 +87,7 @@ export default {
     return {
       payTradeTypeArray: this.initEnumArray(
         this.$utils.getEnums('PayTradeType'),
+        'PayTradeType',
       ),
       payTradeTypeIndex: 0,
       doctorList: uni.getStorageSync('allStaffList'),
@@ -104,9 +105,6 @@ export default {
         request: 'loading',
       },
       params: {},
-      payTradeTypeArray: this.initEnumArray(
-        this.$utils.getEnums('PayTradeType'),
-      ),
     }
   },
   computed: {
@@ -114,7 +112,9 @@ export default {
       return this.payTradeTypeArray[this.payTradeTypeIndex].zh_CN
     },
     doctoPickerText() {
-      return this.doctorList[this.doctorIndex].staffName
+      return this.doctorList[this.doctorIndex].staffName.length > 6
+        ? this.doctorList[this.doctorIndex].staffName.substring(0, 6) + '...'
+        : this.doctorList[this.doctorIndex].staffName
     },
   },
   destroyed() {
@@ -217,10 +217,13 @@ export default {
       }
       this.getPaymentOrder(this.params)
     },
-    initEnumArray: function (obj) {
-      if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
+    initEnumArray: function (obj, type) {
+      if (type === 'PayTradeType') {
+        type = '交易类型'
+      }
+      if (!obj?.properties) return [{ value: -1, zh_CN: type }]
       let array = Object.values(obj.properties)
-      array.unshift({ value: -1, zh_CN: '全部' })
+      array.unshift({ value: -1, zh_CN: type })
       return array
     },
   },
