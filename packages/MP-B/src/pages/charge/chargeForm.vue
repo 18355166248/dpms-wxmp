@@ -18,7 +18,11 @@
       :patientId="patientId"
       :customerId="customerId"
     />
-    <charged v-if="currentTab === 1" :patientId="patientId" />
+    <charged
+      v-if="currentTab === 1"
+      :patientId="patientId"
+      :customerId="customerId"
+    />
     <payment v-if="currentTab === 2" :patientId="patientId" />
   </view>
 </template>
@@ -56,6 +60,17 @@ export default {
     this.customerId = Number(params.customerId)
     this.init()
   },
+  onReachBottom() {
+    if (this.currentTab === 0) {
+      return uni.$emit('refreshPending')
+    }
+    if (this.currentTab === 1) {
+      return uni.$emit('refreshCharged')
+    }
+    if (this.currentTab === 2) {
+      return uni.$emit('refreshPayment')
+    }
+  },
   methods: {
     init() {
       institutionAPI
@@ -66,11 +81,11 @@ export default {
           position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
         })
         .then((res) => {
-          res.data.unshift({ staffId: 0, staffName: '全部' })
+          res.data.unshift({ staffId: 0, staffName: '医生' })
           uni.setStorageSync('allDoctorList', res.data)
         })
       institutionAPI.getStaffs().then((res) => {
-        res.data.unshift({ staffId: 0, staffName: '全部' })
+        res.data.unshift({ staffId: 0, staffName: '收费人' })
         uni.setStorageSync('allStaffList', res.data)
       })
     },

@@ -9,7 +9,7 @@
           range-key="zh_CN"
         >
           <view class="uni-input"
-            >{{ billTypePickerText }} <view class="iconfont icon-close"></view
+            >{{ billTypePickerText }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
@@ -21,14 +21,14 @@
           range-key="staffName"
         >
           <view class="uni-input"
-            >{{ doctoPickerText }} <view class="iconfont icon-close"></view
+            >{{ doctoPickerText }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
       <view class="uni-list-cell">
         <picker @change="datePickerChange" :value="dateIndex" :range="dateList">
           <view class="uni-input"
-            >{{ dateList[dateIndex] }} <view class="iconfont icon-close"></view
+            >{{ dateList[dateIndex] }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
@@ -87,6 +87,7 @@ export default {
     return {
       payTradeTypeArray: this.initEnumArray(
         this.$utils.getEnums('PayTradeType'),
+        'PayTradeType',
       ),
       payTradeTypeIndex: 0,
       doctorList: uni.getStorageSync('allStaffList'),
@@ -104,9 +105,6 @@ export default {
         request: 'loading',
       },
       params: {},
-      payTradeTypeArray: this.initEnumArray(
-        this.$utils.getEnums('PayTradeType'),
-      ),
     }
   },
   computed: {
@@ -114,17 +112,22 @@ export default {
       return this.payTradeTypeArray[this.payTradeTypeIndex].zh_CN
     },
     doctoPickerText() {
-      return this.doctorList[this.doctorIndex].staffName
+      return this.doctorList[this.doctorIndex].staffName.length > 6
+        ? this.doctorList[this.doctorIndex].staffName.substring(0, 6) + '...'
+        : this.doctorList[this.doctorIndex].staffName
     },
+  },
+  destroyed() {
+    uni.$off('refreshPayment')
   },
   mounted() {
     this.init()
-  },
-  onReachBottom() {
-    if (this.pendingList.length < this.total) {
-      this.current += 1
-      this.getPaymentOrder()
-    }
+    uni.$on('refreshPayment', () => {
+      if (this.paymentList.length < this.total) {
+        this.current += 1
+        this.getPaymentOrder()
+      }
+    })
   },
   methods: {
     init() {
@@ -188,9 +191,9 @@ export default {
     doctorChange: function (e) {
       this.doctorIndex = e.detail.value
       if (Number(this.doctorIndex) === 0) {
-        delete this.params.doctorId
+        delete this.params.cashierStaffId
       } else {
-        this.params.doctorId = this.doctorList[this.doctorIndex].staffId
+        this.params.cashierStaffId = this.doctorList[this.doctorIndex].staffId
       }
       this.getPaymentOrder(this.params)
     },
@@ -214,10 +217,13 @@ export default {
       }
       this.getPaymentOrder(this.params)
     },
-    initEnumArray: function (obj) {
-      if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
+    initEnumArray: function (obj, type) {
+      if (type === 'PayTradeType') {
+        type = '交易类型'
+      }
+      if (!obj?.properties) return [{ value: -1, zh_CN: type }]
       let array = Object.values(obj.properties)
-      array.unshift({ value: -1, zh_CN: '全部' })
+      array.unshift({ value: -1, zh_CN: type })
       return array
     },
   },

@@ -10,7 +10,7 @@
         >
           <view class="uni-input"
             >{{ billSettlementPickerText }}
-            <view class="iconfont icon-close"></view
+            <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
@@ -22,7 +22,7 @@
           range-key="zh_CN"
         >
           <view class="uni-input"
-            >{{ billTypePickerText }} <view class="iconfont icon-close"></view
+            >{{ billTypePickerText }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
@@ -34,14 +34,14 @@
           range-key="staffName"
         >
           <view class="uni-input"
-            >{{ doctoPickerText }} <view class="iconfont icon-close"></view
+            >{{ doctoPickerText }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
       <view class="uni-list-cell">
         <picker @change="datePickerChange" :value="dateIndex" :range="dateList">
           <view class="uni-input"
-            >{{ dateList[dateIndex] }} <view class="iconfont icon-close"></view
+            >{{ dateList[dateIndex] }} <view class="iconfont icon-closed"></view
           ></view>
         </picker>
       </view>
@@ -72,13 +72,13 @@
           <view class="listLine">
             <view class="ml-32">{{ order.billTypeText }}</view>
             <view class="totalFee"
-              >总计金额：{{ $utils.formatPrice(order.totalAmount) }}</view
+              >应收金额：{{ $utils.formatPrice(order.totalAmount) }}</view
             >
           </view>
           <view class="listLine">
             <view class="ml-32">{{ order.medicalInstitutionName }}</view>
             <view class="chargeFee"
-              >应收金额：
+              >实收金额：
               <view class="feeRed">{{
                 $utils.formatPrice(order.receivableAmount)
               }}</view>
@@ -122,10 +122,12 @@ export default {
     return {
       billSettlementArray: this.initEnumArray(
         this.$utils.getEnums('BillSettlement'),
+        'BillSettlement',
       ),
       billSettlementIndex: 0,
       billSupperTypeArray: this.initEnumArray(
         this.$utils.getEnums('BillSupperType'),
+        'BillSupperType',
       ),
       billSupperTypeTypeIndex: 0,
       doctorList: uni.getStorageSync('allDoctorList'),
@@ -153,11 +155,22 @@ export default {
       return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
     },
     doctoPickerText() {
-      return this.doctorList[this.doctorIndex].staffName
+      return this.doctorList[this.doctorIndex].staffName.length > 4
+        ? this.doctorList[this.doctorIndex].staffName.substring(0, 4) + '...'
+        : this.doctorList[this.doctorIndex].staffName
     },
+  },
+  destroyed() {
+    uni.$off('refreshCharged')
   },
   mounted() {
     this.init()
+    uni.$on('refreshCharged', () => {
+      if (this.chargedList.length < this.total) {
+        this.current += 1
+        this.getChargedOrder()
+      }
+    })
   },
   methods: {
     billSettlementChange: function (e) {
@@ -211,10 +224,16 @@ export default {
       }
       this.getChargedOrder(this.params)
     },
-    initEnumArray: function (obj) {
-      if (!obj?.properties) return [{ value: -1, zh_CN: '全部' }]
+    initEnumArray: function (obj, type) {
+      if (type === 'BillSettlement') {
+        type = '状态'
+      }
+      if (type === 'BillSupperType') {
+        type = '账单类型'
+      }
+      if (!obj?.properties) return [{ value: -1, zh_CN: type }]
       let array = Object.values(obj.properties)
-      array.unshift({ value: -1, zh_CN: '全部' })
+      array.unshift({ value: -1, zh_CN: type })
       return array
     },
     toPage(url, params) {
