@@ -226,7 +226,7 @@ export default {
     },
     initEnumArray: function (obj, type) {
       if (type === 'BillSettlement') {
-        type = '状态'
+        type = '全部状态'
       }
       if (type === 'BillSupperType') {
         type = '账单类型'

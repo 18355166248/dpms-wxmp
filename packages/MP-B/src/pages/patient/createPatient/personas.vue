@@ -147,7 +147,9 @@ export default {
       height: 64rpx;
       background: #5cbb89;
       border-radius: 4rpx;
-      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .tagList {
       display: flex;
@@ -181,9 +183,6 @@ export default {
     }
     .icon-plus {
       color: #fff;
-      position: absolute;
-      top: 14rpx;
-      left: 16rpx;
       font-size: 32rpx;
     }
   }
