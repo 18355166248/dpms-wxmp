@@ -283,7 +283,7 @@ export default {
     display: flex;
     background-color: #fff;
     margin-bottom: 16rpx;
-    margin-top: 2rpx;
+    margin-top: 1rpx;
     height: 80rpx;
     font-size: 28rpx;
     color: #595959;
@@ -304,7 +304,7 @@ export default {
   }
   .lineHr {
     width: 686rpx;
-    height: 2rpx;
+    height: 1rpx;
     margin-left: 32rpx;
     background: rgba(0, 0, 0, 0.15);
   }
@@ -319,6 +319,7 @@ export default {
       height: 84rpx;
       display: flex;
       align-items: center;
+      margin-bottom: 1rpx;
     }
     .datetime {
       display: flex;

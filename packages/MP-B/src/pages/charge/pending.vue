@@ -10,7 +10,7 @@
         <view class="refund" v-if="order.billStatus === 1">待退费</view>
       </view>
       <view class="lineHr"></view>
-      <view class="listContent">
+      <view>
         <view class="listLine">
           <view class="ml-32">{{ order.billTypeText }}</view>
           <view class="totalFee"
@@ -148,15 +148,9 @@ export default {
 .chargeContentPending {
   .lineHr {
     width: 686rpx;
-    height: 2rpx;
+    height: 1rpx;
     margin-left: 32rpx;
     background: rgba(0, 0, 0, 0.15);
-  }
-  .line {
-    width: 80%;
-    height: 2rpx;
-    background: rgba(0, 0, 0, 0.15);
-    margin-left: 10%;
   }
   .ml-32 {
     margin-left: 32rpx;
@@ -169,6 +163,7 @@ export default {
       height: 84rpx;
       display: flex;
       align-items: center;
+      margin-bottom: 1rpx;
     }
     .datetime {
       display: flex;
