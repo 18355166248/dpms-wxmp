@@ -3,7 +3,7 @@
     <div
       v-if="list.length !== 0"
       class="pb-120"
-      :class="{ 'pb-188': systemScreen === 'screen189' }"
+      :class="{ 'pb-188': isPhoneXCeil }"
     >
       <div class="tagContent" v-for="patientTag in list" :key="patientTag.id">
         <div class="tagTitle">
@@ -35,12 +35,12 @@
       </div>
       <button
         class="ensurebutton"
-        :class="{ 'bt-68': systemScreen === 'screen189' }"
+        :class="{ 'bt-68': isPhoneXCeil }"
         @click="onSave"
       >
         保存
       </button>
-      <view class="bottomSpace" v-if="systemScreen === 'screen189'"></view>
+      <view class="bottomSpace" v-if="isPhoneXCeil"></view>
     </div>
     <div v-else>
       <empty :disabled="true" text="暂无患者标签数据"></empty>
@@ -68,7 +68,7 @@ export default {
     this.loadPatientTags()
   },
   computed: {
-    ...mapState('systemStore', ['systemScreen']),
+    ...mapState('systemStore', ['isPhoneXCeil']),
   },
   methods: {
     onSave() {

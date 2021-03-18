@@ -28,17 +28,19 @@ const OS = function () {
 // 获取手机系统信息
 export const getSystemInfo = function () {
   const res = wx.getSystemInfoSync();
-  let articleBoxClass = "";
-  const os = {};
-  os.windowW = res.safeArea ? res.safeArea.width : res.windowWidth;
-  os.windowH = res.safeArea ? res.safeArea.height : res.windowHeight;
-  os.screenProp = os.windowW / os.windowH;
-  if (os.screenProp < 0.53) articleBoxClass = "screen189";
-  if (os.screenProp >= 0.53 && os.screenProp <= 0.64)
-    articleBoxClass = "screenNormal";
-  if (os.screenProp > 0.64) articleBoxClass = "screen159";
+  let isIphoneX = false;
+  let model = res.model;
 
-  return articleBoxClass;
+  if (
+    /iphone\sx/i.test(model) ||
+    (/iphone/i.test(model) && /unknown/.test(model)) ||
+    /iphone\s11/i.test(model) ||
+    /iphone\s12/i.test(model)
+  ) {
+    isIphoneX = true;
+  }
+
+  return isIphoneX;
 };
 
 export default OS;
