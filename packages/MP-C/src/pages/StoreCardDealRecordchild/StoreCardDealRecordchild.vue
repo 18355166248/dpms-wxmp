@@ -22,15 +22,22 @@ export default {
   data() {
     return {
       zero: 0,
+      current: 1,
       inners: [],
     }
   },
   created() {
     this.getStoreCardDealRecordChild()
   },
+  onReachBottom() {
+    this.current = this.current++
+    this.getStoreCardDealRecordChild()
+  },
   methods: {
     async getStoreCardDealRecordChild() {
-      const res = await mySelfAPI.getStoreCardDealRecordChild({})
+      const res = await mySelfAPI.getStoreCardDealRecordChild({
+        current: this.current,
+      })
       let arr = []
       res.data.records.forEach((item, v, array) => {
         let t = ''
