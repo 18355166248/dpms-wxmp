@@ -59,13 +59,17 @@
         </div>
       </div>
     </div>
-    <div class="bottom">
-      <button @click="save">保 存</button>
-    </div>
+    <fixed-footer :bgColor="primaryColor">
+      <div class="bottom">
+        <button @click="save">保 存</button>
+      </div>
+    </fixed-footer>
   </div>
 </template>
 <script>
 import patientAPI from '@/APIS/patient/patient.api.js'
+import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+
 const keyPs = [
   {
     key: 'mainComplaint',
@@ -102,6 +106,7 @@ const keyPs = [
   },
 ]
 export default {
+  components: { fixedFooter },
   data() {
     return {
       value: '',
@@ -110,6 +115,7 @@ export default {
       dicts: [],
       curDict: {},
       selectType: 'dict',
+      primaryColor: this.$commonCss.commonColor,
     }
   },
   computed: {
@@ -329,10 +335,6 @@ export default {
 .bottom {
   height: 90rpx;
   button {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
     height: 90rpx;
     background: #5cbb89;
     color: #ffffff;

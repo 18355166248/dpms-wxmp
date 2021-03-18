@@ -33,27 +33,33 @@
       </div>
     </scroll-view>
     <empty :disabled="true" text="无病历记录" v-else />
-    <div class="bottom">
-      <button
-        @click="
-          $utils.push({
-            url: `/pages/patient/medicalRecord/create?patientId=${patientId}`,
-          })
-        "
-      >
-        新建病历
-      </button>
-    </div>
+    <fixed-footer :bgColor="primaryColor">
+      <div class="bottom">
+        <button
+          @click="
+            $utils.push({
+              url: `/pages/patient/medicalRecord/create?patientId=${patientId}`,
+            })
+          "
+        >
+          新建病历
+        </button>
+      </div>
+    </fixed-footer>
   </div>
 </template>
 
 <script>
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
+import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+
 export default {
+  components: { fixedFooter },
   data() {
     return {
       records: [],
+      primaryColor: this.$commonCss.commonColor,
     }
   },
   methods: {
@@ -138,10 +144,6 @@ export default {
 .bottom {
   height: 90rpx;
   button {
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
     height: 90rpx;
     background: #5cbb89;
     color: #ffffff;
