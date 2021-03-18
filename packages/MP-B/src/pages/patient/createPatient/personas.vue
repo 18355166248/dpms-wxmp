@@ -115,6 +115,7 @@ export default {
     position: fixed;
     bottom: 0;
     width: 100%;
+    z-index: 9;
   }
   .ensurebutton {
     width: 100%;
