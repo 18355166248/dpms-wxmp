@@ -387,21 +387,23 @@
         </div>
       </dpmsCell>
     </dpmsForm>
-    <div class="bottom">
-      <div class="inner">
-        <div class="funcs">
-          <div @click="historyMedicalVisible = true">
-            <div class="iconfont icon-lishibingli1" />
-            历史病历
+    <fixed-footer bgColor="#f4f4f4">
+      <div class="bottom">
+        <div class="inner">
+          <div class="funcs">
+            <div @click="historyMedicalVisible = true">
+              <div class="iconfont icon-lishibingli1" />
+              历史病历
+            </div>
+            <div @click="templateMedicalVisible = true">
+              <div class="iconfont icon-moban1" />
+              模板
+            </div>
           </div>
-          <div @click="templateMedicalVisible = true">
-            <div class="iconfont icon-moban1" />
-            模板
-          </div>
+          <button @click="save">保 存</button>
         </div>
-        <button @click="save">保 存</button>
       </div>
-    </div>
+    </fixed-footer>
     <HistoryMedicalSelect
       :visible.sync="historyMedicalVisible"
       :patientId="patientId"
@@ -422,9 +424,15 @@ import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import HistoryMedicalSelect from '@/businessComponents/MedicalSelect/HistorySelect.vue'
 import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSelect.vue'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 
 export default {
-  components: { TeethSelect, HistoryMedicalSelect, TemplateMedicalSelect },
+  components: {
+    TeethSelect,
+    HistoryMedicalSelect,
+    TemplateMedicalSelect,
+    fixedFooter,
+  },
   data() {
     return {
       form: {
@@ -773,10 +781,6 @@ export default {
   height: 90rpx;
   .inner {
     display: flex;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
     height: 90rpx;
   }
   .funcs {
