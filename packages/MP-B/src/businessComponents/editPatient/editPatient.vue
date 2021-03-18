@@ -129,7 +129,7 @@
         </div>
       </div>
       <view class="space"></view>
-      <div class="remark" :class="{ 'pb-68': systemScreen === 'screen189' }">
+      <div class="remark" :class="{ 'pb-68': isPhoneXCeil }">
         <view class="title">备注</view>
         <textarea
           class="txt"
@@ -142,14 +142,14 @@
 
       <button
         class="ensurebutton"
-        :class="{ 'bt-68': systemScreen === 'screen189' }"
+        :class="{ 'bt-68': isPhoneXCeil }"
         @click="submit"
         :disabled="disabledSaveBtn"
         :loading="disabledSaveBtn"
       >
         保存
       </button>
-      <view class="bottomSpace" v-if="systemScreen === 'screen189'"></view>
+      <view class="bottomSpace" v-if="isPhoneXCeil"></view>
     </dpmsForm>
   </div>
 </template>
@@ -301,7 +301,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('systemStore', ['systemScreen']),
+    ...mapState('systemStore', ['isPhoneXCeil']),
   },
   created() {
     // 更新用户画像选中值

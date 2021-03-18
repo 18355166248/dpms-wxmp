@@ -5,7 +5,7 @@
 ### 初始化
 
 在 packages/MP-B/src/store/modules/systemStore.js 初始化值
-systemScreen 为 screen189 表示苹果 x 以上手机
+isPhoneXCeil 为 true 表示苹果 x 以上手机
 
 初始化方法在 packages/MP-common/utils/os.js
 在 packages/MP-B/src/App.vue 的 onLaunch 生命周期中进行初始化
@@ -20,6 +20,6 @@ systemScreen 为 screen189 表示苹果 x 以上手机
 import { mapState } from 'vuex'
 
 computed: {
-  ...mapState('systemStore', ['systemScreen']),
+  ...mapState('systemStore', ['isPhoneXCeil']),
 },
 ```

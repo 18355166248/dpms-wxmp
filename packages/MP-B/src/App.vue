@@ -4,9 +4,9 @@ import { getSystemInfo } from 'mpcommon/utils/os'
 
 export default {
   onLaunch: function () {
-    const articleBoxClass = getSystemInfo()
-    store.commit('systemStore/setSystemScreen', articleBoxClass)
-    console.log('articleBoxClass', articleBoxClass)
+    const isPhoneXCeil = getSystemInfo()
+    store.commit('systemStore/setIsPhoneXCeil', isPhoneXCeil)
+    console.log('isPhoneXCeil', isPhoneXCeil)
   },
   onShow: function () {},
   onHide: function () {},

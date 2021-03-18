@@ -1,10 +1,10 @@
 const state = {
-  systemScreen: '', // 判断设备信息: screen189 (苹果x以上手机)
+  isPhoneXCeil: '', // 判断设备信息 (苹果x以上手机)
 }
 
 const mutations = {
-  setSystemScreen(state, value) {
-    state.systemScreen = value
+  setIsPhoneXCeil(state, value) {
+    state.isPhoneXCeil = value
   },
 }
 
