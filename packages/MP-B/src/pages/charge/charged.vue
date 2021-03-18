@@ -182,6 +182,7 @@ export default {
           this.billSettlementIndex
         ].value
       }
+      this.current = 1
       this.getChargedOrder(this.params)
     },
     billingTypeChange: function (e) {
@@ -193,6 +194,7 @@ export default {
           this.billSupperTypeTypeIndex
         ].value
       }
+      this.current = 1
       this.getChargedOrder(this.params)
     },
     doctorChange: function (e) {
@@ -202,6 +204,7 @@ export default {
       } else {
         this.params.doctorId = this.doctorList[this.doctorIndex].staffId
       }
+      this.current = 1
       this.getChargedOrder(this.params)
     },
     datePickerChange: function (e) {
@@ -222,6 +225,8 @@ export default {
         this.params.updateTimeStart = moment().startOf('month').format('x')
         this.params.updateTimeEnd = moment().endOf('month').format('x')
       }
+      this.current = 1
+
       this.getChargedOrder(this.params)
     },
     initEnumArray: function (obj, type) {

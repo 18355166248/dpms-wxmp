@@ -186,6 +186,8 @@ export default {
           this.payTradeTypeIndex
         ].value
       }
+      this.current = 1
+
       this.getPaymentOrder(this.params)
     },
     doctorChange: function (e) {
@@ -195,6 +197,7 @@ export default {
       } else {
         this.params.cashierStaffId = this.doctorList[this.doctorIndex].staffId
       }
+      this.current = 1
       this.getPaymentOrder(this.params)
     },
     datePickerChange: function (e) {
