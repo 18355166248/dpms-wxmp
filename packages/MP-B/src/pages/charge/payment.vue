@@ -187,7 +187,6 @@ export default {
         ].value
       }
       this.current = 1
-
       this.getPaymentOrder(this.params)
     },
     doctorChange: function (e) {
@@ -218,6 +217,7 @@ export default {
         this.params.payTimeStartStamp = moment().startOf('month').format('x')
         this.params.payTimeEndStamp = moment().endOf('month').format('x')
       }
+      this.current = 1
       this.getPaymentOrder(this.params)
     },
     initEnumArray: function (obj, type) {
