@@ -77,6 +77,10 @@ export default {
       delete formValue.region
       delete formValue.address
       delete formValue.weChatInfoList
+
+      formValue.firstDiagnosisMilliSecond = formValue.firstVisitTime
+      delete formValue.firstVisitTime
+
       // 电话脱敏
       if (this.formData?.mobile === formValue?.mobile) {
         delete formValue.mobile
