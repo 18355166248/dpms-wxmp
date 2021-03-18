@@ -91,7 +91,6 @@
             isLink
           />
         </view>
-        <!-- <view style="width: 2rpx; height: 80rpx; background: #d8d8d8;"></view> -->
         <view style="width: 375rpx; padding-top: 2px; background: #fff;">
           <dpmsCellInput placeholder="请输入联系电话" v-model="form.mobile" />
         </view>
@@ -121,12 +120,7 @@
       <div class="dpms-cell-group dpms-cell-group-textarea">
         <div class="dpms-cell" data-layout-align="space-between center">
           <textarea
-            style="
-              height: 142rpx;
-              padding: 6rpx 0;
-              width: 686rpx;
-              margin-top: 30rpx;
-            "
+            style="height: 142rpx; width: 686rpx; margin-top: 30rpx;"
             placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
             placeholder="请输入详细住址"
             maxlength="100"
@@ -480,7 +474,7 @@ export default {
   .title {
     font-size: 35rpx;
     color: #4c4c4c;
-    line-height: 20px;
+    line-height: 40rpx;
     padding-left: 32rpx;
     padding-top: 32rpx;
   }
@@ -582,6 +576,7 @@ export default {
   position: fixed;
   bottom: 0;
   width: 100%;
+  z-index: 9;
 }
 
 .space {
