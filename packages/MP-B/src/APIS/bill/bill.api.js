@@ -19,6 +19,22 @@ const billAPI = {
       data,
     )
   },
+  //待处理账单
+  pendingOrderList(data) {
+    return httper.get('billing/bill/order/process/page', data)
+  },
+  //已收费账单
+  chargedOrderList(data) {
+    return httper.get('billing/bill/order/page', data)
+  },
+  //账单详情
+  orderDetail(data) {
+    return httper.get('billing/bill/order/item', data)
+  },
+  //支付记录
+  paymentOrderList(data) {
+    return httper.get('pay/pay-order/page-by-payer-id', data)
+  },
 }
 
 export default billAPI

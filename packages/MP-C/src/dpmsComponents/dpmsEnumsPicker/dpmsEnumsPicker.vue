@@ -43,6 +43,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    style: {
+      type: String,
+      required: false,
+    },
     headerText: String,
   },
   watch: {
