@@ -40,7 +40,10 @@ const patientAPI = {
   },
   // 更新患者信息
   updatePatient(data) {
-    return httper.post('patient/patient/update/with/patient-contact', data)
+    return httper.post(
+      'patient/patient/miniapp/update/with/patient-contact',
+      data,
+    )
   },
   // 查询患者的预约记录
   getApptList(data) {
