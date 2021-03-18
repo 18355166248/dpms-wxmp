@@ -102,6 +102,7 @@ export default {
     color: #191919;
     margin-left: 32rpx;
     padding-top: 30rpx;
+    font-weight: 500;
   }
   .listLine {
     margin-top: 18rpx;
