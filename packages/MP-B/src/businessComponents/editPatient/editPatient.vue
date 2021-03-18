@@ -571,7 +571,7 @@ export default {
 }
 
 .bottomSpace {
-  height: 34px;
+  height: 68rpx;
   background-color: #fff;
   position: fixed;
   bottom: 0;
