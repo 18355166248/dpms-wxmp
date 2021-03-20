@@ -233,7 +233,6 @@ export default {
     uni.startPullDownRefresh()
     // 测试
     this.init()
-    this.getfunctionConfigDetail()
   },
   onShow() {
     this.getfunctionConfigDetail()
