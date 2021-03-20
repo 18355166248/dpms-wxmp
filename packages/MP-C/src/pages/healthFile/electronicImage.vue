@@ -1,7 +1,7 @@
 <template>
 <!--  <div>-->
     <div class="swiperContent">
-      <div v-if="electronicImageSwiperData.length > 0" class="swiper">
+      <div v-if="electronicImageSwiperData.length > 0" class="swiperBody">
         <div class="dots">
           <div v-if="electronicImageSwiperData.length > 1">
             <span>{{ topSwiperIndex + 1 }}</span
@@ -12,7 +12,7 @@
         </div>
   
         <swiper
-          style="height: 100%;"
+          class="swiperList"
           :indicator-dots="false"
           :current="topSwiperIndex"
           @change="topSwiperTab"
@@ -22,15 +22,17 @@
             :key="index"
           >
             <div class="swiper-item">
-              <img :src="item.imageUrl" alt="" />
+              <img class="itemImg" :src="item.imageUrl" alt="" />
               <div class="itemPic">
                 {{ imageTypeFormat(item.imageType) || '-' }}
               </div>
             </div>
           </swiper-item>
+       
         </swiper>
+        <div v-if="electronicImageSwiperData.length > 0" class="saveBtn" @click="onSavePicture">保存到手机</div>
       </div>
-      <div v-if="electronicImageSwiperData.length > 0" class="saveBtn" @click="onSavePicture">保存到手机</div>
+     
       <div v-if="electronicImageSwiperData.length === 0" class="emptyContentImage">
         <image class="imgContent" src="../../static/empty-icon@2x.png" />
         <div class="emptyText">暂无影像数据</div>
@@ -147,39 +149,50 @@ export default {
   width: 100%;
   height: 100%;
   background: #000000;
-  .swiper {
+  .swiperBody {
     width: 100%;
-    height: 60%;
+    height: 100%;
+    /*background-color: red;*/
     .dots {
       padding-top: 6%;
-      padding-bottom: 30%;
+      width: 100%;
+      height: 30%;
       text-align: center;
       color: #ffffff;
+      box-sizing: border-box;
     }
-    .swiper-item {
-      img {
-        width: 100%;
-        height: 332rpx;
-        display: block;
-      }
-      .itemPic {
-        margin-top: 40%;
-        height: 36rpx;
-        font-size: 28rpx;
-        font-family: PingFangSC, PingFangSC-Regular, sans-serif;
-        font-weight: 400;
-        text-align: center;
-        color: #ffffff;
-        line-height: 36rpx;
+    .swiperList {
+      position: relative;
+      width: 100%;
+      height: 70%;
+      .swiper-item {
+        .itemImg {
+          margin-top: 6%;
+          width: 100%;
+          height: 332rpx;
+          display: block;
+        }
+        .itemPic {
+          position: absolute;
+          bottom: 138rpx;
+          width: 100%;
+          height: 36rpx;
+          font-size: 28rpx;
+          font-family: PingFangSC, PingFangSC-Regular, sans-serif;
+          font-weight: 400;
+          text-align: center;
+          color: #ffffff;
+          line-height: 36rpx;
+        }
       }
     }
+    
   }
   .saveBtn {
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
-    /*width: 100%;*/
     height: 90rpx;
     font-size: 36rpx;
     font-family: PingFangSC, PingFangSC-Regular, sans-serif;
