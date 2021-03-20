@@ -52,6 +52,7 @@
             ></span
           ></view>
         </div>
+
         <div
           :class="{
             mySelf1: configNumber === 1,
@@ -255,10 +256,12 @@ export default {
   },
   onShow() {
     this.load()
+    this.getfunctionConfigDetail()
     this.top =
       wx.getMenuButtonBoundingClientRect().top +
       wx.getMenuButtonBoundingClientRect().height / 4
   },
+
   onPullDownRefresh() {
     this.load()
   },
@@ -331,7 +334,6 @@ export default {
     },
     getfunctionConfigDetail() {
       customerAPI.getfunctionConfigDetail({}).then((res) => {
-        console.log('getfunctionConfigDetail', res)
         this.billDetail = res.data.billDetail
         this.billOverview = res.data.billOverview
         this.couponCenter = res.data.couponCenter
@@ -376,8 +378,7 @@ export default {
             })
             .then((re) => {
               this.memberDetails = re.data?.memberDetailResponse || {}
-              this.memberCardTypeQueryResponse =
-                re.data.memberCardTypeQueryResponse
+              // this.memberCardTypeQueryResponse = re.data.memberCardTypeQueryResponse||{}
               this.shareMember =
                 re.data.memberDetailResponse === undefined ||
                 re.data.memberDetailResponse.shareInfo === undefined
@@ -435,7 +436,6 @@ export default {
       this.getPeopleList()
     },
     onHandleItemClick(item, index) {
-      console.log('item', item)
       this.selectPersonCurrentIndex = index
       this.$utils.push({
         url: '/pages/healthFile/healthFile?patientId=' + item.patientId,
