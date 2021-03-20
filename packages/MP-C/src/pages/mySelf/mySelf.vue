@@ -378,7 +378,8 @@ export default {
             })
             .then((re) => {
               this.memberDetails = re.data?.memberDetailResponse || {}
-              // this.memberCardTypeQueryResponse = re.data.memberCardTypeQueryResponse||{}
+              this.memberCardTypeQueryResponse =
+                re.data.memberCardTypeQueryResponse || {}
               this.shareMember =
                 re.data.memberDetailResponse === undefined ||
                 re.data.memberDetailResponse.shareInfo === undefined
