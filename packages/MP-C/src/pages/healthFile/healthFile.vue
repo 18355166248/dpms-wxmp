@@ -32,7 +32,7 @@
               class="healthBtn"
               @click="onHandleElectronicCase(item)"
             >
-              电子病例
+              电子病历
             </div>
             <div
               v-if="item.showImaging === 1"
