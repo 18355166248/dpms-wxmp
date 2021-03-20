@@ -38,7 +38,7 @@
         </div>
         <div class="flexContent" style="padding-top: 22rpx">
           <div class="leftText">
-            <div v-if="item.arrearageAmount !== undefined">
+            <div v-if="item.arrearageAmount && item.arrearageAmount > 0 ">
               <span>欠费：</span
               ><span style="color: #5cbb89; font-size: 34rpx;"
                 >¥{{ item.arrearageAmount }}</span
