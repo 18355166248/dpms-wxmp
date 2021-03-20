@@ -101,7 +101,7 @@ export default {
   methods: {
     billTypeFormat(billType) {
       let billTypeStr = ''
-      if (billType === 1) {
+      if (billType === 1 || billType === 2 || billType === 6) {
         return (billTypeStr = '普通收费')
       } else if (billType === 3) {
         return (billTypeStr = '储值卡交易')
