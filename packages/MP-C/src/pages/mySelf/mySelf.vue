@@ -235,7 +235,7 @@ export default {
       itemPickerSelectPersonVisible: false,
       selectPersonData: [],
       selectPersonCurrentIndex: 0,
-      billDetail: 1,
+
       billOverview: 1,
       couponCenter: 1,
       doctorAppointment: 1,

@@ -234,9 +234,6 @@ export default {
     // 测试
     this.init()
   },
-  onShow() {
-    this.getfunctionConfigDetail()
-  },
   onPullDownRefresh() {
     this.init()
   },
@@ -310,6 +307,7 @@ export default {
         .then((res) => {
           this.storeList = res.data.institutionList
           this.total = res.data.total
+          this.getfunctionConfigDetail()
           if (this.storeList.length < this.total) {
             this.loadStatus = 'more'
           } else {
