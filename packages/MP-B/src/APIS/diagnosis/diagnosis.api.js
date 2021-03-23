@@ -79,6 +79,10 @@ const diagnosisAPI = {
   getMedicalHistories(data) {
     return httper.get('diagnosis/medical-record/list/history', data)
   },
+  //获取强弱流程
+  getWeakFlow(data) {
+    return httper.get('diagnosis/medical-record-config/detail', data)
+  },
 }
 
 export default diagnosisAPI

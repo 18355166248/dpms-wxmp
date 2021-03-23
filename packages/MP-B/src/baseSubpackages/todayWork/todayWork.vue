@@ -266,7 +266,6 @@
 
 <script>
 import moment from 'moment'
-import roleApi from '@/APIS/role/role.api'
 import diagnosisApi from '@/APIS/diagnosis/diagnosis.api'
 import card from '@/components/card/card.vue'
 import empty from '@/components/empty/empty.vue'
@@ -314,6 +313,7 @@ export default {
       REGISTER_ENUM: this.$utils.getEnums('Register'),
       TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      isWeakflow: 0,
     }
   },
   onLoad() {
@@ -331,6 +331,9 @@ export default {
       )
       this.dataSource.splice(rowIndex, 1)
     })
+
+    //获得强弱流程
+    this.getWeakFlow()
   },
   onUnload() {
     uni.$off(globalEventKeys.cancleApptSuccess)
@@ -351,6 +354,10 @@ export default {
   },
 
   methods: {
+    async getWeakFlow() {
+      const res = await diagnosisApi.getWeakFlow()
+      this.isWeakflow = res.data?.isWeakflow
+    },
     // 治疗完成
     finishTreatment(record, role) {
       this.changeStatus(record, role)
