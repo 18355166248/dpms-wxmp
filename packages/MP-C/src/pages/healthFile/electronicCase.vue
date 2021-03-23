@@ -8,23 +8,23 @@
         <div class="row">
           <div class="label">就诊信息：</div>
           {{ timeFormated(detail.visTimeFormated) || '' }}
-          {{ detail.medicalInstitutionSimpleCode }}
+          <span class="labelName">{{ detail.medicalInstitutionSimpleCode }}</span>
         </div>
         <div class="row">
           <div class="label">医生：</div>
-          {{ detail.doctorStaffName || '' }}
+          <div class="labelText">{{ detail.doctorStaffName || '' }}</div>
         </div>
         <div class="row">
           <div class="label">主诉：</div>
-          {{ detail.mainComplaint || '' }}
+          <div class="labelText">{{ detail.mainComplaint || '' }}</div>
         </div>
         <div v-if="detail.presentIllnessHistory !== undefined" class="row">
           <div class="label">现病史：</div>
-          {{ detail.presentIllnessHistory || '' }}
+          <div class="labelText">{{ detail.presentIllnessHistory || '' }}</div>
         </div>
         <div v-if="detail.pastIllnessHistory !== undefined" class="row">
           <div class="label">既往史：</div>
-          {{ detail.pastIllnessHistory || '' }}
+          <div class="labelText">{{ detail.pastIllnessHistory || '' }}</div>
         </div>
         <div
           v-if="detail.medicalRecordCheckNormalVOList.length > 0"
@@ -201,6 +201,20 @@ export default {
     & + div {
       flex: auto;
     }
+  }
+  .labelName {
+    width: 40%;
+    margin-left:12rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .labelText {
+    width: 570rpx;
+    padding-right:10rpx;
+    margin-bottom: none;
+    word-wrap:break-word;
+    word-break:normal;
   }
   .teeth-content {
     width: 570rpx;
