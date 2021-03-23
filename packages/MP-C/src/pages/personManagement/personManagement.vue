@@ -56,7 +56,6 @@ export default {
     uni.$on(
       globalEventKeys.updatePersonFormWithSaveSuccess,
       ({ isSuccess }) => {
-        console.log('isSuccess', isSuccess)
         this.getCustomer()
       },
     )
@@ -155,7 +154,7 @@ movable-area {
       }
     }
     .self {
-      border: 1rpx solid rgba(0, 0, 0, 0.9);
+      border: 2rpx solid rgba(0, 0, 0, 0.9);
       height: 40rpx;
       line-height: 40rpx;
       border-radius: 2rpx;

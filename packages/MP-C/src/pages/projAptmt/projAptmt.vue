@@ -1,11 +1,24 @@
 <template>
   <view class="content">
-    <view class="nav">
-      <view class="leftNav">按项目预约<view class="selected"></view></view>
-      <view class="rightNav" @click="jump('/pages/docAptmt/docAptmt')"
-        >按医生预约</view
+    <div class="nav">
+      <div
+        v-if="quickAppointment === 1"
+        class="navItem leftNav"
+        @click="jump('/pages/appoint/index')"
       >
-    </view>
+        快速预约
+      </div>
+      <div v-if="projectAppointment === 1" class="navItem centerNav">
+        按项目预约<view class="selected"></view>
+      </div>
+      <div
+        v-if="doctorAppointment === 1"
+        class="navItem rightNav"
+        @click="jump('/pages/docAptmt/docAptmt')"
+      >
+        按医生预约
+      </div>
+    </div>
     <view class="filter">
       <view class="storePicker">
         <picker
@@ -73,7 +86,7 @@ import institutionAPI from '@/APIS/institution/institution.api'
 import loadMore from '@/components/load-more/load-more.vue'
 import { getStorage, setStorage, STORAGE_KEY } from '@/utils/storage'
 import { mapState } from 'vuex'
-
+import customerAPI from '@/APIS/customer/customer.api'
 export default {
   data() {
     return {
@@ -86,6 +99,9 @@ export default {
       size: 10,
       loadStatus: 'loading',
       params: '',
+      doctorAppointment: 1,
+      projectAppointment: 1,
+      quickAppointment: 1,
     }
   },
   onShareAppMessage(res) {
@@ -97,6 +113,7 @@ export default {
     this.params = params
     if (!this.MEDICALINSTITUTION) return
     this.init(params)
+    this.getfunctionConfigDetail()
   },
   onPullDownRefresh() {
     this.currentPage = 1
@@ -133,6 +150,13 @@ export default {
     },
   },
   methods: {
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        this.doctorAppointment = res.data.doctorAppointment
+        this.projectAppointment = res.data.projectAppointment
+        this.quickAppointment = res.data.quickAppointment
+      })
+    },
     init(params) {
       const { appointmentInstitutionId } = params
       institutionAPI
@@ -208,7 +232,7 @@ export default {
               toUrl(
                 '/pages/appoint/index?itemId=' +
                   itemId +
-                  '&shopId=' +
+                  '&isShowTab=2&shopId=' +
                   canApptInstitutionList[0].appointmentInstitutionId,
               )
             }
@@ -249,21 +273,16 @@ export default {
   height: 100%;
   font-size: 30rpx;
 }
+
 .nav {
   width: 100%;
   height: 76rpx;
   background: #ffffff;
   display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }
-.leftNav {
-  width: 50%;
-  font-size: 30rpx;
-  font-family: PingFangSC, PingFangSC-Medium;
-  text-align: center;
-  color: #5cbb89;
-  line-height: 36rpx;
-  padding-top: 20rpx;
-}
+
 .selected {
   width: 58rpx;
   height: 4rpx;
@@ -272,14 +291,18 @@ export default {
   margin: 0 auto;
   margin-top: 16rpx;
 }
-.rightNav {
-  width: 50%;
-  font-size: 30rpx;
+.navItem {
+  width: 140rpx;
+  font-size: 28rpx;
   font-family: PingFangSC, PingFangSC-Medium;
   text-align: center;
   color: rgba(0, 0, 0, 0.65);
   line-height: 36rpx;
   padding-top: 20rpx;
+}
+
+.centerNav {
+  color: #5cbb89;
 }
 .filter {
   margin-top: 24rpx;

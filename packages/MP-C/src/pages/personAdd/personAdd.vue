@@ -103,7 +103,7 @@ export default {
         gender: 2,
         birthday: '',
         mobile: '',
-        contactLabel: 1,
+        contactLabel: -1,
         verificationCode: '',
         defaultPersonnel: '',
         userId: getStorage(STORAGE_KEY.STAFF).id,
