@@ -25,4 +25,22 @@ const OS = function () {
   return os;
 };
 
+// 获取手机系统信息
+export const getSystemInfo = function () {
+  const res = wx.getSystemInfoSync();
+  let isIphoneX = false;
+  let model = res.model;
+
+  if (
+    /iphone\sx/i.test(model) ||
+    (/iphone/i.test(model) && /unknown/.test(model)) ||
+    /iphone\s11/i.test(model) ||
+    /iphone\s12/i.test(model)
+  ) {
+    isIphoneX = true;
+  }
+
+  return isIphoneX;
+};
+
 export default OS;

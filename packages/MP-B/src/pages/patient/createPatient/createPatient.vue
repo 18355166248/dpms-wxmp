@@ -29,7 +29,7 @@ export default {
       const formValue = _.cloneDeep(form)
       const { type } = this.paramsObj
 
-      let patientContact = {
+      const patientContact = {
         contactLabel: form.contactLabel,
         mobile: form.mobile,
         alternateMobile: form.alternateMobile,
@@ -39,6 +39,10 @@ export default {
         city: form.region[1],
         area: form.region[2],
         address: form.address,
+      }
+
+      if (Number(formValue.settingsPatientSourceId) < 0) {
+        delete formValue.settingsPatientSourceId
       }
 
       delete formValue.contactLabel
@@ -62,26 +66,37 @@ export default {
             complete() {
               setTimeout(() => {
                 uni.$emit(globalEventKeys.newPatient)
-
-                if (type === 'createRegister') {
-                  return that.$utils.push({
-                    url:
-                      '/baseSubpackages/apptForm/apptForm?patient=' +
-                      JSON.stringify(res.data) +
-                      '&type=createRegister',
-                  })
+                const pages = getCurrentPages()
+                if (
+                  pages[pages.length - 3]?.route ===
+                  'baseSubpackages/apptForm/apptForm'
+                ) {
+                  uni.$emit(
+                    globalEventKeys.selectPatientCardFromSearchPatient,
+                    res.data,
+                  )
+                  that.$utils.back(2)
+                  return
                 }
+                // if (type === 'createRegister') {
+                //   return that.$utils.replace({
+                //     url:
+                //       '/baseSubpackages/apptForm/apptForm?patient=' +
+                //       JSON.stringify(res.data) +
+                //       '&type=createRegister',
+                //   })
+                // }
 
-                if (type === 'createAppt') {
-                  return that.$utils.push({
-                    url:
-                      '/baseSubpackages/apptForm/apptForm?patient=' +
-                      JSON.stringify(res.data) +
-                      '&type=createAppt',
-                  })
-                }
+                // if (type === 'createAppt') {
+                //   return that.$utils.replace({
+                //     url:
+                //       '/baseSubpackages/apptForm/apptForm?patient=' +
+                //       JSON.stringify(res.data) +
+                //       '&type=createAppt',
+                //   })
+                // }
 
-                return that.$utils.push({
+                return that.$utils.replace({
                   url: '/pages/patient/patient?patientId=' + res.data.patientId,
                 })
               }, 1000)

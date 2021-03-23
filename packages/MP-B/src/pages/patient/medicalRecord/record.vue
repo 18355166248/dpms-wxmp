@@ -1,57 +1,92 @@
 <template>
   <div>
-    <scroll-view class="records" v-if="records.length" scroll-y @scrolltolower="getMedicalRecordList">
-      <div class="record" v-for="r in records" :key="r.medicalRecordId" @click="toDetail(r)">
+    <scroll-view
+      class="records"
+      v-if="records.length"
+      scroll-y
+      @scrolltolower="getMedicalRecordList"
+    >
+      <div
+        class="record"
+        v-for="r in records"
+        :key="r.medicalRecordId"
+        @click="toDetail(r)"
+      >
         <div class="head">
-          <div class="iconfont icon-time-circle"></div>{{r.createTimeFormated}}
+          <div class="iconfont icon-time-circle"></div>
+          {{ r.createTimeFormated }}
         </div>
         <div class="row">
-          就诊信息：<span class="content">{{r.visTimeFormated}} {{r.medicalInstitutionSimpleCode}}</span>
+          就诊信息：<span class="content"
+            >{{ r.visTimeFormated }} {{ r.medicalInstitutionSimpleCode }}</span
+          >
         </div>
         <div class="row">
-          医生：<span class="content">{{r.doctorStaffName}}</span>
+          医生：<span class="content">{{ r.doctorStaffName }}</span>
         </div>
         <div class="row">
-          主诉：<span class="content">{{r.mainComplaint}}</span>
+          主诉：<span class="content">{{ r.mainComplaint }}</span>
         </div>
         <div class="row">
-          现病史：<span class="content">{{r.presentIllnessHistory}}</span>
+          现病史：<span class="content">{{ r.presentIllnessHistory }}</span>
         </div>
       </div>
     </scroll-view>
     <empty :disabled="true" text="无病历记录" v-else />
-    <div class="bottom">
-      <button @click="$utils.push({url: `/pages/patient/medicalRecord/create?patientId=${patientId}`})">新建病历</button>
-    </div>
+    <fixed-footer :bgColor="primaryColor">
+      <div class="bottom">
+        <button
+          @click="
+            $utils.push({
+              url: `/pages/patient/medicalRecord/create?patientId=${patientId}`,
+            })
+          "
+        >
+          新建病历
+        </button>
+      </div>
+    </fixed-footer>
   </div>
 </template>
 
 <script>
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
+import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+
 export default {
+  components: { fixedFooter },
   data() {
     return {
-      records: []
+      records: [],
+      primaryColor: this.$commonCss.commonColor,
     }
   },
   methods: {
     async getMedicalRecordList() {
-      if (this.total && this.total <= this.current * 10) return this.$utils.show('没有更多了')
+      if (this.total && this.total <= (this.current - 1) * 10)
+        return this.$utils.show('没有更多了')
       this.$utils.showLoading('加载中...')
       const res = await diagnosisAPI.getMedicalRecordList({
-        patientId: this.patientId, current: this.current,
+        patientId: this.patientId,
+        current: this.current,
       })
       this.$utils.clearLoading()
       ++this.current
       this.total = res.data.total
-      this.records = [...this.records, ...res.data.records.map(r => ({
-        ...r, visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
-        createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
-      }))]
+      this.records = [
+        ...this.records,
+        ...res.data.records.map((r) => ({
+          ...r,
+          visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
+          createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
+        })),
+      ]
     },
-    toDetail({medicalRecordId}) {
-      this.$utils.push({url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`})
+    toDetail({ medicalRecordId }) {
+      this.$utils.push({
+        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`,
+      })
     },
     onUpdate() {
       uni.$off('medicalRecordListUpdate')
@@ -61,9 +96,9 @@ export default {
         this.records = []
         this.getMedicalRecordList()
       })
-    }
+    },
   },
-  onLoad({patientId}) {
+  onLoad({ patientId }) {
     this.patientId = patientId
     this.current = 1
     this.getMedicalRecordList()
@@ -73,46 +108,42 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.records{
+.records {
   padding: 32rpx;
   padding-bottom: 0;
   height: calc(100vh - 90rpx);
   box-sizing: border-box;
 }
-.record{
+.record {
   background: #ffffff;
   border-radius: 8rpx;
   font-size: 28rpx;
-  color: rgba(0,0,0,0.9);
+  color: rgba(0, 0, 0, 0.9);
   padding: 0 24rpx 16rpx;
   margin-bottom: 25rpx;
-  .head{
+  .head {
     height: 84rpx;
     display: flex;
     align-items: center;
-    border-bottom: solid 1rpx rgba(0,0,0,0.1);
+    border-bottom: solid 1rpx rgba(0, 0, 0, 0.1);
     margin-bottom: 16rpx;
-    .icon-time-circle{
+    .icon-time-circle {
       margin-right: 10rpx;
     }
   }
-  .row{
+  .row {
     line-height: 1.9;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    .content{
-      color: rgba(0,0,0,0.7);
+    .content {
+      color: rgba(0, 0, 0, 0.7);
     }
   }
 }
-.bottom{
+.bottom {
   height: 90rpx;
-  button{
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
+  button {
     height: 90rpx;
     background: #5cbb89;
     color: #ffffff;
