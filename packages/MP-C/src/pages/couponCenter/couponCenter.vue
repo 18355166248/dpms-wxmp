@@ -53,8 +53,8 @@ export default {
   computed: {
     ...mapState('loginStore', {
       MEDICALINSTITUTION: (state) => state.MEDICALINSTITUTION,
-      EFFECTIVE_TIME_TYPE_ENUM: state => state.ENUMS.EffectiveTimeType,
-      RECEIVE_STATUS_ENUM: state => state.ENUMS.ReceiveStatus,
+      EFFECTIVE_TIME_TYPE_ENUM: (state) => state.ENUMS.EffectiveTimeType,
+      RECEIVE_STATUS_ENUM: (state) => state.ENUMS.ReceiveStatus,
     }),
   },
   watch: {
@@ -77,24 +77,29 @@ export default {
         title: '数据加载中',
         mask: true,
       })
-      institutionAPI
-        .getCouponCenterList({
-          memberId: this.memberId,
-          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
-        })
-        .then((res) => {
-          setTimeout(() => uni.hideLoading(), 300)
-          if (!!res.data.length) {
-            this.showNode = false
-            this.couponList = res.data
-          } else {
+      if (this.memberId) {
+        institutionAPI
+          .getCouponCenterList({
+            memberId: this.memberId,
+            medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+          })
+          .then((res) => {
+            setTimeout(() => uni.hideLoading(), 300)
+            if (!!res.data.length) {
+              this.showNode = false
+              this.couponList = res.data
+            } else {
+              this.showNode = true
+            }
+          })
+          .catch(() => {
             this.showNode = true
-          }
-        })
-        .catch(() => {
-          this.showNode = true
-          this.disabled = false
-        })
+            this.disabled = false
+          })
+      } else {
+        setTimeout(() => uni.hideLoading(), 300)
+        this.showNode = true
+      }
     },
     drawCoupon(record) {
       if (this.pending) return
@@ -115,8 +120,9 @@ export default {
             })
             this.couponList = convertList
           }
-        }).finally(() => {
-          setTimeout(() => this.pending = false, 99)
+        })
+        .finally(() => {
+          setTimeout(() => (this.pending = false), 99)
         })
     },
     getVerifiStatusName(item) {
@@ -129,11 +135,14 @@ export default {
       if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DAY.value) {
         return `领取当日起${item.effectiveDays}天内可用`
       }
-      if (item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value) {
+      if (
+        item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.NEXT_DAY.value
+      ) {
         return `领取次日起${item.effectiveDays}天内可用`
       }
       if (
-        item.effectiveTimeType === this.EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
+        item.effectiveTimeType ===
+        this.EFFECTIVE_TIME_TYPE_ENUM.DEFINITE_DATE.value
       ) {
         return `有效期至：${moment(item.effectiveEndTime).format('YYYY.MM.DD')}`
       }
@@ -168,7 +177,7 @@ export default {
     line-height: 36rpx;
     text-align: center;
     margin: 0;
-    &::after{
+    &::after {
       border: none;
     }
   }
