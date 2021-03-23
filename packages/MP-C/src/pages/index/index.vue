@@ -192,7 +192,7 @@ export default {
       },
       backgroundStyle: 'rgb(92, 187, 137, 0)',
       doctorAppointment: 0,
-      projectAppointment: 0,
+      projectAppointment: 1,
       quickAppointment: 0,
     }
   },
@@ -232,6 +232,7 @@ export default {
     if (!this.MEDICALINSTITUTION) return
     uni.startPullDownRefresh()
     // 测试
+
     this.init()
   },
   onPullDownRefresh() {
