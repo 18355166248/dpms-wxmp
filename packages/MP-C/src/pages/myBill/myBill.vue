@@ -6,8 +6,8 @@
       v-for="item in myBillData"
       @click="onHandleClick(item)"
     >
-      <div style="padding: 24rpx 0">
-        <div class="flexContent" style="padding-bottom:24rpx">
+      <div style="padding: 24rpx 0;">
+        <div class="flexContent" style="padding-bottom: 24rpx;">
           <div class="leftText">
             <span class="icon iconfont icontime-circle colorFont"></span
             ><span class="colorFont" style="margin-left: 14rpx;">{{
@@ -19,7 +19,7 @@
           </div>
         </div>
         <div class="lineHr"></div>
-        <div class="flexContent" style="padding-top: 30rpx">
+        <div class="flexContent" style="padding-top: 30rpx;">
           <div class="leftText">
             <span class="colorFont9">账单号：{{ item.billSerialNo }}</span>
           </div>
@@ -27,7 +27,7 @@
             <span class="colorFont9">{{ billTypeFormat(item.billType) }}</span>
           </div>
         </div>
-        <div class="flexContent" style="padding-top: 24rpx">
+        <div class="flexContent" style="padding-top: 24rpx;">
           <div class="leftText">{{ item.patientName }}</div>
           <div class="rightText" @click="onHandleClick(item.id)">
             <span>应收金额：</span
@@ -36,9 +36,9 @@
             >
           </div>
         </div>
-        <div class="flexContent" style="padding-top: 22rpx">
+        <div class="flexContent" style="padding-top: 22rpx;">
           <div class="leftText">
-            <div v-if="item.arrearageAmount && item.arrearageAmount > 0 ">
+            <div v-if="item.arrearageAmount && item.arrearageAmount > 0">
               <span>欠费：</span
               ><span style="color: #5cbb89; font-size: 34rpx;"
                 >¥{{ item.arrearageAmount }}</span
@@ -80,6 +80,7 @@ export default {
       currentPage: 1,
       total: 0,
       size: 2,
+      billDetail: 1,
       contentText: {
         contentdown: '加载更多',
         contentrefresh: '正在加载..',
@@ -89,6 +90,9 @@ export default {
     }
   },
   mounted() {},
+  onShow() {
+    this.getfunctionConfigDetail()
+  },
   onLoad(params) {
     uni.startPullDownRefresh()
   },
@@ -110,6 +114,11 @@ export default {
       } else if (billType === 5) {
         return (billTypeStr = '专享卡交易')
       }
+    },
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        this.billDetail = res.data.billDetail
+      })
     },
     getBillData() {
       this.myBillData = []
@@ -147,7 +156,7 @@ export default {
       return moment(lastUpdateTime).format('YYYY-MM-DD HH:mm:ss')
     },
     onHandleClick(item) {
-      if (item.billSerialNo === '') {
+      if (item.billSerialNo === '' || this.billDetail === 2) {
         return false
       } else {
         this.$utils.push({
@@ -170,7 +179,7 @@ export default {
   color: rgba(0, 0, 0, 0.65) !important;
 }
 .colorFont9 {
-  color:#191919;
+  color: #191919;
 }
 
 .list {

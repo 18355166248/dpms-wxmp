@@ -107,7 +107,7 @@ export default {
       line-height: 68rpx;
       height: 68rpx;
       font-family: PingFangSC, PingFangSC-Medium;
-      color: #191919;
+      color: #595959;
     }
     .inner1 {
       width: 262rpx;
