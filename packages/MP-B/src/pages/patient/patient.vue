@@ -6,8 +6,13 @@
       :name="patient.patientName"
       :avatarUrl="patient.avatarUrl"
       :gender="patient.gender"
-      :age="patient.age"
+      :medicalRecordNo="patient.medicalRecordNo"
+      :visType="patient.visType ? visType[patient.visType] : `未到诊`"
       :infos="[
+        {
+          label: '出生日期',
+          value: patient.age ? `${patient.birthday}（${patient.age}）` : '',
+        },
         { label: '联系方式', value: patient.mobile },
         { label: '患者标签', value: patient.tagListTxt },
       ]"
@@ -15,7 +20,9 @@
     <view class="menu-area">
       <view class="menu-area-body mt-48">
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'detailed-infos')"
+          v-if="
+            menu.pageElementsList.some((m) => m.enumValue === 'detailed-infos')
+          "
           class="menu-area-item"
           @click="
             toUrl(
@@ -31,7 +38,11 @@
           </view>
         </view>
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'treatment-record')"
+          v-if="
+            menu.pageElementsList.some(
+              (m) => m.enumValue === 'treatment-record',
+            )
+          "
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/apptList/apptList?patientId=' + patientId)
@@ -45,11 +56,28 @@
           </view>
         </view>
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'image')"
+          v-if="iconShow.isChargeShow"
           class="menu-area-item"
           @click="
-            toUrl('/pages/patient/image/record?patientId=' + patientId)
+            toUrl(
+              '/pages/charge/chargeForm?patientId=' +
+                patientId +
+                '&customerId=' +
+                customerId,
+            )
           "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color6">
+            <text class="iconfont icon-renmingbi"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            收费
+          </view>
+        </view>
+        <view
+          v-if="menu.pageElementsList.some((m) => m.enumValue === 'image')"
+          class="menu-area-item"
+          @click="toUrl('/pages/patient/image/record?patientId=' + patientId)"
         >
           <view class="menu-area-item-icon menu-area-item-icon-color3">
             <text class="iconfont icon-yingxiang"></text>
@@ -59,7 +87,11 @@
           </view>
         </view>
         <view
-          v-if="menu.pageElementsList.some(m => m.enumValue === 'electronic-medical-record')"
+          v-if="
+            menu.pageElementsList.some(
+              (m) => m.enumValue === 'electronic-medical-record',
+            )
+          "
           class="menu-area-item"
           @click="
             toUrl('/pages/patient/medicalRecord/record?patientId=' + patientId)
@@ -72,10 +104,7 @@
             病历记录
           </view>
         </view>
-        <view
-          class="menu-area-item"
-          @click="callTel"
-        >
+        <view class="menu-area-item" @click="callTel">
           <view class="menu-area-item-icon menu-area-item-icon-color5">
             <text class="iconfont icon-phone"></text>
           </view>
@@ -91,21 +120,49 @@
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import card from '@/components/card/card.vue'
-import {mapState} from 'vuex'
+import { mapState } from 'vuex'
 export default {
   data() {
     return {
       patientId: '',
+      customerId: '',
       patient: {},
+      iconShow: {
+        isChargeShow: false,
+      },
+      visType: {
+        1: '初诊',
+        2: '复诊',
+      },
     }
   },
   computed: {
     ...mapState({
-      menu: state => state.workbenchStore.menu
-    })
+      menu: (state) => state.workbenchStore.menu,
+    }),
   },
   onLoad(params) {
     this.patientId = params.patientId
+    const { menuList, pageElementsList } = this.menu
+
+    const findObj =
+      menuList &&
+      menuList.find((v) => {
+        return v.enumValue === 'patient-center'
+      })
+    this.iconShow.isChargeShow =
+      findObj &&
+      findObj.children.findIndex((v) => {
+        return v.enumValue === 'patient-manage'
+      }) > -1
+
+    const hasCharge =
+      pageElementsList &&
+      pageElementsList.find((v) => {
+        return v.enumValue === 'billing-tab'
+      })
+
+    this.iconShow.isChargeShow = this.iconShow.isChargeShow && hasCharge
   },
   onShow() {
     this.getPatient()
@@ -121,6 +178,7 @@ export default {
           // if (this.patient.tagList.length > 3) {
           //   this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
           // }
+          this.customerId = data.customerId
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
@@ -131,15 +189,16 @@ export default {
         })
     },
     toUrl(url) {
+      console.log(url)
       this.$utils.push({
         url,
       })
     },
     callTel() {
       uni.makePhoneCall({
-        phoneNumber: this.patient?.mobile
+        phoneNumber: this.patient?.mobile,
       })
-    }
+    },
   },
   components: {
     card,
@@ -181,7 +240,7 @@ export default {
       width: $width;
       min-width: 33.33%;
       text-align: center;
-      color: rgba(0,0,0,0.9);
+      color: rgba(0, 0, 0, 0.9);
       margin-bottom: 64rpx;
       &-icon {
         width: $width;
@@ -204,15 +263,19 @@ export default {
         @include colors($values...);
       }
       &-icon-color3 {
-        $values: rgba(179,127,235,1), rgba(114,46,209,1);
+        $values: rgba(179, 127, 235, 1), rgba(114, 46, 209, 1);
         @include colors($values...);
       }
       &-icon-color4 {
-        $values: rgba(255,133,192,1), rgba(235,47,150,1);
+        $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
         @include colors($values...);
       }
       &-icon-color5 {
         $values: rgba(110, 167, 252, 1), rgba(74, 147, 254, 1);
+        @include colors($values...);
+      }
+      &-icon-color6 {
+        $values: rgba(255, 132, 135, 1), rgba(255, 77, 79, 1);
         @include colors($values...);
       }
 

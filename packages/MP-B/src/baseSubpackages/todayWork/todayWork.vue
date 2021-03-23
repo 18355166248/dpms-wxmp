@@ -54,7 +54,7 @@
                 :name="item.patientDTO.patientName"
                 :avatarUrl="item.patientDTO.avatarUrl"
                 :gender="item.patientDTO.gender"
-                :age="item.patientDTO.age"
+                :medicalRecordNo="item.patientDTO.medicalRecordNo"
                 :status="item.registerStatus"
                 :infos="[
                   { label: '联系电话', value: item.patientDTO.mobile },
@@ -66,6 +66,7 @@
                     ],
                   },
                 ]"
+                :patient="item.patientDTO"
               >
                 <template v-slot:footer-right>
                   <template v-if="curRoleKey === 'DOCTOR'">

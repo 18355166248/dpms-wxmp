@@ -1,6 +1,13 @@
 <script>
+import store from '@/store'
+import { getSystemInfo } from 'mpcommon/utils/os'
+
 export default {
-  onLaunch: function () {},
+  onLaunch: function () {
+    const isPhoneXCeil = getSystemInfo()
+    store.commit('systemStore/setIsPhoneXCeil', isPhoneXCeil)
+    console.log('isPhoneXCeil', isPhoneXCeil)
+  },
   onShow: function () {},
   onHide: function () {},
 }
@@ -21,14 +28,15 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.eot');
-  src: url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.eot?#iefix')
+  src: url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.eot');
+  src: url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.eot?#iefix')
       format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_kgpghgie5pi.svg#iconfont') format('svg');
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_21qq3o8pdyr.svg#iconfont') format('svg');
 }
+
 /*********在线字体代码end*********/
 
 .iconfont {
@@ -149,6 +157,27 @@ button::after {
 }
 .icon-sms:before {
   content: '\e60a';
+}
+.icon-renmingbi:before {
+  content: '\e64b';
+}
+.icon-arrea:before {
+  content: '\e64d';
+}
+.icon-lishibingli1:before {
+  content: '\e64c';
+}
+.icon-moban1:before {
+  content: '\e653';
+}
+.icon-open:before {
+  content: '\e64e';
+}
+.icon-closed:before {
+  content: '\e654';
+}
+.icon-sync:before {
+  content: '\e655';
 }
 /* iconfont图标 end */
 </style>

@@ -34,6 +34,10 @@
         >
           <text class="card-baseInfo-name">{{ name }}</text>
           <!-- <div class="iconfont icon-vip vip" v-if="patient.isShowMemberVip"></div> -->
+          <div
+            class="iconfont icon-arrea arrea"
+            v-if="patient.arrearsFlag"
+          ></div>
           <view v-if="badgeObj" class="card-baseInfo-extend">
             <badge
               :type="badgeObj.type"
@@ -45,11 +49,28 @@
 
         <view :class="{ 'mb-14': infos.length > 0 }">
           <template v-if="gender">
-            <tag :text="genderTag" :circle="false" type="error"></tag>
+            <tag
+              :text="genderTag"
+              :circle="false"
+              type="error"
+              size="small"
+            ></tag>
           </template>
-
-          <template v-if="age">
-            <tag :text="age" :circle="false" type="error"></tag>
+          <template v-if="visType">
+            <tag
+              :text="visType"
+              :circle="false"
+              type="error"
+              size="small"
+            ></tag>
+          </template>
+          <template v-if="medicalRecordNo">
+            <tag
+              :text="medicalRecordNo"
+              :circle="false"
+              type="error"
+              size="small"
+            ></tag>
           </template>
         </view>
 
@@ -95,7 +116,7 @@ import qs from 'qs'
  * @property {String} name 患者姓名
  * @property {String} avatarUrl 患者头像（如果不传，则会根据性别，显示默认头像）
  * @property {Number} gender 患者性别
- * @property {String} age 患者年龄
+ * @property {String} medicalRecordNo 病例号
  * @property {Number|Object} status 卡片状态
  * @value { Number } 挂号状态，会自动生成对应的文本，颜色，类型
  * @value { Object } {type: 徽章类型(根据不同类型生成不同的颜色和特效), color: 徽章颜色，会改变默认type类型的颜色, text: 徽章文本} 自定义徽章信息
@@ -107,7 +128,6 @@ import qs from 'qs'
  * @value position { Array|String } 间隙方向如: "left", ["left"], ["left", "top"],["left", "right", "top", "bottom"]
  * @property {Array} infos 主要信息内容数组
  * @value [ {label: 标签, value: 标签值} ]
- *
  * @event {Function} click 卡片点击事件函数
  */
 
@@ -134,7 +154,11 @@ export default {
       type: Number,
       default: 0,
     },
-    age: {
+    medicalRecordNo: {
+      type: String,
+      default: null,
+    },
+    visType: {
       type: String,
       default: null,
     },
@@ -387,9 +411,20 @@ export default {
         top: 50%;
         transform: translateY(-50%);
       }
-      .vip{
+      .vip {
         margin-left: 8rpx;
         background: linear-gradient(180deg, #fbd08c 0%, #cfa147 99%);
+        color: #ffffff;
+        border-radius: 4rpx;
+        width: 32rpx;
+        height: 32rpx;
+        text-align: center;
+        line-height: 32rpx;
+        font-size: 28rpx;
+      }
+      .arrea {
+        margin-left: 8rpx;
+        background: linear-gradient(180deg, #fca6ac 0%, #f84b54 99%);
         color: #ffffff;
         border-radius: 4rpx;
         width: 32rpx;
