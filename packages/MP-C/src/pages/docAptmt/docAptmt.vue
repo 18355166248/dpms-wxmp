@@ -102,7 +102,7 @@ export default {
       loadStatus: 'loading',
       doctorAppointment: 1,
       projectAppointment: 1,
-      quickAppointment: 1,
+      quickAppointment: 2,
     }
   },
   onShareAppMessage(res) {
