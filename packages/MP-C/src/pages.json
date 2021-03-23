@@ -65,6 +65,39 @@
       }
     },
     {
+      "path": "pages/myBill/myBill",
+      "style": {
+        "navigationBarTitleText": "我的账单",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/myBillDetail/myBillDetail",
+      "style": {
+        "navigationBarTitleText": "账单明细",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/healthFile/healthFile",
+      "style": {
+        "navigationBarTitleText": "健康档案"
+      }
+    },
+    {
+      "path": "pages/healthFile/electronicCase",
+      "style": {
+        "navigationBarTitleText": "电子病历"
+      }
+    },
+    {
+      "path": "pages/healthFile/electronicImage",
+      "style": {
+        "navigationBarTitleText": "影像",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
       "path": "pages/myCoupon/myCoupon",
       "style": {
         "navigationBarTitleText": "我的优惠券"
@@ -133,6 +166,18 @@
       "path": "pages/couponCenter/couponCenter",
       "style": {
         "navigationBarTitleText": "领券中心"
+      }
+    },
+    {
+      "path": "pages/StoreCardDealRecordchild/StoreCardDealRecordchild",
+      "style": {
+        "navigationBarTitleText": "储值卡明细"
+      }
+    },
+    {
+      "path": "pages/switchUser/switchUser",
+      "style": {
+        "navigationBarTitleText": "选择绑定人员"
       }
     }
   ],

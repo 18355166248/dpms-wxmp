@@ -11,6 +11,18 @@
         </view>
       </view>
     </view>
+    <view class="detail">
+      <text class="detailTitle">详情介绍</text>
+      <view class="richText">
+        <rich-text :nodes="detailIntroduction"></rich-text>
+      </view>
+    </view>
+    <view class="descr" v-if="tips.length">
+      <text class="descrTitle">温馨提示</text>
+      <view class="descrContent">
+        <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
+      </view>
+    </view>
     <view class="storeContent">
       <text class="storeTitle">可用门店</text>
       <view
@@ -48,24 +60,12 @@
             v-show="i.canAppointment"
             @click="
               toUrl(
-                `/pages/appoint/index?doctorId=${doctor.doctorId}&shopId=${i.appointmentInstitutionId}`,
+                `/pages/appoint/index?doctorId=${doctor.doctorId}&isShowTab=2&shopId=${i.appointmentInstitutionId}`,
               )
             "
             >预 约</view
           >
         </view>
-      </view>
-    </view>
-    <view class="detail">
-      <text class="detailTitle">详情介绍</text>
-      <view class="richText">
-        <rich-text :nodes="detailIntroduction"></rich-text>
-      </view>
-    </view>
-    <view class="descr" v-if="tips.length">
-      <text class="descrTitle">温馨提示</text>
-      <view class="descrContent">
-        <text v-for="(t, i) in tips" :key="i"> {{ (i + 1) }}.{{ t }} </text>
       </view>
     </view>
   </scroll-view>
@@ -209,7 +209,7 @@ export default {
 .storeContent {
   width: 684rpx;
   margin-left: 32rpx;
-  margin-top: 88rpx;
+  margin-top: 48rpx;
 }
 .storeTitle {
   width: 136rpx;
@@ -299,7 +299,7 @@ export default {
   left: 546rpx;
 }
 .detail {
-  margin-top: 48rpx;
+  margin-top: 88rpx;
 }
 .detailTitle {
   width: 136rpx;

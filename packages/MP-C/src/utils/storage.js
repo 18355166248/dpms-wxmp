@@ -10,6 +10,8 @@ const STORAGE_KEY = {
   ENUMS: 'enums',
   // openid
   OPENID: 'openid',
+  // 客户id
+  CUSTOMERID: 'customerId'
 }
 
 export { STORAGE_KEY }
