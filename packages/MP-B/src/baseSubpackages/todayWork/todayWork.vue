@@ -69,7 +69,7 @@
               >
                 <template v-slot:footer-right>
                   <template v-if="curRoleKey === 'DOCTOR'">
-                    <view class="flex" style="position: relative; left: 20rpx;">
+                    <view class="flex doctorConsulantList">
                       <view
                         class="button"
                         @click.stop=""
@@ -174,7 +174,7 @@
                     </view>
                   </template>
                   <template v-else-if="curRoleKey === 'CONSULTANT'">
-                    <view class="flex" style="position: relative; left: 20rpx;">
+                    <view class="flex doctorConsulantList">
                       <view
                         class="button"
                         @click.stop=""
@@ -1231,6 +1231,11 @@ export default {
 
     .flex {
       display: flex;
+    }
+
+    .doctorConsulantList {
+      position: relative;
+      left: 20rpx;
     }
 
     .receptionist {
