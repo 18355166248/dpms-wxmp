@@ -13,4 +13,8 @@ export default {
   getVerifyCode(param) {
     return httper.get('institution-customer/verify-code', param)
   },
+  // 判断是否需要绑定客户
+  getWhetherBindCustomer(param) {
+    return httper.get('institution-customer/customer/bindCustomerAggregation', param)
+  }
 }
