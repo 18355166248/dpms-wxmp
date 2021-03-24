@@ -541,11 +541,13 @@ export default {
       })
     },
     // 选择预约项目
-    onSelectApptItem() {      
+    onSelectApptItem() {
       this.$utils.push({
         url:
           '/baseSubpackages/apptForm/apptItemList?checked=' +
-          this.form.COMMON_DATA_APPOINTMENT_ITEM.join(',')+'&isAppt=' + this.isAppt,
+          this.form.COMMON_DATA_APPOINTMENT_ITEM.join(',') +
+          '&isAppt=' +
+          this.isAppt,
       })
     },
     updateApptItemCheckedText(form) {
@@ -775,25 +777,7 @@ export default {
             appt: { ...formatValue, ...res.data },
           })
 
-          // if (type === 'createAppt') {
-          //   return this.$utils.replace({
-          //     url: '/baseSubpackages/apptView/apptView',
-          //   })
-          // }
           this.$utils.back()
-
-          // if (type === 'createRegister' || type === 'editRegister') {
-          //   this.$utils.push({
-          //     url: '/baseSubpackages/todayWork/todayWork',
-          //   })
-          // }
-          // if (type === 'editAppt') {
-          //   this.$utils.push({
-          //     url:
-          //       '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
-          //       this.paramsObj.appointmentId,
-          //   })
-          // }
         })
         .finally(() => {
           this.saveLoading = false

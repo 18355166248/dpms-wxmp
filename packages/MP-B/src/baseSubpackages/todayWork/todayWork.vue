@@ -382,7 +382,6 @@ export default {
       )
       this.dataSource.splice(rowIndex, 1)
     })
-
     //获得强弱流程
     this.getWeakFlow()
   },
@@ -403,7 +402,6 @@ export default {
   onPageScroll({ scrollTop }) {
     this.scrollTop = scrollTop
   },
-
   methods: {
     async getWeakFlow() {
       const res = await diagnosisApi.getWeakFlow()
@@ -919,8 +917,6 @@ export default {
     },
     //今日工作流程 从pc端搬运而来
     consultationAction(record, value) {
-      console.log(record, value)
-
       const { registerId, registerStatus, appointmentId } = record
       const { REGISTER_ENUM, TODAY_WORK_ROLE_TYPE_ENUM } = this
       if (value === REGISTER_ENUM.REGISTER_APPOINTED?.value) {
