@@ -14,7 +14,7 @@
       >
         <div class="head">
           <div class="iconfont icon-time-circle"></div>
-          {{ r.createTimeFormated }}
+          {{ r.visTimeFormated }}
         </div>
         <div class="row">
           就诊信息：<span class="content"

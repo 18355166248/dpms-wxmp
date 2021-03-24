@@ -449,6 +449,7 @@ export default {
         medicalRecordDisposeVOList: [{}],
         doctorAdvice: '',
         medicalRecordRegisterVO: { visType: '' },
+        medicalRecordImageList: '',
       },
       rules: {},
       teethSync: true,

@@ -54,9 +54,13 @@ const appointmentAPI = {
   getSetting() {
     return httper.get('appointment/appointment-view/setting/detail')
   },
-  confirmAppointmentStatus(params){
+  confirmAppointmentStatus(params) {
     return httper.get('appointment/appointment/confirm_appointment', params)
-  }
+  },
+  //预约更新
+  appointmentUpdateStatus(data) {
+    return httper.post('/appointment/appointment/update/status', data)
+  },
 }
 
 export default appointmentAPI
