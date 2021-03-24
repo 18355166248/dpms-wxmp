@@ -13,7 +13,6 @@
                 <text class="fz-34"
                   >当前角色：{{ roles[roleIndex].displayName || '--' }}</text
                 >
-
                 <text class="todayWork-header-txt">
                   <text class="iconfont icon-retweet"></text>
                   切换角色
@@ -70,6 +69,31 @@
               >
                 <template v-slot:footer-right>
                   <template v-if="curRoleKey === 'DOCTOR'">
+                    <view
+                      class="button"
+                      @click.stop=""
+                      v-if="
+                        item.registerStatus !==
+                        REGISTER_ENUM.REGISTER_LEAVE.value
+                      "
+                    >
+                      <picker
+                        @change="consultationChange"
+                        :value="statusTextValue[item.appointmentId]"
+                        :range="statusTextArray[item.appointmentId]"
+                        range-key="text"
+                        :id="item.appointmentId"
+                      >
+                        <view class="flex"
+                          >{{
+                            statusTextArray[item.appointmentId][
+                              statusTextValue[item.appointmentId]
+                            ].text
+                          }}
+                          <view class="iconfont icon-arrow-down"></view>
+                        </view>
+                      </picker>
+                    </view>
                     <button
                       class="button inverted-button"
                       v-if="item.doctorOperated"
@@ -328,7 +352,6 @@ import { mapState } from 'vuex'
 
 /**
  * 重大重构：调整了员工的权限
- *
  * 由于3.4.9调整了权限控制，所有的角色权限通过统一的menu-all接口获取。
  *
  **/
@@ -583,6 +606,36 @@ export default {
           }
           delete newRowData.appointmentBeginTimeStamp
           delete newRowData.appointmentEndTimeStamp
+
+          //状态设置 临时需求开发时间短不抽公共方法
+          if (this.isWeakflow === 1) {
+            this.statusTextArray[newRowData.appointmentId] = [
+              {
+                status: this.REGISTER_ENUM.REGISTER_CONSULTING?.value,
+                text: '治疗完成',
+              },
+              {
+                status: this.REGISTER_ENUM.REGISTER_TREATING?.value,
+                text: '已离开',
+              },
+              {
+                status: this.REGISTER_ENUM.REGISTER_TREATED?.value,
+                text: '回退',
+              },
+            ]
+          } else {
+            this.statusTextArray[newRowData.appointmentId] = [
+              {
+                status: this.REGISTER_ENUM.REGISTER_TREATING?.value,
+                text: '已离开',
+              },
+              {
+                status: this.REGISTER_ENUM.REGISTER_TREATED?.value,
+                text: '回退',
+              },
+            ]
+          }
+          this.statusTextValue[newRowData.appointmentId] = 0
 
           this.dataSource = [newRowData, ...this.dataSource]
           console.log('this.dataSource:', this.dataSource)
