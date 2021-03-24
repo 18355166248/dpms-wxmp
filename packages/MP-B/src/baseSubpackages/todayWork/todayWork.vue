@@ -174,36 +174,97 @@
                     </view>
                   </template>
                   <template v-else-if="curRoleKey === 'CONSULTANT'">
-                    <button
-                      class="button"
-                      v-if="!item.consultedOperated"
-                      @click.stop="
-                        treating(
-                          {
-                            registerId: item.registerId,
-                            type: 'REGISTER_CONSULTING',
-                          },
-                          'CONSULTANT',
-                        )
-                      "
-                    >
-                      接诊
-                    </button>
-                    <button
-                      class="button inverted-button"
-                      v-else
-                      @click.stop="
-                        finishTreatment(
-                          {
-                            registerId: item.registerId,
-                            type: 'REGISTER_TREATED',
-                          },
-                          'CONSULTANT',
-                        )
-                      "
-                    >
-                      治疗完成
-                    </button>
+                    <view class="flex" style="position: relative; left: 20rpx;">
+                      <view
+                        class="button"
+                        @click.stop=""
+                        v-if="
+                          item.registerStatus !==
+                          REGISTER_ENUM.REGISTER_LEAVE.value
+                        "
+                      >
+                        <picker
+                          @change="consultationChange"
+                          :value="statusTextValue[item.appointmentId]"
+                          :range="statusTextArray[item.appointmentId]"
+                          range-key="text"
+                          :id="item.appointmentId"
+                        >
+                          <view class="flex"
+                            >{{
+                              statusTextArray[item.appointmentId][
+                                statusTextValue[item.appointmentId]
+                              ].text
+                            }}
+                            <view class="iconfont icon-arrow-down"></view>
+                          </view>
+                        </picker>
+                      </view>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_REGISTERED.value,
+                          )
+                        "
+                        v-if="canReception(item)"
+                      >
+                        接诊
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_CONSULTING.value,
+                          )
+                        "
+                        v-if="canFinish(item)"
+                      >
+                        治疗完成
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_TREATING.value,
+                          )
+                        "
+                        v-if="canLeave(item)"
+                      >
+                        已离开
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_TREATED.value,
+                          )
+                        "
+                        v-if="canUndo(item)"
+                      >
+                        回退
+                      </button>
+                    </view>
                   </template>
                   <template v-else>
                     <view
@@ -785,6 +846,7 @@ export default {
       switch (curRoleKey) {
         case 'RECEPTIONIST':
         case 'DOCTOR':
+        case 'CONSULTANT':
           records &&
             records.forEach((v) => {
               switch (v.registerStatus) {
