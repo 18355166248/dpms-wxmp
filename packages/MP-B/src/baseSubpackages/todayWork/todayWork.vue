@@ -69,61 +69,109 @@
               >
                 <template v-slot:footer-right>
                   <template v-if="curRoleKey === 'DOCTOR'">
-                    <view
-                      class="button"
-                      @click.stop=""
-                      v-if="
-                        item.registerStatus !==
-                        REGISTER_ENUM.REGISTER_LEAVE.value
-                      "
-                    >
-                      <picker
-                        @change="consultationChange"
-                        :value="statusTextValue[item.appointmentId]"
-                        :range="statusTextArray[item.appointmentId]"
-                        range-key="text"
-                        :id="item.appointmentId"
+                    <view class="flex" style="position: relative; left: 20rpx;">
+                      <view
+                        class="button"
+                        @click.stop=""
+                        v-if="
+                          item.registerStatus !==
+                          REGISTER_ENUM.REGISTER_LEAVE.value
+                        "
                       >
-                        <view class="flex"
-                          >{{
-                            statusTextArray[item.appointmentId][
-                              statusTextValue[item.appointmentId]
-                            ].text
-                          }}
-                          <view class="iconfont icon-arrow-down"></view>
-                        </view>
-                      </picker>
+                        <picker
+                          @change="consultationChange"
+                          :value="statusTextValue[item.appointmentId]"
+                          :range="statusTextArray[item.appointmentId]"
+                          range-key="text"
+                          :id="item.appointmentId"
+                        >
+                          <view class="flex"
+                            >{{
+                              statusTextArray[item.appointmentId][
+                                statusTextValue[item.appointmentId]
+                              ].text
+                            }}
+                            <view class="iconfont icon-arrow-down"></view>
+                          </view>
+                        </picker>
+                      </view>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          toPage('/baseSubpackages/apptForm/apptForm', {
+                            type: 'editRegister',
+                            appointmentId: item.appointmentId,
+                          })
+                        "
+                        v-if="canRegistration(item)"
+                      >
+                        挂号
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_REGISTERED.value,
+                          )
+                        "
+                        v-if="canReception(item)"
+                      >
+                        接诊
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_CONSULTING.value,
+                          )
+                        "
+                        v-if="canFinish(item)"
+                      >
+                        治疗完成
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_TREATING.value,
+                          )
+                        "
+                        v-if="canLeave(item)"
+                      >
+                        已离开
+                      </button>
+                      <button
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_TREATED.value,
+                          )
+                        "
+                        v-if="canUndo(item)"
+                      >
+                        回退
+                      </button>
                     </view>
-                    <button
-                      class="button inverted-button"
-                      v-if="item.doctorOperated"
-                      @click.stop="
-                        finishTreatment(
-                          {
-                            registerId: item.registerId,
-                            type: 'REGISTER_TREATED',
-                          },
-                          'DOCTOR',
-                        )
-                      "
-                    >
-                      治疗完成
-                    </button>
-                    <button
-                      class="button inverted-button"
-                      v-else
-                      @click.stop="
-                        treating(
-                          {
-                            registerId: item.registerId,
-                            type: 'REGISTER_TREATING',
-                          },
-                          'DOCTOR',
-                        )
-                      "
-                    >
-                      接诊
-                    </button>
                   </template>
                   <template v-else-if="curRoleKey === 'CONSULTANT'">
                     <button
@@ -607,35 +655,8 @@ export default {
           delete newRowData.appointmentBeginTimeStamp
           delete newRowData.appointmentEndTimeStamp
 
-          //状态设置 临时需求开发时间短不抽公共方法
-          if (this.isWeakflow === 1) {
-            this.statusTextArray[newRowData.appointmentId] = [
-              {
-                status: this.REGISTER_ENUM.REGISTER_CONSULTING?.value,
-                text: '治疗完成',
-              },
-              {
-                status: this.REGISTER_ENUM.REGISTER_TREATING?.value,
-                text: '已离开',
-              },
-              {
-                status: this.REGISTER_ENUM.REGISTER_TREATED?.value,
-                text: '回退',
-              },
-            ]
-          } else {
-            this.statusTextArray[newRowData.appointmentId] = [
-              {
-                status: this.REGISTER_ENUM.REGISTER_TREATING?.value,
-                text: '已离开',
-              },
-              {
-                status: this.REGISTER_ENUM.REGISTER_TREATED?.value,
-                text: '回退',
-              },
-            ]
-          }
-          this.statusTextValue[newRowData.appointmentId] = 0
+          //状态设置
+          this.enumStatus([newRowData])
 
           this.dataSource = [newRowData, ...this.dataSource]
           console.log('this.dataSource:', this.dataSource)
@@ -736,149 +757,9 @@ export default {
 
           const { data } = listRes
           const { total, current, records } = data
-          const {
-            curRoleKey,
-            REGISTER_ENUM,
-            isWeakflow,
-            statusTextArray,
-            statusTextValue,
-          } = this
 
           //根据不同的角色，枚举不同状态
-          switch (curRoleKey) {
-            case 'RECEPTIONIST':
-              records &&
-                records.forEach((v) => {
-                  switch (v.registerStatus) {
-                    //就诊状态为已预约、已确认、迟到xx分钟时
-                    //强流程：默认按钮为挂号，下拉按钮为：已离开
-                    //弱流程：默认按钮为挂号，下拉按钮为：挂号、接诊、治疗完成、已离开
-                    case REGISTER_ENUM.REGISTER_CONFIRM?.value:
-                    case REGISTER_ENUM.REGISTER_APPOINTED?.value:
-                      if (isWeakflow === 1) {
-                        statusTextArray[v.appointmentId] = [
-                          // {
-                          //   status: REGISTER_ENUM.REGISTER_APPOINTED?.value,
-                          //   text: '挂号',
-                          // },
-                          {
-                            status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
-                            text: '接诊',
-                          },
-                          {
-                            status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
-                            text: '治疗完成',
-                          },
-                          {
-                            status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                            text: '已离开',
-                          },
-                        ]
-                      } else {
-                        statusTextArray[v.appointmentId] = [
-                          {
-                            status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                            text: '已离开',
-                          },
-                        ]
-                      }
-                      statusTextValue[v.appointmentId] = 0
-                      break
-                    //就诊状态为已挂号
-                    //强流程：默认按钮为接诊，下拉按钮为：已离开、回退
-                    //弱流程：默认按钮为接诊，下拉按钮为：治疗完成、已离开、回退
-                    case REGISTER_ENUM.REGISTER_REGISTERED?.value:
-                      if (isWeakflow === 1) {
-                        statusTextArray[v.appointmentId] = [
-                          {
-                            status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
-                            text: '治疗完成',
-                          },
-                          {
-                            status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                            text: '已离开',
-                          },
-                          {
-                            status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                            text: '回退',
-                          },
-                        ]
-                      } else {
-                        statusTextArray[v.appointmentId] = [
-                          {
-                            status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                            text: '已离开',
-                          },
-                          {
-                            status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                            text: '回退',
-                          },
-                        ]
-                      }
-                      statusTextValue[v.appointmentId] = 0
-                      break
-                    //就诊状态为咨询中
-                    //强流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
-                    //弱流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
-                    case REGISTER_ENUM.REGISTER_CONSULTING?.value:
-                      statusTextArray[v.appointmentId] = [
-                        {
-                          status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
-                          text: '接诊',
-                        },
-                        {
-                          status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
-                          text: '治疗完成',
-                        },
-                        {
-                          status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                          text: '已离开',
-                        },
-                        {
-                          status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                          text: '回退',
-                        },
-                      ]
-                      statusTextValue[v.appointmentId] = 0
-                      break
-                    //就诊状态为治疗中
-                    //强流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
-                    //弱流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
-                    case REGISTER_ENUM.REGISTER_TREATING?.value:
-                      statusTextArray[v.appointmentId] = [
-                        {
-                          status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                          text: '已离开',
-                        },
-                        {
-                          status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                          text: '回退',
-                        },
-                      ]
-                      statusTextValue[v.appointmentId] = 0
-                      break
-                    //就诊状态为治疗完成
-                    //强流程：默认按钮为已离开，下拉按钮为：回退
-                    //弱流程：默认按钮为已离开，下拉按钮为：回退
-                    case REGISTER_ENUM.REGISTER_TREATED?.value:
-                      statusTextArray[v.appointmentId] = [
-                        {
-                          status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                          text: '回退',
-                        },
-                      ]
-                      statusTextValue[v.appointmentId] = 0
-                      break
-                    default:
-                      statusTextArray[v.appointmentId] = []
-                      statusTextValue[v.appointmentId] = 0
-                      break
-                  }
-                })
-              break
-            default:
-              break
-          }
+          this.enumStatus(records)
 
           this.dataSource =
             current === 1 ? records : this.dataSource.concat(records)
@@ -892,6 +773,150 @@ export default {
         this.dataSourceStatus.loading = false
       }
       uni.stopPullDownRefresh()
+    },
+    enumStatus(records) {
+      const {
+        curRoleKey,
+        REGISTER_ENUM,
+        isWeakflow,
+        statusTextArray,
+        statusTextValue,
+      } = this
+      switch (curRoleKey) {
+        case 'RECEPTIONIST':
+        case 'DOCTOR':
+          records &&
+            records.forEach((v) => {
+              switch (v.registerStatus) {
+                //就诊状态为已预约、已确认、迟到xx分钟时
+                //强流程：默认按钮为挂号，下拉按钮为：已离开
+                //弱流程：默认按钮为挂号，下拉按钮为：挂号、接诊、治疗完成、已离开
+                case REGISTER_ENUM.REGISTER_CONFIRM?.value:
+                case REGISTER_ENUM.REGISTER_APPOINTED?.value:
+                  if (isWeakflow === 1) {
+                    statusTextArray[v.appointmentId] = [
+                      // {
+                      //   status: REGISTER_ENUM.REGISTER_APPOINTED?.value,
+                      //   text: '挂号',
+                      // },
+                      {
+                        status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
+                        text: '接诊',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
+                        text: '治疗完成',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  } else {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  }
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为已挂号
+                //强流程：默认按钮为接诊，下拉按钮为：已离开、回退
+                //弱流程：默认按钮为接诊，下拉按钮为：治疗完成、已离开、回退
+                case REGISTER_ENUM.REGISTER_REGISTERED?.value:
+                  if (isWeakflow === 1) {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
+                        text: '治疗完成',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '已离开',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '回退',
+                      },
+                    ]
+                  } else {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '已离开',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '回退',
+                      },
+                    ]
+                  }
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为咨询中
+                //强流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
+                //弱流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
+                case REGISTER_ENUM.REGISTER_CONSULTING?.value:
+                  statusTextArray[v.appointmentId] = [
+                    {
+                      status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
+                      text: '接诊',
+                    },
+                    {
+                      status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
+                      text: '治疗完成',
+                    },
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                      text: '已离开',
+                    },
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                      text: '回退',
+                    },
+                  ]
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为治疗中
+                //强流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
+                //弱流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
+                case REGISTER_ENUM.REGISTER_TREATING?.value:
+                  statusTextArray[v.appointmentId] = [
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                      text: '已离开',
+                    },
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                      text: '回退',
+                    },
+                  ]
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为治疗完成
+                //强流程：默认按钮为已离开，下拉按钮为：回退
+                //弱流程：默认按钮为已离开，下拉按钮为：回退
+                case REGISTER_ENUM.REGISTER_TREATED?.value:
+                  statusTextArray[v.appointmentId] = [
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                      text: '回退',
+                    },
+                  ]
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                default:
+                  statusTextArray[v.appointmentId] = []
+                  statusTextValue[v.appointmentId] = 0
+                  break
+              }
+            })
+          break
+        default:
+          break
+      }
     },
     // 获取角色列表
     async loadCurrentStaff() {
@@ -971,7 +996,18 @@ export default {
     //今日工作流程 从pc端搬运而来
     consultationAction(record, value) {
       const { registerId, registerStatus, appointmentId } = record
-      const { REGISTER_ENUM, TODAY_WORK_ROLE_TYPE_ENUM } = this
+      const { REGISTER_ENUM, TODAY_WORK_ROLE_TYPE_ENUM, curRoleKey } = this
+      let todayWorkRoleType
+      if (curRoleKey === 'DOCTOR') {
+        todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.DOCTOR?.value
+      }
+      if (this.curRoleKey === 'RECEPTIONIST') {
+        todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST?.value
+      }
+      if (this.curRoleKey === 'CONSULTANT') {
+        todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.CONSULTANT?.value
+      }
+
       if (value === REGISTER_ENUM.REGISTER_APPOINTED?.value) {
         return toPage('/baseSubpackages/apptForm/apptForm', {
           type: 'editRegister',
@@ -981,7 +1017,6 @@ export default {
       uni.showLoading()
       if (value === REGISTER_ENUM.REGISTER_REGISTERED?.value) {
         const status = REGISTER_ENUM.REGISTER_TREATING.value
-        const todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST.value
         diagnosisApi
           .updateRegisterStatusForward({
             registerId,
@@ -1000,7 +1035,6 @@ export default {
       }
       if (value === REGISTER_ENUM.REGISTER_CONSULTING?.value) {
         const status = REGISTER_ENUM.REGISTER_TREATED.value
-        const todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST.value
         diagnosisApi
           .updateRegisterStatusForward({
             registerId,
@@ -1019,7 +1053,6 @@ export default {
       }
       if (value === REGISTER_ENUM.REGISTER_TREATING?.value) {
         const status = REGISTER_ENUM.REGISTER_LEAVE?.value
-        const todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST?.value
         diagnosisApi
           .updateRegisterStatusForward({
             registerId,
