@@ -34,7 +34,6 @@
     "dev:quickapp-webview-huawei": "cross-env NODE_ENV=development UNI_PLATFORM=quickapp-webview-huawei vue-cli-service uni-build --watch",
     "dev:quickapp-webview-union": "cross-env NODE_ENV=development UNI_PLATFORM=quickapp-webview-union vue-cli-service uni-build --watch",
     "uat:mp-weixin": "cross-env NODE_ENV=uat UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
-    "uat01:mp-weixin": "cross-env NODE_ENV=uat01 UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "pre:mp-weixin": "cross-env NODE_ENV=staging UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "prod:mp-weixin": "cross-env NODE_ENV=prod UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "info": "node node_modules/@dcloudio/vue-cli-plugin-uni/commands/info.js",

@@ -134,7 +134,10 @@
                     </button>
                   </template>
                   <template v-else>
-                    <view class="receptionist">
+                    <view
+                      class="receptionist"
+                      v-if="showRecepitionButton(item)"
+                    >
                       <view class="flex">
                         <button
                           class="button"
@@ -201,10 +204,14 @@
                         <button
                           class="button inverted-button"
                           @click.stop="
-                            toPage('/baseSubpackages/apptForm/apptForm', {
-                              type: 'editRegister',
-                              appointmentId: item.appointmentId,
-                            })
+                            consultationAction(
+                              {
+                                registerId: item.registerId,
+                                registerStatus: item.registerStatus,
+                                appointmentId: item.appointmentId,
+                              },
+                              REGISTER_ENUM.REGISTER_REGISTERED.value,
+                            )
                           "
                           v-if="canReception(item)"
                         >
@@ -213,10 +220,14 @@
                         <button
                           class="button inverted-button"
                           @click.stop="
-                            toPage('/baseSubpackages/apptForm/apptForm', {
-                              type: 'editRegister',
-                              appointmentId: item.appointmentId,
-                            })
+                            consultationAction(
+                              {
+                                registerId: item.registerId,
+                                registerStatus: item.registerStatus,
+                                appointmentId: item.appointmentId,
+                              },
+                              REGISTER_ENUM.REGISTER_CONSULTING.value,
+                            )
                           "
                           v-if="canFinish(item)"
                         >
@@ -225,10 +236,14 @@
                         <button
                           class="button inverted-button"
                           @click.stop="
-                            toPage('/baseSubpackages/apptForm/apptForm', {
-                              type: 'editRegister',
-                              appointmentId: item.appointmentId,
-                            })
+                            consultationAction(
+                              {
+                                registerId: item.registerId,
+                                registerStatus: item.registerStatus,
+                                appointmentId: item.appointmentId,
+                              },
+                              REGISTER_ENUM.REGISTER_TREATING.value,
+                            )
                           "
                           v-if="canLeave(item)"
                         >
@@ -237,10 +252,14 @@
                         <button
                           class="button inverted-button"
                           @click.stop="
-                            toPage('/baseSubpackages/apptForm/apptForm', {
-                              type: 'editRegister',
-                              appointmentId: item.appointmentId,
-                            })
+                            consultationAction(
+                              {
+                                registerId: item.registerId,
+                                registerStatus: item.registerStatus,
+                                appointmentId: item.appointmentId,
+                              },
+                              REGISTER_ENUM.REGISTER_TREATED.value,
+                            )
                           "
                           v-if="canUndo(item)"
                         >
@@ -886,7 +905,9 @@ export default {
         item.registerStatus === this.REGISTER_ENUM.REGISTER_CONFIRM?.value
       )
     },
-    //前台流程，从pc端搬运而来
+    showRecepitionButton(item) {
+      return item.registerStatus !== this.REGISTER_ENUM.REGISTER_CANCELED?.value
+    },
     consultationChange(e) {
       const { id, value: indexId } = e.target
       const record = this.dataSource.find((v) => {
@@ -894,22 +915,24 @@ export default {
       })
       const value = this.statusTextArray[Number(id)][indexId].status
 
+      this.consultationAction(record, value)
+    },
+    //今日工作流程 从pc端搬运而来
+    consultationAction(record, value) {
+      console.log(record, value)
+
       const { registerId, registerStatus, appointmentId } = record
       const { REGISTER_ENUM, TODAY_WORK_ROLE_TYPE_ENUM } = this
-
       if (value === REGISTER_ENUM.REGISTER_APPOINTED?.value) {
         return toPage('/baseSubpackages/apptForm/apptForm', {
           type: 'editRegister',
           appointmentId: record.appointmentId,
         })
       }
-
       uni.showLoading()
-
       if (value === REGISTER_ENUM.REGISTER_REGISTERED?.value) {
         const status = REGISTER_ENUM.REGISTER_TREATING.value
         const todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST.value
-
         diagnosisApi
           .updateRegisterStatusForward({
             registerId,
@@ -929,7 +952,6 @@ export default {
       if (value === REGISTER_ENUM.REGISTER_CONSULTING?.value) {
         const status = REGISTER_ENUM.REGISTER_TREATED.value
         const todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST.value
-
         diagnosisApi
           .updateRegisterStatusForward({
             registerId,
@@ -949,7 +971,6 @@ export default {
       if (value === REGISTER_ENUM.REGISTER_TREATING?.value) {
         const status = REGISTER_ENUM.REGISTER_LEAVE?.value
         const todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST?.value
-
         diagnosisApi
           .updateRegisterStatusForward({
             registerId,
@@ -994,7 +1015,6 @@ export default {
                   .catch()
               }
             }
-
             if (cancel) {
               console.log(cancel)
             }
