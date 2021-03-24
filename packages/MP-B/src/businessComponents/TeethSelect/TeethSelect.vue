@@ -13,6 +13,9 @@
 
 <script>
 const ru = ['A', 'B', 'C', 'D', 'E']
+function toSortValue(label) {
+  return ru.includes(label) ? ru.indexOf(label) + 1.1 : Number(label)
+}
 export default {
   props: {
     style: [Object, String],
@@ -33,17 +36,26 @@ export default {
   computed: {
     computedValue() {
       const teeth = this.dataValue.teeth
-      const value = Object.keys(teeth).reduce(
-        (r, k) => {
-          const quadrant = k[0] % 4 || 4
-          r[quadrant - 1][[1, 4].includes(quadrant) ? 'unshift' : 'push']({
-            label: k[0] > 4 ? ru[k[1] - 1] : k[1],
-            area: Object.keys(teeth[k] || {}),
-          })
-          return r
-        },
-        Array.from({ length: 4 }, () => []),
-      )
+      const value = Object.keys(teeth)
+        .reduce(
+          (r, k) => {
+            const quadrant = k[0] % 4 || 4
+            r[quadrant - 1]['push']({
+              label: k[0] > 4 ? ru[k[1] - 1] : k[1],
+              area: Object.keys(teeth[k] || {}),
+            })
+            return r
+          },
+          Array.from({ length: 4 }, () => []),
+        )
+        .map((arr, i) =>
+          arr.sort((a, b) => {
+            return (
+              (toSortValue(a.label) - toSortValue(b.label)) *
+              ([0, 3].includes(i) ? -1 : 1)
+            )
+          }),
+        )
       value.splice(2, 0, value[3])
       return value.slice(0, 4)
     },
