@@ -34,14 +34,25 @@ export default {
             iv: detail.iv,
           })
           .then((res) => {
-            setStorage(STORAGE_KEY.STAFF, res.data)
-            setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
+            if (res.code === 0) {
+              setStorage(STORAGE_KEY.STAFF, res.data)
+              setStorage(STORAGE_KEY.ACCESS_TOKEN, res.data.accessToken)
+              loginApi.getWhetherBindCustomer({
+                userId: res.data?.id
+              }).then((info) => {
+                setStorage(STORAGE_KEY.CUSTOMERID, info.data?.bindedCustomerId)
+                if(info.code === 0 && info.data?.need) {
+                  this.$utils.reLaunch({ url: '/pages/switchUser/switchUser' })
+                  return
+                }
+              })
+            }
             if (this.myself == 'myself') {
               this.$utils.reLaunch({ url: '/pages/index/index' })
             } else {
               this.$utils.back()
             }
-          })
+        })
       }
     },
   },

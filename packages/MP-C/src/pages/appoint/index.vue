@@ -1,5 +1,24 @@
 <template>
   <div>
+    <div class="nav" v-if="isShowTab === 1">
+      <div class="navItem leftNav" v-if="quickAppointment === 1">
+        快速预约<view class="selected"></view>
+      </div>
+      <div
+        class="navItem centerNav"
+        v-if="projectAppointment === 1"
+        @click="jump('/pages/projAptmt/projAptmt')"
+      >
+        按项目预约
+      </div>
+      <div
+        class="navItem rightNav"
+        v-if="doctorAppointment === 1"
+        @click="jump('/pages/docAptmt/docAptmt')"
+      >
+        按医生预约
+      </div>
+    </div>
     <dpmsForm ref="editForm" :model="form" :rules="rules">
       <dpmsCell
         title="预约门店"
@@ -51,6 +70,7 @@
         @cellclick="personnelPickerVisible = true"
       />
       <dpmsCellInput
+        class="dpms-last"
         title="预约备注"
         placeholder="请输入备注"
         inputType="text"
@@ -74,6 +94,7 @@
     </div>
     <dpmsButton
       :text="networkAppointmentId ? '修改预约' : '确认预约'"
+      :class="{ buttonIsAgree: !isAgree }"
       @click="submit"
     />
     <dpmsBottomPicker
@@ -203,6 +224,7 @@ import moment from 'moment'
 import { mapState } from 'vuex'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import appointAPI from '../../APIS/appoint/appoint.api'
+import customerAPI from '@/APIS/customer/customer.api'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import institutionAPI from '@/APIS/institution/institution.api'
 import empty from '@/components/empty/empty.vue'
@@ -254,6 +276,10 @@ export default {
       Gender_ENUM: this.$utils.getEnums('Gender'),
       institutionInfo: {},
       isAgree: false,
+      doctorAppointment: 1,
+      projectAppointment: 1,
+      quickAppointment: 1,
+      isShowTab: 1,
     }
   },
   components: {
@@ -276,6 +302,7 @@ export default {
         this.personnelList.find((p) => p.id === this.form.personnelId) || {}
       ).personnelName
     },
+
     startDate() {
       let shopStartDate = moment(
         this.shopDetail.preAdvanceDayOfAppointmentTime,
@@ -306,20 +333,39 @@ export default {
     },
   },
   onLoad(params) {
-    this.shopId = params.shopId
-    this.itemId = params.itemId
-    this.form.doctorId = params.doctorId
+    console.log('------', params)
+    if (params.shopId) {
+      this.shopId = params.shopId
+    }
+    if (params.isShowTab && params.isShowTab == 2) {
+      this.isShowTab = 2
+    }
+    if (params.doctorId) {
+      this.form.doctorId = params.doctorId
+    }
+    if (params.itemId) {
+      this.itemId = params.itemId
+    }
+
     // 编辑模式
     if (params.networkAppointmentId) {
       this.networkAppointmentId = params.networkAppointmentId
       this.apiUrl = 'updateAppt'
       this.createEdit(params.networkAppointmentId)
     }
+    this.getfunctionConfigDetail()
   },
   onShow() {
     this.init()
   },
   methods: {
+    getfunctionConfigDetail() {
+      customerAPI.getfunctionConfigDetail({}).then((res) => {
+        this.doctorAppointment = res.data.doctorAppointment
+        this.projectAppointment = res.data.projectAppointment
+        this.quickAppointment = res.data.quickAppointment
+      })
+    },
     createEdit(id) {
       uni.setNavigationBarTitle({ title: '修改预约' })
       appointmentAPI
@@ -339,9 +385,12 @@ export default {
           }
         })
     },
+    jump(url) {
+      uni.redirectTo({ url })
+    },
     submit() {
+      if (!this.isAgree) return
       if (this.btnDisabled) return
-
       if (!this.isAgree) {
         this.$utils.show('请阅读并同意《预约服务协议》')
         return
@@ -532,22 +581,53 @@ page {
 }
 </style>
 <style lang="scss">
+.nav {
+  width: 100%;
+  height: 76rpx;
+  background: #ffffff;
+  display: flex;
+  margin-bottom: 20rpx;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.selected {
+  width: 58rpx;
+  height: 4rpx;
+  background: #5cbb89;
+  border-radius: 2rpx;
+  margin: 0 auto;
+  margin-top: 16rpx;
+}
+.navItem {
+  width: 140rpx;
+  font-size: 28rpx;
+  font-family: PingFangSC, PingFangSC-Medium;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.65);
+  line-height: 36rpx;
+  padding-top: 20rpx;
+}
+
+.leftNav {
+  color: #5cbb89;
+}
 .agree {
   color: rgba(153, 153, 153, 1);
-  font-size: 24rpx;
+  font-size: 28rpx;
   height: 74rpx;
   display: flex;
   align-items: center;
   .checkbox {
     width: 74rpx;
     height: 74rpx;
-    /deep/.checked{
-      padding: 22rpx 10rpx 22rpx 32rpx;
+    /deep/.checked {
+      padding: 20rpx 10rpx 20rpx 32rpx;
       display: block;
     }
     .check-circle {
       padding: 22rpx 10rpx 22rpx 32rpx;
-      &::before{
+      &::before {
         content: '';
         display: block;
         border: 1rpx solid rgba(0, 0, 0, 0.25);
@@ -712,5 +792,22 @@ button {
   max-height: 70vh;
   box-sizing: border-box;
   word-break: break-word;
+}
+/deep/ .buttonIsAgree .dpms-button-primary {
+  background: #f5f5f5 !important;
+  color: rgba(0, 0, 0, 0.25) !important;
+}
+/deep/ .dpms-last .dpms-cell:after {
+  position: absolute;
+  box-sizing: border-box;
+  transform-origin: center;
+  content: ' ';
+  pointer-events: none;
+  top: auto;
+  right: 0;
+  bottom: 0;
+  left: 16px;
+  border-bottom: none !important;
+  transform: scaleY(0.5);
 }
 </style>

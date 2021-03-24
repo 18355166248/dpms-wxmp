@@ -23,6 +23,12 @@ export default {
   userDetail(param) {
     return httper.get('institution-customer/user/mini-apps/detail', param)
   },
+  getfunctionConfigDetail(param) {
+    return httper.get(
+      'institution-customer/mini-app/function-config/detail',
+      param,
+    )
+  },
   getMemberDetails(param) {
     return httper.get(
       'institution-customer/user/mini-apps/select/member-details',
@@ -48,5 +54,43 @@ export default {
   },
   updateCustomer(data) {
     return httper.post('institution-customer/personnel/update', data)
+  },
+  // 获取绑定客户list
+  getBindCustomerList(param) {
+    return httper.get('institution-customer/customer/bindCustomerList', param)
+  },
+  // 确认绑定人员
+  bindCustomer(param) {
+    return httper.get('institution-customer/customer/bindCustomer', param)
+  },
+  bill(param) {
+    return httper.get('institution-customer/bill/page', param)
+  },
+  billGoods(param) {
+    return httper.get('institution-customer/bill/goods', param)
+  },
+  healthRecordsSelectUserList(param) {
+    return httper.get(
+      '/institution-customer/mini-app/health-records/select-user',
+      param,
+    )
+  },
+  healthRecordsList(param) {
+    return httper.get(
+      'institution-customer/mini-app/health-records/list',
+      param,
+    )
+  },
+  healthRecordsImageList(param) {
+    return httper.get(
+      'institution-customer/mini-app/health-records/image-list',
+      param,
+    )
+  },
+  healthRecordsMedicalRecord(param) {
+    return httper.get(
+      'institution-customer/mini-app/health-records/e-medical-record',
+      param,
+    )
   },
 }
