@@ -523,7 +523,12 @@ export default {
   },
   onPullDownRefresh() {
     this.current = 1
+    uni.showLoading({
+      title: '数据加载中',
+      mask: true,
+    })
     this.loadData()
+    uni.hideLoading()
   },
   onReachBottom() {
     if (this.dataSource.length < this.total) {
