@@ -630,7 +630,7 @@ export default {
       this.form.medicalRecordRegisterVO.registerTime = registerTime
     },
     registerChange({ detail }) {
-      this.form.registerId = registerList[detail.value].registerId
+      this.form.registerId = this.registerList[detail.value].registerId
     },
     historyMedicalChange(contents) {
       const keyP = {

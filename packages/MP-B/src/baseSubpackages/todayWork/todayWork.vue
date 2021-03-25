@@ -96,6 +96,7 @@
                         </picker>
                       </view>
                       <button
+                        :disabled="disabled"
                         class="button inverted-button"
                         @click.stop="
                           toPage('/baseSubpackages/apptForm/apptForm', {
@@ -156,6 +157,7 @@
                         已离开
                       </button>
                       <button
+                        :disabled="disabled"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -201,6 +203,7 @@
                         </picker>
                       </view>
                       <button
+                        :disabled="disabled"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -217,6 +220,7 @@
                         接诊
                       </button>
                       <button
+                        :disabled="disabled"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -233,6 +237,7 @@
                         治疗完成
                       </button>
                       <button
+                        :disabled="disabled"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -249,6 +254,7 @@
                         已离开
                       </button>
                       <button
+                        :disabled="disabled"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -273,6 +279,7 @@
                     >
                       <view class="flex">
                         <button
+                          :disabled="disabled"
                           class="button"
                           @click.stop="
                             toPage('/baseSubpackages/apptForm/cancleAppt', {
@@ -286,6 +293,7 @@
                       </view>
                       <view class="flex">
                         <button
+                          :disabled="disabled"
                           class="button"
                           @click.stop="
                             toPage('/baseSubpackages/apptForm/apptForm', {
@@ -323,6 +331,7 @@
                           </picker>
                         </view>
                         <button
+                          :disabled="disabled"
                           class="button inverted-button"
                           @click.stop="
                             toPage('/baseSubpackages/apptForm/apptForm', {
@@ -335,6 +344,7 @@
                           挂号
                         </button>
                         <button
+                          :disabled="disabled"
                           class="button inverted-button"
                           @click.stop="
                             consultationAction(
@@ -351,6 +361,7 @@
                           接诊
                         </button>
                         <button
+                          :disabled="disabled"
                           class="button inverted-button"
                           @click.stop="
                             consultationAction(
@@ -367,6 +378,7 @@
                           治疗完成
                         </button>
                         <button
+                          :disabled="disabled"
                           class="button inverted-button"
                           @click.stop="
                             consultationAction(
@@ -383,6 +395,7 @@
                           已离开
                         </button>
                         <button
+                          :disabled="disabled"
                           class="button inverted-button"
                           @click.stop="
                             consultationAction(
@@ -497,6 +510,7 @@ export default {
       isWeakflow: 0,
       statusTextValue: {},
       statusTextArray: {},
+      disabled: false,
     }
   },
   onLoad() {
@@ -801,6 +815,11 @@ export default {
           'switch-consultant': 'getTodayConsultant',
         }
 
+        uni.showLoading({
+          title: '数据加载中',
+          mask: true,
+        })
+
         const [listErr, listRes] = await this.$utils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.enumValue]]({
             beginTime: moment().startOf('day').valueOf(),
@@ -831,6 +850,7 @@ export default {
             this.dataSourceStatus.status = 'noMore'
           }
         }
+        uni.hideLoading()
         this.dataSourceStatus.loading = false
       }
       uni.stopPullDownRefresh()
@@ -1076,8 +1096,9 @@ export default {
           appointmentId: record.appointmentId,
         })
       }
-      uni.showLoading()
       if (value === REGISTER_ENUM.REGISTER_REGISTERED?.value) {
+        uni.showLoading()
+        this.disabled = true
         const status = REGISTER_ENUM.REGISTER_TREATING.value
         diagnosisApi
           .updateRegisterStatusForward({
@@ -1089,13 +1110,18 @@ export default {
           .then(() => {
             this.$utils.show('接诊成功', { icon: 'success' })
             this.emitPullDownRefresh()
+            this.disabled = false
+            uni.hideLoading()
           })
-          .catch((err) => {
-            throw err
+          .catch(() => {
+            this.disabled = false
+            uni.hideLoading()
           })
-        return uni.hideLoading()
+        return
       }
       if (value === REGISTER_ENUM.REGISTER_CONSULTING?.value) {
+        uni.showLoading()
+        this.disabled = true
         const status = REGISTER_ENUM.REGISTER_TREATED.value
         diagnosisApi
           .updateRegisterStatusForward({
@@ -1107,13 +1133,18 @@ export default {
           .then(() => {
             this.$utils.show('治疗完成', { icon: 'success' })
             this.emitPullDownRefresh()
+            this.disabled = false
+            uni.hideLoading()
           })
-          .catch((err) => {
-            throw err
+          .catch(() => {
+            this.disabled = false
+            uni.hideLoading()
           })
-        return uni.hideLoading()
+        return
       }
       if (value === REGISTER_ENUM.REGISTER_TREATING?.value) {
+        uni.showLoading()
+        this.disabled = true
         const status = REGISTER_ENUM.REGISTER_LEAVE?.value
         diagnosisApi
           .updateRegisterStatusForward({
@@ -1125,11 +1156,14 @@ export default {
           .then(() => {
             this.$utils.show('已离开', { icon: 'success' })
             this.emitPullDownRefresh()
+            this.disabled = false
+            uni.hideLoading()
           })
           .catch((err) => {
-            throw err
+            this.disabled = false
+            uni.hideLoading()
           })
-        return uni.hideLoading()
+        return
       }
       if (value === REGISTER_ENUM.REGISTER_TREATED?.value) {
         uni.showModal({
@@ -1147,16 +1181,22 @@ export default {
                   .then(() => {
                     this.$utils.show('回退成功', { icon: 'success' })
                     this.emitPullDownRefresh()
+                    this.disabled = false
                   })
-                  .catch()
+                  .catch(() => {
+                    this.disabled = false
+                  })
               } else {
                 diagnosisApi
                   .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
                   .then(() => {
                     this.$utils.show('回退成功', { icon: 'success' })
                     this.emitPullDownRefresh()
+                    this.disabled = false
                   })
-                  .catch()
+                  .catch(() => {
+                    this.disabled = false
+                  })
               }
             }
             if (cancel) {
@@ -1164,7 +1204,6 @@ export default {
             }
           },
         })
-        return uni.hideLoading()
       }
     },
     emitPullDownRefresh() {
