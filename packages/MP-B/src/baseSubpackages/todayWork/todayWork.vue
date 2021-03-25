@@ -523,12 +523,7 @@ export default {
   },
   onPullDownRefresh() {
     this.current = 1
-    uni.showLoading({
-      title: '数据加载中',
-      mask: true,
-    })
     this.loadData()
-    uni.hideLoading()
   },
   onReachBottom() {
     if (this.dataSource.length < this.total) {
@@ -806,6 +801,11 @@ export default {
           'switch-consultant': 'getTodayConsultant',
         }
 
+        uni.showLoading({
+          title: '数据加载中',
+          mask: true,
+        })
+
         const [listErr, listRes] = await this.$utils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.enumValue]]({
             beginTime: moment().startOf('day').valueOf(),
@@ -836,6 +836,7 @@ export default {
             this.dataSourceStatus.status = 'noMore'
           }
         }
+        uni.hideLoading()
         this.dataSourceStatus.loading = false
       }
       uni.stopPullDownRefresh()
