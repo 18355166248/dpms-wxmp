@@ -818,6 +818,7 @@ export default {
         if (listErr) {
           this.dataSourceStatus.request = 'error'
           this.dataSourceStatus.status = 'more'
+          uni.hideLoading()
         } else if (listRes) {
           this.dataSourceStatus.request = 'success'
 
