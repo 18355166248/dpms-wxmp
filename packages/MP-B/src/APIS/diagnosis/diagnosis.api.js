@@ -79,6 +79,18 @@ const diagnosisAPI = {
   getMedicalHistories(data) {
     return httper.get('diagnosis/medical-record/list/history', data)
   },
+  //获取强弱流程
+  getWeakFlow(data) {
+    return httper.get('diagnosis/medical-record-config/detail', data)
+  },
+  //回退预约
+  registerUpdateStatus(data) {
+    return httper.post('diagnosis/register/update-status/back', data)
+  },
+  //更新今日工作状态
+  updateRegisterStatusForward(params) {
+    return httper.post('diagnosis/register/update-status/forward', params)
+  },
 }
 
 export default diagnosisAPI
