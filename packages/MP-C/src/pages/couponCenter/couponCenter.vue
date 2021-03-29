@@ -3,7 +3,7 @@
     <view class="couponCenterBox">
       <couponsCard
         v-for="item in couponList"
-        :key="item.couponBatchId"
+        :key="item.serialNo"
         :item="item"
         :couponsImgSrc="item.cardImage"
         :title="item.couponName"
@@ -106,14 +106,14 @@ export default {
       this.pending = true
       institutionAPI
         .drawCoupon({
-          couponBatchId: record.couponBatchId,
+          serialNo: record.serialNo,
           memberId: this.memberId,
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
           if (res.code === 0) {
             const convertList = this.couponList.map((item) => {
-              if (item.couponBatchId === record.couponBatchId) {
+              if (item.serialNo === record.serialNo) {
                 item.receiveStatus = this.RECEIVE_STATUS_ENUM.YES.value
               }
               return item
