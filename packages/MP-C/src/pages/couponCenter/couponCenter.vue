@@ -116,6 +116,7 @@ export default {
               if (item.serialNo === record.serialNo) {
                 item.receiveStatus = this.RECEIVE_STATUS_ENUM.YES.value
               }
+
               return item
             })
             this.couponList = convertList
