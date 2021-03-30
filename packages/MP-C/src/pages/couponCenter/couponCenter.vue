@@ -6,6 +6,8 @@
         :key="item.serialNo"
         :item="item"
         :couponsImgSrc="item.cardImage"
+        :shareMember="item.shareMember"
+        :shareMemberName="item.shareMemberName"
         :title="item.couponName"
         :content="item.subtitle"
         :useCouponsType="item.receiveStatus"
