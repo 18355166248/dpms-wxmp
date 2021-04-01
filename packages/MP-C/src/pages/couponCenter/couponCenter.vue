@@ -43,7 +43,7 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      memberId: '',
+      customerId: '',
       couponList: [],
       showNode: false,
       disabled: true,
@@ -65,8 +65,9 @@ export default {
     },
   },
   onLoad(params) {
-    const { memberId } = params
-    this.memberId = memberId
+    const { customerId } = params
+    this.customerId = customerId
+
     this.init()
   },
   onPullDownRefresh() {
@@ -79,29 +80,25 @@ export default {
         title: '数据加载中',
         mask: true,
       })
-      if (this.memberId) {
-        institutionAPI
-          .getCouponCenterList({
-            memberId: this.memberId,
-            medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
-          })
-          .then((res) => {
-            setTimeout(() => uni.hideLoading(), 300)
-            if (!!res.data.length) {
-              this.showNode = false
-              this.couponList = res.data
-            } else {
-              this.showNode = true
-            }
-          })
-          .catch(() => {
+
+      institutionAPI
+        .getCouponCenterList({
+          customerId: this.customerId,
+          medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
+        })
+        .then((res) => {
+          setTimeout(() => uni.hideLoading(), 300)
+          if (!!res.data.length) {
+            this.showNode = false
+            this.couponList = res.data
+          } else {
             this.showNode = true
-            this.disabled = false
-          })
-      } else {
-        setTimeout(() => uni.hideLoading(), 300)
-        this.showNode = true
-      }
+          }
+        })
+        .catch(() => {
+          this.showNode = true
+          this.disabled = false
+        })
     },
     drawCoupon(record) {
       if (this.pending) return
@@ -109,7 +106,7 @@ export default {
       institutionAPI
         .drawCoupon({
           serialNo: record.serialNo,
-          memberId: this.memberId,
+          customerId: this.customerId,
           medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         })
         .then((res) => {
