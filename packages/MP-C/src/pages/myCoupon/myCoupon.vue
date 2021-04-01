@@ -78,7 +78,7 @@ export default {
       const res = await couponApi.getCoupons({
         medicalInstitutionId: this.MEDICALINSTITUTION.medicalInstitutionId,
         memberId: userRes.data.memberId,
-        userBaseId: userRes.data.userBaseId,
+        customerId: userRes.data.customerId,
         status: this.tab
       })
       setTimeout(() => uni.hideLoading(), 300)
