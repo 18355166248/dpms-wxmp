@@ -134,7 +134,10 @@
         <div
           v-if="couponCenter === 1"
           @click="
-            toUrl('/pages/couponCenter/couponCenter?memberId=' + memberId, 6)
+            toUrl(
+              '/pages/couponCenter/couponCenter?customerId=' + customerId,
+              6,
+            )
           "
         >
           <span
@@ -235,7 +238,7 @@ export default {
       itemPickerSelectPersonVisible: false,
       selectPersonData: [],
       selectPersonCurrentIndex: 0,
-
+      customerId: '',
       billOverview: 1,
       couponCenter: 1,
       doctorAppointment: 1,
@@ -371,10 +374,11 @@ export default {
           console.log('userDetail', res)
           this.mobile = res.data.mobile
           this.memberId = res.data.memberId
+          this.customerId = res.data.customerId
           customerAPI
             .getMemberDetails({
               memberId: res.data.memberId,
-              userBaseId: res.data.userBaseId,
+              customerId: res.data.customerId,
             })
             .then((re) => {
               this.memberDetails = re.data?.memberDetailResponse || {}
