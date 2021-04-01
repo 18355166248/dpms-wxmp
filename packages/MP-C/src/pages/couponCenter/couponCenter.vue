@@ -43,7 +43,6 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      memberId: '',
       customerId: '',
       couponList: [],
       showNode: false,
@@ -66,9 +65,7 @@ export default {
     },
   },
   onLoad(params) {
-    const { memberId, customerId } = params
-    console.log('----------', memberId, customerId, params)
-    this.memberId = memberId
+    const { customerId } = params
     this.customerId = customerId
 
     this.init()
