@@ -1174,7 +1174,7 @@ export default {
 
               if (registerStatus === status) {
                 appointmentAPI
-                  .appointmentUpdateStatus({
+                  .updateAppointmentStatus({
                     appointmentId,
                     appointmentStatus: 2,
                   })
