@@ -59,7 +59,14 @@ const appointmentAPI = {
   },
   //预约更新
   appointmentUpdateStatus(data) {
-    return httper.post('/appointment/appointment/update/status', data)
+    return httper.post('appointment/appointment/update/status', data)
+  },
+  //取消确认
+  confirmBackToAppointment(data) {
+    return httper.post(
+      'appointment/appointment/update/status/cancel-confirm',
+      data,
+    )
   },
 }
 

@@ -286,6 +286,9 @@ export default {
             case 'REGISTER_CANCELED':
               badge.type = 'error'
               break
+            case 'REGISTER_CONFIRM':
+              badge.type = 'success'
+              badge.color = '#5cbb89'
             default:
               badge.type = 'default'
           }

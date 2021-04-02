@@ -99,6 +99,9 @@
           </button>
         </template>
         <template v-if="statusEnumKey === 'CONFIRM'">
+          <button class="button button-ghost" @click="cancelConfirm">
+            取消确认
+          </button>
           <button
             class="button button-ghost"
             @click="
@@ -196,6 +199,22 @@ export default {
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   methods: {
+    cancelConfirm() {
+      appointmentAPI
+        .confirmBackToAppointment({
+          appointmentId: this.dataSource.appointmentId,
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            uni.showToast({
+              icon: 'success',
+              title: '已取消确认',
+            })
+            this.loadData()
+          }
+        })
+        .catch()
+    },
     cancleRegister() {
       if (this.dataSource.registerId) {
         const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
@@ -442,7 +461,7 @@ export default {
       height: 90rpx;
       line-height: 90rpx;
       text-align: center;
-      font-size: 36rpx;
+      font-size: 32rpx;
       background-color: $dpms-color-primary;
       color: #fff;
       box-sizing: border-box;
