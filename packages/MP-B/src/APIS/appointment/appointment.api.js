@@ -65,6 +65,11 @@ const appointmentAPI = {
     return httper.post(
       'appointment/appointment/update/status/cancel-confirm',
       data,
+      {
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
     )
   },
 }
