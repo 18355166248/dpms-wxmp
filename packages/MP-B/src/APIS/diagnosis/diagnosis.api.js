@@ -88,8 +88,15 @@ const diagnosisAPI = {
     return httper.post('diagnosis/register/update-status/back', data)
   },
   //更新今日工作状态
-  updateRegisterStatusForward(params) {
-    return httper.post('diagnosis/register/update-status/forward', params)
+  updateRegisterStatusForward(data) {
+    return httper.post('diagnosis/register/update-status/forward', data)
+  },
+  //影像医嘱项目
+  getSettingsItem(data) {
+    return httper.get(
+      'diagnosis/settings/diagnosis_settings_image_item/list-search',
+      data,
+    )
   },
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="imageUploader">
     <dpmsForm ref="form" :model="form" :rules="rules">
       <dpmsCellPicker
         title="就诊信息"
@@ -7,9 +7,23 @@
         v-model="form.registerId"
         :list="registerList"
         defaultType="registerId"
-        :defaultProps="{label: 'registerLabel', value: 'registerId'}"
+        :defaultProps="{ label: 'registerLabel', value: 'registerId' }"
         :disabled="!registerList.length"
       />
+      <dpmsCellPicker
+        title="影像医嘱项目"
+        placeholder="请选择影像医嘱项目"
+        v-model="form.diagnosisSettingsImageItemId"
+        :list="settingsImageItems"
+        defaultType="diagnosisSettingsImageItemId"
+        :defaultProps="{
+          label: 'diagnosisSettingsImageItemName',
+          value: 'diagnosisSettingsImageItemId',
+        }"
+      />
+      <dpmsCell title="牙位" wrap>
+        <TeethSelect class="handle" v-model="toothPosition" />
+      </dpmsCell>
       <dpmsCellPicker
         required
         title="影像类型"
@@ -23,60 +37,87 @@
         title="影像上传"
         required
         wrap
+        placeholderStyle="font-size: 27rpx"
+        placeholder="可添加jpg、png、jpeg、bmp、gif，且大小不超过50M"
       >
         <div class="upload-wrap">
-          <MyUpload v-model="form.imageUrlStr" :format="uploadFormat"></MyUpload>
+          <MyUpload
+            v-model="form.imageUrlStr"
+            :format="uploadFormat"
+          ></MyUpload>
         </div>
       </dpmsCell>
-      <dpmsCell
-        title="备注"
-        wrap
-      >
+      <dpmsCell title="备注" wrap>
         <textarea
-          class="textarea" v-model="form.remark"
+          class="textarea"
+          v-model="form.remark"
           placeholder-style="color: rgba(0,0,0,0.3);"
-          placeholder="请输入备注" maxlength="500"
+          placeholder="请输入备注"
+          maxlength="500"
         />
-        <div class="count">{{form.remark.length}}/500</div>
+        <div class="count">{{ form.remark.length }}/500</div>
       </dpmsCell>
       <div class="pt-56 pb-82">
-        <dpmsButton @click="submit"/>
+        <dpmsButton @click="submit" />
       </div>
     </dpmsForm>
   </div>
 </template>
 
 <script>
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import MyUpload from '@/businessComponents/MyUpload/MyUpload'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
 export default {
-  components: {MyUpload},
+  components: { MyUpload, TeethSelect },
   data() {
     return {
-      form: {registerId: '', imageType: '', imageUrlStr: '', remark: ''}, rules: {
-        imageType: [
-          {required: true, message: '请选择影像类型'}
-        ],
-        imageUrlStr: [
-          {required: true, message: '请上传影像'}
-        ]
-      }, registerList: null,
+      form: {
+        registerId: '',
+        imageType: '',
+        imageUrlStr: '',
+        remark: '',
+        diagnosisSettingsImageItemId: '',
+        toothPositionStr: '',
+        toothPosition: '',
+      },
+      rules: {
+        imageType: [{ required: true, message: '请选择影像类型' }],
+        imageUrlStr: [{ required: true, message: '请上传影像' }],
+      },
+      toothPosition: '',
+      registerList: null,
       imageType: {},
+      settingsImageItems: {},
     }
   },
   computed: {
     imageTypeList() {
-      return Object.values(this.imageType).map(t => ({
-        ...t, label: t.text.zh_CN
+      return Object.values(this.imageType).map((t) => ({
+        ...t,
+        label: t.text.zh_CN,
       }))
-    }
+    },
+  },
+  watch: {
+    toothPosition(newVal) {
+      if (!newVal) return
+      this.form.toothPositionStr = JSON.stringify(newVal)
+      this.form.toothPosition = Object.keys(newVal.teeth).join(',')
+      console.log(this.form)
+    },
   },
   methods: {
+    async getSettingsImageItems() {
+      const res = await diagnosisAPI.getSettingsItem({ pageSize: 30 })
+      this.settingsImageItems = res.data
+    },
     async getRegisterList(param) {
       const res = await diagnosisAPI.getRegisterList(param)
-      this.registerList = (res.data || []).map(d => ({
-        ...d, registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm')
+      this.registerList = (res.data || []).map((d) => ({
+        ...d,
+        registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm'),
       }))
     },
     async getImageEnums() {
@@ -85,10 +126,11 @@ export default {
     },
     async saveImageInfo() {
       await diagnosisAPI.saveImageInfo({
-        ...this.form, patientId: this.patientId
+        ...this.form,
+        patientId: this.patientId,
       })
       this.$utils.clearLoading()
-      this.$utils.show('上传成功', {icon: 'success'})
+      this.$utils.show('上传成功', { icon: 'success' })
       this.$utils.back()
       this.$nextTick(() => {
         this.pending = false
@@ -98,42 +140,42 @@ export default {
       if (this.pending) return
       this.pending = true
       this.$utils.showLoading('请稍后...')
-      this.$utils.formValidate(
-        this.rules, this.form,
-        (err) => {
-          if (err) {
-            this.pending = false
-            this.$utils.clearLoading()
-            return this.$utils.show(err[0].message)
-          }
-          this.saveImageInfo()
+      this.$utils.formValidate(this.rules, this.form, (err) => {
+        if (err) {
+          this.pending = false
+          this.$utils.clearLoading()
+          return this.$utils.show(err[0].message)
         }
-      )
+        this.saveImageInfo()
+      })
     },
     uploadFormat(v) {
       return JSON.stringify(v)
-    }
+    },
   },
-  onLoad({patientId}) {
+  onLoad({ patientId }) {
     this.patientId = patientId
-    this.getRegisterList({patientId})
+    this.getRegisterList({ patientId })
     this.getImageEnums()
-  }
+    this.getSettingsImageItems()
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-.upload-wrap{
-  padding-top: 28rpx;
-}
-.textarea{
-  padding: 18rpx 0 0;
-  height: 160rpx;
-}
-.count{
-  text-align: right;
-  color: rgba(0,0,0,0.3);
-  font-size: 28rpx;
-  width: 100%;
+.imageUploader {
+  .upload-wrap {
+    padding-top: 28rpx;
+  }
+  .textarea {
+    padding: 18rpx 0 0;
+    height: 160rpx;
+  }
+  .count {
+    text-align: right;
+    color: rgba(0, 0, 0, 0.3);
+    font-size: 28rpx;
+    width: 100%;
+  }
 }
 </style>
