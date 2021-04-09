@@ -53,7 +53,7 @@ const diagnosisAPI = {
   },
   // 获取影像列表
   getImageList(data) {
-    return httper.get('diagnosis/mini-apps/teeth-image/list', data)
+    return httper.get('diagnosis/teeth-image/list', data)
   },
   // 分页查询电子病历列表
   getMedicalRecordList(data) {

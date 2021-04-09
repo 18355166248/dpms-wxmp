@@ -105,7 +105,6 @@ export default {
       if (!newVal) return
       this.form.toothPositionStr = JSON.stringify(newVal)
       this.form.toothPosition = Object.keys(newVal.teeth).join(',')
-      console.log(this.form)
     },
   },
   methods: {

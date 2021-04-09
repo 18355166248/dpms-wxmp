@@ -118,6 +118,12 @@
           }
         },
         {
+          "path": "image/preview",
+          "style": {
+            "navigationBarTitleText": "影像记录"
+          }
+        },
+        {
           "path": "image/upload",
           "style": {
             "navigationBarTitleText": "上传影像"

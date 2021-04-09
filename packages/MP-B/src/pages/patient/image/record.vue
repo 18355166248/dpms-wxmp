@@ -14,7 +14,7 @@
                 v-for="img in it.imgs"
                 :key="img.imageUrl"
                 :src="img.imageUrl"
-                @click="preview(it, img.imageUrl)"
+                @click="preview(img)"
               />
             </div>
           </div>
@@ -39,8 +39,9 @@
 </template>
 
 <script>
-import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
+import qs from 'qs'
 import moment from 'moment'
+import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 
 export default {
@@ -92,10 +93,11 @@ export default {
       const res = await diagnosisAPI.getImageEnums()
       this.imageType = res.data.ImageType
     },
-    preview({ imgs }, current) {
-      uni.previewImage({
-        current,
-        urls: imgs.map((img) => img.imageUrl),
+    preview(params) {
+      this.$utils.push({
+        url: `image/preview?${qs.stringify(params, {
+          arrayFormat: 'comma', // a: [1, 2] => a=1,2
+        })}`,
       })
     },
   },
