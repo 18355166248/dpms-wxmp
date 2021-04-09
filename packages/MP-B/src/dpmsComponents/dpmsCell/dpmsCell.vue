@@ -14,6 +14,7 @@
     <div class="dpms-cell__value text-ellipsis" :class="{ wrap: wrap }">
       <text
         class="dpms-cell-placeholder"
+        :style="placeholderStyle || ''"
         v-if="placeholder && (!value && value !== 0)"
         >{{ placeholder }}</text
       >
@@ -46,6 +47,7 @@ export default {
       required: false,
     },
     placeholder: String,
+    placeholderStyle: String,
     disabled: {
       type: Boolean,
       required: false,
