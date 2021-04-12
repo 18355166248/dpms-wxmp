@@ -120,13 +120,20 @@
         {
           "path": "image/preview",
           "style": {
-            "navigationBarTitleText": "影像记录"
+            "navigationBarTitleText": "影像记录",
+            "backgroundColor": "#626262"
           }
         },
         {
           "path": "image/upload",
           "style": {
             "navigationBarTitleText": "上传影像"
+          }
+        },
+        {
+          "path": "image/editRemark",
+          "style": {
+            "navigationBarTitleText": "修改备注"
           }
         },
         {

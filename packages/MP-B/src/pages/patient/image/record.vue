@@ -14,7 +14,7 @@
                 v-for="img in it.imgs"
                 :key="img.imageUrl"
                 :src="img.imageUrl"
-                @click="preview(img)"
+                @click="preview(img, it)"
               />
             </div>
           </div>
@@ -39,7 +39,6 @@
 </template>
 
 <script>
-import qs from 'qs'
 import moment from 'moment'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
@@ -93,11 +92,11 @@ export default {
       const res = await diagnosisAPI.getImageEnums()
       this.imageType = res.data.ImageType
     },
-    preview(params) {
+    preview(params, { imgs }) {
+      this.$store.commit('workbenchStore/setTeethPreviewParams', params)
+      this.$store.commit('workbenchStore/setTeethPreviewImgs', imgs)
       this.$utils.push({
-        url: `image/preview?${qs.stringify(params, {
-          arrayFormat: 'comma', // a: [1, 2] => a=1,2
-        })}`,
+        url: `/pages/patient/image/preview`,
       })
     },
   },

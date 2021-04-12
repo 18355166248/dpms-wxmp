@@ -179,6 +179,9 @@ button::after {
 .icon-sync:before {
   content: '\e655';
 }
+.icon-edit:before {
+  content: '\e7e1';
+}
 /* iconfont图标 end */
 </style>
 

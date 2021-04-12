@@ -98,6 +98,14 @@ const diagnosisAPI = {
       data,
     )
   },
+  //删除影像
+  deleteImageItem(data) {
+    return httper.post('diagnosis/teeth-image/delete', data)
+  },
+  //修改影像
+  updateImageItem(data) {
+    return httper.post('diagnosis/teeth-image/update', data)
+  },
 }
 
 export default diagnosisAPI
