@@ -215,7 +215,6 @@ export default {
   }
 }
 .bottom {
-  height: 90rpx;
   display: flex;
   .leftBtn {
     width: 328rpx;
