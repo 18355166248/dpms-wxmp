@@ -36,9 +36,10 @@
       </div>
     </div>
     <empty :disabled="true" text="无影像记录" v-else />
-    <fixed-footer :bgColor="primaryColor">
+    <fixed-footer bgColor="#F5F5F5">
       <div class="bottom" v-if="!isBatch">
         <button
+          class="leftBtn"
           @click="
             $utils.push({
               url: `/pages/patient/image/upload?patientId=${patientId}`,
@@ -53,15 +54,16 @@
               this.isBatch = true
             }
           "
+          class="rightBtn"
         >
           批量操作
         </button>
       </div>
       <div class="bottom" v-if="isBatch">
-        <button @click="batchDelete">
+        <button @click="batchDelete" class="leftBtn">
           删除
         </button>
-        <button @click="editRemark">
+        <button @click="editRemark" class="rightBtn">
           修改备注
         </button>
       </div>
@@ -141,7 +143,7 @@ export default {
         : this.checkedList.push(id)
     },
     batchDelete() {
-      if (this.checkedList.length < 1) return
+      if (this.checkedList.length < 1) return (this.isBatch = false)
       const teethImageIdStr = JSON.stringify(this.checkedList)
       diagnosisAPI.batchDeleteImages({ teethImageIdStr }).then((res) => {
         if (res.code === 0) {
@@ -152,7 +154,7 @@ export default {
       })
     },
     editRemark() {
-      if (this.checkedList.length < 1) return
+      if (this.checkedList.length < 1) return (this.isBatch = false)
       const diagnosisTeethImageIdStr = JSON.stringify(this.checkedList)
       this.$utils.push({
         url: `/pages/patient/image/editRemark?diagnosisTeethImageIdStr=${diagnosisTeethImageIdStr}`,
@@ -166,6 +168,7 @@ export default {
   },
   onShow() {
     this.isBatch = false
+    this.checkedList = []
     this.getImageList({ patientId: this.patientId })
   },
 }
@@ -176,7 +179,7 @@ export default {
   padding: 0 32rpx;
   margin-bottom: 20rpx;
   font-size: 28rpx;
-  color: rgba(0, 0, 0, 0.65);
+  color: #f5f5f5;
   background: #feffff;
   .iconfont {
     position: absolute;
@@ -214,12 +217,23 @@ export default {
 .bottom {
   height: 90rpx;
   display: flex;
-  button {
-    height: 90rpx;
+  .leftBtn {
+    width: 328rpx;
+    height: 78rpx;
     background: #5cbb89;
+    border-radius: 10rpx;
+    line-height: 78rpx;
     color: #ffffff;
     font-size: 36rpx;
-    border-radius: 0;
+  }
+  .rightBtn {
+    width: 328rpx;
+    height: 78rpx;
+    line-height: 78rpx;
+    color: #5cbb89;
+    font-size: 36rpx;
+    border: 2rpx solid #5cbb89;
+    border-radius: 10rpx;
   }
 }
 </style>
