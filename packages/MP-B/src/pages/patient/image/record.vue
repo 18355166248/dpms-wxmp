@@ -10,12 +10,26 @@
           <div v-for="it in r.imageTypes" :key="it.value">
             <div class="label">{{ it.label }}</div>
             <div class="imgs">
-              <image
+              <div
                 v-for="img in it.imgs"
                 :key="img.imageUrl"
-                :src="img.imageUrl"
-                @click="preview(img, it)"
-              />
+                style="position: relative;"
+                @click="checkedImg(Number(img.diagnosisTeethImageId))"
+              >
+                <div
+                  class="iconfont icon-check-circle-no"
+                  v-if="
+                    isBatch && !checkedList.includes(img.diagnosisTeethImageId)
+                  "
+                />
+                <div
+                  class="iconfont icon-checked-circle"
+                  v-if="
+                    isBatch && checkedList.includes(img.diagnosisTeethImageId)
+                  "
+                />
+                <image :src="img.imageUrl" @click="preview(img, it)" />
+              </div>
             </div>
           </div>
         </div>
@@ -23,7 +37,7 @@
     </div>
     <empty :disabled="true" text="无影像记录" v-else />
     <fixed-footer :bgColor="primaryColor">
-      <div class="bottom">
+      <div class="bottom" v-if="!isBatch">
         <button
           @click="
             $utils.push({
@@ -32,6 +46,23 @@
           "
         >
           上传影像
+        </button>
+        <button
+          @click="
+            () => {
+              this.isBatch = true
+            }
+          "
+        >
+          批量操作
+        </button>
+      </div>
+      <div class="bottom" v-if="isBatch">
+        <button @click="batchDelete">
+          删除
+        </button>
+        <button @click="editRemark">
+          修改备注
         </button>
       </div>
     </fixed-footer>
@@ -51,6 +82,8 @@ export default {
       patientId: '',
       imageType: {},
       primaryColor: this.$commonCss.commonColor,
+      isBatch: false,
+      checkedList: [],
     }
   },
   computed: {
@@ -93,11 +126,38 @@ export default {
       this.imageType = res.data.ImageType
     },
     preview(params, { imgs }) {
+      if (this.isBatch) return
       this.$store.commit('workbenchStore/setTeethPreviewParams', params)
       this.$store.commit('workbenchStore/setTeethPreviewImgs', imgs)
       this.$utils.push({
         url: `/pages/patient/image/preview`,
       })
+    },
+    checkedImg(id) {
+      this.checkedList.includes(id)
+        ? (this.checkedList = this.checkedList.filter((v) => {
+            return v !== id
+          }))
+        : this.checkedList.push(id)
+    },
+    batchDelete() {
+      if (this.checkedList.length < 1) return
+      const teethImageIdStr = JSON.stringify(this.checkedList)
+      diagnosisAPI.batchDeleteImages({ teethImageIdStr }).then((res) => {
+        if (res.code === 0) {
+          this.getImageList({ patientId: this.patientId })
+          this.checkedList = []
+          this.isBatch = false
+        }
+      })
+    },
+    editRemark() {
+      if (this.checkedList.length < 1) return
+      const diagnosisTeethImageIdStr = JSON.stringify(this.checkedList)
+      this.$utils.push({
+        url: `/pages/patient/image/editRemark?diagnosisTeethImageIdStr=${diagnosisTeethImageIdStr}`,
+      })
+      this.checkedList = []
     },
   },
   onLoad({ patientId }) {
@@ -105,6 +165,7 @@ export default {
     this.getImageEnums()
   },
   onShow() {
+    this.isBatch = false
     this.getImageList({ patientId: this.patientId })
   },
 }
@@ -117,6 +178,12 @@ export default {
   font-size: 28rpx;
   color: rgba(0, 0, 0, 0.65);
   background: #feffff;
+  .iconfont {
+    position: absolute;
+    right: 0;
+    font-size: 48rpx;
+    color: #ffffff;
+  }
   .head {
     height: 84rpx;
     color: rgba(0, 0, 0, 0.9);
@@ -146,6 +213,7 @@ export default {
 }
 .bottom {
   height: 90rpx;
+  display: flex;
   button {
     height: 90rpx;
     background: #5cbb89;

@@ -106,6 +106,14 @@ const diagnosisAPI = {
   updateImageItem(data) {
     return httper.post('diagnosis/teeth-image/update', data)
   },
+  // 批量删除影像
+  batchDeleteImages(data) {
+    return httper.post('diagnosis/teeth-image/delete/batch', data)
+  },
+  // 批量update影像
+  batchUpdateImageItem(data) {
+    return httper.post('diagnosis/teeth-image/update/batch', data)
+  },
 }
 
 export default diagnosisAPI

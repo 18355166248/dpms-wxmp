@@ -27,12 +27,18 @@ export default {
       disabled: false,
       diagnosisTeethImageId: 0,
       swiperIndex: 0,
+      diagnosisTeethImageIdStr: '',
     }
   },
-  onLoad({ diagnosisTeethImageId, swiperIndex }) {
-    this.diagnosisTeethImageId = Number(diagnosisTeethImageId)
-    this.remark = this.teethPreviewImgs[swiperIndex].remark
-    this.swiperIndex = swiperIndex
+  onLoad({ diagnosisTeethImageId, swiperIndex, diagnosisTeethImageIdStr }) {
+    if (!diagnosisTeethImageIdStr) {
+      this.diagnosisTeethImageId = Number(diagnosisTeethImageId)
+      this.remark = this.teethPreviewImgs[swiperIndex].remark
+      this.swiperIndex = swiperIndex
+    } else {
+      this.diagnosisTeethImageIdStr = diagnosisTeethImageIdStr
+      this.remark = ''
+    }
   },
   computed: {
     ...mapState('workbenchStore', ['teethPreviewImgs']),
@@ -40,28 +46,45 @@ export default {
   methods: {
     onSave() {
       this.disabled = true
-      diagnosisAPI
-        .updateImageItem({
-          diagnosisTeethImageId: this.diagnosisTeethImageId,
-          remark: this.remark,
-        })
-        .then(() => {
-          //vuex
-          this.teethPreviewImgs.forEach((element) => {
-            if (element.diagnosisTeethImageId === this.diagnosisTeethImageId) {
-              element.remark = this.remark
-            }
+      if (!this.diagnosisTeethImageIdStr) {
+        diagnosisAPI
+          .updateImageItem({
+            diagnosisTeethImageId: this.diagnosisTeethImageId,
+            remark: this.remark,
           })
-          this.$store.commit(
-            'workbenchStore/setTeethPreviewImgs',
-            this.teethPreviewImgs,
-          )
-          this.$utils.back()
-          this.disabled = false
-        })
-        .catch(() => {
-          this.disabled = false
-        })
+          .then(() => {
+            //vuex
+            this.teethPreviewImgs.forEach((element) => {
+              if (
+                element.diagnosisTeethImageId === this.diagnosisTeethImageId
+              ) {
+                element.remark = this.remark
+              }
+            })
+            this.$store.commit(
+              'workbenchStore/setTeethPreviewImgs',
+              this.teethPreviewImgs,
+            )
+            this.$utils.back()
+            this.disabled = false
+          })
+          .catch(() => {
+            this.disabled = false
+          })
+      } else {
+        diagnosisAPI
+          .batchUpdateImageItem({
+            diagnosisTeethImageIdStr: this.diagnosisTeethImageIdStr,
+            remark: this.remark,
+          })
+          .then(() => {
+            this.$utils.back()
+            this.disabled = false
+          })
+          .catch(() => {
+            this.disabled = false
+          })
+      }
     },
   },
 }

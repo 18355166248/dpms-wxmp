@@ -1,47 +1,34 @@
 <template>
   <div class="imagePreview">
-    <div>
-      <div style="padding-top: 32rpx;">
-        <div
-          style="
-            color: rgba(255, 255, 255, 1);
-            font-size: 40rpx;
-            text-align: center;
-            line-height: 70rpx;
-          "
-        >
-          <div>全景</div>
-          <div>{{ swiperIndex + 1 }}/{{ imgs.length }}</div>
-        </div>
-        <div style="padding-top: 28rpx;">
-          <swiper
-            :current="swiperIndex"
-            @change="swiperChange"
-            style="height: 800rpx;"
-          >
-            <swiper-item v-for="i in imgs" :key="i.diagnosisTeethImageId">
-              <image :src="i.imageUrl" style="width: 100vw;" mode="widthFix" />
-            </swiper-item>
-          </swiper>
+    <div class="pd-32">
+      <div class="title">
+        <div>{{ diagnosisSettingsImageItemName }}</div>
+        <div>{{ swiperIndex + 1 }}/{{ imgs.length }}</div>
+      </div>
+      <div class="pd-32">
+        <swiper :current="swiperIndex" @change="swiperChange" class="ht-800">
+          <swiper-item v-for="i in imgs" :key="i.diagnosisTeethImageId">
+            <image :src="i.imageUrl" class="wd-100vw" mode="widthFix" />
+          </swiper-item>
+        </swiper>
+      </div>
+    </div>
+    <div class="pd-24">
+      <div class="previewCell">
+        <div class="previewCell__title">牙位：</div>
+        <div class="previewCell__value">
+          <TeethSelect
+            class="handle"
+            :value="data.toothPosition"
+            disabled
+            :style="{ color: '#ffffff' }"
+          />
         </div>
       </div>
-      <div style="margin-top: 25rpx;">
-        <div class="previewCell">
-          <div class="previewCell__title">牙位：</div>
-          <div class="previewCell__value">
-            <TeethSelect
-              class="handle"
-              :value="data.toothPosition"
-              disabled
-              :style="{ color: '#ffffff' }"
-            />
-          </div>
-        </div>
-        <div class="previewCell">
-          <div class="previewCell__title">备注：</div>
-          <div class="previewCell__value">
-            <div>{{ remark || '' }}</div>
-          </div>
+      <div class="previewCell">
+        <div class="previewCell__title">备注：</div>
+        <div class="previewCell__value">
+          <div>{{ remark || '' }}</div>
         </div>
       </div>
     </div>
@@ -52,13 +39,7 @@
             <div class="iconfont icon-delete" />
             删除
           </div>
-          <div
-            style="
-              height: 90rpx;
-              border: 2rpx solid #ffffff;
-              margin-left: 50rpx;
-            "
-          ></div>
+          <div class="line"></div>
           <div @click="editRemark()">
             <div class="iconfont icon-edit" />
             修改备注
@@ -82,6 +63,7 @@ export default {
       remark: '',
       imgs: [],
       swiperIndex: 0,
+      diagnosisSettingsImageItemName: '',
     }
   },
   computed: {
@@ -116,6 +98,9 @@ export default {
               icon: 'success',
               title: '删除成功',
             })
+            if (this.imgs.length === 0) {
+              this.$utils.back()
+            }
           }
         })
     },
@@ -127,17 +112,18 @@ export default {
     },
   },
   onLoad() {
-    if (!this.teethPreviewParams || !this.teethPreviewImgs) return
+    if (!this.teethPreviewParams) return
     this.teethPreviewParams.toothPosition = JSON.parse(
       this.teethPreviewParams.toothPositionStr || 'null',
     )
     this.data = this.teethPreviewParams
-    this.imgs = this.teethPreviewImgs
-    this.remark = this.imgs[this.swiperIndex]?.remark || ''
   },
   onShow() {
+    if (!this.teethPreviewImgs) return
     this.imgs = this.teethPreviewImgs
     this.remark = this.imgs[this.swiperIndex]?.remark || ''
+    this.diagnosisSettingsImageItemName =
+      this.imgs[this.swiperIndex]?.diagnosisSettingsImageItemName || ''
   },
 }
 </script>
@@ -181,6 +167,29 @@ export default {
         font-size: 48rpx;
       }
     }
+  }
+  .pd-32 {
+    padding-top: 32rpx;
+  }
+  .pd-24 {
+    padding-top: 24rpx;
+  }
+  .ht-800 {
+    height: 800rpx;
+  }
+  .wd-100vw {
+    width: 100vw;
+  }
+  .title {
+    color: rgba(255, 255, 255, 1);
+    font-size: 40rpx;
+    text-align: center;
+    line-height: 70rpx;
+  }
+  .line {
+    height: 90rpx;
+    border: 2rpx solid #ffffff;
+    margin-left: 50rpx;
   }
 }
 </style>
