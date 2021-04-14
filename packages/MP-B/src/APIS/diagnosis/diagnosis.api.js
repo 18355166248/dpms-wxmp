@@ -53,7 +53,7 @@ const diagnosisAPI = {
   },
   // 获取影像列表
   getImageList(data) {
-    return httper.get('diagnosis/mini-apps/teeth-image/list', data)
+    return httper.get('diagnosis/teeth-image/list', data)
   },
   // 分页查询电子病历列表
   getMedicalRecordList(data) {
@@ -97,6 +97,22 @@ const diagnosisAPI = {
       'diagnosis/settings/diagnosis_settings_image_item/list-search',
       data,
     )
+  },
+  //删除影像
+  deleteImageItem(data) {
+    return httper.post('diagnosis/teeth-image/delete', data)
+  },
+  //修改影像
+  updateImageItem(data) {
+    return httper.post('diagnosis/teeth-image/update', data)
+  },
+  // 批量删除影像
+  batchDeleteImages(data) {
+    return httper.post('diagnosis/teeth-image/delete/batch', data)
+  },
+  // 批量update影像
+  batchUpdateImageItem(data) {
+    return httper.post('diagnosis/teeth-image/update/batch', data)
   },
 }
 

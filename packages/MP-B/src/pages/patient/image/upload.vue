@@ -21,9 +21,6 @@
           value: 'diagnosisSettingsImageItemId',
         }"
       />
-      <dpmsCell title="牙位" wrap>
-        <TeethSelect class="handle" v-model="toothPosition" />
-      </dpmsCell>
       <dpmsCellPicker
         required
         title="影像类型"
@@ -33,6 +30,9 @@
         defaultType="value"
         :defaultProps="{ label: 'label', value: 'value' }"
       />
+      <dpmsCell title="牙位" wrap>
+        <TeethSelect class="handle" v-model="toothPosition" />
+      </dpmsCell>
       <dpmsCell
         title="影像上传"
         required
@@ -46,16 +46,6 @@
             :format="uploadFormat"
           ></MyUpload>
         </div>
-      </dpmsCell>
-      <dpmsCell title="备注" wrap>
-        <textarea
-          class="textarea"
-          v-model="form.remark"
-          placeholder-style="color: rgba(0,0,0,0.3);"
-          placeholder="请输入备注"
-          maxlength="500"
-        />
-        <div class="count">{{ form.remark.length }}/500</div>
       </dpmsCell>
       <div class="pt-56 pb-82">
         <dpmsButton @click="submit" />
@@ -77,7 +67,6 @@ export default {
         registerId: '',
         imageType: '',
         imageUrlStr: '',
-        remark: '',
         diagnosisSettingsImageItemId: '',
         toothPositionStr: '',
         toothPosition: '',
@@ -105,7 +94,6 @@ export default {
       if (!newVal) return
       this.form.toothPositionStr = JSON.stringify(newVal)
       this.form.toothPosition = Object.keys(newVal.teeth).join(',')
-      console.log(this.form)
     },
   },
   methods: {
