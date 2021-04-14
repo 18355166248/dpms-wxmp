@@ -38,7 +38,7 @@
         dataKeyLabelId="settingsPatientSourceId"
         dataKeyLabelName="settingsPatientSourceName"
         dataPatientId="settingsPatientSourceTypeId"
-        v-model="form.settingsPatientSourceId"
+        @confirm="setPatientSource"
         :openAll="true"
       />
       <dpmsDatePicker
@@ -222,10 +222,6 @@ export default {
             message: '病历号输入不应该超过 30 字',
           },
         ],
-        gender: {
-          required: true,
-          message: '请选择性别',
-        },
         birthday: {
           message: '请选择出生日期',
         },
@@ -283,6 +279,9 @@ export default {
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
+    'form.settingsPatientSourceId'(val) {
+      console.log(val)
+    },
   },
   computed: {
     ...mapState('systemStore', ['isPhoneXCeil']),
@@ -303,6 +302,9 @@ export default {
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
+    setPatientSource(val) {
+      this.form.settingsPatientSourceId = val
+    },
     async getPatientTypeList() {
       let res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data

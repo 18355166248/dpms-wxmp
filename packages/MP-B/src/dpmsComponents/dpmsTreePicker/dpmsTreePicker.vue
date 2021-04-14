@@ -1,5 +1,5 @@
 <template>
-  <view class="tki-tree" @tap="show" :value="value">
+  <view class="tki-tree" @tap="show">
     <dpmsCell
       :title="title"
       :required="required"
@@ -93,7 +93,6 @@ export default {
       range: [],
       enableList: [],
       pickerText: '',
-      value: '',
     }
   },
   mounted() {
@@ -129,13 +128,12 @@ export default {
         this.treeList.push({
           id: item[labelId],
           name: item[labelName],
-          parentId: item.parentId, // 父级id数组
+          parentId: item.parentId, // 父级id
           rank, // 层级
           showChild: false, //子级是否显示
           open: false, //是否打开
           show: rank === 0, // 自身是否显示
         })
-
         if (
           Array.isArray(item[childrenItemKeyName]) &&
           item[childrenItemKeyName].length > 0
@@ -150,7 +148,7 @@ export default {
               this.treeList.push({
                 id: element[dataKeyLabelId],
                 name: element[dataKeyLabelName],
-                parentId: item[dataPatientId], // 父级id数组
+                parentId: item[dataPatientId], // 父级id
                 rank, // 层级
                 showChild: false, //子级是否显示
                 open: false, //是否打开
@@ -192,10 +190,11 @@ export default {
       })
       return list
     },
+    //选择
     treeItemSelect(item) {
       if (this.enableList.includes(item.id)) {
         this.pickerText = item.name
-        this.value = item.id
+        this.$emit('confirm', item.id)
         this.showTree = false
       }
     },
