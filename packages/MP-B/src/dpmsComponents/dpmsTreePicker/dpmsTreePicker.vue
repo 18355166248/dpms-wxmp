@@ -175,28 +175,23 @@ export default {
     // 点击
     treeItemTap(item) {
       const list = this.treeList
-      const id = Number(item.id)
       item.showChild = !item.showChild
       item.open = item.showChild ? true : !item.open
-      list.forEach((element1) => {
-        if (Number(element1.parentId) === Number(id)) {
-          element1.open = item.open
-          element1.show = item.open
-          element1.showChild = item.showChild
-          if (!element1.lastRank) {
-            list.forEach((element2) => {
-              if (Number(element2.parentId) === Number(element1.id)) {
-                element2.open = item.open
-                element2.show = item.open
-                element2.showChild = item.showChild
-              }
-            })
+      this.treeList = this.treeTap(list, item.id, item.showChild)
+    },
+    treeTap(list, id, isShow) {
+      list.forEach((element) => {
+        if (Number(element.parentId) === Number(id)) {
+          element.open = isShow
+          element.show = isShow
+          element.showChild = isShow
+          if (!element.lastRank) {
+            this.treeTap(list, element.id, isShow)
           }
         }
       })
-      this.treeList = list
+      return list
     },
-
     treeItemSelect(item) {
       if (this.enableList.includes(item.id)) {
         this.pickerText = item.name
