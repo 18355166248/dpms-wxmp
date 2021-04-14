@@ -132,6 +132,14 @@ const patientAPI = {
   patientSource(data) {
     return httper.get('patient/settings/patient/source/list/all', data)
   },
+  //患者标签
+  patientContactLabel(data) {
+    return httper.get('patient/patient-contact/label/list/all', data)
+  },
+  //国籍
+  patientNationality(data) {
+    return httper.get('patient/patient-nationality/list/all', data)
+  },
 }
 
 export default patientAPI
