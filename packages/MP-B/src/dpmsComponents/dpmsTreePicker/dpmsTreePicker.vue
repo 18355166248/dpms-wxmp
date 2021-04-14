@@ -13,6 +13,9 @@
       @tap.stop="hide"
     ></view>
     <view class="tki-tree-cnt" :class="{ show: showTree }">
+      <view class="tki-tree-bar">
+        {{ title }}
+      </view>
       <view class="tki-tree-view">
         <scroll-view class="tki-tree-view-sc" :scroll-y="true">
           <block v-for="(item, index) in treeList" :key="index">
@@ -77,6 +80,7 @@ export default {
     list: {
       type: Array,
     },
+    value: Number,
     childrenItemKeyName: String,
     labelId: String,
     labelName: String,
@@ -193,7 +197,6 @@ export default {
     //选择
     treeItemSelect(item) {
       if (this.enableList.includes(item.id)) {
-        this.pickerText = item.name
         this.$emit('confirm', item.id)
         this.showTree = false
       }
@@ -208,6 +211,9 @@ export default {
         this.range = list
         this.initTree(list)
       }
+    },
+    value(id) {
+      this.pickerText = this.treeList.find((element) => element.id === id)?.name
     },
   },
 }

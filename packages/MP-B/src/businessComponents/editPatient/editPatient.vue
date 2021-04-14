@@ -38,8 +38,26 @@
         dataKeyLabelId="settingsPatientSourceId"
         dataKeyLabelName="settingsPatientSourceName"
         dataPatientId="settingsPatientSourceTypeId"
+        :value="form.settingsPatientSourceId"
         @confirm="setPatientSource"
         :openAll="true"
+      />
+      <dpmsCellPicker
+        title="国籍"
+        placeholder="请选择国籍"
+        v-model="form.nationality"
+        :list="patientNationalityList"
+        defaultType="patientNationalityId"
+        :defaultProps="{
+          label: 'nationalityName',
+          value: 'patientNationalityId',
+        }"
+        isLink
+      />
+      <dpmsCellInput
+        title="医保卡号"
+        placeholder="请输入医保卡号"
+        v-model="form.medicalInsuranceCardNo"
       />
       <dpmsDatePicker
         title="出生日期"
@@ -84,12 +102,16 @@
       <dpmsFormTitle title="联系方式" />
       <view class="group">
         <view style="width: 375rpx;">
-          <dpmsEnumsPicker
+          <dpmsCellPicker
             title="联系电话"
             placeholder="请选择电话标签"
             v-model="form.contactLabel"
-            enumsKey="ContactLabel"
-            isLink
+            :list="contactLabelList"
+            defaultType="patientContactLabelId"
+            :defaultProps="{
+              label: 'contactLabelName',
+              value: 'patientContactLabelId',
+            }"
           />
         </view>
         <view style="width: 375rpx; padding-top: 2px; background: #fff;">
@@ -166,6 +188,8 @@ const formDefault = {
   region: [],
   address: '',
   medicalRecordNo: '',
+  nationality: '',
+  medicalInsuranceCardNo: '',
 }
 
 export default {
@@ -187,6 +211,8 @@ export default {
       medicalRecordNo: '', //病历号
       settingsTypeId: '', //患者类型
       settingsPatientSourceId: '', //患者来源
+      contactLabelList: [],
+      patientNationalityList: [],
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
@@ -209,6 +235,12 @@ export default {
           {
             max: 50,
             message: '个性称呼输入不应该超过 50 字',
+          },
+        ],
+        medicalInsuranceCardNo: [
+          {
+            max: 50,
+            message: '医保卡号不应该超过 50 字',
           },
         ],
         medicalRecordNo: [
@@ -296,6 +328,8 @@ export default {
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
     this.getSettingsPatientSourceList()
+    this.getPatientContactLabel()
+    this.getPatientNationality()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
@@ -306,13 +340,21 @@ export default {
       this.form.settingsPatientSourceId = val
     },
     async getPatientTypeList() {
-      let res = await patientAPI.getPatientTypeList()
+      const res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getSettingsPatientSourceList() {
       const res = await patientAPI.patientSource()
       this.settingsPatientSourceList = res.data || []
+    },
+    async getPatientContactLabel() {
+      const res = await patientAPI.patientContactLabel()
+      this.contactLabelList = res.data || []
+    },
+    async getPatientNationality() {
+      const res = await patientAPI.patientNationality()
+      this.patientNationalityList = res.data || []
     },
     async getPatientTags() {
       const res = await patientAPI.getPatientTags()
