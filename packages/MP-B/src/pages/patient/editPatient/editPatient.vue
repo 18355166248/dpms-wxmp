@@ -29,7 +29,7 @@ export default {
   onLoad(params) {
     this.patientId = params.patientId
   },
-  mounted(params) {
+  mounted() {
     this.getPatient()
   },
   methods: {

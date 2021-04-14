@@ -180,7 +180,7 @@ export default {
   margin-bottom: 20rpx;
   font-size: 28rpx;
   color: #f5f5f5;
-  background: #feffff;
+  background: #f5f5f5;
   .iconfont {
     position: absolute;
     right: 0;

@@ -805,6 +805,10 @@ export default {
     },
     // 获取列表数据
     async loadData() {
+      //没有权限的情况下，防止页面报错卡死
+      if (!this.selectedRole?.enumValue) {
+        return uni.stopPullDownRefresh()
+      }
       if (this.selectedRole) {
         this.dataSourceStatus.loading = true
         this.dataSourceStatus.status = 'loading'

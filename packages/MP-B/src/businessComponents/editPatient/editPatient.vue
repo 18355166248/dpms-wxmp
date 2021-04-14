@@ -9,7 +9,6 @@
         v-model="form.patientName"
       />
       <dpmsEnumsPicker
-        required
         title="性别"
         placeholder="请选择性别"
         v-model="form.gender"
@@ -28,17 +27,19 @@
         placeholder="请输入身份证号"
         v-model="form.certificatesNo"
       />
-      <dpmsCellPicker
+      <dpmsTreePicker
         title="患者来源"
         placeholder="请选择患者来源"
-        v-model="form.settingsPatientSourceId"
         :list="settingsPatientSourceList"
-        defaultType="settingsPatientSourceId"
-        :defaultProps="{
-          label: 'settingsPatientSourceName',
-          value: 'settingsPatientSourceId',
-        }"
-        isLink
+        childrenItemKeyName="childSourceTypeList"
+        labelId="settingsPatientSourceTypeId"
+        labelName="settingsPatientSourceTypeName"
+        dataKeyName="patientSourceList"
+        dataKeyLabelId="settingsPatientSourceId"
+        dataKeyLabelName="settingsPatientSourceName"
+        dataPatientId="settingsPatientSourceTypeId"
+        v-model="form.settingsPatientSourceId"
+        :openAll="true"
       />
       <dpmsDatePicker
         title="出生日期"
@@ -100,17 +101,6 @@
         placeholder="请输入固定电话"
         v-model="form.fixedTelephone"
       />
-      <dpmsCellInput
-        title="备用号码"
-        placeholder="请输入备用号码"
-        v-model="form.alternateMobile"
-      />
-      <dpmsCellInput
-        title="微信号"
-        placeholder="请输入微信号"
-        v-model="form.weChatId"
-      />
-      <dpmsCellInput title="QQ" placeholder="请输入QQ" v-model="form.qqNum" />
       <dpmsPlacePicker
         title="家庭住址"
         placeholder="请选择地区"
@@ -139,7 +129,6 @@
           v-model="form.memo"
         />
       </div>
-
       <button
         class="ensurebutton"
         :class="{ 'bt-68': isPhoneXCeil }"
@@ -252,10 +241,6 @@ export default {
           type: 'any',
         },
         mobile: [
-          // {
-          //   required: true,
-          //   message: '请输入联系电话',
-          // },
           {
             pattern: /^\d{11}$/,
             message: '联系电话格式不正确',
@@ -283,7 +268,7 @@ export default {
         },
         settingsPatientSourceId: {
           type: 'any',
-        }, //不写validator的rules会变成undefiend要报错啊
+        }, //不写validator的rules会变成undefiend，会报错
       },
     }
   },
@@ -325,21 +310,10 @@ export default {
     },
     async getSettingsPatientSourceList() {
       const res = await patientAPI.patientSource()
-      let arr = [
-        {
-          settingsPatientSourceId: -1,
-          settingsPatientSourceName: '无',
-        },
-      ]
-      res.data?.forEach((v) => {
-        v.childSourceTypeList?.forEach((v) => {
-          arr.push(...v.patientSourceList)
-        })
-      })
-      this.settingsPatientSourceList = arr
+      this.settingsPatientSourceList = res.data || []
     },
     async getPatientTags() {
-      let res = await patientAPI.getPatientTags()
+      const res = await patientAPI.getPatientTags()
       uni.setStorageSync(
         'patientTagsList',
         res.data.filter((v) => v.tagInfoDTOList?.length > 0),
@@ -347,7 +321,7 @@ export default {
       this.updateTagsCheckedText()
     },
     async getPatientMedicalRecordNo() {
-      let res = await patientAPI.getPatientMedicalRecordNo({
+      const res = await patientAPI.getPatientMedicalRecordNo({
         patientType: this.form.settingsTypeId,
       })
       this.form.medicalRecordNo = res.data

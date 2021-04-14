@@ -27,7 +27,6 @@ export default {
   methods: {
     async createPatient(form) {
       const formValue = _.cloneDeep(form)
-      const { type } = this.paramsObj
 
       const patientContact = {
         contactLabel: form.contactLabel,
@@ -78,23 +77,6 @@ export default {
                   that.$utils.back(2)
                   return
                 }
-                // if (type === 'createRegister') {
-                //   return that.$utils.replace({
-                //     url:
-                //       '/baseSubpackages/apptForm/apptForm?patient=' +
-                //       JSON.stringify(res.data) +
-                //       '&type=createRegister',
-                //   })
-                // }
-
-                // if (type === 'createAppt') {
-                //   return that.$utils.replace({
-                //     url:
-                //       '/baseSubpackages/apptForm/apptForm?patient=' +
-                //       JSON.stringify(res.data) +
-                //       '&type=createAppt',
-                //   })
-                // }
 
                 return that.$utils.replace({
                   url: '/pages/patient/patient?patientId=' + res.data.patientId,
