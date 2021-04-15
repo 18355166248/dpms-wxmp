@@ -137,6 +137,7 @@ export default {
           showChild: false, //子级是否显示
           open: false, //是否打开
           show: rank === 0, // 自身是否显示
+          origin: item,
         })
         if (
           Array.isArray(item[childrenItemKeyName]) &&
@@ -158,6 +159,7 @@ export default {
                 open: false, //是否打开
                 show: rank === 0, // 自身是否显示
                 lastRank: true,
+                origin: element,
               })
               this.enableList.push(element[dataKeyLabelId])
             })
@@ -197,7 +199,7 @@ export default {
     //选择
     treeItemSelect(item) {
       if (this.enableList.includes(item.id)) {
-        this.$emit('confirm', item.id)
+        this.$emit('confirm', item.origin)
         this.showTree = false
       }
     },

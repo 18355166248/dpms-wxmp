@@ -43,6 +43,53 @@
         :openAll="true"
       />
       <dpmsCellPicker
+        v-if="form.patientSourceRelationDTO.sourceName === '员工介绍'"
+        title="介绍人"
+        placeholder="请选择介绍人"
+        v-model="form.sourceValue"
+        :list="staffList"
+        defaultType="staffId"
+        :defaultProps="{ label: 'staffName', value: 'staffId' }"
+        isLink
+      />
+      <dpmsCell title="介绍人" :isLink="true">
+        <input
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          placeholder="请选择介绍人"
+          @click="
+            () => {
+              this.$utils.push({
+                url: '/pages/patient/searchPatient/searchPatient',
+              })
+            }
+          "
+        />
+        <template v-slot:right-icon>
+          <slot name="inputRight" />
+        </template>
+      </dpmsCell>
+      <!-- <dpmsCellInput
+        v-if="form.patientSourceRelationDTO.sourceName === '患者介绍'"
+        title="介绍人"
+        placeholder="请输入介绍人"
+        v-model="form.sourceValue"
+        @click="
+          () => {
+            console.log(1)
+          }
+        "
+      /> -->
+      <dpmsCellInput
+        v-if="
+          form.patientSourceRelationDTO.sourceName !== '员工介绍' &&
+          form.patientSourceRelationDTO.sourceName !== '朋友介绍' &&
+          form.patientSourceRelationDTO.sourceName !== '患者介绍'
+        "
+        title="介绍人"
+        placeholder="请输入介绍人"
+        v-model="form.sourceValue"
+      />
+      <dpmsCellPicker
         title="国籍"
         placeholder="请选择国籍"
         v-model="form.nationality"
@@ -176,7 +223,10 @@ const formDefault = {
   gender: '',
   birthday: '',
   settingsTypeId: '',
+  //患者来源 以及介绍人
   settingsPatientSourceId: '',
+  sourceValue: '',
+  systemInner: '',
   sourceName: '',
   tagIds: [],
   contactLabel: -1,
@@ -190,6 +240,7 @@ const formDefault = {
   medicalRecordNo: '',
   nationality: '',
   medicalInsuranceCardNo: '',
+  patientSourceRelationDTO: {},
 }
 
 export default {
@@ -219,6 +270,7 @@ export default {
       oldForm: this.filterFormData(this.formData),
       newRules: {},
       changeKeys: [],
+      staffList: [],
       rules: {
         patientName: [
           {
@@ -311,8 +363,10 @@ export default {
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
-    'form.settingsPatientSourceId'(val) {
-      console.log(val)
+    'form.sourceValue'(val) {
+      if (val === '') return
+      this.form.systemInner = this.form.patientSourceRelationDTO.systemInner
+      this.form.sourceName = this.form.patientSourceRelationDTO.sourceName
     },
   },
   computed: {
@@ -330,14 +384,26 @@ export default {
     this.getSettingsPatientSourceList()
     this.getPatientContactLabel()
     this.getPatientNationality()
+    this.getScrmStaffList()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
-    setPatientSource(val) {
-      this.form.settingsPatientSourceId = val
+    setPatientSource({
+      settingsPatientSourceId,
+      systemInner,
+      settingsPatientSourceName,
+    }) {
+      this.form.settingsPatientSourceId = settingsPatientSourceId
+      this.form.patientSourceRelationDTO.systemInner = systemInner
+      this.form.patientSourceRelationDTO.sourceName = settingsPatientSourceName
+      this.form.sourceValue = ''
+    },
+    async getScrmStaffList() {
+      const res = await patientAPI.getScrmStaffList()
+      this.staffList = res.data
     },
     async getPatientTypeList() {
       const res = await patientAPI.getPatientTypeList()
