@@ -50,8 +50,9 @@ export default {
       delete formValue.qqNum
       delete formValue.region
       delete formValue.address
+      delete formValue.introducer
 
-      let that = this
+      const that = this
       patientAPI
         .createPatient({
           ...formValue,
