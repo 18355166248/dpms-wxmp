@@ -42,8 +42,29 @@
         @confirm="setPatientSource"
         :openAll="true"
       />
+      <dpmsCell
+        title="介绍人"
+        :isLink="true"
+        v-if="sourceName === '朋友介绍' && form.systemInner === 1"
+      >
+        <input
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          placeholder="请选择介绍人"
+          v-model="form.introducer"
+          @click="
+            () => {
+              this.$utils.push({
+                url: '/pages/patient/searchPatient/searchCustomer',
+              })
+            }
+          "
+        />
+        <template v-slot:right-icon>
+          <slot name="inputRight" />
+        </template>
+      </dpmsCell>
       <dpmsCellPicker
-        v-if="sourceName === '员工介绍' && form.systemInner === 1"
+        v-else-if="sourceName === '员工介绍' && form.systemInner === 1"
         title="介绍人"
         placeholder="请选择介绍人"
         v-model="form.sourceValue"
@@ -445,6 +466,7 @@ export default {
       this.form.settingsPatientSourceId = settingsPatientSourceId
       this.form.systemInner = systemInner
       this.form.sourceValue = ''
+      this.form.introducer = ''
       this.sourceName = settingsPatientSourceName
     },
     async getScrmStaffList() {

@@ -144,6 +144,10 @@ const patientAPI = {
   getScrmStaffList(data) {
     return scrmHttper.get('scrm/staff/staff-drop-down-box-list', data)
   },
+  //获取customer
+  getCustomerStaffList(data) {
+    return scrmHttper.get('scrm/customer/customer-page', data)
+  },
 }
 
 export default patientAPI

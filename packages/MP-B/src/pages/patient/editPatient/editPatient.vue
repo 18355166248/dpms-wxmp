@@ -79,8 +79,6 @@ export default {
       delete formValue.address
       delete formValue.weChatInfoList
 
-      console.log(formValue)
-
       if (formValue.systemInner === 2) {
         formValue.sourceValue = formValue.introducer
       }
