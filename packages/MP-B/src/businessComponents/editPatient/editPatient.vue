@@ -37,7 +37,7 @@
         dataKeyName="patientSourceList"
         dataKeyLabelId="settingsPatientSourceId"
         dataKeyLabelName="settingsPatientSourceName"
-        dataPatientId="settingsPatientSourceTypeId"
+        dataParentId="settingsPatientSourceTypeId"
         :value="form.settingsPatientSourceId"
         @confirm="setPatientSource"
         :openAll="true"

@@ -3,9 +3,9 @@
     <dpmsCell
       :title="title"
       :required="required"
-      isLink
       :placeholder="placeholder"
       :value="pickerText"
+      isLink
     />
     <view
       class="tki-tree-mask"
@@ -87,7 +87,7 @@ export default {
     dataKeyName: String,
     dataKeyLabelId: String,
     dataKeyLabelName: String,
-    dataPatientId: String,
+    dataParentId: String,
     openAll: Boolean,
   },
   data() {
@@ -126,7 +126,7 @@ export default {
         dataKeyName,
         dataKeyLabelId,
         dataKeyLabelName,
-        dataPatientId,
+        dataParentId,
       } = this
       list.forEach((item) => {
         this.treeList.push({
@@ -152,7 +152,7 @@ export default {
               this.treeList.push({
                 id: element[dataKeyLabelId],
                 name: element[dataKeyLabelName],
-                parentId: item[dataPatientId], // 父级id
+                parentId: item[dataParentId], // 父级id
                 rank, // 层级
                 showChild: false, //子级是否显示
                 open: false, //是否打开
