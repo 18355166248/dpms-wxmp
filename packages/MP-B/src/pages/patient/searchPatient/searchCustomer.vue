@@ -122,8 +122,6 @@ export default {
           ]?.zh_CN
         })
 
-      console.log(records)
-
       if (current === 1) {
         this.customerList = records
       } else {
