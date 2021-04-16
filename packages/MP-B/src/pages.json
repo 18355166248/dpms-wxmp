@@ -208,6 +208,12 @@
           }
         },
         {
+          "path": "mainComplaintList",
+          "style": {
+            "navigationBarTitleText": "主诉"
+          }
+        },
+        {
           "path": "apptDetail",
           "style": {
             "navigationBarTitleText": "预约详情",
