@@ -25,10 +25,10 @@
           医生：<span class="content">{{ r.doctorStaffName }}</span>
         </div>
         <div class="row">
-          主诉：<span class="content">{{ r.mainComplaint }}</span>
+          病历类型：<span class="content">{{ r.visText }}</span>
         </div>
         <div class="row">
-          现病史：<span class="content">{{ r.presentIllnessHistory }}</span>
+          主诉：<span class="content">{{ r.mainComplaint }}</span>
         </div>
       </div>
     </scroll-view>
@@ -60,6 +60,7 @@ export default {
     return {
       records: [],
       primaryColor: this.$commonCss.commonColor,
+      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
     }
   },
   methods: {
@@ -80,6 +81,7 @@ export default {
           ...r,
           visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
           createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
+          visText: this.VIS_TYPE_ENUM.properties[r.visType]?.zh_CN,
         })),
       ]
     },
