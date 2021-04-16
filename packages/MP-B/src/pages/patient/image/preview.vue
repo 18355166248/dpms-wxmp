@@ -18,10 +18,10 @@
         <div class="previewCell__title">牙位：</div>
         <div class="previewCell__value">
           <TeethSelect
+            color="#ffffff"
             class="handle"
             :value="data.toothPosition"
             disabled
-            :style="{ color: '#ffffff' }"
           />
         </div>
       </div>
@@ -79,7 +79,7 @@ export default {
       const { diagnosisTeethImageId } = this.imgs[this.swiperIndex]
       const { imgs } = this
       uni.showModal({
-        title: '确认删除这条记录吗？',
+        title: '确认删除此张影像？',
         success: async ({ confirm }) => {
           if (confirm) {
             diagnosisAPI

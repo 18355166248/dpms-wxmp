@@ -107,6 +107,7 @@ export default {
         ...d,
         registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm'),
       }))
+      this.form.registerId = this.registerList[0]?.registerId
     },
     async getImageEnums() {
       const res = await diagnosisAPI.getImageEnums()

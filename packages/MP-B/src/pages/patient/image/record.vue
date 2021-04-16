@@ -146,7 +146,7 @@ export default {
       if (this.checkedList.length < 1) return (this.isBatch = false)
       const teethImageIdStr = JSON.stringify(this.checkedList)
       uni.showModal({
-        title: '确认删除这些记录吗？',
+        title: '确认删除这些影像？',
         success: async ({ confirm }) => {
           if (confirm) {
             this.$utils.showLoading('请稍后...')

@@ -99,6 +99,7 @@
         title="介绍人"
         placeholder="请输入介绍人"
         v-model="form.introducer"
+        maxlength="20"
       />
       <dpmsCellPicker
         title="国籍"
@@ -386,7 +387,8 @@ export default {
           type: 'any',
         },
         introducer: {
-          type: 'any',
+          max: 20,
+          message: '介绍人输入不应该超过 20 字',
         },
         systemInner: {
           type: 'any',
