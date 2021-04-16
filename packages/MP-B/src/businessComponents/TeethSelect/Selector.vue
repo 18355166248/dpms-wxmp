@@ -19,6 +19,9 @@
             :key="ya.position"
             :class="{
               active: teethSelected.some((s) => s.position === ya.position),
+              nowSelected: activeTeeth === ya.position,
+              super: teethSelected.find((s) => s.position === ya.position)
+                .hasArea,
             }"
             @click="yaClick(ya)"
           >
@@ -33,7 +36,7 @@
         <div
           v-for="a in areas"
           :key="a"
-          :class="{ active: areaSelected.includes(a) }"
+          :class="{ active: activeTeethObj.areaSelected.includes(a) }"
           @click="areaClick(a)"
         >
           {{ a }}
@@ -49,6 +52,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 
 function genYa(quadrant) {
@@ -57,6 +61,8 @@ function genYa(quadrant) {
   return Array.from({ length: num }, (v, i) => ({
     label: String.fromCharCode(start.charCodeAt() + i),
     position: `${quadrant}${i + 1}`,
+    areaSelected: [],
+    hasArea: false,
   }))
 }
 export default {
@@ -88,34 +94,53 @@ export default {
         [genYa(3), genYa(7)],
       ],
       areas: ['B', 'L', 'O', 'M', 'D'],
-      areaSelected: [],
       teethSelected: [],
       primaryColor: this.$commonCss.commonColor,
+      activeTeeth: '',
     }
+  },
+  computed: {
+    activeTeethObj: {
+      get() {
+        return (
+          this.teethSelected.find((v) => v.position === this.activeTeeth) || {
+            areaSelected: [],
+          }
+        )
+      },
+      set() {},
+    },
   },
   methods: {
     areaClick(a) {
-      if (!this.teethSelected.length) return
-      this.areaSelected = this.areaSelected.includes(a)
-        ? this.areaSelected.filter((_a) => _a !== a)
-        : [...this.areaSelected, a]
+      if (!this.activeTeeth) return
+      this.activeTeethObj.areaSelected = this.activeTeethObj.areaSelected.includes(
+        a,
+      )
+        ? this.activeTeethObj.areaSelected.filter((_a) => _a !== a)
+        : [...this.activeTeethObj.areaSelected, a]
+      this.activeTeethObj.hasArea = !!this.activeTeethObj.areaSelected.length
     },
     yaClick(ya) {
-      if (this.teethSelected.some((s) => s.position === ya.position)) {
+      if (ya.position === this.activeTeeth) {
         this.teethSelected = this.teethSelected.filter(
           (s) => s.position !== ya.position,
         )
-      } else {
-        this.teethSelected.push(ya)
+        this.activeTeeth = ''
+        return
       }
+
+      if (!this.teethSelected.some((s) => s.position === ya.position))
+        this.teethSelected.push(_.cloneDeep(ya))
+      this.activeTeeth = ya.position
     },
     setClick(...yas) {
-      this.teethSelected = [...this.teethSelected, ...yas.flat()]
+      this.teethSelected = [...this.teethSelected, ..._.cloneDeep(yas).flat()]
     },
     save() {
       const result = this.teethSelected.reduce(
         (r, s) => {
-          r.teeth[`${s.position}`] = this.areaSelected.reduce(
+          r.teeth[s.position] = s.areaSelected.reduce(
             (r, _a) => ({ ...r, [_a]: true }),
             {},
           )
@@ -129,29 +154,14 @@ export default {
     initValue({ teeth }) {
       this.teethSelected = Object.keys(teeth).map((t) => ({
         position: t,
+        areaSelected: Object.keys(teeth[t] || {}),
+        hasArea: !!Object.keys(teeth[t] || {}).length,
       }))
-      if (this.teethSelected.length) {
-        this.areaSelected = [
-          ...new Set(
-            Object.values(teeth)
-              .map((t) => Object.keys(t))
-              .flat(),
-          ),
-        ]
-      }
     },
   },
   onLoad({ value, uid }) {
     this.uid = uid
     this.initValue(JSON.parse(value))
-  },
-  watch: {
-    teethSelected(newVal, oldVal) {
-      if (newVal === oldVal) return
-      if (!newVal.length) {
-        this.area = ''
-      }
-    },
   },
 }
 </script>
@@ -227,6 +237,7 @@ export default {
       }
     }
     > div {
+      position: relative;
       border: 2rpx solid rgba(0, 0, 0, 0.15);
       border-radius: 4rpx;
       width: 72rpx;
@@ -239,6 +250,21 @@ export default {
       background: #5cbb89;
       border-color: #5cbb89;
       color: #ffffff;
+    }
+    .nowSelected {
+      background: rgb(255, 204, 0);
+      border-color: rgb(255, 204, 0);
+      color: #ffffff;
+    }
+    .super:after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-top: 30rpx solid rgb(255, 0, 0);
+      border-left: 30rpx solid transparent;
     }
   }
 }
