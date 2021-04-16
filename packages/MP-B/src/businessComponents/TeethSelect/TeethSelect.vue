@@ -1,5 +1,9 @@
 <template>
-  <div class="teeth-select" :style="style" @click="openSelector">
+  <div
+    class="teeth-select"
+    :style="[style, { '--color': color }]"
+    @click="openSelector"
+  >
     <div v-for="(yas, i) in computedValue" :key="i">
       <span v-for="ya in yas" :key="ya.label">
         {{ ya.label }}
@@ -19,6 +23,10 @@ function toSortValue(label) {
 export default {
   props: {
     style: [Object, String],
+    color: {
+      type: String,
+      default: '#5cbb89',
+    },
     value: {
       type: Object,
       default() {
@@ -90,15 +98,15 @@ export default {
 
 <style lang="scss" scoped>
 .teeth-select {
-  color: #5cbb89;
+  color: var(--color);
   display: flex;
   flex-wrap: wrap;
   height: 102rpx;
   line-height: 51rpx;
   font-size: 22rpx;
   > div {
-    border-bottom: solid 2rpx #5cbb89;
-    border-right: solid 2rpx #5cbb89;
+    border-bottom: solid 2rpx var(--color);
+    border-right: solid 2rpx var(--color);
     width: 50%;
     height: 50%;
     box-sizing: border-box;
