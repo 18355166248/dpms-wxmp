@@ -9,17 +9,14 @@ const diagnosisAPI = {
   getTodayReceptionistList(data) {
     return httper.get('diagnosis/register/page-receptionist', data)
   },
-
   // 今日就诊-医生 列表
   getTodayDoctorList(data) {
     return httper.get('diagnosis/register/page-doctor', data)
   },
-
   // 今日就诊-咨询
   getTodayConsultant(data) {
     return httper.get('diagnosis/register/page-consultant', data)
   },
-
   // 取消挂号
   cancleTodayWorkRegister(data) {
     return httper.post('diagnosis/register/update-status', data)
@@ -113,6 +110,10 @@ const diagnosisAPI = {
   // 批量update影像
   batchUpdateImageItem(data) {
     return httper.post('diagnosis/teeth-image/update/batch', data)
+  },
+  // 获得主诉列表
+  getMainComplaint(data) {
+    return httper.get('diagnosis/patient-main-complaint/list', data)
   },
 }
 
