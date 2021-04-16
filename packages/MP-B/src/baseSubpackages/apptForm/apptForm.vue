@@ -723,6 +723,7 @@ export default {
           patientMainComplaintIds: this.form.patientMainComplaintIds,
           memo: this.form.appointmentMemo, // 备注
         }
+        console.log(params)
         dept = diagnosisAPI.createNewRegister(params)
       }
       if (type === 'editRegister') {
