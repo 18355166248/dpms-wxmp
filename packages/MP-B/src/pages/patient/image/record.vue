@@ -145,12 +145,21 @@ export default {
     batchDelete() {
       if (this.checkedList.length < 1) return (this.isBatch = false)
       const teethImageIdStr = JSON.stringify(this.checkedList)
-      diagnosisAPI.batchDeleteImages({ teethImageIdStr }).then((res) => {
-        if (res.code === 0) {
-          this.getImageList({ patientId: this.patientId })
-          this.checkedList = []
-          this.isBatch = false
-        }
+      uni.showModal({
+        title: '确认删除这些记录吗？',
+        success: async ({ confirm }) => {
+          if (confirm) {
+            this.$utils.showLoading('请稍后...')
+            diagnosisAPI.batchDeleteImages({ teethImageIdStr }).then((res) => {
+              if (res.code === 0) {
+                this.getImageList({ patientId: this.patientId })
+                this.checkedList = []
+                this.isBatch = false
+                this.$utils.show('删除成功', { icon: 'success' })
+              }
+            })
+          }
+        },
       })
     },
     editRemark() {

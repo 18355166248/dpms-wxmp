@@ -51,7 +51,7 @@
     <!-- 搜索列表 -->
     <div v-if="patientList.length !== 0">
       <div v-for="patient in patientList" :key="patient.patientId">
-        <div @click="clickPatientCard(patient.patientId)">
+        <div @click="clickPatientCard(patient)">
           <card
             :name="patient.patientName"
             :avatarUrl="patient.avatarUrl"
@@ -210,7 +210,11 @@ export default {
       uni.setStorageSync('searchPatientHistory', [])
     },
     // 点击患者卡片
-    clickPatientCard(patientId) {
+    clickPatientCard({ patientId, patientName }) {
+      if (this.paramsObj.type === 'source') {
+        uni.$emit('onSourceValueSelected', { patientId, patientName })
+        return this.$utils.back()
+      }
       if (
         this.paramsObj.type === 'createAppt' ||
         this.paramsObj.type === 'editAppt' ||
@@ -221,10 +225,8 @@ export default {
           patientId,
           params: this.paramsObj,
         })
-
         return this.$utils.back()
       }
-
       this.toPatient(patientId)
     },
     toPatient(id) {

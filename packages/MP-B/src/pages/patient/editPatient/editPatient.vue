@@ -49,7 +49,7 @@ export default {
     updatePatient(form) {
       const formValue = _.cloneDeep(form)
 
-      let patientContact = {
+      const patientContact = {
         contactLabel: form.contactLabel,
         mobile: form.mobile,
         alternateMobile: form.alternateMobile,
@@ -61,6 +61,7 @@ export default {
         address: form.address,
         patientContactsId: form?.patientContactsList[0]?.patientContactsId,
       }
+
       // 联系方式脱敏
       const desensitizationData = CCDesensitizedUpdateFilterUtil({
         currentFormvalue: patientContact,
@@ -77,6 +78,11 @@ export default {
       delete formValue.region
       delete formValue.address
       delete formValue.weChatInfoList
+
+      if (formValue.systemInner === 2) {
+        formValue.sourceValue = formValue.introducer
+      }
+      delete formValue.introducer
 
       formValue.firstDiagnosisMilliSecond = formValue.firstVisitTime
       delete formValue.firstVisitTime

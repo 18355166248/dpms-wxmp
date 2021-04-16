@@ -3,9 +3,9 @@
     <dpmsCell
       :title="title"
       :required="required"
-      isLink
       :placeholder="placeholder"
       :value="pickerText"
+      isLink
     />
     <view
       class="tki-tree-mask"
@@ -87,7 +87,7 @@ export default {
     dataKeyName: String,
     dataKeyLabelId: String,
     dataKeyLabelName: String,
-    dataPatientId: String,
+    dataParentId: String,
     openAll: Boolean,
   },
   data() {
@@ -126,7 +126,7 @@ export default {
         dataKeyName,
         dataKeyLabelId,
         dataKeyLabelName,
-        dataPatientId,
+        dataParentId,
       } = this
       list.forEach((item) => {
         this.treeList.push({
@@ -137,6 +137,7 @@ export default {
           showChild: false, //子级是否显示
           open: false, //是否打开
           show: rank === 0, // 自身是否显示
+          origin: item,
         })
         if (
           Array.isArray(item[childrenItemKeyName]) &&
@@ -152,12 +153,13 @@ export default {
               this.treeList.push({
                 id: element[dataKeyLabelId],
                 name: element[dataKeyLabelName],
-                parentId: item[dataPatientId], // 父级id
+                parentId: item[dataParentId], // 父级id
                 rank, // 层级
                 showChild: false, //子级是否显示
                 open: false, //是否打开
                 show: rank === 0, // 自身是否显示
                 lastRank: true,
+                origin: element,
               })
               this.enableList.push(element[dataKeyLabelId])
             })
@@ -197,7 +199,7 @@ export default {
     //选择
     treeItemSelect(item) {
       if (this.enableList.includes(item.id)) {
-        this.$emit('confirm', item.id)
+        this.$emit('confirm', item.origin)
         this.showTree = false
       }
     },

@@ -112,6 +112,12 @@
           }
         },
         {
+          "path": "searchPatient/searchCustomer",
+          "style": {
+            "navigationBarTitleText": "搜索客户"
+          }
+        },
+        {
           "path": "image/record",
           "style": {
             "navigationBarTitleText": "影像记录"

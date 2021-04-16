@@ -37,10 +37,68 @@
         dataKeyName="patientSourceList"
         dataKeyLabelId="settingsPatientSourceId"
         dataKeyLabelName="settingsPatientSourceName"
-        dataPatientId="settingsPatientSourceTypeId"
+        dataParentId="settingsPatientSourceTypeId"
         :value="form.settingsPatientSourceId"
         @confirm="setPatientSource"
         :openAll="true"
+      />
+      <dpmsCell
+        title="介绍人"
+        :isLink="true"
+        v-if="sourceName === '朋友介绍' && form.systemInner === 1"
+      >
+        <input
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          placeholder="请选择介绍人"
+          v-model="form.introducer"
+          @click="
+            () => {
+              this.$utils.push({
+                url: '/pages/patient/searchPatient/searchCustomer',
+              })
+            }
+          "
+        />
+        <template v-slot:right-icon>
+          <slot name="inputRight" />
+        </template>
+      </dpmsCell>
+      <dpmsCellPicker
+        v-else-if="sourceName === '员工介绍' && form.systemInner === 1"
+        title="介绍人"
+        placeholder="请选择介绍人"
+        v-model="form.sourceValue"
+        :list="staffList"
+        defaultType="staffId"
+        :defaultProps="{ label: 'showStaffName', value: 'staffId' }"
+        isLink
+      />
+      <dpmsCell
+        title="介绍人"
+        :isLink="true"
+        v-else-if="sourceName === '患者介绍' && form.systemInner === 1"
+      >
+        <input
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          placeholder="请选择介绍人"
+          v-model="form.introducer"
+          @click="
+            () => {
+              this.$utils.push({
+                url: '/pages/patient/searchPatient/searchPatient?type=source',
+              })
+            }
+          "
+        />
+        <template v-slot:right-icon>
+          <slot name="inputRight" />
+        </template>
+      </dpmsCell>
+      <dpmsCellInput
+        v-else
+        title="介绍人"
+        placeholder="请输入介绍人"
+        v-model="form.introducer"
       />
       <dpmsCellPicker
         title="国籍"
@@ -123,6 +181,24 @@
         placeholder="请输入固定电话"
         v-model="form.fixedTelephone"
       />
+      <dpmsCellInput
+        v-if="editType"
+        title="备用号码"
+        placeholder="请输入备用号码"
+        v-model="form.alternateMobile"
+      />
+      <dpmsCellInput
+        v-if="editType"
+        title="微信号"
+        placeholder="请输入微信号"
+        v-model="form.weChatId"
+      />
+      <dpmsCellInput
+        v-if="editType"
+        title="QQ"
+        placeholder="请输入QQ"
+        v-model="form.qqNum"
+      />
       <dpmsPlacePicker
         title="家庭住址"
         placeholder="请选择地区"
@@ -176,8 +252,10 @@ const formDefault = {
   gender: '',
   birthday: '',
   settingsTypeId: '',
+  //患者来源 以及介绍人
   settingsPatientSourceId: '',
-  sourceName: '',
+  sourceValue: '',
+  systemInner: '',
   tagIds: [],
   contactLabel: -1,
   mobile: '',
@@ -190,6 +268,8 @@ const formDefault = {
   medicalRecordNo: '',
   nationality: '',
   medicalInsuranceCardNo: '',
+  introducer: '',
+  sourceName: '',
 }
 
 export default {
@@ -219,6 +299,8 @@ export default {
       oldForm: this.filterFormData(this.formData),
       newRules: {},
       changeKeys: [],
+      staffList: [],
+      sourceName: '', //患者来源名称
       rules: {
         patientName: [
           {
@@ -296,6 +378,18 @@ export default {
         },
         settingsPatientSourceId: {
           type: 'any',
+        },
+        sourceName: {
+          type: 'any',
+        },
+        sourceValue: {
+          type: 'any',
+        },
+        introducer: {
+          type: 'any',
+        },
+        systemInner: {
+          type: 'any',
         }, //不写validator的rules会变成undefiend，会报错
       },
     }
@@ -305,14 +399,35 @@ export default {
       this.form = this.filterFormData(newVal)
       this.oldForm = this.filterFormData(newVal)
     },
-    'form.settingsTypeId'(e) {
+    'form.settingsTypeId'() {
       this.getPatientMedicalRecordNo()
     },
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
     },
-    'form.settingsPatientSourceId'(val) {
-      console.log(val)
+    'form.settingsPatientSourceId'(id) {
+      if (this.sourceName) return
+      const _self = this
+      const falt = (arr) => {
+        arr.forEach((v) => {
+          if (v.childSourceTypeList.length > 0) {
+            falt(v.childSourceTypeList)
+          } else if (v.patientSourceList.length > 0) {
+            v.patientSourceList.forEach((ele) => {
+              if (ele.settingsPatientSourceId === Number(id)) {
+                _self.form.systemInner = ele.systemInner
+                _self.sourceName = ele.settingsPatientSourceName
+              }
+            })
+          }
+        })
+      }
+      falt(this.settingsPatientSourceList)
+    },
+    'form.sourceValue'(id) {
+      if (this.form.systemInner === 1) {
+        this.form.sourceValue = Number(id)
+      }
     },
   },
   computed: {
@@ -324,20 +439,39 @@ export default {
       this.form.tagIds = checked
       this.updateTagsCheckedText()
     })
+    uni.$on('onSourceValueSelected', ({ patientId, patientName }) => {
+      this.form.sourceValue = patientId
+      this.form.introducer = patientName
+    })
     this.getPatientTypeList()
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
     this.getSettingsPatientSourceList()
     this.getPatientContactLabel()
     this.getPatientNationality()
+    this.getScrmStaffList()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
+    uni.$off('onSourceValueSelected')
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
-    setPatientSource(val) {
-      this.form.settingsPatientSourceId = val
+    setPatientSource({
+      settingsPatientSourceId,
+      systemInner,
+      settingsPatientSourceName,
+    }) {
+      if (settingsPatientSourceId === this.form.settingsPatientSourceId) return
+      this.form.settingsPatientSourceId = settingsPatientSourceId
+      this.form.systemInner = systemInner
+      this.form.sourceValue = ''
+      this.form.introducer = ''
+      this.sourceName = settingsPatientSourceName
+    },
+    async getScrmStaffList() {
+      const res = await patientAPI.getScrmStaffList()
+      this.staffList = res.data
     },
     async getPatientTypeList() {
       const res = await patientAPI.getPatientTypeList()

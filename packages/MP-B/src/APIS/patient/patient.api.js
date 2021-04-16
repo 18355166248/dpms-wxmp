@@ -140,6 +140,14 @@ const patientAPI = {
   patientNationality(data) {
     return httper.get('patient/patient-nationality/list/all', data)
   },
+  //获取staff员工
+  getScrmStaffList(data) {
+    return scrmHttper.get('scrm/staff/staff-drop-down-box-list', data)
+  },
+  //获取customer
+  getCustomerStaffList(data) {
+    return scrmHttper.get('scrm/customer/customer-page', data)
+  },
 }
 
 export default patientAPI

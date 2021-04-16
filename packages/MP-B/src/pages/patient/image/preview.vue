@@ -78,31 +78,43 @@ export default {
     deleteImg() {
       const { diagnosisTeethImageId } = this.imgs[this.swiperIndex]
       const { imgs } = this
-      diagnosisAPI
-        .deleteImageItem({
-          teethImageId: diagnosisTeethImageId,
-        })
-        .then((res) => {
-          if (res.code === 0) {
-            this.imgs = []
-            //filer不了，很奇怪
-            imgs.forEach((element) => {
-              if (element.diagnosisTeethImageId !== diagnosisTeethImageId) {
-                this.imgs.push(element)
-              }
-            })
-            this.swiperIndex = 0
-            //vuex
-            this.$store.commit('workbenchStore/setTeethPreviewImgs', this.imgs)
-            uni.showToast({
-              icon: 'success',
-              title: '删除成功',
-            })
-            if (this.imgs.length === 0) {
-              this.$utils.back()
-            }
+      uni.showModal({
+        title: '确认删除这条记录吗？',
+        success: async ({ confirm }) => {
+          if (confirm) {
+            diagnosisAPI
+              .deleteImageItem({
+                teethImageId: diagnosisTeethImageId,
+              })
+              .then((res) => {
+                if (res.code === 0) {
+                  this.imgs = []
+                  //filer不了，很奇怪
+                  imgs.forEach((element) => {
+                    if (
+                      element.diagnosisTeethImageId !== diagnosisTeethImageId
+                    ) {
+                      this.imgs.push(element)
+                    }
+                  })
+                  this.swiperIndex = 0
+                  //vuex
+                  this.$store.commit(
+                    'workbenchStore/setTeethPreviewImgs',
+                    this.imgs,
+                  )
+                  uni.showToast({
+                    icon: 'success',
+                    title: '删除成功',
+                  })
+                  if (this.imgs.length === 0) {
+                    this.$utils.back()
+                  }
+                }
+              })
           }
-        })
+        },
+      })
     },
     editRemark() {
       const { diagnosisTeethImageId } = this.imgs[this.swiperIndex]
