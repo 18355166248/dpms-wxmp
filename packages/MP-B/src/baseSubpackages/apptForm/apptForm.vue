@@ -727,6 +727,16 @@ export default {
         dept = diagnosisAPI.createNewRegister(params)
       }
       if (type === 'editRegister') {
+        // if (
+        //   Array.isArray(formatValue.patientMainComplaintIds) &&
+        //   formatValue.patientMainComplaintIds.length > 0
+        // ) {
+        //   formatValue.patientMainComplaintIds = formatValue.patientMainComplaintIds.join(
+        //     ',',
+        //   )
+        // } else {
+        //   formatValue.patientMainComplaintIds = ''
+        // }
         dept = diagnosisAPI.createRegister({
           appointmentJsonStr: JSON.stringify(formatValue),
         })
