@@ -30,19 +30,14 @@
     <!-- 搜索列表 -->
     <div v-if="customerList.length !== 0">
       <div v-for="customer in customerList" :key="customer.customerId">
-        <div
-          @click="clickPatientCard(customer)"
-          style="
-            background: #feffff;
-            border-radius: 8rpx;
-            margin: 32rpx;
-            height: 160rpx;
-          "
-        >
-          <div>
-            {{ customer.customerName }}
+        <div @click="clickPatientCard(customer)" class="card">
+          <div class="title">
+            <div class="name">
+              {{ customer.customerName }}
+            </div>
+            <tag :text="customer.genderText" :circle="false" type="error"></tag>
           </div>
-          <div>手机号：{{ customer.mobile }}</div>
+          <div class="moble">手机号：{{ customer.mobile }}</div>
         </div>
       </div>
       <load-more :status="dataSourceStatus.status" />
@@ -52,6 +47,7 @@
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
+import tag from '@/components/tag/tag.vue'
 import loadMore from '@/components/load-more/load-more.vue'
 
 export default {
@@ -71,7 +67,11 @@ export default {
         request: 'loading',
       },
       paramsObj: {},
+      GENDER_ENUM: this.$utils.getEnums('Gender'),
     }
+  },
+  components: {
+    tag,
   },
   onLoad(option) {
     this.paramsObj = option
@@ -114,6 +114,15 @@ export default {
 
       this.isSearchedValue = this.searchValue
       uni.hideLoading()
+
+      records &&
+        records.forEach((element) => {
+          element.genderText = this.GENDER_ENUM?.properties[
+            element.gender
+          ]?.zh_CN
+        })
+
+      console.log(records)
 
       if (current === 1) {
         this.customerList = records
@@ -166,6 +175,28 @@ export default {
     align-items: center;
     align-content: center;
     max-width: 100%;
+  }
+
+  .card {
+    background: #feffff;
+    border-radius: 8rpx;
+    margin: 32rpx;
+    height: 160rpx;
+    .title {
+      padding: 24rpx;
+      display: flex;
+      padding-bottom: 18rpx;
+    }
+    .name {
+      margin-right: 20rpx;
+      font-size: 34rpx;
+      font-weight: 500;
+    }
+    .moble {
+      padding-left: 24rpx;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 28rpx;
+    }
   }
 
   .search-tip-text {
