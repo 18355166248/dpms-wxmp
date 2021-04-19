@@ -1,38 +1,55 @@
 <template>
   <div class="imagePreview">
-    <div class="pd-32">
+    <div class="pd-32" style="min-height: 820rpx;">
       <div class="title">
         <div>{{ diagnosisSettingsImageItemName }}</div>
         <div>{{ swiperIndex + 1 }}/{{ imgs.length }}</div>
       </div>
-      <div class="pd-32">
-        <swiper :current="swiperIndex" @change="swiperChange" class="ht-800">
-          <swiper-item v-for="i in imgs" :key="i.diagnosisTeethImageId">
-            <image :src="i.imageUrl" class="wd-100vw" mode="widthFix" />
+      <scroll-view
+        class="pd-32"
+        :style="[{ height: swiperheight + 'px', 'min-height': '820rpx' }]"
+      >
+        <swiper
+          :current="swiperIndex"
+          @change="swiperChange"
+          style="height: 100%;"
+          circular
+        >
+          <swiper-item
+            v-for="i in imgs"
+            :key="i.diagnosisTeethImageId"
+            @longtap="saveImage(i.imageUrl)"
+          >
+            <image
+              :src="i.imageUrl"
+              class="wd-100vw swiper-item-content"
+              mode="widthFix"
+              :id="teethImageId"
+            />
           </swiper-item>
         </swiper>
-      </div>
-    </div>
-    <div class="pd-24">
-      <div class="previewCell">
-        <div class="previewCell__title">牙位：</div>
-        <div class="previewCell__value">
-          <TeethSelect
-            color="#ffffff"
-            class="handle"
-            :value="data.toothPosition"
-            disabled
-          />
-        </div>
-      </div>
-      <div class="previewCell">
-        <div class="previewCell__title">备注：</div>
-        <div class="previewCell__value">
-          <div>{{ remark || '' }}</div>
-        </div>
-      </div>
+      </scroll-view>
     </div>
     <fixed-footer bgColor="#626262">
+      <div class="pd-24">
+        <div class="previewCell">
+          <div class="previewCell__title">牙位：</div>
+          <div class="previewCell__value">
+            <TeethSelect
+              color="#ffffff"
+              class="handle"
+              :value="data.toothPosition"
+              disabled
+            />
+          </div>
+        </div>
+        <div class="previewCell">
+          <div class="previewCell__title">备注：</div>
+          <div class="previewCell__value">
+            <div>{{ remark || '' }}</div>
+          </div>
+        </div>
+      </div>
       <div class="bottom">
         <div class="funcs">
           <div @click="deleteImg()">
@@ -64,16 +81,61 @@ export default {
       imgs: [],
       swiperIndex: 0,
       diagnosisSettingsImageItemName: '',
+      swiperheight: 0,
     }
   },
   computed: {
     ...mapState('workbenchStore', ['teethPreviewParams', 'teethPreviewImgs']),
   },
+  watch: {
+    swiperIndex(val) {
+      this.$nextTick(() => {
+        this.initSwiperHeight(val)
+      })
+    },
+  },
   methods: {
-    submit() {},
+    saveImage(url) {
+      uni.showModal({
+        title: `是否保存这张图片到系统相册?`,
+        success: ({ confirm, cancel }) => {
+          if (confirm) {
+            uni.downloadFile({
+              url,
+              success: function (res) {
+                if (res.statusCode === 200) {
+                  uni.saveImageToPhotosAlbum({
+                    filePath: res.tempFilePath,
+                    success: function () {
+                      uni.showToast({
+                        icon: 'success',
+                        title: '保存成功',
+                      })
+                    },
+                    complete: (res) => {
+                      console.log(res)
+                    },
+                  })
+                }
+              },
+            })
+          }
+        },
+      })
+    },
     swiperChange(e) {
       this.swiperIndex = Number(e.target.current)
       this.remark = this.imgs[this.swiperIndex]?.remark || ''
+    },
+    initSwiperHeight(index) {
+      const query = uni.createSelectorQuery().in(this)
+      query
+        .selectAll('.swiper-item-content')
+        .boundingClientRect((res) => {
+          console.log(res, '.swiper-item-content')
+          this.swiperheight = res[index]?.height || 0
+        })
+        .exec()
     },
     deleteImg() {
       const { diagnosisTeethImageId } = this.imgs[this.swiperIndex]
@@ -123,12 +185,13 @@ export default {
       })
     },
   },
-  onLoad() {
+  onLoad({ index }) {
     if (!this.teethPreviewParams) return
     this.teethPreviewParams.toothPosition = JSON.parse(
       this.teethPreviewParams.toothPositionStr || 'null',
     )
     this.data = this.teethPreviewParams
+    this.swiperIndex = Number(index)
   },
   onShow() {
     if (!this.teethPreviewImgs) return
@@ -136,6 +199,16 @@ export default {
     this.remark = this.imgs[this.swiperIndex]?.remark || ''
     this.diagnosisSettingsImageItemName =
       this.imgs[this.swiperIndex]?.diagnosisSettingsImageItemName || ''
+
+    //写next tick不能稳定执行
+    uni.showLoading({
+      title: '加载中...',
+      mask: true,
+    })
+    setTimeout(() => {
+      this.initSwiperHeight(this.swiperIndex)
+      uni.hideLoading()
+    }, 1000)
   },
 }
 </script>
@@ -185,9 +258,6 @@ export default {
   }
   .pd-24 {
     padding-top: 24rpx;
-  }
-  .ht-800 {
-    height: 800rpx;
   }
   .wd-100vw {
     width: 100vw;

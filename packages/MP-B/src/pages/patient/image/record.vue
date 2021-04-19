@@ -11,7 +11,7 @@
             <div class="label">{{ it.label }}</div>
             <div class="imgs">
               <div
-                v-for="img in it.imgs"
+                v-for="(img, index) in it.imgs"
                 :key="img.imageUrl"
                 style="position: relative;"
                 @click="checkedImg(Number(img.diagnosisTeethImageId))"
@@ -28,7 +28,7 @@
                     isBatch && checkedList.includes(img.diagnosisTeethImageId)
                   "
                 />
-                <image :src="img.imageUrl" @click="preview(img, it)" />
+                <image :src="img.imageUrl" @click="preview(img, it, index)" />
               </div>
             </div>
           </div>
@@ -127,12 +127,12 @@ export default {
       const res = await diagnosisAPI.getImageEnums()
       this.imageType = res.data.ImageType
     },
-    preview(params, { imgs }) {
+    preview(params, { imgs }, index) {
       if (this.isBatch) return
       this.$store.commit('workbenchStore/setTeethPreviewParams', params)
       this.$store.commit('workbenchStore/setTeethPreviewImgs', imgs)
       this.$utils.push({
-        url: `/pages/patient/image/preview`,
+        url: `/pages/patient/image/preview?index=${index}`,
       })
     },
     checkedImg(id) {
