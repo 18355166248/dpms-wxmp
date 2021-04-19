@@ -1,13 +1,13 @@
 <template>
   <div class="imagePreview">
-    <div class="pd-32" style="min-height: 820rpx;">
+    <div class="pd-32">
       <div class="title">
         <div>{{ diagnosisSettingsImageItemName }}</div>
         <div>{{ swiperIndex + 1 }}/{{ imgs.length }}</div>
       </div>
       <scroll-view
         class="pd-32"
-        :style="[{ height: swiperheight + 'px', 'min-height': '820rpx' }]"
+        :style="[{ height: swiperheight + 'px', 'min-height': '840rpx' }]"
       >
         <swiper
           :current="swiperIndex"
