@@ -99,7 +99,7 @@
         title="介绍人"
         placeholder="请输入介绍人"
         v-model="form.introducer"
-        maxlength="20"
+        max="20"
       />
       <dpmsCellPicker
         title="国籍"
