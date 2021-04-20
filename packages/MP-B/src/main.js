@@ -1,9 +1,11 @@
 import Vue from 'vue'
 import App from './App'
 import store from './store'
+import uma from './uma'
 import { toastUtil, flyUtil, commonUtil, utils } from 'mpcommon'
 
 Vue.config.productionTip = false
+Vue.use(uma)
 
 Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
 Vue.prototype.$store = store
