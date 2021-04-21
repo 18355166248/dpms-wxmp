@@ -15,12 +15,9 @@
     </div>
 
     <!-- 搜索提示、结果文字 -->
-    <div class="search-tip-text pt-28" v-if="!(searchValue && isSearchedValue)">
-      请输入姓名/拼音/手机号查找患者
-    </div>
     <div
       class="search-tip-text pt-28 pl-24 pr-24"
-      v-else-if="customerList.length === 0"
+      v-if="customerList.length === 0 && isSearchedValue"
     >
       没有找到“
       <span class="patient-name">{{ isSearchedValue }}</span>

@@ -33,7 +33,7 @@
       </div>
     </scroll-view>
     <empty :disabled="true" text="无病历记录" v-else />
-    <fixed-footer :bgColor="primaryColor">
+    <fixed-footer bgColor="#F5F5F5">
       <div class="bottom">
         <button
           @click="
