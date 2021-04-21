@@ -633,6 +633,7 @@ export default {
   }
   .txt {
     padding: 32rpx;
+    padding-top: 16rpx;
     width: 686rpx;
     overflow-y: scroll;
   }
@@ -713,7 +714,7 @@ export default {
 .ensurebutton {
   height: 80rpx;
   background: #5cbb89;
-  border-radius: 0;
+  border-radius: 1;
   margin-top: 320rpx;
   color: #fff;
   line-height: 80rpx;
@@ -721,6 +722,8 @@ export default {
   bottom: 0;
   width: 750rpx;
   z-index: 9;
+  width: 90vw;
+  margin-left: 5vw;
 }
 
 .bottomSpace {
