@@ -28,11 +28,8 @@
                     isBatch && checkedList.includes(img.diagnosisTeethImageId)
                   "
                 />
-                <image
-                  :src="img.imageUrl"
-                  @click="preview(img, it, index)"
-                  :class="[isBatch ? 'opc06' : '']"
-                />
+                <image :src="img.imageUrl" @click="preview(img, it, index)" />
+                <div class="mask" v-if="isBatch"></div>
               </div>
             </div>
           </div>
@@ -227,6 +224,13 @@ export default {
         width: 160rpx;
         height: 160rpx;
         border-radius: 4rpx;
+      }
+      .mask {
+        width: 160rpx;
+        height: 160rpx;
+        position: absolute;
+        top: 0;
+        background: rgba(101, 101, 101, 0.6);
       }
     }
   }
