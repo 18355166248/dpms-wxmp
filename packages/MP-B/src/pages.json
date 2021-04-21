@@ -234,6 +234,18 @@
       ]
     },
     {
+      "root": "pages/achievement",
+      "name": "achievement",
+      "pages": [
+        {
+          "path": "doctor",
+          "style": {
+            "navigationBarTitleText": "医生业绩"
+          }
+        }
+      ]
+    },
+    {
       "root": "pages/charge",
       "name": "charge",
       "pages": [
