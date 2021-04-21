@@ -82,7 +82,7 @@ const keyPs = [
     prefix: 'presentIllnessHistory',
   },
   { key: 'doctorAdvice', func: 'getDoctorAdviceDict', prefix: 'doctorAdvice' },
-  { key: 'dispose', func: 'getDisposeDict', prefix: 'dispose' },
+  { key: 'dispose', func: 'getDisposeDict', prefix: 'disposal' }, //处置
   { key: 'diagnosisDesc', prefix: 'diagnosis' },
   {
     key: 'pastIllnessHistory',
@@ -90,14 +90,16 @@ const keyPs = [
     prefix: 'pastIllnessHistory',
   },
   {
+    //口腔检查
     key: 'checkNormalSymptoms',
     func: 'getExaminationDict',
-    prefix: 'examination',
+    prefix: 'dentalExamination',
   },
   {
+    //辅助检查
     key: 'checkRaySymptoms',
     func: 'getExaminationDict',
-    prefix: 'examination',
+    prefix: 'auxiliaryExamination',
   },
   {
     key: 'treatmentProgram',
