@@ -28,7 +28,11 @@
                     isBatch && checkedList.includes(img.diagnosisTeethImageId)
                   "
                 />
-                <image :src="img.imageUrl" @click="preview(img, it, index)" />
+                <image
+                  :src="img.imageUrl"
+                  @click="preview(img, it, index)"
+                  :class="[isBatch ? 'opc06' : '']"
+                />
               </div>
             </div>
           </div>
@@ -189,12 +193,16 @@ export default {
   margin-bottom: 20rpx;
   font-size: 28rpx;
   color: #f5f5f5;
-  background: #f5f5f5;
+  background: #feffff;
+  .opc06 {
+    opacity: 0.6;
+  }
   .iconfont {
     position: absolute;
     right: 0;
     font-size: 48rpx;
     color: #ffffff;
+    z-index: 9;
   }
   .head {
     height: 84rpx;
@@ -242,6 +250,7 @@ export default {
     font-size: 36rpx;
     border: 2rpx solid #5cbb89;
     border-radius: 10rpx;
+    background-color: #ffffff;
   }
 }
 </style>
