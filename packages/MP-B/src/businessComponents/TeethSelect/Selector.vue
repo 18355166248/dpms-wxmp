@@ -252,8 +252,8 @@ export default {
       color: #ffffff;
     }
     .nowSelected {
-      background: rgb(255, 204, 0);
-      border-color: rgb(255, 204, 0);
+      background: #faad51;
+      border-color: #faad51;
       color: #ffffff;
     }
     .super:after {
