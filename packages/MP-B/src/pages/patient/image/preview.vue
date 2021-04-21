@@ -46,7 +46,13 @@
         <div class="previewCell">
           <div class="previewCell__title">备注：</div>
           <div class="previewCell__value">
-            <div>{{ remark || '' }}</div>
+            <div
+              style="height: 200rpx; text-overflow: ellipsis; overflow: hidden;"
+            >
+              {{
+                remark.length < 59 ? remark : remark.substring(0, 59) + '...'
+              }}
+            </div>
           </div>
         </div>
       </div>

@@ -722,8 +722,6 @@ export default {
   bottom: 0;
   width: 750rpx;
   z-index: 9;
-  width: 90vw;
-  margin-left: 5vw;
 }
 
 .bottomSpace {
