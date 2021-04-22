@@ -33,7 +33,7 @@
     "dev:mp-weixin": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "uat:mp-weixin": "cross-env NODE_ENV=uat UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "uat01:mp-weixin": "cross-env NODE_ENV=uat01 UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
-    "staging:mp-weixin": "cross-env NODE_ENV=staging UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
+    "pre:mp-weixin": "cross-env NODE_ENV=staging UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "prod:mp-weixin": "cross-env NODE_ENV=prod UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize",
     "dev:quickapp-native": "cross-env NODE_ENV=development UNI_PLATFORM=quickapp-native vue-cli-service uni-build --watch",
     "dev:quickapp-webview": "cross-env NODE_ENV=development UNI_PLATFORM=quickapp-webview vue-cli-service uni-build --watch",

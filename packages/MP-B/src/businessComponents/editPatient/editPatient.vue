@@ -9,7 +9,6 @@
         v-model="form.patientName"
       />
       <dpmsEnumsPicker
-        required
         title="性别"
         placeholder="请选择性别"
         v-model="form.gender"
@@ -28,17 +27,96 @@
         placeholder="请输入身份证号"
         v-model="form.certificatesNo"
       />
-      <dpmsCellPicker
+      <dpmsTreePicker
         title="患者来源"
         placeholder="请选择患者来源"
-        v-model="form.settingsPatientSourceId"
         :list="settingsPatientSourceList"
-        defaultType="settingsPatientSourceId"
+        childrenItemKeyName="childSourceTypeList"
+        labelId="settingsPatientSourceTypeId"
+        labelName="settingsPatientSourceTypeName"
+        dataKeyName="patientSourceList"
+        dataKeyLabelId="settingsPatientSourceId"
+        dataKeyLabelName="settingsPatientSourceName"
+        dataParentId="settingsPatientSourceTypeId"
+        :value="form.settingsPatientSourceId"
+        @confirm="setPatientSource"
+        :openAll="true"
+      />
+      <dpmsCell
+        title="介绍人"
+        :isLink="true"
+        v-if="sourceName === '朋友介绍' && form.systemInner === 1"
+      >
+        <input
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          placeholder="请选择介绍人"
+          v-model="form.introducer"
+          @click="
+            () => {
+              this.$utils.push({
+                url: '/pages/patient/searchPatient/searchCustomer',
+              })
+            }
+          "
+        />
+        <template v-slot:right-icon>
+          <slot name="inputRight" />
+        </template>
+      </dpmsCell>
+      <dpmsCellPicker
+        v-else-if="sourceName === '员工介绍' && form.systemInner === 1"
+        title="介绍人"
+        placeholder="请选择介绍人"
+        v-model="form.sourceValue"
+        :list="staffList"
+        defaultType="staffId"
+        :defaultProps="{ label: 'showStaffName', value: 'staffId' }"
+        isLink
+      />
+      <dpmsCell
+        title="介绍人"
+        :isLink="true"
+        v-else-if="sourceName === '患者介绍' && form.systemInner === 1"
+      >
+        <input
+          placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+          placeholder="请选择介绍人"
+          v-model="form.introducer"
+          @click="
+            () => {
+              this.$utils.push({
+                url: '/pages/patient/searchPatient/searchPatient?type=source',
+              })
+            }
+          "
+        />
+        <template v-slot:right-icon>
+          <slot name="inputRight" />
+        </template>
+      </dpmsCell>
+      <dpmsCellInput
+        v-else
+        title="介绍人"
+        placeholder="请输入介绍人"
+        v-model="form.introducer"
+        max="20"
+      />
+      <dpmsCellPicker
+        title="国籍"
+        placeholder="请选择国籍"
+        v-model="form.nationality"
+        :list="patientNationalityList"
+        defaultType="patientNationalityId"
         :defaultProps="{
-          label: 'settingsPatientSourceName',
-          value: 'settingsPatientSourceId',
+          label: 'nationalityName',
+          value: 'patientNationalityId',
         }"
         isLink
+      />
+      <dpmsCellInput
+        title="医保卡号"
+        placeholder="请输入医保卡号"
+        v-model="form.medicalInsuranceCardNo"
       />
       <dpmsDatePicker
         title="出生日期"
@@ -83,12 +161,16 @@
       <dpmsFormTitle title="联系方式" />
       <view class="group">
         <view style="width: 375rpx;">
-          <dpmsEnumsPicker
+          <dpmsCellPicker
             title="联系电话"
             placeholder="请选择电话标签"
             v-model="form.contactLabel"
-            enumsKey="ContactLabel"
-            isLink
+            :list="contactLabelList"
+            defaultType="patientContactLabelId"
+            :defaultProps="{
+              label: 'contactLabelName',
+              value: 'patientContactLabelId',
+            }"
           />
         </view>
         <view style="width: 375rpx; padding-top: 2px; background: #fff;">
@@ -101,16 +183,23 @@
         v-model="form.fixedTelephone"
       />
       <dpmsCellInput
+        v-if="editType"
         title="备用号码"
         placeholder="请输入备用号码"
         v-model="form.alternateMobile"
       />
       <dpmsCellInput
+        v-if="editType"
         title="微信号"
         placeholder="请输入微信号"
         v-model="form.weChatId"
       />
-      <dpmsCellInput title="QQ" placeholder="请输入QQ" v-model="form.qqNum" />
+      <dpmsCellInput
+        v-if="editType"
+        title="QQ"
+        placeholder="请输入QQ"
+        v-model="form.qqNum"
+      />
       <dpmsPlacePicker
         title="家庭住址"
         placeholder="请选择地区"
@@ -139,7 +228,6 @@
           v-model="form.memo"
         />
       </div>
-
       <button
         class="ensurebutton"
         :class="{ 'bt-68': isPhoneXCeil }"
@@ -165,8 +253,10 @@ const formDefault = {
   gender: '',
   birthday: '',
   settingsTypeId: '',
+  //患者来源 以及介绍人
   settingsPatientSourceId: '',
-  sourceName: '',
+  sourceValue: '',
+  systemInner: '',
   tagIds: [],
   contactLabel: -1,
   mobile: '',
@@ -177,6 +267,10 @@ const formDefault = {
   region: [],
   address: '',
   medicalRecordNo: '',
+  nationality: '',
+  medicalInsuranceCardNo: '',
+  introducer: '',
+  sourceName: '',
 }
 
 export default {
@@ -198,12 +292,16 @@ export default {
       medicalRecordNo: '', //病历号
       settingsTypeId: '', //患者类型
       settingsPatientSourceId: '', //患者来源
+      contactLabelList: [],
+      patientNationalityList: [],
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
       oldForm: this.filterFormData(this.formData),
       newRules: {},
       changeKeys: [],
+      staffList: [],
+      sourceName: '', //患者来源名称
       rules: {
         patientName: [
           {
@@ -222,6 +320,12 @@ export default {
             message: '个性称呼输入不应该超过 50 字',
           },
         ],
+        medicalInsuranceCardNo: [
+          {
+            max: 50,
+            message: '医保卡号不应该超过 50 字',
+          },
+        ],
         medicalRecordNo: [
           {
             required: true,
@@ -233,10 +337,6 @@ export default {
             message: '病历号输入不应该超过 30 字',
           },
         ],
-        gender: {
-          required: true,
-          message: '请选择性别',
-        },
         birthday: {
           message: '请选择出生日期',
         },
@@ -252,10 +352,6 @@ export default {
           type: 'any',
         },
         mobile: [
-          // {
-          //   required: true,
-          //   message: '请输入联系电话',
-          // },
           {
             pattern: /^\d{11}$/,
             message: '联系电话格式不正确',
@@ -283,7 +379,20 @@ export default {
         },
         settingsPatientSourceId: {
           type: 'any',
-        }, //不写validator的rules会变成undefiend要报错啊
+        },
+        sourceName: {
+          type: 'any',
+        },
+        sourceValue: {
+          type: 'any',
+        },
+        introducer: {
+          max: 20,
+          message: '介绍人输入不应该超过 20 字',
+        },
+        systemInner: {
+          type: 'any',
+        }, //不写validator的rules会变成undefiend，会报错
       },
     }
   },
@@ -292,11 +401,35 @@ export default {
       this.form = this.filterFormData(newVal)
       this.oldForm = this.filterFormData(newVal)
     },
-    'form.settingsTypeId'(e) {
+    'form.settingsTypeId'() {
       this.getPatientMedicalRecordNo()
     },
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
+    },
+    'form.settingsPatientSourceId'(id) {
+      if (this.sourceName) return
+      const _self = this
+      const falt = (arr) => {
+        arr.forEach((v) => {
+          if (v.childSourceTypeList.length > 0) {
+            falt(v.childSourceTypeList)
+          } else if (v.patientSourceList.length > 0) {
+            v.patientSourceList.forEach((ele) => {
+              if (ele.settingsPatientSourceId === Number(id)) {
+                _self.form.systemInner = ele.systemInner
+                _self.sourceName = ele.settingsPatientSourceName
+              }
+            })
+          }
+        })
+      }
+      falt(this.settingsPatientSourceList)
+    },
+    'form.sourceValue'(id) {
+      if (this.form.systemInner === 1) {
+        this.form.sourceValue = Number(id)
+      }
     },
   },
   computed: {
@@ -308,38 +441,59 @@ export default {
       this.form.tagIds = checked
       this.updateTagsCheckedText()
     })
+    uni.$on('onSourceValueSelected', ({ patientId, patientName }) => {
+      this.form.sourceValue = patientId
+      this.form.introducer = patientName
+    })
     this.getPatientTypeList()
     this.getPatientTags()
     this.getPatientMedicalRecordNo()
     this.getSettingsPatientSourceList()
+    this.getPatientContactLabel()
+    this.getPatientNationality()
+    this.getScrmStaffList()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
+    uni.$off('onSourceValueSelected')
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
+    setPatientSource({
+      settingsPatientSourceId,
+      systemInner,
+      settingsPatientSourceName,
+    }) {
+      if (settingsPatientSourceId === this.form.settingsPatientSourceId) return
+      this.form.settingsPatientSourceId = settingsPatientSourceId
+      this.form.systemInner = systemInner
+      this.form.sourceValue = ''
+      this.form.introducer = ''
+      this.sourceName = settingsPatientSourceName
+    },
+    async getScrmStaffList() {
+      const res = await patientAPI.getScrmStaffList()
+      this.staffList = res.data
+    },
     async getPatientTypeList() {
-      let res = await patientAPI.getPatientTypeList()
+      const res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getSettingsPatientSourceList() {
       const res = await patientAPI.patientSource()
-      let arr = [
-        {
-          settingsPatientSourceId: -1,
-          settingsPatientSourceName: '无',
-        },
-      ]
-      res.data?.forEach((v) => {
-        v.childSourceTypeList?.forEach((v) => {
-          arr.push(...v.patientSourceList)
-        })
-      })
-      this.settingsPatientSourceList = arr
+      this.settingsPatientSourceList = res.data || []
+    },
+    async getPatientContactLabel() {
+      const res = await patientAPI.patientContactLabel()
+      this.contactLabelList = res.data || []
+    },
+    async getPatientNationality() {
+      const res = await patientAPI.patientNationality()
+      this.patientNationalityList = res.data || []
     },
     async getPatientTags() {
-      let res = await patientAPI.getPatientTags()
+      const res = await patientAPI.getPatientTags()
       uni.setStorageSync(
         'patientTagsList',
         res.data.filter((v) => v.tagInfoDTOList?.length > 0),
@@ -347,7 +501,7 @@ export default {
       this.updateTagsCheckedText()
     },
     async getPatientMedicalRecordNo() {
-      let res = await patientAPI.getPatientMedicalRecordNo({
+      const res = await patientAPI.getPatientMedicalRecordNo({
         patientType: this.form.settingsTypeId,
       })
       this.form.medicalRecordNo = res.data
@@ -479,6 +633,7 @@ export default {
   }
   .txt {
     padding: 32rpx;
+    padding-top: 16rpx;
     width: 686rpx;
     overflow-y: scroll;
   }
@@ -559,7 +714,7 @@ export default {
 .ensurebutton {
   height: 80rpx;
   background: #5cbb89;
-  border-radius: 0;
+  border-radius: 1;
   margin-top: 320rpx;
   color: #fff;
   line-height: 80rpx;
