@@ -230,7 +230,7 @@ export default {
         height: 160rpx;
         position: absolute;
         top: 0;
-        background: rgba(101, 101, 101, 0.6);
+        background: rgba(0, 0, 0, 0.3);
       }
     }
   }
