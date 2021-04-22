@@ -145,12 +145,12 @@
           @click.native="onSelectMainComplaintList"
           placeholder="请选择主诉"
         />
-        <dpmsCell title="预约备注" />
+        <dpmsCell title="备注" />
         <view class="appointmentMemo">
           <textarea
             v-model="form.appointmentMemo"
             auto-height
-            placeholder="请输入预约备注"
+            placeholder="请输入备注"
             placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
             :maxlength="500"
             @focus="bindFocus"
