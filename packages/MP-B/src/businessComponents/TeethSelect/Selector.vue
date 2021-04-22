@@ -1,5 +1,8 @@
 <template>
   <div class="selector">
+    <div class="teeth-select">
+      <TeethSelect class="handle" :value="toothPositionStr" />
+    </div>
     <div class="sets">
       <div @click="setClick(teeth[0][0], teeth[1][0])">上半口-乳</div>
       <div @click="setClick(teeth[2][1], teeth[3][1])">下半口-乳</div>
@@ -54,6 +57,7 @@
 <script>
 import _ from 'lodash'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 
 function genYa(quadrant) {
   //大于4是乳牙
@@ -66,7 +70,7 @@ function genYa(quadrant) {
   }))
 }
 export default {
-  components: { fixedFooter },
+  components: { fixedFooter, TeethSelect },
   data() {
     return {
       teeth: [
@@ -110,6 +114,18 @@ export default {
       },
       set() {},
     },
+    toothPositionStr() {
+      return this.teethSelected.reduce(
+        (r, s) => {
+          r.teeth[s.position] = s.areaSelected.reduce(
+            (r, _a) => ({ ...r, [_a]: true }),
+            {},
+          )
+          return r
+        },
+        { teeth: {} },
+      )
+    },
   },
   methods: {
     areaClick(a) {
@@ -135,20 +151,14 @@ export default {
       this.activeTeeth = ya.position
     },
     setClick(...yas) {
-      this.teethSelected = [...this.teethSelected, ..._.cloneDeep(yas).flat()]
+      let teethSelected = this.teethSelected.map((v) => v.position)
+      let sets = _.cloneDeep(yas)
+        .flat()
+        .filter((s) => !teethSelected.includes(s.position))
+      this.teethSelected = [...this.teethSelected, ...sets]
     },
     save() {
-      const result = this.teethSelected.reduce(
-        (r, s) => {
-          r.teeth[s.position] = s.areaSelected.reduce(
-            (r, _a) => ({ ...r, [_a]: true }),
-            {},
-          )
-          return r
-        },
-        { teeth: {} },
-      )
-      uni.$emit(`teethSelectChange${this.uid}`, result)
+      uni.$emit(`teethSelectChange${this.uid}`, this.toothPositionStr)
       this.$utils.back()
     },
     initValue({ teeth }) {
@@ -167,6 +177,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.teeth-select {
+  background-color: #fff;
+  margin-bottom: 20rpx;
+  padding: 32rpx;
+  .handle {
+    width: 100%;
+  }
+}
 .selector {
   font-size: 28rpx;
   color: rgba(0, 0, 0, 0.7);
@@ -252,8 +270,8 @@ export default {
       color: #ffffff;
     }
     .nowSelected {
-      background: rgb(255, 204, 0);
-      border-color: rgb(255, 204, 0);
+      background: #faad51;
+      border-color: #faad51;
       color: #ffffff;
     }
     .super:after {
