@@ -9,17 +9,14 @@ const diagnosisAPI = {
   getTodayReceptionistList(data) {
     return httper.get('diagnosis/register/page-receptionist', data)
   },
-
   // 今日就诊-医生 列表
   getTodayDoctorList(data) {
     return httper.get('diagnosis/register/page-doctor', data)
   },
-
   // 今日就诊-咨询
   getTodayConsultant(data) {
     return httper.get('diagnosis/register/page-consultant', data)
   },
-
   // 取消挂号
   cancleTodayWorkRegister(data) {
     return httper.post('diagnosis/register/update-status', data)
@@ -53,7 +50,7 @@ const diagnosisAPI = {
   },
   // 获取影像列表
   getImageList(data) {
-    return httper.get('diagnosis/mini-apps/teeth-image/list', data)
+    return httper.get('diagnosis/teeth-image/list', data)
   },
   // 分页查询电子病历列表
   getMedicalRecordList(data) {
@@ -88,8 +85,35 @@ const diagnosisAPI = {
     return httper.post('diagnosis/register/update-status/back', data)
   },
   //更新今日工作状态
-  updateRegisterStatusForward(params) {
-    return httper.post('diagnosis/register/update-status/forward', params)
+  updateRegisterStatusForward(data) {
+    return httper.post('diagnosis/register/update-status/forward', data)
+  },
+  //影像医嘱项目
+  getSettingsItem(data) {
+    return httper.get(
+      'diagnosis/settings/diagnosis_settings_image_item/list-search',
+      data,
+    )
+  },
+  //删除影像
+  deleteImageItem(data) {
+    return httper.post('diagnosis/teeth-image/delete', data)
+  },
+  //修改影像
+  updateImageItem(data) {
+    return httper.post('diagnosis/teeth-image/update', data)
+  },
+  // 批量删除影像
+  batchDeleteImages(data) {
+    return httper.post('diagnosis/teeth-image/delete/batch', data)
+  },
+  // 批量update影像
+  batchUpdateImageItem(data) {
+    return httper.post('diagnosis/teeth-image/update/batch', data)
+  },
+  // 获得主诉列表
+  getMainComplaint(data) {
+    return httper.get('diagnosis/patient-main-complaint/list', data)
   },
 }
 

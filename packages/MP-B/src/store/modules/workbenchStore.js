@@ -14,6 +14,8 @@ const state = {
     ? getStorage(STORAGE_KEY.APPTSETTING)
     : {},
   menu: getStorage(STORAGE_KEY.MENU) ? getStorage(STORAGE_KEY.MENU) : {},
+  teethPreviewParams: uni.getStorageSync('teethPreviewParams') || {},
+  teethPreviewImgs: uni.getStorageSync('teethPreviewImgs') || {},
 }
 
 const mutations = {
@@ -40,6 +42,14 @@ const mutations = {
   delStaff(state) {
     removeStorage(STORAGE_KEY.STAFF)
     state.staff = {}
+  },
+  setTeethPreviewParams(state, value) {
+    state.teethPreviewParams = value
+    setStorage('teethPreviewParams', value)
+  },
+  setTeethPreviewImgs(state, value) {
+    state.teethPreviewImgs = value
+    setStorage('teethPreviewImgs', value)
   },
 }
 

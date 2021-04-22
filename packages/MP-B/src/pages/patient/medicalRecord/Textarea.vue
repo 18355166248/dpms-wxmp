@@ -5,6 +5,7 @@
       v-model="value"
       placeholder-style="color: rgba(0,0,0,0.3);"
       :placeholder="`请输入${title}`"
+      maxlength="-1"
     />
     <div class="panel">
       <div class="head">

@@ -132,6 +132,22 @@ const patientAPI = {
   patientSource(data) {
     return httper.get('patient/settings/patient/source/list/all', data)
   },
+  //患者标签
+  patientContactLabel(data) {
+    return httper.get('patient/patient-contact/label/list/all', data)
+  },
+  //国籍
+  patientNationality(data) {
+    return httper.get('patient/patient-nationality/list/all', data)
+  },
+  //获取staff员工
+  getScrmStaffList(data) {
+    return scrmHttper.get('scrm/staff/staff-drop-down-box-list', data)
+  },
+  //获取customer
+  getCustomerStaffList(data) {
+    return scrmHttper.get('scrm/customer/customer-page', data)
+  },
 }
 
 export default patientAPI
