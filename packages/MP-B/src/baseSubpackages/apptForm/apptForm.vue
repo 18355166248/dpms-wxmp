@@ -510,7 +510,7 @@ export default {
     },
     onBlurWithDuration(value) {
       this.closeBlur()
-      const timeStep = this.apptSetting.appointmentDuration || 15
+      const timeStep = this.apptSetting.appointmentDuration === 30 ? 30 : 15 //只支持15,30
       if (value < timeStep) return this.$set(this.form, 'duration', timeStep)
       if (value > 1440) return this.$set(this.form, 'duration', 1440)
       if (value % timeStep !== 0) {
