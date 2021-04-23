@@ -729,6 +729,7 @@ export default {
           this.enumStatus([newRowData])
 
           this.dataSource = [newRowData, ...this.dataSource]
+          console.log('this.dataSource:', this.dataSource)
         }
       }
     },
@@ -760,6 +761,8 @@ export default {
 
         this.$set(this.dataSource, rowIndex, newRowData)
       }
+
+      console.log('this.dataSource:', this.dataSource)
     },
     async changeStatus(record, role) {
       const status = this.REGISTER_ENUM[record.type].value
@@ -801,58 +804,54 @@ export default {
       if (!this.selectedRole?.enumValue) {
         return uni.stopPullDownRefresh()
       }
-<<<<<<< HEAD
-      this.dataSourceStatus.loading = true
-      this.dataSourceStatus.status = 'loading'
-=======
       if (this.selectedRole) {
         this.dataSourceStatus.loading = true
         this.dataSourceStatus.status = 'loading'
->>>>>>> master
 
-      const urlMap = {
-        'switch-receptionist': 'getTodayReceptionistList',
-        'switch-doctor': 'getTodayDoctorList',
-        'switch-consultant': 'getTodayConsultant',
-      }
-
-      uni.showLoading({
-        title: '数据加载中',
-        mask: true,
-      })
-
-      const [listErr, listRes] = await this.$utils.asyncTasks(
-        diagnosisApi[urlMap[this.selectedRole.enumValue]]({
-          beginTime: moment().startOf('day').valueOf(),
-          endTime: moment().endOf('day').valueOf(),
-          current: this.current,
-          patientSearchKey: this.patientSearchKey,
-        }),
-      )
-
-      if (listErr) {
-        this.dataSourceStatus.request = 'error'
-        this.dataSourceStatus.status = 'more'
-      } else if (listRes) {
-        this.dataSourceStatus.request = 'success'
-
-        const { data } = listRes
-        const { total, current, records } = data
-
-        //根据不同的角色，枚举不同状态
-        this.enumStatus(records)
-
-        this.dataSource =
-          current === 1 ? records : this.dataSource.concat(records)
-
-        this.total = total
-
-        if (this.total === this.dataSource.length) {
-          this.dataSourceStatus.status = 'noMore'
+        const urlMap = {
+          'switch-receptionist': 'getTodayReceptionistList',
+          'switch-doctor': 'getTodayDoctorList',
+          'switch-consultant': 'getTodayConsultant',
         }
+
+        uni.showLoading({
+          title: '数据加载中',
+          mask: true,
+        })
+
+        const [listErr, listRes] = await this.$utils.asyncTasks(
+          diagnosisApi[urlMap[this.selectedRole.enumValue]]({
+            beginTime: moment().startOf('day').valueOf(),
+            endTime: moment().endOf('day').valueOf(),
+            current: this.current,
+            patientSearchKey: this.patientSearchKey,
+          }),
+        )
+
+        if (listErr) {
+          this.dataSourceStatus.request = 'error'
+          this.dataSourceStatus.status = 'more'
+        } else if (listRes) {
+          this.dataSourceStatus.request = 'success'
+
+          const { data } = listRes
+          const { total, current, records } = data
+
+          //根据不同的角色，枚举不同状态
+          this.enumStatus(records)
+
+          this.dataSource =
+            current === 1 ? records : this.dataSource.concat(records)
+
+          this.total = total
+
+          if (this.total === this.dataSource.length) {
+            this.dataSourceStatus.status = 'noMore'
+          }
+        }
+        uni.hideLoading()
+        this.dataSourceStatus.loading = false
       }
-      uni.hideLoading()
-      this.dataSourceStatus.loading = false
       uni.stopPullDownRefresh()
     },
     enumStatus(records) {
@@ -1004,13 +1003,17 @@ export default {
     async loadCurrentStaff() {
       // 今日工作的角色枚举
       const { pageElementsList } = this.menu
+
+      console.log('TODAY_WORK_ROLE_TYPE_ENUM:', this.TODAY_WORK_ROLE_TYPE_ENUM)
       // 需要筛选的菜单枚举值enumValue
       const roles = pageElementsList
         .filter((element) => this.enumValue.includes(element.enumValue))
         .sort((prev, next) => prev.sort - next.sort)
-      this.roles = roles
 
+      this.roles = roles
+      console.log('roles:', roles)
       this.initSelectedRole(roles)
+
       uni.startPullDownRefresh()
     },
     // 角色切换
@@ -1170,7 +1173,7 @@ export default {
 
               if (registerStatus === status) {
                 appointmentAPI
-                  .updateAppointmentStatus({
+                  .appointmentUpdateStatus({
                     appointmentId,
                     appointmentStatus: 2,
                   })
