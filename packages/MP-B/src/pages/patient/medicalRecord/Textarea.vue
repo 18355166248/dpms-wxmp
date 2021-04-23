@@ -5,6 +5,7 @@
       v-model="value"
       placeholder-style="color: rgba(0,0,0,0.3);"
       :placeholder="`请输入${title}`"
+      maxlength="-1"
     />
     <div class="panel">
       <div class="head">
@@ -82,7 +83,13 @@ const keyPs = [
     prefix: 'presentIllnessHistory',
   },
   { key: 'doctorAdvice', func: 'getDoctorAdviceDict', prefix: 'doctorAdvice' },
-  { key: 'dispose', func: 'getDisposeDict', prefix: 'disposal' }, //处置
+  {
+    //处置
+    key: 'dispose',
+    func: 'getDisposeDict',
+    prefix: 'disposal',
+    prefixDict: 'dispose',
+  },
   { key: 'diagnosisDesc', prefix: 'diagnosis' },
   {
     key: 'pastIllnessHistory',
@@ -94,12 +101,14 @@ const keyPs = [
     key: 'checkNormalSymptoms',
     func: 'getExaminationDict',
     prefix: 'dentalExamination',
+    prefixDict: 'examination',
   },
   {
     //辅助检查
     key: 'checkRaySymptoms',
     func: 'getExaminationDict',
     prefix: 'auxiliaryExamination',
+    prefixDict: 'examination',
   },
   {
     key: 'treatmentProgram',
@@ -146,7 +155,7 @@ export default {
             (r, k) => ({
               ...r,
               [k
-                .replace(RegExp(kp.prefix, 'i'), '')
+                .replace(RegExp(kp.prefixDict || kp.prefix, 'i'), '')
                 .replace('DictVOS', 'DictVO')]: Array.isArray(a[k])
                 ? replaceKey(a[k], key)
                 : a[k],

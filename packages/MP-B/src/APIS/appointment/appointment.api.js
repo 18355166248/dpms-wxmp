@@ -9,9 +9,11 @@ const appointmentAPI = {
   getAppointmentVerify(data) {
     return httper.post('appointment/appointment/mini-apps/verify', data)
   },
+  //新建预约
   createAppointment(data) {
     return httper.post('appointment/appointment/mini-apps/create', data)
   },
+  //预约更新
   updateAppointment(data) {
     return httper.post('appointment/appointment/mini-apps/update', data)
   },
@@ -25,7 +27,7 @@ const appointmentAPI = {
       params,
     )
   },
-  // 预约 状态修改
+  // 预约状态修改
   updateAppointmentStatus(data) {
     return httper.post('appointment/appointment/update/status', data)
   },
@@ -54,12 +56,21 @@ const appointmentAPI = {
   getSetting() {
     return httper.get('appointment/appointment-view/setting/detail')
   },
+  //确认预约
   confirmAppointmentStatus(params) {
     return httper.get('appointment/appointment/confirm_appointment', params)
   },
-  //预约更新
-  appointmentUpdateStatus(data) {
-    return httper.post('/appointment/appointment/update/status', data)
+  //取消确认
+  confirmBackToAppointment(data) {
+    return httper.post(
+      'appointment/appointment/update/status/cancel-confirm',
+      data,
+      {
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
+    )
   },
 }
 

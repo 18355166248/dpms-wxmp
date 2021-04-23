@@ -141,6 +141,13 @@ httper.interceptors.request.use((request) => {
             'Content-Type': 'application/json; charset=utf-8',
             ...request.headers,
           }
+          //json拼接参数
+          request.url += '?'
+          Object.keys(omitUndefinedAndNullValue(defaultDatas)).forEach(
+            function (key) {
+              request.url += `${key}=${defaultDatas[key]}&`
+            },
+          )
         } else {
           request.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
