@@ -1,10 +1,19 @@
 <template>
   <scroll-view class="ach_doc">
+    <view style="height: 10vh; display: flex;">
+      <uni-calendar
+        ref="calendar"
+        :insert="false"
+        :range="true"
+        @confirm="confirm"
+      />
+      <button @click="open">打开日历</button>
+    </view>
     <dpmsTable
       firstLinefixed
       :contents="contents"
       :headers="headers"
-      height="100vh"
+      height="90vh"
     />
   </scroll-view>
 </template>
@@ -16,7 +25,6 @@ import billAPI from '@/APIS/bill/bill.api'
 export default {
   data() {
     return {
-      contents: [],
       headers: [
         {
           label: '机构',
@@ -75,9 +83,11 @@ export default {
           key: 'plannedRevenueAmount',
         },
       ],
+      contents: [],
       total: 0,
       current: 0,
       size: 20,
+      range: ['2020-10-1', '2021-4-1'],
     }
   },
   onLoad() {
@@ -124,6 +134,12 @@ export default {
       }
       this.total = total
       this.current = current
+    },
+    open() {
+      this.$refs.calendar.open()
+    },
+    confirm(e) {
+      console.log(e)
     },
   },
 }
