@@ -240,7 +240,8 @@
         {
           "path": "doctor",
           "style": {
-            "navigationBarTitleText": "医生业绩"
+            "navigationBarTitleText": "医生业绩",
+            "enablePullDownRefresh": true
           }
         }
       ]
