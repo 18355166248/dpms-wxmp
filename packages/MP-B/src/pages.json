@@ -263,9 +263,9 @@
       "name": "achievement",
       "pages": [
         {
-          "path": "doctor",
+          "path": "nurse",
           "style": {
-            "navigationBarTitleText": "医生业绩",
+            "navigationBarTitleText": "护士业绩",
             "enablePullDownRefresh": true
           }
         }

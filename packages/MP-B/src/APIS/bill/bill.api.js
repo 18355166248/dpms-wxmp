@@ -35,6 +35,10 @@ const billAPI = {
   paymentOrderList(data) {
     return httper.get('pay/pay-order/page-by-payer-id', data)
   },
+  //护士业绩
+  nurseList(data) {
+    return httper.get('billing/stat/nurse/performance/page', data)
+  },
 }
 
 export default billAPI

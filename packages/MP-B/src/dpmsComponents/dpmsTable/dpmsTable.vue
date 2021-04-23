@@ -4,7 +4,7 @@
       ref="table"
       :headers="headers"
       :contents="contents"
-      height="90vh"
+      :height="height"
       :url-col="urlCol"
       :first-line-fixed="firstLinefixed"
     />
@@ -25,49 +25,20 @@ export default {
       type: Array,
       required: true,
     },
+    headers: {
+      type: Array,
+      required: true,
+    },
+    height: {
+      type: String,
+      required: true,
+    },
   },
   components: {
     wybTable,
   },
   data() {
-    return {
-      headers: [
-        {
-          label: '姓名',
-          key: 'name',
-        },
-        {
-          label: '年龄',
-          key: 'age',
-        },
-        {
-          label: '学院',
-          key: 'collage',
-        },
-        {
-          label: '成绩',
-          key: 'score',
-        },
-        {
-          label: '路由',
-          key: 'url',
-        },
-        {
-          label: '网址',
-          key: 'link',
-        },
-      ],
-      urlCol: [
-        {
-          type: 'route',
-          key: 'url',
-        },
-        {
-          type: 'http',
-          key: 'link',
-        },
-      ],
-    }
+    return {}
   },
 }
 </script>
