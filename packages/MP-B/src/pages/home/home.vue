@@ -204,6 +204,7 @@ import dropDown from './dropDown.vue'
 
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { mapState } from 'vuex'
+import { setCustomOpenId } from '@/utils/utils'
 
 export default {
   components: {
@@ -261,7 +262,7 @@ export default {
   onLoad() {
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.init()
-
+    setCustomOpenId()
     uni.$on(globalEventKeys.newPatient, () => {
       this.init()
     })

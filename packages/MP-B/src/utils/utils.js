@@ -1,3 +1,6 @@
+import { getStorage, STORAGE_KEY } from './storage'
+import uma from 'umtrack-wx'
+
 /**
  * @desc 移除对象中有空值的属性 空值包含 undefined null
  * @param object
@@ -30,4 +33,23 @@ export function omitUndefinedAndNullValue(object) {
   })
 
   return definedMap
+}
+
+/**
+ * 自定义28位长度openid，4个固定字符+（机构号+员工号）+不定数量字符
+ */
+export function setCustomOpenId() {
+  const medicalInstitutionId = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+    ?.medicalInstitutionId
+  const staffId = getStorage(STORAGE_KEY.STAFF)?.staffId
+  if (medicalInstitutionId && staffId) {
+    let openid = `${medicalInstitutionId}${staffId}`
+    const prefix = 'DPMS' //不能修改
+    let suffix =
+      openid.length > 24
+        ? ''
+        : 'XNeUTeBcdWGMeHJGWEcGAMus'.substr(0, 24 - openid.length) //不能修改
+    openid = `${prefix}${openid}${suffix}`
+    uma.setOpenid(openid)
+  }
 }

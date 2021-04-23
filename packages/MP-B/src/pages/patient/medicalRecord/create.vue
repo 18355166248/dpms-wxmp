@@ -485,6 +485,15 @@ export default {
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
         this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
+        const { patientMainComplaintList } = this.registerList[0]
+        if (
+          Array.isArray(patientMainComplaintList) &&
+          patientMainComplaintList.length > 0
+        ) {
+          this.form.mainComplaint = patientMainComplaintList
+            .map((ele) => ele.content)
+            .join('，')
+        }
       } else {
         this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
       }
@@ -713,6 +722,17 @@ export default {
     'form.registerId'(newVal) {
       if (newVal) {
         this.form.medicalRecordRegisterVO.createRegister = false
+        this.form.mainComplaint = ''
+        this.registerList.forEach((ele) => {
+          if (ele.registerId === Number(newVal)) {
+            const { patientMainComplaintList } = ele
+            if (patientMainComplaintList.length > 0) {
+              this.form.mainComplaint = patientMainComplaintList
+                .map((ele) => ele.content)
+                .join('，')
+            }
+          }
+        })
       } else {
         this.form.medicalRecordRegisterVO.createRegister = true
       }

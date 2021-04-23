@@ -189,7 +189,6 @@ export default {
         })
     },
     toUrl(url) {
-      console.log(url)
       this.$utils.push({
         url,
       })

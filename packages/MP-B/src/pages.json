@@ -112,15 +112,34 @@
           }
         },
         {
+          "path": "searchPatient/searchCustomer",
+          "style": {
+            "navigationBarTitleText": "搜索客户"
+          }
+        },
+        {
           "path": "image/record",
           "style": {
             "navigationBarTitleText": "影像记录"
           }
         },
         {
+          "path": "image/preview",
+          "style": {
+            "navigationBarTitleText": "影像记录",
+            "backgroundColor": "#626262"
+          }
+        },
+        {
           "path": "image/upload",
           "style": {
             "navigationBarTitleText": "上传影像"
+          }
+        },
+        {
+          "path": "image/editRemark",
+          "style": {
+            "navigationBarTitleText": "修改备注"
           }
         },
         {
@@ -186,6 +205,12 @@
           "path": "apptItemList",
           "style": {
             "navigationBarTitleText": "预约项目"
+          }
+        },
+        {
+          "path": "mainComplaintList",
+          "style": {
+            "navigationBarTitleText": "主诉"
           }
         },
         {
