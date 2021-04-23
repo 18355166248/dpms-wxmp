@@ -32,7 +32,6 @@
             </view>
           </view>
         </fixed-filter>
-
         <view
           v-if="dataSourceStatus.request === 'success'"
           class="today-work-list"
@@ -422,7 +421,6 @@
               iconSize="20"
             ></load-more>
           </template>
-
           <template v-else>
             <empty :disabled="true" text="暂无今日就诊数据"></empty>
           </template>
@@ -442,7 +440,6 @@
             </fixed-footer>
           </view>
         </view>
-
         <view
           v-else-if="dataSourceStatus.request === 'error'"
           class="error-wrapper"
@@ -450,7 +447,6 @@
           <request-error @click="emitPullDownRefresh"></request-error>
         </view>
       </view>
-
       <view v-else class="h100">
         <empty :disabled="true"></empty>
       </view>
@@ -477,7 +473,6 @@ import { mapState } from 'vuex'
  * 由于3.4.9调整了权限控制，所有的角色权限通过统一的menu-all接口获取。
  *
  **/
-
 export default {
   data() {
     return {
@@ -806,8 +801,14 @@ export default {
       if (!this.selectedRole?.enumValue) {
         return uni.stopPullDownRefresh()
       }
+<<<<<<< HEAD
       this.dataSourceStatus.loading = true
       this.dataSourceStatus.status = 'loading'
+=======
+      if (this.selectedRole) {
+        this.dataSourceStatus.loading = true
+        this.dataSourceStatus.status = 'loading'
+>>>>>>> master
 
       const urlMap = {
         'switch-receptionist': 'getTodayReceptionistList',
