@@ -27,24 +27,16 @@
         </view>
       </view>
       <view class="uni-calendar__header" style="justify-content: flex-start;">
-        <view
-          @click="chooseDate('chooseCalendarOption', 'today')"
-          class="uni-calendar__option"
+        <view @click="chooseDate('today')" class="uni-calendar__option"
           >今天</view
         >
-        <view
-          class="uni-calendar__option"
-          @click="chooseDate('chooseCalendarOption', 'yesterday')"
+        <view class="uni-calendar__option" @click="chooseDate('yesterday')"
           >昨天</view
         >
-        <view
-          class="uni-calendar__option"
-          @click="chooseDate('chooseCalendarOption', 'thisMonth')"
+        <view class="uni-calendar__option" @click="chooseDate('thisMonth')"
           >本月</view
         >
-        <view
-          class="uni-calendar__option"
-          @click="chooseDate('chooseCalendarOption', 'lastMonth')"
+        <view class="uni-calendar__option" @click="chooseDate('lastMonth')"
           >上月</view
         >
       </view>
@@ -296,7 +288,8 @@ export default {
       })
     },
     chooseDate(name) {
-      this.$emit('chooseCalendarOption', name)
+      uni.$emit('chooseCalendarOption', name)
+      this.close()
     },
     /**
      * 派发事件

@@ -1,20 +1,39 @@
 <template>
-  <scroll-view class="ach_doc">
-    <view style="height: 6vh; display: flex;">
+  <scroll-view class="ach_nurse">
+    <view class="filter">
+      <view class="uni-list-cell">
+        <view @click="openCalendar" class="left"
+          >{{ dateFilterText }} <view class="iconfont icon-closed"></view>
+        </view>
+      </view>
+      <view class="uni-list-cell">
+        <view :class="['left', isFilter ? 'right' : '']"
+          >{{ isFilter ? '已按条件筛选' : '筛选'
+          }}<view class="iconfont icon-closed"></view
+        ></view>
+      </view>
+    </view>
+    <view class="content">
+      <dpmsTable
+        v-if="contents.length !== 0"
+        firstLinefixed
+        :contents="contents"
+        :headers="headers"
+        height="92vh"
+      />
+      <empty
+        :disabled="true"
+        img="../../static/empty.png"
+        text="暂无数据"
+        v-if="contents.length === 0"
+      />
       <uni-calendar
         ref="calendar"
         :insert="false"
         :range="true"
-        @confirm="confirm"
+        @confirm="confirmCalendar"
       />
-      <button @click="open">打开日历</button>
     </view>
-    <dpmsTable
-      firstLinefixed
-      :contents="contents"
-      :headers="headers"
-      height="94vh"
-    />
   </scroll-view>
 </template>
 
@@ -87,10 +106,56 @@ export default {
       total: 0,
       current: 0,
       size: 20,
+      beginTimeMillis: moment().startOf('day').format('x'),
+      endTimeMillis: moment().endOf('day').format('x'),
+      dateFilterText: '今天',
+      isFilter: false,
     }
   },
   onLoad() {
     this.init()
+    uni.$on('chooseCalendarOption', (name) => {
+      switch (name) {
+        case 'today':
+          this.beginTimeMillis = moment().startOf('day').format('x')
+          this.endTimeMillis = moment().endOf('day').format('x')
+          this.dateFilterText = '今天'
+          break
+        case 'yesterday':
+          this.beginTimeMillis = moment()
+            .subtract(1, 'day')
+            .startOf('day')
+            .format('x')
+          this.endTimeMillis = moment()
+            .subtract(1, 'day')
+            .endOf('day')
+            .format('x')
+          this.dateFilterText = '昨天'
+          break
+        case 'thisMonth':
+          this.beginTimeMillis = moment().startOf('month').format('x')
+          this.endTimeMillis = moment().endOf('month').format('x')
+          this.dateFilterText = '本月'
+          break
+        case 'lastMonth':
+          this.beginTimeMillis = moment()
+            .subtract(1, 'month')
+            .startOf('month')
+            .format('x')
+          this.endTimeMillis = moment()
+            .subtract(1, 'month')
+            .endOf('month')
+            .format('x')
+          this.dateFilterText = '上月'
+          break
+        default:
+          break
+      }
+      this.init()
+    })
+  },
+  onUnload() {
+    uni.$off('chooseCalendarOption')
   },
   onReachBottom() {
     if (this.contents.length > this.total) return
@@ -103,13 +168,17 @@ export default {
       this.getNurses()
     },
     async getNurses() {
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
       const {
         data: { total, current, records },
       } = await billAPI.nurseList({
         current: this.current,
         size: this.size,
-        beginTimeMillis: 1609430400000,
-        endTimeMillis: 1640966399999,
+        beginTimeMillis: this.beginTimeMillis,
+        endTimeMillis: this.endTimeMillis,
       })
       records.forEach((element) => {
         element.statDate = moment(element.statDate).format('YYYY-MM-DD')
@@ -134,19 +203,54 @@ export default {
       }
       this.total = total
       this.current = current
+      uni.hideLoading()
     },
-    open() {
+    openCalendar() {
       this.$refs.calendar.open()
     },
-    confirm(e) {
-      console.log(e)
+    confirmCalendar({ range, fulldate }) {
+      const { before, after, data } = range
+      if (data.length === 0) {
+        this.beginTimeMillis = moment(fulldate).startOf('day').format('x')
+        this.endTimeMillis = moment(fulldate).endOf('day').format('x')
+      } else {
+        this.beginTimeMillis = moment(before).format('x')
+        this.endTimeMillis = moment(after).endOf('day').format('x')
+      }
+      this.init()
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.ach_doc {
-  width: 100%;
+.ach_nurse {
+  background: rgba(0, 0, 0, 0.04);
+  .filter {
+    background: #ffffff;
+    height: 6vh;
+    display: flex;
+    margin-bottom: 2vh;
+    .uni-list-cell {
+      width: 50vw;
+      .left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+      .right {
+        color: #5cbb89;
+      }
+      .iconfont {
+        font-size: 24rpx;
+        margin-left: 20rpx;
+      }
+    }
+  }
+  .content {
+    background: #ffffff;
+    height: 92vh;
+  }
 }
 </style>
