@@ -28,23 +28,23 @@
       </view>
       <view class="uni-calendar__header" style="justify-content: flex-start;">
         <view
-          @click="backtoday"
-          style="padding-left: 32rpx; padding-right: 32rpx;"
+          @click="chooseDate('chooseCalendarOption', 'today')"
+          class="uni-calendar__option"
           >今天</view
         >
         <view
-          style="padding-left: 32rpx; padding-right: 32rpx;"
-          @click="backtoday"
+          class="uni-calendar__option"
+          @click="chooseDate('chooseCalendarOption', 'yesterday')"
           >昨天</view
         >
         <view
-          style="padding-left: 32rpx; padding-right: 32rpx;"
-          @click="backtoday"
+          class="uni-calendar__option"
+          @click="chooseDate('chooseCalendarOption', 'thisMonth')"
           >本月</view
         >
         <view
-          style="padding-left: 32rpx; padding-right: 32rpx;"
-          @click="backtoday"
+          class="uni-calendar__option"
+          @click="chooseDate('chooseCalendarOption', 'lastMonth')"
           >上月</view
         >
       </view>
@@ -65,6 +65,7 @@
         <view class="uni-calendar__header-btn-box" @click.stop="next">
           <view class="uni-calendar__header-btn uni-calendar--right"></view>
         </view>
+        <text class="uni-calendar__backtoday" @click="backtoday">回到今天</text>
       </view>
       <view class="uni-calendar__box">
         <view v-if="showMonth" class="uni-calendar__box-bg">
@@ -294,6 +295,9 @@ export default {
         month: Number(month),
       })
     },
+    chooseDate(name) {
+      this.$emit('chooseCalendarOption', name)
+    },
     /**
      * 派发事件
      * @param {Object} name
@@ -384,6 +388,11 @@ export default {
   /* #ifndef APP-NVUE */
   z-index: 99;
   /* #endif */
+}
+
+.uni-calendar__option {
+  padding-left: 32rpx;
+  padding-right: 32rpx;
 }
 
 .uni-calendar--mask-show {

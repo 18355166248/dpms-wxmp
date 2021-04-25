@@ -176,11 +176,11 @@ $uni-color-primary: #ceeadb;
 }
 
 .uni-calendar-item--isDay-text {
-  color: $uni-color-primary;
+  color: #333;
 }
 
 .uni-calendar-item--isDay {
-  background-color: $uni-color-primary;
+  // background-color: $uni-color-primary;
   color: #333;
 }
 
