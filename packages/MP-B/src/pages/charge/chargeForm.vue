@@ -12,23 +12,24 @@
       lineScale="0.2"
       @change="changeTab"
     />
-
+    <charge v-if="currentTab === 0" class="charge" />
     <pending
-      v-if="currentTab === 0"
-      :patientId="patientId"
-      :customerId="customerId"
-    />
-    <charged
       v-if="currentTab === 1"
       :patientId="patientId"
       :customerId="customerId"
     />
-    <payment v-if="currentTab === 2" :patientId="patientId" />
+    <charged
+      v-if="currentTab === 2"
+      :patientId="patientId"
+      :customerId="customerId"
+    />
+    <payment v-if="currentTab === 3" :patientId="patientId" />
   </view>
 </template>
 
 <script>
 import tabs from '@/components/tabs/tabs.vue'
+import charge from './charge'
 import pending from './pending'
 import charged from './charged'
 import payment from './payment'
@@ -37,6 +38,7 @@ import institutionAPI from 'APIS/institution/institution.api'
 export default {
   components: {
     tabs,
+    charge,
     pending,
     charged,
     payment,
@@ -44,9 +46,10 @@ export default {
   data() {
     return {
       tabs: [
-        { name: '待处理账单', val: 0 },
-        { name: '已收费账单', val: 1 },
-        { name: '支付记录', val: 2 },
+        { name: '收费', val: 0 },
+        { name: '待处理账单', val: 1 },
+        { name: '已收费账单', val: 2 },
+        { name: '支付记录', val: 3 },
       ],
       currentTab: 0,
       touchStartX: 0, // 触屏起始点x
@@ -62,12 +65,15 @@ export default {
   },
   onReachBottom() {
     if (this.currentTab === 0) {
-      return uni.$emit('refreshPending')
+      return uni.$emit('refreshCharge')
     }
     if (this.currentTab === 1) {
-      return uni.$emit('refreshCharged')
+      return uni.$emit('refreshPending')
     }
     if (this.currentTab === 2) {
+      return uni.$emit('refreshCharged')
+    }
+    if (this.currentTab === 3) {
       return uni.$emit('refreshPayment')
     }
   },
@@ -123,5 +129,12 @@ export default {
 .chargeForm {
   background: rgba(0, 0, 0, 0.04);
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  .charge {
+    display: flex;
+    flex-grow: 2;
+  }
 }
 </style>
