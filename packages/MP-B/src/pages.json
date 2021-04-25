@@ -269,6 +269,24 @@
           }
         },
         {
+          "path": "selectChargeProjects",
+          "style": {
+            "navigationBarTitleText": "选择收费项目"
+          }
+        },
+        {
+          "path": "overdueCharge",
+          "style": {
+            "navigationBarTitleText": "收欠费"
+          }
+        },
+        {
+          "path": "checkstand",
+          "style": {
+            "navigationBarTitleText": "收银台"
+          }
+        },
+        {
           "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"
