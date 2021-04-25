@@ -259,6 +259,19 @@
       ]
     },
     {
+      "root": "pages/achievement",
+      "name": "achievement",
+      "pages": [
+        {
+          "path": "nurse",
+          "style": {
+            "navigationBarTitleText": "护士业绩",
+            "enablePullDownRefresh": true
+          }
+        }
+      ]
+    },
+    {
       "root": "pages/charge",
       "name": "charge",
       "pages": [
