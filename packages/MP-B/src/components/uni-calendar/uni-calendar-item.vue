@@ -126,6 +126,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+$uni-color-primary: #ceeadb;
+
 .uni-calendar-item__weeks-box {
   flex: 1;
   /* #ifndef APP-NVUE */
@@ -179,8 +181,7 @@ export default {
 
 .uni-calendar-item--isDay {
   background-color: $uni-color-primary;
-  opacity: 0.8;
-  color: #fff;
+  color: #333;
 }
 
 .uni-calendar-item--extra {
@@ -190,21 +191,19 @@ export default {
 
 .uni-calendar-item--checked {
   background-color: $uni-color-primary;
-  color: #fff;
-  opacity: 0.8;
+  color: #333;
 }
 
 .uni-calendar-item--multiple {
   background-color: $uni-color-primary;
-  color: #fff;
-  opacity: 0.8;
+  color: #333;
 }
 .uni-calendar-item--before-checked {
-  background-color: #ff5a5f;
-  color: #fff;
+  background-color: #5cbb89;
+  color: #333;
 }
 .uni-calendar-item--after-checked {
-  background-color: #ff5a5f;
-  color: #fff;
+  background-color: #5cbb89;
+  color: #333;
 }
 </style>

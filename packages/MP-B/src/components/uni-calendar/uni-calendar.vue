@@ -26,7 +26,29 @@
           >
         </view>
       </view>
-      <view class="uni-calendar__header">
+      <view class="uni-calendar__header" style="justify-content: flex-start;">
+        <view
+          @click="backtoday"
+          style="padding-left: 32rpx; padding-right: 32rpx;"
+          >今天</view
+        >
+        <view
+          style="padding-left: 32rpx; padding-right: 32rpx;"
+          @click="backtoday"
+          >昨天</view
+        >
+        <view
+          style="padding-left: 32rpx; padding-right: 32rpx;"
+          @click="backtoday"
+          >本月</view
+        >
+        <view
+          style="padding-left: 32rpx; padding-right: 32rpx;"
+          @click="backtoday"
+          >上月</view
+        >
+      </view>
+      <view class="uni-calendar__header" style="border: 0;">
         <view class="uni-calendar__header-btn-box" @click.stop="pre">
           <view class="uni-calendar__header-btn uni-calendar--left"></view>
         </view>
@@ -43,7 +65,6 @@
         <view class="uni-calendar__header-btn-box" @click.stop="next">
           <view class="uni-calendar__header-btn uni-calendar--right"></view>
         </view>
-        <text class="uni-calendar__backtoday" @click="backtoday">回到今天</text>
       </view>
       <view class="uni-calendar__box">
         <view v-if="showMonth" class="uni-calendar__box-bg">

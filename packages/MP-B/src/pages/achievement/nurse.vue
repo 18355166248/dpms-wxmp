@@ -1,6 +1,6 @@
 <template>
   <scroll-view class="ach_doc">
-    <view style="height: 10vh; display: flex;">
+    <view style="height: 6vh; display: flex;">
       <uni-calendar
         ref="calendar"
         :insert="false"
@@ -13,7 +13,7 @@
       firstLinefixed
       :contents="contents"
       :headers="headers"
-      height="90vh"
+      height="94vh"
     />
   </scroll-view>
 </template>
@@ -27,16 +27,16 @@ export default {
     return {
       headers: [
         {
+          label: '护士',
+          key: 'nurseName',
+        },
+        {
           label: '机构',
           key: 'medicalInstitutionName',
         },
         {
           label: '日期',
           key: 'statDate',
-        },
-        {
-          label: '护士',
-          key: 'nurseName',
         },
         {
           label: '收费大类',
@@ -87,13 +87,13 @@ export default {
       total: 0,
       current: 0,
       size: 20,
-      range: ['2020-10-1', '2021-4-1'],
     }
   },
   onLoad() {
     this.init()
   },
   onReachBottom() {
+    if (this.contents.length > this.total) return
     this.current += 1
     this.getNurses()
   },

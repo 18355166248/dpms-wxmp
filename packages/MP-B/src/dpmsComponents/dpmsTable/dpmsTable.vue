@@ -5,8 +5,8 @@
       :headers="headers"
       :contents="contents"
       :height="height"
-      :url-col="urlCol"
       :first-line-fixed="firstLinefixed"
+      firstColBgColor="#ffffff"
     />
   </scroll-view>
 </template>
@@ -43,7 +43,9 @@ export default {
 }
 </script>
 
+//
 <style lang="scss">
-.dpmsTable {
-}
+// .dpmsTable {
+// }
+//
 </style>
