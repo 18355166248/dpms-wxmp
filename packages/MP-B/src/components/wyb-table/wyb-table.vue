@@ -334,6 +334,13 @@
 import Pinyin from './js/characterToPinyin.js'
 import { isEqual } from './js/objEqual.js'
 export default {
+  onReachBottom() {
+    console.log(this.contents, 'onReachBottom')
+    // if (this.contents.length < this.total) {
+    //   this.current += 1
+    //   this.getNurses()
+    // }
+  },
   data() {
     return {
       bottomComputed: [],
@@ -1224,87 +1231,90 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 @import './css/iconfont.css';
 @import './css/loader.css';
-.ios-header-bug {
-  height: 0;
-  width: 1px;
-  opacity: 0;
-}
 
-.wyb-table-scroll-view {
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-}
+.wyb-table-box {
+  .ios-header-bug {
+    height: 0;
+    width: 1px;
+    opacity: 0;
+  }
 
-.wyb-table-scroll-view::-webkit-scrollbar {
-  display: none;
-  /* #ifdef MP-WEIXIN */
-  width: 0;
-  height: 0;
-  /* #endif */
-}
+  .wyb-table-scroll-view {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
 
-.wyb-table-loading-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 500;
-}
+  .wyb-table-scroll-view::-webkit-scrollbar {
+    display: none;
+    /* #ifdef MP-WEIXIN */
+    width: 0;
+    height: 0;
+    /* #endif */
+  }
 
-.wyb-table-header {
-  position: sticky;
-  top: 0;
-  display: grid;
-  grid-auto-flow: column;
-  width: max-content;
-  z-index: 25;
-}
+  .wyb-table-loading-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+  }
 
-.wyb-table-header-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  position: relative;
-}
+  .wyb-table-header {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-auto-flow: column;
+    width: max-content;
+    z-index: 25;
+  }
 
-.wyb-table-header-icon {
-  display: flex;
-  flex-direction: column;
-}
+  .wyb-table-header-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+  }
 
-.wyb-table-content-line {
-  display: grid;
-  grid-auto-flow: column;
-  width: max-content;
-  position: relative;
-}
+  .wyb-table-header-icon {
+    display: flex;
+    flex-direction: column;
+  }
 
-.wyb-table-content-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-sizing: border-box;
-}
+  .wyb-table-content-line {
+    display: grid;
+    grid-auto-flow: column;
+    width: max-content;
+    position: relative;
+  }
 
-.wyb-table-checkbox {
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+  .wyb-table-content-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+  }
 
-.icon-check {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  border-radius: 0;
-  border-radius: 3px;
-  font-weight: bold;
-  box-sizing: border-box;
-  transform: scale(1.1);
+  .wyb-table-checkbox {
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .icon-check {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 0;
+    border-radius: 3px;
+    font-weight: bold;
+    box-sizing: border-box;
+    transform: scale(1.1);
+  }
 }
 </style>
