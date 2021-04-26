@@ -12,8 +12,7 @@
 <script>
 export default {
   name: 'chargestandTitle',
-
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -26,12 +25,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   background: #eef8f3;
-  .content, .extra {
+  .content,
+  .extra {
     font-size: 30rpx;
-    color: #5CBB89;
+    color: #5cbb89;
   }
   .content {
-    width:560rpx;
+    width: 560rpx;
   }
 }
 </style>

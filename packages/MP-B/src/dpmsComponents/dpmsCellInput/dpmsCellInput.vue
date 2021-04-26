@@ -1,5 +1,10 @@
 <template>
-  <dpmsCell :title="title" :required="required" :isLink="isLink" :hideBorderBottom="hideBorderBottom">
+  <dpmsCell
+    :title="title"
+    :required="required"
+    :isLink="isLink"
+    :hideBorderBottom="hideBorderBottom"
+  >
     <input
       :type="type"
       :value="value"
@@ -43,8 +48,8 @@ export default {
     },
     hideBorderBottom: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   methods: {
     onChange(e) {

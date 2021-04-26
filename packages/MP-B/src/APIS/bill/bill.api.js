@@ -43,6 +43,10 @@ const billAPI = {
   chargeTypeParentList(data) {
     return httper.get('billing/settings/charge-type/select-parent', data)
   },
+  //收费项目
+  getChargeTypes(data) {
+    return httper.get('billing/settings/charge-type/list', data)
+  },
 }
 
 export default billAPI

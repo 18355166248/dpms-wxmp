@@ -27,13 +27,14 @@ button::after {
 }
 /*********在线字体代码start*********/
 @font-face {
-  font-family: 'iconfont';  /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_thqzmfkhup.eot');
-  src: url('//at.alicdn.com/t/font_1965288_thqzmfkhup.eot?#iefix') format('embedded-opentype'),
-  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.woff2') format('woff2'),
-  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.woff') format('woff'),
-  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.ttf') format('truetype'),
-  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.svg#iconfont') format('svg');
+  font-family: 'iconfont'; /* project id 1965288 */
+  src: url('//at.alicdn.com/t/font_1965288_pelbtgy2h8.eot');
+  src: url('//at.alicdn.com/t/font_1965288_pelbtgy2h8.eot?#iefix')
+      format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_1965288_pelbtgy2h8.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_pelbtgy2h8.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1965288_pelbtgy2h8.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1965288_pelbtgy2h8.svg#iconfont') format('svg');
 }
 
 /*********在线字体代码end*********/
@@ -191,15 +192,33 @@ button::after {
   content: '\e611';
 }
 .icon-savings:before {
-  content: "\e657";
+  content: '\e657';
 }
-.icon-customer-management:before{
-  content: "\e636";
+.icon-customer-management:before {
+  content: '\e636';
 }
 .icon-detail:before {
-  content: "\e793";
+  content: '\e793';
 }
 
+.iconconsumption-profile:before {
+  content: '\e60d';
+}
+.icondiagnosis-treatment:before {
+  content: '\e60c';
+}
+.iconconsumption-profile:before {
+  content: '\e60d';
+}
+.iconsearch:before {
+  content: '\e8ef';
+}
+.iconup1:before {
+  content: '\e68a';
+}
+.icondown1:before {
+  content: '\e684';
+}
 /* iconfont图标 end */
 </style>
 

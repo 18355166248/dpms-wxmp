@@ -79,7 +79,7 @@ export default {
   width: 100%;
   padding: 35rpx 32rpx;
   overflow: hidden;
-  color: #4C4C4C;
+  color: #4c4c4c;
   font-size: 30rpx;
   background-color: #fff;
   &.wrap {
