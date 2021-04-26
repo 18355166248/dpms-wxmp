@@ -144,7 +144,7 @@ export default {
     padding: 32rpx 0;
     background: #feffff;
     border-radius: 8rpx;
-    box-shadow: 0rpx 0 rpx 20 rpx 0 rpx rgba(0, 0, 0, 0.06);
+    box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.06);
     margin-bottom: 24rpx;
 
     .dashed {

@@ -53,8 +53,8 @@ export default {
   width: 100%;
 }
 .iconfont {
-  width: 28 rpx;
-  height: 28 rpx;
+  width: 28rpx;
+  height: 28rpx;
   margin-right: 20rpx;
 }
 </style>
