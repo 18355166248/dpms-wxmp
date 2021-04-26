@@ -259,6 +259,42 @@
       ]
     },
     {
+      "root": "pages/achievement",
+      "name": "nurse",
+      "pages": [
+        {
+          "path": "nurse",
+          "style": {
+            "navigationBarTitleText": "护士业绩"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "filter",
+      "pages": [
+        {
+          "path": "filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "projectList",
+      "pages": [
+        {
+          "path": "projectList",
+          "style": {
+            "navigationBarTitleText": "选择项目"
+          }
+        }
+      ]
+    },
+    {
       "root": "pages/charge",
       "name": "charge",
       "pages": [

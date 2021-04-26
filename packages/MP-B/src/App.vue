@@ -188,6 +188,19 @@ button::after {
 .icon-edit:before {
   content: '\e7e1';
 }
+.icon-filter:before {
+  content: '\e611';
+}
+.icon-savings:before {
+  content: '\e657';
+}
+.icon-customer-management:before {
+  content: '\e636';
+}
+.icon-detail:before {
+  content: '\e793';
+}
+
 .iconconsumption-profile:before {
   content: '\e60d';
 }

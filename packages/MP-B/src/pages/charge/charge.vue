@@ -57,7 +57,7 @@ import chargeButton from './common/chargeButton'
 import actionSheet from './common/actionSheet'
 
 export default {
-  name: '',
+  name: 'charge',
   data() {
     return {
       icon0: {

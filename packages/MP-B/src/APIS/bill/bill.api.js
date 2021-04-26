@@ -35,6 +35,14 @@ const billAPI = {
   paymentOrderList(data) {
     return httper.get('pay/pay-order/page-by-payer-id', data)
   },
+  //护士业绩
+  nurseList(data) {
+    return httper.get('billing/stat/nurse/performance/page', data)
+  },
+  //项目列表
+  chargeTypeParentList(data) {
+    return httper.get('billing/settings/charge-type/select-parent', data)
+  },
   //收费项目
   getChargeTypes(data) {
     return httper.get('billing/settings/charge-type/list', data)

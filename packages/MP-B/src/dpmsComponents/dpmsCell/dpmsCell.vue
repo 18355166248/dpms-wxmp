@@ -79,8 +79,8 @@ export default {
   width: 100%;
   padding: 35rpx 32rpx;
   overflow: hidden;
-  color: #323233;
-  font-size: 34rpx;
+  color: #4c4c4c;
+  font-size: 30rpx;
   background-color: #fff;
   &.wrap {
     flex-wrap: wrap;
@@ -133,7 +133,7 @@ export default {
     right: 0;
     bottom: 0;
     left: 16px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid #e5e5e5;
     transform: scaleY(0.5);
   }
   &.hideBorder:after {
