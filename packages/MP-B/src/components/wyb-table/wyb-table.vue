@@ -325,6 +325,18 @@
             {{ autoBottomComputedItem(index) }}
           </view>
         </view>
+        <view
+          @click="emitPage"
+          :class="['pager', isPhoneXCeil ? 'mb-68' : '']"
+          >{{
+            dataSourceStatus === 'more'
+              ? '点击加载更多'
+              : dataSourceStatus === 'loading'
+              ? '加载中...'
+              : '没有更多了'
+          }}</view
+        >
+        <view class="bottomSpace" v-if="isPhoneXCeil"></view>
       </view>
     </view>
   </view>
@@ -333,9 +345,11 @@
 <script>
 import Pinyin from './js/characterToPinyin.js'
 import { isEqual } from './js/objEqual.js'
+import { mapState } from 'vuex'
+
 export default {
   onReachBottom() {
-    console.log(this.contents, 'onReachBottom')
+    console.log('onReachBottom')
     // if (this.contents.length < this.total) {
     //   this.current += 1
     //   this.getNurses()
@@ -363,6 +377,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('systemStore', ['isPhoneXCeil']),
     loadingColor() {
       let color = this.loaderColor.slice()
       let rgbList = this.hexToRgb(color)
@@ -848,6 +863,10 @@ export default {
       type: String,
       default: '#f1f1f1',
     },
+    dataSourceStatus: {
+      type: String,
+      default: 'loading',
+    },
   },
   watch: {
     headers(val) {
@@ -881,6 +900,9 @@ export default {
     }
   },
   methods: {
+    emitPage() {
+      uni.$emit('emitPage')
+    },
     doSort(key, type, isNumber) {
       let arr = this.contentsSort
       if (type === 'asc') {
@@ -1315,6 +1337,18 @@ export default {
     font-weight: bold;
     box-sizing: border-box;
     transform: scale(1.1);
+  }
+
+  .pager {
+    color: #3e3e3e;
+    text-align: center;
+    font-size: 32rpx;
+    line-height: 72rpx;
+    margin-top: 10rpx;
+  }
+
+  .mb-68 {
+    margin-bottom: 68rpx;
   }
 }
 </style>

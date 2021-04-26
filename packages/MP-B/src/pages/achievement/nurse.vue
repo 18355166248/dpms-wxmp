@@ -23,28 +23,11 @@
       v-if="contents.length !== 0"
       :headers="headers"
       :contents="contents"
-      height="88vh"
+      height="93.5vh"
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
+      :dataSourceStatus="dataSourceStatus"
     />
-    <view
-      @click="emitPage"
-      v-if="contents.length !== 0"
-      style="
-        color: #3e3e3e;
-        height: 5.5vh;
-        text-align: center;
-        font-size: 32rpx;
-        line-height: 72rpx;
-      "
-      >{{
-        dataSourceStatus === 'more'
-          ? '点击加载更多'
-          : dataSourceStatus === 'loading'
-          ? '加载中...'
-          : '没有更多了'
-      }}</view
-    >
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
     </view>
@@ -123,7 +106,7 @@ export default {
       contents: [],
       total: 0,
       current: 0,
-      size: 10,
+      size: 4,
       beginTimeMillis: moment().startOf('day').format('x'),
       endTimeMillis: moment().endOf('day').format('x'),
       dateFilterText: '今天',
@@ -172,10 +155,18 @@ export default {
       }
       this.init()
     })
+    uni.$on('emitPage', () => {
+      if (this.contents.length < this.total) {
+        this.current += 1
+        this.getNurses()
+      }
+    })
   },
   onUnload() {
     uni.$off('chooseCalendarOption')
+    uni.$off('emitPage')
   },
+  //双重scroll-view触发不灵敏
   // onReachBottom() {
   //   console.log(this.contents.length, this.total, 'onReachBottom')
   //   if (this.contents.length < this.total) {
