@@ -112,7 +112,11 @@ export default {
       })
     },
     //收欠费
-    overdueCharge() {},
+    overdueCharge() {
+      uni.navigateTo({
+        url: '/pages/charge/overdueCharge',
+      })
+    },
   },
   watch: {
     watchData: {

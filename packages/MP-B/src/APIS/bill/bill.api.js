@@ -47,6 +47,10 @@ const billAPI = {
   getChargeTypes(data) {
     return httper.get('billing/settings/charge-type/list', data)
   },
+  //支付方式
+  getPayTypes(data) {
+    return httper.get('pay/settings/pay-transaction-channel/list', data)
+  },
 }
 
 export default billAPI
