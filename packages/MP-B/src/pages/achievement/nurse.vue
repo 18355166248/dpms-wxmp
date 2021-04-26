@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="ach_nurse">
+  <view class="ach_nurse">
     <view class="filter">
       <view class="uni-list-cell">
         <view @click="openCalendar" class="left"
@@ -9,24 +9,9 @@
       <view class="uni-list-cell">
         <view :class="['left', isFilter ? 'right' : '']"
           >{{ isFilter ? '已按条件筛选' : '筛选'
-          }}<view class="iconfont icon-closed"></view
+          }}<view class="iconfont icon-filter"></view
         ></view>
       </view>
-    </view>
-    <view class="content">
-      <dpmsTable
-        v-if="contents.length !== 0"
-        firstLinefixed
-        :contents="contents"
-        :headers="headers"
-        height="92vh"
-      />
-      <empty
-        :disabled="true"
-        img="../../static/empty.png"
-        text="暂无数据"
-        v-if="contents.length === 0"
-      />
       <uni-calendar
         ref="calendar"
         :insert="false"
@@ -34,14 +19,33 @@
         @confirm="confirmCalendar"
       />
     </view>
-  </scroll-view>
+    <wyb-table
+      v-if="contents.length !== 0"
+      :headers="headers"
+      :contents="contents"
+      height="93.5vh"
+      :first-line-fixed="true"
+      firstColBgColor="#ffffff"
+      :dataSourceStatus="dataSourceStatus"
+      :bottom-computed-fixed="true"
+      :computed-col="computedCol"
+      :summary="summary"
+    />
+    <view class="content" v-if="contents.length === 0">
+      <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
+    </view>
+  </view>
 </template>
 
 <script>
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
+import wybTable from '@/components/wyb-table/wyb-table.vue'
 
 export default {
+  components: {
+    wybTable,
+  },
   data() {
     return {
       headers: [
@@ -102,14 +106,26 @@ export default {
           key: 'plannedRevenueAmount',
         },
       ],
+      computedCol: [
+        'receivableAmount',
+        'refundAmount',
+        'cashAmount',
+        'virtualAmount',
+        'deductionOfAdvanceAmount',
+        'revenueAmount',
+        'paymentAmount',
+        'plannedRevenueAmount',
+      ],
       contents: [],
       total: 0,
       current: 0,
-      size: 20,
+      size: 10,
       beginTimeMillis: moment().startOf('day').format('x'),
       endTimeMillis: moment().endOf('day').format('x'),
       dateFilterText: '今天',
       isFilter: false,
+      dataSourceStatus: 'loading',
+      summary: {},
     }
   },
   onLoad() {
@@ -153,15 +169,25 @@ export default {
       }
       this.init()
     })
+    uni.$on('emitPage', () => {
+      if (this.contents.length < this.total) {
+        this.current += 1
+        this.getNurses()
+      }
+    })
   },
   onUnload() {
     uni.$off('chooseCalendarOption')
+    uni.$off('emitPage')
   },
-  onReachBottom() {
-    if (this.contents.length > this.total) return
-    this.current += 1
-    this.getNurses()
-  },
+  //双重scroll-view触发不灵敏
+  // onReachBottom() {
+  //   console.log(this.contents.length, this.total, 'onReachBottom')
+  //   if (this.contents.length < this.total) {
+  //     this.current += 1
+  //     this.getNurses()
+  //   }
+  // },
   methods: {
     init() {
       this.current = 1
@@ -172,8 +198,9 @@ export default {
         title: '数据加载中',
         mask: true,
       })
+      this.dataSourceStatus = 'loading'
       const {
-        data: { total, current, records },
+        data: { total, current, records, summary },
       } = await billAPI.nurseList({
         current: this.current,
         size: this.size,
@@ -203,6 +230,12 @@ export default {
       }
       this.total = total
       this.current = current
+      if (total === this.contents.length) {
+        this.dataSourceStatus = 'noMore'
+      } else {
+        this.dataSourceStatus = 'more'
+      }
+      this.summary = summary || {}
       uni.hideLoading()
     },
     openCalendar() {
@@ -217,7 +250,14 @@ export default {
         this.beginTimeMillis = moment(before).format('x')
         this.endTimeMillis = moment(after).endOf('day').format('x')
       }
+      this.dateFilterText = '自定义'
       this.init()
+    },
+    emitPage() {
+      if (this.contents.length < this.total) {
+        this.current += 1
+        this.getNurses()
+      }
     },
   },
 }
@@ -228,9 +268,8 @@ export default {
   background: rgba(0, 0, 0, 0.04);
   .filter {
     background: #ffffff;
-    height: 6vh;
+    height: 6.5vh;
     display: flex;
-    margin-bottom: 2vh;
     .uni-list-cell {
       width: 50vw;
       .left {
@@ -249,6 +288,7 @@ export default {
     }
   }
   .content {
+    margin-top: 1.5vh;
     background: #ffffff;
     height: 92vh;
   }

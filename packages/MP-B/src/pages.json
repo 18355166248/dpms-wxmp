@@ -261,12 +261,12 @@
     {
       "root": "pages/achievement",
       "name": "achievement",
+      "onReachBottomDistance": 50,
       "pages": [
         {
           "path": "nurse",
           "style": {
-            "navigationBarTitleText": "护士业绩",
-            "enablePullDownRefresh": true
+            "navigationBarTitleText": "护士业绩"
           }
         }
       ]
