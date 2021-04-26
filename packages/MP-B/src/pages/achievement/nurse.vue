@@ -7,7 +7,9 @@
         </view>
       </view>
       <view class="uni-list-cell">
-        <view :class="['left', isFilter ? 'right' : '']"
+        <view
+          :class="['left', isFilter ? 'right' : '']"
+          @click.native="onFilterClick"
           >{{ isFilter ? '已按条件筛选' : '筛选'
           }}<view class="iconfont icon-filter"></view
         ></view>
@@ -41,6 +43,7 @@
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import wybTable from '@/components/wyb-table/wyb-table.vue'
+import institutionAPI from 'APIS/institution/institution.api'
 
 export default {
   components: {
@@ -126,6 +129,9 @@ export default {
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
+      nurseIds: '',
+      parentChargeTypeIds: '',
+      chargeTypeName: '',
     }
   },
   onLoad() {
@@ -175,10 +181,20 @@ export default {
         this.getNurses()
       }
     })
+    uni.$on('achFilter', ({ staffId, chargeTypeIds, chargeTypeName }) => {
+      this.nurseIds = staffId
+      this.parentChargeTypeIds = chargeTypeIds
+      this.chargeTypeName = chargeTypeName
+      this.init()
+
+      if (staffId || chargeTypeIds) this.isFilter = true
+      else this.isFilter = false
+    })
   },
   onUnload() {
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
+    uni.$off('achFilter')
   },
   //双重scroll-view触发不灵敏
   // onReachBottom() {
@@ -190,8 +206,25 @@ export default {
   // },
   methods: {
     init() {
+      this.getStaff()
+      this.getProject()
       this.current = 1
       this.getNurses()
+    },
+    async getStaff() {
+      const {
+        data,
+      } = await institutionAPI.getStaffListByPositionFromAllInstitution({
+        workStatus:
+          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+            ?.value || 1,
+        position: this.$utils.getEnums('StaffPosition')?.NURSE?.value || 6,
+      })
+      uni.setStorageSync('allNurseList', data)
+    },
+    async getProject() {
+      const { data } = await billAPI.chargeTypeParentList()
+      uni.setStorageSync('allProjectList', data)
     },
     async getNurses() {
       uni.showLoading({
@@ -206,6 +239,8 @@ export default {
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
+        nurseIds: this.nurseIds,
+        parentChargeTypeIds: this.parentChargeTypeIds,
       })
       records.forEach((element) => {
         element.statDate = moment(element.statDate).format('YYYY-MM-DD')
@@ -237,6 +272,11 @@ export default {
       }
       this.summary = summary || {}
       uni.hideLoading()
+    },
+    onFilterClick() {
+      this.$utils.push({
+        url: `/pages/achievement/filter?name=nurse&staffId=${this.nurseIds}&chargeTypeIds=${this.parentChargeTypeIds}&chargeTypeName=${this.chargeTypeName}`,
+      })
     },
     openCalendar() {
       this.$refs.calendar.open()
