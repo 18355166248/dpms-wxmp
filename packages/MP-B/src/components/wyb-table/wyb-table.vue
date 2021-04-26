@@ -168,6 +168,73 @@
       </view>
       <view class="wyb-table-content">
         <view
+          v-if="computedCol.length !== 0"
+          class="wyb-table-content-line"
+          :style="{
+            position: bottomComputedFixed ? 'sticky' : 'static',
+            bottom: 0,
+            zIndex: 25,
+            borderTop: '1px solid' + borderColor,
+          }"
+        >
+          <view
+            class="wyb-table-content-item"
+            v-if="enableCheck"
+            :style="{
+              minWidth: checkColWidth + 'rpx',
+              maxWidth: checkColWidth + 'rpx',
+              textAlign: textAlign,
+              justifyContent:
+                textAlign === 'center'
+                  ? textAlign
+                  : textAlign === 'left'
+                  ? 'flex-start'
+                  : 'flex-end',
+              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
+              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
+              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
+              borderBottom: '1px solid' + borderColor,
+              borderRight: '1px solid' + borderColor,
+              zIndex: 25,
+              color: contentFtColor,
+              backgroundColor: checkerCellBgColor,
+              left: 0,
+              position: 'sticky',
+            }"
+          ></view>
+          <view
+            class="wyb-table-content-item"
+            v-for="(header, index) in headers"
+            :key="index"
+            :style="{
+              minWidth: (header.width || defaultColWidth) + 'rpx',
+              maxWidth: (header.width || defaultColWidth) + 'rpx',
+              textAlign: textAlign,
+              justifyContent:
+                textAlign === 'center'
+                  ? textAlign
+                  : textAlign === 'left'
+                  ? 'flex-start'
+                  : 'flex-end',
+              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
+              color: contentFtColor,
+              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
+              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
+              backgroundColor: index === 0 ? firstColBgColor : contentBgColor,
+              borderBottom: '1px solid' + borderColor,
+              borderRight:
+                index === headers.length - 1 || (!showVertBorder && index !== 0)
+                  ? 'none'
+                  : '1px solid' + borderColor,
+              zIndex: index === 0 ? 20 : 0,
+              left: enableCheck ? checkColWidth + 'rpx' : 0,
+              position: index === 0 && firstLineFixed ? 'sticky' : 'static',
+            }"
+          >
+            {{ autoBottomComputedItem(index) }}
+          </view>
+        </view>
+        <view
           class="wyb-table-content-line"
           v-for="(content, cIndex) in contentsSort"
           :key="contentLineKey(content, cIndex)"
@@ -259,73 +326,6 @@
           >
         </view>
         <view
-          v-if="computedCol.length !== 0"
-          class="wyb-table-content-line"
-          :style="{
-            position: bottomComputedFixed ? 'sticky' : 'static',
-            bottom: 0,
-            zIndex: 25,
-            borderTop: '1px solid' + borderColor,
-          }"
-        >
-          <view
-            class="wyb-table-content-item"
-            v-if="enableCheck"
-            :style="{
-              minWidth: checkColWidth + 'rpx',
-              maxWidth: checkColWidth + 'rpx',
-              textAlign: textAlign,
-              justifyContent:
-                textAlign === 'center'
-                  ? textAlign
-                  : textAlign === 'left'
-                  ? 'flex-start'
-                  : 'flex-end',
-              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
-              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
-              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
-              borderBottom: '1px solid' + borderColor,
-              borderRight: '1px solid' + borderColor,
-              zIndex: 25,
-              color: contentFtColor,
-              backgroundColor: checkerCellBgColor,
-              left: 0,
-              position: 'sticky',
-            }"
-          ></view>
-          <view
-            class="wyb-table-content-item"
-            v-for="(header, index) in headers"
-            :key="index"
-            :style="{
-              minWidth: (header.width || defaultColWidth) + 'rpx',
-              maxWidth: (header.width || defaultColWidth) + 'rpx',
-              textAlign: textAlign,
-              justifyContent:
-                textAlign === 'center'
-                  ? textAlign
-                  : textAlign === 'left'
-                  ? 'flex-start'
-                  : 'flex-end',
-              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
-              color: contentFtColor,
-              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
-              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
-              backgroundColor: index === 0 ? firstColBgColor : contentBgColor,
-              borderBottom: '1px solid' + borderColor,
-              borderRight:
-                index === headers.length - 1 || (!showVertBorder && index !== 0)
-                  ? 'none'
-                  : '1px solid' + borderColor,
-              zIndex: index === 0 ? 20 : 0,
-              left: enableCheck ? checkColWidth + 'rpx' : 0,
-              position: index === 0 && firstLineFixed ? 'sticky' : 'static',
-            }"
-          >
-            {{ autoBottomComputedItem(index) }}
-          </view>
-        </view>
-        <view
           @click="emitPage"
           :class="['pager', isPhoneXCeil ? 'mb-68' : '']"
           >{{
@@ -336,7 +336,6 @@
               : '没有更多了'
           }}</view
         >
-        <view class="bottomSpace" v-if="isPhoneXCeil"></view>
       </view>
     </view>
   </view>
@@ -451,7 +450,9 @@ export default {
           item.forEach((num) => {
             total += parseFloat(num)
           })
-          bottomComputed[this.computedCol[index]] = total
+          bottomComputed[this.computedCol[index]] =
+            this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
+            this.$utils.formatPrice(total)
         })
         let header = this.headers[index]
         let result = this.computedCol.includes(header.key)
@@ -813,6 +814,12 @@ export default {
         return []
       },
     },
+    summary: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
     sortWays: {
       type: Array,
       default() {
@@ -870,6 +877,9 @@ export default {
   },
   watch: {
     headers(val) {
+      this.$forceUpdate()
+    },
+    summary(val) {
       this.$forceUpdate()
     },
     contents(val) {
@@ -994,7 +1004,9 @@ export default {
         item.forEach((num) => {
           total += parseFloat(num)
         })
-        result[this.computedCol[index]] = total
+        result[this.computedCol[index]] =
+          this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
+          this.$utils.formatPrice(total)
       })
       this.bottomComputed = result
     },
@@ -1290,7 +1302,7 @@ export default {
     display: grid;
     grid-auto-flow: column;
     width: max-content;
-    z-index: 25;
+    z-index: 30;
   }
 
   .wyb-table-header-item {
@@ -1345,6 +1357,8 @@ export default {
     font-size: 32rpx;
     line-height: 72rpx;
     margin-top: 10rpx;
+    position: sticky;
+    left: 0;
   }
 
   .mb-68 {

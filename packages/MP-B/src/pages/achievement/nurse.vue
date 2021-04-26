@@ -9,7 +9,7 @@
       <view class="uni-list-cell">
         <view :class="['left', isFilter ? 'right' : '']"
           >{{ isFilter ? '已按条件筛选' : '筛选'
-          }}<view class="iconfont icon-closed"></view
+          }}<view class="iconfont icon-filter"></view
         ></view>
       </view>
       <uni-calendar
@@ -27,6 +27,9 @@
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
+      :bottom-computed-fixed="true"
+      :computed-col="computedCol"
+      :summary="summary"
     />
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
@@ -103,15 +106,26 @@ export default {
           key: 'plannedRevenueAmount',
         },
       ],
+      computedCol: [
+        'receivableAmount',
+        'refundAmount',
+        'cashAmount',
+        'virtualAmount',
+        'deductionOfAdvanceAmount',
+        'revenueAmount',
+        'paymentAmount',
+        'plannedRevenueAmount',
+      ],
       contents: [],
       total: 0,
       current: 0,
-      size: 4,
+      size: 10,
       beginTimeMillis: moment().startOf('day').format('x'),
       endTimeMillis: moment().endOf('day').format('x'),
       dateFilterText: '今天',
       isFilter: false,
       dataSourceStatus: 'loading',
+      summary: {},
     }
   },
   onLoad() {
@@ -221,6 +235,7 @@ export default {
       } else {
         this.dataSourceStatus = 'more'
       }
+      this.summary = summary || {}
       uni.hideLoading()
     },
     openCalendar() {
