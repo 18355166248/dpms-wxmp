@@ -260,13 +260,36 @@
     },
     {
       "root": "pages/achievement",
-      "name": "achievement",
-      "onReachBottomDistance": 50,
+      "name": "nurse",
       "pages": [
         {
           "path": "nurse",
           "style": {
             "navigationBarTitleText": "护士业绩"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "filter",
+      "pages": [
+        {
+          "path": "filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "projectList",
+      "pages": [
+        {
+          "path": "projectList",
+          "style": {
+            "navigationBarTitleText": "选择项目"
           }
         }
       ]
