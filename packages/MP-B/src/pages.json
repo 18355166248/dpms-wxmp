@@ -323,7 +323,7 @@
           }
         },
         {
-          "path": " ",
+          "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"
           }
