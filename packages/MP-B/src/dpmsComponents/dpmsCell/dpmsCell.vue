@@ -106,7 +106,7 @@ export default {
   .dpms-cell__value {
     flex: 1;
     text-align: right;
-    color: rgba(0, 0, 0, 0.5);
+    color: #191919;
     padding-right: 10rpx;
     overflow: hidden;
     &.wrap {

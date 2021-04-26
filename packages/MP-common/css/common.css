@@ -40,6 +40,10 @@
   justify-content: center;
   align-items: center;
 }
+.flexAlign {
+  display: flex;
+  align-items: center;
+}
 .flexBt {
   display: flex;
   justify-content: space-between;
