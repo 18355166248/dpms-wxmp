@@ -68,6 +68,12 @@
           title="就诊类型"
           placeholder="请选择就诊类型"
         />
+        <dpmsEnumsPicker
+          enumsKey="AppointmentType"
+          v-model="form.appointmentType"
+          title="预约类型"
+          placeholder="请选择预约类型"
+        />
         <dpmsCellPicker
           :list="DOCTOR_LIST"
           v-model="form.doctor"
@@ -226,7 +232,7 @@ export default {
         institutionConsultingRoomId: -1, // 诊室
         help: [-1], // 助理 2423
         nurse: [-1], // 护士 2424
-        appointmentType: APPOINTMENT_TYPE_ENUM.COMMON.value, // 预约类型 写死为普通
+        appointmentType: undefined,
         patientMainComplaintIds: [],
       },
       rules: {
@@ -399,7 +405,6 @@ export default {
           })
           .then((res) => {
             const form = apptFormUtil.formatApptToFormValues(res.data)
-            form.appointmentType = APPOINTMENT_TYPE_ENUM.COMMON.value
             if (type === 'editRegister') {
               form.timeRange =
                 moment(form.appointmentBeginTimeStamp).format('HH:mm') +
