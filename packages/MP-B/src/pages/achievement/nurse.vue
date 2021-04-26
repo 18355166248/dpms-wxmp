@@ -232,6 +232,13 @@ export default {
         mask: true,
       })
       this.dataSourceStatus = 'loading'
+      const params = {}
+      if (this.nurseIds) {
+        params.nurseIds = this.nurseIds
+      }
+      if (this.parentChargeTypeIds) {
+        params.parentChargeTypeIds = this.parentChargeTypeIds
+      }
       const {
         data: { total, current, records, summary },
       } = await billAPI.nurseList({
@@ -239,8 +246,7 @@ export default {
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
-        nurseIds: this.nurseIds,
-        parentChargeTypeIds: this.parentChargeTypeIds,
+        ...params,
       })
       records.forEach((element) => {
         element.statDate = moment(element.statDate).format('YYYY-MM-DD')
