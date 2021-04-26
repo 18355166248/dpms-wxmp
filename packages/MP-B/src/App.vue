@@ -27,14 +27,13 @@ button::after {
 }
 /*********在线字体代码start*********/
 @font-face {
-  font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_vvkpa7rkhp.eot');
-  src: url('//at.alicdn.com/t/font_1965288_vvkpa7rkhp.eot?#iefix')
-      format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_vvkpa7rkhp.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_vvkpa7rkhp.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_vvkpa7rkhp.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_vvkpa7rkhp.svg#iconfont') format('svg');
+  font-family: 'iconfont';  /* project id 1965288 */
+  src: url('//at.alicdn.com/t/font_1965288_thqzmfkhup.eot');
+  src: url('//at.alicdn.com/t/font_1965288_thqzmfkhup.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1965288_thqzmfkhup.svg#iconfont') format('svg');
 }
 
 /*********在线字体代码end*********/
@@ -191,61 +190,71 @@ button::after {
 .icon-filter:before {
   content: '\e611';
 }
+.icon-savings:before {
+  content: "\e657";
+}
+.icon-customer-management:before{
+  content: "\e636";
+}
+.icon-detail:before {
+  content: "\e793";
+}
+
 /* iconfont图标 end */
 </style>
 
 <style lang="scss">
 @for $i from 1 through 100 {
   .m-#{$i} {
-    margin: $i + rpx;
+    margin: $i +rpx;
   }
   .mt-#{$i} {
-    margin-top: $i + rpx;
+    margin-top: $i +rpx;
   }
   .mb-#{$i} {
-    margin-bottom: $i + rpx;
+    margin-bottom: $i +rpx;
   }
   .ml-#{$i} {
-    margin-left: $i + rpx;
+    margin-left: $i +rpx;
   }
   .mr-#{$i} {
-    margin-right: $i + rpx;
+    margin-right: $i +rpx;
   }
   .mh-#{$i} {
-    margin-left: $i + rpx;
-    margin-right: $i + rpx;
+    margin-left: $i +rpx;
+    margin-right: $i +rpx;
   }
   .mv-#{$i} {
-    margin-top: $i + rpx;
-    margin-bottom: $i + rpx;
+    margin-top: $i +rpx;
+    margin-bottom: $i +rpx;
   }
 
   .p-#{$i} {
-    padding: $i + rpx;
+    padding: $i +rpx;
   }
   .pt-#{$i} {
-    padding-top: $i + rpx;
+    padding-top: $i +rpx;
   }
   .pb-#{$i} {
-    padding-bottom: $i + rpx;
+    padding-bottom: $i +rpx;
   }
   .pl-#{$i} {
-    padding-left: $i + rpx;
+    padding-left: $i +rpx;
   }
   .pr-#{$i} {
-    padding-right: $i + rpx;
+    padding-right: $i +rpx;
   }
   .pv-#{$i} {
-    padding-top: $i + rpx;
-    padding-bottom: $i + rpx;
+    padding-top: $i +rpx;
+    padding-bottom: $i +rpx;
   }
   .ph-#{$i} {
-    padding-left: $i + rpx;
-    padding-right: $i + rpx;
+    padding-left: $i +rpx;
+    padding-right: $i +rpx;
   }
 
   .fz-#{$i} {
-    font-size: $i + rpx;
+    font-size: $i +rpx;
   }
 
   .c-white {
