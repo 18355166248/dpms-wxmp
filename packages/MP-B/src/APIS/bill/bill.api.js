@@ -35,6 +35,10 @@ const billAPI = {
   paymentOrderList(data) {
     return httper.get('pay/pay-order/page-by-payer-id', data)
   },
+  //收费项目
+  getChargeTypes(data) {
+    return httper.get('billing/settings/charge-type/list', data)
+  },
 }
 
 export default billAPI
