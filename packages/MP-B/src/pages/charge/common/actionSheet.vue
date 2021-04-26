@@ -2,7 +2,9 @@
   <view class="action-sheet-wrap">
     <view class="mask" @click="hideActionSheet"></view>
     <view class="action-sheet">
-      <slot></slot>
+      <view class="container">
+        <slot></slot>
+      </view>
       <view class="sure-text" v-if="sureText" @click="sure">{{
         sureText
       }}</view>
@@ -61,6 +63,16 @@ export default {
     color: #191919;
     line-height: 1;
     font-size: 30rpx;
+    max-height: 800rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .container {
+      display: flex;
+      flex-direction: column;
+      flex-basis: 2;
+      overflow-y: scroll;
+    }
     .sure-text {
       height: 112rpx;
       width: 100%;
@@ -71,6 +83,7 @@ export default {
       color: #5cbb89;
       font-size: 34rpx;
       background: #fff;
+      flex-shrink: 0;
     }
   }
 }
