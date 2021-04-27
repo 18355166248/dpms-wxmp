@@ -182,6 +182,18 @@
               营收报表
             </view>
           </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/revenueForm/revenueForm')"
+            v-if="iconShow.isAchieveShow"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color7">
+              <text class="iconfont icon-ar-report"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              绩效报表
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -250,10 +262,11 @@ export default {
       iconShow: {
         isStatisticsShow: false,
         isReportShow: false,
+        isAchieveShow: false,
       },
     }
   },
-  onShareAppMessage(res) {
+  onShareAppMessage() {
     return {
       title: '北吉熊口腔',
       path: '/pages/home/home',
@@ -302,6 +315,9 @@ export default {
         findObj.children.findIndex((v) => {
           return v.enumValue === 'marketing-report'
         }) > -1
+
+      console.log(this.menuPermission())
+      // this.isAchieveShow =
     },
     institutionChainTypeKey() {
       if (this.INSTITUTION_CHAIN_TYPE_ENUM && this.medicalInstitution) {
@@ -316,10 +332,6 @@ export default {
       }
     },
     isHeadquartersAndRegion() {
-      // console.log(
-      //   this.INSTITUTION_CHAIN_TYPE_ENUM,
-      //   this.medicalInstitution.institutionChainType,
-      // )
       return (
         (this.medicalInstitution.topParentId === 0 &&
           this.medicalInstitution.institutionChainType === 2) ||
@@ -364,7 +376,6 @@ export default {
       return this.$systemInfo.windowHeight - this.navHeight + 'px'
     },
   },
-
   methods: {
     dropMenuSelect(val) {
       const urls = {
@@ -642,7 +653,10 @@ export default {
           $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
           @include colors($values...);
         }
-
+        &-icon-color7 {
+          $values: #bfdf27, #8bbb11;
+          @include colors($values...);
+        }
         &-txt {
           font-size: 28rpx;
         }
