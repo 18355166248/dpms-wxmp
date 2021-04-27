@@ -346,7 +346,8 @@ export default {
       )
     },
     staffName() {
-      return this.staff ? this.staff.name : '--'
+      const { name, staffName } = this.staff || {}
+      return name || staffName || '--'
     },
     medicalInstitutionSimpleCode() {
       if (this.switchClinicStatus === 'loading') {
