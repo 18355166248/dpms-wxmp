@@ -184,7 +184,7 @@
           </view>
           <view
             class="menu-area-item"
-            @click="toUrl('/baseSubpackages/revenueForm/revenueForm')"
+            @click="openAchPopup"
             v-if="menuPermission(['report-center', 'performance'])"
           >
             <view class="menu-area-item-icon menu-area-item-icon-color7">
@@ -201,6 +201,10 @@
       ref="selectMedicalInstitution"
       @confirm="selectClinic"
     ></selectMedicalInstitution>
+    <achevementpopup
+      ref="achevementpopup"
+      id="achevementpopup"
+    ></achevementpopup>
   </view>
 </template>
 
@@ -385,6 +389,9 @@ export default {
       if (this.institutionChainTypeKey !== 'SINGLE_STORE') {
         this.$refs.selectMedicalInstitution.show()
       }
+    },
+    openAchPopup() {
+      this.$refs.achevementpopup.open()
     },
     toUrl(url) {
       this.$utils.push({
@@ -659,6 +666,10 @@ export default {
         }
       }
     }
+  }
+  .popup-content {
+    background-color: #fff;
+    padding: 15px;
   }
 }
 </style>
