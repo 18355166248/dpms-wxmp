@@ -3,7 +3,7 @@
     <view class="amount">{{
       amountData.amount | thousandFormatter(2, '￥')
     }}</view>
-    <view class="des">{{ amountData.des }}</view>
+    <view class="des">{{ amountData.name }}</view>
   </view>
 </template>
 <script>

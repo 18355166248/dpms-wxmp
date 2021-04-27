@@ -329,6 +329,12 @@
           }
         },
         {
+          "path": "searchProjects",
+          "style": {
+            "navigationBarTitleText": "搜索收费项目"
+          }
+        },
+        {
           "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"

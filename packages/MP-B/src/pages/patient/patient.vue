@@ -141,7 +141,8 @@
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import card from '@/components/card/card.vue'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
+
 export default {
   data() {
     return {
@@ -189,6 +190,7 @@ export default {
     this.getPatient()
   },
   methods: {
+    ...mapMutations('patient', ['setPatientDetail']),
     getPatient() {
       this.$utils.showLoading()
       patientAPI
@@ -196,6 +198,7 @@ export default {
         .then((res) => {
           let { data } = res
           this.patient = data
+          this.setPatientDetail(data)
           // if (this.patient.tagList.length > 3) {
           //   this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
           // }

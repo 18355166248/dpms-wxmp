@@ -1,15 +1,14 @@
 <template>
-  <view class="select-charge-wrap">
+  <view class="search-charge-wrap">
     <!--搜索-->
     <view class="search-input">
       <view class="iconfont iconsearch"></view>
-      <u-input
+      <input
         v-model="value"
         type="text"
-        height="76"
-        :custom-style="inputStyle"
         :placeholder="'请输入项目名称或拼音快速搜索'"
-        :clearable="false"
+        class="input"
+        @focus="onfocus"
       />
     </view>
     <!--选择项目-->
@@ -28,16 +27,12 @@
           <view class="children" v-if="item.open">
             <view
               class="project"
-              v-for="project in item.children"
-              :key="project.settingsChargeTypeId"
+              v-for="project in item.chargeItemList"
+              :key="project.settingsChargeItemId"
             >
-              <view>{{ project.settingsChargeTypeName }}</view>
+              <view>{{ project.settingsChargeItemName }}</view>
               <view class="checkBox">
-                <dpmsCheckbox
-                  shape="square"
-                  :value="project.checked"
-                  @change="projectChange($event, project, item)"
-                >
+                <dpmsCheckbox shape="square" v-model="project.checked">
                 </dpmsCheckbox>
               </view>
             </view>
@@ -47,8 +42,8 @@
     </view>
     <view class="bottom-wrap">
       <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
-        >下一步</chargeButton
-      >
+        >下一步
+      </chargeButton>
     </view>
   </view>
 </template>
@@ -56,37 +51,59 @@
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import chargeButton from './common/chargeButton'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: '',
   data() {
     return {
-      inputStyle: {
-        width: '600rpx',
-      },
-      headStyle: {
-        height: '56rpx',
-      },
       classifyList: [],
       buttonStyle: { width: '686rpx' },
     }
   },
-  computed: {},
+  computed: {
+    ...mapState('searchProjectStore', ['searchProjectList']),
+    ...mapState('dispose', ['disposeList']),
+  },
   onLoad() {
     this.getChargeTypes()
   },
-  onShow() {},
+  onShow() {
+    this.mergeData()
+  },
   onHide() {},
   onUnload() {},
   methods: {
+    ...mapMutations('dispose', ['setDisposeList']),
+    //合并数据
+    mergeData() {
+      if (this.classifyList.length > 0 && this.searchProjectList.length > 0) {
+        this.searchProjectList.forEach((project) => {
+          this.classifyList.forEach((item) => {
+            if (item.settingsChargeTypeId === project.settingsChargeTypeId) {
+              item.open = true
+              item.chargeItemList.forEach((charge) => {
+                if (
+                  charge.settingsChargeItemId === project.settingsChargeItemId
+                ) {
+                  charge.checked = true
+                }
+              })
+            }
+          })
+        })
+      }
+    },
     async getChargeTypes() {
       const { data } = await billAPI.getChargeTypes()
       if (data) {
         data.forEach((item) => {
           item.open = false
-          item.children.forEach((project) => {
-            project.checked = false
-          })
+          if (item.chargeItemList && item.chargeItemList.length > 0) {
+            item.chargeItemList.forEach((project) => {
+              project.checked = false
+            })
+          }
         })
         this.classifyList = data || []
       }
@@ -98,11 +115,57 @@ export default {
     projectChange(value, project, item) {
       console.log(value, project, item)
     },
+    //搜索框聚焦
+    onfocus() {
+      uni.navigateTo({
+        url: '/pages/charge/searchProjects',
+      })
+    },
     //下一步
     nextStep() {
+      this.handleData()
+      if (this.disposeList.length <= 0) {
+        this.$utils.show('请选择收费项目')
+        return
+      }
       uni.navigateTo({
         url: '/pages/charge/checkstand',
       })
+    },
+    handleData() {
+      let targetList = []
+      let index = 0
+      const defaultData = {
+        salesList: [],
+        deductSign: false,
+        singleDiscountLimit: 0,
+        itemNum: 1,
+        itemType: 5,
+        singleDiscount: 100,
+      }
+      this.classifyList.forEach((item) => {
+        if (item.chargeItemList && item.chargeItemList.length > 0) {
+          item.chargeItemList.forEach((project) => {
+            if (project.checked) {
+              index += 1
+              let temp = {}
+              temp.pageSerialNo = index
+              temp.allBillDiscount = project.allBillDiscount
+              temp.isSingleDiscount = project.isSingleDiscount
+              temp.itemCode = project.settingsChargeItemCode
+              temp.itemName = project.settingsChargeItemName
+              temp.parentItemCode = item.settingsChargeTypeCode
+              temp.totalAmount = project.unitAmount
+              temp.singleDiscountAfterAmount = project.unitAmount
+              temp.receivableAmount = project.unitAmount
+              temp.unitAmount = project.unitAmount
+              const data = { ...defaultData, ...temp }
+              targetList.push(data)
+            }
+          })
+        }
+      })
+      this.setDisposeList(targetList)
     },
   },
   watch: {},
@@ -110,7 +173,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.select-charge-wrap {
+.search-charge-wrap {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -131,6 +194,14 @@ export default {
     .iconsearch {
       margin-right: 20rpx;
       color: #bfbfbf;
+      width: 32rpx;
+      height: 32rpx;
+    }
+
+    .input {
+      width: 600rpx;
+      height: 76rpx;
+      font-size: 28rpx;
     }
   }
 
@@ -182,9 +253,11 @@ export default {
   }
 
   .bottom-wrap {
-    padding: 16rpx 8rpx;
+    padding: 16rpx 32rpx;
     display: flex;
     justify-content: space-between;
+    background: #fff;
+    border-top: 1rpx solid #e5e5e5;
   }
 }
 </style>

@@ -45,11 +45,23 @@ const billAPI = {
   },
   //收费项目
   getChargeTypes(data) {
-    return httper.get('billing/settings/charge-type/list', data)
+    return httper.get('billing/settings/charge-type/select-item-list', data)
   },
   //支付方式
   getPayTypes(data) {
     return httper.get('pay/settings/pay-transaction-channel/list', data)
+  },
+  //搜索处置项目
+  searchChargeItem(data) {
+    return httper.get('billing/settings/charge-item/select-list/fuzzy', data)
+  },
+  //消费预览和诊疗项目
+  getStatistical(data) {
+    return httper.get('billing/bill/order/statistical', data)
+  },
+  //储值卡详情
+  getSoredCardDetail(data) {
+    return httper.get('member/sored-card/details', data)
   },
 }
 
