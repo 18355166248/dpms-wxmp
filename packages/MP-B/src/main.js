@@ -5,6 +5,7 @@ import uma from './uma'
 import { toastUtil, flyUtil, commonUtil, utils } from 'mpcommon'
 import '@/styles/common.scss'
 import './utils/filter'
+import './utils/globalMixin'
 
 Vue.config.productionTip = false
 Vue.use(uma)
