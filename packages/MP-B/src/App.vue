@@ -219,6 +219,9 @@ button::after {
 .icondown1:before {
   content: '\e684';
 }
+.icon-ar-report:before {
+  content: '\e610';
+}
 /* iconfont图标 end */
 </style>
 
