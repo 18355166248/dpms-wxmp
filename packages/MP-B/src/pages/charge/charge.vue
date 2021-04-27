@@ -6,9 +6,15 @@
           <view class="item0">
             <itemType :iconData="icon0" />
             <view class="flex">
-              <chargeItem class="charge-item dashed" :amountData="amountData" />
-              <chargeItem class="charge-item dashed" :amountData="amountData" />
-              <chargeItem class="charge-item" :amountData="amountData" />
+              <chargeItem
+                class="charge-item dashed"
+                :amountData="receivableData"
+              />
+              <chargeItem
+                class="charge-item dashed"
+                :amountData="receiptData"
+              />
+              <chargeItem class="charge-item" :amountData="arrearageData" />
             </view>
           </view>
         </view>
@@ -16,21 +22,34 @@
           <view class="item1">
             <view>
               <itemType :iconData="icon1" />
-              <chargeItem class="charge-item dashed" :amountData="amountData" />
+              <chargeItem
+                class="charge-item dashed"
+                :amountData="advancePaymentsData"
+              />
             </view>
           </view>
           <view class="item2">
             <itemType :iconData="icon2" />
             <view class="flex">
-              <chargeItem class="charge-item dashed" :amountData="amountData" />
-              <chargeItem class="charge-item" :amountData="amountData" />
+              <chargeItem
+                class="charge-item dashed"
+                :amountData="capitalBalanceData"
+              />
+              <chargeItem class="charge-item" :amountData="giftBalanceData" />
             </view>
           </view>
         </view>
       </view>
       <view class="bottom-wrap">
-        <chargeButton type="solid" @click="createOrder">新建账单</chargeButton>
-        <chargeButton type="border" @click="overdueCharge">收欠费</chargeButton>
+        <chargeButton
+          type="solid"
+          @click="createOrder"
+          :buttonStyle="{ width: isOverdue ? '336rpx' : '686rpx' }"
+          >新建账单
+        </chargeButton>
+        <chargeButton type="border" @click="overdueCharge" v-if="isOverdue"
+          >收欠费</chargeButton
+        >
       </view>
     </view>
     <actionSheet @close="hideActionSheet" v-if="showActionSheet">
@@ -44,7 +63,6 @@
       </view>
     </actionSheet>
   </view>
-
   <!--  <view >-->
   <!--    <empty :disabled="true" text="暂无数据"></empty>-->
   <!--  </view>-->
@@ -55,6 +73,8 @@ import chargeItem from './common/chargeItem'
 import bottomWrap from './common/bottomWrap'
 import chargeButton from './common/chargeButton'
 import actionSheet from './common/actionSheet'
+import { mapState } from 'vuex'
+import billAPI from '@/APIS/bill/bill.api'
 
 export default {
   name: 'charge',
@@ -79,21 +99,72 @@ export default {
         amount: 62586,
         des: '开单应收',
       },
-      showChargeSheet: false,
+
       list: [
         {
           text: '简易收费',
         },
       ],
       showActionSheet: false,
+      isOverdue: true,
+      receivableData: {
+        name: '开单应收',
+        amount: 0,
+      },
+      receiptData: {
+        name: '消费总额',
+        amount: 0,
+      },
+      arrearageData: {
+        name: '总欠费',
+        amount: 0,
+      },
+      advancePaymentsData: {
+        name: '预收款',
+        amount: 0,
+      },
+      capitalBalanceData: {
+        name: '本金余额',
+        amount: 0,
+      },
+      giftBalanceData: {
+        name: '赠金余额',
+        amount: 0,
+      },
     }
   },
-  computed: {},
-  onLoad() {},
-  onShow() {},
-  onHide() {},
-  onUnload() {},
+  computed: {
+    ...mapState('searchProjectStore', ['searchProjectList']),
+    ...mapState('patient', ['patientDetail']),
+  },
+  created() {
+    this.initData()
+  },
   methods: {
+    initData() {
+      //获取消费预览和诊疗项目数据
+      billAPI.getStatistical().then((res) => {
+        if (res.data) {
+          this.receivableData.amount = res.data.receivableAmount
+          this.receiptData.amount = res.data.receiptAmount
+          this.arrearageData.amount = res.data.arrearageAmount
+          this.advancePaymentsData.amount = res.data.advancePaymentsAmount
+        }
+      })
+      //获取储值卡余额数据
+      billAPI
+        .getSoredCardDetail({
+          memberId: this.patientDetail.memberId,
+          customerId: this.patientDetail.customerId,
+          patientId: this.patientDetail.patientId,
+        })
+        .then((res) => {
+          if (res.data) {
+            this.capitalBalanceData.amount = res.data.capitalBalance
+            this.giftBalanceData.amount = res.data.giftBalance
+          }
+        })
+    },
     //新建订单
     createOrder() {
       this.showActionSheet = true
@@ -135,6 +206,7 @@ export default {
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
 }
+
 .charge-wrap {
   padding: 24rpx;
   flex-grow: 2;
@@ -209,6 +281,7 @@ export default {
     justify-content: space-between;
   }
 }
+
 .action-item {
   height: 112rpx;
   width: 100%;
@@ -218,6 +291,7 @@ export default {
   align-items: center;
   border-top: 1rpx solid #f2f2f2;
 }
+
 .action-item:first-child {
   border-top: none;
   border-radius: 24rpx 24rpx 0 0;
