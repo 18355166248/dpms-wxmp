@@ -185,7 +185,7 @@
           <view
             class="menu-area-item"
             @click="toUrl('/baseSubpackages/revenueForm/revenueForm')"
-            v-if="iconShow.isAchieveShow"
+            v-if="menuPermission(['report-center', 'performance'])"
           >
             <view class="menu-area-item-icon menu-area-item-icon-color7">
               <text class="iconfont icon-ar-report"></text>
@@ -262,7 +262,6 @@ export default {
       iconShow: {
         isStatisticsShow: false,
         isReportShow: false,
-        isAchieveShow: false,
       },
     }
   },
@@ -315,9 +314,6 @@ export default {
         findObj.children.findIndex((v) => {
           return v.enumValue === 'marketing-report'
         }) > -1
-
-      console.log(this.menuPermission())
-      // this.isAchieveShow =
     },
     institutionChainTypeKey() {
       if (this.INSTITUTION_CHAIN_TYPE_ENUM && this.medicalInstitution) {
