@@ -19,8 +19,9 @@
 
         </div>
       </chargestand-title>
-      <dpmsCellInput type="number" title="支付宝" :value="testValue1" />
-      <dpmsCellInput type="number" title="储值卡" :value="testValue2" />
+      <dpmsCellInput v-for="(item, index) in form.payChannelList" :key="item.transactionChannelId" type="number"
+                     :title="item.transactionChannelName"
+                     v-model="item.paymentAmount" />
       <div v-if="true" class="validateCount">
         支付总金额不能大于应收金额
       </div>
@@ -120,10 +121,8 @@
           <div class="ellipsis" style="width: 550rpx;">项目明细</div>
         </div>
       </chargestand-title>
-      <dpmsCell title="项目名称" value="¥50.00盒子×️2" />
-      <dpmsCell title="项目名称" value="¥50.00盒子×️2" />
-      <dpmsCell title="项目名称" value="¥50.00盒子×️2" />
-      <dpmsCell title="项目名称" value="¥50.00盒子×️2" />
+      <dpmsCell v-for="(item, index) in disposeList" :key="item.itemCode"
+                :title="item.itemName" :value="formatDisposeItem(item)" />
       <div class="empty-wrapper"></div>
     </div>
     <div class="footer-wrapper flexBt">
@@ -162,6 +161,7 @@
       >
         {{ item.settingsPayTransactionChannelName }}
         <dpmsCheckbox
+          :disabled = "checkDisableFn() && item.checked"
           shape="square"
           :value="item.checked"
           @change="payTypeChange($event, item)"
@@ -172,17 +172,26 @@
   </view>
 </template>
 <script>
-import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
-import patientAPI from '@/APIS/patient/patient.api'
-import inputMixins from 'mpcommon/mixins/inputMixins'
+import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle';
+import patientAPI from '@/APIS/patient/patient.api';
+import inputMixins from 'mpcommon/mixins/inputMixins';
 // import chargeAPI from 'APIS/charge/charge.api'
-import billAPI from '@/APIS/bill/bill.api'
-import moment from 'moment'
-import actionSheet from './common/actionSheet'
+import billAPI from '@/APIS/bill/bill.api';
+import moment from 'moment';
+import actionSheet from './common/actionSheet';
 import { mapState } from 'vuex';
+import { mockItems, mockPayTypes } from '@/pages/charge/json';
+import { numberUtils } from '@/utils/utils';
+
 export default {
   name: 'checkstand',
   mixins: [inputMixins],
+  props: {
+    disposeList: {
+      type: Array,
+      default: mockItems,
+    },
+  },
   data() {
     return {
       form: {
@@ -204,7 +213,7 @@ export default {
       payTypes: [],
       // 操作菜单
       showActionSheet: false,
-    }
+    };
   },
   components: {
     ChargestandTitle,
@@ -213,97 +222,127 @@ export default {
   computed: {
     ...mapState('workbenchStore', ['menu']),
     doctorList() {
-      return this.otherList.filter((item) => item.position === 2)
+      return this.otherList.filter((item) => item.position === 2);
     },
     nurseList() {
-      return this.otherList.filter((item) => item.position === 6)
+      return this.otherList.filter((item) => item.position === 6);
     },
     consultantList() {
-      return this.otherList.filter((item) => item.position === 4)
+      return this.otherList.filter((item) => item.position === 4);
     },
     salesManList() {
-      return this.otherList.filter((item) => item.position === 16)
+      return this.otherList.filter((item) => item.position === 16);
     },
   },
   onLoad() {
-    this.loadListData()
+    this.loadListData();
   },
   onShow() {
-    this.btnPremisstion()
+    this.btnPremisstion();
   },
   onHide() {},
   onUnload() {},
   methods: {
-    hideActionSheet() {
-      this.showActionSheet = false
+    formatDisposeItem(item) {
+      return numberUtils.thousandFormatter(item.receivableAmount) + (item.unit || '') + 'x' + item.itemNum;
     },
-    payTypeChange() {},
+    checkDisableFn() {
+      const hasCheck = this.payTypes.filter(item => item.checked)
+      return hasCheck.length === 1
+    },
+    payTypeChange(value, record) {
+      record.checked = value;
+    },
+    hideActionSheet() {
+      // 重制payChannelList
+      const selectKeys = this.form.payChannelList.map(item => item.transactionChannelId)
+      this.payTypes = this.payTypes.map((item) => {
+        item.checked = selectKeys.includes(item.settingsPayTransactionChannelId)
+        return item
+      })
+      this.showActionSheet = false;
+    },
     onSure() {
-      this.showActionSheet = true
+      // 更新payChannelList
+      this.form.payChannelList = this.payTypes.filter(item => item.checked).map(item => ({
+        paymentAmount: 0,
+        transactionChannelId: item.settingsPayTransactionChannelId,
+        transactionChannelName: item.settingsPayTransactionChannelName,
+      }));
+      this.showActionSheet = false;
     },
     registerTimeLabel(record) {
-      console.log(record)
-      return 123132
+      console.log(record);
+      return 123132;
     },
     loadListData() {
       patientAPI.getStaffList().then((res) => {
-        this.otherList = res.data
-      })
+        this.otherList = res.data;
+      });
       // todo patientId由上游传过来
       billAPI
-        .getRegisterList({
-          patientId: 351013,
-        })
-        .then((res) => {
-          this.visitTimeList = this.formatRegister(res.data)
-          if (this.visitTimeList.length) {
-            // this.form = Object.assign(this.form,{registerTime:this.visitTimeList[0].registerTime})
-            // 如果有值第一次做回显
-            this.backVisitTimeDate(this.visitTimeList[0])
-          }
-        })
-      billAPI.getPayTypes().then((res) => {
-        if (res?.data.length > 0) {
-          res.data.forEach((item) => {
-            item.checked = false
-          })
-          this.payTypes = res.data
-        }
-        console.log(res)
+      .getRegisterList({
+        patientId: 351013,
       })
+      .then((res) => {
+        this.visitTimeList = this.formatRegister(res.data);
+        if (this.visitTimeList.length) {
+          // this.form = Object.assign(this.form,{registerTime:this.visitTimeList[0].registerTime})
+          // 如果有值第一次做回显
+          this.backVisitTimeDate(this.visitTimeList[0]);
+        }
+      });
+      billAPI.getPayTypes().then((res) => {
+        // todo换接口
+        const mockRes = mockPayTypes;
+        if (mockRes?.data.length > 0) {
+          mockRes.data.forEach((item, index) => {
+            item.checked = false;
+            if (index === 0) {
+              item.checked = true;
+              this.form.payChannelList = [{
+                paymentAmount: 0,
+                transactionChannelId: item.settingsPayTransactionChannelId,
+                transactionChannelName: item.settingsPayTransactionChannelName,
+              }];
+            }
+          });
+          this.payTypes = mockRes.data;
+        }
+      });
     },
     formatRegister(list) {
       return list.map((item) => {
         item.labelStr =
           moment(item.registerTime).format('YYYY-MM-DD HH:mm') +
           ' ' +
-          item.medicalInstitutionSimpleCode
-        return item
-      })
+          item.medicalInstitutionSimpleCode;
+        return item;
+      });
     },
     backVisitTimeDate(data) {
-      const { form } = this
+      const { form } = this;
       const updateObj = {
         registerTime: data.registerTime,
-      }
+      };
       // 如果已经有值则不联动
       // 回显医生
       if (!form.doctorStaffId && data.doctorStaffId) {
-        updateObj.doctorStaffId = data.doctorStaffId
+        updateObj.doctorStaffId = data.doctorStaffId;
       }
       // 回显其他
       if (!form.otherStaffId && data.otherStaffId) {
-        updateObj.otherStaffId = data.otherStaffId
+        updateObj.otherStaffId = data.otherStaffId;
       }
       // 回显咨询师
       if (!form.consultedStaffId && data.consultedStaffId) {
-        updateObj.consultedStaffId = data.consultedStaffId
+        updateObj.consultedStaffId = data.consultedStaffId;
       }
-      this.form = Object.assign(this.form, updateObj)
+      this.form = Object.assign(this.form, updateObj);
     },
     onRegisterTime(v, record) {
-      console.log('record', record)
-      this.backVisitTimeDate(record)
+      console.log('record', record);
+      this.backVisitTimeDate(record);
     },
   },
   watch: {
@@ -313,7 +352,7 @@ export default {
       immediate: true,
     },
   },
-}
+};
 </script>
 <style lang="scss" scoped>
 .action-item {
@@ -327,10 +366,12 @@ export default {
   flex-shrink: 0;
   padding: 0 32rpx;
 }
+
 .action-item:first-child {
   border-top: none;
   border-radius: 24rpx 24rpx 0 0;
 }
+
 .checkstand-wrap {
   width: 750rpx;
   height: 100vh;
@@ -342,6 +383,7 @@ export default {
     width: 100%;
     background: #f5f5f5;
     overflow-y: scroll;
+
     .validateCount {
       width: 100%;
       height: 68rpx;
@@ -353,6 +395,7 @@ export default {
       flex-direction: row-reverse;
       color: #fa5151;
     }
+
     .memo {
       width: 100%;
       padding: 0 32px 32rpx 32rpx;
@@ -361,10 +404,12 @@ export default {
       color: #191919;
       font-size: 30rpx;
       box-sizing: border-box;
+
       textarea {
         width: 100%;
       }
     }
+
     .empty-wrapper {
       height: 244rpx;
     }
