@@ -168,6 +168,73 @@
       </view>
       <view class="wyb-table-content">
         <view
+          v-if="computedCol.length !== 0"
+          class="wyb-table-content-line"
+          :style="{
+            position: bottomComputedFixed ? 'sticky' : 'static',
+            bottom: 0,
+            zIndex: 25,
+            borderTop: '1px solid' + borderColor,
+          }"
+        >
+          <view
+            class="wyb-table-content-item"
+            v-if="enableCheck"
+            :style="{
+              minWidth: checkColWidth + 'rpx',
+              maxWidth: checkColWidth + 'rpx',
+              textAlign: textAlign,
+              justifyContent:
+                textAlign === 'center'
+                  ? textAlign
+                  : textAlign === 'left'
+                  ? 'flex-start'
+                  : 'flex-end',
+              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
+              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
+              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
+              borderBottom: '1px solid' + borderColor,
+              borderRight: '1px solid' + borderColor,
+              zIndex: 25,
+              color: contentFtColor,
+              backgroundColor: checkerCellBgColor,
+              left: 0,
+              position: 'sticky',
+            }"
+          ></view>
+          <view
+            class="wyb-table-content-item"
+            v-for="(header, index) in headers"
+            :key="index"
+            :style="{
+              minWidth: (header.width || defaultColWidth) + 'rpx',
+              maxWidth: (header.width || defaultColWidth) + 'rpx',
+              textAlign: textAlign,
+              justifyContent:
+                textAlign === 'center'
+                  ? textAlign
+                  : textAlign === 'left'
+                  ? 'flex-start'
+                  : 'flex-end',
+              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
+              color: contentFtColor,
+              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
+              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
+              backgroundColor: index === 0 ? firstColBgColor : contentBgColor,
+              borderBottom: '1px solid' + borderColor,
+              borderRight:
+                index === headers.length - 1 || (!showVertBorder && index !== 0)
+                  ? 'none'
+                  : '1px solid' + borderColor,
+              zIndex: index === 0 ? 20 : 0,
+              left: enableCheck ? checkColWidth + 'rpx' : 0,
+              position: index === 0 && firstLineFixed ? 'sticky' : 'static',
+            }"
+          >
+            {{ autoBottomComputedItem(index) }}
+          </view>
+        </view>
+        <view
           class="wyb-table-content-line"
           v-for="(content, cIndex) in contentsSort"
           :key="contentLineKey(content, cIndex)"
@@ -259,72 +326,16 @@
           >
         </view>
         <view
-          v-if="computedCol.length !== 0"
-          class="wyb-table-content-line"
-          :style="{
-            position: bottomComputedFixed ? 'sticky' : 'static',
-            bottom: 0,
-            zIndex: 25,
-            borderTop: '1px solid' + borderColor,
-          }"
+          @click="emitPage"
+          :class="['pager', isPhoneXCeil ? 'mb-68' : '']"
+          >{{
+            dataSourceStatus === 'more'
+              ? '点击加载更多'
+              : dataSourceStatus === 'loading'
+              ? '加载中...'
+              : '没有更多了'
+          }}</view
         >
-          <view
-            class="wyb-table-content-item"
-            v-if="enableCheck"
-            :style="{
-              minWidth: checkColWidth + 'rpx',
-              maxWidth: checkColWidth + 'rpx',
-              textAlign: textAlign,
-              justifyContent:
-                textAlign === 'center'
-                  ? textAlign
-                  : textAlign === 'left'
-                  ? 'flex-start'
-                  : 'flex-end',
-              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
-              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
-              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
-              borderBottom: '1px solid' + borderColor,
-              borderRight: '1px solid' + borderColor,
-              zIndex: 25,
-              color: contentFtColor,
-              backgroundColor: checkerCellBgColor,
-              left: 0,
-              position: 'sticky',
-            }"
-          ></view>
-          <view
-            class="wyb-table-content-item"
-            v-for="(header, index) in headers"
-            :key="index"
-            :style="{
-              minWidth: (header.width || defaultColWidth) + 'rpx',
-              maxWidth: (header.width || defaultColWidth) + 'rpx',
-              textAlign: textAlign,
-              justifyContent:
-                textAlign === 'center'
-                  ? textAlign
-                  : textAlign === 'left'
-                  ? 'flex-start'
-                  : 'flex-end',
-              fontSize: (fontSize[1] || fontSize[0]) + 'rpx',
-              color: contentFtColor,
-              minHeight: (minHeight[1] || minHeight[0]) + 'rpx',
-              padding: padding[0] + 'rpx ' + (padding[1] || padding[0]) + 'rpx',
-              backgroundColor: index === 0 ? firstColBgColor : contentBgColor,
-              borderBottom: '1px solid' + borderColor,
-              borderRight:
-                index === headers.length - 1 || (!showVertBorder && index !== 0)
-                  ? 'none'
-                  : '1px solid' + borderColor,
-              zIndex: index === 0 ? 20 : 0,
-              left: enableCheck ? checkColWidth + 'rpx' : 0,
-              position: index === 0 && firstLineFixed ? 'sticky' : 'static',
-            }"
-          >
-            {{ autoBottomComputedItem(index) }}
-          </view>
-        </view>
       </view>
     </view>
   </view>
@@ -333,7 +344,16 @@
 <script>
 import Pinyin from './js/characterToPinyin.js'
 import { isEqual } from './js/objEqual.js'
+import { mapState } from 'vuex'
+
 export default {
+  onReachBottom() {
+    console.log('onReachBottom')
+    // if (this.contents.length < this.total) {
+    //   this.current += 1
+    //   this.getNurses()
+    // }
+  },
   data() {
     return {
       bottomComputed: [],
@@ -356,6 +376,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('systemStore', ['isPhoneXCeil']),
     loadingColor() {
       let color = this.loaderColor.slice()
       let rgbList = this.hexToRgb(color)
@@ -429,7 +450,9 @@ export default {
           item.forEach((num) => {
             total += parseFloat(num)
           })
-          bottomComputed[this.computedCol[index]] = total
+          bottomComputed[this.computedCol[index]] =
+            this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
+            this.$utils.formatPrice(total)
         })
         let header = this.headers[index]
         let result = this.computedCol.includes(header.key)
@@ -791,6 +814,12 @@ export default {
         return []
       },
     },
+    summary: {
+      type: Object,
+      default() {
+        return {}
+      },
+    },
     sortWays: {
       type: Array,
       default() {
@@ -841,9 +870,16 @@ export default {
       type: String,
       default: '#f1f1f1',
     },
+    dataSourceStatus: {
+      type: String,
+      default: 'loading',
+    },
   },
   watch: {
     headers(val) {
+      this.$forceUpdate()
+    },
+    summary(val) {
       this.$forceUpdate()
     },
     contents(val) {
@@ -874,6 +910,9 @@ export default {
     }
   },
   methods: {
+    emitPage() {
+      uni.$emit('emitPage')
+    },
     doSort(key, type, isNumber) {
       let arr = this.contentsSort
       if (type === 'asc') {
@@ -965,7 +1004,9 @@ export default {
         item.forEach((num) => {
           total += parseFloat(num)
         })
-        result[this.computedCol[index]] = total
+        result[this.computedCol[index]] =
+          this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
+          this.$utils.formatPrice(total)
       })
       this.bottomComputed = result
     },
@@ -1224,87 +1265,104 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 @import './css/iconfont.css';
 @import './css/loader.css';
-.ios-header-bug {
-  height: 0;
-  width: 1px;
-  opacity: 0;
-}
 
-.wyb-table-scroll-view {
-  overflow: scroll;
-  -webkit-overflow-scrolling: touch;
-}
+.wyb-table-box {
+  .ios-header-bug {
+    height: 0;
+    width: 1px;
+    opacity: 0;
+  }
 
-.wyb-table-scroll-view::-webkit-scrollbar {
-  display: none;
-  /* #ifdef MP-WEIXIN */
-  width: 0;
-  height: 0;
-  /* #endif */
-}
+  .wyb-table-scroll-view {
+    overflow: scroll;
+    -webkit-overflow-scrolling: touch;
+  }
 
-.wyb-table-loading-box {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 500;
-}
+  .wyb-table-scroll-view::-webkit-scrollbar {
+    display: none;
+    /* #ifdef MP-WEIXIN */
+    width: 0;
+    height: 0;
+    /* #endif */
+  }
 
-.wyb-table-header {
-  position: sticky;
-  top: 0;
-  display: grid;
-  grid-auto-flow: column;
-  width: max-content;
-  z-index: 25;
-}
+  .wyb-table-loading-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+  }
 
-.wyb-table-header-item {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  box-sizing: border-box;
-  position: relative;
-}
+  .wyb-table-header {
+    position: sticky;
+    top: 0;
+    display: grid;
+    grid-auto-flow: column;
+    width: max-content;
+    z-index: 30;
+  }
 
-.wyb-table-header-icon {
-  display: flex;
-  flex-direction: column;
-}
+  .wyb-table-header-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    position: relative;
+  }
 
-.wyb-table-content-line {
-  display: grid;
-  grid-auto-flow: column;
-  width: max-content;
-  position: relative;
-}
+  .wyb-table-header-icon {
+    display: flex;
+    flex-direction: column;
+  }
 
-.wyb-table-content-item {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  box-sizing: border-box;
-}
+  .wyb-table-content-line {
+    display: grid;
+    grid-auto-flow: column;
+    width: max-content;
+    position: relative;
+  }
 
-.wyb-table-checkbox {
-  border-radius: 3px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-}
+  .wyb-table-content-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    box-sizing: border-box;
+  }
 
-.icon-check {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  border-radius: 0;
-  border-radius: 3px;
-  font-weight: bold;
-  box-sizing: border-box;
-  transform: scale(1.1);
+  .wyb-table-checkbox {
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .icon-check {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    border-radius: 0;
+    border-radius: 3px;
+    font-weight: bold;
+    box-sizing: border-box;
+    transform: scale(1.1);
+  }
+
+  .pager {
+    color: #3e3e3e;
+    text-align: center;
+    font-size: 32rpx;
+    line-height: 72rpx;
+    margin-top: 10rpx;
+    position: sticky;
+    left: 0;
+  }
+
+  .mb-68 {
+    margin-bottom: 68rpx;
+  }
 }
 </style>

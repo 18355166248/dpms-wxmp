@@ -34,6 +34,9 @@ const patientAPI = {
   getStaffMapThroughPosition(params) {
     return httper.get('institution/staff/group/position', params)
   },
+  getStaffList() {
+    return httper.get('/institution/staff/work/list')
+  },
   // 获取患者信息
   getPatientDetail(data) {
     return httper.get('patient/patient/mini-apps/detail', data)

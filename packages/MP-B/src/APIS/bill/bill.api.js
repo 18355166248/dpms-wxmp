@@ -39,6 +39,18 @@ const billAPI = {
   nurseList(data) {
     return httper.get('billing/stat/nurse/performance/page', data)
   },
+  //项目列表
+  chargeTypeParentList(data) {
+    return httper.get('billing/settings/charge-type/select-parent', data)
+  },
+  //收费项目
+  getChargeTypes(data) {
+    return httper.get('billing/settings/charge-type/list', data)
+  },
+  //支付方式
+  getPayTypes(data) {
+    return httper.get('pay/settings/pay-transaction-channel/list', data)
+  },
 }
 
 export default billAPI

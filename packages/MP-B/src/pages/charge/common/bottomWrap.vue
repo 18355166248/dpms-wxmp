@@ -1,11 +1,17 @@
 <template>
-  <view class="charge-wrap"> </view>
+  <view class="bottom-wrap"> </view>
 </template>
 <script>
 export default {
   name: '',
   data() {
     return {}
+  },
+  props: {
+    btnName: {
+      type: String,
+      default: '',
+    },
   },
   computed: {},
   onLoad() {},
@@ -23,8 +29,4 @@ export default {
   components: {},
 }
 </script>
-<style lang="scss" scoped>
-.bottom-wrap {
-  padding: 12px;
-}
-</style>
+<style lang="scss" scoped></style>
