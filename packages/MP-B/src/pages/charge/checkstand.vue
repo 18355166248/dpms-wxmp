@@ -12,7 +12,11 @@
           </div>
         </div>
         <div slot="extra">
-          <span class="iconfont icon-right" style="font-size: 36rpx;"></span>
+          <div style="padding-left: 36rpx;"
+               @click="showActionSheet = true">
+            <span class="iconfont icon-right" style="font-size: 36rpx;"></span>
+          </div>
+
         </div>
       </chargestand-title>
       <dpmsCellInput type="number" title="支付宝" :value="testValue1" />
@@ -168,13 +172,14 @@
   </view>
 </template>
 <script>
-import ChargestandTitle from '@/pages/charge/components/checkstandstandTitle'
+import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
 import patientAPI from '@/APIS/patient/patient.api'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import chargeAPI from 'APIS/charge/charge.api'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import actionSheet from './common/actionSheet'
+import { mapState } from 'vuex';
 export default {
   name: 'checkstand',
   mixins: [inputMixins],
@@ -198,7 +203,7 @@ export default {
       //支付方式
       payTypes: [],
       // 操作菜单
-      showActionSheet: true,
+      showActionSheet: false,
     }
   },
   components: {
@@ -206,6 +211,7 @@ export default {
     actionSheet,
   },
   computed: {
+    ...mapState('workbenchStore', ['menu']),
     doctorList() {
       return this.otherList.filter((item) => item.position === 2)
     },
@@ -222,7 +228,9 @@ export default {
   onLoad() {
     this.loadListData()
   },
-  onShow() {},
+  onShow() {
+    this.btnPremisstion()
+  },
   onHide() {},
   onUnload() {},
   methods: {
