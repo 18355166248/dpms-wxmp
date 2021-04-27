@@ -77,6 +77,7 @@
           placeholder="请选择就诊类型"
         />
         <dpmsEnumsPicker
+          v-if="isAppt"
           enumsKey="AppointmentType"
           v-model="form.appointmentType"
           title="预约类型"
@@ -423,6 +424,9 @@ export default {
           })
           .then((res) => {
             const form = apptFormUtil.formatApptToFormValues(res.data)
+            form.appointmentType =
+              form.appointmentType || APPOINTMENT_TYPE_ENUM.COMMON.value
+
             if (type === 'editRegister') {
               form.timeRange =
                 moment(form.appointmentBeginTimeStamp).format('HH:mm') +
