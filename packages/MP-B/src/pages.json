@@ -323,6 +323,12 @@
           }
         },
         {
+          "path": "chargeProjectsList",
+          "style": {
+            "navigationBarTitleText": "收费项目清单"
+          }
+        },
+        {
           "path": "checkstand",
           "style": {
             "navigationBarTitleText": "收银台"
