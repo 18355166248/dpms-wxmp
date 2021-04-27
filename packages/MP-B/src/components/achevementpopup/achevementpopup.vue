@@ -60,7 +60,7 @@
             <text
               class="achevementpopup-text"
               v-if="menuPermission(['report-center', 'performance', 'triage'])"
-              >分诊疗业绩</text
+              >分诊业绩</text
             >
           </uni-grid-item>
           <uni-grid-item>
