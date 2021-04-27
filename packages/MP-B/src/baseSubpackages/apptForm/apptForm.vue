@@ -62,11 +62,26 @@
             <span class="inputRightIcon">分钟</span>
           </template>
         </dpmsCellInput>
-        <dpmsEnumsPicker
+        <!-- <dpmsEnumsPicker
           enumsKey="VisType"
           v-model="form.visType"
           title="就诊类型"
           placeholder="请选择就诊类型"
+        /> -->
+        <dpmsCellPicker
+          :list="TreatmentTypes"
+          v-model="form.visType"
+          defaultType="codeId"
+          :defaultProps="{ label: 'name', value: 'codeId' }"
+          title="就诊类型"
+          placeholder="请选择就诊类型"
+        />
+        <dpmsEnumsPicker
+          v-if="isAppt"
+          enumsKey="AppointmentType"
+          v-model="form.appointmentType"
+          title="预约类型"
+          placeholder="请选择预约类型"
         />
         <dpmsCellPicker
           :list="DOCTOR_LIST"
@@ -226,7 +241,7 @@ export default {
         institutionConsultingRoomId: -1, // 诊室
         help: [-1], // 助理 2423
         nurse: [-1], // 护士 2424
-        appointmentType: APPOINTMENT_TYPE_ENUM.COMMON.value, // 预约类型 写死为普通
+        appointmentType: APPOINTMENT_TYPE_ENUM.COMMON.value,
         patientMainComplaintIds: [],
       },
       rules: {
@@ -257,6 +272,7 @@ export default {
       isCurrentInstitutionFlag: true, // 是否为当前诊所
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
       patientMainComplaintIds: [],
+      TreatmentTypes: [],
     }
   },
   filters: {
@@ -383,11 +399,20 @@ export default {
     },
   },
   methods: {
+    initTreatmentTypes() {
+      diagnosisAPI.getTreatmentTypes().then((res) => {
+        if (res?.data?.length > 0) {
+          this.TreatmentTypes = res.data
+        }
+      })
+    },
     init() {
       this.$utils.showLoading()
       // 如果地址栏有appointmentId并且type为editRegister或者editAppt才去获取预约详情
       const type = this.paramsObj.type
       this.selectListCache[6] = [] // 预约项目类别
+
+      this.initTreatmentTypes()
 
       if (
         this.paramsObj.appointmentId &&
@@ -399,7 +424,9 @@ export default {
           })
           .then((res) => {
             const form = apptFormUtil.formatApptToFormValues(res.data)
-            form.appointmentType = APPOINTMENT_TYPE_ENUM.COMMON.value
+            form.appointmentType =
+              form.appointmentType || APPOINTMENT_TYPE_ENUM.COMMON.value
+
             if (type === 'editRegister') {
               form.timeRange =
                 moment(form.appointmentBeginTimeStamp).format('HH:mm') +

@@ -115,6 +115,9 @@ const diagnosisAPI = {
   getMainComplaint(data) {
     return httper.get('diagnosis/patient-main-complaint/list', data)
   },
+  getTreatmentTypes() {
+    return httper.get('diagnosis/treatment-type/list')
+  },
 }
 
 export default diagnosisAPI
