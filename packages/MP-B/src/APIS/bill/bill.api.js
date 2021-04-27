@@ -63,6 +63,14 @@ const billAPI = {
   getSoredCardDetail(data) {
     return httper.get('member/sored-card/details', data)
   },
+  //获取就诊列表
+  getRegisterList(data) {
+    return httper.get('/diagnosis/register/list-pay', data)
+  },
+  orderPayOne(data) {
+    return httper.post('/billing/bill/order/pay-one', data)
+  }
+
 }
 
 export default billAPI

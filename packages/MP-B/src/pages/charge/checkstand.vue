@@ -175,7 +175,7 @@
 import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
 import patientAPI from '@/APIS/patient/patient.api'
 import inputMixins from 'mpcommon/mixins/inputMixins'
-import chargeAPI from 'APIS/charge/charge.api'
+// import chargeAPI from 'APIS/charge/charge.api'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import actionSheet from './common/actionSheet'
@@ -250,7 +250,7 @@ export default {
         this.otherList = res.data
       })
       // todo patientId由上游传过来
-      chargeAPI
+      billAPI
         .getRegisterList({
           patientId: 351013,
         })
