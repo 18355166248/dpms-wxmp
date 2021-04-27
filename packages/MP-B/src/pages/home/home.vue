@@ -60,7 +60,7 @@
 
     <view class="mt-64">
       <view
-        class="statistics ph-32 mh-32 mb-32"
+        class="statistics ph-32 mh-32 mb-64"
         v-if="!isHeadquartersAndRegion"
       >
         <view class="statistics-header" @click="toggle">
@@ -108,7 +108,7 @@
         </view>
       </view>
 
-      <view class="menu-area pt-48 ph-32">
+      <view class="menu-area pb-48 ph-32">
         <view class="menu-area-header">
           常用功能
         </view>
@@ -151,7 +151,7 @@
       </view>
 
       <view
-        class="menu-area pt-48 ph-32"
+        class="menu-area pb-48 ph-32"
         v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
       >
         <view class="menu-area-header">
