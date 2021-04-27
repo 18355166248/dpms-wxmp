@@ -1,3 +1,10 @@
+// {
+//   paymentAmount:0,
+//   transactionChannelId:1,
+//   transactionChannelName:1,
+// }
+// payChannelList
+
 export const mockPayTypes = {
   "_st": 1619504501195,
   "code": 0,
