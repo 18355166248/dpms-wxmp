@@ -67,7 +67,7 @@ export default {
     hideBorderBottom: {
       type: Boolean,
       required: false,
-    }
+    },
   },
   computed: {
     pickerValue() {

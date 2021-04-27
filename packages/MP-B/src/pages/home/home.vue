@@ -108,8 +108,8 @@
         </view>
       </view>
 
-      <view class="menu-area pt-48 ph-32">
-        <view class="menu-area-header">
+      <view class="menu-area pb-48 ph-32">
+        <view class="menu-area-header pt-48">
           常用功能
         </view>
         <view class="menu-area-body mt-41">
@@ -151,7 +151,7 @@
       </view>
 
       <view
-        class="menu-area pt-48 ph-32"
+        class="menu-area pb-48 ph-32"
         v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
       >
         <view class="menu-area-header">
@@ -350,7 +350,8 @@ export default {
       )
     },
     staffName() {
-      return this.staff ? this.staff.name : '--'
+      const { name, staffName } = this.staff || {}
+      return name || staffName || '--'
     },
     medicalInstitutionSimpleCode() {
       if (this.switchClinicStatus === 'loading') {
