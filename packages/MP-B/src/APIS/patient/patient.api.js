@@ -151,6 +151,10 @@ const patientAPI = {
   getCustomerStaffList(data) {
     return scrmHttper.get('scrm/customer/customer-page', data)
   },
+  // 获取处置记录列表
+  getDisposeList(data) {
+    return httper.get('/diagnosis/mini-apps/dispose/list-dispose', data)
+  },
 }
 
 export default patientAPI

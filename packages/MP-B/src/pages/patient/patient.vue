@@ -7,7 +7,9 @@
       :avatarUrl="patient.avatarUrl"
       :gender="patient.gender"
       :medicalRecordNo="patient.medicalRecordNo"
-      :visType="patient.visType ? visType[patient.visType] : `未到诊`"
+      :visType="
+        patient.visTypeName === undefined ? `未到诊` : patient.visTypeName
+      "
       :infos="[
         {
           label: '出生日期',
@@ -112,6 +114,25 @@
             打电话
           </view>
         </view>
+        <view
+          v-if="
+            menu.pageElementsList.some((m) => m.enumValue === 'disposalRecord')
+          "
+          class="menu-area-item"
+          @click="
+            onDisposalRecord(
+              '/pages/patient/disposalRecord/disposalRecord?patientId=' +
+                patientId,
+            )
+          "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color7">
+            <text class="iconfont icon-lishibingli1"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            处置记录
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -198,6 +219,12 @@ export default {
         phoneNumber: this.patient?.mobile,
       })
     },
+    onDisposalRecord(url) {
+      console.log('url', url)
+      this.$utils.push({
+        url,
+      })
+    },
   },
   components: {
     card,
@@ -275,6 +302,10 @@ export default {
       }
       &-icon-color6 {
         $values: rgba(255, 132, 135, 1), rgba(255, 77, 79, 1);
+        @include colors($values...);
+      }
+      &-icon-color7 {
+        $values: rgba(91, 218, 153, 1), rgba(52, 197, 122, 1);
         @include colors($values...);
       }
 
