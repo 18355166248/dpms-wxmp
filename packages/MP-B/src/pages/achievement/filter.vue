@@ -55,9 +55,9 @@ export default {
         break
     }
     this.staffIds = staffIds ? staffIds.split(',') : []
-    this.staffName = staffName
+    this.staffName = staffName || ''
     this.chargeTypeIds = chargeTypeIds ? chargeTypeIds.split(',') : []
-    this.chargeTypeName = chargeTypeName
+    this.chargeTypeName = chargeTypeName || ''
     this.name = name
   },
   mounted() {
@@ -101,7 +101,6 @@ export default {
         chargeTypeName: this.chargeTypeName,
       })
       this.setStore()
-
       this.$utils.back()
     },
     onReset() {

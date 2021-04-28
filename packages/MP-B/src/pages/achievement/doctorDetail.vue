@@ -8,9 +8,6 @@
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
-      :bottom-computed-fixed="true"
-      :computed-col="computedCol"
-      :summary="summary"
     />
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
@@ -22,7 +19,6 @@
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import wybTable from '@/components/wyb-table/wyb-table.vue'
-import institutionAPI from 'APIS/institution/institution.api'
 
 export default {
   components: {
@@ -34,6 +30,10 @@ export default {
         {
           label: '医生',
           key: 'doctorName',
+        },
+        {
+          label: '实收金额',
+          key: 'paidInAmount',
         },
         {
           label: '机构',
@@ -89,6 +89,7 @@ export default {
         },
       ],
       computedCol: [
+        'paidInAmount',
         'receivableAmount',
         'refundAmount',
         'cashAmount',
@@ -110,70 +111,23 @@ export default {
       summary: {},
       doctorIds: '',
       parentChargeTypeIds: '',
-      chargeTypeName: '',
     }
   },
-  onLoad() {
+  onLoad({ id, beginTimeMillis, endTimeMillis, parentChargeTypeIds }) {
+    this.doctorIds = id
+    this.beginTimeMillis = beginTimeMillis
+    this.endTimeMillis = endTimeMillis
+    this.parentChargeTypeIds = parentChargeTypeIds
     this.init()
-    uni.$on('chooseCalendarOption', (name) => {
-      switch (name) {
-        case 'today':
-          this.beginTimeMillis = moment().startOf('day').format('x')
-          this.endTimeMillis = moment().endOf('day').format('x')
-          this.dateFilterText = '今天'
-          break
-        case 'yesterday':
-          this.beginTimeMillis = moment()
-            .subtract(1, 'day')
-            .startOf('day')
-            .format('x')
-          this.endTimeMillis = moment()
-            .subtract(1, 'day')
-            .endOf('day')
-            .format('x')
-          this.dateFilterText = '昨天'
-          break
-        case 'thisMonth':
-          this.beginTimeMillis = moment().startOf('month').format('x')
-          this.endTimeMillis = moment().endOf('month').format('x')
-          this.dateFilterText = '本月'
-          break
-        case 'lastMonth':
-          this.beginTimeMillis = moment()
-            .subtract(1, 'month')
-            .startOf('month')
-            .format('x')
-          this.endTimeMillis = moment()
-            .subtract(1, 'month')
-            .endOf('month')
-            .format('x')
-          this.dateFilterText = '上月'
-          break
-        default:
-          break
-      }
-      this.init()
-    })
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
         this.current += 1
         this.getDoctors()
       }
     })
-    uni.$on('achFilter', ({ staffId, chargeTypeIds, chargeTypeName }) => {
-      this.doctorIds = staffId
-      this.parentChargeTypeIds = chargeTypeIds
-      this.chargeTypeName = chargeTypeName
-      this.init()
-
-      if (staffId || chargeTypeIds) this.isFilter = true
-      else this.isFilter = false
-    })
   },
   onUnload() {
-    uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
-    uni.$off('achFilter')
   },
   //双重scroll-view触发不灵敏
   // onReachBottom() {
@@ -195,19 +149,17 @@ export default {
       })
       this.dataSourceStatus = 'loading'
       const params = {}
-      if (this.doctorIds) {
-        params.doctorIds = this.doctorIds
-      }
       if (this.parentChargeTypeIds) {
         params.parentChargeTypeIds = this.parentChargeTypeIds
       }
       const {
         data: { total, current, records, summary },
-      } = await billAPI.doctorList({
+      } = await billAPI.doctorDetailList({
         current: this.current,
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
+        doctorIds: this.doctorIds,
         ...params,
       })
       records.forEach((element) => {
@@ -215,12 +167,14 @@ export default {
         element.receivableAmount = this.$utils.formatPrice(
           element.receivableAmount,
         )
+        element.paidInAmount = this.$utils.formatPrice(element.paidInAmount)
         element.refundAmount = this.$utils.formatPrice(element.refundAmount)
         element.cashAmount = this.$utils.formatPrice(element.cashAmount)
         element.virtualAmount = this.$utils.formatPrice(element.virtualAmount)
         element.deductionOfAdvanceAmount = this.$utils.formatPrice(
           element.deductionOfAdvanceAmount,
         )
+        element.revenueAmount = this.$utils.formatPrice(element.revenueAmount)
         element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
         element.plannedRevenueAmount = this.$utils.formatPrice(
           element.plannedRevenueAmount,
@@ -256,7 +210,7 @@ export default {
   background: rgba(0, 0, 0, 0.04);
   .content {
     background: #ffffff;
-    height: 92vh;
+    height: 100vh;
   }
 }
 </style>

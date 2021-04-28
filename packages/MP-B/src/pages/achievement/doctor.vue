@@ -25,13 +25,14 @@
       v-if="contents.length !== 0"
       :headers="headers"
       :contents="contents"
-      height="100vh"
+      height="93.5vh"
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
       :bottom-computed-fixed="true"
       :computed-col="computedCol"
       :summary="summary"
+      :url-col="[{ type: 'route', key: 'url' }]"
     />
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
@@ -54,84 +55,30 @@ export default {
       headers: [
         {
           label: '医生',
-          key: 'doctorName',
+          key: 'url',
+          width: 272,
         },
         {
-          label: '机构',
-          key: 'medicalInstitutionName',
-        },
-        {
-          label: '日期',
-          key: 'statDate',
-        },
-        {
-          label: '收费大类',
-          key: 'parentItemChargeTypeName',
-        },
-        {
-          label: '收费小类',
-          key: 'itemChargeTypeName',
-        },
-        {
-          label: '项目名称',
-          key: 'itemName',
-        },
-        {
-          label: '当日收款',
-          key: 'receivableAmount',
-        },
-        {
-          label: '当日退款',
-          key: 'refundAmount',
-        },
-        {
-          label: '现金收款',
-          key: 'cashAmount',
-        },
-        {
-          label: '虚拟收款',
-          key: 'virtualAmount',
-        },
-        {
-          label: '预收款抵扣',
-          key: 'deductionOfAdvanceAmount',
-        },
-        {
-          label: '营业收入',
-          key: 'revenueAmount',
-        },
-        {
-          label: '普通收费收入',
-          key: 'paymentAmount',
-        },
-        {
-          label: '划扣收入',
-          key: 'plannedRevenueAmount',
+          label: '实收金额',
+          key: 'paidInAmount',
+          width: 478,
         },
       ],
-      computedCol: [
-        'receivableAmount',
-        'refundAmount',
-        'cashAmount',
-        'virtualAmount',
-        'deductionOfAdvanceAmount',
-        'revenueAmount',
-        'paymentAmount',
-        'plannedRevenueAmount',
-      ],
+      computedCol: ['paidInAmount'],
       contents: [],
       total: 0,
       current: 0,
       size: 10,
       beginTimeMillis: moment().startOf('day').format('x'),
       endTimeMillis: moment().endOf('day').format('x'),
+      // beginTimeMillis: 1548950400000,
+      // endTimeMillis: 1619711999999,
       dateFilterText: '今天',
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
       doctorIds: '',
       parentChargeTypeIds: '',
-      chargeTypeName: '',
     }
   },
   onLoad() {
@@ -181,13 +128,11 @@ export default {
         this.getDoctors()
       }
     })
-    uni.$on('achFilter', ({ staffId, chargeTypeIds, chargeTypeName }) => {
-      this.doctorIds = staffId
-      this.parentChargeTypeIds = chargeTypeIds
-      this.chargeTypeName = chargeTypeName
+    uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
+      this.doctorIds = staffIds || ''
+      this.parentChargeTypeIds = chargeTypeIds || ''
       this.init()
-
-      if (staffId || chargeTypeIds) this.isFilter = true
+      if (staffIds || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
     })
   },
@@ -195,6 +140,7 @@ export default {
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
+    uni.removeStorageSync('achFilter')
   },
   //双重scroll-view触发不灵敏
   // onReachBottom() {
@@ -248,21 +194,19 @@ export default {
         endTimeMillis: this.endTimeMillis,
         ...params,
       })
+      const { beginTimeMillis, endTimeMillis, parentChargeTypeIds } = this
       records.forEach((element) => {
-        element.statDate = moment(element.statDate).format('YYYY-MM-DD')
-        element.receivableAmount = this.$utils.formatPrice(
-          element.receivableAmount,
-        )
-        element.refundAmount = this.$utils.formatPrice(element.refundAmount)
-        element.cashAmount = this.$utils.formatPrice(element.cashAmount)
-        element.virtualAmount = this.$utils.formatPrice(element.virtualAmount)
-        element.deductionOfAdvanceAmount = this.$utils.formatPrice(
-          element.deductionOfAdvanceAmount,
-        )
-        element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
-        element.plannedRevenueAmount = this.$utils.formatPrice(
-          element.plannedRevenueAmount,
-        )
+        element.paidInAmount = this.$utils.formatPrice(element.paidInAmount)
+        element.url = [
+          element.doctorName,
+          '/pages/achievement/doctorDetail',
+          {
+            id: element.doctorId,
+            beginTimeMillis,
+            endTimeMillis,
+            parentChargeTypeIds,
+          },
+        ]
       })
       if (this.current === 1) {
         this.contents = records
@@ -281,7 +225,7 @@ export default {
     },
     onFilterClick() {
       this.$utils.push({
-        url: `/pages/achievement/filter?name=doctor&staffId=${this.doctorIds}&chargeTypeIds=${this.parentChargeTypeIds}&chargeTypeName=${this.chargeTypeName}`,
+        url: `/pages/achievement/filter?name=doctor`,
       })
     },
     openCalendar() {

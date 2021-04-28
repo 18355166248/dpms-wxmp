@@ -718,7 +718,7 @@ export default {
     },
     defaultColWidth: {
       type: Number,
-      default: 165,
+      default: 300,
     },
     headerWeight: {
       type: Boolean,
@@ -1056,7 +1056,7 @@ export default {
                   url += `&${key}=${content[header['key']][2][key]}`
                 })
               }
-              uni.navigateTo({ url })
+              this.$utils.push({ url })
               break
             case 'http':
               this.openURL(content[header.key][1])

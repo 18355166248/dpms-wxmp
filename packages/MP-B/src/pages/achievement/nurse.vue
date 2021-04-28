@@ -131,7 +131,6 @@ export default {
       summary: {},
       nurseIds: '',
       parentChargeTypeIds: '',
-      chargeTypeName: '',
     }
   },
   onLoad() {
@@ -182,8 +181,8 @@ export default {
       }
     })
     uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
-      this.nurseIds = staffIds
-      this.parentChargeTypeIds = chargeTypeIds
+      this.nurseIds = staffIds || ''
+      this.parentChargeTypeIds = chargeTypeIds || ''
       this.init()
       if (staffIds || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
@@ -193,6 +192,7 @@ export default {
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
+    uni.removeStorageSync('achFilter')
   },
   //双重scroll-view触发不灵敏
   // onReachBottom() {
@@ -257,6 +257,7 @@ export default {
         element.deductionOfAdvanceAmount = this.$utils.formatPrice(
           element.deductionOfAdvanceAmount,
         )
+        element.revenueAmount = this.$utils.formatPrice(element.revenueAmount)
         element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
         element.plannedRevenueAmount = this.$utils.formatPrice(
           element.plannedRevenueAmount,
