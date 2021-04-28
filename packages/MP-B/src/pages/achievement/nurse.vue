@@ -206,10 +206,10 @@ export default {
   // },
   methods: {
     init() {
-      this.getStaff()
-      this.getProject()
       this.current = 1
       this.getNurses()
+      this.getStaff()
+      this.getProject()
     },
     async getStaff() {
       const {
