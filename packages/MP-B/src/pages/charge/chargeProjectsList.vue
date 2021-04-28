@@ -19,16 +19,17 @@
             </div>
             <div class="flex-h-end">
               <div style="margin-top: 10rpx">
-                <uni-number-box :max="9999" v-model="item.itemNum"/>
+                <uni-number-box :max="9999" v-model="item.itemNum" @input="onChangeItem($event, item)"/>
               </div>
             </div>
           </div>
         </div>
         <div class="row-2 flex-v-center">
-          是否整单折扣: 是
+          是否整单折扣: {{ item.allBillDiscount?'是':'否' }}
         </div>
       </div>
       <dpmsCellInput
+        :disabledProps="!(btnPremisstion('modify_whole_order_discount') && hasDiscountItem)"
         title="整单折扣"
         :value="mainOrderDiscount"
         @input="onMainOrderDiscount"
@@ -39,8 +40,10 @@
         </div>
       </dpmsCellInput>
       <dpmsCellInput
+        :disabledProps="!(btnPremisstion('modify_discount_amount') && hasDiscountItem)"
         title="折后金额(¥)"
-
+        :value="receivableAmount"
+        type="number"
       />
     </div>
     <div class="footer-wrapper">
@@ -64,17 +67,37 @@ export default {
   data() {
     return {
       disposeList: this.fackList,
-      mainOrderDiscount: 100
+      mainOrderDiscount: 100,
+      receivableAmount:0,
     };
   },
   onShow() {
-    console.log(BigCalculate(0.1, '+', 0.2));
     // 计算宽度
   },
+  computed: {
+    hasDiscountItem() {
+      return this.disposeList.some(item => item.allBillDiscount)
+    }
+  },
   methods: {
+    onChangeItem(v, record) {
+      if(v === 0) {
+        uni.showModal({
+          title: '确定删除该项目吗?',
+          success: (res) => {
+            if (res.confirm) {
+              this.disposeList = this.disposeList.filter(item => item.itemCode !== record.itemCode)
+            } else if (res.cancel) {
+              record.itemNum = 1
+            }
+          }
+        })
+      }
+    },
     onEditPrice(v) {
       console.log(v);
     },
+
     onMainOrderDiscount(v) {
       console.log(v);
       let vStr = `${v}`
