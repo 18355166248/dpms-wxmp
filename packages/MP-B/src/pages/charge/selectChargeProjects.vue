@@ -77,8 +77,9 @@ export default {
     ...mapMutations('dispose', ['setDisposeList']),
     //合并数据
     mergeData() {
-      if (this.classifyList.length > 0 && this.searchProjectList.length > 0) {
-        this.searchProjectList.forEach((project) => {
+      const mergeList = [...this.searchProjectList, ...this.disposeList]
+      if (this.classifyList.length > 0 && mergeList.length > 0) {
+        mergeList.forEach((project) => {
           this.classifyList.forEach((item) => {
             if (item.settingsChargeTypeId === project.settingsChargeTypeId) {
               item.open = true
@@ -94,6 +95,7 @@ export default {
         })
       }
     },
+
     async getChargeTypes() {
       const { data } = await billAPI.getChargeTypes()
       if (data) {
@@ -129,7 +131,7 @@ export default {
         return
       }
       uni.navigateTo({
-        url: '/pages/charge/checkstand',
+        url: '/pages/charge/chargeProjectsList',
       })
     },
     handleData() {

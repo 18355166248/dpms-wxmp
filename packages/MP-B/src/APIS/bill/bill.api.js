@@ -69,8 +69,11 @@ const billAPI = {
   },
   orderPayOne(data) {
     return httper.post('/billing/bill/order/pay-one', data)
-  }
-
+  },
+  // 获取欠费列表
+  getPayDebtList(data) {
+    return httper.get('billing/bill/order/pay-debt', data)
+  },
 }
 
 export default billAPI

@@ -7,6 +7,9 @@ import '@/styles/common.scss'
 import './utils/filter'
 import './utils/globalMixin'
 
+import uView from 'uview-ui'
+Vue.use(uView)
+
 Vue.config.productionTip = false
 Vue.use(uma)
 
