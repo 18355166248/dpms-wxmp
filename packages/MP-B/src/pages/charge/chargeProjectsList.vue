@@ -28,6 +28,20 @@
           是否整单折扣: 是
         </div>
       </div>
+      <dpmsCellInput
+        title="整单折扣"
+        :value="mainOrderDiscount"
+        @input="onMainOrderDiscount"
+        type="number"
+      >
+        <div slot="inputRight">
+          %
+        </div>
+      </dpmsCellInput>
+      <dpmsCellInput
+        title="折后金额(¥)"
+
+      />
     </div>
     <div class="footer-wrapper">
       <button class="submit-btn flex-center">下一步</button>
@@ -50,6 +64,7 @@ export default {
   data() {
     return {
       disposeList: this.fackList,
+      mainOrderDiscount: 100
     };
   },
   onShow() {
@@ -60,6 +75,25 @@ export default {
     onEditPrice(v) {
       console.log(v);
     },
+    onMainOrderDiscount(v) {
+      console.log(v);
+      let vStr = `${v}`
+      vStr = vStr.replace(/\b(0+)/gi,"")
+      const vNum = Number(vStr)
+      if(vNum > 100) {
+        this.$nextTick(() => {
+          this.mainOrderDiscount = 100
+          console.log(this.mainOrderDiscount);
+        })
+
+      } else {
+        this.$nextTick(() => {
+          this.mainOrderDiscount = vNum
+          console.log(this.mainOrderDiscount);
+        })
+
+      }
+    }
   },
 };
 </script>
