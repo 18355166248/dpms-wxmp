@@ -88,6 +88,18 @@ const billAPI = {
   getPayDebtList(data) {
     return httper.get('billing/bill/order/pay-debt', data)
   },
+  //收欠费
+  payDebt(data) {
+    return httper.post('/billing/bill/order/pay-debt', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
+  //获取订单支付结果
+  getPayChannelResult(data) {
+    return httper.get('billing/bill/pay/channel', data)
+  },
 }
 
 export default billAPI

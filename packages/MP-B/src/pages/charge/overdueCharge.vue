@@ -10,9 +10,9 @@
           <view class="info-left">
             <view>{{ billTypeDic[item.billType] }}</view>
             <view>{{ item.medicalInstitutionName }}</view>
-            <view>{{
-              item.billFistPayTime | filterTime('YYYY-MM-DD HH:mm')
-            }}</view>
+            <view
+              >{{ item.billFistPayTime | filterTime('YYYY-MM-DD HH:mm') }}
+            </view>
           </view>
           <view class="info-right">
             <view class="labels">
@@ -21,15 +21,15 @@
               <view>欠费：</view>
             </view>
             <view class="values">
-              <view>{{
-                item.receivableAmount | thousandFormatter(2, '￥')
-              }}</view>
-              <view class="red-color">{{
-                item.receiptAmount | thousandFormatter(2, '￥')
-              }}</view>
-              <view class="green-color">{{
-                item.debtAmount | thousandFormatter(2, '￥')
-              }}</view>
+              <view
+                >{{ item.receivableAmount | thousandFormatter(2, '￥') }}
+              </view>
+              <view class="red-color"
+                >{{ item.receiptAmount | thousandFormatter(2, '￥') }}
+              </view>
+              <view class="green-color"
+                >{{ item.debtAmount | thousandFormatter(2, '￥') }}
+              </view>
             </view>
           </view>
         </view>
@@ -49,16 +49,18 @@
         }}</span></view
       >
       <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
-        >下一步</chargeButton
-      >
+        >下一步
+      </chargeButton>
     </view>
+    <!--提示-->
+    <u-toast ref="uToast" />
   </view>
 </template>
 <script>
 import chargeButton from './common/chargeButton'
 import billAPI from '@/APIS/bill/bill.api'
 import { BigCalculate } from '@/utils/utils'
-import { mapMutations } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'overdueCharge',
@@ -78,7 +80,9 @@ export default {
       totalAmount: 0,
     }
   },
-  computed: {},
+  computed: {
+    ...mapState('patient', ['patientDetail']),
+  },
   onLoad() {},
   onShow() {
     this.getPayDebtList()
@@ -93,7 +97,8 @@ export default {
     },
     calculate() {
       this.totalAmount = this.overdueChargeList.reduce((pre, next) => {
-        return pre + next.checked ? next.debtAmount : 0
+        const nextAmount = next.checked ? next.debtAmount : 0
+        return BigCalculate(pre, '+', nextAmount)
       }, 0)
     },
     hideActionSheet() {
@@ -103,7 +108,7 @@ export default {
     getPayDebtList() {
       billAPI
         .getPayDebtList({
-          patientId: 351032,
+          patientId: this.patientDetail.patientId,
         })
         .then((res) => {
           if (res?.data) {
@@ -119,11 +124,15 @@ export default {
     nextStep() {
       const list = this.overdueChargeList.filter((item) => item.checked)
       if (list.length <= 0) {
-        this.$utils.show('请选择收费项目')
+        this.$refs.uToast.show({
+          title: '请选择收欠费项目!',
+          type: 'warning',
+        })
         return
       }
       this.setOverdueList(list)
       this.setOverdueAmount(this.totalAmount)
+
       uni.navigateTo({
         url: '/pages/charge/overdueCheckstand',
       })
