@@ -1,31 +1,10 @@
 <template>
-  <view class="ach_nurse">
-    <view class="filter">
-      <view class="uni-list-cell">
-        <view @click="openCalendar" class="left"
-          >{{ dateFilterText }} <view class="iconfont icon-closed"></view>
-        </view>
-      </view>
-      <view class="uni-list-cell">
-        <view
-          :class="['left', isFilter ? 'right' : '']"
-          @click.native="onFilterClick"
-          >{{ isFilter ? '已按条件筛选' : '筛选'
-          }}<view class="iconfont icon-filter"></view
-        ></view>
-      </view>
-      <uni-calendar
-        ref="calendar"
-        :insert="false"
-        :range="true"
-        @confirm="confirmCalendar"
-      />
-    </view>
+  <view class="ach_doctor_detail">
     <wyb-table
       v-if="contents.length !== 0"
       :headers="headers"
       :contents="contents"
-      height="93.5vh"
+      height="100vh"
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
@@ -53,8 +32,8 @@ export default {
     return {
       headers: [
         {
-          label: '护士',
-          key: 'nurseName',
+          label: '医生',
+          key: 'doctorName',
         },
         {
           label: '机构',
@@ -129,7 +108,7 @@ export default {
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
-      nurseIds: '',
+      doctorIds: '',
       parentChargeTypeIds: '',
       chargeTypeName: '',
     }
@@ -178,14 +157,16 @@ export default {
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getNurses()
+        this.getDoctors()
       }
     })
-    uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
-      this.nurseIds = staffIds
+    uni.$on('achFilter', ({ staffId, chargeTypeIds, chargeTypeName }) => {
+      this.doctorIds = staffId
       this.parentChargeTypeIds = chargeTypeIds
+      this.chargeTypeName = chargeTypeName
       this.init()
-      if (staffIds || chargeTypeIds) this.isFilter = true
+
+      if (staffId || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
     })
   },
@@ -199,47 +180,30 @@ export default {
   //   console.log(this.contents.length, this.total, 'onReachBottom')
   //   if (this.contents.length < this.total) {
   //     this.current += 1
-  //     this.getNurses()
+  //     this.getDoctors()
   //   }
   // },
   methods: {
     init() {
       this.current = 1
-      this.getNurses()
-      this.getStaff()
-      this.getProject()
+      this.getDotcors()
     },
-    async getStaff() {
-      const {
-        data,
-      } = await institutionAPI.getStaffListByPositionFromAllInstitution({
-        workStatus:
-          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
-            ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.NURSE?.value || 6,
-      })
-      uni.setStorageSync('allNurseList', data)
-    },
-    async getProject() {
-      const { data } = await billAPI.chargeTypeParentList()
-      uni.setStorageSync('allProjectList', data)
-    },
-    async getNurses() {
+    async getDotcors() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
       })
       this.dataSourceStatus = 'loading'
       const params = {}
-      if (this.nurseIds) {
-        params.nurseIds = this.nurseIds
+      if (this.doctorIds) {
+        params.doctorIds = this.doctorIds
       }
       if (this.parentChargeTypeIds) {
         params.parentChargeTypeIds = this.parentChargeTypeIds
       }
       const {
         data: { total, current, records, summary },
-      } = await billAPI.nurseList({
+      } = await billAPI.doctorList({
         current: this.current,
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
@@ -277,30 +241,10 @@ export default {
       this.summary = summary || {}
       uni.hideLoading()
     },
-    onFilterClick() {
-      this.$utils.push({
-        url: `/pages/achievement/filter?name=nurse`,
-      })
-    },
-    openCalendar() {
-      this.$refs.calendar.open()
-    },
-    confirmCalendar({ range, fulldate }) {
-      const { before, after, data } = range
-      if (data.length === 0) {
-        this.beginTimeMillis = moment(fulldate).startOf('day').format('x')
-        this.endTimeMillis = moment(fulldate).endOf('day').format('x')
-      } else {
-        this.beginTimeMillis = moment(before).format('x')
-        this.endTimeMillis = moment(after).endOf('day').format('x')
-      }
-      this.dateFilterText = '自定义'
-      this.init()
-    },
     emitPage() {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getNurses()
+        this.getDoctors()
       }
     },
   },
@@ -308,31 +252,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.ach_nurse {
+.ach_doctor_detail {
   background: rgba(0, 0, 0, 0.04);
-  .filter {
-    background: #ffffff;
-    height: 6.5vh;
-    display: flex;
-    .uni-list-cell {
-      width: 50vw;
-      .left {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-      }
-      .right {
-        color: #5cbb89;
-      }
-      .iconfont {
-        font-size: 24rpx;
-        margin-left: 20rpx;
-      }
-    }
-  }
   .content {
-    margin-top: 1.5vh;
     background: #ffffff;
     height: 92vh;
   }

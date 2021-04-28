@@ -1,5 +1,5 @@
 <template>
-  <view class="ach_nurse">
+  <view class="ach_doctor">
     <view class="filter">
       <view class="uni-list-cell">
         <view @click="openCalendar" class="left"
@@ -25,7 +25,7 @@
       v-if="contents.length !== 0"
       :headers="headers"
       :contents="contents"
-      height="93.5vh"
+      height="100vh"
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
@@ -53,8 +53,8 @@ export default {
     return {
       headers: [
         {
-          label: '护士',
-          key: 'nurseName',
+          label: '医生',
+          key: 'doctorName',
         },
         {
           label: '机构',
@@ -129,7 +129,7 @@ export default {
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
-      nurseIds: '',
+      doctorIds: '',
       parentChargeTypeIds: '',
       chargeTypeName: '',
     }
@@ -178,14 +178,16 @@ export default {
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getNurses()
+        this.getDoctors()
       }
     })
-    uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
-      this.nurseIds = staffIds
+    uni.$on('achFilter', ({ staffId, chargeTypeIds, chargeTypeName }) => {
+      this.doctorIds = staffId
       this.parentChargeTypeIds = chargeTypeIds
+      this.chargeTypeName = chargeTypeName
       this.init()
-      if (staffIds || chargeTypeIds) this.isFilter = true
+
+      if (staffId || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
     })
   },
@@ -199,13 +201,13 @@ export default {
   //   console.log(this.contents.length, this.total, 'onReachBottom')
   //   if (this.contents.length < this.total) {
   //     this.current += 1
-  //     this.getNurses()
+  //     this.getDoctors()
   //   }
   // },
   methods: {
     init() {
       this.current = 1
-      this.getNurses()
+      this.getDotcors()
       this.getStaff()
       this.getProject()
     },
@@ -216,30 +218,30 @@ export default {
         workStatus:
           this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.NURSE?.value || 6,
+        position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
       })
-      uni.setStorageSync('allNurseList', data)
+      uni.setStorageSync('allDoctorList', data)
     },
     async getProject() {
       const { data } = await billAPI.chargeTypeParentList()
       uni.setStorageSync('allProjectList', data)
     },
-    async getNurses() {
+    async getDotcors() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
       })
       this.dataSourceStatus = 'loading'
       const params = {}
-      if (this.nurseIds) {
-        params.nurseIds = this.nurseIds
+      if (this.doctorIds) {
+        params.doctorIds = this.doctorIds
       }
       if (this.parentChargeTypeIds) {
         params.parentChargeTypeIds = this.parentChargeTypeIds
       }
       const {
         data: { total, current, records, summary },
-      } = await billAPI.nurseList({
+      } = await billAPI.doctorList({
         current: this.current,
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
@@ -279,7 +281,7 @@ export default {
     },
     onFilterClick() {
       this.$utils.push({
-        url: `/pages/achievement/filter?name=nurse`,
+        url: `/pages/achievement/filter?name=doctor&staffId=${this.doctorIds}&chargeTypeIds=${this.parentChargeTypeIds}&chargeTypeName=${this.chargeTypeName}`,
       })
     },
     openCalendar() {
@@ -300,7 +302,7 @@ export default {
     emitPage() {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getNurses()
+        this.getDoctors()
       }
     },
   },
@@ -308,7 +310,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.ach_nurse {
+.ach_doctor {
   background: rgba(0, 0, 0, 0.04);
   .filter {
     background: #ffffff;

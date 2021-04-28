@@ -39,6 +39,20 @@ const billAPI = {
   nurseList(data) {
     return httper.get('billing/stat/nurse/performance/page', data)
   },
+  //医生业绩
+  doctorList(data) {
+    return httper.get(
+      'billing/mini-apps/stat/doctor/performance/sum/page',
+      data,
+    )
+  },
+  //医生业绩详情
+  doctorDetailList(data) {
+    return httper.get(
+      'billing/mini-apps/stat/doctor/performance/detail/page',
+      data,
+    )
+  },
   //项目列表
   chargeTypeParentList(data) {
     return httper.get('billing/settings/charge-type/select-parent', data)
@@ -69,8 +83,7 @@ const billAPI = {
   },
   orderPayOne(data) {
     return httper.post('/billing/bill/order/pay-one', data)
-  }
-
+  },
 }
 
 export default billAPI
