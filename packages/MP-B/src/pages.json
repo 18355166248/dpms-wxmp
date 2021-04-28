@@ -266,6 +266,30 @@
     },
     {
       "root": "pages/achievement",
+      "name": "doctorDetail",
+      "pages": [
+        {
+          "path": "doctorDetail",
+          "style": {
+            "navigationBarTitleText": "医生明细"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "doctor",
+      "pages": [
+        {
+          "path": "doctor",
+          "style": {
+            "navigationBarTitleText": "医生业绩"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
       "name": "nurse",
       "pages": [
         {
@@ -282,6 +306,18 @@
       "pages": [
         {
           "path": "filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "staffList",
+      "pages": [
+        {
+          "path": "staffList",
           "style": {
             "navigationBarTitleText": "筛选"
           }
