@@ -104,3 +104,10 @@ export function BigCalculate(value1, method, value2) {
   }
 }
 
+export function changeTwoDecimal(params) {
+  return params
+  const paramsMul=Math.floor(BigCalculate(params, '*', 100))
+  const paramsDiv=BigCalculate(paramsMul,'/',100)
+  return paramsDiv
+}
+
