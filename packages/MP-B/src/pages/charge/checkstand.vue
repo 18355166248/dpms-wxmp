@@ -161,9 +161,10 @@
       >
         {{ item.settingsPayTransactionChannelName }}
         <dpmsCheckbox
-          :disabled = "checkDisableFn() && item.checked"
+          :disabled = "checkDisableFn(item.checked)"
           shape="square"
-          v-model="item.checked"
+          :value="item.checked"
+          @input="payTypeChange($event, item)"
         >
         </dpmsCheckbox>
       </view>
@@ -245,9 +246,9 @@ export default {
     formatDisposeItem(item) {
       return numberUtils.thousandFormatter(item.receivableAmount) + (item.unit || '') + 'x' + item.itemNum;
     },
-    checkDisableFn() {
+    checkDisableFn(checked) {
       const hasCheck = this.payTypes.filter(item => item.checked)
-      return hasCheck.length === 1
+      return (hasCheck.length === 1 && checked) || (hasCheck.length ===3 && !checked)
     },
     payTypeChange(value, record) {
       record.checked = value;
@@ -269,10 +270,6 @@ export default {
         transactionChannelName: item.settingsPayTransactionChannelName,
       }));
       this.showActionSheet = false;
-    },
-    registerTimeLabel(record) {
-      console.log(record);
-      return 123132;
     },
     loadListData() {
       patientAPI.getStaffList().then((res) => {

@@ -7,6 +7,7 @@
   >
     <input
       :type="type"
+      :disabled="disabledProps"
       :value="value"
       @input="onChange"
       @blur="onBlur"
@@ -50,6 +51,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabledProps: {
+      type: Boolean,
+      default: false
+    }
   },
   methods: {
     onChange(e) {

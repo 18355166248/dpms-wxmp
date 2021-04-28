@@ -114,7 +114,7 @@ export const mockItems = [
     pageSerialNo: 3,
     salesList: [],
     deductSign: false,
-    allBillDiscount: false,
+    allBillDiscount: true,
     isSingleDiscount: false,
     singleDiscountLimit: 0,
     itemCode: "8109441103329",
