@@ -188,7 +188,8 @@ export default {
       else this.isFilter = false
     })
   },
-  onUnload() {
+  beforeDestroy() {
+    console.log('nurse unload')
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
@@ -297,12 +298,6 @@ export default {
       }
       this.dateFilterText = '自定义'
       this.init()
-    },
-    emitPage() {
-      if (this.contents.length < this.total) {
-        this.current += 1
-        this.getNurses()
-      }
     },
   },
 }

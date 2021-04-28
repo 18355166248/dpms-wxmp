@@ -126,7 +126,7 @@ export default {
       }
     })
   },
-  onUnload() {
+  beforeDestroy() {
     uni.$off('emitPage')
   },
   //双重scroll-view触发不灵敏
@@ -140,9 +140,9 @@ export default {
   methods: {
     init() {
       this.current = 1
-      this.getDotcors()
+      this.getDoctors()
     },
-    async getDotcors() {
+    async getDoctors() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
@@ -194,12 +194,6 @@ export default {
       }
       this.summary = summary || {}
       uni.hideLoading()
-    },
-    emitPage() {
-      if (this.contents.length < this.total) {
-        this.current += 1
-        this.getDoctors()
-      }
     },
   },
 }
