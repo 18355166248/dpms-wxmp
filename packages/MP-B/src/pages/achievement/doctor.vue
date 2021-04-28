@@ -1,5 +1,5 @@
 <template>
-  <view class="ach_nurse">
+  <view class="ach_doctor">
     <view class="filter">
       <view class="uni-list-cell">
         <view @click="openCalendar" class="left"
@@ -32,6 +32,7 @@
       :bottom-computed-fixed="true"
       :computed-col="computedCol"
       :summary="summary"
+      :url-col="[{ type: 'route', key: 'url' }]"
     />
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
@@ -53,83 +54,30 @@ export default {
     return {
       headers: [
         {
-          label: '护士',
-          key: 'nurseName',
+          label: '医生',
+          key: 'url',
+          width: 272,
         },
         {
-          label: '机构',
-          key: 'medicalInstitutionName',
-        },
-        {
-          label: '日期',
-          key: 'statDate',
-        },
-        {
-          label: '收费大类',
-          key: 'parentItemChargeTypeName',
-        },
-        {
-          label: '收费小类',
-          key: 'itemChargeTypeName',
-        },
-        {
-          label: '项目名称',
-          key: 'itemName',
-        },
-        {
-          label: '当日收款',
-          key: 'receivableAmount',
-        },
-        {
-          label: '当日退款',
-          key: 'refundAmount',
-        },
-        {
-          label: '现金收款',
-          key: 'cashAmount',
-        },
-        {
-          label: '虚拟收款',
-          key: 'virtualAmount',
-        },
-        {
-          label: '预收款抵扣',
-          key: 'deductionOfAdvanceAmount',
-        },
-        {
-          label: '营业收入',
-          key: 'revenueAmount',
-        },
-        {
-          label: '普通收费收入',
-          key: 'paymentAmount',
-        },
-        {
-          label: '划扣收入',
-          key: 'plannedRevenueAmount',
+          label: '实收金额',
+          key: 'paidInAmount',
+          width: 478,
         },
       ],
-      computedCol: [
-        'receivableAmount',
-        'refundAmount',
-        'cashAmount',
-        'virtualAmount',
-        'deductionOfAdvanceAmount',
-        'revenueAmount',
-        'paymentAmount',
-        'plannedRevenueAmount',
-      ],
+      computedCol: ['paidInAmount'],
       contents: [],
       total: 0,
       current: 0,
       size: 10,
       beginTimeMillis: moment().startOf('day').format('x'),
       endTimeMillis: moment().endOf('day').format('x'),
+      // beginTimeMillis: 1548950400000,
+      // endTimeMillis: 1619711999999,
       dateFilterText: '今天',
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
-      nurseIds: '',
+      doctorIds: '',
       parentChargeTypeIds: '',
     }
   },
@@ -177,11 +125,11 @@ export default {
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getNurses()
+        this.getDoctors()
       }
     })
     uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
-      this.nurseIds = staffIds || ''
+      this.doctorIds = staffIds || ''
       this.parentChargeTypeIds = chargeTypeIds || ''
       this.init()
       if (staffIds || chargeTypeIds) this.isFilter = true
@@ -189,24 +137,16 @@ export default {
     })
   },
   beforeDestroy() {
-    console.log('nurse unload')
+    console.log('doctor unload')
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
     uni.removeStorageSync('achFilter')
   },
-  //双重scroll-view触发不灵敏
-  // onReachBottom() {
-  //   console.log(this.contents.length, this.total, 'onReachBottom')
-  //   if (this.contents.length < this.total) {
-  //     this.current += 1
-  //     this.getNurses()
-  //   }
-  // },
   methods: {
     init() {
       this.current = 1
-      this.getNurses()
+      this.getDoctors()
       this.getStaff()
       this.getProject()
     },
@@ -217,52 +157,49 @@ export default {
         workStatus:
           this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.NURSE?.value || 6,
+        position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
       })
-      uni.setStorageSync('allNurseList', data)
+      uni.setStorageSync('allDoctorList', data)
     },
     async getProject() {
       const { data } = await billAPI.chargeTypeParentList()
       uni.setStorageSync('allProjectList', data)
     },
-    async getNurses() {
+    async getDoctors() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
       })
       this.dataSourceStatus = 'loading'
       const params = {}
-      if (this.nurseIds) {
-        params.nurseIds = this.nurseIds
+      if (this.doctorIds) {
+        params.doctorIds = this.doctorIds
       }
       if (this.parentChargeTypeIds) {
         params.parentChargeTypeIds = this.parentChargeTypeIds
       }
       const {
         data: { total, current, records, summary },
-      } = await billAPI.nurseList({
+      } = await billAPI.doctorList({
         current: this.current,
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
         ...params,
       })
+      const { beginTimeMillis, endTimeMillis, parentChargeTypeIds } = this
       records.forEach((element) => {
-        element.statDate = moment(element.statDate).format('YYYY-MM-DD')
-        element.receivableAmount = this.$utils.formatPrice(
-          element.receivableAmount,
-        )
-        element.refundAmount = this.$utils.formatPrice(element.refundAmount)
-        element.cashAmount = this.$utils.formatPrice(element.cashAmount)
-        element.virtualAmount = this.$utils.formatPrice(element.virtualAmount)
-        element.deductionOfAdvanceAmount = this.$utils.formatPrice(
-          element.deductionOfAdvanceAmount,
-        )
-        element.revenueAmount = this.$utils.formatPrice(element.revenueAmount)
-        element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
-        element.plannedRevenueAmount = this.$utils.formatPrice(
-          element.plannedRevenueAmount,
-        )
+        element.paidInAmount = this.$utils.formatPrice(element.paidInAmount)
+        element.url = [
+          element.doctorName,
+          '/pages/achievement/doctorDetail',
+          {
+            id: element.doctorId,
+            beginTimeMillis,
+            endTimeMillis,
+            parentChargeTypeIds,
+          },
+        ]
       })
       if (this.current === 1) {
         this.contents = records
@@ -281,7 +218,7 @@ export default {
     },
     onFilterClick() {
       this.$utils.push({
-        url: `/pages/achievement/filter?name=nurse`,
+        url: `/pages/achievement/filter?name=doctor`,
       })
     },
     openCalendar() {
@@ -304,7 +241,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.ach_nurse {
+.ach_doctor {
   background: rgba(0, 0, 0, 0.04);
   .filter {
     background: #ffffff;

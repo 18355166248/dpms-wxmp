@@ -1,37 +1,13 @@
 <template>
-  <view class="ach_nurse">
-    <view class="filter">
-      <view class="uni-list-cell">
-        <view @click="openCalendar" class="left"
-          >{{ dateFilterText }} <view class="iconfont icon-closed"></view>
-        </view>
-      </view>
-      <view class="uni-list-cell">
-        <view
-          :class="['left', isFilter ? 'right' : '']"
-          @click.native="onFilterClick"
-          >{{ isFilter ? '已按条件筛选' : '筛选'
-          }}<view class="iconfont icon-filter"></view
-        ></view>
-      </view>
-      <uni-calendar
-        ref="calendar"
-        :insert="false"
-        :range="true"
-        @confirm="confirmCalendar"
-      />
-    </view>
+  <view class="ach_doctor_detail">
     <wyb-table
       v-if="contents.length !== 0"
       :headers="headers"
       :contents="contents"
-      height="93.5vh"
+      height="100vh"
       :first-line-fixed="true"
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
-      :bottom-computed-fixed="true"
-      :computed-col="computedCol"
-      :summary="summary"
     />
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
@@ -43,7 +19,6 @@
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import wybTable from '@/components/wyb-table/wyb-table.vue'
-import institutionAPI from 'APIS/institution/institution.api'
 
 export default {
   components: {
@@ -53,8 +28,12 @@ export default {
     return {
       headers: [
         {
-          label: '护士',
-          key: 'nurseName',
+          label: '医生',
+          key: 'doctorName',
+        },
+        {
+          label: '实收金额',
+          key: 'paidInAmount',
         },
         {
           label: '机构',
@@ -110,6 +89,7 @@ export default {
         },
       ],
       computedCol: [
+        'paidInAmount',
         'receivableAmount',
         'refundAmount',
         'cashAmount',
@@ -129,122 +109,57 @@ export default {
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
-      nurseIds: '',
+      doctorIds: '',
       parentChargeTypeIds: '',
     }
   },
-  onLoad() {
+  onLoad({ id, beginTimeMillis, endTimeMillis, parentChargeTypeIds }) {
+    this.doctorIds = id
+    this.beginTimeMillis = beginTimeMillis
+    this.endTimeMillis = endTimeMillis
+    this.parentChargeTypeIds = parentChargeTypeIds
     this.init()
-    uni.$on('chooseCalendarOption', (name) => {
-      switch (name) {
-        case 'today':
-          this.beginTimeMillis = moment().startOf('day').format('x')
-          this.endTimeMillis = moment().endOf('day').format('x')
-          this.dateFilterText = '今天'
-          break
-        case 'yesterday':
-          this.beginTimeMillis = moment()
-            .subtract(1, 'day')
-            .startOf('day')
-            .format('x')
-          this.endTimeMillis = moment()
-            .subtract(1, 'day')
-            .endOf('day')
-            .format('x')
-          this.dateFilterText = '昨天'
-          break
-        case 'thisMonth':
-          this.beginTimeMillis = moment().startOf('month').format('x')
-          this.endTimeMillis = moment().endOf('month').format('x')
-          this.dateFilterText = '本月'
-          break
-        case 'lastMonth':
-          this.beginTimeMillis = moment()
-            .subtract(1, 'month')
-            .startOf('month')
-            .format('x')
-          this.endTimeMillis = moment()
-            .subtract(1, 'month')
-            .endOf('month')
-            .format('x')
-          this.dateFilterText = '上月'
-          break
-        default:
-          break
-      }
-      this.init()
-    })
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getNurses()
+        this.getDoctors()
       }
-    })
-    uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
-      this.nurseIds = staffIds || ''
-      this.parentChargeTypeIds = chargeTypeIds || ''
-      this.init()
-      if (staffIds || chargeTypeIds) this.isFilter = true
-      else this.isFilter = false
     })
   },
   beforeDestroy() {
-    console.log('nurse unload')
-    uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
-    uni.$off('achFilter')
-    uni.removeStorageSync('achFilter')
   },
   //双重scroll-view触发不灵敏
   // onReachBottom() {
   //   console.log(this.contents.length, this.total, 'onReachBottom')
   //   if (this.contents.length < this.total) {
   //     this.current += 1
-  //     this.getNurses()
+  //     this.getDoctors()
   //   }
   // },
   methods: {
     init() {
       this.current = 1
-      this.getNurses()
-      this.getStaff()
-      this.getProject()
+      this.getDoctors()
     },
-    async getStaff() {
-      const {
-        data,
-      } = await institutionAPI.getStaffListByPositionFromAllInstitution({
-        workStatus:
-          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
-            ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.NURSE?.value || 6,
-      })
-      uni.setStorageSync('allNurseList', data)
-    },
-    async getProject() {
-      const { data } = await billAPI.chargeTypeParentList()
-      uni.setStorageSync('allProjectList', data)
-    },
-    async getNurses() {
+    async getDoctors() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
       })
       this.dataSourceStatus = 'loading'
       const params = {}
-      if (this.nurseIds) {
-        params.nurseIds = this.nurseIds
-      }
       if (this.parentChargeTypeIds) {
         params.parentChargeTypeIds = this.parentChargeTypeIds
       }
       const {
         data: { total, current, records, summary },
-      } = await billAPI.nurseList({
+      } = await billAPI.doctorDetailList({
         current: this.current,
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
+        doctorIds: this.doctorIds,
         ...params,
       })
       records.forEach((element) => {
@@ -252,6 +167,7 @@ export default {
         element.receivableAmount = this.$utils.formatPrice(
           element.receivableAmount,
         )
+        element.paidInAmount = this.$utils.formatPrice(element.paidInAmount)
         element.refundAmount = this.$utils.formatPrice(element.refundAmount)
         element.cashAmount = this.$utils.formatPrice(element.cashAmount)
         element.virtualAmount = this.$utils.formatPrice(element.virtualAmount)
@@ -279,58 +195,16 @@ export default {
       this.summary = summary || {}
       uni.hideLoading()
     },
-    onFilterClick() {
-      this.$utils.push({
-        url: `/pages/achievement/filter?name=nurse`,
-      })
-    },
-    openCalendar() {
-      this.$refs.calendar.open()
-    },
-    confirmCalendar({ range, fulldate }) {
-      const { before, after, data } = range
-      if (data.length === 0) {
-        this.beginTimeMillis = moment(fulldate).startOf('day').format('x')
-        this.endTimeMillis = moment(fulldate).endOf('day').format('x')
-      } else {
-        this.beginTimeMillis = moment(before).format('x')
-        this.endTimeMillis = moment(after).endOf('day').format('x')
-      }
-      this.dateFilterText = '自定义'
-      this.init()
-    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.ach_nurse {
+.ach_doctor_detail {
   background: rgba(0, 0, 0, 0.04);
-  .filter {
-    background: #ffffff;
-    height: 6.5vh;
-    display: flex;
-    .uni-list-cell {
-      width: 50vw;
-      .left {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-      }
-      .right {
-        color: #5cbb89;
-      }
-      .iconfont {
-        font-size: 24rpx;
-        margin-left: 20rpx;
-      }
-    }
-  }
   .content {
-    margin-top: 1.5vh;
     background: #ffffff;
-    height: 92vh;
+    height: 100vh;
   }
 }
 </style>
