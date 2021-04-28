@@ -1,6 +1,7 @@
 <template>
   <div class="disposalContent">
     <div
+      v-if="disposalRecordList.length > 0"
       v-for="item in disposalRecordList"
       :key="item.businessId"
       class="disposalList"
@@ -25,6 +26,7 @@
       <div class="teethRow">
         <div>
           <div
+            v-if="item.diagnosisDisposeType === 1"
             class="teethContent"
             v-for="(v0, i) in item.medicalRecordDisposeList"
             :key="i"
@@ -38,6 +40,25 @@
             </div>
             <div class="label">处置说明：</div>
             <div class="labelText">{{ v0.dispose }}</div>
+            <div class="lineHr"></div>
+          </div>
+          <div
+            v-if="item.diagnosisDisposeType === 2"
+            class="teethContent"
+            v-for="(v0, i) in item.chargeDisposeList"
+            :key="i"
+          >
+            <div class="label">牙位</div>
+            <div class="teethPosition">
+              <TeethSelect
+                :value="
+                  JSON.parse(v0.billOrderItemBaseDTO.disposePosition || 'null')
+                "
+                disabled
+              />
+            </div>
+            <div class="label">处置说明：</div>
+            <div class="labelText">{{ v0.billOrderItemBaseDTO.dispose }}</div>
             <div class="lineHr"></div>
           </div>
         </div>
@@ -79,17 +100,21 @@
         </div>
       </div>
     </div>
+    <div v-if="disposalRecordList.length === 0">
+      <empty :disabled="true" text="暂无处置记录数据"></empty>
+    </div>
   </div>
 </template>
 
 <script>
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import moment from 'moment'
+import empty from '@/components/empty/empty.vue'
 import patientAPI from '@/APIS/patient/patient.api.js'
 
 export default {
   name: 'disposalRecord',
-  components: { TeethSelect },
+  components: { TeethSelect, empty },
   data() {
     return {
       disposalRecordList: [],
@@ -171,7 +196,7 @@ export default {
       flex-direction: row;
       justify-content: space-between;
       .leftText {
-        width: 65%;
+        width: 80%;
         font-size: 28rpx;
         font-weight: 400;
         color: #191919;
@@ -180,7 +205,7 @@ export default {
         text-overflow: ellipsis;
       }
       .rightText {
-        width: 35%;
+        width: 20%;
         text-align: right;
         font-weight: 400;
         color: #191919;
@@ -198,7 +223,6 @@ export default {
         font-size: 28rpx;
         font-family: PingFangSC, PingFangSC-Regular, sans-serif;
         font-weight: 400;
-        color: #191919;
         white-space: nowrap;
         color: rgba(0, 0, 0, 0.9);
       }
@@ -208,6 +232,8 @@ export default {
         font-weight: 400;
         text-align: left;
         color: #4c4c4c;
+        word-wrap: break-word;
+        word-break: normal;
         padding-bottom: 16rpx;
       }
       .teethPosition {

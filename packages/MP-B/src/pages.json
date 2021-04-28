@@ -371,6 +371,12 @@
           }
         },
         {
+          "path": "overdueCheckstand",
+          "style": {
+            "navigationBarTitleText": "收欠费"
+          }
+        },
+        {
           "path": "searchProjects",
           "style": {
             "navigationBarTitleText": "搜索收费项目"
@@ -421,7 +427,8 @@
   "easycom": {
     "autoscan": true,
     "custom": {
-      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue",
+      "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
     }
   }
 }

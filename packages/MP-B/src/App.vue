@@ -225,6 +225,9 @@ button::after {
 .icon-ar-close:before {
   content: '\e633';
 }
+.icon-warning-circle:before {
+  content: '\e785';
+}
 /* iconfont图标 end */
 </style>
 
