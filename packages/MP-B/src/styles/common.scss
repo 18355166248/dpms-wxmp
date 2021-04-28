@@ -98,6 +98,15 @@
   text-overflow: ellipsis;
 }
 
+
+.ellipsis2 {
+  display: -webkit-box;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .share-menu-wrap {
   position: fixed;
   left: 0;
