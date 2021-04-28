@@ -163,8 +163,7 @@
         <dpmsCheckbox
           :disabled = "checkDisableFn() && item.checked"
           shape="square"
-          :value="item.checked"
-          @change="payTypeChange($event, item)"
+          v-model="item.checked"
         >
         </dpmsCheckbox>
       </view>
