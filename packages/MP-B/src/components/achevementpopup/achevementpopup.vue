@@ -18,6 +18,7 @@
           <uni-grid-item>
             <text
               class="achevementpopup-text"
+              @click="toUrl('/pages/achievement/doctor')"
               v-if="menuPermission(['report-center', 'performance', 'doctors'])"
               >医生业绩</text
             >
