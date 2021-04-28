@@ -136,24 +136,17 @@ export default {
       else this.isFilter = false
     })
   },
-  onUnload() {
+  beforeDestroy() {
+    console.log('doctor unload')
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
     uni.removeStorageSync('achFilter')
   },
-  //双重scroll-view触发不灵敏
-  // onReachBottom() {
-  //   console.log(this.contents.length, this.total, 'onReachBottom')
-  //   if (this.contents.length < this.total) {
-  //     this.current += 1
-  //     this.getDoctors()
-  //   }
-  // },
   methods: {
     init() {
       this.current = 1
-      this.getDotcors()
+      this.getDoctors()
       this.getStaff()
       this.getProject()
     },
@@ -172,7 +165,7 @@ export default {
       const { data } = await billAPI.chargeTypeParentList()
       uni.setStorageSync('allProjectList', data)
     },
-    async getDotcors() {
+    async getDoctors() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
@@ -242,12 +235,6 @@ export default {
       }
       this.dateFilterText = '自定义'
       this.init()
-    },
-    emitPage() {
-      if (this.contents.length < this.total) {
-        this.current += 1
-        this.getDoctors()
-      }
     },
   },
 }
