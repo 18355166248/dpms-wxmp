@@ -302,6 +302,18 @@
     },
     {
       "root": "pages/achievement",
+      "name": "assistant",
+      "pages": [
+        {
+          "path": "assistant",
+          "style": {
+            "navigationBarTitleText": "医生助理业绩"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
       "name": "filter",
       "pages": [
         {

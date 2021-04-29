@@ -8,6 +8,7 @@
       :placeholder="placeholder"
     />
     <dpmsCell
+      v-if="name === 'nurse' || name === 'doctor'"
       title="项目"
       :value="chargeTypeName"
       isLink
@@ -44,12 +45,14 @@ export default {
       case 'nurse':
         this.title = '护士'
         this.placeholder = '请选择护士'
-        this.staffList = uni.getStorageSync('allNurseList')
         break
       case 'doctor':
         this.title = '医生'
         this.placeholder = '请选择医生'
-        this.staffList = uni.getStorageSync('allDoctorList')
+        break
+      case 'assistant':
+        this.title = '医生助理'
+        this.placeholder = '请选择医生助理'
         break
       default:
         break
@@ -104,7 +107,7 @@ export default {
       this.$utils.back()
     },
     onReset() {
-      this.staffId = []
+      this.staffIds = []
       this.staffName = ''
       this.chargeTypeIds = []
       this.chargeTypeName = ''
