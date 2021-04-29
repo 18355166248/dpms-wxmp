@@ -11,7 +11,7 @@
       @input="onChange"
       @blur="onBlur"
       @focus="onFocus"
-      placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+      placeholder-style="font-size: 28rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
       :placeholder="placeholder"
       :maxlength="max"
     />
