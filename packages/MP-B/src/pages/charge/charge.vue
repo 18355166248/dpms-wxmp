@@ -40,14 +40,15 @@
           </view>
         </view>
       </view>
-      <view class="bottom-wrap">
+      <view class="bottom-wrap" v-if="isCreateOrder() || isOverdue()">
         <chargeButton
           type="solid"
           @click="createOrder"
-          :buttonStyle="{ width: isOverdue ? '336rpx' : '686rpx' }"
+          :buttonStyle="{ width: isOverdue() ? '336rpx' : '686rpx' }"
+          v-if="isCreateOrder()"
           >新建账单
         </chargeButton>
-        <chargeButton type="border" @click="overdueCharge" v-if="isOverdue"
+        <chargeButton type="border" @click="overdueCharge" v-if="isOverdue()"
           >收欠费</chargeButton
         >
       </view>
@@ -106,7 +107,6 @@ export default {
         },
       ],
       showActionSheet: false,
-      isOverdue: true,
       receivableData: {
         name: '开单应收',
         amount: 0,
@@ -141,16 +141,28 @@ export default {
     this.initData()
   },
   methods: {
+    isOverdue() {
+      return (
+        this.btnPremisstion('arrears_of_fees') && this.arrearageData.amount > 0
+      )
+    },
+    isCreateOrder() {
+      return this.btnPremisstion('patient_new_bill')
+    },
     initData() {
       //获取消费预览和诊疗项目数据
-      billAPI.getStatistical().then((res) => {
-        if (res.data) {
-          this.receivableData.amount = res.data.receivableAmount
-          this.receiptData.amount = res.data.receiptAmount
-          this.arrearageData.amount = res.data.arrearageAmount
-          this.advancePaymentsData.amount = res.data.advancePaymentsAmount
-        }
-      })
+      billAPI
+        .getStatistical({
+          patientId: this.patientDetail.patientId,
+        })
+        .then((res) => {
+          if (res.data) {
+            this.receivableData.amount = res.data.receivableAmount
+            this.receiptData.amount = res.data.receiptAmount
+            this.arrearageData.amount = res.data.arrearageAmount
+            this.advancePaymentsData.amount = res.data.advancePaymentsAmount
+          }
+        })
       //获取储值卡余额数据
       billAPI
         .getSoredCardDetail({

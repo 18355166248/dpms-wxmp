@@ -45,6 +45,7 @@
         >下一步
       </chargeButton>
     </view>
+    <u-toast ref="uToast" />
   </view>
 </template>
 <script>
@@ -127,7 +128,10 @@ export default {
     nextStep() {
       this.handleData()
       if (this.disposeList.length <= 0) {
-        this.$utils.show('请选择收费项目')
+        this.$refs.uToast.show({
+          title: '请选择收费项目!',
+          type: 'warning',
+        })
         return
       }
       uni.navigateTo({
