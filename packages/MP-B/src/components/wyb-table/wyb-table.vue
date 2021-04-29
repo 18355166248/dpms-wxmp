@@ -325,17 +325,41 @@
             >{{ autoContentItem(cIndex, hIndex) }}</view
           >
         </view>
-        <view
-          @click="emitPage"
-          :class="['pager', isPhoneXCeil ? 'mb-68' : '']"
-          >{{
-            dataSourceStatus === 'more'
-              ? '点击加载更多'
-              : dataSourceStatus === 'loading'
-              ? '加载中...'
-              : '没有更多了'
-          }}</view
-        >
+        <view class="wyb-table-content-line">
+          <view
+            @click="emitPage"
+            :class="[
+              'wyb-table-content-item',
+              'pager',
+              isPhoneXCeil ? 'mb-68' : '',
+            ]"
+            :style="{
+              width: '750rpx',
+              zIndex: 20,
+              left: 0,
+              position: 'sticky',
+            }"
+          >
+            <view>{{
+              dataSourceStatus === 'more'
+                ? '点击加载更多'
+                : dataSourceStatus === 'loading'
+                ? '加载中...'
+                : '没有更多了'
+            }}</view>
+          </view>
+          <view
+            @click="emitPage"
+            v-for="(pItem, pIndex) in headers"
+            :key="contentItemKey(pItem, pIndex)"
+            class="wyb-table-content-item"
+            :style="{
+              position: 'static',
+              width: pagerWidth + 'rpx',
+            }"
+          >
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -373,6 +397,7 @@ export default {
         data: [],
       },
       chars: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      pagerWidth: 0,
     }
   },
   computed: {
@@ -908,6 +933,16 @@ export default {
         this.sortCol[0].isNumber,
       )
     }
+    //计算宽度
+    let pagerWidth = 0
+    this.headers.forEach((v) => {
+      if (v.width) {
+        pagerWidth += v.width
+      } else {
+        pagerWidth += this.defaultColWidth
+      }
+    })
+    this.pagerWidth = (pagerWidth - 750) / Number(this.headers.length)
   },
   methods: {
     emitPage() {
@@ -1352,13 +1387,12 @@ export default {
   }
 
   .pager {
+    display: flex;
+    justify-content: center;
     color: #3e3e3e;
-    text-align: center;
     font-size: 32rpx;
     line-height: 72rpx;
     margin-top: 10rpx;
-    position: sticky;
-    left: 0;
   }
 
   .mb-68 {
