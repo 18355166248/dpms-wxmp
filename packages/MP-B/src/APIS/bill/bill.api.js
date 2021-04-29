@@ -112,6 +112,14 @@ const billAPI = {
   getPayChannelResult(data) {
     return httper.get('billing/bill/pay/channel', data)
   },
+  // 查询账单数据
+  getOrderDetail(data) {
+    return httper.get('/billing/bill/order/wait', data)
+  },
+  //
+  getPayTransactionChannel(data) {
+    return httper.get('/pay/settings/pay-transaction-channel/list/apps', data)
+  },
 }
 
 export default billAPI

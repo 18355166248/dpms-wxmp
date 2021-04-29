@@ -90,6 +90,8 @@ export const numberUtils = {
 }
 
 export function BigCalculate(value1, method, value2) {
+  value1 = value1 || 0
+  value2 = value2 || 0
   if (method === '+') {
     return Number(Big(value1).plus(Number(value2)))
   }
