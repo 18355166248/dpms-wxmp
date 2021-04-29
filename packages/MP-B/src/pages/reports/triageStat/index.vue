@@ -72,7 +72,7 @@ export default {
         {
           label: '病历号',
           key: 'medicalRecordNo',
-          width: 260,
+          width: 440,
         },
         {
           label: '联系电话',
