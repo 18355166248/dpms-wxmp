@@ -44,6 +44,7 @@
                   'assistant-manager',
                 ])
               "
+              @click="toUrl('/pages/achievement/assistant')"
               >医生助理业绩</text
             >
           </uni-grid-item>

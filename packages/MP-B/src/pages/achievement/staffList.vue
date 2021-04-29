@@ -44,6 +44,9 @@ export default {
       case 'doctor':
         this.list = uni.getStorageSync('allDoctorList')
         break
+      case 'assistant':
+        this.list = uni.getStorageSync('allAssistantList')
+        break
       default:
         break
     }
