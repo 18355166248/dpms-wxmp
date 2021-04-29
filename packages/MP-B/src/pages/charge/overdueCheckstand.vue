@@ -9,18 +9,27 @@
             style="font-size: 36rpx; margin-right: 11rpx;"
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
-            总计金额： <span>¥4,038.00</span>
+            总计金额：
+            <span>{{ overdueAmount | thousandFormatter(2, '￥') }}</span>
           </div>
         </div>
       </chargestand-title>
 
-      <dpmsCellInput title="欠费折扣" v-model="form.debtDiscount">
+      <dpmsCellInput
+        title="欠费折扣"
+        :value="form.debtDiscount"
+        @input="onDebtDiscountChange($event)"
+      >
         <template v-slot:inputRight>
           <span class="inputRightIcon">%</span>
         </template>
       </dpmsCellInput>
 
-      <dpmsCellInput title="总计应收" v-model="form.receivableAmount" />
+      <dpmsCellInput
+        title="总计应收(￥)"
+        :value="form.receivableAmount"
+        @input="onReceivableAmountChange($event)"
+      />
       <!--支付方式-->
       <chargestand-title>
         <div slot="content" class="flex">
@@ -42,12 +51,13 @@
         v-for="(item, index) in form.payChannelList"
         :key="item.transactionChannelId"
         type="number"
-        :title="item.transactionChannelName"
-        v-model="item.paymentAmount"
+        :title="`${item.transactionChannelName}(￥)`"
+        :value="item.paymentAmount"
+        @input="onPayTypeInputChange($event, item)"
       />
       <!--支付金额大于应收金额的验证-->
-      <div v-if="true" class="validateCount">
-        支付总金额不能大于应收金额
+      <div v-if="errTipText" class="validateCount">
+        {{ errTipText }}
       </div>
       <!-- 开单信息-->
       <chargestand-title>
@@ -94,22 +104,28 @@
       <div class="left-wrap">
         <div class="amount-wrap">
           <span class="black-big-font padding-r">实收:</span
-          ><span class="red-color">200,950.00</span>
+          ><span class="red-color">{{
+            paidAmount | thousandFormatter(2, '￥')
+          }}</span>
         </div>
         <div class="amount-wrap">
           <view class="margin-r">
             <span class="gray-font padding-r">欠费:</span>
-            <span class="black-font">20.00</span>
+            <span class="black-font">{{
+              oweAmount | thousandFormatter(2, '￥')
+            }}</span>
           </view>
           <view class="margin-r">
             <span class="gray-font padding-r">找零:</span>
-            <span class="black-font">0.00</span>
+            <span class="black-font">{{
+              changeAmount | thousandFormatter(2, '￥')
+            }}</span>
           </view>
         </div>
       </div>
       <div class="btn-wrapper">
-        <button class="save-btn">欠费免单</button>
-        <button class="charge-btn">确定</button>
+        <button class="save-btn" @click="sureCharge('free')">欠费免单</button>
+        <button class="charge-btn" @click="sureCharge">确定</button>
       </div>
     </div>
     <!--支付方式-->
@@ -126,7 +142,7 @@
       >
         {{ item.settingsPayTransactionChannelName }}
         <dpmsCheckbox
-          :disabled="checkDisableFn() && item.checked"
+          :disabled="checkDisableFn(item.checked)"
           shape="square"
           :value="item.checked"
           @change="payTypeChange($event, item)"
@@ -134,6 +150,9 @@
         </dpmsCheckbox>
       </view>
     </actionSheet>
+    <!--提示-->
+    <u-toast ref="uToast" />
+    <payResult ref="payResultRef"></payResult>
   </view>
 </template>
 <script>
@@ -144,6 +163,9 @@ import moment from 'moment'
 import actionSheet from './common/actionSheet'
 import { mapState } from 'vuex'
 import { mockItems, mockPayTypes } from '@/pages/charge/json'
+import { BigCalculate } from '@/utils/utils'
+import payResult from './common/payResult'
+
 export default {
   name: 'checkstand',
   mixins: [inputMixins],
@@ -160,7 +182,7 @@ export default {
         cashierTime: moment(new Date().getTime()).format('YYYY-MM-DD HH:mm'),
         staffName: '',
         memo: '',
-        debtDiscount: 100,
+        debtDiscount: 100.0,
         receivableAmount: 0,
       },
       toggleInfomation: true,
@@ -172,31 +194,46 @@ export default {
       showActionSheet: false,
       //登录人信息
       staffData: {},
+      // 实收金额
+      paidAmount: 0,
+      // 欠费金额
+      oweAmount: 0,
+      // 找零金额
+      changeAmount: 0,
+      //提示实付金额大于应付金额
+      errTipText: '',
+      // 从接口获取的所有支付方式列表
+      allPayTypesList: [],
     }
   },
   components: {
     ChargestandTitle,
     actionSheet,
+    payResult,
   },
   computed: {
     ...mapState('workbenchStore', ['menu']),
     ...mapState('overdue', ['overdueList', 'overdueAmount']),
+    ...mapState('patient', ['patientDetail']),
   },
   onLoad() {
-    console.log(this.overdueList)
     this.staffData = uni.getStorageSync('staff')
     this.form.staffName = this.staffData.staffName
     this.form.receivableAmount = this.overdueAmount
+    this.paidAmount = this.overdueAmount
     this.loadListData()
   },
   onShow() {},
   onHide() {},
   onUnload() {},
   methods: {
-    //------------支付方式控制面板
-    checkDisableFn() {
+    //---------------------------支付方式控制面板
+    checkDisableFn(checked) {
       const hasCheck = this.payTypes.filter((item) => item.checked)
-      return hasCheck.length === 1
+      return (
+        (hasCheck.length === 1 && checked) ||
+        (hasCheck.length === 3 && !checked)
+      )
     },
     payTypeChange(value, record) {
       record.checked = value
@@ -224,30 +261,167 @@ export default {
       this.form.payChannelList[0].paymentAmount = this.form.receivableAmount
       this.showActionSheet = false
     },
-    //------------支付方式控制面板
+    //支付方式监听
+    onPayTypeInputChange(value, item) {
+      let val = Number(value)
+      if (value === '' || value === undefined) {
+        this.errTipText = '请输入支付金额！'
+        return false
+      }
+      if (!(typeof val === 'number' && !isNaN(val))) {
+        this.$refs.uToast.show({
+          title: '请输入数字!',
+          type: 'error',
+        })
+        return
+      }
+      item.paymentAmount = val.toFixed(2)
+      this.errTipText = ''
+      this.checkPaidAmount()
+    },
+    //校验实付金额是否大于应付金额
+    checkPaidAmount() {
+      this.paidAmount = this.form.payChannelList.reduce((pre, next) => {
+        return BigCalculate(pre, '+', next.paymentAmount)
+      }, 0)
+      if (this.paidAmount > this.form.receivableAmount) {
+        this.errTipText = '支付总额不能大于应收金额'
+        this.changeAmount = BigCalculate(
+          this.paidAmount,
+          '-',
+          this.form.receivableAmount,
+        )
+        this.oweAmount = 0
+        return false
+      } else {
+        this.errTipText = ''
+        this.oweAmount = BigCalculate(
+          this.form.receivableAmount,
+          '-',
+          this.paidAmount,
+        )
+        this.changeAmount = 0
+        return true
+      }
+    },
+    //------------------------支付方式控制面板
+    //-----------------------总计金额、折扣、应收
+    onDebtDiscountChange(value) {
+      let vStr = `${value}`
+      vStr = vStr.replace(/\b(0+)/gi, '')
+      let val = Number(vStr)
+      if (val > 100) {
+        val = 100
+      }
+      if (!(typeof val === 'number' && !isNaN(val))) {
+        this.$refs.uToast.show({
+          title: '请输入数字!',
+          type: 'error',
+        })
+        return
+      }
+      this.form.debtDiscount = val.toFixed(2)
+      this.form.receivableAmount = BigCalculate(
+        this.overdueAmount,
+        '*',
+        BigCalculate(this.form.debtDiscount, '/', 100),
+      ).toFixed(2)
+      this.initPayTypes()
+      this.checkPaidAmount()
+    },
+    onReceivableAmountChange(value) {
+      let val = Number(value)
+      if (!(typeof val === 'number' && !isNaN(val))) {
+        this.$refs.uToast.show({
+          title: '请输入数字!',
+          type: 'error',
+        })
+        return
+      }
+      if (val > this.overdueAmount) {
+        val = this.overdueAmount
+      }
+      this.form.receivableAmount = val.toFixed(2)
+      this.form.debtDiscount = BigCalculate(
+        BigCalculate(this.form.receivableAmount, '/', this.overdueAmount),
+        '*',
+        100,
+      ).toFixed(2)
+      this.initPayTypes()
+      this.checkPaidAmount()
+    },
+    //-----------------------总计金额、折扣、应收
+
     //获取数据
     loadListData() {
       billAPI.getPayTypes().then((res) => {
         // todo换接口
         const mockRes = mockPayTypes
         if (mockRes?.data.length > 0) {
-          mockRes.data.forEach((item, index) => {
-            item.checked = false
-            if (index === 0) {
-              item.checked = true
-              this.form.payChannelList = [
-                {
-                  paymentAmount: this.form.receivableAmount,
-                  transactionChannelId: item.settingsPayTransactionChannelId,
-                  transactionChannelName:
-                    item.settingsPayTransactionChannelName,
-                },
-              ]
-            }
-          })
-          this.payTypes = mockRes.data
+          this.allPayTypesList = mockRes.data
+          this.initPayTypes()
         }
       })
+    },
+    initPayTypes() {
+      this.allPayTypesList.forEach((item, index) => {
+        item.checked = false
+        if (index === 0) {
+          item.checked = true
+          this.form.payChannelList = [
+            {
+              paymentAmount: this.form.receivableAmount,
+              transactionChannelId: item.settingsPayTransactionChannelId,
+              transactionChannelName: item.settingsPayTransactionChannelName,
+            },
+          ]
+        }
+      })
+      this.payTypes = this.allPayTypesList
+    },
+    //确认收费
+    sureCharge(type) {
+      if (!this.checkPaidAmount) {
+        return false
+      }
+      const _data = {}
+      _data.billOrderVOList = this.overdueList
+      _data.cashierStaffId = this.staffData.staffId
+      _data.cashierStaffName = this.form.staffName
+      _data.cashierTime = this.form.cashierTime
+      _data.customerId = this.patientDetail.customerId
+      _data.patientId = this.patientDetail.patientId
+      _data.debtDiscount = this.form.debtDiscount
+      _data.memo = this.form.memo
+      _data.receivableAmount = this.form.receivableAmount
+      _data.payChannelList = this.form.payChannelList
+      _data.salesVOList = []
+
+      if (type === 'free') {
+        _data.debtDiscount = 0
+        _data.receivableAmount = 0
+        _data.payChannelList.forEach((item) => {
+          item.paymentAmount = 0
+        })
+      }
+      billAPI
+        .payDebt(_data)
+        .then((res) => {
+          if (res.code === 0) {
+            this.$refs.uToast.show({
+              title: '收欠费成功!',
+              type: 'success',
+            })
+            return billAPI.getPayChannelResult({
+              payBatchNo: res.data,
+            })
+          }
+        })
+        .then((res) => {
+          if (res?.data) {
+            this.$refs.payResultRef.open(res.data)
+          }
+        })
     },
   },
   watch: {},
@@ -281,6 +455,7 @@ export default {
     width: 100%;
     background: #f5f5f5;
     overflow-y: scroll;
+
     .inputRightIcon {
       color: #191919;
       margin-left: -8rpx;
