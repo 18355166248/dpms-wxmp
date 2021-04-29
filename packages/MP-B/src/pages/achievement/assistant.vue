@@ -204,7 +204,6 @@ export default {
         position:
           this.$utils.getEnums('StaffPosition')?.ASSISTANT_MANAGER?.value || 5,
       })
-      console.log(data, 'data')
       uni.setStorageSync('allAssistantList', data)
     },
     async getAssistant() {

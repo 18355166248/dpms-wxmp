@@ -170,9 +170,6 @@ export default {
     uni.$on('achFilter', ({ staffIds }) => {
       this.assistantIds = staffIds || ''
       this.init()
-
-      console.log('staffIds', staffIds)
-
       if (staffIds) this.isFilter = true
       else this.isFilter = false
     })
