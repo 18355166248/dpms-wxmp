@@ -133,7 +133,7 @@ export default {
 
       this.selectIndex = index
 
-      this.$emit('input', value[this.defaultType], value)
+      this.$emit('input', value && value[this.defaultType], value)
     },
   },
 }
