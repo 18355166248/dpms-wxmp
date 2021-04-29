@@ -8,7 +8,7 @@
             style="font-size: 36rpx; margin-right: 11rpx;"
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
-            支付方式（应收金额{{ 4022 }}）
+            支付方式（应收金额{{ receivableAmount }}）
           </div>
         </div>
         <div slot="extra">
@@ -23,8 +23,9 @@
         type="number"
         :title="item.transactionChannelName"
         v-model="item.paymentAmount"
+        @input="changePayChannel($event, item)"
       />
-      <div v-if="true" class="validateCount">
+      <div v-if="changeAmount>0" class="validateCount">
         支付总金额不能大于应收金额
       </div>
       <chargestand-title>
@@ -49,8 +50,8 @@
           </div>
         </div>
       </chargestand-title>
-      <dpmsCell title="收费时间" value="2021-04-20 18:56" />
-      <dpmsCell title="收费人" value="张三" />
+      <dpmsCell title="收费时间" :value="nowDate" />
+      <dpmsCell title="收费人" :value="patientDetail.patientName" />
       <template v-if="toggleInfomation">
         <dpmsCellPicker
           title="就诊时间"
@@ -119,7 +120,7 @@
           <div
             class="iconfont icon-detail"
             style="font-size: 36rpx; margin-right: 11rpx;"
-          ></div>
+          />
           <div class="ellipsis" style="width: 550rpx;">项目明细</div>
         </div>
       </chargestand-title>
@@ -138,14 +139,14 @@
             实收:
           </span>
           <span style="font-size: 28rpx; color: #fa5151;">
-            200,950.00
+            {{ paidAmount | thousandFormatter(2, '￥') }}
           </span>
         </div>
         <div style="height: 32rpx;" class="flexAlign">
           <span style="font-size: 22rpx; color: #4c4c4c;">欠费:</span>
-          <span style="font-size: 22rpx; color: #191919;">20.00</span>
+          <span style="font-size: 22rpx; color: #191919;">{{ oweAmount }}</span>
           <span style="font-size: 22rpx; color: #4c4c4c;">找零:</span>
-          <span style="font-size: 22rpx; color: #191919;">0.00</span>
+          <span style="font-size: 22rpx; color: #191919;">{{ changeAmount }}</span>
         </div>
       </div>
       <div class="btn-wrapper flexBt">
@@ -166,6 +167,7 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
+        <template v-if="item.balance">&nbsp;&nbsp;(余额{{item.balance|thousandFormatter}})</template>
         <dpmsCheckbox
           :disabled="checkDisableFn(item.checked)"
           shape="square"
@@ -181,23 +183,15 @@
 import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
 import patientAPI from '@/APIS/patient/patient.api'
 import inputMixins from 'mpcommon/mixins/inputMixins'
-// import chargeAPI from 'APIS/charge/charge.api'
-import billAPI from '@/APIS/bill/bill.api'
-import moment from 'moment'
-import actionSheet from './common/actionSheet'
-import { mapState } from 'vuex'
-import { mockItems, mockPayTypes } from '@/pages/charge/json'
-import { numberUtils } from '@/utils/utils'
+import billAPI from '@/APIS/bill/bill.api';
+import moment from 'moment';
+import actionSheet from './common/actionSheet';
+import { mapMutations, mapState } from 'vuex';
+import { BigCalculate, numberUtils } from '@/utils/utils';
 
 export default {
   name: 'checkstand',
   mixins: [inputMixins],
-  props: {
-    disposeList: {
-      type: Array,
-      default: mockItems,
-    },
-  },
   data() {
     return {
       form: {
@@ -210,8 +204,6 @@ export default {
         memo: '',
         registerTime: '',
       },
-      testValue1: 4000,
-      testValue2: 400,
       toggleInfomation: false,
       otherList: [],
       visitTimeList: [],
@@ -219,6 +211,7 @@ export default {
       payTypes: [],
       // 操作菜单
       showActionSheet: false,
+      nowDate: moment(new Date().valueOf()).format("YYYY-MM-DD HH:mm")
     }
   },
   components: {
@@ -227,6 +220,19 @@ export default {
   },
   computed: {
     ...mapState('workbenchStore', ['menu']),
+    ...mapState('patient', ['patientDetail']),
+    ...mapState('dispose', ['disposeList','receivableAmount']),
+    paidAmount() {
+      return this.form.payChannelList.reduce((pre,item)=>BigCalculate(item.paymentAmount,'+',pre),0)
+    },
+    oweAmount() {
+      const {paidAmount, receivableAmount} = this
+      return paidAmount < receivableAmount ? BigCalculate(receivableAmount,'-',paidAmount) : 0
+    },
+    changeAmount() {
+      const {paidAmount, receivableAmount} = this
+      return paidAmount > receivableAmount ? BigCalculate(paidAmount,'-',receivableAmount) : 0
+    },
     doctorList() {
       return this.otherList.filter((item) => item.position === 2)
     },
@@ -240,22 +246,62 @@ export default {
       return this.otherList.filter((item) => item.position === 16)
     },
   },
-  onLoad() {
-    this.loadListData()
+  onLoad(query) {
+    this.loadListData().then(() => {
+      if(query) this.backData(query)
+    })
   },
   onShow() {
-    this.btnPremisstion()
+    this.btnPremisstion();
   },
   onHide() {},
   onUnload() {},
   methods: {
+    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
+    backData(query) {
+      if(query.billSerialNo) {
+        // 走编辑账单逻辑,通过接口获取值
+        billAPI.getOrderDetail({
+          billSerialNo: query.billSerialNo
+        }).then(res => {
+          const {orderPayItemList,payChannelList,receivableAmount} = res.data
+          // 设置应收金额
+          this.setReceivableAmount(receivableAmount)
+          this.setDisposeList(orderPayItemList)
+          // 设置payChannelList
+          this.setPayChannelList(payChannelList)
+        })
+      }
+    },
+    setPayChannelList(backChannelList) {
+      // 回显this.form.payChannelList
+      const balanceMap = new Map()
+      this.payTypes.forEach(item => {
+        if(item.balance) {
+          balanceMap.set(item.settingsPayTransactionChannelId, item.balance)
+        }
+      })
+      this.form.payChannelList = backChannelList.map(item => {
+        let balance = balanceMap.get(item.transactionChannelId) || 0
+
+        return {
+          paymentAmount: item.paymentAmount,
+          transactionChannelId: item.transactionChannelId,
+          transactionChannelName: item.transactionChannelName,
+          balance
+        }
+      })
+      // todo 处理paytypes checked
+
+    },
+    changePayChannel(value, record) {
+      if(record.balance) {
+        value = (value - record.balance) > 0 ? record.balance : value
+      }
+      record.paymentAmount = value
+    },
     formatDisposeItem(item) {
-      return (
-        numberUtils.thousandFormatter(item.receivableAmount) +
-        (item.unit || '') +
-        'x' +
-        item.itemNum
-      )
+      return numberUtils.thousandFormatter(item.unitAmount) + (item.unit || '') + 'x' + item.itemNum;
     },
     checkDisableFn(checked) {
       const hasCheck = this.payTypes.filter((item) => item.checked)
@@ -280,51 +326,47 @@ export default {
     },
     onSure() {
       // 更新payChannelList
-      this.form.payChannelList = this.payTypes
-        .filter((item) => item.checked)
-        .map((item) => ({
-          paymentAmount: 0,
-          transactionChannelId: item.settingsPayTransactionChannelId,
-          transactionChannelName: item.settingsPayTransactionChannelName,
-        }))
-      this.showActionSheet = false
+      this.form.payChannelList = this.payTypes.filter(item => item.checked).map(item => ({
+        paymentAmount: 0,
+        transactionChannelId: item.settingsPayTransactionChannelId,
+        transactionChannelName: item.settingsPayTransactionChannelName,
+        balance: item.balance,
+      }));
+      this.showActionSheet = false;
     },
     loadListData() {
       patientAPI.getStaffList().then((res) => {
-        this.otherList = res.data
-      })
-      // todo patientId由上游传过来
+        this.otherList = res.data;
+      });
+
       billAPI
-        .getRegisterList({
-          patientId: 351013,
-        })
-        .then((res) => {
-          this.visitTimeList = this.formatRegister(res.data)
-          if (this.visitTimeList.length) {
-            // this.form = Object.assign(this.form,{registerTime:this.visitTimeList[0].registerTime})
-            // 如果有值第一次做回显
-            this.backVisitTimeDate(this.visitTimeList[0])
-          }
-        })
-      billAPI.getPayTypes().then((res) => {
-        // todo换接口
-        const mockRes = mockPayTypes
-        if (mockRes?.data.length > 0) {
-          mockRes.data.forEach((item, index) => {
-            item.checked = false
+      .getRegisterList({
+        patientId: this.patientDetail.patientId,
+      })
+      .then((res) => {
+        this.visitTimeList = this.formatRegister(res.data);
+        if (this.visitTimeList.length) {
+          // 如果有值第一次做回显
+          this.backVisitTimeDate(this.visitTimeList[0]);
+        }
+      });
+      return billAPI.getPayTransactionChannel({
+        memberId:this.patientDetail.memberId
+      }).then((res) => {
+        if (res?.data.length > 0) {
+          res.data.forEach((item, index) => {
+            item.checked = false;
             if (index === 0) {
-              item.checked = true
-              this.form.payChannelList = [
-                {
-                  paymentAmount: 0,
-                  transactionChannelId: item.settingsPayTransactionChannelId,
-                  transactionChannelName:
-                    item.settingsPayTransactionChannelName,
-                },
-              ]
+              item.checked = true;
+              this.form.payChannelList = [{
+                paymentAmount: 0,
+                transactionChannelId: item.settingsPayTransactionChannelId,
+                transactionChannelName: item.settingsPayTransactionChannelName,
+                balance: item.balance,
+              }];
             }
-          })
-          this.payTypes = mockRes.data
+          });
+          this.payTypes = res.data;
         }
       })
     },
@@ -358,8 +400,7 @@ export default {
       this.form = Object.assign(this.form, updateObj)
     },
     onRegisterTime(v, record) {
-      console.log('record', record)
-      this.backVisitTimeDate(record)
+      this.backVisitTimeDate(record);
     },
   },
   watch: {

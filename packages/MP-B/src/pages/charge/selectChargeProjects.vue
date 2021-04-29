@@ -165,6 +165,8 @@ export default {
               temp.singleDiscountAfterAmount = project.unitAmount
               temp.receivableAmount = project.unitAmount
               temp.unitAmount = project.unitAmount
+              //todo 需要单位unit
+              temp.unit = "盒"
               const data = { ...defaultData, ...temp }
               targetList.push(data)
             }

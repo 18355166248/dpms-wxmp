@@ -21,6 +21,7 @@
                 ¥{{ item.unitAmount }}{{ item.unit }}
               </div>
               <div
+                @click="onEditPirce(item)"
                 v-if="btnPremisstion('changes_unit_price')"
                 class="iconfont icon-edit edit-icon-style"
               />
@@ -63,36 +64,44 @@
         type="number"
       />
     </div>
-    <div class="footer-wrapper">
-      <button class="submit-btn flex-center">下一步</button>
+    <div class="footer-wrapper flex-center">
+      <button @click="onNextStep" class="submit-btn flex-center">下一步</button>
     </div>
     <u-toast ref="uToast" />
+    <u-modal v-model="showEditPrice" @confirm="confirmPrice" title="请输入单价">
+      <view class="slot-content">
+        <dpmsCellInput
+          title="单价(¥)"
+          :value="activeRecord.unitAmount"
+          @input="onEditAmount"
+          type="digit"
+        />
+      </view>
+    </u-modal>
   </div>
 </template>
 <script>
-import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
-import { mockItems } from '@/pages/charge/json'
+
+import { BigCalculate, changeTwoDecimal } from '@/utils/utils';
+// import { mockItems } from '@/pages/charge/json';
+import { mapMutations, mapState } from 'vuex';
 
 export default {
   name: 'chargeProjectsList',
-  props: {
-    fackList: {
-      type: Array,
-      default: mockItems,
-    },
-  },
   data() {
     return {
-      disposeList: this.fackList,
       mainOrderDiscount: 100,
-      receivableAmount: 0,
-    }
+      receivableAmount:0,
+      showEditPrice: false,
+      activeRecord: {}
+    };
   },
   onShow() {
     // 计算receivableAmount
     this.calculateAmount()
   },
   computed: {
+    ...mapMutations('dispose', ['setDisposeList']),
     hasDiscountItem() {
       return this.disposeList.some((item) => item.allBillDiscount)
     },
@@ -120,6 +129,27 @@ export default {
     },
   },
   methods: {
+    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount']),
+    onNextStep() {
+      // 保存vuex并跳转
+      this.setDisposeList([...this.disposeList])
+      this.setReceivableAmount(this.receivableAmount)
+      // console.log('this.disposeList', this.disposeList);
+      uni.navigateTo({
+        url: '/pages/charge/checkstand',
+      })
+    },
+    onEditPirce(record) {
+      this.showEditPrice = true
+      this.activeRecord = record
+    },
+    onEditAmount(v) {
+      this.tempValue = changeTwoDecimal(v)
+    },
+    confirmPrice() {
+      this.activeRecord.unitAmount = this.tempValue
+      this.calculateAmount()
+    },
     calculateAmount() {
       let result = 0
       this.disposeList.forEach((item) => {
