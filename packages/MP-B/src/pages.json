@@ -389,6 +389,36 @@
           }
         }
       ]
+    },
+    {
+      "root": "pages/reports",
+      "name": "reports",
+      "pages": [
+        {
+          "path": "triageStat/index",
+          "style": {
+            "navigationBarTitleText": "分诊业绩"
+          }
+        },
+        {
+          "path": "triageStat/filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        },
+        {
+          "path": "referralStat/index",
+          "style": {
+            "navigationBarTitleText": "转诊业绩"
+          }
+        },
+        {
+          "path": "referralStat/filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {

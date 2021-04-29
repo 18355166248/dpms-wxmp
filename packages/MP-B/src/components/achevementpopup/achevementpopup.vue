@@ -61,6 +61,7 @@
             <text
               class="achevementpopup-text"
               v-if="menuPermission(['report-center', 'performance', 'triage'])"
+              @click="toUrl('/pages/reports/triageStat/index')"
               >分诊业绩</text
             >
           </uni-grid-item>
@@ -70,6 +71,7 @@
               v-if="
                 menuPermission(['report-center', 'performance', 'referral'])
               "
+              @click="toUrl('/pages/reports/referralStat/index')"
               >转诊业绩</text
             >
           </uni-grid-item>

@@ -84,6 +84,14 @@ const billAPI = {
   orderPayOne(data) {
     return httper.post('/billing/bill/order/pay-one', data)
   },
+  // 分诊业绩
+  getTriageList(data) {
+    return httper.get('diagnosis/stat-triage-statistics/stat/list', data)
+  },
+  // 转诊业绩
+  getReferralList(data) {
+    return httper.get('diagnosis/stat-referral-statistics/stat/list', data)
+  },
   // 获取欠费列表
   getPayDebtList(data) {
     return httper.get('billing/bill/order/pay-debt', data)
