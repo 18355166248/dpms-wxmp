@@ -225,61 +225,64 @@ button::after {
 .icon-ar-close:before {
   content: '\e633';
 }
+.icon-warning-circle:before {
+  content: '\e785';
+}
 /* iconfont图标 end */
 </style>
 
 <style lang="scss">
 @for $i from 1 through 100 {
   .m-#{$i} {
-    margin: $i +rpx;
+    margin: $i + rpx;
   }
   .mt-#{$i} {
-    margin-top: $i +rpx;
+    margin-top: $i + rpx;
   }
   .mb-#{$i} {
-    margin-bottom: $i +rpx;
+    margin-bottom: $i + rpx;
   }
   .ml-#{$i} {
-    margin-left: $i +rpx;
+    margin-left: $i + rpx;
   }
   .mr-#{$i} {
-    margin-right: $i +rpx;
+    margin-right: $i + rpx;
   }
   .mh-#{$i} {
-    margin-left: $i +rpx;
-    margin-right: $i +rpx;
+    margin-left: $i + rpx;
+    margin-right: $i + rpx;
   }
   .mv-#{$i} {
-    margin-top: $i +rpx;
-    margin-bottom: $i +rpx;
+    margin-top: $i + rpx;
+    margin-bottom: $i + rpx;
   }
 
   .p-#{$i} {
-    padding: $i +rpx;
+    padding: $i + rpx;
   }
   .pt-#{$i} {
-    padding-top: $i +rpx;
+    padding-top: $i + rpx;
   }
   .pb-#{$i} {
-    padding-bottom: $i +rpx;
+    padding-bottom: $i + rpx;
   }
   .pl-#{$i} {
-    padding-left: $i +rpx;
+    padding-left: $i + rpx;
   }
   .pr-#{$i} {
-    padding-right: $i +rpx;
+    padding-right: $i + rpx;
   }
   .pv-#{$i} {
-    padding-top: $i +rpx;
-    padding-bottom: $i +rpx;
+    padding-top: $i + rpx;
+    padding-bottom: $i + rpx;
   }
   .ph-#{$i} {
-    padding-left: $i +rpx;
-    padding-right: $i +rpx;
+    padding-left: $i + rpx;
+    padding-right: $i + rpx;
   }
 
   .fz-#{$i} {
-    font-size: $i +rpx;
+    font-size: $i + rpx;
   }
 
   .c-white {

@@ -7,6 +7,7 @@
   >
     <input
       :type="type"
+      :disabled="disabledProps"
       :value="value"
       @input="onChange"
       @blur="onBlur"
@@ -47,6 +48,10 @@ export default {
       default: 140,
     },
     hideBorderBottom: {
+      type: Boolean,
+      default: false,
+    },
+    disabledProps: {
       type: Boolean,
       default: false,
     },

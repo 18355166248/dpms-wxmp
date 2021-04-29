@@ -1,14 +1,295 @@
 <template>
-  <div>123</div>
+  <div class="charge-projects-list-wrapper">
+    <div class="content-wrapper">
+      <div class="info flex-v-center">
+        <span
+          class="iconfont icon-warning-circle"
+          style="margin-right: 10rpx;"
+        />
+        <span style="font-size: 26rpx;">如需使用折扣，可手动调整金额</span>
+      </div>
+      <div
+        v-for="(item, index) in disposeList"
+        :key="item.itemCode"
+        class="disposal-item flex-column"
+      >
+        <div class="row-1 flex-h-between">
+          <div class="item-name ellipsis2">{{ item.itemName }}</div>
+          <div class="action">
+            <div class="flex">
+              <div class="edit-price" style="flex: 1;">
+                ¥{{ item.unitAmount }}{{ item.unit }}
+              </div>
+              <div
+                v-if="btnPremisstion('changes_unit_price')"
+                class="iconfont icon-edit edit-icon-style"
+              />
+            </div>
+            <div class="flex-h-end">
+              <div style="margin-top: 10rpx;">
+                <uni-number-box
+                  :max="9999"
+                  v-model="item.itemNum"
+                  @input="onChangeItem($event, item)"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row-2 flex-v-center">
+          是否整单折扣: {{ item.allBillDiscount ? '是' : '否' }}
+        </div>
+      </div>
+      <dpmsCellInput
+        :disabledProps="
+          !(btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
+        "
+        title="整单折扣"
+        :value="mainOrderDiscount"
+        @input="onMainOrderDiscount"
+        type="number"
+      >
+        <div slot="inputRight">
+          %
+        </div>
+      </dpmsCellInput>
+      <dpmsCellInput
+        :disabledProps="
+          !(btnPremisstion('modify_discount_amount') && hasDiscountItem)
+        "
+        title="折后金额(¥)"
+        :value="receivableAmount"
+        @input="onReceivableAmount"
+        type="number"
+      />
+    </div>
+    <div class="footer-wrapper">
+      <button class="submit-btn flex-center">下一步</button>
+    </div>
+    <u-toast ref="uToast" />
+  </div>
 </template>
 <script>
+import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
+import { mockItems } from '@/pages/charge/json'
 
 export default {
   name: 'chargeProjectsList',
+  props: {
+    fackList: {
+      type: Array,
+      default: mockItems,
+    },
+  },
+  data() {
+    return {
+      disposeList: this.fackList,
+      mainOrderDiscount: 100,
+      receivableAmount: 0,
+    }
+  },
   onShow() {
-    console.log(321);
-  }
+    // 计算receivableAmount
+    this.calculateAmount()
+  },
+  computed: {
+    hasDiscountItem() {
+      return this.disposeList.some((item) => item.allBillDiscount)
+    },
+    maxPrice() {
+      let result = 0
+      this.disposeList.forEach((item) => {
+        const value = BigCalculate(item.unitAmount, '*', item.itemNum)
+        result = BigCalculate(result, '+', value)
+      })
+      return changeTwoDecimal(result)
+    },
+    minPrice() {
+      let result = 0
+      this.disposeList
+        .filter((item) => !item.allBillDiscount)
+        .forEach((item) => {
+          const value = BigCalculate(item.unitAmount, '*', item.itemNum)
+          result = BigCalculate(result, '+', value)
+        })
+      return changeTwoDecimal(result)
+    },
+    discountMaxValue() {
+      const { maxPrice, minPrice } = this
+      return BigCalculate(maxPrice, '-', minPrice)
+    },
+  },
+  methods: {
+    calculateAmount() {
+      let result = 0
+      this.disposeList.forEach((item) => {
+        if (item.allBillDiscount) {
+          const value = BigCalculate(item.unitAmount, '*', item.itemNum)
+          const disCount = BigCalculate(this.mainOrderDiscount, '/', 100)
+          const disCountValue = BigCalculate(value, '*', disCount)
+          result = BigCalculate(result, '+', disCountValue)
+        } else {
+          const value = BigCalculate(item.unitAmount, '*', item.itemNum)
+          result = BigCalculate(result, '+', value)
+        }
+      })
+      this.receivableAmount = changeTwoDecimal(result)
+    },
+    calculateDiscount() {
+      const { minPrice, discountMaxValue } = this
+      const discountValue = BigCalculate(this.receivableAmount, '-', minPrice)
+      this.mainOrderDiscount = Math.floor(
+        (discountValue / discountMaxValue) * 100,
+      )
+    },
+    onChangeItem(v, record) {
+      if (v === 0) {
+        uni.showModal({
+          title: '确定删除该项目吗?',
+          success: (res) => {
+            if (res.confirm) {
+              this.disposeList = this.disposeList.filter(
+                (item) => item.itemCode !== record.itemCode,
+              )
+              this.calculateAmount()
+            } else if (res.cancel) {
+              record.itemNum = 1
+              this.calculateAmount()
+            }
+          },
+        })
+      } else {
+        this.calculateAmount()
+      }
+    },
+
+    filterDiscount(v) {
+      // 处理数字回显范围0~100
+      let vStr = `${v}`
+      vStr = vStr.replace(/\b(0+)/gi, '')
+      const vNum = Number(vStr)
+      return vNum
+    },
+
+    onMainOrderDiscount(v) {
+      const vNum = this.filterDiscount(v)
+      if (vNum > 100) {
+        this.mainOrderDiscount = 100
+      } else {
+        this.mainOrderDiscount = vNum
+      }
+
+      // 计算折后金额
+      this.calculateAmount()
+    },
+
+    onReceivableAmount(v) {
+      v = Number(v)
+      const { maxPrice, minPrice } = this
+      // 判断范围
+      if (v < minPrice) {
+        this.$refs.uToast.show({
+          title: '不能小于折后最小值',
+          type: 'warning',
+        })
+        this.receivableAmount = minPrice
+      } else if (v > maxPrice) {
+        this.$refs.uToast.show({
+          title: '本次折后金额不可以超过总计原价',
+          type: 'warning',
+        })
+        this.receivableAmount = maxPrice
+      } else {
+        this.receivableAmount = v
+      }
+
+      // 计算折扣
+      this.calculateDiscount()
+    },
+  },
 }
 </script>
 <style lang="scss" scoped>
+.charge-projects-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 750rpx;
+  height: 100vh;
+
+  .content-wrapper {
+    flex: 1;
+    background: #f4f6f4;
+    overflow-y: scroll;
+
+    .info {
+      width: 100%;
+      height: 64rpx;
+      background: #fefcec;
+      color: #f86e21;
+      padding: 0 26rpx;
+      box-sizing: border-box;
+    }
+
+    .disposal-item {
+      width: 750rpx;
+      height: 240rpx;
+      padding: 32rpx;
+      box-sizing: border-box;
+      background: #fff;
+      margin-bottom: 14rpx;
+      .row-1 {
+        width: 100%;
+        flex: 1;
+
+        .item-name {
+          flex: 0 0 420rpx;
+          height: 96rpx;
+          font-size: 34rpx;
+          color: #191919;
+        }
+
+        .action {
+          flex: 1;
+
+          .edit-price {
+            display: flex;
+            justify-content: flex-end;
+            color: #7f7f7f;
+            font-size: 28rpx;
+          }
+
+          .edit-icon-style {
+            color: #5cbb89;
+            font-size: 36rpx;
+            flex: 0 0 36rpx;
+            margin-left: 20rpx;
+          }
+        }
+      }
+
+      .row-2 {
+        width: 100%;
+        flex: 0 0 32rpx;
+        line-height: 32rpx;
+        font-size: 28rpx;
+        color: #595959;
+      }
+    }
+  }
+
+  .footer-wrapper {
+    width: 750rpx;
+    flex: 0 0 112rpx;
+    background: #fff;
+
+    .submit-btn {
+      width: 686rpx;
+      height: 80rpx;
+      padding: 16rpx 32rpx;
+      border-radius: 40rpx;
+      color: #fff;
+      background: #73b689;
+    }
+  }
+}
 </style>

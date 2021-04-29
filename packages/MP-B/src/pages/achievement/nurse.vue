@@ -131,7 +131,6 @@ export default {
       summary: {},
       nurseIds: '',
       parentChargeTypeIds: '',
-      chargeTypeName: '',
     }
   },
   onLoad() {
@@ -181,20 +180,20 @@ export default {
         this.getNurses()
       }
     })
-    uni.$on('achFilter', ({ staffId, chargeTypeIds, chargeTypeName }) => {
-      this.nurseIds = staffId
-      this.parentChargeTypeIds = chargeTypeIds
-      this.chargeTypeName = chargeTypeName
+    uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
+      this.nurseIds = staffIds || ''
+      this.parentChargeTypeIds = chargeTypeIds || ''
       this.init()
-
-      if (staffId || chargeTypeIds) this.isFilter = true
+      if (staffIds || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
     })
   },
-  onUnload() {
+  beforeDestroy() {
+    console.log('nurse unload')
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
+    uni.removeStorageSync('achFilter')
   },
   //双重scroll-view触发不灵敏
   // onReachBottom() {
@@ -206,10 +205,10 @@ export default {
   // },
   methods: {
     init() {
-      this.getStaff()
-      this.getProject()
       this.current = 1
       this.getNurses()
+      this.getStaff()
+      this.getProject()
     },
     async getStaff() {
       const {
@@ -259,6 +258,7 @@ export default {
         element.deductionOfAdvanceAmount = this.$utils.formatPrice(
           element.deductionOfAdvanceAmount,
         )
+        element.revenueAmount = this.$utils.formatPrice(element.revenueAmount)
         element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
         element.plannedRevenueAmount = this.$utils.formatPrice(
           element.plannedRevenueAmount,
@@ -281,7 +281,7 @@ export default {
     },
     onFilterClick() {
       this.$utils.push({
-        url: `/pages/achievement/filter?name=nurse&staffId=${this.nurseIds}&chargeTypeIds=${this.parentChargeTypeIds}&chargeTypeName=${this.chargeTypeName}`,
+        url: `/pages/achievement/filter?name=nurse`,
       })
     },
     openCalendar() {
@@ -298,12 +298,6 @@ export default {
       }
       this.dateFilterText = '自定义'
       this.init()
-    },
-    emitPage() {
-      if (this.contents.length < this.total) {
-        this.current += 1
-        this.getNurses()
-      }
     },
   },
 }

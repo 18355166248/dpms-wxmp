@@ -1,6 +1,6 @@
 import { getStorage, STORAGE_KEY } from './storage'
 import uma from 'umtrack-wx'
-const Big = require("big.js");
+const Big = require('big.js')
 
 /**
  * @desc 移除对象中有空值的属性 空值包含 undefined null
@@ -90,17 +90,23 @@ export const numberUtils = {
 }
 
 export function BigCalculate(value1, method, value2) {
-  if (method === "+") {
-    return Number(Big(value1).plus(Number(value2)));
+  if (method === '+') {
+    return Number(Big(value1).plus(Number(value2)))
   }
-  if (method === "-") {
-    return Number(Big(value1).minus(Number(value2)));
+  if (method === '-') {
+    return Number(Big(value1).minus(Number(value2)))
   }
-  if (method === "*") {
-    return Number(Big(value1).times(Number(value2)));
+  if (method === '*') {
+    return Number(Big(value1).times(Number(value2)))
   }
-  if (method === "/") {
-    return Number(Big(value1).div(Number(value2)));
+  if (method === '/') {
+    return Number(Big(value1).div(Number(value2)))
   }
 }
 
+export function changeTwoDecimal(params) {
+  return params
+  const paramsMul = Math.floor(BigCalculate(params, '*', 100))
+  const paramsDiv = BigCalculate(paramsMul, '/', 100)
+  return paramsDiv
+}
