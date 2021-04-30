@@ -90,8 +90,6 @@ export const numberUtils = {
 }
 
 export function BigCalculate(value1, method, value2) {
-  value1 = value1 || 0
-  value2 = value2 || 0
   if (method === '+') {
     return Number(Big(value1).plus(Number(value2)))
   }
@@ -106,9 +104,6 @@ export function BigCalculate(value1, method, value2) {
   }
 }
 
-export function changeTwoDecimal(params) {
-  return params
-  const paramsMul = Math.floor(BigCalculate(params, '*', 100))
-  const paramsDiv = BigCalculate(paramsMul, '/', 100)
-  return paramsDiv
+export function changeTwoDecimal(params, precision = 2) {
+  return Number(params.toFixed(precision))
 }
