@@ -40,15 +40,15 @@
           </view>
         </view>
       </view>
-      <view class="bottom-wrap" v-if="isCreateOrder() || isOverdue()">
+      <view class="bottom-wrap" v-if="isOverdue || isCreateOrder">
         <chargeButton
           type="solid"
           @click="createOrder"
-          :buttonStyle="{ width: isOverdue() ? '336rpx' : '686rpx' }"
-          v-if="isCreateOrder()"
+          :buttonStyle="{ width: isOverdue ? '336rpx' : '686rpx' }"
+          v-if="isCreateOrder"
           >新建账单
         </chargeButton>
-        <chargeButton type="border" @click="overdueCharge" v-if="isOverdue()"
+        <chargeButton type="border" @click="overdueCharge" v-if="isOverdue"
           >收欠费</chargeButton
         >
       </view>
@@ -136,11 +136,6 @@ export default {
   computed: {
     ...mapState('searchProjectStore', ['searchProjectList']),
     ...mapState('patient', ['patientDetail']),
-  },
-  created() {
-    this.initData()
-  },
-  methods: {
     isOverdue() {
       return (
         this.btnPremisstion('arrears_of_fees') && this.arrearageData.amount > 0
@@ -149,6 +144,11 @@ export default {
     isCreateOrder() {
       return this.btnPremisstion('patient_new_bill')
     },
+  },
+  created() {
+    this.initData()
+  },
+  methods: {
     initData() {
       //获取消费预览和诊疗项目数据
       billAPI
