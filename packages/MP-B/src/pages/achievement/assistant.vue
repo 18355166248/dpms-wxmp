@@ -159,7 +159,8 @@ export default {
         default:
           break
       }
-      this.init()
+      this.current = 1
+      this.getAssistant()
     })
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
@@ -169,7 +170,8 @@ export default {
     })
     uni.$on('achFilter', ({ staffIds }) => {
       this.assistantIds = staffIds || ''
-      this.init()
+      this.current = 1
+      this.getAssistant()
       if (staffIds) this.isFilter = true
       else this.isFilter = false
     })
@@ -275,7 +277,8 @@ export default {
         this.endTimeMillis = moment(after).endOf('day').format('x')
       }
       this.dateFilterText = '自定义'
-      this.init()
+      this.current = 1
+      this.getAssistant()
     },
   },
 }

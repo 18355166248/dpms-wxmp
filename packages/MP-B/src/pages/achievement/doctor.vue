@@ -120,7 +120,8 @@ export default {
         default:
           break
       }
-      this.init()
+      this.current = 1
+      this.getDoctors()
     })
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
@@ -131,7 +132,8 @@ export default {
     uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
       this.doctorIds = staffIds || ''
       this.parentChargeTypeIds = chargeTypeIds || ''
-      this.init()
+      this.current = 1
+      this.getDoctors()
       if (staffIds || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
     })
@@ -234,7 +236,8 @@ export default {
         this.endTimeMillis = moment(after).endOf('day').format('x')
       }
       this.dateFilterText = '自定义'
-      this.init()
+      this.current = 1
+      this.getDoctors()
     },
   },
 }
