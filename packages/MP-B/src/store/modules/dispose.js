@@ -1,6 +1,8 @@
 const state = {
   disposeList: [],
   receivableAmount:0,
+  realMainOrderDiscount:100,
+  realDiscountPromotionAmount:0,
 }
 
 const mutations = {
@@ -9,6 +11,12 @@ const mutations = {
   },
   setReceivableAmount(state, value) {
     state.receivableAmount = value
+  },
+  setRealMainOrderDiscount(state, value) {
+    state.realMainOrderDiscount = value
+  },
+  setRealDiscountPromotionAmount(state, value) {
+    state.realDiscountPromotionAmount = value
   }
 }
 

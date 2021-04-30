@@ -83,7 +83,6 @@
 <script>
 
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils';
-// import { mockItems } from '@/pages/charge/json';
 import { mapMutations, mapState } from 'vuex';
 
 export default {
@@ -101,7 +100,7 @@ export default {
     this.calculateAmount()
   },
   computed: {
-    ...mapMutations('dispose', ['setDisposeList']),
+    ...mapState('dispose', ['disposeList']),
     hasDiscountItem() {
       return this.disposeList.some((item) => item.allBillDiscount)
     },
@@ -128,8 +127,18 @@ export default {
       return BigCalculate(maxPrice, '-', minPrice)
     },
   },
+  watch: {
+    mainOrderDiscount(nv,ov) {
+      this.setRealMainOrderDiscount(nv)
+      const {discountMaxValue} = this
+      const _discount = BigCalculate(nv, '/', 100)
+      const discount = BigCalculate(1,'-',_discount)
+      let val = BigCalculate(discountMaxValue, '*', discount)
+      this.setRealDiscountPromotionAmount(val)
+    }
+  },
   methods: {
-    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount']),
+    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
     onNextStep() {
       // 保存vuex并跳转
       this.setDisposeList([...this.disposeList])
@@ -168,9 +177,10 @@ export default {
     calculateDiscount() {
       const { minPrice, discountMaxValue } = this
       const discountValue = BigCalculate(this.receivableAmount, '-', minPrice)
-      this.mainOrderDiscount = Math.floor(
+      this.mainOrderDiscount = Math.ceil(
         (discountValue / discountMaxValue) * 100,
       )
+
     },
     onChangeItem(v, record) {
       if (v === 0) {
@@ -197,7 +207,7 @@ export default {
       // 处理数字回显范围0~100
       let vStr = `${v}`
       vStr = vStr.replace(/\b(0+)/gi, '')
-      const vNum = Number(vStr)
+      const vNum = Math.ceil(Number(vStr))
       return vNum
     },
 
