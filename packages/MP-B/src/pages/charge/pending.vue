@@ -1,6 +1,6 @@
 <template>
   <view class="chargeContentPending" v-if="pendingList.length > 0">
-    <view class="list" v-for="order in pendingList" :key="order.billOrderId">
+    <view class="list" v-for="order in pendingList" @click="onPendingList(order)" :key="order.billOrderId">
       <view class="listTitle">
         <view class="datetime"
           ><view class="iconfont icon-time-circle"></view>
@@ -76,6 +76,7 @@ export default {
     uni.$off('refreshPending')
   },
   mounted() {
+
     setTimeout(() => {
       this.init()
       uni.$on('refreshPending', () => {
@@ -90,6 +91,13 @@ export default {
     init() {
       this.current = 1
       this.getPendingOrder()
+    },
+    onPendingList(record) {
+      if(record.billStatus === 0) {
+        uni.navigateTo({
+          url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
+        })
+      }
     },
     async getPendingOrder() {
       uni.showLoading({

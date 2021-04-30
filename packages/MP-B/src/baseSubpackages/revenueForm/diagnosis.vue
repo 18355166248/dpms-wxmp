@@ -65,30 +65,7 @@
               formatPriceDecimal(data.operatingRevenue) || `¥0.00`
             }}</view>
           </view>
-          <view
-            class="item"
-            v-if="data.detail.length === 0"
-            v-for="item in dataSourceDetail"
-            :key="item.id"
-          >
-            <view class="th">{{ item.detailName }}</view>
-            <view class="td">{{ item.registerNum }}</view>
-            <view class="td">{{ item.appointmentRegisterNum }}</view>
-            <view class="td">{{ item.rateOfAppointmentRegister }}</view>
-            <view class="td">{{ item.nonappointmentRegisterNum }}</view>
-            <view class="td">{{ item.rateOfNonappointmentRegister }}</view>
-            <view class="td">{{ item.doneNum }}</view>
-            <view class="td">{{ formatPriceDecimal(item.cashRevenue) }}</view>
-            <view class="td">{{
-              formatPriceDecimal(item.operatingRevenue)
-            }}</view>
-          </view>
-          <view
-            class="item"
-            v-if="data.detail.length > 0"
-            v-for="(item, index) in data.detail"
-            :key="index"
-          >
+          <view class="item" v-for="(item, index) in data.detail" :key="index">
             <view class="th">{{ item.detailName }}</view>
             <view class="td">{{ item.registerNum || 0 }}</view>
             <view class="td">{{ item.appointmentRegisterNum || 0 }}</view>
@@ -171,8 +148,7 @@ export default {
             this.data = res.data
           } else {
             this.data = {
-              // detail: [{}, {}],
-              detail: [],
+              detail: this.dataSourceDetail,
             }
           }
           uni.hideLoading()

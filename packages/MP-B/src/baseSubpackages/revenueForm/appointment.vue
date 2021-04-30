@@ -58,33 +58,12 @@
               formatPriceDecimal(data.operatingRevenue)
             }}</view>
           </view>
-          <view
-            class="item"
-            v-if="data.detail.length === 0"
-            v-for="(item, index) in dataSourceDetail"
-            :key="item.id"
-          >
+          <view class="item" v-for="(item, index) in data.detail" :key="index">
             <view class="th">{{ item.detailName }}</view>
-            <view class="td">{{ item.appointmentNum || 0 }}</view>
-            <view class="td">{{ item.registerNum || 0 }}</view>
-            <view class="td">{{ item.rateOfRegister || 0 }}</view>
-            <view class="td">{{ item.doneNum || 0 }}</view>
-            <view class="td">{{ formatPriceDecimal(item.cashRevenue) }}</view>
-            <view class="td">{{
-              formatPriceDecimal(item.operatingRevenue)
-            }}</view>
-          </view>
-          <view
-            class="item"
-            v-if="data.detail.length > 0"
-            v-for="(item, index) in data.detail"
-            :key="index"
-          >
-            <view class="th">{{ item.detailName }}</view>
-            <view class="td">{{ item.appointmentNum || 0 }}</view>
-            <view class="td">{{ item.registerNum || 0 }}</view>
-            <view class="td">{{ item.rateOfRegister || 0 }}</view>
-            <view class="td">{{ item.doneNum || 0 }}</view>
+            <view class="td">{{ item.appointmentNum }}</view>
+            <view class="td">{{ item.registerNum }}</view>
+            <view class="td">{{ item.rateOfRegister }}</view>
+            <view class="td">{{ item.doneNum }}</view>
             <view class="td">{{ formatPriceDecimal(item.cashRevenue) }}</view>
             <view class="td">{{
               formatPriceDecimal(item.operatingRevenue)
@@ -156,8 +135,7 @@ export default {
             this.data = res.data
           } else {
             this.data = {
-              // detail: [{}, {}],
-              detail: [],
+              detail: this.dataSourceDetail,
             }
           }
           uni.hideLoading()
