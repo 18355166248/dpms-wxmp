@@ -34,7 +34,7 @@
             class="iconfont icon-customer-management"
             style="font-size: 36rpx; margin-right: 11rpx;"
           ></div>
-          <div class="ellipsis" style="width: 550rpx;">开单时间</div>
+          <div class="ellipsis" style="width: 550rpx;">开单信息</div>
         </div>
         <div slot="extra">
           <div
@@ -51,7 +51,7 @@
         </div>
       </chargestand-title>
       <dpmsCell title="收费时间" :value="nowDate" />
-      <dpmsCell title="收费人" :value="patientDetail.patientName" />
+      <dpmsCell title="收费人" :value="staff.staffName" />
       <template v-if="toggleInfomation">
         <dpmsCellPicker
           title="就诊时间"
@@ -150,8 +150,8 @@
         </div>
       </div>
       <div class="btn-wrapper flexBt">
-        <button class="save-btn">保存</button>
-        <button class="charge-btn">收费</button>
+        <button @click="onSaveBill" class="save-btn">保存</button>
+        <button @click="onCharge" class="charge-btn">收费</button>
       </div>
     </div>
     <!--支付方式-->
@@ -188,6 +188,13 @@ import moment from 'moment';
 import actionSheet from './common/actionSheet';
 import { mapMutations, mapState } from 'vuex';
 import { BigCalculate, numberUtils } from '@/utils/utils';
+const STAFF_ENUMS = new Map([
+  ['doctor',2],
+  ['nurse',6],
+  ['consultant',4],
+  ['salesMan',16],
+  ['other',0]
+])
 
 export default {
   name: 'checkstand',
@@ -202,7 +209,8 @@ export default {
         salesManStaffId: '',
         otherStaffId: '',
         memo: '',
-        registerTime: '',
+        registerTime: '', //提交时为consultTime
+        registerId:'', // 提交时为consultId
       },
       toggleInfomation: false,
       otherList: [],
@@ -211,7 +219,8 @@ export default {
       payTypes: [],
       // 操作菜单
       showActionSheet: false,
-      nowDate: moment(new Date().valueOf()).format("YYYY-MM-DD HH:mm")
+      nowDate: moment(new Date().valueOf()).format("YYYY-MM-DD HH:mm"),
+      staff: {}
     }
   },
   components: {
@@ -221,7 +230,7 @@ export default {
   computed: {
     ...mapState('workbenchStore', ['menu']),
     ...mapState('patient', ['patientDetail']),
-    ...mapState('dispose', ['disposeList','receivableAmount']),
+    ...mapState('dispose', ['disposeList','receivableAmount','realMainOrderDiscount','realDiscountPromotionAmount']),
     paidAmount() {
       return this.form.payChannelList.reduce((pre,item)=>BigCalculate(item.paymentAmount,'+',pre),0)
     },
@@ -234,19 +243,21 @@ export default {
       return paidAmount > receivableAmount ? BigCalculate(paidAmount,'-',receivableAmount) : 0
     },
     doctorList() {
-      return this.otherList.filter((item) => item.position === 2)
+      return this.otherList.filter((item) => item.position === STAFF_ENUMS.get('doctor'))
     },
     nurseList() {
-      return this.otherList.filter((item) => item.position === 6)
+      return this.otherList.filter((item) => item.position === STAFF_ENUMS.get('nurse'))
     },
     consultantList() {
-      return this.otherList.filter((item) => item.position === 4)
+      return this.otherList.filter((item) => item.position === STAFF_ENUMS.get('consultant'))
     },
     salesManList() {
-      return this.otherList.filter((item) => item.position === 16)
+      return this.otherList.filter((item) => item.position === STAFF_ENUMS.get('salesMan'))
     },
   },
   onLoad(query) {
+    this.staff = uni.getStorageSync('staff')
+    console.log(554, this.staff);
     this.loadListData().then(() => {
       if(query) this.backData(query)
     })
@@ -257,30 +268,87 @@ export default {
   onHide() {},
   onUnload() {},
   methods: {
-    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
+    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
+    onSaveBill() {
+      const { staff, nowDate, form, patientDetail, receivableAmount } = this
+      let params = {
+        billType: 1,
+        cashierStaffId:staff.staffId,
+        cashierTime:nowDate.valueOf(),
+        consultId:form.registerId,
+        consultTime:form.registerTime.valueOf(),
+        mainDiscountPromotionAmount: this.realDiscountPromotionAmount,
+        mainOrderDiscount: this.realMainOrderDiscount,
+        mainOrderDiscountIsmember: false,
+        memo: form.memo,
+        orderPayItemList:[],
+        patientId: patientDetail.patientId,
+        payChannelList: form.payChannelList,
+        receivableAmount: receivableAmount,
+        salesList: [],
+      }
+      if(this.billSerialNo) {
+        params.billSerialNo = this.billSerialNo
+      }
+      console.log(params);
+      // billAPI.saveOrderBill()
+    },
+    onCharge() {
+      console.log(22);
+    },
     backData(query) {
       if(query.billSerialNo) {
+        this.billSerialNo = query.billSerialNo
         // 走编辑账单逻辑,通过接口获取值
         billAPI.getOrderDetail({
           billSerialNo: query.billSerialNo
         }).then(res => {
-          const {orderPayItemList,payChannelList,receivableAmount} = res.data
+          const {orderPayItemList,payChannelList,receivableAmount,salesList,memo,consultTime,consultId,realMainOrderDiscount} = res.data
           // 设置应收金额
           this.setReceivableAmount(receivableAmount)
           this.setDisposeList(orderPayItemList)
           // 设置payChannelList
           this.setPayChannelList(payChannelList)
+          // 回显人员
+          salesList.forEach(item => {
+            if(item.salesType === STAFF_ENUMS.get('doctor')) {
+              this.form.doctorStaffId = item.salesId
+            } else if(item.salesType === STAFF_ENUMS.get('nurse')) {
+              this.form.nurseStaffId = item.salesId
+            } else if (item.salesType === STAFF_ENUMS.get('consultant')) {
+              this.form.consultedStaffId = item.salesId
+            } else if (item.salesType === STAFF_ENUMS.get('salesMan')) {
+              this.form.salesManStaffId = item.salesId
+            } else if (item.salesType === STAFF_ENUMS.get('other')) {
+              this.form.otherStaffId = item.salesId
+            }
+          })
+          // 回显备注
+          this.form.memo = memo
+          // 回显就诊时间就诊Id
+          this.form.registerTime = moment(consultTime).format('YYYY-MM-DD HH:mm')
+          this.form.registerId = consultId
+          // this.orderDetail = res.data
+          // 回显setRealMainOrderDiscount
+          this.setRealMainOrderDiscount(realMainOrderDiscount)
+          // 计算折扣金额
+
         })
       }
+
     },
     setPayChannelList(backChannelList) {
-      // 回显this.form.payChannelList
+      // 处理payType的checked属性
       const balanceMap = new Map()
-      this.payTypes.forEach(item => {
+      const selectedList = backChannelList.map(item => item.transactionChannelId)
+      this.payTypes = this.payTypes.map(item => {
         if(item.balance) {
           balanceMap.set(item.settingsPayTransactionChannelId, item.balance)
         }
+        item.checked = selectedList.includes(item.settingsPayTransactionChannelId)
+        return item
       })
+      // 生成新的payChannelList数据结构
       this.form.payChannelList = backChannelList.map(item => {
         let balance = balanceMap.get(item.transactionChannelId) || 0
 
@@ -291,7 +359,6 @@ export default {
           balance
         }
       })
-      // todo 处理paytypes checked
 
     },
     changePayChannel(value, record) {
@@ -383,6 +450,7 @@ export default {
       const { form } = this
       const updateObj = {
         registerTime: data.registerTime,
+        registerId:data.registerId,
       }
       // 如果已经有值则不联动
       // 回显医生

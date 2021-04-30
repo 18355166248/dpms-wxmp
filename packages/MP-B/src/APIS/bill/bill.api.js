@@ -124,6 +124,11 @@ const billAPI = {
   getPayTransactionChannel(data) {
     return httper.get('/pay/settings/pay-transaction-channel/list/apps', data)
   },
+  // 账单保存接口
+  saveOrderBill() {
+    return httper.post('/billing/bill/order/saveOrUpdate',data)
+  }
+
 }
 
 export default billAPI
