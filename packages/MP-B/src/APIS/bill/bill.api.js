@@ -57,6 +57,10 @@ const billAPI = {
   assistantList(data) {
     return httper.get('billing/stat/doctor/assistant/performance/page', data)
   },
+  //咨询师业绩
+  consultantList(data) {
+    return httper.get('billing/stat/consultant/performance/page', data)
+  },
   //项目列表
   chargeTypeParentList(data) {
     return httper.get('billing/settings/charge-type/select-parent', data)

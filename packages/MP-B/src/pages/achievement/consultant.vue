@@ -1,5 +1,5 @@
 <template>
-  <view class="ach_assistant">
+  <view class="ach_consultant">
     <view class="filter">
       <view class="uni-list-cell">
         <view @click="openCalendar" class="left"
@@ -117,7 +117,7 @@ export default {
       isFilter: false,
       dataSourceStatus: 'loading',
       summary: {},
-      assistantIds: '',
+      consultantIds: '',
     }
   },
   onLoad() {
@@ -159,20 +159,19 @@ export default {
         default:
           break
       }
-      this.init()
+      this.current = 1
+      this.getConsultant()
     })
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
         this.current += 1
-        this.getAssistant()
+        this.getConsultant()
       }
     })
     uni.$on('achFilter', ({ staffIds }) => {
-      this.assistantIds = staffIds || ''
-      this.init()
-
-      console.log('staffIds', staffIds)
-
+      this.consultantIds = staffIds || ''
+      this.current = 1
+      this.getConsultant()
       if (staffIds) this.isFilter = true
       else this.isFilter = false
     })
@@ -188,13 +187,13 @@ export default {
   //   console.log(this.contents.length, this.total, 'onReachBottom')
   //   if (this.contents.length < this.total) {
   //     this.current += 1
-  //     this.getAssistant()
+  //     this.getConsultant()
   //   }
   // },
   methods: {
     init() {
       this.current = 1
-      this.getAssistant()
+      this.getConsultant()
       this.getStaff()
     },
     async getStaff() {
@@ -208,19 +207,19 @@ export default {
       })
       uni.setStorageSync('allConsultantList', data)
     },
-    async getAssistant() {
+    async getConsultant() {
       uni.showLoading({
         title: '数据加载中',
         mask: true,
       })
       this.dataSourceStatus = 'loading'
       const params = {}
-      if (this.assistantIds) {
-        params.assistantIds = this.assistantIds
+      if (this.consultantIds) {
+        params.consultantIds = this.consultantIds
       }
       const {
         data: { total, current, records, summary },
-      } = await billAPI.assistantList({
+      } = await billAPI.consultantList({
         current: this.current,
         size: this.size,
         beginTimeMillis: this.beginTimeMillis,
@@ -277,14 +276,15 @@ export default {
         this.endTimeMillis = moment(after).endOf('day').format('x')
       }
       this.dateFilterText = '自定义'
-      this.init()
+      this.current = 1
+      this.getConsultant()
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.ach_assistant {
+.ach_consultant {
   background: rgba(0, 0, 0, 0.04);
   .filter {
     background: #ffffff;

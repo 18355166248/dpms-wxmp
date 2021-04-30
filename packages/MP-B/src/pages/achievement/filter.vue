@@ -54,6 +54,10 @@ export default {
         this.title = '医生助理'
         this.placeholder = '请选择医生助理'
         break
+      case 'consultant':
+        this.title = '咨询师'
+        this.placeholder = '请选择咨询师'
+        break
       default:
         break
     }

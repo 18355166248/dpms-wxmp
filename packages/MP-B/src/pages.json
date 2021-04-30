@@ -314,6 +314,18 @@
     },
     {
       "root": "pages/achievement",
+      "name": "consultant",
+      "pages": [
+        {
+          "path": "consultant",
+          "style": {
+            "navigationBarTitleText": "咨询师业绩"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
       "name": "filter",
       "pages": [
         {

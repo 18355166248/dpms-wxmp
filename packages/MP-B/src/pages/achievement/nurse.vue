@@ -172,7 +172,8 @@ export default {
         default:
           break
       }
-      this.init()
+      this.current = 1
+      this.getNurses()
     })
     uni.$on('emitPage', () => {
       if (this.contents.length < this.total) {
@@ -183,13 +184,13 @@ export default {
     uni.$on('achFilter', ({ staffIds, chargeTypeIds }) => {
       this.nurseIds = staffIds || ''
       this.parentChargeTypeIds = chargeTypeIds || ''
-      this.init()
       if (staffIds || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
+      this.current = 1
+      this.getNurses()
     })
   },
   beforeDestroy() {
-    console.log('nurse unload')
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
@@ -297,7 +298,8 @@ export default {
         this.endTimeMillis = moment(after).endOf('day').format('x')
       }
       this.dateFilterText = '自定义'
-      this.init()
+      this.current = 1
+      this.getNurses()
     },
   },
 }
