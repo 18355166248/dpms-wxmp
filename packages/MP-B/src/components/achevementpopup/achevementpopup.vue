@@ -26,6 +26,7 @@
           <uni-grid-item>
             <text
               class="achevementpopup-text"
+              @click="toUrl('/pages/achievement/consultant')"
               v-if="
                 menuPermission(['report-center', 'performance', 'consultant'])
               "
