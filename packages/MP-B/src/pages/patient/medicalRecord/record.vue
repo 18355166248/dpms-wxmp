@@ -81,7 +81,7 @@ export default {
           ...r,
           visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
           createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
-          visText: this.VIS_TYPE_ENUM.properties[r.visType]?.zh_CN,
+          visText: r.visTypeName,
         })),
       ]
     },

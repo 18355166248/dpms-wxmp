@@ -52,9 +52,18 @@
         defaultType="doctorId"
         v-model="form.doctorStaffId"
       />
-      <dpmsEnumsPicker
-        enumsKey="VisType"
+
+      <!--      <dpmsEnumsPicker-->
+      <!--        enumsKey="VisType"-->
+      <!--        v-model="form.medicalRecordRegisterVO.visType"-->
+      <!--        title="就诊类型"-->
+      <!--        placeholder="请选择就诊类型"-->
+      <!--      />-->
+      <dpmsCellPicker
+        :list="TreatmentTypes"
         v-model="form.medicalRecordRegisterVO.visType"
+        defaultType="codeId"
+        :defaultProps="{ label: 'name', value: 'codeId' }"
         title="就诊类型"
         placeholder="请选择就诊类型"
       />
@@ -459,6 +468,7 @@ export default {
       historyMedicalVisible: false,
       patientId: '',
       templateMedicalVisible: false,
+      TreatmentTypes: [],
     }
   },
   computed: {
@@ -472,6 +482,13 @@ export default {
     },
   },
   methods: {
+    initTreatmentTypes() {
+      diagnosisAPI.getTreatmentTypes().then((res) => {
+        if (res?.data?.length > 0) {
+          this.TreatmentTypes = res.data
+        }
+      })
+    },
     async getDoctors() {
       const res = await institutionAPI.getDoctors()
       this.doctors = res.data
@@ -484,6 +501,7 @@ export default {
       }))
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
+        // 如果有就诊记录，那就证明是复诊
         this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
         const { patientMainComplaintList } = this.registerList[0]
         if (
@@ -709,6 +727,7 @@ export default {
     this.onTextareaChange()
     this.onEdit()
     this.getDoctors()
+    this.initTreatmentTypes()
   },
   watch: {
     'form.doctorStaffId'(newVal) {
