@@ -61,6 +61,7 @@ export default {
   onLoad(params) {
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
+    this.currentTab = Number(params.tab) || 0
     this.init()
   },
   onReachBottom() {

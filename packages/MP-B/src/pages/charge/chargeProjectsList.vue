@@ -102,6 +102,7 @@ export default {
   computed: {
     ...mapState('dispose', ['disposeList']),
     hasDiscountItem() {
+      console.log(this.disposeList.some((item) => item.allBillDiscount));
       return this.disposeList.some((item) => item.allBillDiscount)
     },
     maxPrice() {
@@ -183,6 +184,7 @@ export default {
 
     },
     onChangeItem(v, record) {
+      record.totalAmount = BigCalculate(v,'*',record.unitAmount)
       if (v === 0) {
         uni.showModal({
           title: '确定删除该项目吗?',
@@ -194,6 +196,7 @@ export default {
               this.calculateAmount()
             } else if (res.cancel) {
               record.itemNum = 1
+              record.totalAmount = record.unitAmount
               this.calculateAmount()
             }
           },
