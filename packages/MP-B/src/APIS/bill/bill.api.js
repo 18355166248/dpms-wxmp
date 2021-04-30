@@ -89,9 +89,6 @@ const billAPI = {
   getRegisterList(data) {
     return httper.get('/diagnosis/register/list-pay', data)
   },
-  orderPayOne(data) {
-    return httper.post('/billing/bill/order/pay-one', data)
-  },
   // 分诊业绩
   getTriageList(data) {
     return httper.get('diagnosis/stat-triage-statistics/stat/list', data)
@@ -125,9 +122,20 @@ const billAPI = {
     return httper.get('/pay/settings/pay-transaction-channel/list/apps', data)
   },
   // 账单保存接口
-  saveOrderBill() {
-    return httper.post('/billing/bill/order/saveOrUpdate',data)
-  }
+  saveOrderBill(data) {
+    return httper.post('/billing/bill/order/saveOrUpdate',data,{
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
+  orderPayOne(data) {
+    return httper.post('/billing/bill/order/pay-one', data,{
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
 
 }
 

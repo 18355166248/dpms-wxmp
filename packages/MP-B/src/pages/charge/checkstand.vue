@@ -150,8 +150,8 @@
         </div>
       </div>
       <div class="btn-wrapper flexBt">
-        <button @click="onSaveBill" class="save-btn">保存</button>
-        <button @click="onCharge" class="charge-btn">收费</button>
+        <button @click="onSubmitBill('save')" class="save-btn">保存</button>
+        <button @click="onSubmitBill('charge')" class="charge-btn">收费</button>
       </div>
     </div>
     <!--支付方式-->
@@ -177,6 +177,7 @@
         </dpmsCheckbox>
       </view>
     </actionSheet>
+    <payResult ref="payResultRef"></payResult>
   </view>
 </template>
 <script>
@@ -188,6 +189,8 @@ import moment from 'moment';
 import actionSheet from './common/actionSheet';
 import { mapMutations, mapState } from 'vuex';
 import { BigCalculate, numberUtils } from '@/utils/utils';
+import payResult from './common/payResult'
+
 const STAFF_ENUMS = new Map([
   ['doctor',2],
   ['nurse',6],
@@ -226,6 +229,7 @@ export default {
   components: {
     ChargestandTitle,
     actionSheet,
+    payResult,
   },
   computed: {
     ...mapState('workbenchStore', ['menu']),
@@ -257,7 +261,6 @@ export default {
   },
   onLoad(query) {
     this.staff = uni.getStorageSync('staff')
-    console.log(554, this.staff);
     this.loadListData().then(() => {
       if(query) this.backData(query)
     })
@@ -269,32 +272,78 @@ export default {
   onUnload() {},
   methods: {
     ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
-    onSaveBill() {
+    onSubmitBill(type) {
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
       let params = {
         billType: 1,
         cashierStaffId:staff.staffId,
-        cashierTime:nowDate.valueOf(),
+        cashierTime:new Date(nowDate).valueOf(),
         consultId:form.registerId,
-        consultTime:form.registerTime.valueOf(),
+        consultTime:new Date(form.registerTime).valueOf(),
         mainDiscountPromotionAmount: this.realDiscountPromotionAmount,
         mainOrderDiscount: this.realMainOrderDiscount,
         mainOrderDiscountIsmember: false,
         memo: form.memo,
-        orderPayItemList:[],
+        orderPayItemList:this.disposeList, //列表
         patientId: patientDetail.patientId,
-        payChannelList: form.payChannelList,
+        payChannelList: form.payChannelList, //列表
         receivableAmount: receivableAmount,
         salesList: [],
+      }
+      if(form.doctorStaffId) {
+        params.salesList.push({
+          salesId: form.doctorStaffId,
+          salesType: STAFF_ENUMS.get('doctor')
+        })
+      }
+      if(form.nurseStaffId) {
+        params.salesList.push({
+          salesId: form.nurseStaffId,
+          salesType: STAFF_ENUMS.get('nurse')
+        })
+      }
+      if(form.consultedStaffId) {
+        params.salesList.push({
+          salesId: form.consultedStaffId,
+          salesType: STAFF_ENUMS.get('consultant')
+        })
+      }
+      if(form.salesManStaffId) {
+        params.salesList.push({
+          salesId: form.salesManStaffId,
+          salesType: STAFF_ENUMS.get('salesMan')
+        })
+      }
+      if(form.otherStaffId){
+        params.salesList.push({
+          salesId: form.otherStaffId,
+          salesType: STAFF_ENUMS.get('other')
+        })
       }
       if(this.billSerialNo) {
         params.billSerialNo = this.billSerialNo
       }
-      console.log(params);
-      // billAPI.saveOrderBill()
-    },
-    onCharge() {
-      console.log(22);
+
+      params.orderPayItemList = params.orderPayItemList.map(item => {
+        item.salesList = form.salesList
+        return item
+      })
+
+      // console.log(params);
+      if(type === 'save') {
+        billAPI.saveOrderBill(params).then(res => {
+          uni.reLaunch({
+            url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
+          })
+        })
+      } else if(type === 'charge') {
+        billAPI.orderPayOne(params).then(res => {
+          if(res?.data) {
+            this.$refs.payResultRef.open(res.data)
+          }
+        })
+      }
+
     },
     backData(query) {
       if(query.billSerialNo) {
@@ -306,11 +355,14 @@ export default {
           const {orderPayItemList,payChannelList,receivableAmount,salesList,memo,consultTime,consultId,realMainOrderDiscount} = res.data
           // 设置应收金额
           this.setReceivableAmount(receivableAmount)
-          this.setDisposeList(orderPayItemList)
+          this.setDisposeList(orderPayItemList.map((item,index)=>{
+            item.pageSerialNo = index + 1
+            return item
+          }))
           // 设置payChannelList
           this.setPayChannelList(payChannelList)
           // 回显人员
-          salesList.forEach(item => {
+          salesList?.forEach(item => {
             if(item.salesType === STAFF_ENUMS.get('doctor')) {
               this.form.doctorStaffId = item.salesId
             } else if(item.salesType === STAFF_ENUMS.get('nurse')) {
@@ -328,10 +380,9 @@ export default {
           // 回显就诊时间就诊Id
           this.form.registerTime = moment(consultTime).format('YYYY-MM-DD HH:mm')
           this.form.registerId = consultId
-          // this.orderDetail = res.data
           // 回显setRealMainOrderDiscount
           this.setRealMainOrderDiscount(realMainOrderDiscount)
-          // 计算折扣金额
+          // todo 计算折扣金额
 
         })
       }
