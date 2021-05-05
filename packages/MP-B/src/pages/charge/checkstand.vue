@@ -177,7 +177,8 @@
         </dpmsCheckbox>
       </view>
     </actionSheet>
-    <payResult ref="payResultRef"></payResult>
+    <u-toast ref="uToast" />
+    <payResult @confirm="payResultConfirm" ref="payResultRef"></payResult>
   </view>
 </template>
 <script>
@@ -261,7 +262,7 @@ export default {
   },
   onLoad(query) {
     this.staff = uni.getStorageSync('staff')
-    this.loadListData().then(() => {
+    this.loadListData(query).then(() => {
       if(query) this.backData(query)
     })
   },
@@ -332,18 +333,36 @@ export default {
       // console.log(params);
       if(type === 'save') {
         billAPI.saveOrderBill(params).then(res => {
+          this.setReceivableAmount(0) //提交以后将应收金额归零
           uni.reLaunch({
             url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
           })
         })
       } else if(type === 'charge') {
         billAPI.orderPayOne(params).then(res => {
-          if(res?.data) {
+          if (res.code === 0) {
+            this.$refs.uToast.show({
+              title: '收费成功!',
+              type: 'success',
+            })
+            // todo qingqing，未正确显示弹窗
+            return billAPI.getPayChannelResult({
+              payBatchNo: res.data,
+            })
+          }
+        })
+        .then((res) => {
+          if (res?.data) {
             this.$refs.payResultRef.open(res.data)
           }
         })
       }
-
+    },
+    payResultConfirm() {
+      this.setReceivableAmount(0) //提交以后将应收金额归零
+      uni.reLaunch({
+        url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
+      })
     },
     backData(query) {
       if(query.billSerialNo) {
@@ -381,9 +400,13 @@ export default {
           this.form.registerTime = moment(consultTime).format('YYYY-MM-DD HH:mm')
           this.form.registerId = consultId
           // 回显setRealMainOrderDiscount
-          this.setRealMainOrderDiscount(realMainOrderDiscount)
-          // todo 计算折扣金额
-
+          this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
+          // 计算折扣金额
+          let _realDiscountPromotionAmount = orderPayItemList.filter(item => item.allBillDiscount).reduce((pre,item) => {
+            const itemPromotiono = BigCalculate(item.totalAmount,'-',item.receivableAmount)
+            return BigCalculate(pre,'+',itemPromotiono)
+          },0)
+          this.setRealDiscountPromotionAmount(_realDiscountPromotionAmount)
         })
       }
 
@@ -428,9 +451,6 @@ export default {
         (hasCheck.length === 3 && !checked)
       )
     },
-    payTypeChange(value, record) {
-      record.checked = value
-    },
     hideActionSheet() {
       // 重制payChannelList
       const selectKeys = this.form.payChannelList.map(
@@ -442,17 +462,25 @@ export default {
       })
       this.showActionSheet = false
     },
+    payTypeChange(value, record) {
+      record.checked = value
+    },
     onSure() {
       // 更新payChannelList
+      let payChannelAcount = new Map()
+      this.form.payChannelList.forEach(item => {
+        payChannelAcount.set(item.transactionChannelId,item.paymentAmount)
+      })
       this.form.payChannelList = this.payTypes.filter(item => item.checked).map(item => ({
-        paymentAmount: 0,
+        paymentAmount: payChannelAcount.get(item.settingsPayTransactionChannelId) || 0,
         transactionChannelId: item.settingsPayTransactionChannelId,
         transactionChannelName: item.settingsPayTransactionChannelName,
         balance: item.balance,
       }));
       this.showActionSheet = false;
     },
-    loadListData() {
+    loadListData(query) {
+      const flag = query.billSerialNo //判断是否回显应收金额
       patientAPI.getStaffList().then((res) => {
         this.otherList = res.data;
       });
@@ -477,7 +505,7 @@ export default {
             if (index === 0) {
               item.checked = true;
               this.form.payChannelList = [{
-                paymentAmount: 0,
+                paymentAmount: flag?0:this.receivableAmount,
                 transactionChannelId: item.settingsPayTransactionChannelId,
                 transactionChannelName: item.settingsPayTransactionChannelName,
                 balance: item.balance,

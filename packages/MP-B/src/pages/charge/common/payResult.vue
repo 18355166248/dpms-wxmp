@@ -53,6 +53,8 @@ export default {
 
   .item {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding-bottom: 32rpx;
 
     .amount-wrap {
@@ -87,9 +89,6 @@ export default {
 
   .item:last-child {
     padding-bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
   }
 }
 </style>

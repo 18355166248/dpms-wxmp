@@ -160,7 +160,7 @@
     </actionSheet>
     <!--提示-->
     <u-toast ref='uToast' />
-    <payResult ref='payResultRef'></payResult>
+    <payResult ref='payResultRef' @confirm="payResultConfirm"></payResult>
   </view>
 </template>
 <script>
@@ -169,20 +169,13 @@ import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import actionSheet from './common/actionSheet'
-import { mapState } from 'vuex'
-import { mockItems, mockPayTypes } from '@/pages/charge/json'
+import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import payResult from './common/payResult'
 
 export default {
   name: 'checkstand',
   mixins: [inputMixins],
-  props: {
-    disposeList: {
-      type: Array,
-      default: mockItems,
-    },
-  },
   data() {
     return {
       form: {
@@ -210,8 +203,6 @@ export default {
       changeAmount: 0,
       //提示实付金额大于应付金额
       errTipText: '',
-      // 从接口获取的所有支付方式列表
-      allPayTypesList: [],
     }
   },
   components: {
@@ -235,6 +226,7 @@ export default {
   onHide() {},
   onUnload() {},
   methods: {
+    ...mapMutations('overdue', ['setOverdueList', 'setOverdueAmount']),
     //---------------------------支付方式控制面板
     checkDisableFn(checked) {
       const hasCheck = this.payTypes.filter((item) => item.checked)
@@ -260,10 +252,15 @@ export default {
 
     onSure() {
       // 更新payChannelList
+      let payChannelAcount = new Map()
+      this.form.payChannelList.forEach(item => {
+        payChannelAcount.set(item.transactionChannelId,item.paymentAmount)
+      })
+      // 更新payChannelList
       this.form.payChannelList = this.payTypes
       .filter((item) => item.checked)
       .map((item) => ({
-        paymentAmount: 0.0,
+        paymentAmount:payChannelAcount.get(item.settingsPayTransactionChannelId)|| 0.00,
         transactionChannelId: item.settingsPayTransactionChannelId,
         transactionChannelName: item.settingsPayTransactionChannelName,
         balance: item.balance,
@@ -395,8 +392,19 @@ export default {
       })
       .then((res) => {
         if (res?.data.length > 0) {
-          this.payTypes = res.data
-          this.initPayTypes()
+          res.data.forEach((item, index) => {
+            item.checked = false;
+            if (index === 0) {
+              item.checked = true;
+              this.form.payChannelList = [{
+                paymentAmount: this.form.receivableAmount,
+                transactionChannelId: item.settingsPayTransactionChannelId,
+                transactionChannelName: item.settingsPayTransactionChannelName,
+                balance: item.balance,
+              }];
+            }
+          });
+          this.payTypes = res.data;
         }
       })
       .catch((err) => {
@@ -448,10 +456,6 @@ export default {
       .payDebt(_data)
       .then((res) => {
         if (res.code === 0) {
-          // this.$refs.uToast.show({
-          //   title: '收欠费成功!',
-          //   type: 'success',
-          // })
           return billAPI.getPayChannelResult({
             payBatchNo: res.data,
           })
@@ -464,6 +468,13 @@ export default {
       })
       .catch((err) => {
         console.log(err.message)
+      })
+    },
+    payResultConfirm() {
+      this.setOverdueList([])
+      this.setOverdueAmount(0)
+      uni.reLaunch({
+        url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
       })
     },
   },

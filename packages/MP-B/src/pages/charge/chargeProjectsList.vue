@@ -44,7 +44,7 @@
       </div>
       <dpmsCellInput
         :disabledProps="
-          (btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
+          !(btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
         "
         title="整单折扣"
         :value="mainOrderDiscount"
@@ -57,7 +57,7 @@
       </dpmsCellInput>
       <dpmsCellInput
         :disabledProps="
-          (btnPremisstion('modify_discount_amount') && hasDiscountItem)
+          !(btnPremisstion('modify_discount_amount') && hasDiscountItem)
         "
         title="折后金额(¥)"
         :value="receivableAmount"
@@ -91,17 +91,18 @@ export default {
   data() {
     return {
       mainOrderDiscount: 100,
-      receivableAmount:0,
       showEditPrice: false,
       activeRecord: {}
     };
   },
   onShow() {
-    // 计算receivableAmount
-    this.calculateAmount()
+    if(!this.receivableAmount) {
+      // 如果没有receivableAmount，需要计算
+      this.calculateAmount()
+    }
   },
   computed: {
-    ...mapState('dispose', ['disposeList']),
+    ...mapState('dispose', ['disposeList','receivableAmount']),
     hasDiscountItem() {
       console.log(this.disposeList.some((item) => item.allBillDiscount));
       return this.disposeList.some((item) => item.allBillDiscount)
@@ -134,13 +135,13 @@ export default {
     mainOrderDiscount(nv,ov) {
       let result = 0
       this.setRealMainOrderDiscount(nv)
-      const {discountMaxValue, receivableAmount} = this
+      const {discountMaxValue, receivableAmount, maxPrice} = this
       const _discount = BigCalculate(nv, '/', 100)
       const discount = BigCalculate(1,'-',_discount)
       let val = BigCalculate(discountMaxValue, '*', discount)
 
       // 如果通过折扣计算与手动填写折后金额有误差（折扣精度较低产生的问题）取手动你填写的值来计算
-      let cusVal = BigCalculate(discountMaxValue,'-', receivableAmount)
+      let cusVal = BigCalculate(maxPrice,'-', receivableAmount)
       result = cusVal !== val?cusVal:val
       this.setRealDiscountPromotionAmount(result)
     }
@@ -190,11 +191,11 @@ export default {
           result = BigCalculate(result, '+', value)
         }
       })
-      this.receivableAmount = changeTwoDecimal(result)
+      this.setReceivableAmount(changeTwoDecimal(result))
     },
     calculateDiscount() {
-      const { minPrice, discountMaxValue } = this
-      const discountValue = BigCalculate(this.receivableAmount, '-', minPrice)
+      const { minPrice, discountMaxValue, receivableAmount } = this
+      const discountValue = BigCalculate(receivableAmount, '-', minPrice)
       this.mainOrderDiscount = Math.ceil(
         (discountValue / discountMaxValue) * 100,
       )
@@ -265,15 +266,15 @@ export default {
           title: '不能小于折后最小值',
           type: 'warning',
         })
-        this.receivableAmount = minPrice
+        this.setReceivableAmount(minPrice)
       } else if (v > maxPrice) {
         this.$refs.uToast.show({
           title: '本次折后金额不可以超过总计原价',
           type: 'warning',
         })
-        this.receivableAmount = maxPrice
+        this.setReceivableAmount(maxPrice)
       } else {
-        this.receivableAmount = v
+        this.setReceivableAmount(v)
       }
 
       // 计算折扣

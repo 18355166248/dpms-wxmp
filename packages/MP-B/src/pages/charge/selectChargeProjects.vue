@@ -1,38 +1,37 @@
 <template>
-  <view class="search-charge-wrap">
+  <view class='search-charge-wrap'>
     <!--搜索-->
-    <view class="search-input">
-      <view class="iconfont iconsearch"></view>
+    <view class='search-input' @click='search'>
+      <view class='iconfont iconsearch'></view>
       <input
-        v-model="value"
-        type="text"
+        type='text'
         :placeholder="'请输入项目名称或拼音快速搜索'"
-        class="input"
-        @focus="onfocus"
+        class='input'
+        disabled
       />
     </view>
     <!--选择项目-->
-    <view class="projects-wrap">
-      <view class="list-wrap">
+    <view class='projects-wrap'>
+      <view class='list-wrap'>
         <view
-          class="classify"
-          v-for="item in classifyList"
-          :key="item.settingsChargeTypeId"
+          class='classify'
+          v-for='item in classifyList'
+          :key='item.settingsChargeTypeId'
         >
-          <view class="header" @click="toggleClassify(item)">
+          <view class='header' @click='toggleClassify(item)'>
             <view>{{ item.settingsChargeTypeName }}</view>
-            <view class="iconfont iconup1" v-if="item.open"></view>
-            <view class="iconfont icondown1" v-else></view>
+            <view class='iconfont iconup1' v-if='item.open'></view>
+            <view class='iconfont icondown1' v-else></view>
           </view>
-          <view class="children" v-if="item.open">
+          <view class='children' v-if='item.open'>
             <view
-              class="project"
-              v-for="project in item.chargeItemList"
-              :key="project.settingsChargeItemId"
+              class='project'
+              v-for='project in item.chargeItemList'
+              :key='project.settingsChargeItemId'
             >
               <view>{{ project.settingsChargeItemName }}</view>
-              <view class="checkBox">
-                <dpmsCheckbox shape="square" v-model="project.checked">
+              <view class='checkBox'>
+                <dpmsCheckbox shape='square' v-model='project.checked'>
                 </dpmsCheckbox>
               </view>
             </view>
@@ -40,12 +39,12 @@
         </view>
       </view>
     </view>
-    <view class="bottom-wrap">
-      <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
-        >下一步
+    <view class='bottom-wrap'>
+      <chargeButton type='solid' :buttonStyle='buttonStyle' @click='nextStep'
+      >下一步
       </chargeButton>
     </view>
-    <u-toast ref="uToast" />
+    <u-toast ref='uToast' />
   </view>
 </template>
 <script>
@@ -79,21 +78,35 @@ export default {
     //合并数据
     mergeData() {
       const mergeList = [...this.searchProjectList, ...this.disposeList]
+      console.log(mergeList)
       if (this.classifyList.length > 0 && mergeList.length > 0) {
-        mergeList.forEach((project) => {
-          this.classifyList.forEach((item) => {
-            if (item.settingsChargeTypeId === project.settingsChargeTypeId) {
-              item.open = true
-              item.chargeItemList.forEach((charge) => {
-                if (
-                  charge.settingsChargeItemId === project.settingsChargeItemId
-                ) {
-                  charge.checked = true
-                }
-              })
-            }
-          })
+        this.classifyList.forEach((item) => {
+          if (this.checkTypeId(item.settingsChargeTypeId,mergeList)) {
+            item.open = true
+            item.chargeItemList.forEach((charge) => {
+              charge.checked=!!this.checkItemId(charge.settingsChargeItemId,mergeList)
+            })
+          }else{
+            item.open = false
+            item.chargeItemList.forEach((item)=>{
+              item.checked=false
+            })
+          }
         })
+      }
+    },
+    checkTypeId(id,list) {
+      for (let i = 0; i <list.length ; i++) {
+        if (list[i].settingsChargeTypeId===id){
+          return true
+        }
+      }
+    },
+    checkItemId(id,list) {
+      for (let i = 0; i <list.length ; i++) {
+        if (list[i].settingsChargeItemId===id){
+          return true
+        }
       }
     },
 
@@ -115,11 +128,8 @@ export default {
     toggleClassify(item) {
       item.open = !item.open
     },
-    projectChange(value, project, item) {
-      console.log(value, project, item)
-    },
     //搜索框聚焦
-    onfocus() {
+    search() {
       uni.navigateTo({
         url: '/pages/charge/searchProjects',
       })
@@ -155,6 +165,8 @@ export default {
             if (project.checked) {
               index += 1
               let temp = {}
+              temp.settingsChargeItemId=project.settingsChargeItemId
+              temp.settingsChargeTypeId=project.settingsChargeTypeId
               temp.pageSerialNo = index
               temp.allBillDiscount = project.allBillDiscount
               temp.isSingleDiscount = project.isSingleDiscount
@@ -166,7 +178,7 @@ export default {
               temp.receivableAmount = project.unitAmount
               temp.unitAmount = project.unitAmount
               //todo 需要单位unit
-              temp.unit = "盒"
+              temp.unit = '盒'
               const data = { ...defaultData, ...temp }
               targetList.push(data)
             }
@@ -180,7 +192,7 @@ export default {
   components: { chargeButton },
 }
 </script>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .search-charge-wrap {
   width: 100%;
   height: 100vh;
