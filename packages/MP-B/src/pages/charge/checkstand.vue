@@ -262,7 +262,7 @@ export default {
   },
   onLoad(query) {
     this.staff = uni.getStorageSync('staff')
-    this.loadListData().then(() => {
+    this.loadListData(query).then(() => {
       if(query) this.backData(query)
     })
   },
@@ -401,7 +401,7 @@ export default {
           this.form.registerId = consultId
           // 回显setRealMainOrderDiscount
           this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
-          // todo 计算折扣金额
+          // 计算折扣金额
           let _realDiscountPromotionAmount = orderPayItemList.filter(item => item.allBillDiscount).reduce((pre,item) => {
             const itemPromotiono = BigCalculate(item.totalAmount,'-',item.receivableAmount)
             return BigCalculate(pre,'+',itemPromotiono)
@@ -451,9 +451,6 @@ export default {
         (hasCheck.length === 3 && !checked)
       )
     },
-    payTypeChange(value, record) {
-      record.checked = value
-    },
     hideActionSheet() {
       // 重制payChannelList
       const selectKeys = this.form.payChannelList.map(
@@ -465,17 +462,25 @@ export default {
       })
       this.showActionSheet = false
     },
+    payTypeChange(value, record) {
+      record.checked = value
+    },
     onSure() {
       // 更新payChannelList
+      let payChannelAcount = new Map()
+      this.form.payChannelList.forEach(item => {
+        payChannelAcount.set(item.transactionChannelId,item.paymentAmount)
+      })
       this.form.payChannelList = this.payTypes.filter(item => item.checked).map(item => ({
-        paymentAmount: 0,
+        paymentAmount: payChannelAcount.get(item.settingsPayTransactionChannelId) || 0,
         transactionChannelId: item.settingsPayTransactionChannelId,
         transactionChannelName: item.settingsPayTransactionChannelName,
         balance: item.balance,
       }));
       this.showActionSheet = false;
     },
-    loadListData() {
+    loadListData(query) {
+      const flag = query.billSerialNo //判断是否回显应收金额
       patientAPI.getStaffList().then((res) => {
         this.otherList = res.data;
       });
@@ -500,7 +505,7 @@ export default {
             if (index === 0) {
               item.checked = true;
               this.form.payChannelList = [{
-                paymentAmount: 0,
+                paymentAmount: flag?0:this.receivableAmount,
                 transactionChannelId: item.settingsPayTransactionChannelId,
                 transactionChannelName: item.settingsPayTransactionChannelName,
                 balance: item.balance,
