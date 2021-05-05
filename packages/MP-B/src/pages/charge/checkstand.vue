@@ -345,6 +345,7 @@ export default {
               title: '收费成功!',
               type: 'success',
             })
+            // todo qingqing，未正确显示弹窗
             return billAPI.getPayChannelResult({
               payBatchNo: res.data,
             })
