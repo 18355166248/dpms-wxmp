@@ -1,14 +1,14 @@
 <template>
-  <view class="checkstand-wrap">
-    <div class="content-wrapper">
+  <view class='checkstand-wrap'>
+    <div class='content-wrapper'>
       <!--总计金额-->
       <chargestand-title>
-        <div slot="content" class="flex">
+        <div slot='content' class='flex'>
           <div
-            class="iconfont icon-savings"
-            style="font-size: 36rpx; margin-right: 11rpx;"
+            class='iconfont icon-savings'
+            style='font-size: 36rpx; margin-right: 11rpx;'
           ></div>
-          <div class="ellipsis" style="width: 550rpx;">
+          <div class='ellipsis' style='width: 550rpx;'>
             总计金额：
             <span>{{ overdueAmount | thousandFormatter(2, '￥') }}</span>
           </div>
@@ -16,148 +16,151 @@
       </chargestand-title>
 
       <dpmsCellInput
-        title="欠费折扣"
-        :value="form.debtDiscount"
-        type="number"
-        @input="onDebtDiscountChange($event)"
+        title='欠费折扣'
+        :value='form.debtDiscount'
+        type='number'
+        @input='onDebtDiscountChange($event)'
       >
         <template v-slot:inputRight>
-          <span class="inputRightIcon">%</span>
+          <span class='inputRightIcon'>%</span>
         </template>
       </dpmsCellInput>
 
       <dpmsCellInput
-        title="总计应收(￥)"
-        type="number"
-        :value="form.receivableAmount"
-        @input="onReceivableAmountChange($event)"
+        title='总计应收(￥)'
+        type='digit'
+        :value='form.receivableAmount'
+        :max='12'
+        @input='onReceivableAmountChange($event)'
       />
       <!--支付方式-->
       <chargestand-title>
-        <div slot="content" class="flex">
+        <div slot='content' class='flex'>
           <div
-            class="iconfont icon-savings"
-            style="font-size: 36rpx; margin-right: 11rpx;"
+            class='iconfont icon-savings'
+            style='font-size: 36rpx; margin-right: 11rpx;'
           ></div>
-          <div class="ellipsis" style="width: 550rpx;">
+          <div class='ellipsis' style='width: 550rpx;'>
             支付方式
           </div>
         </div>
-        <div slot="extra">
-          <div style="padding-left: 36rpx;" @click="showActionSheet = true">
-            <span class="iconfont icon-right" style="font-size: 36rpx;"></span>
+        <div slot='extra'>
+          <div style='padding-left: 36rpx;' @click='showActionSheet = true'>
+            <span class='iconfont icon-right' style='font-size: 36rpx;'></span>
           </div>
         </div>
       </chargestand-title>
       <dpmsCellInput
-        v-for="(item, index) in form.payChannelList"
-        :key="item.transactionChannelId"
-        type="number"
-        :title="`${item.transactionChannelName}(￥)`"
-        :value="item.paymentAmount"
-        @input="onPayTypeInputChange($event, item)"
+        v-for='(item, index) in form.payChannelList'
+        :key='item.transactionChannelId'
+        type='digit'
+        :title='`${item.transactionChannelName}(￥)`'
+        :value='item.paymentAmount'
+        @input='onPayTypeInputChange($event, item)'
+        :max='12'
       />
       <!--支付金额大于应收金额的验证-->
-      <div v-if="errTipText" class="validateCount">
+      <div v-if='errTipText' class='validateCount'>
         {{ errTipText }}
       </div>
       <!-- 开单信息-->
       <chargestand-title>
-        <div slot="content" class="flex">
+        <div slot='content' class='flex'>
           <div
-            class="iconfont icon-customer-management"
-            style="font-size: 36rpx; margin-right: 11rpx;"
+            class='iconfont icon-customer-management'
+            style='font-size: 36rpx; margin-right: 11rpx;'
           ></div>
-          <div class="ellipsis" style="width: 550rpx;">开单信息</div>
+          <div class='ellipsis' style='width: 550rpx;'>开单信息</div>
         </div>
-        <div slot="extra">
+        <div slot='extra'>
           <div
-            style="padding-left: 36rpx;"
-            @click="toggleInfomation = !toggleInfomation"
+            style='padding-left: 36rpx;'
+            @click='toggleInfomation = !toggleInfomation'
           >
-            <template v-if="toggleInfomation">
-              <span class="iconfont icon-closed" style="font-size: 22rpx;" />
+            <template v-if='toggleInfomation'>
+              <span class='iconfont icon-closed' style='font-size: 22rpx;' />
             </template>
             <template v-else>
-              <span class="iconfont icon-open" style="font-size: 22rpx;" />
+              <span class='iconfont icon-open' style='font-size: 22rpx;' />
             </template>
           </div>
         </div>
       </chargestand-title>
       <!--展开部分-->
-      <template v-if="toggleInfomation">
-        <dpmsCell title="收费时间" :value="form.cashierTime" />
-        <dpmsCell title="收费人" :value="form.staffName" />
-        <dpmsCell title="备注" hideBorderBottom />
-        <view class="memo">
+      <template v-if='toggleInfomation'>
+        <dpmsCell title='收费时间' :value='form.cashierTime' />
+        <dpmsCell title='收费人' :value='form.staffName' />
+        <dpmsCell title='备注' hideBorderBottom />
+        <view class='memo'>
           <textarea
-            v-model="form.memo"
+            v-model='form.memo'
             auto-height
-            placeholder="请输入备注"
-            placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-            :maxlength="500"
-            @focus="bindFocus"
-            @blur="closeBlur"
+            placeholder='请输入备注'
+            placeholder-style='font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);'
+            :maxlength='500'
+            @focus='bindFocus'
+            @blur='closeBlur'
           />
         </view>
       </template>
     </div>
-    <div class="footer-wrapper flexBt">
-      <div class="left-wrap">
-        <div class="amount-wrap">
-          <span class="black-big-font padding-r">实收:</span
-          ><span class="red-color">{{
+    <div class='footer-wrapper flexBt'>
+      <div class='left-wrap'>
+        <div class='amount-wrap'>
+          <span class='black-big-font padding-r'>实收:</span
+          ><span class='red-color'>{{
             paidAmount | thousandFormatter(2, '￥')
           }}</span>
         </div>
-        <div class="amount-wrap">
-          <view class="margin-r">
-            <span class="gray-font padding-r">欠费:</span>
-            <span class="black-font">{{
-              oweAmount | thousandFormatter(2, '￥')
-            }}</span>
+        <div class='amount-wrap'>
+          <view class='margin-r'>
+            <span class='gray-font padding-r'>欠费:</span>
+            <span class='black-font'>{{
+                oweAmount | thousandFormatter(2, '￥')
+              }}</span>
           </view>
-          <view class="margin-r">
-            <span class="gray-font padding-r">找零:</span>
-            <span class="black-font">{{
-              changeAmount | thousandFormatter(2, '￥')
-            }}</span>
+          <view class='margin-r'>
+            <span class='gray-font padding-r'>找零:</span>
+            <span class='black-font'>{{
+                changeAmount | thousandFormatter(2, '￥')
+              }}</span>
           </view>
         </div>
       </div>
-      <div class="btn-wrapper">
-        <button class="save-btn" @click="sureCharge('free')">欠费免单</button>
-        <button class="charge-btn" @click="sureCharge">确定</button>
+      <div class='btn-wrapper'>
+        <button class='save-btn' @click="sureCharge('free')">欠费免单</button>
+        <button class='charge-btn' @click='sureCharge'>确定</button>
       </div>
     </div>
     <!--支付方式-->
     <actionSheet
-      @close="hideActionSheet"
-      @sure="onSure"
-      sure-text="确定"
-      v-if="showActionSheet"
+      @close='hideActionSheet'
+      @sure='onSure'
+      sure-text='确定'
+      v-if='showActionSheet'
     >
       <view
-        class="action-item"
-        v-for="item in payTypes"
-        :key="item.settingsPayTransactionChannelId"
+        class='action-item'
+        v-for='item in payTypes'
+        :key='item.settingsPayTransactionChannelId'
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance"
-          >&nbsp;&nbsp;(余额{{ item.balance | thousandFormatter }})</template
+        <template v-if='item.balance'
+        >&nbsp;&nbsp;(余额{{ item.balance | thousandFormatter }})
+        </template
         >
         <dpmsCheckbox
-          :disabled="checkDisableFn(item.checked)"
-          shape="square"
-          :value="item.checked"
-          @change="payTypeChange($event, item)"
+          :disabled='checkDisableFn(item.checked)'
+          shape='square'
+          :value='item.checked'
+          @change='payTypeChange($event, item)'
         >
         </dpmsCheckbox>
       </view>
     </actionSheet>
     <!--提示-->
-    <u-toast ref="uToast" />
-    <payResult ref="payResultRef"></payResult>
+    <u-toast ref='uToast' />
+    <payResult ref='payResultRef' @confirm="payResultConfirm"></payResult>
   </view>
 </template>
 <script>
@@ -166,20 +169,13 @@ import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import actionSheet from './common/actionSheet'
-import { mapState } from 'vuex'
-import { mockItems, mockPayTypes } from '@/pages/charge/json'
+import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import payResult from './common/payResult'
 
 export default {
   name: 'checkstand',
   mixins: [inputMixins],
-  props: {
-    disposeList: {
-      type: Array,
-      default: mockItems,
-    },
-  },
   data() {
     return {
       form: {
@@ -207,8 +203,6 @@ export default {
       changeAmount: 0,
       //提示实付金额大于应付金额
       errTipText: '',
-      // 从接口获取的所有支付方式列表
-      allPayTypesList: [],
     }
   },
   components: {
@@ -232,6 +226,7 @@ export default {
   onHide() {},
   onUnload() {},
   methods: {
+    ...mapMutations('overdue', ['setOverdueList', 'setOverdueAmount']),
     //---------------------------支付方式控制面板
     checkDisableFn(checked) {
       const hasCheck = this.payTypes.filter((item) => item.checked)
@@ -257,27 +252,35 @@ export default {
 
     onSure() {
       // 更新payChannelList
+      let payChannelAcount = new Map()
+      this.form.payChannelList.forEach(item => {
+        payChannelAcount.set(item.transactionChannelId,item.paymentAmount)
+      })
+      // 更新payChannelList
       this.form.payChannelList = this.payTypes
-        .filter((item) => item.checked)
-        .map((item) => ({
-          paymentAmount: 0.0,
-          transactionChannelId: item.settingsPayTransactionChannelId,
-          transactionChannelName: item.settingsPayTransactionChannelName,
-          balance: item.balance,
-        }))
+      .filter((item) => item.checked)
+      .map((item) => ({
+        paymentAmount:payChannelAcount.get(item.settingsPayTransactionChannelId)|| 0.00,
+        transactionChannelId: item.settingsPayTransactionChannelId,
+        transactionChannelName: item.settingsPayTransactionChannelName,
+        balance: item.balance,
+      }))
       this.form.payChannelList[0].paymentAmount = this.form.receivableAmount
       this.showActionSheet = false
     },
     //支付方式监听
     onPayTypeInputChange(value, item) {
       value = this.checkInputValue(value)
-      if (!value) {
+      if (value === '' || value === undefined) {
         return
       }
       if (item.balance) {
         value = value > item.balance ? item.balance : value
       }
-      item.paymentAmount = changeTwoDecimal(value)
+      item.paymentAmount = value
+      this.$nextTick(() => {
+        item.paymentAmount = changeTwoDecimal(value)
+      })
       this.errTipText = ''
       this.checkPaidAmount()
     },
@@ -330,39 +333,53 @@ export default {
     //-----------------------总计金额、折扣、应收
     onDebtDiscountChange(value) {
       value = this.checkInputValue(value)
-      if (!value) {
+      if (value === '' || value === undefined) {
         return
       }
       if (value > 100) {
-        value = 100
+        this.form.debtDiscount='100'
+      }else{
+        this.form.debtDiscount = value
       }
+      this.$nextTick(() => {
+        this.form.debtDiscount = changeTwoDecimal(this.form.debtDiscount,0)
+      })
+
       let receivableAmount = BigCalculate(
         this.overdueAmount,
         '*',
         BigCalculate(this.form.debtDiscount, '/', 100),
       )
-      this.form.receivableAmount = changeTwoDecimal(receivableAmount)
+      this.form.receivableAmount = receivableAmount
+      this.$nextTick(() => {
+        this.form.receivableAmount = changeTwoDecimal(receivableAmount)
+      })
       this.initPayTypes()
       this.checkPaidAmount()
     },
+    //应收金额
     onReceivableAmountChange(value) {
       value = this.checkInputValue(value)
-      if (!value) {
+      if (value === '' || value === undefined || this.overdueAmount <= 0) {
         return
       }
       if (value > this.overdueAmount) {
-        value = this.overdueAmount
+        this.form.receivableAmount=this.overdueAmount+''
+      }else{
+        this.form.receivableAmount = value
       }
-      this.form.receivableAmount = value
-      if (this.overdueAmount <= 0) {
-        return
-      }
+      this.$nextTick(() => {
+        this.form.receivableAmount = changeTwoDecimal(this.form.receivableAmount)
+      })
       const debtDiscount = BigCalculate(
         BigCalculate(this.form.receivableAmount, '/', this.overdueAmount),
         '*',
         100,
       )
-      this.form.debtDiscount = changeTwoDecimal(Math.ceil(debtDiscount))
+      this.form.debtDiscount = Math.ceil(debtDiscount)
+      this.$nextTick(() => {
+        this.form.debtDiscount = changeTwoDecimal(Math.ceil(debtDiscount))
+      })
       this.initPayTypes()
       this.checkPaidAmount()
     },
@@ -370,35 +387,32 @@ export default {
     //获取数据
     loadListData() {
       billAPI
-        .getPayTransactionChannel({
-          memberId: this.patientDetail.memberId,
-        })
-        .then((res) => {
-          if (res?.data.length > 0) {
-            res.data.forEach((item, index) => {
-              item.checked = false
-              if (index === 0) {
-                item.checked = true
-                this.form.payChannelList = [
-                  {
-                    paymentAmount: 0,
-                    transactionChannelId: item.settingsPayTransactionChannelId,
-                    transactionChannelName:
-                      item.settingsPayTransactionChannelName,
-                    balance: item.balance,
-                  },
-                ]
-              }
-            })
-            this.payTypes = res.data
-          }
-        })
-        .catch((err) => {
-          console.log(err.message)
-        })
+      .getPayTransactionChannel({
+        memberId: this.patientDetail.memberId,
+      })
+      .then((res) => {
+        if (res?.data.length > 0) {
+          res.data.forEach((item, index) => {
+            item.checked = false;
+            if (index === 0) {
+              item.checked = true;
+              this.form.payChannelList = [{
+                paymentAmount: this.form.receivableAmount,
+                transactionChannelId: item.settingsPayTransactionChannelId,
+                transactionChannelName: item.settingsPayTransactionChannelName,
+                balance: item.balance,
+              }];
+            }
+          });
+          this.payTypes = res.data;
+        }
+      })
+      .catch((err) => {
+        console.log(err.message)
+      })
     },
     initPayTypes() {
-      this.allPayTypesList.forEach((item, index) => {
+      this.payTypes.forEach((item, index) => {
         item.checked = false
         if (index === 0) {
           item.checked = true
@@ -407,15 +421,15 @@ export default {
               paymentAmount: this.form.receivableAmount,
               transactionChannelId: item.settingsPayTransactionChannelId,
               transactionChannelName: item.settingsPayTransactionChannelName,
+              balance: item.balance,
             },
           ]
         }
       })
-      this.payTypes = this.allPayTypesList
     },
     //确认收费
     sureCharge(type) {
-      if (!this.checkPaidAmount) {
+      if (!this.checkPaidAmount()) {
         return false
       }
       const _data = {}
@@ -439,32 +453,35 @@ export default {
         })
       }
       billAPI
-        .payDebt(_data)
-        .then((res) => {
-          if (res.code === 0) {
-            this.$refs.uToast.show({
-              title: '收欠费成功!',
-              type: 'success',
-            })
-            return billAPI.getPayChannelResult({
-              payBatchNo: res.data,
-            })
-          }
-        })
-        .then((res) => {
-          if (res?.data) {
-            this.$refs.payResultRef.open(res.data)
-          }
-        })
-        .catch((err) => {
-          console.log(err.message)
-        })
+      .payDebt(_data)
+      .then((res) => {
+        if (res.code === 0) {
+          return billAPI.getPayChannelResult({
+            payBatchNo: res.data,
+          })
+        }
+      })
+      .then((res) => {
+        if (res?.data) {
+          this.$refs.payResultRef.open(res.data)
+        }
+      })
+      .catch((err) => {
+        console.log(err.message)
+      })
+    },
+    payResultConfirm() {
+      this.setOverdueList([])
+      this.setOverdueAmount(0)
+      uni.reLaunch({
+        url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
+      })
     },
   },
   watch: {},
 }
 </script>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 .action-item {
   height: 112rpx;
   background: #fff;

@@ -6,7 +6,7 @@
     confirm-color="#5CBB89"
     @confirm="onConfirm"
   >
-    <view class="slot-content" v-if="payRes.length > 0">
+    <view class="slot-content" v-if="payResult.length > 0">
       <view class="item" v-for="(item, index) in payResult" :key="index">
         <view class="amount-wrap">
           <view class="type-name">{{ item.transactionChannelName }}</view>
@@ -53,6 +53,8 @@ export default {
 
   .item {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding-bottom: 32rpx;
 
     .amount-wrap {
@@ -87,9 +89,6 @@ export default {
 
   .item:last-child {
     padding-bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
   }
 }
 </style>
