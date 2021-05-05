@@ -44,7 +44,7 @@
       </div>
       <dpmsCellInput
         :disabledProps="
-          (btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
+          !(btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
         "
         title="整单折扣"
         :value="mainOrderDiscount"
@@ -57,7 +57,7 @@
       </dpmsCellInput>
       <dpmsCellInput
         :disabledProps="
-          (btnPremisstion('modify_discount_amount') && hasDiscountItem)
+          !(btnPremisstion('modify_discount_amount') && hasDiscountItem)
         "
         title="折后金额(¥)"
         :value="receivableAmount"

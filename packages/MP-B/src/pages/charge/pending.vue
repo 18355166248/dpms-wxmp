@@ -93,7 +93,7 @@ export default {
       this.getPendingOrder()
     },
     onPendingList(record) {
-      if(record.billStatus === 0) {
+      if(record.billStatus === 0 && this.btnPremisstion('pending_editing')) {
         uni.navigateTo({
           url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
         })
