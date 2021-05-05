@@ -11,6 +11,7 @@
       <div
         v-for="(item, index) in disposeList"
         :key="item.itemCode"
+        @longtap="removeDisposeItem(item)"
         class="disposal-item flex-column"
       >
         <div class="row-1 flex-h-between">
@@ -43,7 +44,7 @@
       </div>
       <dpmsCellInput
         :disabledProps="
-          !(btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
+          (btnPremisstion('modify_whole_order_discount') && hasDiscountItem)
         "
         title="整单折扣"
         :value="mainOrderDiscount"
@@ -56,7 +57,7 @@
       </dpmsCellInput>
       <dpmsCellInput
         :disabledProps="
-          !(btnPremisstion('modify_discount_amount') && hasDiscountItem)
+          (btnPremisstion('modify_discount_amount') && hasDiscountItem)
         "
         title="折后金额(¥)"
         :value="receivableAmount"
@@ -129,19 +130,32 @@ export default {
     },
   },
   watch: {
+    // 通过折扣计算优惠金额
     mainOrderDiscount(nv,ov) {
+      let result = 0
       this.setRealMainOrderDiscount(nv)
-      const {discountMaxValue} = this
+      const {discountMaxValue, receivableAmount} = this
       const _discount = BigCalculate(nv, '/', 100)
       const discount = BigCalculate(1,'-',_discount)
       let val = BigCalculate(discountMaxValue, '*', discount)
-      this.setRealDiscountPromotionAmount(val)
+
+      // 如果通过折扣计算与手动填写折后金额有误差（折扣精度较低产生的问题）取手动你填写的值来计算
+      let cusVal = BigCalculate(discountMaxValue,'-', receivableAmount)
+      result = cusVal !== val?cusVal:val
+      this.setRealDiscountPromotionAmount(result)
     }
   },
   methods: {
     ...mapMutations('dispose', ['setDisposeList','setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
     onNextStep() {
       // 保存vuex并跳转
+      if(this.disposeList.length === 0) {
+        this.$refs.uToast.show({
+          title: '账单明细不能为空',
+          type: 'warning',
+        })
+        return
+      }
       this.setDisposeList([...this.disposeList])
       this.setReceivableAmount(this.receivableAmount)
       // console.log('this.disposeList', this.disposeList);
@@ -157,7 +171,10 @@ export default {
       this.tempValue = changeTwoDecimal(v)
     },
     confirmPrice() {
-      this.activeRecord.unitAmount = this.tempValue
+      // 修改单价，同时修改totalAmount
+      let record = this.activeRecord
+      record.unitAmount = this.tempValue
+      record.totalAmount = BigCalculate(record.itemNum,'*',record.unitAmount)
       this.calculateAmount()
     },
     calculateAmount() {
@@ -183,6 +200,19 @@ export default {
       )
 
     },
+    removeDisposeItem(record) {
+      uni.showModal({
+        title: '确定删除该项目吗？',
+        success: (res) => {
+          if(res.confirm) {
+            this.setDisposeList(this.disposeList.filter(
+              (item) => item.itemCode !== record.itemCode,
+            ))
+            this.calculateAmount()
+          }
+        }
+      })
+    },
     onChangeItem(v, record) {
       record.totalAmount = BigCalculate(v,'*',record.unitAmount)
       if (v === 0) {
@@ -190,9 +220,9 @@ export default {
           title: '确定删除该项目吗?',
           success: (res) => {
             if (res.confirm) {
-              this.disposeList = this.disposeList.filter(
+              this.setDisposeList(this.disposeList.filter(
                 (item) => item.itemCode !== record.itemCode,
-              )
+              ))
               this.calculateAmount()
             } else if (res.cancel) {
               record.itemNum = 1
