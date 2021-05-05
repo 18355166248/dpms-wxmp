@@ -177,7 +177,8 @@
         </dpmsCheckbox>
       </view>
     </actionSheet>
-    <payResult ref="payResultRef"></payResult>
+    <u-toast ref="uToast" />
+    <payResult @confirm="payResultConfirm" ref="payResultRef"></payResult>
   </view>
 </template>
 <script>
@@ -332,18 +333,35 @@ export default {
       // console.log(params);
       if(type === 'save') {
         billAPI.saveOrderBill(params).then(res => {
+          this.setReceivableAmount(0) //提交以后将应收金额归零
           uni.reLaunch({
             url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
           })
         })
       } else if(type === 'charge') {
         billAPI.orderPayOne(params).then(res => {
-          if(res?.data) {
+          if (res.code === 0) {
+            this.$refs.uToast.show({
+              title: '收费成功!',
+              type: 'success',
+            })
+            return billAPI.getPayChannelResult({
+              payBatchNo: res.data,
+            })
+          }
+        })
+        .then((res) => {
+          if (res?.data) {
             this.$refs.payResultRef.open(res.data)
           }
         })
       }
-
+    },
+    payResultConfirm() {
+      this.setReceivableAmount(0) //提交以后将应收金额归零
+      uni.reLaunch({
+        url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
+      })
     },
     backData(query) {
       if(query.billSerialNo) {
@@ -381,9 +399,13 @@ export default {
           this.form.registerTime = moment(consultTime).format('YYYY-MM-DD HH:mm')
           this.form.registerId = consultId
           // 回显setRealMainOrderDiscount
-          this.setRealMainOrderDiscount(realMainOrderDiscount)
+          this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
           // todo 计算折扣金额
-
+          let _realDiscountPromotionAmount = orderPayItemList.filter(item => item.allBillDiscount).reduce((pre,item) => {
+            const itemPromotiono = BigCalculate(item.totalAmount,'-',item.receivableAmount)
+            return BigCalculate(pre,'+',itemPromotiono)
+          },0)
+          this.setRealDiscountPromotionAmount(_realDiscountPromotionAmount)
         })
       }
 
