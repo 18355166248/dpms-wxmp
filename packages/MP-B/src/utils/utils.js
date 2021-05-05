@@ -105,5 +105,6 @@ export function BigCalculate(value1, method, value2) {
 }
 
 export function changeTwoDecimal(params, precision = 2) {
+  if(typeof params !== 'number') params = Number(params)
   return Number(params.toFixed(precision))
 }
