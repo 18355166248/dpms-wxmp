@@ -269,7 +269,6 @@ export default {
   onShow() {
     this.btnPremisstion();
   },
-  onHide() {},
   onUnload() {},
   methods: {
     ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
@@ -278,9 +277,9 @@ export default {
       let params = {
         billType: 1,
         cashierStaffId:staff.staffId,
-        cashierTime:new Date(nowDate).valueOf(),
+        cashierTime:new Date(nowDate.replace(/-/g, '/')).valueOf(),
         consultId:form.registerId,
-        consultTime:new Date(form.registerTime).valueOf(),
+        consultTime:new Date(form.registerTime.replace(/-/g, '/')).valueOf(),
         mainDiscountPromotionAmount: this.realDiscountPromotionAmount,
         mainOrderDiscount: this.realMainOrderDiscount,
         mainOrderDiscountIsmember: false,
@@ -333,7 +332,6 @@ export default {
       // console.log(params);
       if(type === 'save') {
         billAPI.saveOrderBill(params).then(res => {
-          this.setReceivableAmount(0) //提交以后将应收金额归零
           uni.reLaunch({
             url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
           })
@@ -341,11 +339,6 @@ export default {
       } else if(type === 'charge') {
         billAPI.orderPayOne(params).then(res => {
           if (res.code === 0) {
-            this.$refs.uToast.show({
-              title: '收费成功!',
-              type: 'success',
-            })
-            // todo qingqing，未正确显示弹窗
             return billAPI.getPayChannelResult({
               payBatchNo: res.data,
             })
@@ -359,7 +352,6 @@ export default {
       }
     },
     payResultConfirm() {
-      this.setReceivableAmount(0) //提交以后将应收金额归零
       uni.reLaunch({
         url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
       })
