@@ -74,7 +74,7 @@ export default {
   onHide() {},
   onUnload() {},
   methods: {
-    ...mapMutations('dispose', ['setDisposeList']),
+    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount']),
     //合并数据
     mergeData() {
       const mergeList = [...this.searchProjectList, ...this.disposeList]
@@ -177,8 +177,7 @@ export default {
               temp.singleDiscountAfterAmount = project.unitAmount
               temp.receivableAmount = project.unitAmount
               temp.unitAmount = project.unitAmount
-              //todo 需要单位unit
-              temp.unit = '盒'
+              temp.unit = project.unit
               const data = { ...defaultData, ...temp }
               targetList.push(data)
             }
@@ -186,6 +185,7 @@ export default {
         }
       })
       this.setDisposeList(targetList)
+      this.setReceivableAmount(0)
     },
   },
   watch: {},
