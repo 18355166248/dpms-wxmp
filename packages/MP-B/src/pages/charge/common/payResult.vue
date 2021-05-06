@@ -1,24 +1,26 @@
 <template>
   <u-modal
-    v-model="show"
-    :show-title="false"
-    confirm-text="我知道了"
-    confirm-color="#5CBB89"
-    @confirm="onConfirm"
+    v-model='show'
+    :show-title='false'
+    confirm-text='我知道了'
+    confirm-color='#5CBB89'
+    @confirm='onConfirm'
   >
-    <view class="slot-content" v-if="payResult.length > 0">
-      <view class="item" v-for="(item, index) in payResult" :key="index">
-        <view class="amount-wrap">
-          <view class="type-name">{{ item.transactionChannelName }}</view>
-          <view class="amount">{{
-            item.paymentAmount | thousandFormatter(2, '￥')
-          }}</view>
+    <view class='slot-content' v-if='payResult.length > 0'>
+      <view class='item' v-for='(item, index) in payResult' :key='index'>
+        <view class='amount-wrap'>
+          <view class='type-name'>{{ item.transactionChannelName }}</view>
+          <view class='amount'>{{
+              item.paymentAmount | thousandFormatter(2, '￥')
+            }}
+          </view>
         </view>
         <view
-          class="success"
+          class='success'
           :class="Number(item.payStatus) === 1 ? 'success' : 'error'"
+          :style='{color:payStatusDic[`${item.payStatus}`].color }'
         >
-          {{ Number(item.payStatus) === 1 ? '成功' : '失败' }}
+          {{ payStatusDic[`${item.payStatus}`].text }}
         </view>
       </view>
     </view>
@@ -31,6 +33,36 @@ export default {
     return {
       show: false,
       payResult: [],
+      payStatusDic: {
+        '0': {
+          text: '未支付',
+          color: '#FAAD14',
+        },
+        '1': {
+          text: '支付中',
+          color: '#FAAD14',
+        },
+        '2': {
+          text: '部分支付',
+          color: '#5CBB89',
+        },
+        '3': {
+          text: '支付完成',
+          color: '#5CBB89',
+        },
+        '4': {
+          text: '作废',
+          color: '#FA5151',
+        },
+        '5': {
+          text: '支付失败',
+          color: '#FA5151',
+        },
+        '-1': {
+          text: '未知',
+          color: '#FA5151',
+        },
+      },
     }
   },
   methods: {
@@ -45,7 +77,7 @@ export default {
   components: {},
 }
 </script>
-<style lang="scss" scoped>
+<style lang='scss' scoped>
 //
 .slot-content {
   padding: 48rpx;
@@ -76,14 +108,6 @@ export default {
         color: #191919;
         font-weight: 500;
       }
-    }
-
-    .success {
-      color: #5cbb89;
-    }
-
-    .error {
-      color: #fa5151;
     }
   }
 

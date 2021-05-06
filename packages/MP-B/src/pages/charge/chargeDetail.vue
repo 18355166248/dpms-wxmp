@@ -46,12 +46,11 @@
         >
       </view>
     </view>
-    <view class='btn-wrap'>
+    <view class='btn-wrap' v-if='isOverdue'>
       <chargeButton
         type='solid'
         @click='overdueCharge'
         :buttonStyle="{ width:'686rpx' }"
-        v-if='isOverdue'
       >收欠费
       </chargeButton>
     </view>
