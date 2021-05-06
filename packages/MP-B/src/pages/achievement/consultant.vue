@@ -260,7 +260,7 @@ export default {
     },
     onFilterClick() {
       this.$utils.push({
-        url: `/pages/achievement/filter?name=assistant`,
+        url: `/pages/achievement/filter?name=consultant`,
       })
     },
     openCalendar() {
