@@ -118,10 +118,10 @@ export default {
         })
         .then((res) => {
           this.range = this.list.length ? this.list : res.data
-
           const disList = []
           if (this.medicalInstitutionType > 0) {
             JSON.stringify(res.data, (k, v) => {
+              if (typeof v === 'undefined' || (!v && v !== 0)) return v
               v.medicalInstitutionId &&
                 v.parentId !== 0 &&
                 v.medicalInstitutionType === this.medicalInstitutionType &&
@@ -130,6 +130,7 @@ export default {
             })
           } else {
             JSON.stringify(res.data, (k, v) => {
+              if (typeof v === 'undefined' || (!v && v !== 0)) return v
               v.medicalInstitutionId && disList.push(v.medicalInstitutionId)
               return v
             })
