@@ -19,7 +19,7 @@
           <div class="action">
             <div class="flex">
               <div class="edit-price" style="flex: 1;">
-                ¥{{ item.unitAmount }}{{ item.unit }}
+                ¥{{ item.unitAmount }}
               </div>
               <div
                 @click="onEditPirce(item)"
@@ -169,6 +169,11 @@ export default {
       this.activeRecord = record
     },
     onEditAmount(v) {
+      if(!v) {
+        v = 0
+      } else if (v > 999999.99) {
+        v = 999999.99
+      }
       this.tempValue = changeTwoDecimal(v)
     },
     confirmPrice() {
