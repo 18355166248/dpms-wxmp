@@ -275,7 +275,7 @@ export default {
         return
       }
       if (item.balance) {
-        value = value > item.balance ? item.balance : value
+        value = value > item.balance ? item.balance+'' : value
       }
       item.paymentAmount = value
       this.$nextTick(() => {
@@ -327,6 +327,11 @@ export default {
         })
         return ''
       }
+      const maxNumber=99999;
+      if (val>maxNumber){
+        val=maxNumber+''
+      }
+
       return val
     },
     //------------------------支付方式控制面板
@@ -453,16 +458,8 @@ export default {
         })
       }
       billAPI
-      .payDebt(_data)
-      .then((res) => {
-        if (res.code === 0) {
-          return billAPI.getPayChannelResult({
-            payBatchNo: res.data,
-          })
-        }
-      })
-      .then((res) => {
-        if (res?.data) {
+      .payDebt(_data).then((res) => {
+        if (res.code===0&&res.data) {
           this.$refs.payResultRef.open(res.data)
         }
       })

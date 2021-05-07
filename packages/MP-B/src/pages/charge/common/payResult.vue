@@ -27,6 +27,7 @@
   </u-modal>
 </template>
 <script>
+import billAPI from '@/APIS/bill/bill.api'
 export default {
   name: '',
   data() {
@@ -66,9 +67,13 @@ export default {
     }
   },
   methods: {
-    open(payResult) {
-      this.payResult = payResult || []
-      this.show = true
+    open(orderNo) {
+      setTimeout(()=>{
+        billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res)=>{
+          this.payResult = res.data || []
+          this.show = true
+        })
+      },500)
     },
     onConfirm() {
       this.$emit('confirm')

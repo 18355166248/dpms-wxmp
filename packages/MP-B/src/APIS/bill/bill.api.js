@@ -111,7 +111,7 @@ const billAPI = {
   },
   //获取订单支付结果
   getPayChannelResult(data) {
-    return httper.get('billing/bill/pay/channel', data)
+    return httper.get('/billing/bill/pay/channel', data)
   },
   // 查询账单数据
   getOrderDetail(data) {
