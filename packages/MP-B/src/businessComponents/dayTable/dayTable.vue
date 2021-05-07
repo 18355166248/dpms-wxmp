@@ -1389,7 +1389,11 @@ export default {
       ) {
         return `（${
           this.GENDER_ENUM.properties[apptInfo.patient.gender].text.zh_CN
-        }${apptInfo.visType ? '，' + apptInfo.visTypeName : ''}）`
+        }${
+          apptInfo.visType && apptInfo.visTypeName
+            ? '，' + apptInfo.visTypeName
+            : ''
+        }）`
       }
 
       return ''
