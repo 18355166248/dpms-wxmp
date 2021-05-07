@@ -78,7 +78,6 @@ export default {
     //合并数据
     mergeData() {
       const mergeList = [...this.searchProjectList, ...this.disposeList]
-      console.log(mergeList)
       if (this.classifyList.length > 0 && mergeList.length > 0) {
         this.classifyList.forEach((item) => {
           if (this.checkTypeId(item.settingsChargeTypeId,mergeList)) {
@@ -177,7 +176,6 @@ export default {
               temp.singleDiscountAfterAmount = project.unitAmount
               temp.receivableAmount = project.unitAmount
               temp.unitAmount = project.unitAmount
-              temp.unit = project.unit
               const data = { ...defaultData, ...temp }
               targetList.push(data)
             }

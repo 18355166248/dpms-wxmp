@@ -8,7 +8,7 @@
         type="text"
         :placeholder="'请输入项目名称或拼音快速搜索'"
         class="input"
-        @input="onInputChange"
+        @input="searchProject($event.detail.value)"
       />
     </view>
     <!--选择项目-->
@@ -60,7 +60,9 @@ export default {
   },
   computed: {},
   onLoad() {},
-  onShow() {},
+  onShow() {
+      this.searchProject('')
+  },
   onHide() {},
   onUnload() {},
   methods: {
@@ -70,22 +72,21 @@ export default {
       this.setSearchProjectList(list)
       uni.navigateBack()
     },
-    onInputChange(event) {
-      const searchVal = event.detail.value
-      if (searchVal) {
-        billAPI
-          .searchChargeItem({
-            searchValue: searchVal,
-          })
-          .then((res) => {
-            this.handleResult(res.data)
-          })
-          .catch((err) => {
-            this.handleResult([])
-          })
-      } else {
-        this.searchResultList = []
-      }
+    searchProject(searchVal) {
+      billAPI
+      .searchChargeItem({
+        searchValue: searchVal||'',
+      })
+      .then((res) => {
+        if (res.data?.length>0){
+          this.handleResult(res.data)
+        }else{
+          this.handleResult([])
+        }
+      })
+      .catch((err) => {
+        this.handleResult([])
+      })
     },
     //搜索
     handleResult(list) {

@@ -43,11 +43,10 @@
       </view>
     </view>
     <view class="bottom-wrap">
-      <view
-        >总计金额：<span>{{
+      <view class='amount-wrap'
+        ><span class='des'>总计金额：</span><span class='amount'>{{
           totalAmount | thousandFormatter(2, '￥')
-        }}</span></view
-      >
+        }}</span></view>
       <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
         >下一步
       </chargeButton>
@@ -181,11 +180,14 @@ export default {
           flex-direction: column;
           align-items: flex-start;
           width: 254rpx;
-          margin-right: 62rpx;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-box-orient: vertical;
+          margin-right: 12rpx;
+          view{
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: block;
+            width: 100%;
+          }
         }
 
         .info-right {
@@ -239,9 +241,21 @@ export default {
     align-items: center;
     justify-content: space-between;
     background: #fff;
-
-    span {
+    .amount-wrap{
+      display: flex;
+    }
+    .des{
+      display: flex;
+      flex-wrap: nowrap;
+      flex-shrink: 0
+    }
+    .amount {
       font-weight: 500;
+      max-width:220rpx;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
     }
   }
 }
