@@ -279,7 +279,7 @@ export default {
         cashierStaffId:staff.staffId,
         cashierTime:new Date(nowDate.replace(/-/g, '/')).valueOf(),
         consultId:form.registerId,
-        consultTime:new Date(form.registerTime.replace(/-/g, '/')).valueOf(),
+        consultTime:form.registerTime,
         mainDiscountPromotionAmount: this.realDiscountPromotionAmount,
         mainOrderDiscount: this.realMainOrderDiscount,
         mainOrderDiscountIsmember: false,
@@ -337,15 +337,16 @@ export default {
           })
         })
       } else if(type === 'charge') {
-        billAPI.orderPayOne(params).then(res => {
-          if (res.code === 0) {
-            return billAPI.getPayChannelResult({
-              payBatchNo: res.data,
-            })
-          }
-        })
+        billAPI.orderPayOne(params)
+        // .then(res => {
+        //   if (res.code === 0) {
+        //     return billAPI.getPayChannelResult({
+        //       payBatchNo: res.data,
+        //     })
+        //   }
+        // })
         .then((res) => {
-          if (res?.data) {
+          if (res.code===0 && res?.data) {
             this.$refs.payResultRef.open(res.data)
           }
         })
@@ -428,6 +429,11 @@ export default {
 
     },
     changePayChannel(value, record) {
+      if(!value) {
+        value = 0
+      } else if(value > 999999.99) {
+        value = 999999.99
+      }
       if(record.balance) {
         value = (value - record.balance) > 0 ? record.balance : value
       }
