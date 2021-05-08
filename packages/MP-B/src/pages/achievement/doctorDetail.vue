@@ -202,6 +202,8 @@ export default {
 <style lang="scss" scoped>
 .ach_doctor_detail {
   background: rgba(0, 0, 0, 0.04);
+  height: 100vh;
+  overflow-y: auto;
   .content {
     background: #ffffff;
     height: 100vh;
