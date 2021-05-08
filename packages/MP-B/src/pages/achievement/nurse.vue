@@ -308,6 +308,8 @@ export default {
 <style lang="scss" scoped>
 .ach_nurse {
   background: rgba(0, 0, 0, 0.04);
+  height: 100vh;
+  overflow-y: auto;
   .filter {
     background: #ffffff;
     height: 6.5vh;
