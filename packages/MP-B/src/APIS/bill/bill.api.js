@@ -113,6 +113,10 @@ const billAPI = {
   getPayChannelResult(data) {
     return httper.get('/billing/bill/pay/channel', data)
   },
+  /* 收费结果-数据 */
+  getDeductionData(data) {
+    return httper.get('/billing/bill-order-item/planned-deduction/select-current-pay-deduction',data);
+  },
   // 查询账单数据
   getOrderDetail(data) {
     return httper.get('/billing/bill/order/wait', data)

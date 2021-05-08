@@ -16,8 +16,6 @@
           </view>
         </view>
         <view
-          class='success'
-          :class="Number(item.payStatus) === 1 ? 'success' : 'error'"
           :style='{color:payStatusDic[`${item.payStatus}`].color }'
         >
           {{ payStatusDic[`${item.payStatus}`].text }}
@@ -28,6 +26,7 @@
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
+
 export default {
   name: '',
   data() {
@@ -68,12 +67,15 @@ export default {
   },
   methods: {
     open(orderNo) {
-      setTimeout(()=>{
-        billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res)=>{
-          this.payResult = res.data || []
-          this.show = true
-        })
-      },500)
+      billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res) => {
+        const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
+        return billAPI.getDeductionData({ paySerialNos: paySerialNos })
+      }).then((res) => {
+        this.payResult = res?.data?.payOrderList || []
+        this.show = true
+      }).catch((err)=>{
+        console.log(err)
+      })
     },
     onConfirm() {
       this.$emit('confirm')
