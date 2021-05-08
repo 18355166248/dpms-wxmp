@@ -1313,7 +1313,7 @@ export default {
 
   .wyb-table-scroll-view {
     overflow: scroll;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: auto;
   }
 
   .wyb-table-scroll-view::-webkit-scrollbar {

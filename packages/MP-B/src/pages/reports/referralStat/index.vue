@@ -340,8 +340,6 @@ export default {
 <style lang="scss" scoped>
 .rpt_referral {
   background: rgba(0, 0, 0, 0.04);
-  height: 100vh;
-  overflow-y: auto;
 
   .filter {
     background: #ffffff;
