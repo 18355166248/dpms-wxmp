@@ -227,12 +227,12 @@ export default {
 
 .fixed-content {
   float: left;
-  width: 30%;
+  width: 35%;
 }
 
 .scroll-content {
   float: left;
-  width: 70%;
+  width: 65%;
 }
 
 .scroll-view_w {
@@ -271,6 +271,7 @@ export default {
 .horizontal-scroll .fixed-content .td,
 .horizontal-scroll .fixed-content .th {
   text-align: left;
+  max-width: 300px;
 }
 .horizontal-scroll .scroll-view_w .td {
   text-align: right;
