@@ -283,7 +283,8 @@
         {
           "path": "doctor",
           "style": {
-            "navigationBarTitleText": "医生业绩"
+            "navigationBarTitleText": "医生业绩",
+            "disableScroll": true
           }
         }
       ]
@@ -295,7 +296,8 @@
         {
           "path": "nurse",
           "style": {
-            "navigationBarTitleText": "护士业绩"
+            "navigationBarTitleText": "护士业绩",
+            "disableScroll": true
           }
         }
       ]
@@ -307,7 +309,8 @@
         {
           "path": "assistant",
           "style": {
-            "navigationBarTitleText": "医生助理业绩"
+            "navigationBarTitleText": "医生助理业绩",
+            "disableScroll": true
           }
         }
       ]
@@ -319,7 +322,8 @@
         {
           "path": "consultant",
           "style": {
-            "navigationBarTitleText": "咨询师业绩"
+            "navigationBarTitleText": "咨询师业绩",
+            "disableScroll": true
           }
         }
       ]
@@ -421,7 +425,8 @@
         {
           "path": "triageStat/index",
           "style": {
-            "navigationBarTitleText": "分诊业绩"
+            "navigationBarTitleText": "分诊业绩",
+            "disableScroll": true
           }
         },
         {
@@ -433,7 +438,8 @@
         {
           "path": "referralStat/index",
           "style": {
-            "navigationBarTitleText": "转诊业绩"
+            "navigationBarTitleText": "转诊业绩",
+            "disableScroll": true
           }
         },
         {

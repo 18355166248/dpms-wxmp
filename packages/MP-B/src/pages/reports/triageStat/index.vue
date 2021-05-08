@@ -333,12 +333,10 @@ export default {
 <style lang="scss" scoped>
 .rpt_triage {
   background: rgba(0, 0, 0, 0.04);
-  height: 100vh;
-  overflow-y: auto;
 
   .filter {
     background: #ffffff;
-    height: 6.5vh;
+    height: 80rpx;
     display: flex;
     .uni-list-cell {
       width: 50vw;
@@ -352,7 +350,7 @@ export default {
         color: #5cbb89;
       }
       .iconfont {
-        font-size: 24rpx;
+        font-size: 28rpx;
         margin-left: 20rpx;
       }
     }
@@ -360,7 +358,7 @@ export default {
   .content {
     margin-top: 1.5vh;
     background: #ffffff;
-    height: 92vh;
+    height: calc(98.5vh - 80rpx);
   }
 }
 </style>
