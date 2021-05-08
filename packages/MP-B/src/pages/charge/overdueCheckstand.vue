@@ -203,6 +203,8 @@ export default {
       changeAmount: 0,
       //提示实付金额大于应付金额
       errTipText: '',
+      //提交代码的锁
+      submitLock:false
     }
   },
   components: {
@@ -437,6 +439,10 @@ export default {
       if (!this.checkPaidAmount()) {
         return false
       }
+      this.submitLock=true;
+      if (this.submitLock){
+        return
+      }
       const _data = {}
       _data.billOrderVOList = this.overdueList
       _data.cashierStaffId = this.staffData.staffId
@@ -467,7 +473,9 @@ export default {
         console.log(err.message)
       })
     },
+    //点击我知道
     payResultConfirm() {
+      this.submitLock=false;
       this.setOverdueList([])
       this.setOverdueAmount(0)
       uni.reLaunch({
