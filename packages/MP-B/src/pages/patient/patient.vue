@@ -127,7 +127,7 @@
           "
         >
           <view class="menu-area-item-icon menu-area-item-icon-color7">
-            <text class="iconfont icon-lishibingli1"></text>
+            <text class="iconfont icon-disposal-fill"></text>
           </view>
           <view class="menu-area-item-txt mt-24">
             处置记录
