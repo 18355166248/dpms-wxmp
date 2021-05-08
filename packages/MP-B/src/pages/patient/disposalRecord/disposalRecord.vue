@@ -96,7 +96,7 @@
         </div>
         <div v-if="item.diagnosisDisposeType === 1" class="rowMain">
           <div class="label colorFontF7">主诉：</div>
-          {{ item.mainComplaint || '--' }}
+          <div>{{ item.mainComplaint || '--' }}</div>
         </div>
       </div>
     </div>
@@ -258,6 +258,7 @@ export default {
       text-align: right;
       & + div {
         flex: auto;
+        word-break: break-all;
       }
     }
   }
