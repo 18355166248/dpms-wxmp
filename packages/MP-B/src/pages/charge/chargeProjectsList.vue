@@ -33,6 +33,7 @@
                   :max="9999"
                   v-model="item.itemNum"
                   @input="onChangeItem($event, item)"
+                  @blur="onBlurItem($event, item)"
                 />
               </div>
             </div>
@@ -163,7 +164,6 @@ export default {
       }
       this.setDisposeList([...this.disposeList])
       this.setReceivableAmount(this.receivableAmount)
-      // console.log('this.disposeList', this.disposeList);
       uni.navigateTo({
         url: '/pages/charge/checkstand',
       })
@@ -171,12 +171,15 @@ export default {
     onEditPirce(record) {
       this.showEditPrice = true
       this.activeRecord = record
+      this.tempValue = record.unitAmount
     },
     onEditAmount(v) {
-      if (!v) {
+      if (v <= 0) {
         v = 0
-      } else if (v > 999999.99) {
-        v = 999999.99
+      } else if (v < 0.01) {
+        v = 0.01
+      } else if (v > 9999999.99) {
+        v = 9999999.99
       }
       this.tempValue = changeTwoDecimal(v)
     },
@@ -200,6 +203,7 @@ export default {
           result = BigCalculate(result, '+', value)
         }
       })
+
       this.setReceivableAmount(changeTwoDecimal(result))
     },
     calculateDiscount() {
@@ -224,6 +228,18 @@ export default {
         },
       })
     },
+    onBlurItem(v, record) {
+      const value = v.target.value
+      if (value === '') {
+        record.itemNum = 0
+        record.totalAmount = record.unitAmount
+        this.$nextTick(() => {
+          record.itemNum = 1
+          record.totalAmount = record.unitAmount
+          this.calculateAmount()
+        })
+      }
+    },
     onChangeItem(v, record) {
       record.totalAmount = BigCalculate(v, '*', record.unitAmount)
       if (v === 0) {
@@ -244,12 +260,15 @@ export default {
             }
           },
         })
+      } else if (v === '') {
+        console.log('空')
       } else {
         this.calculateAmount()
       }
     },
 
     filterDiscount(v) {
+      if (!v) v = 0
       // 处理数字回显范围0~100
       let vStr = `${v}`
       vStr = vStr.replace(/\b(0+)/gi, '')
@@ -260,7 +279,18 @@ export default {
     onMainOrderDiscount(v) {
       const vNum = this.filterDiscount(v)
       if (vNum > 100) {
+        // 不这么操作页面不更新
+        this.mainOrderDiscount = ''
+        this.$nextTick(() => {
+          this.mainOrderDiscount = 100
+          this.calculateAmount()
+        })
+      } else if (!vNum) {
         this.mainOrderDiscount = 100
+        this.$nextTick(() => {
+          this.mainOrderDiscount = 0
+          this.calculateAmount()
+        })
       } else {
         this.mainOrderDiscount = vNum
       }
@@ -367,8 +397,7 @@ export default {
     width: 750rpx;
     flex: 0 0 112rpx;
     background: #fff;
-    padding-bottom: constant(safe-area-inset-bottom);
-    padding-bottom: env(safe-area-inset-bottom);
+
     .submit-btn {
       width: 686rpx;
       height: 80rpx;

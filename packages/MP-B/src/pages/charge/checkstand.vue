@@ -134,23 +134,6 @@
     </div>
     <div class="footer-wrapper">
       <div class="content-wrap">
-        <!--        <div>-->
-        <!--          <div style="height: 36rpx;" class="flexAlign">-->
-        <!--          <span style="font-size: 28rpx; color: #191919;">-->
-        <!--            实收:-->
-        <!--          </span>-->
-        <!--            <span style="font-size: 28rpx; color: #fa5151;">-->
-        <!--            {{ paidAmount | thousandFormatter(2, '￥') }}-->
-        <!--          </span>-->
-        <!--          </div>-->
-        <!--          <div style="height: 32rpx;" class="flexAlign">-->
-        <!--            <span style="font-size: 22rpx; color: #4c4c4c;">欠费:</span>-->
-        <!--            <span style="font-size: 22rpx; color: #191919;">{{ oweAmount }}</span>-->
-        <!--            <span style="font-size: 22rpx; color: #4c4c4c;">找零:</span>-->
-        <!--            <span style="font-size: 22rpx; color: #191919;">{{ changeAmount }}</span>-->
-        <!--          </div>-->
-        <!--        </div>-->
-
         <div class="left-wrap">
           <div class="amount-wrap">
             <span class="black-big-font padding-r">实收:</span
@@ -392,20 +375,11 @@ export default {
           })
         })
       } else if (type === 'charge') {
-        billAPI
-          .orderPayOne(params)
-          // .then(res => {
-          //   if (res.code === 0) {
-          //     return billAPI.getPayChannelResult({
-          //       payBatchNo: res.data,
-          //     })
-          //   }
-          // })
-          .then((res) => {
-            if (res.code === 0 && res?.data) {
-              this.$refs.payResultRef.open(res.data)
-            }
-          })
+        billAPI.orderPayOne(params).then((res) => {
+          if (res.code === 0 && res?.data) {
+            this.$refs.payResultRef.open(res.data)
+          }
+        })
       }
     },
     payResultConfirm() {
@@ -510,8 +484,8 @@ export default {
     changePayChannel(value, record) {
       if (!value) {
         value = 0
-      } else if (value > 999999.99) {
-        value = 999999.99
+      } else if (value > 9999999.99) {
+        value = 9999999.99
       }
       if (record.balance) {
         value = value - record.balance > 0 ? record.balance : value

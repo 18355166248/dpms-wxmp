@@ -90,21 +90,23 @@ export const numberUtils = {
 }
 
 export function BigCalculate(value1, method, value2) {
+  if (!value1) value1 = 0
+  if (!value2) value2 = 0
+  if (typeof value1 !== 'number') value1 = 0
+  if (typeof value2 !== 'number') value2 = 0
   if (method === '+') {
     return Number(Big(value1).plus(Number(value2)))
-  }
-  if (method === '-') {
+  } else if (method === '-') {
     return Number(Big(value1).minus(Number(value2)))
-  }
-  if (method === '*') {
+  } else if (method === '*') {
     return Number(Big(value1).times(Number(value2)))
-  }
-  if (method === '/') {
+  } else if (method === '/') {
     return Number(Big(value1).div(Number(value2)))
   }
 }
 
 export function changeTwoDecimal(params, precision = 2) {
-  if(typeof params !== 'number') params = Number(params)
+  if (typeof params !== 'number') params = Number(params)
+  if (params < 0.01) params = 0.01 // 计算金额精度最小值为0.01
   return Number(params.toFixed(precision))
 }
