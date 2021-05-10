@@ -33,6 +33,7 @@
                   :max="9999"
                   v-model="item.itemNum"
                   @input="onChangeItem($event, item)"
+                  @blur="onBlurItem($event, item)"
                 />
               </div>
             </div>
@@ -82,9 +83,8 @@
   </div>
 </template>
 <script>
-
-import { BigCalculate, changeTwoDecimal } from '@/utils/utils';
-import { mapMutations, mapState } from 'vuex';
+import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'chargeProjectsList',
@@ -92,19 +92,19 @@ export default {
     return {
       mainOrderDiscount: 100,
       showEditPrice: false,
-      activeRecord: {}
-    };
+      activeRecord: {},
+    }
   },
   onShow() {
-    if(!this.receivableAmount) {
+    if (!this.receivableAmount) {
       // 如果没有receivableAmount，需要计算
       this.calculateAmount()
     }
   },
   computed: {
-    ...mapState('dispose', ['disposeList','receivableAmount']),
+    ...mapState('dispose', ['disposeList', 'receivableAmount']),
     hasDiscountItem() {
-      console.log(this.disposeList.some((item) => item.allBillDiscount));
+      console.log(this.disposeList.some((item) => item.allBillDiscount))
       return this.disposeList.some((item) => item.allBillDiscount)
     },
     maxPrice() {
@@ -132,25 +132,30 @@ export default {
   },
   watch: {
     // 通过折扣计算优惠金额
-    mainOrderDiscount(nv,ov) {
+    mainOrderDiscount(nv, ov) {
       let result = 0
       this.setRealMainOrderDiscount(nv)
-      const {discountMaxValue, receivableAmount, maxPrice} = this
+      const { discountMaxValue, receivableAmount, maxPrice } = this
       const _discount = BigCalculate(nv, '/', 100)
-      const discount = BigCalculate(1,'-',_discount)
+      const discount = BigCalculate(1, '-', _discount)
       let val = BigCalculate(discountMaxValue, '*', discount)
 
       // 如果通过折扣计算与手动填写折后金额有误差（折扣精度较低产生的问题）取手动你填写的值来计算
-      let cusVal = BigCalculate(maxPrice,'-', receivableAmount)
-      result = cusVal !== val?cusVal:val
+      let cusVal = BigCalculate(maxPrice, '-', receivableAmount)
+      result = cusVal !== val ? cusVal : val
       this.setRealDiscountPromotionAmount(result)
-    }
+    },
   },
   methods: {
-    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
+    ...mapMutations('dispose', [
+      'setDisposeList',
+      'setReceivableAmount',
+      'setRealMainOrderDiscount',
+      'setRealDiscountPromotionAmount',
+    ]),
     onNextStep() {
       // 保存vuex并跳转
-      if(this.disposeList.length === 0) {
+      if (this.disposeList.length === 0) {
         this.$refs.uToast.show({
           title: '账单明细不能为空',
           type: 'warning',
@@ -159,7 +164,6 @@ export default {
       }
       this.setDisposeList([...this.disposeList])
       this.setReceivableAmount(this.receivableAmount)
-      // console.log('this.disposeList', this.disposeList);
       uni.navigateTo({
         url: '/pages/charge/checkstand',
       })
@@ -167,12 +171,15 @@ export default {
     onEditPirce(record) {
       this.showEditPrice = true
       this.activeRecord = record
+      this.tempValue = record.unitAmount
     },
     onEditAmount(v) {
-      if(!v) {
+      if (v <= 0) {
         v = 0
-      } else if (v > 999999.99) {
-        v = 999999.99
+      } else if (v < 0.01) {
+        v = 0.01
+      } else if (v > 9999999.99) {
+        v = 9999999.99
       }
       this.tempValue = changeTwoDecimal(v)
     },
@@ -180,7 +187,7 @@ export default {
       // 修改单价，同时修改totalAmount
       let record = this.activeRecord
       record.unitAmount = this.tempValue
-      record.totalAmount = BigCalculate(record.itemNum,'*',record.unitAmount)
+      record.totalAmount = BigCalculate(record.itemNum, '*', record.unitAmount)
       this.calculateAmount()
     },
     calculateAmount() {
@@ -196,6 +203,7 @@ export default {
           result = BigCalculate(result, '+', value)
         }
       })
+
       this.setReceivableAmount(changeTwoDecimal(result))
     },
     calculateDiscount() {
@@ -204,31 +212,46 @@ export default {
       this.mainOrderDiscount = Math.ceil(
         (discountValue / discountMaxValue) * 100,
       )
-
     },
     removeDisposeItem(record) {
       uni.showModal({
         title: '确定删除该项目吗？',
         success: (res) => {
-          if(res.confirm) {
-            this.setDisposeList(this.disposeList.filter(
-              (item) => item.itemCode !== record.itemCode,
-            ))
+          if (res.confirm) {
+            this.setDisposeList(
+              this.disposeList.filter(
+                (item) => item.itemCode !== record.itemCode,
+              ),
+            )
             this.calculateAmount()
           }
-        }
+        },
       })
     },
+    onBlurItem(v, record) {
+      const value = v.target.value
+      if (value === '') {
+        record.itemNum = 0
+        record.totalAmount = record.unitAmount
+        this.$nextTick(() => {
+          record.itemNum = 1
+          record.totalAmount = record.unitAmount
+          this.calculateAmount()
+        })
+      }
+    },
     onChangeItem(v, record) {
-      record.totalAmount = BigCalculate(v,'*',record.unitAmount)
+      record.totalAmount = BigCalculate(v, '*', record.unitAmount)
       if (v === 0) {
         uni.showModal({
           title: '确定删除该项目吗?',
           success: (res) => {
             if (res.confirm) {
-              this.setDisposeList(this.disposeList.filter(
-                (item) => item.itemCode !== record.itemCode,
-              ))
+              this.setDisposeList(
+                this.disposeList.filter(
+                  (item) => item.itemCode !== record.itemCode,
+                ),
+              )
               this.calculateAmount()
             } else if (res.cancel) {
               record.itemNum = 1
@@ -237,12 +260,15 @@ export default {
             }
           },
         })
+      } else if (v === '') {
+        console.log('空')
       } else {
         this.calculateAmount()
       }
     },
 
     filterDiscount(v) {
+      if (!v) v = 0
       // 处理数字回显范围0~100
       let vStr = `${v}`
       vStr = vStr.replace(/\b(0+)/gi, '')
@@ -253,7 +279,18 @@ export default {
     onMainOrderDiscount(v) {
       const vNum = this.filterDiscount(v)
       if (vNum > 100) {
+        // 不这么操作页面不更新
+        this.mainOrderDiscount = ''
+        this.$nextTick(() => {
+          this.mainOrderDiscount = 100
+          this.calculateAmount()
+        })
+      } else if (!vNum) {
         this.mainOrderDiscount = 100
+        this.$nextTick(() => {
+          this.mainOrderDiscount = 0
+          this.calculateAmount()
+        })
       } else {
         this.mainOrderDiscount = vNum
       }
