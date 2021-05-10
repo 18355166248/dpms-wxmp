@@ -63,7 +63,8 @@
         title="折后金额(¥)"
         :value="receivableAmount"
         @input="onReceivableAmount"
-        type="number"
+        @blur="onBlurDiscount"
+        type="digit"
       />
     </div>
     <div class="footer-wrapper flex-center">
@@ -104,7 +105,6 @@ export default {
   computed: {
     ...mapState('dispose', ['disposeList', 'receivableAmount']),
     hasDiscountItem() {
-      console.log(this.disposeList.some((item) => item.allBillDiscount))
       return this.disposeList.some((item) => item.allBillDiscount)
     },
     maxPrice() {
@@ -176,8 +176,6 @@ export default {
     onEditAmount(v) {
       if (v <= 0) {
         v = 0
-      } else if (v < 0.01) {
-        v = 0.01
       } else if (v > 9999999.99) {
         v = 9999999.99
       }
@@ -188,6 +186,7 @@ export default {
       let record = this.activeRecord
       record.unitAmount = this.tempValue
       record.totalAmount = BigCalculate(record.itemNum, '*', record.unitAmount)
+      this.activeRecord = {}
       this.calculateAmount()
     },
     calculateAmount() {
@@ -260,8 +259,6 @@ export default {
             }
           },
         })
-      } else if (v === '') {
-        console.log('空')
       } else {
         this.calculateAmount()
       }
@@ -299,28 +296,54 @@ export default {
       this.calculateAmount()
     },
 
+    onBlurDiscount(v) {
+      const { minPrice } = this
+      if(v === '') {
+        this.setReceivableAmount('无');
+        this.$nextTick(()=>{
+          this.setReceivableAmount(changeTwoDecimal(minPrice))
+        })
+      }
+    },
+
     onReceivableAmount(v) {
-      v = Number(v)
+      const value = changeTwoDecimal(v)
       const { maxPrice, minPrice } = this
-      // 判断范围
-      if (v < minPrice) {
+      // 判断范围,uniapp的坑所以必须这么写才能保证每次修改能正确的验证
+      if (value < minPrice) {
         this.$refs.uToast.show({
           title: '不能小于折后最小值',
           type: 'warning',
         })
-        this.setReceivableAmount(minPrice)
-      } else if (v > maxPrice) {
+        this.setReceivableAmount('');
+        this.$nextTick(()=>{
+          this.setReceivableAmount(changeTwoDecimal(minPrice))
+          this.calculateDiscount()
+        })
+      } else if (value > maxPrice) {
         this.$refs.uToast.show({
           title: '本次折后金额不可以超过总计原价',
           type: 'warning',
         })
-        this.setReceivableAmount(maxPrice)
+        this.setReceivableAmount('');
+        this.$nextTick(()=>{
+          this.setReceivableAmount(changeTwoDecimal(maxPrice))
+          this.calculateDiscount()
+        })
       } else {
-        this.setReceivableAmount(v)
+        if(v !== value) {
+          this.setReceivableAmount(v);
+          this.$nextTick(()=>{
+            // 删除多余小数位
+            this.setReceivableAmount(Math.floor(v * 100)/100)
+            this.calculateDiscount()
+          })
+          this.calculateDiscount()
+        } else {
+          this.setReceivableAmount(value)
+          this.calculateDiscount()
+        }
       }
-
-      // 计算折扣
-      this.calculateDiscount()
     },
   },
 }
