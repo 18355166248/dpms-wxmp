@@ -147,14 +147,13 @@ export default {
         } else {
           //取值
           const lastData = item[dataKeyName]
-          rank++
           lastData &&
             lastData.forEach((element) => {
               this.treeList.push({
                 id: element[dataKeyLabelId],
                 name: element[dataKeyLabelName],
                 parentId: item[dataParentId], // 父级id
-                rank, // 层级
+                rank: rank + 1, // 层级
                 showChild: false, //子级是否显示
                 open: false, //是否打开
                 show: rank === 0, // 自身是否显示
