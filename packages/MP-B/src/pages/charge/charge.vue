@@ -1,65 +1,66 @@
 <template>
-  <view class='page-wrap'>
-    <view class='charge-wrap'>
-      <view class='flex flex-column'>
-        <view class='item-wrap'>
-          <view class='item0'>
-            <itemType :iconData='icon0' />
-            <view class='flex'>
+  <view class="page-wrap">
+    <view class="charge-wrap">
+      <view class="flex flex-column">
+        <view class="item-wrap">
+          <view class="item0">
+            <itemType :iconData="icon0" />
+            <view class="flex">
               <chargeItem
-                class='charge-item dashed'
-                :amountData='receivableData'
+                class="charge-item dashed"
+                :amountData="receivableData"
               />
               <chargeItem
-                class='charge-item dashed'
-                :amountData='receiptData'
+                class="charge-item dashed"
+                :amountData="receiptData"
               />
-              <chargeItem class='charge-item' :amountData='arrearageData' />
+              <chargeItem class="charge-item" :amountData="arrearageData" />
             </view>
           </view>
         </view>
-        <view class='item-wrap'>
-          <view class='item1'>
+        <view class="item-wrap">
+          <view class="item1">
             <view>
-              <itemType :iconData='icon1' />
+              <itemType :iconData="icon1" />
               <chargeItem
-                class='charge-item dashed'
-                :amountData='advancePaymentsData'
+                class="charge-item dashed"
+                :amountData="advancePaymentsData"
               />
             </view>
           </view>
-          <view class='item2'>
-            <itemType :iconData='icon2' />
-            <view class='flex'>
+          <view class="item2">
+            <itemType :iconData="icon2" />
+            <view class="flex">
               <chargeItem
-                class='charge-item dashed'
-                :amountData='capitalBalanceData'
+                class="charge-item dashed"
+                :amountData="capitalBalanceData"
               />
-              <chargeItem class='charge-item' :amountData='giftBalanceData' />
+              <chargeItem class="charge-item" :amountData="giftBalanceData" />
             </view>
           </view>
         </view>
       </view>
-      <view class='bottom-wrap' v-if='isOverdue || isCreateOrder'>
-        <chargeButton
-          type='solid'
-          @click='createOrder'
-          :buttonStyle="{ width: isOverdue ? '336rpx' : '686rpx' }"
-          v-if='isCreateOrder'
-        >新建账单
-        </chargeButton>
-        <chargeButton type='border' @click='overdueCharge' v-if='isOverdue'
-        >收欠费
-        </chargeButton
-        >
+      <view class="bottom-wrap" v-if="isOverdue || isCreateOrder">
+        <view class="btns">
+          <chargeButton
+            type="solid"
+            @click="createOrder"
+            :buttonStyle="{ width: isOverdue ? '336rpx' : '686rpx' }"
+            v-if="isCreateOrder"
+            >新建账单</chargeButton
+          >
+          <chargeButton type="border" @click="overdueCharge" v-if="isOverdue"
+            >收欠费</chargeButton
+          >
+        </view>
       </view>
     </view>
-    <actionSheet @close='hideActionSheet' v-if='showActionSheet'>
+    <actionSheet @close="hideActionSheet" v-if="showActionSheet">
       <view
-        class='action-item'
-        v-for='(item, index) in list'
-        :key='index'
-        @click='selectType'
+        class="action-item"
+        v-for="(item, index) in list"
+        :key="index"
+        @click="selectType(item)"
       >
         {{ item.text }}
       </view>
@@ -75,7 +76,7 @@ import chargeItem from './common/chargeItem'
 import bottomWrap from './common/bottomWrap'
 import chargeButton from './common/chargeButton'
 import actionSheet from './common/actionSheet'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import billAPI from '@/APIS/bill/bill.api'
 
 export default {
@@ -105,6 +106,7 @@ export default {
       list: [
         {
           text: '简易收费',
+          type: 1,
         },
       ],
       showActionSheet: false,
@@ -141,7 +143,9 @@ export default {
     ...mapState('patient', ['patientDetail']),
     isOverdue() {
       return (
-        this.btnPremisstion('arrears_of_fees') && this.arrearageData.amount > 0 && this.isGetResult
+        this.btnPremisstion('arrears_of_fees') &&
+        this.arrearageData.amount > 0 &&
+        this.isGetResult
       )
     },
     isCreateOrder() {
@@ -152,36 +156,37 @@ export default {
     this.initData()
   },
   methods: {
+    ...mapMutations('checkstand', ['setChargeType']),
     initData() {
       //获取消费预览和诊疗项目数据
       // Promise.all()
       let promise1 = billAPI
-      .getStatistical({
-        patientId: this.patientDetail.patientId,
-      })
-      .then((res) => {
-        if (res.data) {
-          this.receivableData.amount = res.data.receivableAmount
-          this.receiptData.amount = res.data.receiptAmount
-          this.arrearageData.amount = res.data.arrearageAmount
-          this.advancePaymentsData.amount = res.data.advancePaymentsAmount
-        }
-      })
+        .getStatistical({
+          patientId: this.patientDetail.patientId,
+        })
+        .then((res) => {
+          if (res.data) {
+            this.receivableData.amount = res.data.receivableAmount
+            this.receiptData.amount = res.data.receiptAmount
+            this.arrearageData.amount = res.data.arrearageAmount
+            this.advancePaymentsData.amount = res.data.advancePaymentsAmount
+          }
+        })
       //获取储值卡余额数据
       let promise2 = billAPI
-      .getSoredCardDetail({
-        memberId: this.patientDetail.memberId,
-        customerId: this.patientDetail.customerId,
-        patientId: this.patientDetail.patientId,
-      })
-      .then((res) => {
-        if (res.data) {
-          this.capitalBalanceData.amount = res.data.capitalBalance
-          this.giftBalanceData.amount = res.data.giftBalance
-        }
-      })
+        .getSoredCardDetail({
+          memberId: this.patientDetail.memberId,
+          customerId: this.patientDetail.customerId,
+          patientId: this.patientDetail.patientId,
+        })
+        .then((res) => {
+          if (res.data) {
+            this.capitalBalanceData.amount = res.data.capitalBalance
+            this.giftBalanceData.amount = res.data.giftBalance
+          }
+        })
       Promise.all([promise1, promise2]).then(() => {
-        this.isGetResult=true
+        this.isGetResult = true
       })
     },
     //新建订单
@@ -192,7 +197,8 @@ export default {
       this.showActionSheet = false
     },
     //选择收费方式
-    selectType() {
+    selectType(item) {
+      this.setChargeType(item.type)
       this.toSelectChargeProjects()
     },
     //选择收费项目
@@ -218,16 +224,14 @@ export default {
   components: { chargeItem, itemType, bottomWrap, chargeButton, actionSheet },
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .page-wrap {
   display: flex;
   flex-grow: 2;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .charge-wrap {
-  padding: 24rpx;
+  padding: 24rpx 24rpx 0;
   flex-grow: 2;
   box-sizing: border-box;
   display: flex;
@@ -295,9 +299,14 @@ export default {
   }
 
   .bottom-wrap {
-    padding: 16rpx 8rpx;
-    display: flex;
-    justify-content: space-between;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+    background: #fff;
+    .btns {
+      padding: 16rpx 8rpx;
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }
 

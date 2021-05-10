@@ -132,28 +132,36 @@
       />
       <div class="empty-wrapper"></div>
     </div>
-    <div class="footer-wrapper flexBt">
-      <div>
-        <div style="height: 36rpx;" class="flexAlign">
-          <span style="font-size: 28rpx; color: #191919;">
-            实收:
-          </span>
-          <span style="font-size: 28rpx; color: #fa5151;">
-            {{ paidAmount | thousandFormatter(2, '￥') }}
-          </span>
+    <div class="footer-wrapper">
+      <div class="content-wrap">
+        <div class="left-wrap">
+          <div class="amount-wrap">
+            <span class="black-big-font padding-r">实收:</span
+            ><span class="red-color">{{
+              paidAmount | thousandFormatter(2, '￥')
+            }}</span>
+          </div>
+          <div class="amount-wrap">
+            <view class="margin-r">
+              <span class="gray-font padding-r">欠费:</span>
+              <span class="black-font">{{
+                oweAmount | thousandFormatter(2, '￥')
+              }}</span>
+            </view>
+            <view class="margin-r">
+              <span class="gray-font padding-r">找零:</span>
+              <span class="black-font">{{
+                changeAmount | thousandFormatter(2, '￥')
+              }}</span>
+            </view>
+          </div>
         </div>
-        <div style="height: 32rpx;" class="flexAlign">
-          <span style="font-size: 22rpx; color: #4c4c4c;">欠费:</span>
-          <span style="font-size: 22rpx; color: #191919;">{{ oweAmount }}</span>
-          <span style="font-size: 22rpx; color: #4c4c4c;">找零:</span>
-          <span style="font-size: 22rpx; color: #191919;">{{
-            changeAmount
-          }}</span>
+        <div class="btn-wrapper flexBt">
+          <button @click="onSubmitBill('save')" class="save-btn">保存</button>
+          <button @click="onSubmitBill('charge')" class="charge-btn">
+            收费
+          </button>
         </div>
-      </div>
-      <div class="btn-wrapper flexBt">
-        <button @click="onSubmitBill('save')" class="save-btn">保存</button>
-        <button @click="onSubmitBill('charge')" class="charge-btn">收费</button>
       </div>
     </div>
     <!--支付方式-->
@@ -245,6 +253,7 @@ export default {
       'realMainOrderDiscount',
       'realDiscountPromotionAmount',
     ]),
+    ...mapState('checkstand', ['billType']),
     paidAmount() {
       return this.form.payChannelList.reduce(
         (pre, item) => BigCalculate(item.paymentAmount, '+', pre),
@@ -304,7 +313,7 @@ export default {
     onSubmitBill(type) {
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
       let params = {
-        billType: 1,
+        billType: this.billType,
         cashierStaffId: staff.staffId,
         cashierTime: new Date(nowDate.replace(/-/g, '/')).valueOf(),
         consultId: form.registerId,
@@ -366,20 +375,11 @@ export default {
           })
         })
       } else if (type === 'charge') {
-        billAPI
-          .orderPayOne(params)
-          // .then(res => {
-          //   if (res.code === 0) {
-          //     return billAPI.getPayChannelResult({
-          //       payBatchNo: res.data,
-          //     })
-          //   }
-          // })
-          .then((res) => {
-            if (res.code === 0 && res?.data) {
-              this.$refs.payResultRef.open(res.data)
-            }
-          })
+        billAPI.orderPayOne(params).then((res) => {
+          if (res.code === 0 && res?.data) {
+            this.$refs.payResultRef.open(res.data)
+          }
+        })
       }
     },
     payResultConfirm() {
@@ -685,13 +685,54 @@ export default {
   }
 
   .footer-wrapper {
-    flex: 0 0 92rpx;
+    width: 100%;
+    background: #fff;
+    box-sizing: border-box;
     padding-bottom: constant(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
-    background: #fff;
-    padding: 0 32rpx;
-    box-sizing: border-box;
+    .left-wrap {
+      padding: 10rpx 0;
 
+      .margin-r {
+        margin-right: 32rpx;
+      }
+
+      .padding-r {
+        padding-right: 10rpx;
+      }
+
+      .amount-wrap {
+        color: #191919;
+        display: flex;
+        font-size: 22rpx;
+
+        .black-big-font {
+          font-size: 28rpx;
+          color: #191919;
+        }
+
+        .gray-font {
+          color: #4c4c4c;
+        }
+
+        .black-font {
+          color: #191919;
+        }
+
+        .red-color {
+          color: #fa5151;
+          font-size: 28rpx;
+          font-weight: 500;
+        }
+      }
+    }
+    .content-wrap {
+      display: flex;
+      height: 90rpx;
+      padding: 0 32rpx;
+      align-items: center;
+      justify-content: space-between;
+    }
     .btn-wrapper {
       box-sizing: border-box;
 

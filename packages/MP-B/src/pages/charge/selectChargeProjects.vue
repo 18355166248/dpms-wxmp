@@ -1,37 +1,62 @@
 <template>
-  <view class='search-charge-wrap'>
+  <view class="search-charge-wrap">
     <!--搜索-->
-    <view class='search-input' @click='search'>
-      <view class='iconfont iconsearch'></view>
+    <view class="search-input" @click="search">
+      <view class="iconfont iconsearch"></view>
       <input
-        type='text'
+        type="text"
         :placeholder="'请输入项目名称或拼音快速搜索'"
-        class='input'
+        class="input"
         disabled
       />
     </view>
     <!--选择项目-->
-    <view class='projects-wrap'>
-      <view class='list-wrap'>
+    <view class="projects-wrap">
+      <view class="list-wrap">
         <view
-          class='classify'
-          v-for='item in classifyList'
-          :key='item.settingsChargeTypeId'
+          class="classify"
+          v-for="item in classifyList"
+          :key="item.settingsChargeTypeId"
         >
-          <view class='header' @click='toggleClassify(item)'>
-            <view>{{ item.settingsChargeTypeName }}</view>
-            <view class='iconfont iconup1' v-if='item.open'></view>
-            <view class='iconfont icondown1' v-else></view>
+          <view class="header" @click="toggleClassify(item)">
+            <view class="ellipsisChargeName">{{
+              item.settingsChargeTypeName
+            }}</view>
+            <view class="iconfont iconup1" v-if="item.open"></view>
+            <view class="iconfont icondown1" v-else></view>
           </view>
-          <view class='children' v-if='item.open'>
+          <view class="children" v-if="item.open">
+            <!--一级和二级分类-->
             <view
-              class='project'
-              v-for='project in item.chargeItemList'
-              :key='project.settingsChargeItemId'
+              v-if="chargeType === 1"
+              class="project"
+              v-for="project in item.children"
+              :key="project.settingsChargeTypeId"
             >
-              <view>{{ project.settingsChargeItemName }}</view>
-              <view class='checkBox'>
-                <dpmsCheckbox shape='square' v-model='project.checked'>
+              <view class="ellipsisChargeName">{{
+                project.settingsChargeTypeName
+              }}</view>
+              <view class="checkBox">
+                <dpmsCheckbox
+                  shape="square"
+                  v-model="project.checked"
+                  @change="handleData"
+                >
+                </dpmsCheckbox>
+              </view>
+            </view>
+            <!--二级和三级分类-->
+            <view
+              v-else
+              class="project"
+              v-for="project in item.chargeItemList"
+              :key="project.settingsChargeItemId"
+            >
+              <view class="ellipsisChargeName">{{
+                project.settingsChargeItemName
+              }}</view>
+              <view class="checkBox">
+                <dpmsCheckbox shape="square" v-model="project.checked">
                 </dpmsCheckbox>
               </view>
             </view>
@@ -39,12 +64,14 @@
         </view>
       </view>
     </view>
-    <view class='bottom-wrap'>
-      <chargeButton type='solid' :buttonStyle='buttonStyle' @click='nextStep'
-      >下一步
-      </chargeButton>
+    <view class="bottom-wrap">
+      <view class="btns">
+        <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
+          >下一步
+        </chargeButton>
+      </view>
     </view>
-    <u-toast ref='uToast' />
+    <u-toast ref="uToast" />
   </view>
 </template>
 <script>
@@ -64,63 +91,127 @@ export default {
   computed: {
     ...mapState('searchProjectStore', ['searchProjectList']),
     ...mapState('dispose', ['disposeList']),
+    ...mapState('checkstand', ['chargeType', 'itemType']),
   },
   onLoad() {
-    this.getChargeTypes()
+    this.getChargeList()
   },
   onShow() {
-    this.mergeData()
+    const mergeList = [...this.searchProjectList, ...this.disposeList]
+    if (this.classifyList.length > 0) {
+      if (this.chargeType === 1) {
+        this.chargeTypesMerge(mergeList)
+      } else {
+        this.chargeItemsMerge(mergeList)
+      }
+    }
   },
   onHide() {},
   onUnload() {},
   methods: {
-    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount']),
-    //合并数据
-    mergeData() {
-      const mergeList = [...this.searchProjectList, ...this.disposeList]
-      if (this.classifyList.length > 0 && mergeList.length > 0) {
-        this.classifyList.forEach((item) => {
-          if (this.checkTypeId(item.settingsChargeTypeId,mergeList)) {
-            item.open = true
-            item.chargeItemList.forEach((charge) => {
-              charge.checked=!!this.checkItemId(charge.settingsChargeItemId,mergeList)
-            })
-          }else{
-            item.open = false
-            item.chargeItemList.forEach((item)=>{
-              item.checked=false
-            })
+    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
+    //获取收费项目收费项目
+    async getChargeList() {
+      if (this.chargeType === 1) {
+        this.getChargeTypes()
+      } else {
+        this.getChargeItems()
+      }
+    },
+    //获取一级和二级分类
+    getChargeTypes() {
+      billAPI
+        .getChargeTypes()
+        .then((res) => {
+          if (res?.data.length > 0) {
+            this.handleClassifyList(res.data, 'children')
           }
         })
-      }
+        .catch((err) => {
+          console.log(err)
+        })
     },
-    checkTypeId(id,list) {
-      for (let i = 0; i <list.length ; i++) {
-        if (list[i].settingsChargeTypeId===id){
-          return true
+    //获取二级和三级分类
+    getChargeItems() {
+      billAPI
+        .getChargeItems()
+        .then((res) => {
+          if (res?.data.length > 0) {
+            this.handleClassifyList(res.data, 'chargeItemList')
+          }
+        })
+        .catch(() => {})
+    },
+    //处理列表数据
+    handleClassifyList(list, key) {
+      list.forEach((item) => {
+        item.open = false
+        if (item[key].length > 0) {
+          item[key].forEach((project) => {
+            project.checked = false
+          })
         }
-      }
+      })
+      this.classifyList = list
     },
-    checkItemId(id,list) {
-      for (let i = 0; i <list.length ; i++) {
-        if (list[i].settingsChargeItemId===id){
-          return true
-        }
-      }
-    },
-
-    async getChargeTypes() {
-      const { data } = await billAPI.getChargeTypes()
-      if (data) {
-        data.forEach((item) => {
+    //合并数据  从搜索页面和收费项目清单列表返回的时候 需要将那两页的数据进行合并
+    chargeItemsMerge(mergeList) {
+      this.classifyList.forEach((item) => {
+        if (this.checkTypeId(item.settingsChargeTypeId, mergeList)) {
+          item.open = true
+          item.chargeItemList.forEach((charge) => {
+            charge.checked = !!this.checkItemId(
+              charge.settingsChargeItemId,
+              mergeList,
+            )
+          })
+        } else {
           item.open = false
-          if (item.chargeItemList && item.chargeItemList.length > 0) {
-            item.chargeItemList.forEach((project) => {
-              project.checked = false
-            })
-          }
-        })
-        this.classifyList = data || []
+          list.forEach((item) => {
+            item.checked = false
+          })
+        }
+      })
+    },
+    chargeTypesMerge(mergeList) {
+      this.classifyList.forEach((item) => {
+        if (this.checkParentTypeId(item.settingsChargeTypeId, mergeList)) {
+          item.open = true
+          item.children.forEach((charge) => {
+            charge.checked = !!this.checkTypeId(
+              charge.settingsChargeTypeId,
+              mergeList,
+            )
+          })
+        } else {
+          item.open = false
+          item.children.forEach((item) => {
+            item.checked = false
+          })
+        }
+      })
+    },
+    checkParentTypeId(id, list) {
+      for (let i = 0; i < list.length; i++) {
+        const parentId =
+          list[i].settingsChargeTypeParentId || list[i].parentChargeTypeId
+        if (parentId === id) {
+          return true
+        }
+      }
+    },
+    checkTypeId(id, list) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].settingsChargeTypeId === id) {
+          return true
+        }
+      }
+    },
+    checkItemId(id, list) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].settingsChargeItemId === id) {
+          return true
+        }
       }
     },
     //切换分类
@@ -141,7 +232,7 @@ export default {
           title: '请选择收费项目!',
           type: 'warning',
         })
-        return
+        return false
       }
       uni.navigateTo({
         url: '/pages/charge/chargeProjectsList',
@@ -155,28 +246,33 @@ export default {
         deductSign: false,
         singleDiscountLimit: 0,
         itemNum: 1,
-        itemType: 5,
+        itemType: this.itemType,
         singleDiscount: 100,
       }
       this.classifyList.forEach((item) => {
-        if (item.chargeItemList && item.chargeItemList.length > 0) {
-          item.chargeItemList.forEach((project) => {
+        let list = item.children || item.chargeItemList
+        if (list && list.length > 0) {
+          list.forEach((project) => {
             if (project.checked) {
               index += 1
-              let temp = {}
-              temp.settingsChargeItemId=project.settingsChargeItemId
-              temp.settingsChargeTypeId=project.settingsChargeTypeId
-              temp.pageSerialNo = index
-              temp.allBillDiscount = project.allBillDiscount
-              temp.isSingleDiscount = project.isSingleDiscount
-              temp.itemCode = project.settingsChargeItemCode
-              temp.itemName = project.settingsChargeItemName
-              temp.parentItemCode = item.settingsChargeTypeCode
-              temp.totalAmount = project.unitAmount
-              temp.singleDiscountAfterAmount = project.unitAmount
-              temp.receivableAmount = project.unitAmount
-              temp.unitAmount = project.unitAmount
-              const data = { ...defaultData, ...temp }
+              project.pageSerialNo = index
+              project.allBillDiscount =
+                this.chargeType === 1 ? true : project.allBillDiscount
+              project.isSingleDiscount =
+                this.chargeType === 1 ? false : project.isSingleDiscount
+              project.itemCode =
+                project.settingsChargeItemCode || project.settingsChargeTypeCode
+              project.itemName =
+                project.settingsChargeItemName || project.settingsChargeTypeName
+              project.parentItemCode =
+                this.chargeType === 1
+                  ? item.settingsChargeTypeParentId
+                  : item.settingsChargeTypeCode
+              project.totalAmount = 0
+              project.singleDiscountAfterAmount = 0
+              project.receivableAmount = 0
+              project.unitAmount = 0
+              const data = { ...defaultData, ...project }
               targetList.push(data)
             }
           })
@@ -190,15 +286,23 @@ export default {
   components: { chargeButton },
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
+.ellipsisChargeName {
+  max-width: 560rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+}
+
 .search-charge-wrap {
   width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
+
   box-sizing: border-box;
 
   .search-input {
@@ -224,8 +328,8 @@ export default {
   }
 
   .projects-wrap {
-    font-size: 30rpx;
     line-height: 30rpx;
+    font-size: 30rpx;
     flex-grow: 2;
     overflow-y: scroll;
 
@@ -271,11 +375,16 @@ export default {
   }
 
   .bottom-wrap {
-    padding: 16rpx 32rpx;
-    display: flex;
-    justify-content: space-between;
     background: #fff;
     border-top: 1rpx solid #e5e5e5;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+
+    .btns {
+      padding: 16rpx 32rpx;
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }
 </style>

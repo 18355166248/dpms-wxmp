@@ -21,11 +21,17 @@
           :key="index"
         >
           <view class="left-infos">
-            <view>{{ item.settingsChargeItemName }}</view>
-            <span>{{ item.settingsChargeItemCode }}</span>
+            <view>{{
+              item.settingsChargeItemName || item.settingsChargeTypeName
+            }}</view>
+            <span>{{
+              item.settingsChargeItemCode || item.settingsChargeTypeCode
+            }}</span>
           </view>
           <view class="right-infos">
-            <soan>{{ item.unitAmount | thousandFormatter(2, '￥') }}</soan>
+            <span v-if="item.unitAmount">{{
+              item.unitAmount | thousandFormatter(2, '￥')
+            }}</span>
             <view class="checkBox">
               <dpmsCheckbox shape="square" v-model="item.checked">
               </dpmsCheckbox>
@@ -61,7 +67,7 @@ export default {
   computed: {},
   onLoad() {},
   onShow() {
-      this.searchProject('')
+    this.searchProject('')
   },
   onHide() {},
   onUnload() {},
@@ -74,19 +80,19 @@ export default {
     },
     searchProject(searchVal) {
       billAPI
-      .searchChargeItem({
-        searchValue: searchVal||'',
-      })
-      .then((res) => {
-        if (res.data?.length>0){
-          this.handleResult(res.data)
-        }else{
+        .searchChargeType({
+          searchValue: searchVal || '',
+        })
+        .then((res) => {
+          if (res.data?.length > 0) {
+            this.handleResult(res.data)
+          } else {
+            this.handleResult([])
+          }
+        })
+        .catch((err) => {
           this.handleResult([])
-        }
-      })
-      .catch((err) => {
-        this.handleResult([])
-      })
+        })
     },
     //搜索
     handleResult(list) {
