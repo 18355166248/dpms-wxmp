@@ -65,17 +65,25 @@ const billAPI = {
   chargeTypeParentList(data) {
     return httper.get('billing/settings/charge-type/select-parent', data)
   },
-  //收费项目
+  //收费项目 获取一级和二级分类
   getChargeTypes(data) {
+    return httper.get('billing/settings/charge-type/list', data)
+  },
+  //收费项目 获取二级和三级分类
+  getChargeItems(data) {
     return httper.get('billing/settings/charge-type/select-item-list', data)
+  },
+  //搜索一级分类下的二级分类
+  searchChargeType(data) {
+    return httper.get('billing/settings/charge-type/search', data)
+  },
+  //搜索二级分类下的三级分类
+  searchChargeItem(data) {
+    return httper.get('billing/settings/charge-item/select-list/fuzzy', data)
   },
   //支付方式
   getPayTypes(data) {
     return httper.get('pay/settings/pay-transaction-channel/list', data)
-  },
-  //搜索处置项目
-  searchChargeItem(data) {
-    return httper.get('billing/settings/charge-item/select-list/fuzzy', data)
   },
   //消费预览和诊疗项目
   getStatistical(data) {
@@ -115,7 +123,10 @@ const billAPI = {
   },
   /* 收费结果-数据 */
   getDeductionData(data) {
-    return httper.get('/billing/bill-order-item/planned-deduction/select-current-pay-deduction',data);
+    return httper.get(
+      '/billing/bill-order-item/planned-deduction/select-current-pay-deduction',
+      data,
+    )
   },
   // 查询账单数据
   getOrderDetail(data) {
@@ -127,20 +138,19 @@ const billAPI = {
   },
   // 账单保存接口
   saveOrderBill(data) {
-    return httper.post('/billing/bill/order/saveOrUpdate',data,{
+    return httper.post('/billing/bill/order/saveOrUpdate', data, {
       headers: {
         'content-type': 'application/json',
       },
     })
   },
   orderPayOne(data) {
-    return httper.post('/billing/bill/order/pay-one', data,{
+    return httper.post('/billing/bill/order/pay-one', data, {
       headers: {
         'content-type': 'application/json',
       },
     })
   },
-
 }
 
 export default billAPI

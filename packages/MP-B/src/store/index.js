@@ -10,6 +10,8 @@ import patient from './modules/patient'
 import dispose from './modules/dispose'
 //欠费列表
 import overdue from './modules/overdue'
+//收银台
+import checkstand from './modules/checkstand'
 
 Vue.use(Vuex)
 
@@ -21,5 +23,6 @@ export default new Vuex.Store({
     patient,
     dispose,
     overdue,
+    checkstand,
   },
 })

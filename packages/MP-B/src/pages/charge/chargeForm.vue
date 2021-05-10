@@ -65,9 +65,9 @@ export default {
     this.init()
   },
   onReachBottom() {
-    if (this.currentTab === 0) {
-      return uni.$emit('refreshCharge')
-    }
+    // if (this.currentTab === 0) {
+    //   return uni.$emit('refreshCharge')
+    // }
     if (this.currentTab === 1) {
       return uni.$emit('refreshPending')
     }

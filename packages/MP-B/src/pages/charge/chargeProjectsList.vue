@@ -82,9 +82,8 @@
   </div>
 </template>
 <script>
-
-import { BigCalculate, changeTwoDecimal } from '@/utils/utils';
-import { mapMutations, mapState } from 'vuex';
+import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'chargeProjectsList',
@@ -92,19 +91,19 @@ export default {
     return {
       mainOrderDiscount: 100,
       showEditPrice: false,
-      activeRecord: {}
-    };
+      activeRecord: {},
+    }
   },
   onShow() {
-    if(!this.receivableAmount) {
+    if (!this.receivableAmount) {
       // 如果没有receivableAmount，需要计算
       this.calculateAmount()
     }
   },
   computed: {
-    ...mapState('dispose', ['disposeList','receivableAmount']),
+    ...mapState('dispose', ['disposeList', 'receivableAmount']),
     hasDiscountItem() {
-      console.log(this.disposeList.some((item) => item.allBillDiscount));
+      console.log(this.disposeList.some((item) => item.allBillDiscount))
       return this.disposeList.some((item) => item.allBillDiscount)
     },
     maxPrice() {
@@ -132,25 +131,30 @@ export default {
   },
   watch: {
     // 通过折扣计算优惠金额
-    mainOrderDiscount(nv,ov) {
+    mainOrderDiscount(nv, ov) {
       let result = 0
       this.setRealMainOrderDiscount(nv)
-      const {discountMaxValue, receivableAmount, maxPrice} = this
+      const { discountMaxValue, receivableAmount, maxPrice } = this
       const _discount = BigCalculate(nv, '/', 100)
-      const discount = BigCalculate(1,'-',_discount)
+      const discount = BigCalculate(1, '-', _discount)
       let val = BigCalculate(discountMaxValue, '*', discount)
 
       // 如果通过折扣计算与手动填写折后金额有误差（折扣精度较低产生的问题）取手动你填写的值来计算
-      let cusVal = BigCalculate(maxPrice,'-', receivableAmount)
-      result = cusVal !== val?cusVal:val
+      let cusVal = BigCalculate(maxPrice, '-', receivableAmount)
+      result = cusVal !== val ? cusVal : val
       this.setRealDiscountPromotionAmount(result)
-    }
+    },
   },
   methods: {
-    ...mapMutations('dispose', ['setDisposeList','setReceivableAmount','setRealMainOrderDiscount','setRealDiscountPromotionAmount']),
+    ...mapMutations('dispose', [
+      'setDisposeList',
+      'setReceivableAmount',
+      'setRealMainOrderDiscount',
+      'setRealDiscountPromotionAmount',
+    ]),
     onNextStep() {
       // 保存vuex并跳转
-      if(this.disposeList.length === 0) {
+      if (this.disposeList.length === 0) {
         this.$refs.uToast.show({
           title: '账单明细不能为空',
           type: 'warning',
@@ -169,7 +173,7 @@ export default {
       this.activeRecord = record
     },
     onEditAmount(v) {
-      if(!v) {
+      if (!v) {
         v = 0
       } else if (v > 999999.99) {
         v = 999999.99
@@ -180,7 +184,7 @@ export default {
       // 修改单价，同时修改totalAmount
       let record = this.activeRecord
       record.unitAmount = this.tempValue
-      record.totalAmount = BigCalculate(record.itemNum,'*',record.unitAmount)
+      record.totalAmount = BigCalculate(record.itemNum, '*', record.unitAmount)
       this.calculateAmount()
     },
     calculateAmount() {
@@ -204,31 +208,34 @@ export default {
       this.mainOrderDiscount = Math.ceil(
         (discountValue / discountMaxValue) * 100,
       )
-
     },
     removeDisposeItem(record) {
       uni.showModal({
         title: '确定删除该项目吗？',
         success: (res) => {
-          if(res.confirm) {
-            this.setDisposeList(this.disposeList.filter(
-              (item) => item.itemCode !== record.itemCode,
-            ))
+          if (res.confirm) {
+            this.setDisposeList(
+              this.disposeList.filter(
+                (item) => item.itemCode !== record.itemCode,
+              ),
+            )
             this.calculateAmount()
           }
-        }
+        },
       })
     },
     onChangeItem(v, record) {
-      record.totalAmount = BigCalculate(v,'*',record.unitAmount)
+      record.totalAmount = BigCalculate(v, '*', record.unitAmount)
       if (v === 0) {
         uni.showModal({
           title: '确定删除该项目吗?',
           success: (res) => {
             if (res.confirm) {
-              this.setDisposeList(this.disposeList.filter(
-                (item) => item.itemCode !== record.itemCode,
-              ))
+              this.setDisposeList(
+                this.disposeList.filter(
+                  (item) => item.itemCode !== record.itemCode,
+                ),
+              )
               this.calculateAmount()
             } else if (res.cancel) {
               record.itemNum = 1
@@ -360,7 +367,8 @@ export default {
     width: 750rpx;
     flex: 0 0 112rpx;
     background: #fff;
-
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
     .submit-btn {
       width: 686rpx;
       height: 80rpx;
