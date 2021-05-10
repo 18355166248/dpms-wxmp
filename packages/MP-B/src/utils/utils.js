@@ -107,6 +107,6 @@ export function BigCalculate(value1, method, value2) {
 
 export function changeTwoDecimal(params, precision = 2) {
   if (typeof params !== 'number') params = Number(params)
-  if (params < 0.01) params = 0.01 // 计算金额精度最小值为0.01
+  if (params < 0.01 && params > 0) params = 0.01 // 计算金额精度最小值为0.01
   return Number(params.toFixed(precision))
 }

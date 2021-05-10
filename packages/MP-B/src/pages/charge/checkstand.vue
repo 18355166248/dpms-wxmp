@@ -8,7 +8,7 @@
             style="font-size: 36rpx; margin-right: 11rpx;"
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
-            支付方式（应收金额{{ receivableAmount }}）
+            支付方式（应收金额<span style="font-weight: bold">{{ receivableAmount | thousandFormatter(2, '￥') }}</span>）
           </div>
         </div>
         <div slot="extra">
@@ -41,7 +41,7 @@
             style="padding-left: 36rpx;"
             @click="toggleInfomation = !toggleInfomation"
           >
-            <template v-if="toggleInfomation">
+            <template v-if="!toggleInfomation">
               <span class="iconfont icon-closed" style="font-size: 22rpx;" />
             </template>
             <template v-else>
@@ -201,7 +201,7 @@ import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
-import { BigCalculate, numberUtils } from '@/utils/utils'
+import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils';
 import payResult from './common/payResult'
 
 const STAFF_ENUMS = new Map([
@@ -407,7 +407,7 @@ export default {
               realMainOrderDiscount,
             } = res.data
             // 设置应收金额
-            this.setReceivableAmount(receivableAmount)
+            this.setReceivableAmount(changeTwoDecimal(receivableAmount))
             this.setDisposeList(
               orderPayItemList.map((item, index) => {
                 item.pageSerialNo = index + 1

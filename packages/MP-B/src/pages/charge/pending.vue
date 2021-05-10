@@ -105,7 +105,6 @@ export default {
         mask: true,
       })
 
-      console.log('params', this.customerId, this.patientId)
 
       const {
         data: { total, current, records },
