@@ -752,7 +752,7 @@ export default {
     minHeight: {
       type: Array,
       default() {
-        return [70]
+        return [96]
       },
     },
     headerBgColor: {
@@ -773,7 +773,7 @@ export default {
     },
     linkColor: {
       type: String,
-      default: '#0024c8',
+      default: '#5CBB89',
     },
     firstColBgColor: {
       type: String,

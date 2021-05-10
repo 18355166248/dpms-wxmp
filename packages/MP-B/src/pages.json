@@ -271,7 +271,8 @@
         {
           "path": "doctorDetail",
           "style": {
-            "navigationBarTitleText": "医生明细"
+            "navigationBarTitleText": "医生明细",
+            "disableScroll": true
           }
         }
       ]
