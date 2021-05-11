@@ -43,13 +43,17 @@
       </view>
     </view>
     <view class="bottom-wrap">
-      <view class='amount-wrap'
-        ><span class='des'>总计金额：</span><span class='amount'>{{
-          totalAmount | thousandFormatter(2, '￥')
-        }}</span></view>
-      <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
-        >下一步
-      </chargeButton>
+      <view class="btns">
+        <view class="amount-wrap"
+          ><span class="des">总计金额：</span
+          ><span class="amount">{{
+            totalAmount | thousandFormatter(2, '￥')
+          }}</span></view
+        >
+        <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
+          >下一步
+        </chargeButton>
+      </view>
     </view>
     <!--提示-->
     <u-toast ref="uToast" />
@@ -82,9 +86,11 @@ export default {
   computed: {
     ...mapState('patient', ['patientDetail']),
   },
-  onLoad() {},
-  onShow() {
+  onLoad() {
     this.getPayDebtList()
+  },
+  onShow() {
+    // this.getPayDebtList()
   },
   onHide() {},
   onUnload() {},
@@ -151,8 +157,8 @@ export default {
   font-size: 28rpx;
   color: #191919;
   line-height: 1;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
+  //padding-bottom: constant(safe-area-inset-bottom);
+  //padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
 
   .list-wrap {
@@ -181,7 +187,7 @@ export default {
           align-items: flex-start;
           width: 254rpx;
           margin-right: 12rpx;
-          view{
+          view {
             overflow-x: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -236,26 +242,30 @@ export default {
   }
 
   .bottom-wrap {
-    display: flex;
-    padding: 16rpx 32rpx;
-    align-items: center;
-    justify-content: space-between;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
     background: #fff;
-    .amount-wrap{
+    .btns {
       display: flex;
-    }
-    .des{
-      display: flex;
-      flex-wrap: nowrap;
-      flex-shrink: 0
-    }
-    .amount {
-      font-weight: 500;
-      max-width:220rpx;
-      overflow-x: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      display: block;
+      padding: 16rpx 32rpx;
+      align-items: center;
+      justify-content: space-between;
+      .amount-wrap {
+        display: flex;
+      }
+      .des {
+        display: flex;
+        flex-wrap: nowrap;
+        flex-shrink: 0;
+      }
+      .amount {
+        font-weight: 500;
+        max-width: 220rpx;
+        overflow-x: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: block;
+      }
     }
   }
 }

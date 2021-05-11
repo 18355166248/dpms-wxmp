@@ -1,6 +1,11 @@
 <template>
   <view class="chargeContentPending" v-if="pendingList.length > 0">
-    <view class="list" v-for="order in pendingList" @click="onPendingList(order)" :key="order.billOrderId">
+    <view
+      class="list"
+      v-for="order in pendingList"
+      @click="onPendingList(order)"
+      :key="order.billOrderId"
+    >
       <view class="listTitle">
         <view class="datetime"
           ><view class="iconfont icon-time-circle"></view>
@@ -52,6 +57,7 @@
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import loadMore from '@/components/load-more/load-more.vue'
+import { mapMutations } from 'vuex'
 
 export default {
   props: ['patientId', 'customerId'],
@@ -76,7 +82,6 @@ export default {
     uni.$off('refreshPending')
   },
   mounted() {
-
     setTimeout(() => {
       this.init()
       uni.$on('refreshPending', () => {
@@ -88,12 +93,14 @@ export default {
     }, 0)
   },
   methods: {
+    ...mapMutations('checkstand', ['setBillType']),
     init() {
       this.current = 1
       this.getPendingOrder()
     },
     onPendingList(record) {
-      if(record.billStatus === 0 && this.btnPremisstion('pending_editing')) {
+      if (record.billStatus === 0 && this.btnPremisstion('pending_editing')) {
+        this.setBillType(record.billType)
         uni.navigateTo({
           url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
         })
@@ -104,8 +111,6 @@ export default {
         title: '数据加载中',
         mask: true,
       })
-
-
       const {
         data: { total, current, records },
       } = await billAPI.pendingOrderList({

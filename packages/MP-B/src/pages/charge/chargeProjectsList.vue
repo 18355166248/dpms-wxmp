@@ -68,7 +68,11 @@
       />
     </div>
     <div class="footer-wrapper flex-center">
-      <button @click="onNextStep" class="submit-btn flex-center">下一步</button>
+      <div class="btns">
+        <button @click="onNextStep" class="submit-btn flex-center">
+          下一步
+        </button>
+      </div>
     </div>
     <u-toast ref="uToast" />
     <u-modal v-model="showEditPrice" @confirm="confirmPrice" title="请输入单价">
@@ -298,9 +302,9 @@ export default {
 
     onBlurDiscount(v) {
       const { minPrice } = this
-      if(v === '') {
-        this.setReceivableAmount('无');
-        this.$nextTick(()=>{
+      if (v === '') {
+        this.setReceivableAmount('无')
+        this.$nextTick(() => {
           this.setReceivableAmount(changeTwoDecimal(minPrice))
         })
       }
@@ -315,8 +319,8 @@ export default {
           title: '不能小于折后最小值',
           type: 'warning',
         })
-        this.setReceivableAmount('');
-        this.$nextTick(()=>{
+        this.setReceivableAmount('')
+        this.$nextTick(() => {
           this.setReceivableAmount(changeTwoDecimal(minPrice))
           this.calculateDiscount()
         })
@@ -325,17 +329,17 @@ export default {
           title: '本次折后金额不可以超过总计原价',
           type: 'warning',
         })
-        this.setReceivableAmount('');
-        this.$nextTick(()=>{
+        this.setReceivableAmount('')
+        this.$nextTick(() => {
           this.setReceivableAmount(changeTwoDecimal(maxPrice))
           this.calculateDiscount()
         })
       } else {
-        if(v !== value) {
-          this.setReceivableAmount(v);
-          this.$nextTick(()=>{
+        if (v !== value) {
+          this.setReceivableAmount(v)
+          this.$nextTick(() => {
             // 删除多余小数位
-            this.setReceivableAmount(Math.floor(v * 100)/100)
+            this.setReceivableAmount(Math.floor(v * 100) / 100)
             this.calculateDiscount()
           })
           this.calculateDiscount()
@@ -418,16 +422,20 @@ export default {
 
   .footer-wrapper {
     width: 750rpx;
-    flex: 0 0 112rpx;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
     background: #fff;
-
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      padding: 16rpx 32rpx;
+    }
     .submit-btn {
       width: 686rpx;
-      height: 80rpx;
-      padding: 16rpx 32rpx;
       border-radius: 40rpx;
+      height: 80rpx;
       color: #fff;
-      background: #73b689;
+      background: #5cbb89;
     }
   }
 }

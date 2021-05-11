@@ -229,6 +229,9 @@ button::after {
 .icon-disposal-fill:before {
   content: '\e858';
 }
+.icon-stored-value-card:before {
+  content: '\e613';
+}
 /* iconfont图标 end */
 </style>
 
