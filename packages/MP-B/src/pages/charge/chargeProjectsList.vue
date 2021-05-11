@@ -75,7 +75,7 @@
       </div>
     </div>
     <u-toast ref="uToast" />
-    <u-modal v-model="showEditPrice" @confirm="confirmPrice" title="请输入单价">
+    <u-modal v-model="showEditPrice" confirm-color='#5CBB89' @confirm="confirmPrice" title="请输入单价">
       <view class="slot-content">
         <dpmsCellInput
           title="单价(¥)"

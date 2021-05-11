@@ -94,6 +94,7 @@ export default {
   },
   methods: {
     ...mapMutations('checkstand', ['setBillType']),
+    ...mapMutations('dispose', ['setReceivableAmount']),
     init() {
       this.current = 1
       this.getPendingOrder()
@@ -101,6 +102,7 @@ export default {
     onPendingList(record) {
       if (record.billStatus === 0 && this.btnPremisstion('pending_editing')) {
         this.setBillType(record.billType)
+        this.setReceivableAmount(record.receivableAmount)
         uni.navigateTo({
           url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
         })
