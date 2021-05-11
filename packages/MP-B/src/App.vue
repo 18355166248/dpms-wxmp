@@ -232,6 +232,10 @@ button::after {
 .icon-stored-value-card:before {
   content: '\e613';
 }
+.icon-search:before {
+  content: '\e631';
+}
+
 /* iconfont图标 end */
 </style>
 
