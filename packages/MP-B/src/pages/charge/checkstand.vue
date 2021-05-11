@@ -257,7 +257,7 @@ export default {
     ...mapState('checkstand', ['billType']),
     paidAmount() {
       return this.form.payChannelList.reduce(
-        (pre, item) => BigCalculate(item.paymentAmount, '+', pre),
+        (pre, item) => BigCalculate(Number(item.paymentAmount), '+', pre),
         0,
       )
     },
@@ -312,6 +312,9 @@ export default {
       'setRealDiscountPromotionAmount',
     ]),
     onSubmitBill(type) {
+      if(this.changeAmount > 0) {
+        return
+      }
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
       let params = {
         billType: this.billType,
@@ -563,6 +566,9 @@ export default {
         })
         .then((res) => {
           if (res?.data.length > 0) {
+            if(this.billType === 3) {
+              res.data = res.data.filter(item => (item.payStyle !== 8 && item.payStyle !== 9))
+            }
             res.data.forEach((item, index) => {
               item.checked = false
               if (index === 0) {
@@ -748,6 +754,7 @@ export default {
       }
 
       .save-btn {
+        background: #fff;
         color: #5cbb89;
         border: 2rpx solid #5cbb89;
         margin-right: 16rpx;
