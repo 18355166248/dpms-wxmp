@@ -8,10 +8,8 @@
             style="font-size: 36rpx; margin-right: 11rpx;"
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
-            支付方式（应收金额<span style="font-weight: bold;">{{
-              receivableAmount | thousandFormatter(2, '￥')
-            }}</span
-            >）
+            支付方式（应收金额<span style="font-weight: bold;">
+            {{receivableAmount | thousandFormatter(2, '￥')}}</span>）
           </div>
         </div>
         <div slot="extra">
@@ -180,9 +178,9 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance"
-          >&nbsp;&nbsp;(余额{{ item.balance | thousandFormatter }})</template
-        >
+        <template v-if="item.balance">&nbsp;
+          &nbsp;(余额{{ item.balance | thousandFormatter }})
+        </template>
         <dpmsCheckbox
           :disabled="checkDisableFn(item.checked)"
           shape="square"
@@ -366,7 +364,7 @@ export default {
       }
 
       params.orderPayItemList = params.orderPayItemList.map((item) => {
-        item.salesList = form.salesList
+        item.salesList = params.salesList
         return item
       })
 
