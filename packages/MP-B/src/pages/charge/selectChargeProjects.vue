@@ -2,10 +2,11 @@
   <view class="search-charge-wrap">
     <!--搜索-->
     <view class="search-input" @click="search">
-      <view class="iconfont iconsearch"></view>
+      <view class="iconfont icon-search"></view>
       <input
         type="text"
         :placeholder="'请输入项目名称或拼音快速搜索'"
+        placeholder-style="color:#bfbfbf"
         class="input"
         disabled
       />
@@ -295,6 +296,9 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
+.placeholder{
+  color: red;
+}
 
 .search-charge-wrap {
   width: 100%;
@@ -313,7 +317,7 @@ export default {
     border-radius: 8rpx;
     padding: 0 28rpx;
 
-    .iconsearch {
+    .icon-search {
       margin-right: 20rpx;
       color: #bfbfbf;
       width: 32rpx;
@@ -353,6 +357,8 @@ export default {
         .iconfont {
           padding-right: 32rpx;
           color: #bfbfbf;
+          width: 24rpx;
+          height: 24rpx;
         }
       }
     }
@@ -360,7 +366,8 @@ export default {
     .project {
       display: flex;
       align-items: center;
-      padding: 32rpx 0 32rpx 64rpx;
+      padding: 32rpx 0;
+      margin-left: 32rpx;
       justify-content: space-between;
       border-bottom: 2rpx solid #f5f5f5;
 

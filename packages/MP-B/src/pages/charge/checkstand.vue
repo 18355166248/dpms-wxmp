@@ -8,7 +8,10 @@
             style="font-size: 36rpx; margin-right: 11rpx;"
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
-            支付方式（应收金额<span style="font-weight: bold">{{ receivableAmount | thousandFormatter(2, '￥') }}</span>）
+            支付方式（应收金额<span style="font-weight: bold;">{{
+              receivableAmount | thousandFormatter(2, '￥')
+            }}</span
+            >）
           </div>
         </div>
         <div slot="extra">
@@ -201,7 +204,7 @@ import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
 import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
-import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils';
+import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils'
 import payResult from './common/payResult'
 
 const STAFF_ENUMS = new Map([
@@ -558,6 +561,7 @@ export default {
       return billAPI
         .getPayTransactionChannel({
           memberId: this.patientDetail.memberId,
+          enabled: true,
         })
         .then((res) => {
           if (res?.data.length > 0) {

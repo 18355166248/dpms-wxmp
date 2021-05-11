@@ -1,3 +1,11 @@
+// ORDINARY_BILL(1, '普通收费', ''),
+//   // 简易收费
+//   SIMPLE_CHARGING(2, '普通收费', ''),
+//   PET_CARD_BILL(3, '储值卡交易', ''),
+//   COUPON_BILL(4, '卡券交易', ''),
+//   EXCLUSIVE_CARD_BILL(5, '专享卡交易', ''),
+//   // 处置收费
+//   DISPOSAL_BILL(6, '普通收费', '');
 const state = {
   chargeType: 1,
   billType: 2,
@@ -14,6 +22,9 @@ const mutations = {
     state.chargeType = value || 1
     state.billType = typeDic[value].billType
     state.itemType = typeDic[value].itemType
+  },
+  setBillType(state, value) {
+    state.billType = value
   },
 }
 

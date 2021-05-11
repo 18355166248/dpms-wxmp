@@ -1,7 +1,7 @@
 <template>
   <view class="page-wrap">
     <view class="charge-wrap">
-      <view class="flex flex-column">
+      <view class="list-wrap">
         <view class="item-wrap">
           <view class="item0">
             <itemType :iconData="icon0" />
@@ -55,6 +55,7 @@
         </view>
       </view>
     </view>
+
     <actionSheet @close="hideActionSheet" v-if="showActionSheet">
       <view
         class="action-item"
@@ -94,7 +95,7 @@ export default {
         color: '#75a8f0',
       },
       icon2: {
-        iconClass: `iconconsumption-profile`,
+        iconClass: `icon-stored-value-card`,
         typeName: '储值卡余额',
         color: '#fa5151',
       },
@@ -185,9 +186,14 @@ export default {
             this.giftBalanceData.amount = res.data.giftBalance
           }
         })
-      Promise.all([promise1, promise2]).then(() => {
-        this.isGetResult = true
-      })
+
+      Promise.all([promise1, promise2])
+        .then(() => {
+          this.isGetResult = true
+        })
+        .catch((err) => {
+          this.isGetResult = true
+        })
     },
     //新建订单
     createOrder() {
@@ -228,85 +234,87 @@ export default {
 .page-wrap {
   display: flex;
   flex-grow: 2;
+  .charge-wrap {
+    display: flex;
+    flex-grow: 2;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .list-wrap {
+    display: flex;
+    flex-direction: column;
+    padding: 24rpx 24rpx 0;
+  }
 }
 
-.charge-wrap {
-  padding: 24rpx 24rpx 0;
-  flex-grow: 2;
-  box-sizing: border-box;
+.item-wrap {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  padding: 32rpx 0;
+  background: #feffff;
+  border-radius: 8rpx;
+  box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.06);
+  margin-bottom: 24rpx;
 
-  .item-wrap {
-    display: flex;
-    padding: 32rpx 0;
-    background: #feffff;
-    border-radius: 8rpx;
-    box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.06);
-    margin-bottom: 24rpx;
-
-    .dashed {
-      &::after {
-        position: absolute;
-        content: '';
-        right: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        border: 1rpx dashed rgba(0, 0, 0, 0.15);
-      }
-    }
-
-    .item0 {
-      width: 100%;
-
-      .charge-item {
-        width: 33.33%;
-        position: relative;
-      }
-    }
-
-    .item1 {
-      width: 33.33%;
-      position: relative;
-      display: flex;
-
-      .charge-item {
-        width: 100%;
-        position: relative;
-      }
-
-      &::after {
-        position: absolute;
-        content: '';
-        right: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        border: 1rpx solid rgba(0, 0, 0, 0.15);
-      }
-    }
-
-    .item2 {
-      width: 66.66%;
-
-      .charge-item {
-        width: 50%;
-        position: relative;
-      }
+  .dashed {
+    &::after {
+      position: absolute;
+      content: '';
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      border: 2rpx dashed rgba(0, 0, 0, 0.15);
     }
   }
 
-  .bottom-wrap {
-    padding-bottom: constant(safe-area-inset-bottom);
-    padding-bottom: env(safe-area-inset-bottom);
-    background: #fff;
-    .btns {
-      padding: 16rpx 8rpx;
-      display: flex;
-      justify-content: space-between;
+  .item0 {
+    width: 100%;
+
+    .charge-item {
+      width: 33.33%;
+      position: relative;
     }
+  }
+
+  .item1 {
+    width: 33.33%;
+    position: relative;
+    display: flex;
+
+    .charge-item {
+      width: 100%;
+      position: relative;
+    }
+
+    &::after {
+      position: absolute;
+      content: '';
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 0;
+      border: 2rpx solid rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .item2 {
+    width: 66.66%;
+
+    .charge-item {
+      width: 50%;
+      position: relative;
+    }
+  }
+}
+
+.bottom-wrap {
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  background: #fff;
+  .btns {
+    padding: 16rpx 32rpx;
+    display: flex;
+    justify-content: space-between;
   }
 }
 

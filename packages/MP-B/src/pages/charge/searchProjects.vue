@@ -1,14 +1,14 @@
 <template>
   <view class="select-charge-wrap">
     <!--搜索-->
-    <view class="search-input">
-      <view class="iconfont iconsearch"></view>
+    <view class="search-input" >
+      <view class="iconfont icon-search"></view>
       <input
-        v-model="value"
         type="text"
         :placeholder="'请输入项目名称或拼音快速搜索'"
+        placeholder-style="color:#bfbfbf"
         class="input"
-        @input="searchProject($event.detail.value)"
+        disabled
       />
     </view>
     <!--选择项目-->
@@ -129,7 +129,7 @@ export default {
     border-radius: 8rpx;
     padding: 0 28rpx;
 
-    .iconsearch {
+    .icon-search {
       margin-right: 20rpx;
       color: #bfbfbf;
       width: 32rpx;
