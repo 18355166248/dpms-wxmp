@@ -195,6 +195,7 @@ export default {
       this.current = 1
       this.getAssistant()
       this.getStaff()
+      this.getPermission()
     },
     async getStaff() {
       const {
@@ -207,6 +208,20 @@ export default {
           this.$utils.getEnums('StaffPosition')?.ASSISTANT_MANAGER?.value || 5,
       })
       uni.setStorageSync('allAssistantList', data)
+    },
+    async getPermission() {
+      //逻辑从pc端搬运
+      const { data } = await institutionAPI.getPermission({ dataTypeId: 4 })
+      const staff = uni.getStorageSync('staff')
+      if (data?.roleTypeId === 5 && staff.position === 5) {
+        uni.setStorageSync('achFilter', {
+          staffIds: String(staff.staffId),
+          staffName: staff.name,
+        })
+        uni.setStorageSync('achFilterDisabled', true)
+      } else {
+        uni.setStorageSync('achFilterDisabled', false)
+      }
     },
     async getAssistant() {
       uni.showLoading({

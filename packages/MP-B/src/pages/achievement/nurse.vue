@@ -210,6 +210,21 @@ export default {
       this.getNurses()
       this.getStaff()
       this.getProject()
+      this.getPermission()
+    },
+    async getPermission() {
+      //逻辑从pc端搬运
+      const { data } = await institutionAPI.getPermission({ dataTypeId: 4 })
+      const staff = uni.getStorageSync('staff')
+      if (data?.roleTypeId === 5 && staff.position === 6) {
+        uni.setStorageSync('achFilter', {
+          staffIds: String(staff.staffId),
+          staffName: staff.name,
+        })
+        uni.setStorageSync('achFilterDisabled', true)
+      } else {
+        uni.setStorageSync('achFilterDisabled', false)
+      }
     },
     async getStaff() {
       const {

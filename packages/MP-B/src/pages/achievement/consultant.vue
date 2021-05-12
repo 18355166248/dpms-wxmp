@@ -195,6 +195,7 @@ export default {
       this.current = 1
       this.getConsultant()
       this.getStaff()
+      this.getPermission()
     },
     async getStaff() {
       const {
@@ -206,6 +207,20 @@ export default {
         position: this.$utils.getEnums('StaffPosition')?.CONSULTANT?.value || 4,
       })
       uni.setStorageSync('allConsultantList', data)
+    },
+    async getPermission() {
+      //逻辑从pc端搬运
+      const { data } = await institutionAPI.getPermission({ dataTypeId: 4 })
+      const staff = uni.getStorageSync('staff')
+      if (data?.roleTypeId === 5 && staff.position === 4) {
+        uni.setStorageSync('achFilter', {
+          staffIds: String(staff.staffId),
+          staffName: staff.name,
+        })
+        uni.setStorageSync('achFilterDisabled', true)
+      } else {
+        uni.setStorageSync('achFilterDisabled', false)
+      }
     },
     async getConsultant() {
       uni.showLoading({
