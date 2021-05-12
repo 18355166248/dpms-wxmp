@@ -105,6 +105,15 @@ export default {
       this.institutionDepartmentId = ''
       this.oldDoctorStaffId = ''
       this.oldInstitutionDepartmentId = ''
+
+      // 重置筛选结果
+      uni.$emit('rptReferralFilter', {
+        searchKey: '',
+        doctorStaffId: '',
+        institutionDepartmentId: '',
+        oldDoctorStaffId: '',
+        oldInstitutionDepartmentId: '',
+      })
     },
   },
 }
