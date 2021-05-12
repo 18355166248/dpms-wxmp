@@ -36,10 +36,12 @@ export default {
       title: '',
       placeholder: '',
       name: '',
+      achFilterDisabled: false,
     }
   },
   onLoad({ name }) {
     const achFilter = uni.getStorageSync('achFilter')
+    this.achFilterDisabled = uni.getStorageSync('achFilterDisabled') || false
     const { staffIds, staffName, chargeTypeIds, chargeTypeName } = achFilter
     switch (name) {
       case 'nurse':
@@ -111,8 +113,10 @@ export default {
       this.$utils.back()
     },
     onReset() {
-      this.staffIds = []
-      this.staffName = ''
+      if (!this.achFilterDisabled) {
+        this.staffIds = []
+        this.staffName = ''
+      }
       this.chargeTypeIds = []
       this.chargeTypeName = ''
       this.setStore()

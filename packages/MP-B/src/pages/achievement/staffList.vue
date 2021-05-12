@@ -60,7 +60,7 @@ export default {
     if (checked) {
       this.checked = checked.split(',').map((v) => Number(v))
     }
-    this.achFilterDisabled = uni.getStorageSync('achFilterDisabled')
+    this.achFilterDisabled = uni.getStorageSync('achFilterDisabled') || false
   },
   methods: {
     onSave() {
