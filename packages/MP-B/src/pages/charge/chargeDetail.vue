@@ -155,13 +155,18 @@ export default {
 
       .listLineBottom {
         justify-content: space-between;
-        margin-top: 18rpx;
         display: flex;
         font-size: 28rpx;
         width: 686rpx;
-        margin-left: 32rpx;
         color: #7f7f7f;
-        margin-bottom: 32rpx;
+        margin: 18rpx 32rpx 32rpx;
+        view{
+          width: 33.33%;
+          overflow-x: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          display: block;
+        }
       }
 
       .grey {
