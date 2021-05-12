@@ -55,6 +55,9 @@ const institutionAPI = {
   getDepartmentList(data) {
     return httper.get('institution/department/list', data)
   },
+  getPermission(data) {
+    return httper.get('institution/permission/query', data)
+  },
 }
 
 export default institutionAPI

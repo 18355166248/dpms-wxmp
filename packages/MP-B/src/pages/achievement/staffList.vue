@@ -7,9 +7,12 @@
           :key="item.staffId"
           style="margin-top: 24rpx;"
         >
-          <dpmsCheckbox shape="square" :label="item.staffId">{{
-            item.staffName
-          }}</dpmsCheckbox>
+          <dpmsCheckbox
+            shape="square"
+            :label="item.staffId"
+            :disabled="achFilterDisabled"
+            >{{ item.staffName }}
+          </dpmsCheckbox>
           <div class="line"></div>
         </div>
       </div>
@@ -34,6 +37,7 @@ export default {
     return {
       list: [],
       checked: [],
+      achFilterDisabled: false,
     }
   },
   onLoad({ checked, name }) {
@@ -56,6 +60,7 @@ export default {
     if (checked) {
       this.checked = checked.split(',').map((v) => Number(v))
     }
+    this.achFilterDisabled = uni.getStorageSync('achFilterDisabled')
   },
   methods: {
     onSave() {
