@@ -175,11 +175,18 @@ export default {
       if (staffIds) this.isFilter = true
       else this.isFilter = false
     })
+    uni.$on('achReset', (achFilterDisabled) => {
+      if (!achFilterDisabled) this.assistantIds = ''
+      this.current = 1
+      this.isFilter = false
+      this.getAssistant()
+    })
   },
   beforeDestroy() {
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
+    uni.$off('achReset')
     uni.removeStorageSync('achFilter')
   },
   //双重scroll-view触发不灵敏

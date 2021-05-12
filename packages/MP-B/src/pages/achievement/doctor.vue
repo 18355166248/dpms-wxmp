@@ -137,11 +137,19 @@ export default {
       if (staffIds || chargeTypeIds) this.isFilter = true
       else this.isFilter = false
     })
+    uni.$on('achReset', (achFilterDisabled) => {
+      if (!achFilterDisabled) this.doctorIds = ''
+      this.parentChargeTypeIds = ''
+      this.current = 1
+      this.isFilter = false
+      this.getDoctors()
+    })
   },
   beforeDestroy() {
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
+    uni.$off('achReset')
     uni.removeStorageSync('achFilter')
   },
   methods: {

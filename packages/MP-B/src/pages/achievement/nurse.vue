@@ -189,11 +189,19 @@ export default {
       this.current = 1
       this.getNurses()
     })
+    uni.$on('achReset', (achFilterDisabled) => {
+      if (!achFilterDisabled) this.nurseIds = ''
+      this.parentChargeTypeIds = ''
+      this.current = 1
+      this.isFilter = false
+      this.getNurses()
+    })
   },
   beforeDestroy() {
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
+    uni.$off('achReset')
     uni.removeStorageSync('achFilter')
   },
   //双重scroll-view触发不灵敏
