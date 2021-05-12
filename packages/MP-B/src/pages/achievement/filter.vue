@@ -120,6 +120,7 @@ export default {
       this.chargeTypeIds = []
       this.chargeTypeName = ''
       this.setStore()
+      uni.$emit('achReset', this.achFilterDisabled)
     },
     setStore() {
       uni.setStorageSync('achFilter', {
