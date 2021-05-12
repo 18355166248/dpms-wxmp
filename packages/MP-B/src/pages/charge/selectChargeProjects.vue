@@ -23,8 +23,10 @@
             <view class="ellipsisChargeName">{{
               item.settingsChargeTypeName
             }}</view>
-            <view class="iconfont iconup1" v-if="item.open"></view>
-            <view class="iconfont icondown1" v-else></view>
+            <view class="icon-wrap">
+              <view class="iconfont iconup1" v-if="item.open"></view>
+              <view class="iconfont icondown1" v-else></view>
+            </view>
           </view>
           <view class="children" v-if="item.open">
             <!--一级和二级分类-->
@@ -353,13 +355,20 @@ export default {
         justify-content: space-between;
         padding: 32rpx 0;
         border-bottom: 2rpx solid #f5f5f5;
-
-        .iconfont {
-          padding-right: 32rpx;
-          color: #bfbfbf;
-          width: 24rpx;
-          height: 24rpx;
+        .icon-wrap{
+          width:48rpx;
+          height: 48rpx;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          margin-right: 20rpx;
+          .iconfont {
+            color: #bfbfbf;
+            width: 32rpx;
+            height: 32rpx;
+          }
         }
+
       }
     }
 
@@ -376,7 +385,7 @@ export default {
       }
 
       .checkBox {
-        padding-right: 32rpx;
+        margin-right: 28rpx;
       }
     }
   }

@@ -92,6 +92,14 @@ export default {
       this.doctorStaffId = ''
       this.institutionDepartmentId = ''
       this.triageConsultedStaffId = ''
+
+      // 重置筛选结果
+      uni.$emit('rptTriageFilter', {
+        searchKey: '',
+        doctorStaffId: '',
+        institutionDepartmentId: '',
+        triageConsultedStaffId: '',
+      })
     },
   },
 }
