@@ -220,6 +220,7 @@ export default {
         uni.setStorageSync('achFilterDisabled', true)
       } else {
         uni.setStorageSync('achFilterDisabled', false)
+        uni.removeStorageSync('achFilter')
       }
     },
     async getConsultant() {
