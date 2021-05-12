@@ -263,7 +263,7 @@ export default {
       top: 0;
       height: 100%;
       width: 0;
-      border: 2rpx dashed rgba(0, 0, 0, 0.15);
+      border: 1rpx dashed rgba(0, 0, 0, 0.15);
     }
   }
 
@@ -293,7 +293,7 @@ export default {
       top: 0;
       height: 100%;
       width: 0;
-      border: 2rpx solid rgba(0, 0, 0, 0.15);
+      border: 1rpx solid rgba(0, 0, 0, 0.15);
     }
   }
 

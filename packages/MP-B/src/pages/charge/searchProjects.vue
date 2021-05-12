@@ -8,7 +8,7 @@
         :placeholder="'请输入项目名称或拼音快速搜索'"
         placeholder-style="color:#bfbfbf"
         class="input"
-        disabled
+        @input="searchProject($event.detail.value)"
       />
     </view>
     <!--选择项目-->

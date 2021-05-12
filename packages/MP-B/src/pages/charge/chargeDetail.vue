@@ -66,28 +66,28 @@
 </template>
 
 <script>
-import billAPI from '@/APIS/bill/bill.api'
-import chargeButton from './common/chargeButton'
+import billAPI from '@/APIS/bill/bill.api';
+import chargeButton from './common/chargeButton';
 
 export default {
   data() {
     return {
       billSerialNo: '',
       data: {},
-    }
+    };
   },
   components: {
     chargeButton,
   },
   onLoad(params) {
-    this.billSerialNo = params.billSerialNo
-    this.init()
+    this.billSerialNo = params.billSerialNo;
+    this.init();
   },
   computed: {
     isOverdue() {
       return (
         this.btnPremisstion('paid_arrears') && (this.data.receivableAmount > this.data.paymentAmount)
-      )
+      );
     },
   },
   methods: {
@@ -97,21 +97,21 @@ export default {
         billSerialNo: this.billSerialNo,
       })
       .then((res) => {
-        this.data = res.data
-      })
+        this.data = res.data;
+      });
     },
     //收欠费
     overdueCharge() {
       uni.redirectTo({
-        url: '/pages/charge/overdueCharge',
-      })
+        url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
+      });
     },
   },
-}
+};
 </script>
 
 <style lang='scss' scoped>
-.page-wrap{
+.page-wrap {
   display: flex;
   flex-grow: 2;
   flex-direction: column;
@@ -121,15 +121,18 @@ export default {
   box-sizing: border-box;
   padding-bottom: constant(safe-area-inset-bottom);
   padding-bottom: env(safe-area-inset-bottom);
-  .list-wrap{
+
+  .list-wrap {
     display: flex;
     flex-grow: 100;
     height: 0;
   }
+
   .chargeContentDetail {
     height: 100%;
     width: 100%;
     overflow-y: scroll;
+
     .listChargeDetail {
       background-color: #ffffff;
 
@@ -170,6 +173,7 @@ export default {
       margin-top: 16rpx;
       margin-bottom: 16rpx;
       background-color: #ffffff;
+
       .line {
         margin-left: 32rpx;
         justify-content: space-between;
@@ -192,6 +196,7 @@ export default {
       }
     }
   }
+
   .btn-wrap {
     display: flex;
     justify-content: center;
@@ -219,7 +224,6 @@ export default {
   line-height: 90rpx;
   font-size: 28rpx;
 }
-
 
 
 </style>
