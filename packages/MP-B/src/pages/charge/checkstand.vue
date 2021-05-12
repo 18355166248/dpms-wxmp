@@ -110,7 +110,7 @@
             auto-height
             placeholder="请输入备注"
             placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-            :maxlength="500"
+            :maxlength="150"
             @focus="bindFocus"
             @blur="closeBlur"
           />
@@ -459,6 +459,15 @@ export default {
       }
     },
     setPayChannelList(backChannelList) {
+      // 处理储值卡，优惠卷收费的模式，此时没有backChannelList
+      if(!backChannelList) {
+        console.log('this.form.payChannelList', this.form.payChannelList);
+        this.form.payChannelList = this.form.payChannelList.map(item => {
+          item.paymentAmount = this.receivableAmount
+          return item
+        })
+        return
+      }
       // 处理payType的checked属性
       const balanceMap = new Map()
       const selectedList = backChannelList.map(

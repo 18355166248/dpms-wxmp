@@ -63,7 +63,6 @@
         title="折后金额(¥)"
         :value="receivableAmount"
         @input="onReceivableAmount"
-        @blur="onBlurDiscount"
         type="digit"
       />
     </div>
@@ -300,15 +299,15 @@ export default {
       this.calculateAmount()
     },
 
-    onBlurDiscount(v) {
-      const { minPrice } = this
-      if (v === '') {
-        this.setReceivableAmount('无')
-        this.$nextTick(() => {
-          this.setReceivableAmount(changeTwoDecimal(minPrice))
-        })
-      }
-    },
+    // onBlurDiscount(v) {
+    //   const { minPrice } = this
+    //   if (v === '') {
+    //     this.setReceivableAmount('-')
+    //     this.$nextTick(() => {
+    //       this.setReceivableAmount(changeTwoDecimal(minPrice))
+    //     })
+    //   }
+    // },
 
     onReceivableAmount(v) {
       const value = changeTwoDecimal(v)
@@ -319,7 +318,7 @@ export default {
           title: '不能小于折后最小值',
           type: 'warning',
         })
-        this.setReceivableAmount('')
+        this.setReceivableAmount('-')
         this.$nextTick(() => {
           this.setReceivableAmount(changeTwoDecimal(minPrice))
           this.calculateDiscount()
@@ -329,12 +328,18 @@ export default {
           title: '本次折后金额不可以超过总计原价',
           type: 'warning',
         })
-        this.setReceivableAmount('')
+        this.setReceivableAmount('-')
         this.$nextTick(() => {
           this.setReceivableAmount(changeTwoDecimal(maxPrice))
           this.calculateDiscount()
         })
-      } else {
+      } else if(v === '' || v===undefined){
+            this.setReceivableAmount('-')
+            this.$nextTick(() => {
+              this.setReceivableAmount(changeTwoDecimal(minPrice))
+              this.calculateDiscount()
+            })
+      }else {
         if (v !== value) {
           this.setReceivableAmount(v)
           this.$nextTick(() => {
