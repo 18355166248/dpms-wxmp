@@ -274,19 +274,19 @@ export default {
     },
     //支付方式监听
     onPayTypeInputChange(value, item) {
-      value = this.checkInputValue(value)
       if (value === '' || value === undefined) {
-        return
+        item.paymentAmount='-'
       }
       if (item.balance) {
-        value = value > item.balance ? item.balance + '' : value
+        item.paymentAmount = value > item.balance ? item.balance + '' : Number(value)
+      }else {
+        item.paymentAmount=Number(value)
       }
-      item.paymentAmount = value
       this.$nextTick(() => {
-        item.paymentAmount = changeTwoDecimal(value)
+        item.paymentAmount = changeTwoDecimal(value,2)
+        this.errTipText = ''
+        this.checkPaidAmount()
       })
-      this.errTipText = ''
-      this.checkPaidAmount()
     },
     changePayChannel(value, record) {
       if (record.balance) {
@@ -321,29 +321,27 @@ export default {
     },
 
     checkInputValue(value) {
-      let vStr = `${value}`
-      vStr = vStr.replace(/\b(0+)/gi, '')
-      let val = Number(vStr)
-      if (isNaN(val)) {
+      // let vStr = `${value}`
+      // vStr = vStr.replace(/\b(0+)/gi, '')
+      value = Number(value)
+      if (isNaN(value)) {
         this.$refs.uToast.show({
           title: '请输入数字!',
           type: 'error',
         })
         return ''
       }
-      const maxNumber = 99999
-      if (val > maxNumber) {
-        val = maxNumber + ''
+      const maxNumber = 999999
+      if (value > maxNumber) {
+        value = maxNumber + ''
       }
-
-      return val
+      return value
     },
     //------------------------支付方式控制面板
     //-----------------------总计金额、折扣、应收
     onDebtDiscountChange(value) {
-      value = this.checkInputValue(value)
       if (value === '' || value === undefined) {
-        return
+        this.form.debtDiscount='-'
       }
       if (value > 100) {
         this.form.debtDiscount = '100'
@@ -352,47 +350,37 @@ export default {
       }
       this.$nextTick(() => {
         this.form.debtDiscount = changeTwoDecimal(this.form.debtDiscount, 0)
-      })
-
-      let receivableAmount = BigCalculate(
-        this.overdueAmount,
-        '*',
-        BigCalculate(this.form.debtDiscount, '/', 100),
-      )
-      this.form.receivableAmount = receivableAmount
-      this.$nextTick(() => {
+        let receivableAmount = BigCalculate(
+          this.overdueAmount,
+          '*',
+          BigCalculate(this.form.debtDiscount, '/', 100),
+        )
         this.form.receivableAmount = changeTwoDecimal(receivableAmount)
+        this.initPayTypes()
+        this.checkPaidAmount()
       })
-      this.initPayTypes()
-      this.checkPaidAmount()
     },
     //应收金额
     onReceivableAmountChange(value) {
-      value = this.checkInputValue(value)
-      if (value === '' || value === undefined || this.overdueAmount <= 0) {
-        return
+      if (value === '' || value === undefined) {
+        this.form.receivableAmount='-'
       }
       if (value > this.overdueAmount) {
         this.form.receivableAmount = this.overdueAmount + ''
       } else {
-        this.form.receivableAmount = value
+        this.form.receivableAmount = Number(value)
       }
       this.$nextTick(() => {
-        this.form.receivableAmount = changeTwoDecimal(
-          this.form.receivableAmount,
+        this.form.receivableAmount = changeTwoDecimal(this.form.receivableAmount,2)
+        const debtDiscount = BigCalculate(
+          BigCalculate(this.form.receivableAmount, '/', this.overdueAmount),
+          '*',
+          100,
         )
+        this.form.debtDiscount = Math.ceil(debtDiscount)
+        this.initPayTypes()
+        this.checkPaidAmount()
       })
-      const debtDiscount = BigCalculate(
-        BigCalculate(this.form.receivableAmount, '/', this.overdueAmount),
-        '*',
-        100,
-      )
-      this.form.debtDiscount = Math.ceil(debtDiscount)
-      this.$nextTick(() => {
-        this.form.debtDiscount = changeTwoDecimal(Math.ceil(debtDiscount))
-      })
-      this.initPayTypes()
-      this.checkPaidAmount()
     },
     //-----------------------总计金额、折扣、应收
     //获取数据
@@ -460,7 +448,7 @@ export default {
       _data.patientId = this.patientDetail.patientId
       _data.debtDiscount = this.form.debtDiscount
       _data.memo = this.form.memo
-      _data.receivableAmount = this.form.receivableAmount
+      _data.receivableAmount =this.form.receivableAmount
       _data.payChannelList = this.form.payChannelList
       _data.salesVOList = []
 
