@@ -7,8 +7,8 @@
         type="text"
         :placeholder="'请输入项目名称或拼音快速搜索'"
         placeholder-style="color:#bfbfbf"
-        class="input"
         @input="searchProject($event.detail.value)"
+        class="input"
       />
     </view>
     <!--选择项目-->
@@ -81,7 +81,7 @@ export default {
     searchProject(searchVal) {
       billAPI
         .searchChargeType({
-          searchValue: searchVal || '',
+          settingsChargeTypeName: searchVal || '',
         })
         .then((res) => {
           if (res.data?.length > 0) {
