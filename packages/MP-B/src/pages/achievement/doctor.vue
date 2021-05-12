@@ -139,7 +139,6 @@ export default {
     })
   },
   beforeDestroy() {
-    console.log('doctor unload')
     uni.$off('chooseCalendarOption')
     uni.$off('emitPage')
     uni.$off('achFilter')
@@ -151,6 +150,7 @@ export default {
       this.getDoctors()
       this.getStaff()
       this.getProject()
+      this.getPermission()
     },
     async getStaff() {
       const {
@@ -166,6 +166,21 @@ export default {
     async getProject() {
       const { data } = await billAPI.chargeTypeParentList()
       uni.setStorageSync('allProjectList', data)
+    },
+    async getPermission() {
+      //逻辑从pc端搬运
+      const { data } = await institutionAPI.getPermission({ dataTypeId: 4 })
+      const staff = uni.getStorageSync('staff')
+      if (data?.roleTypeId === 5 && staff.position === 2) {
+        uni.setStorageSync('achFilter', {
+          staffIds: String(staff.staffId),
+          staffName: staff.name,
+        })
+        uni.setStorageSync('achFilterDisabled', true)
+      } else {
+        uni.setStorageSync('achFilterDisabled', false)
+        uni.removeStorageSync('achFilter')
+      }
     },
     async getDoctors() {
       uni.showLoading({
