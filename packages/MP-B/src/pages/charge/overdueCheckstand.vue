@@ -217,6 +217,7 @@ export default {
     ...mapState('workbenchStore', ['menu']),
     ...mapState('overdue', ['overdueList', 'overdueAmount']),
     ...mapState('patient', ['patientDetail']),
+    ...mapState('checkstand', ['billType']),
   },
   onLoad() {
     this.staffData = uni.getStorageSync('staff')
@@ -392,6 +393,9 @@ export default {
         })
         .then((res) => {
           if (res?.data.length > 0) {
+            if(this.billType === 3) {
+              res.data = res.data.filter(item => (item.payStyle !== 8 && item.payStyle !== 9))
+            }
             res.data.forEach((item, index) => {
               item.checked = false
               if (index === 0) {
