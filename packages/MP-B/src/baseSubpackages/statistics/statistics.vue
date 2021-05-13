@@ -188,7 +188,7 @@ export default {
                 color: _self.color[v.product],
                 format(val) {
                   return (
-                    v.product +
+                    that.nameFilter(v.product) +
                     ' ' +
                     that.numFilter((v.count / registerDataCount) * 100)
                   )
