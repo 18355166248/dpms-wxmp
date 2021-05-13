@@ -149,7 +149,7 @@ export default {
     handleClassifyList(list, key) {
       list.forEach((item) => {
         item.open = false
-        if (item[key].length > 0) {
+        if (item[key]&&item[key].length > 0) {
           item[key].forEach((project) => {
             project.checked = false
           })
@@ -162,7 +162,7 @@ export default {
       this.classifyList.forEach((item) => {
         if (this.checkTypeId(item.settingsChargeTypeId, mergeList)) {
           item.open = true
-          item.chargeItemList.forEach((charge) => {
+          item?.chargeItemList.forEach((charge) => {
             charge.checked = !!this.checkItemId(
               charge.settingsChargeItemId,
               mergeList,
@@ -170,7 +170,7 @@ export default {
           })
         } else {
           item.open = false
-          list.forEach((item) => {
+          tem?.chargeItemList.forEach((item) => {
             item.checked = false
           })
         }
