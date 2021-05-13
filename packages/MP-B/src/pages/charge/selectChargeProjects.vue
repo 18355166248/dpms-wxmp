@@ -149,7 +149,7 @@ export default {
     handleClassifyList(list, key) {
       list.forEach((item) => {
         item.open = false
-        if (item[key].length > 0) {
+        if (item[key] && item[key].length > 0) {
           item[key].forEach((project) => {
             project.checked = false
           })
@@ -162,7 +162,7 @@ export default {
       this.classifyList.forEach((item) => {
         if (this.checkTypeId(item.settingsChargeTypeId, mergeList)) {
           item.open = true
-          item.chargeItemList.forEach((charge) => {
+          item?.chargeItemList.forEach((charge) => {
             charge.checked = !!this.checkItemId(
               charge.settingsChargeItemId,
               mergeList,
@@ -170,7 +170,7 @@ export default {
           })
         } else {
           item.open = false
-          list.forEach((item) => {
+          tem?.chargeItemList.forEach((item) => {
             item.checked = false
           })
         }
@@ -180,7 +180,7 @@ export default {
       this.classifyList.forEach((item) => {
         if (this.checkParentTypeId(item.settingsChargeTypeId, mergeList)) {
           item.open = true
-          item.children.forEach((charge) => {
+          item.children?.forEach((charge) => {
             charge.checked = !!this.checkTypeId(
               charge.settingsChargeTypeId,
               mergeList,
@@ -188,7 +188,7 @@ export default {
           })
         } else {
           item.open = false
-          item.children.forEach((item) => {
+          item.children?.forEach((item) => {
             item.checked = false
           })
         }
@@ -205,14 +205,14 @@ export default {
     },
     checkTypeId(id, list) {
       for (let i = 0; i < list.length; i++) {
-        if (list[i].settingsChargeTypeId === id) {
+        if (list[i] && list[i].settingsChargeTypeId === id) {
           return true
         }
       }
     },
     checkItemId(id, list) {
       for (let i = 0; i < list.length; i++) {
-        if (list[i].settingsChargeItemId === id) {
+        if (list[i] && list[i].settingsChargeItemId === id) {
           return true
         }
       }
@@ -298,7 +298,7 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
 }
-.placeholder{
+.placeholder {
   color: red;
 }
 
@@ -355,8 +355,8 @@ export default {
         justify-content: space-between;
         padding: 32rpx 0;
         border-bottom: 2rpx solid #f5f5f5;
-        .icon-wrap{
-          width:48rpx;
+        .icon-wrap {
+          width: 48rpx;
           height: 48rpx;
           display: flex;
           align-items: center;
@@ -368,7 +368,6 @@ export default {
             height: 32rpx;
           }
         }
-
       }
     }
 
