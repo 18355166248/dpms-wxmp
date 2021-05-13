@@ -52,9 +52,18 @@
         defaultType="doctorId"
         v-model="form.doctorStaffId"
       />
-      <dpmsEnumsPicker
-        enumsKey="VisType"
-        v-model="form.medicalRecordRegisterVO.visType"
+
+      <!--      <dpmsEnumsPicker-->
+      <!--        enumsKey="VisType"-->
+      <!--        v-model="form.medicalRecordRegisterVO.visType"-->
+      <!--        title="就诊类型"-->
+      <!--        placeholder="请选择就诊类型"-->
+      <!--      />-->
+      <dpmsCellPicker
+        :list="TreatmentTypes"
+        v-model="form.visType"
+        defaultType="codeId"
+        :defaultProps="{ label: 'name', value: 'codeId' }"
         title="就诊类型"
         placeholder="请选择就诊类型"
       />
@@ -76,9 +85,7 @@
       <dpmsCell
         title="现病史"
         wrap
-        v-if="
-          VIS_TYPE_ENUM.REVISIT.value !== form.medicalRecordRegisterVO.visType
-        "
+        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
       >
         <div
           class="text"
@@ -98,9 +105,7 @@
         title="既往史"
         wrap
         hideBorderBottom
-        v-if="
-          VIS_TYPE_ENUM.REVISIT.value !== form.medicalRecordRegisterVO.visType
-        "
+        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
       >
         <div
           class="text"
@@ -450,6 +455,7 @@ export default {
         doctorAdvice: '',
         medicalRecordRegisterVO: { visType: '' },
         medicalRecordImageList: '',
+        visType: '',
       },
       rules: {},
       teethSync: true,
@@ -459,6 +465,7 @@ export default {
       historyMedicalVisible: false,
       patientId: '',
       templateMedicalVisible: false,
+      TreatmentTypes: [],
     }
   },
   computed: {
@@ -472,6 +479,13 @@ export default {
     },
   },
   methods: {
+    initTreatmentTypes() {
+      diagnosisAPI.getTreatmentTypes().then((res) => {
+        if (res?.data?.length > 0) {
+          this.TreatmentTypes = res.data
+        }
+      })
+    },
     async getDoctors() {
       const res = await institutionAPI.getDoctors()
       this.doctors = res.data
@@ -484,7 +498,10 @@ export default {
       }))
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
-        this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
+        // 如果有就诊记录，那就证明是复诊
+        // this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
+        this.form.medicalRecordRegisterVO.visType = this.registerList[0].visType
+        this.form.visType = this.registerList[0].visType
         const { patientMainComplaintList } = this.registerList[0]
         if (
           Array.isArray(patientMainComplaintList) &&
@@ -495,6 +512,7 @@ export default {
             .join('，')
         }
       } else {
+        this.form.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
         this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
       }
     },
@@ -571,6 +589,10 @@ export default {
           medicalInstitutionId: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
             .medicalInstitutionId,
           ...this.form,
+          medicalRecordRegisterVO: {
+            ...this.form.medicalRecordRegisterVO,
+            visType: this.form.visType,
+          },
         }),
       })
       this.$utils.clearLoading()
@@ -709,6 +731,7 @@ export default {
     this.onTextareaChange()
     this.onEdit()
     this.getDoctors()
+    this.initTreatmentTypes()
   },
   watch: {
     'form.doctorStaffId'(newVal) {

@@ -16,6 +16,7 @@
     "build:mp-toutiao": "cross-env NODE_ENV=production UNI_PLATFORM=mp-toutiao vue-cli-service uni-build",
     "build:mp-weixin": "cross-env NODE_ENV=production UNI_PLATFORM=mp-weixin vue-cli-service uni-build",
     "build:mp-weixin-uat": "cross-env NODE_ENV=uat UNI_PLATFORM=mp-weixin vue-cli-service uni-build --minimize",
+    "build:mp-weixin-pre": "cross-env NODE_ENV=staging UNI_PLATFORM=mp-weixin vue-cli-service uni-build --minimize",
     "build:quickapp-native": "cross-env NODE_ENV=production UNI_PLATFORM=quickapp-native vue-cli-service uni-build",
     "build:quickapp-webview": "cross-env NODE_ENV=production UNI_PLATFORM=quickapp-webview vue-cli-service uni-build",
     "build:quickapp-webview-huawei": "cross-env NODE_ENV=production UNI_PLATFORM=quickapp-webview-huawei vue-cli-service uni-build",
@@ -68,7 +69,8 @@
     "vue": "^2.6.11",
     "vuex": "^3.2.0",
     "mpcommon": "1.0.0",
-    "wxcomponents": "1.0.0"
+    "wxcomponents": "1.0.0",
+    "big.js": "^6.0.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.1.1",

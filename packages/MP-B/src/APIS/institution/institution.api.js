@@ -46,6 +46,18 @@ const institutionAPI = {
   getStaffs(data) {
     return httper.get('/institution/staff/list/search', data)
   },
+  // 获取员工
+  getWorkList(data) {
+    // position 医生:2 --- 洁牙师:3 --- 咨询师:4 --- 助理:5 --- 护士:6
+    return httper.get('institution/staff/work/list', data)
+  },
+  // 获取科室
+  getDepartmentList(data) {
+    return httper.get('institution/department/list', data)
+  },
+  getPermission(data) {
+    return httper.get('institution/permission/query', data)
+  },
 }
 
 export default institutionAPI

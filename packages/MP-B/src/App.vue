@@ -27,16 +27,14 @@ button::after {
 }
 /*********在线字体代码start*********/
 @font-face {
-  font-family: 'iconfont'; /* project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_4m5ayfhrsxj.eot');
-  src: url('//at.alicdn.com/t/font_1965288_4m5ayfhrsxj.eot?#iefix')
-      format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1965288_4m5ayfhrsxj.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_4m5ayfhrsxj.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1965288_4m5ayfhrsxj.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1965288_4m5ayfhrsxj.svg#iconfont') format('svg');
+  font-family: 'iconfont'; /* Project id 1965288 */
+  src: url('//at.alicdn.com/t/font_1965288_h9yn44x7c5t.woff2?t=1620463589584')
+      format('woff2'),
+    url('//at.alicdn.com/t/font_1965288_h9yn44x7c5t.woff?t=1620463589584')
+      format('woff'),
+    url('//at.alicdn.com/t/font_1965288_h9yn44x7c5t.ttf?t=1620463589584')
+      format('truetype');
 }
-
 /*********在线字体代码end*********/
 
 .iconfont {
@@ -188,6 +186,56 @@ button::after {
 .icon-edit:before {
   content: '\e7e1';
 }
+.icon-filter:before {
+  content: '\e611';
+}
+.icon-savings:before {
+  content: '\e657';
+}
+.icon-customer-management:before {
+  content: '\e636';
+}
+.icon-detail:before {
+  content: '\e793';
+}
+
+.iconconsumption-profile:before {
+  content: '\e60d';
+}
+.icondiagnosis-treatment:before {
+  content: '\e60c';
+}
+.iconconsumption-profile:before {
+  content: '\e60d';
+}
+.iconsearch:before {
+  content: '\e8ef';
+}
+.iconup1:before {
+  content: '\e68a';
+}
+.icondown1:before {
+  content: '\e684';
+}
+.icon-ar-report:before {
+  content: '\e610';
+}
+.icon-ar-close:before {
+  content: '\e633';
+}
+.icon-warning-circle:before {
+  content: '\e785';
+}
+.icon-disposal-fill:before {
+  content: '\e858';
+}
+.icon-stored-value-card:before {
+  content: '\e613';
+}
+.icon-search:before {
+  content: '\e631';
+}
+
 /* iconfont图标 end */
 </style>
 

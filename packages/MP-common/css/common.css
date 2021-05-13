@@ -26,3 +26,26 @@
 .overHidden {
   overflow: hidden;
 }
+.ellipsis {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+}
+.flex {
+  display: flex;
+}
+.flexCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.flexAlign {
+  display: flex;
+  align-items: center;
+}
+.flexBt {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}

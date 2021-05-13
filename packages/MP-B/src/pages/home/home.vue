@@ -108,8 +108,8 @@
         </view>
       </view>
 
-      <view class="menu-area pt-48 ph-32">
-        <view class="menu-area-header">
+      <view class="menu-area pb-48 ph-32">
+        <view class="menu-area-header pt-48">
           常用功能
         </view>
         <view class="menu-area-body mt-41">
@@ -151,7 +151,7 @@
       </view>
 
       <view
-        class="menu-area pt-48 ph-32"
+        class="menu-area pb-48 ph-32"
         v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
       >
         <view class="menu-area-header">
@@ -182,6 +182,18 @@
               营收报表
             </view>
           </view>
+          <view
+            class="menu-area-item"
+            @click="openAchPopup"
+            v-if="menuPermission(['report-center', 'performance'])"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color7">
+              <text class="iconfont icon-ar-report"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              绩效报表
+            </view>
+          </view>
         </view>
       </view>
     </view>
@@ -189,6 +201,10 @@
       ref="selectMedicalInstitution"
       @confirm="selectClinic"
     ></selectMedicalInstitution>
+    <achevementpopup
+      ref="achevementpopup"
+      id="achevementpopup"
+    ></achevementpopup>
   </view>
 </template>
 
@@ -253,7 +269,7 @@ export default {
       },
     }
   },
-  onShareAppMessage(res) {
+  onShareAppMessage() {
     return {
       title: '北吉熊口腔',
       path: '/pages/home/home',
@@ -316,10 +332,6 @@ export default {
       }
     },
     isHeadquartersAndRegion() {
-      // console.log(
-      //   this.INSTITUTION_CHAIN_TYPE_ENUM,
-      //   this.medicalInstitution.institutionChainType,
-      // )
       return (
         (this.medicalInstitution.topParentId === 0 &&
           this.medicalInstitution.institutionChainType === 2) ||
@@ -338,7 +350,8 @@ export default {
       )
     },
     staffName() {
-      return this.staff ? this.staff.name : '--'
+      const { name, staffName } = this.staff || {}
+      return name || staffName || '--'
     },
     medicalInstitutionSimpleCode() {
       if (this.switchClinicStatus === 'loading') {
@@ -364,7 +377,6 @@ export default {
       return this.$systemInfo.windowHeight - this.navHeight + 'px'
     },
   },
-
   methods: {
     dropMenuSelect(val) {
       const urls = {
@@ -377,6 +389,9 @@ export default {
       if (this.institutionChainTypeKey !== 'SINGLE_STORE') {
         this.$refs.selectMedicalInstitution.show()
       }
+    },
+    openAchPopup() {
+      this.$refs.achevementpopup.open()
     },
     toUrl(url) {
       this.$utils.push({
@@ -642,12 +657,19 @@ export default {
           $values: rgba(255, 133, 192, 1), rgba(235, 47, 150, 1);
           @include colors($values...);
         }
-
+        &-icon-color7 {
+          $values: #bfdf27, #8bbb11;
+          @include colors($values...);
+        }
         &-txt {
           font-size: 28rpx;
         }
       }
     }
+  }
+  .popup-content {
+    background-color: #fff;
+    padding: 15px;
   }
 }
 </style>

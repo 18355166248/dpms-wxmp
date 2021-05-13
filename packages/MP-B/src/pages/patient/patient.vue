@@ -7,7 +7,9 @@
       :avatarUrl="patient.avatarUrl"
       :gender="patient.gender"
       :medicalRecordNo="patient.medicalRecordNo"
-      :visType="patient.visType ? visType[patient.visType] : `未到诊`"
+      :visType="
+        patient.visTypeName === undefined ? `未到诊` : patient.visTypeName
+      "
       :infos="[
         {
           label: '出生日期',
@@ -112,6 +114,25 @@
             打电话
           </view>
         </view>
+        <view
+          v-if="
+            menu.pageElementsList.some((m) => m.enumValue === 'disposalRecord')
+          "
+          class="menu-area-item"
+          @click="
+            onDisposalRecord(
+              '/pages/patient/disposalRecord/disposalRecord?patientId=' +
+                patientId,
+            )
+          "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color7">
+            <text class="iconfont icon-disposal-fill"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            处置记录
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -120,7 +141,8 @@
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import card from '@/components/card/card.vue'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
+
 export default {
   data() {
     return {
@@ -168,6 +190,7 @@ export default {
     this.getPatient()
   },
   methods: {
+    ...mapMutations('patient', ['setPatientDetail']),
     getPatient() {
       this.$utils.showLoading()
       patientAPI
@@ -175,6 +198,7 @@ export default {
         .then((res) => {
           let { data } = res
           this.patient = data
+          this.setPatientDetail(data)
           // if (this.patient.tagList.length > 3) {
           //   this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
           // }
@@ -196,6 +220,12 @@ export default {
     callTel() {
       uni.makePhoneCall({
         phoneNumber: this.patient?.mobile,
+      })
+    },
+    onDisposalRecord(url) {
+      console.log('url', url)
+      this.$utils.push({
+        url,
       })
     },
   },
@@ -275,6 +305,10 @@ export default {
       }
       &-icon-color6 {
         $values: rgba(255, 132, 135, 1), rgba(255, 77, 79, 1);
+        @include colors($values...);
+      }
+      &-icon-color7 {
+        $values: rgba(91, 218, 153, 1), rgba(52, 197, 122, 1);
         @include colors($values...);
       }
 

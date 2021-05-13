@@ -8,7 +8,7 @@ const config = {
   enableNotReleaseCode: false,
   DPMSServerUrl: 'https://power.medcloud.cn/api/his/',
   SCRMServerUrl: 'https://power.medcloud.cn/api/',
-  iconfontUrl: '//at.alicdn.com/t/font_1575084_5snnlrkarpw.js',
+  iconfontUrl: '//at.alicdn.com/t/font_1965288_h9yn44x7c5t.js',
   microAppUrl: 'http://scrm.medcloud.cn/scrm_vue/',
   scrmUrl: 'https://scrm.medcloud.cn',
   DPMSAntdPrefixCls: 'dpms-ant',

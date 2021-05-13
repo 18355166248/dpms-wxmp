@@ -165,6 +165,12 @@
           "style": {
             "navigationBarTitleText": ""
           }
+        },
+        {
+          "path": "disposalRecord/disposalRecord",
+          "style": {
+            "navigationBarTitleText": "处置记录"
+          }
         }
       ]
     },
@@ -259,6 +265,107 @@
       ]
     },
     {
+      "root": "pages/achievement",
+      "name": "doctorDetail",
+      "pages": [
+        {
+          "path": "doctorDetail",
+          "style": {
+            "navigationBarTitleText": "医生明细",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "doctor",
+      "pages": [
+        {
+          "path": "doctor",
+          "style": {
+            "navigationBarTitleText": "医生业绩",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "nurse",
+      "pages": [
+        {
+          "path": "nurse",
+          "style": {
+            "navigationBarTitleText": "护士业绩",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "assistant",
+      "pages": [
+        {
+          "path": "assistant",
+          "style": {
+            "navigationBarTitleText": "医生助理业绩",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "consultant",
+      "pages": [
+        {
+          "path": "consultant",
+          "style": {
+            "navigationBarTitleText": "咨询师业绩",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "filter",
+      "pages": [
+        {
+          "path": "filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "staffList",
+      "pages": [
+        {
+          "path": "staffList",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/achievement",
+      "name": "projectList",
+      "pages": [
+        {
+          "path": "projectList",
+          "style": {
+            "navigationBarTitleText": "选择项目"
+          }
+        }
+      ]
+    },
+    {
       "root": "pages/charge",
       "name": "charge",
       "pages": [
@@ -269,9 +376,77 @@
           }
         },
         {
+          "path": "selectChargeProjects",
+          "style": {
+            "navigationBarTitleText": "选择收费项目"
+          }
+        },
+        {
+          "path": "overdueCharge",
+          "style": {
+            "navigationBarTitleText": "收欠费"
+          }
+        },
+        {
+          "path": "chargeProjectsList",
+          "style": {
+            "navigationBarTitleText": "收费项目清单"
+          }
+        },
+        {
+          "path": "checkstand",
+          "style": {
+            "navigationBarTitleText": "收银台"
+          }
+        },
+        {
+          "path": "overdueCheckstand",
+          "style": {
+            "navigationBarTitleText": "收欠费"
+          }
+        },
+        {
+          "path": "searchProjects",
+          "style": {
+            "navigationBarTitleText": "搜索收费项目"
+          }
+        },
+        {
           "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/reports",
+      "name": "reports",
+      "pages": [
+        {
+          "path": "triageStat/index",
+          "style": {
+            "navigationBarTitleText": "分诊业绩",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "triageStat/filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        },
+        {
+          "path": "referralStat/index",
+          "style": {
+            "navigationBarTitleText": "转诊业绩",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "referralStat/filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
           }
         }
       ]
@@ -313,7 +488,8 @@
   "easycom": {
     "autoscan": true,
     "custom": {
-      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue"
+      "^dpms(.*)": "@/dpmsComponents/dpms$1/dpms$1.vue",
+      "^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
     }
   }
 }
