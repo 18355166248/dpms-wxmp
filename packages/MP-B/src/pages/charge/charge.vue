@@ -263,7 +263,9 @@ export default {
       top: 0;
       height: 100%;
       width: 0;
-      border: 1rpx dashed rgba(0, 0, 0, 0.15);
+      border: 2rpx dashed rgba(0, 0, 0, 0.15);
+      transform-origin: 50% 0;
+      transform: scale(0.5,1);
     }
   }
 
