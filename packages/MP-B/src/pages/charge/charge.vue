@@ -213,7 +213,7 @@ export default {
     //选择收费方式 跳转到对应的选择收费项目页面
     selectType(item) {
       this.setChargeType(item.type)
-      let url='/pages/charge/selectChargeProjects'
+      let url='/pages/charge/selectChargeTypes'
       if (item.type!==1){
         url='/pages/charge/chargeProjectsTabs'
       }

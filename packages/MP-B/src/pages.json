@@ -376,7 +376,7 @@
           }
         },
         {
-          "path": "selectChargeProjects",
+          "path": "selectChargeTypes",
           "style": {
             "navigationBarTitleText": "选择收费项目"
           }
