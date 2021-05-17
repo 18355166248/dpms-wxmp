@@ -47,6 +47,7 @@ import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { getDoctorListByInstitutionId } from './utils'
 
+const ALL_DOCTOR_ITEM = { staffId: 'all', staffName: '所有医生' }
 export default {
   data() {
     return {
@@ -61,7 +62,7 @@ export default {
   computed: {
     // 显示供选择的医生，需在原有基础上加上所有医生
     doctorSelectList() {
-      return [{ staffId: 'all', staffName: '所有医生' }].concat(this.doctorList)
+      return [ALL_DOCTOR_ITEM].concat(this.doctorList)
     },
   },
   methods: {
@@ -82,7 +83,6 @@ export default {
     },
     // 切换诊所后更新医生
     onSelectInstitution(value) {
-      console.log('hc:onSelectInstitution:', value)
       if (value.id === this.accessMedicalInstitution.medicalInstitutionId) {
         return
       }
@@ -110,8 +110,8 @@ export default {
       const res = await getDoctorListByInstitutionId(
         this.accessMedicalInstitution.medicalInstitutionId,
       )
-
       this.doctorList = res.data
+      this.apptViewDoctor = ALL_DOCTOR_ITEM
     },
   },
 }

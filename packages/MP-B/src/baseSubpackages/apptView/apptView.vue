@@ -92,10 +92,7 @@ export default {
       uni.setStorageSync('apptViewDoctor', newVal)
     },
     accessMedicalInstitution(newVal) {
-      uni.setStorageSync(
-        'accessMedicalInstitution',
-        this.accessMedicalInstitution,
-      )
+      uni.setStorageSync('accessMedicalInstitution', newVal)
     },
   },
   computed: {
@@ -172,7 +169,6 @@ export default {
     },
     onCreateAppointment({ detail }) {
       const { begin, end, group } = detail
-      console.log(begin);
       const url = '/baseSubpackages/apptForm/apptForm?type=createAppt'
         .concat(`&startTimeStamp=${begin.valueOf()}`)
         .concat(`&endTimeStamp=${end.valueOf()}`)
@@ -219,7 +215,7 @@ export default {
     },
     async initData() {
       this.$utils.showPageLoading()
-      // 1. 设置访问机构。对于总部/大区，访问机构需；对于非总部/大区，访问机构则为登录人当前机构
+      // 1. 设置访问机构。对于总部/大区，访问机构需先获取上一次访问的机构；对于非总部/大区，访问机构则为登录人当前机构
       if (this.isHeaderWithLargeArea) {
         const {
           data: institutionTree,
@@ -233,10 +229,15 @@ export default {
         } = await appointmentAPI.getLastAccessMedicalInstitution()
 
         if (lastAccessInstitutionId !== -1) {
-          this.accessMedicalInstitution = findInstitutionInTree(
+          let institution = findInstitutionInTree(
             institutionTree,
             lastAccessInstitutionId,
           )
+          if (institution) {
+            this.accessMedicalInstitution = institution
+          } else {
+            this.accessMedicalInstitution = this.medicalInstitution
+          }
         }
       } else {
         this.accessMedicalInstitution = this.medicalInstitution
@@ -258,7 +259,6 @@ export default {
     },
     initEvent() {
       uni.$on(globalEventKeys.onSelectApptViewDoctor, (doctor) => {
-        console.log('onSelectApptViewDoctor:', doctor)
         this.doctorList = uni.getStorageSync('doctorList')
         this.accessMedicalInstitution = uni.getStorageSync(
           'accessMedicalInstitution',
