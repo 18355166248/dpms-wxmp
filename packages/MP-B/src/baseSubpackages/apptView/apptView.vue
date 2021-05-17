@@ -1,633 +1,307 @@
 <template>
-  <view class="apptViewPage">
-    <view v-if="accessMedicalInstitution === -1" class="emptyInstitution">
-      <span>无下属直营诊所，无法查看预约视图</span>
-    </view>
-    <view class="apptView" v-else>
-      <!-- <dpmsDrawer maskClose ref="dpmsDrawer" :width="750">
-
-      </dpmsDrawer> -->
-
-      <calendar
-        :value="date"
-        @collapseChange="collapseChange"
-        @change="changeCalendar"
-      />
-
-      <view class="apptCardInfo">
-        <view v-if="!showSearch" class="topGray" />
-        <view v-if="showSearch">
-          <dpmsSearch
-            showCancel
-            @cancel="cancel"
-            @search="search"
-            @clear="clear"
-            placeholder="搜索"
-            v-model="searchValueWithAppt"
-          />
-        </view>
-        <view v-else class="curCardInfo">
-          <view class="leftCardInfo">
-            <view
-              class="doctorName pr-48 text-ellipsis"
-              v-if="isHeaderWithLargeArea"
-              >诊所：{{
-                (accessMedicalInstitution &&
-                  accessMedicalInstitution.medicalInstitutionSimpleCode) ||
-                ''
-              }}</view
-            >
-            <view
-              class="doctorName doctorSelect"
-              :style="{ maxWidth: isHeaderWithLargeArea ? '50%' : '100%' }"
-            >
-              <span class="text-ellipsis doctorShowName">
-                医生：{{ doctor.staffName || '' }}
-              </span>
-              <span @click="openDrawer" class="pl-20 changeDoctorIcon">
-                <span class="iconfont icon-new-weet" />
-              </span>
-            </view>
-          </view>
-          <view class="rightCardInfo">
-            <view @click="showSearch = true">
-              <span class="iconfont icon-search" />
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <view
-        v-if="showSearch"
-        class="apptSearch overHidden pt-12"
-        data-layout-grow
-      >
-        <scroll-view v-if="apptSearchList.length > 0" class="h100" scroll-y>
-          <view class="apptSearchContent ph-24 pb-32">
-            <apptCard
-              v-for="apptInfo in apptSearchList"
-              :key="apptInfo.appointmentId"
-              :appt="apptInfo"
-              :doctor="doctor"
-            />
-          </view>
-        </scroll-view>
-        <view class="tc mt-28 emptyPatient" v-else>
-          请输入姓名/拼音/联系电话查找患者预约记录
-        </view>
-      </view>
-
-      <dayTable
-        ref="apptTable"
-        :class="showSearch ? 'hidden' : ''"
-        :style="{
-          width: '100%',
-          height: retract ? 'calc(100% - 286rpx)' : 'calc(100% - 686rpx)',
-        }"
-        :uMinute="apptSetting.appointmentDuration === 30 ? 30 : 15"
-        :apptList="list"
-        :chooseDateProp="date"
-        :scheduleList="scheduleList"
-        :retract="retract"
-        :blockEvent="blockEvent"
-        @createAppt="createAppt"
-        @editAppt="editAppt"
-        @changeCard="changeCard"
-      />
-    </view>
+  <view class="apptView">
+    <doctor-drawer ref="doctorDrawer" />
+    <calendar
+      :value="calendarDate"
+      @change="dateChange"
+      @collapseChange="collapseChange"
+    />
+    <view style="height: 10px;" />
+    <scheduler
+      :isAll="true"
+      :height="schedulerHeight"
+      :currentDate="calendarDate"
+      :columnGroup="schedulerGroup"
+      :resources="schedulerResources"
+      :hourParts="schedulerHourParts"
+      :displayGroupCount="schedulerGroupCount"
+      @menu="onMenu"
+      @detail="onDetail"
+      @newAppointment="onCreateAppointment"
+      @changeAppointment="onChangeAppointment"
+    />
   </view>
 </template>
 
 <script>
 import moment from 'moment'
 import _ from 'lodash'
-import AsyncValidator from 'async-validator'
 import institutionAPI from 'APIS/institution/institution.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
-import dayTable from '@/businessComponents/dayTable/dayTable'
 import calendar from '@/businessComponents/calendar/calendar'
-import { globalEventKeys } from 'config/global.eventKeys.js'
-import apptCard from '@/businessComponents/apptCard/apptCard.vue'
-import { apptFormUtil } from '@/baseSubpackages/apptForm/apptForm.util'
-import { frontAuthUtil } from '@/utils/frontAuth.util'
-import { apptViewUtil } from './apptView.util'
+import scheduler from '@/businessComponents/scheduler/scheduler'
+import { commonUtil } from 'mpcommon'
+import {
+  data2schedulerGroup,
+  appointment2schedulerResource,
+  blockEvent2schedulerResource,
+  findInstitutionInTree,
+  getDoctorListByInstitutionId,
+} from './utils'
 import { mapState } from 'vuex'
+import { globalEventKeys } from 'config/global.eventKeys'
+import { frontAuthUtil } from '@/utils/frontAuth.util'
+import { apptDataService } from '@/baseSubpackages/apptForm/apptData.service'
+import doctorDrawer from './doctorDrawer'
 
-const defaultScheduleList = [
-  {
-    allowAppointmentStatus: 1,
-    beginTimeMilliSecond: 0,
-    endTimeMilliSecond: 86340000,
-  },
-]
+const STAFF_POSITION_ENUM = commonUtil.getEnums('StaffPosition')
+const INSTITUTION_CHAIN_TYPE_ENUM = commonUtil.getEnums('InstitutionChainType')
+const BLOCK_EVENT_TYPE_ENUM = commonUtil.getEnums('BlockEventType')
+
+const POSITION_DOCTOR = STAFF_POSITION_ENUM.DOCTOR.value
+const INSTITUTION_CHAIN = INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value
+const INSTITUTION_REGIONAL = INSTITUTION_CHAIN_TYPE_ENUM.REGIONAL.value
+const STAFF_BLOCK = BLOCK_EVENT_TYPE_ENUM.STAFF_BLOCK_EVENT.value
 
 export default {
   name: 'apptView',
+  components: {
+    calendar,
+    scheduler,
+    doctorDrawer,
+  },
   data() {
     return {
-      doctor: undefined,
+      // 日历组件日期
+      calendarDate: moment().format('YYYY-MM-DD'),
+      // 日历组件展开搜索状态
+      calendarCollapsed: true,
+      // 可选的医生列表：对于总部/大区，会根据机构的选择动态变化
       doctorList: [],
-      allDoctorWithApptList: [], // 所以在职医生的预约列表
-      retract: true, // 日历展开: false 收缩: true
-      showSearch: false, // 搜索患者
-      list: [],
-      date: moment().format('YYYY-MM-DD'),
-      startTimeStamp: moment().startOf('day').valueOf(),
-      endTimeStamp: moment().endOf('day').valueOf(),
-      apptSuccess: false,
-      apptSearchList: [], // 模糊搜索列表
-      searchValueWithAppt: '', // 模糊搜索的值
-      scheduleList: [], // 排班列表
-      institutionInfo: {}, // 总部/大区诊所选择信息
+      // 当前预约显示的医生，init中初始化为全部医生
+      apptViewDoctor: null,
+      // 当前的预约列表
+      appointmentList: [],
+      // 当前的日程列表
+      blockEventList: [],
+      // 接入的机构：对于总部/大区，该值可以选择；其他，则为所在机构，不变
+      accessMedicalInstitution: {},
+      // 检测是否为机构或者大区？具体含义未知，沿用之前判断
       isHeaderWithLargeArea: frontAuthUtil.check(
         '预约中心/预约视图/诊所的查询条件',
       ),
-      institutionList: [], // 总部/大区 诊所列表
-      accessMedicalInstitution: {}, // 获取总部/大区时 预约视图诊所选择 如果后台返回-1表示没有直营诊所 则提示：“无下属直营诊所，无法查看预约视图”
-      institutionCanSelectList: [], // 总部/大区 诊所列表 可编辑id(medicalInstitutionId)
-      STAFF_POSITION_ENUM: this.$utils.getEnums('StaffPosition'),
-      STAFF_STATUS_ENUM: this.$utils.getEnums('StaffStatus'),
-      INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
-      staff: uni.getStorageSync('staff'),
-      doctorValue: null,
-      isDoctorWithLogin: true,
-      blockEvent: [],
     }
+  },
+  watch: {
+    // 每次doctorList更新，则写入storage，共doctorList选择使用
+    doctorList(newVal) {
+      uni.setStorageSync('doctorList', newVal)
+    },
+    // 每次视图关联的doctor变更，则写入storage
+    apptViewDoctor(newVal) {
+      uni.setStorageSync('apptViewDoctor', newVal)
+    },
+    accessMedicalInstitution(newVal) {
+      uni.setStorageSync(
+        'accessMedicalInstitution',
+        this.accessMedicalInstitution,
+      )
+    },
   },
   computed: {
     ...mapState('workbenchStore', {
       medicalInstitution: (state) => state.medicalInstitution,
       apptSetting: (state) => state.apptSetting,
     }),
-  },
-  onShow() {
-    this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
-    this.getApptList()
-    this.refreshDoctorWithApptList()
-  },
-  onLoad() {
-    this.$utils.showPageLoading()
-
-    this.doctorValue =
-      this.STAFF_POSITION_ENUM && this.STAFF_POSITION_ENUM.DOCTOR.value
-
-    // 1、如果当前登录人为医生，则 默认为当前登录人员的预约视图
-    // 2、如果当前登录人不是医生，则默认为WEB端，排名第一的医生（不包含未指定医生）
-    this.isDoctorWithLogin = this.staff.position === this.doctorValue
-    this.init()
-      .finally(() => {
-        console.log('finally')
-        setTimeout(() => {
-          this.$utils.hidePageLoading()
-        }, 50)
-      })
-      .catch((err) => {
-        console.error('初始化错误', err)
-      })
-
-    uni.$on(
-      globalEventKeys.apptFormWithSaveSuccess,
-      ({ isSuccess, params }) => {
-        console.log('isSuccess', isSuccess, params)
-        this.getApptList()
-      },
-    )
-    // 预约视图选择医生后返回预约视图页面
-    uni.$on(globalEventKeys.onSelectedDcotorWithApptView, (doctor) => {
-      this.accessMedicalInstitution = uni.getStorageSync(
-        'accessMedicalInstitution',
-      )
-      this.doctorList = uni.getStorageSync('doctorList')
-      this.doctor = uni.getStorageSync('apptViewdoctor')
-      this.onSelected(doctor)
-    })
-    uni.$on(
-      globalEventKeys.getDoctorListByPosition,
-      (accessMedicalInstitution) => {
-        this.getDoctorListByPosition(
-          accessMedicalInstitution.medicalInstitutionId,
-        ).then((res) => {
-          uni.$emit(globalEventKeys.updateDoctorListByPosition, res.data)
-        })
-      },
-    )
-  },
-  watch: {
-    date(newVal) {
-      const dayMoment = moment(newVal)
-      this.startTimeStamp = dayMoment.startOf('day').valueOf()
-      this.endTimeStamp = dayMoment.endOf('day').valueOf()
-
-      this.searchValueWithAppt = ''
-
-      this.getApptList()
-      this.getApptScheduleInfo()
-      this.getApptBlockEventInfo()
-      this.refreshDoctorWithApptList()
+    // 预约视图数据请求的开始时间
+    appointmentBeginTime() {
+      return moment(this.calendarDate).startOf('day').valueOf()
     },
-    showSearch(newVal) {
-      if (newVal) {
-        this.getAllDoctorWithApptList()
+    // 预约视图数据请求的结束时间
+    appointmentEndTime() {
+      return moment(this.calendarDate).endOf('day').valueOf()
+    },
+    // 预约视图中数据请求需要的医生列表
+    staffIds() {
+      if (!this.apptViewDoctor) {
+        return ''
+      }
+      const { staffId } = this.apptViewDoctor
+      return staffId === 'all'
+        ? this.doctorList.map((d) => d.staffId).join(',')
+        : staffId
+    },
+    schedulerHeight() {
+      const calendarHeightRpx = this.calendarCollapsed ? 192 : 592
+      return this.$systemInfo.windowHeight - uni.upx2px(calendarHeightRpx) - 10
+    },
+    schedulerResources() {
+      return []
+        .concat(appointment2schedulerResource(this.appointmentList))
+        .concat(blockEvent2schedulerResource(this.blockEventList))
+    },
+    schedulerGroup() {
+      const doctor = this.apptViewDoctor
+      if (!doctor) {
+        return []
+      } else if (doctor.staffId === 'all') {
+        return data2schedulerGroup(this.doctorList)
+      } else {
+        return data2schedulerGroup([doctor])
       }
     },
-    medicalInstitution(newVal) {
-      this.accessMedicalInstitution = newVal
+    schedulerGroupCount() {
+      const groupCount = this.schedulerGroup.length
+      return Math.min(groupCount, 4)
     },
-    accessMedicalInstitution(newVal) {
-      console.log('accessMedicalInstitution', newVal)
-      uni.setStorageSync('accessMedicalInstitution', newVal)
+    schedulerHourParts() {
+      return 60 / this.apptSetting.appointmentDuration
     },
-    doctorList(newVal) {
-      uni.setStorageSync('doctorList', newVal)
-    },
-    doctor(newVal) {
-      uni.setStorageSync('apptViewdoctor', newVal)
-    },
-    institutionList(newVal) {
-      uni.setStorageSync('institutionList', newVal)
-    },
-    institutionCanSelectList(newVal) {
-      uni.setStorageSync('institutionCanSelectList', newVal)
-    },
+  },
+  onLoad() {
+    this.initData()
+    this.initEvent()
   },
   onUnload() {
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
-    uni.$off(globalEventKeys.onSelectedDcotorWithApptView)
-    uni.$off(globalEventKeys.getDoctorListByPosition)
-    uni.removeStorageSync('accessMedicalInstitution')
+    uni.$off(globalEventKeys.onSelectApptViewDoctor)
     uni.removeStorageSync('doctorList')
-    uni.removeStorageSync('apptViewdoctor')
-    uni.removeStorageSync('institutionList')
-    uni.removeStorageSync('institutionCanSelectList')
+    uni.removeStorageSync('apptViewDoctor')
+    uni.removeStorageSync('accessMedicalInstitution')
   },
   methods: {
-    async init() {
-      // 如果是总部/大区 需要获取诊所列表
-      if (this.isHeaderWithLargeArea) {
-        let [err, res] = await this.$utils.asyncTasks(
-          institutionAPI.getInstitutionList({
-            medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
-            institutionChainTypes:
-              this.INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value +
-              ',' +
-              this.INSTITUTION_CHAIN_TYPE_ENUM.REGIONAL.value,
-          }),
-        )
-
-        if (err) return Promise.reject(err)
-
-        this.institutionList = [res.data]
-        // 获取预约视图总部/大区时 诊所选择的值
-        ;[err, res] = await this.$utils.asyncTasks(
-          appointmentAPI.getLastAccessMedicalInstitution(),
-        )
-
-        if (err) return Promise.reject(err)
-
-        this.accessMedicalInstitution = res.data
-
-        const canSelectList = apptViewUtil.findCanSelectId(
-          this.institutionList,
-          'medicalInstitutionId',
-          'childMedicalInstitutionList',
-          frontAuthUtil.canSelect,
-        )
-
-        this.institutionCanSelectList = canSelectList
-        uni.setStorageSync('institutionCanSelectList', canSelectList)
-
-        if (this.accessMedicalInstitution !== -1) {
-          const info = apptViewUtil.findSelectInfo(
-            _.cloneDeep(this.institutionList),
-            'medicalInstitutionId',
-            'childMedicalInstitutionList',
-            this.accessMedicalInstitution,
-          )
-          this.accessMedicalInstitution = info
-          ;[err, res] = await this.$utils.asyncTasks(this.getDoctor())
-
-          if (err) return Promise.reject('staff not found', err)
-
-          try {
-            this.getApptList()
-            ;[err, res] = await this.$utils.asyncTasks(
-              this.getApptScheduleInfo(),
-            )
-
-            if (err) return Promise.reject(err)
-            ;[err, res] = await this.$utils.asyncTasks(
-              this.getApptBlockEventInfo(),
-            )
-
-            if (err) return Promise.reject(err)
-
-            return true
-          } catch (err) {
-            return Promise.reject(err)
-          }
-        } else {
-          return true
-        }
-      } else {
-        let [err, res] = await this.$utils.asyncTasks(this.getDoctor())
-
-        if (err) return Promise.reject('staff not found', err)
-
-        try {
-          this.getApptList()
-          ;[err, res] = await this.$utils.asyncTasks(this.getApptScheduleInfo())
-
-          if (err) return Promise.reject(err)
-          ;[err, res] = await this.$utils.asyncTasks(
-            this.getApptBlockEventInfo(),
-          )
-
-          if (err) return Promise.reject(err)
-
-          return true
-        } catch (err) {
-          return Promise.reject(err)
-        }
-      }
+    collapseChange(status) {
+      this.calendarCollapsed = status
     },
-    // 获取医生详情
-    getDoctor() {
-      return new Promise((resolve, reject) => {
-        if (this.isDoctorWithLogin) {
-          if (!this.staff) reject()
-          this.doctor = this.staff
-          resolve()
-        }
-
-        // 获取在职医生列表
-        this.getDoctorListByPosition().then(() => resolve())
-      })
+    dateChange({ fulldate }) {
+      this.calendarDate = fulldate
+      this.refreshApptViewList()
     },
-    // 获取在职医生列表
-    getDoctorListByPosition(medicalInstitutionId) {
-      return new Promise((resolve, reject) => {
-        institutionAPI
-          .getStaffListByPosition({
-            position: this.doctorValue,
-            workStatus: this.STAFF_STATUS_ENUM.STAFF_STATUS_AT_WORK_NAME.value,
-            includeUnspecified: true,
-            medicalInstitutionId:
-              medicalInstitutionId ||
-              this.accessMedicalInstitution.medicalInstitutionId,
-          })
-          .then((res) => {
-            if (!this.isDoctorWithLogin) {
-              let doctor = []
-              if (res.data.length === 0) {
-                doctor = { staffId: -1, staffName: '未指定医生', position: 2 }
-              }
-
-              if (res.data.length === 1) {
-                doctor = res.data[0]
-              }
-
-              if (res.data.length > 1) {
-                if (res.data[0].staffId === -1) doctor = res.data[1]
-                else doctor = res.data[0]
-              }
-              // 如果是医生页面的话 这个页面的医生选中值是不需要改变的
-              !medicalInstitutionId && (this.doctor = doctor)
-            }
-
-            // 如果是医生页面的话 这个页面的医生列表是不需要改变的
-            !medicalInstitutionId && (this.doctorList = res.data)
-            resolve(res)
-          })
-          .catch((err) => {
-            reject(err)
-          })
-      })
+    onMenu() {
+      this.$refs.doctorDrawer.open()
     },
-    // 获取预约列表
-    getApptList: _.debounce(function () {
-      if (!this.doctor) return
-      appointmentAPI
-        .getAppointmentViewListFromStaff({
-          appointmentBeginTime: this.startTimeStamp,
-          appointmentEndTime: this.endTimeStamp,
-          medicalInstitutionId: this.accessMedicalInstitution
-            .medicalInstitutionId,
-          position: this.doctorValue,
-          staffId: this.doctor.staffId,
-          staffIds: this.doctor.staffId,
-        })
-        .then((res) => {
-          res.data.forEach((v) => {
-            v.startTimeStamp = v.appointmentBeginTimeStamp
-            v.endTimeStamp = v.appointmentEndTimeStamp + 1
-          })
+    onCreateAppointment({ detail }) {
+      const { begin, end, group } = detail
+      console.log(begin);
+      const url = '/baseSubpackages/apptForm/apptForm?type=createAppt'
+        .concat(`&startTimeStamp=${begin.valueOf()}`)
+        .concat(`&endTimeStamp=${end.valueOf()}`)
+        .concat(`&doctorId=${group.key}`)
+      this.$utils.push({ url })
+    },
+    onChangeAppointment({ detail }) {
+      const { origin, change, confirm } = detail
 
-          res.data.sort(
-            (first, second) => second.startTimeStamp - second.endTimeStamp,
-          )
-
-          this.list = [
-            {
-              1: {
-                list: res.data,
-              },
-            },
-          ]
-        })
-        .catch()
-    }, 300),
-    // 获取排班详情
-    getApptScheduleInfo() {
-      return new Promise((resolve, reject) => {
-        if (this.doctor.staffId === -1) {
-          this.scheduleList = defaultScheduleList
-          this.blockEvent = []
-          resolve()
-
-          return
-        }
-
-        institutionAPI
-          .getApptScheduleListByStaff({
-            scheduleBeginTime: this.startTimeStamp,
-            scheduleEndTime: this.endTimeStamp,
-            medicalInstitutionId: this.accessMedicalInstitution
-              .medicalInstitutionId,
-            staffId: this.doctor.staffId,
-          })
-          .then((res) => {
-            if (
-              Array.isArray(res.data) &&
-              res.data[0] &&
-              _.isPlainObject(res.data[0].institutionScheduleTableMap) &&
-              Array.isArray(
-                res.data[0].institutionScheduleTableMap[this.startTimeStamp],
-              )
-            ) {
-              this.scheduleList =
-                res.data[0].institutionScheduleTableMap[this.startTimeStamp]
-            }
-
-            resolve()
-          })
-          .catch(() => {
-            reject()
-          })
-      })
-    },
-    getApptBlockEventInfo() {
-      return new Promise((resolve, reject) => {
-        if (this.doctor.staffId === -1) {
-          this.blockEvent = []
-          return resolve()
-        }
-
-        appointmentAPI
-          .getApptBlockListByStaff({
-            blockBeginTime: moment(this.startTimeStamp)
-              .startOf('day')
-              .valueOf(),
-            blockEndTime: moment(this.endTimeStamp).endOf('day').valueOf(),
-            medicalInstitutionId: this.accessMedicalInstitution
-              .medicalInstitutionId,
-            blockEventType: 1,
-            businessIds: this.doctor.staffId,
-          })
-          .then((res) => {
-            if (res.code === 0) {
-              this.blockEvent = res.data
-            }
-            resolve()
-          })
-          .catch(() => {
-            reject()
-          })
-      })
-    },
-    // 获取全部在职医生的预约列表
-    getAllDoctorWithApptList() {
-      return new Promise((resolve) => {
-        appointmentAPI
-          .getAppointmentViewListFromStaff({
-            appointmentBeginTime: this.startTimeStamp,
-            appointmentEndTime: this.endTimeStamp,
-            medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
-            position: this.doctorValue,
-            staffIds: this.doctorList.map((doctor) => doctor.staffId).join(','),
-          })
-          .then((res) => {
-            this.allDoctorWithApptList = res.data
-            resolve()
-          })
-          .catch()
-      })
-    },
-    collapseChange(val) {
-      this.retract = val
-    },
-    cancel() {
-      this.showSearch = false
-    },
-    search({ value }) {
-      if (!value) return (this.apptSearchList = [])
-
-      this.searchValueWithAppt = value
-      const searchList = this.allDoctorWithApptList.filter((appt) => {
-        const mobile = appt.patient.mobile || ''
-        const pinyin = appt.patient.pinyin || ''
-        const patientName = appt.patient.patientName
-
-        return (
-          mobile.indexOf(value) > -1 ||
-          pinyin.indexOf(value) > -1 ||
-          patientName.indexOf(value) > -1
-        )
-      })
-
-      this.apptSearchList = searchList
-    },
-    clear() {
-      this.searchValueWithAppt = ''
-      this.apptSearchList = []
-    },
-    openDrawer() {
-      // this.$refs.dpmsDrawer.open()
-      this.$utils.push({ url: '/baseSubpackages/apptView/doctorList' })
-    },
-    changeCalendar({ fulldate }) {
-      this.$refs.apptTable.clearCreateMeet()
-      this.date = fulldate
-    },
-    createAppt(params) {
-      this.$utils.push({
-        url:
-          '/baseSubpackages/apptForm/apptForm?type=createAppt&startTimeStamp=' +
-          params.startTimeStamp +
-          '&endTimeStamp=' +
-          params.endTimeStamp +
-          '&doctorId=' +
-          this.doctor.staffId,
-      })
-    },
-    editAppt(params) {
-      this.$utils.push({
-        url:
-          '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
-          params.appointmentId,
-      })
-    },
-    // 抽屉医生选择
-    onSelected(doctor) {
-      this.accessMedicalInstitution = uni.getStorageSync(
-        'accessMedicalInstitution',
+      // 找到对于的预约数据，填入新的时间
+      let changedAppointment = this.appointmentList.find(
+        (appt) => appt.appointmentId === origin.id,
       )
-
-      if (this.doctor && doctor.staffId === this.doctor.staffId)
-        return this.$utils.back()
-      this.doctor = doctor
-      this.$utils.back()
-      this.$refs.apptTable && this.$refs.apptTable.clearCreateMeet()
-      this.getApptList()
-
-      // 选择完医生后记录最后一次选择诊所id
-      if (this.isHeaderWithLargeArea)
-        appointmentAPI.updateAccessMedicalInstitution({
-          medicalInstitutionId: this.accessMedicalInstitution
-            .medicalInstitutionId,
-        })
-
-      if (doctor.staffId === -1) {
-        this.scheduleList = defaultScheduleList
-        this.blockEvent = []
-      } else {
-        this.getApptScheduleInfo()
-        this.getApptBlockEventInfo()
+      changedAppointment = {
+        ...changedAppointment,
+        appointmentBeginTimeStamp: change.begin.valueOf(),
+        appointmentEndTimeStamp: change.end.valueOf(),
       }
-    },
-    refreshDoctorWithApptList() {
-      this.getAllDoctorWithApptList()
-        .then(() => {
-          this.search({ value: this.searchValueWithAppt })
-        })
-        .catch()
-    },
-    changeCard({ meet, type }) {
-      console.log('编辑改变', type, meet)
 
-      appointmentAPI
-        .updateAppointment({
-          appointmentJsonStr: JSON.stringify(meet),
-        })
-        .then(() => {
-          this.getApptList()
-        })
-        .catch()
+      // 这里会根据具体情况进行弹框确认
+      apptDataService.getApptVerify(
+        changedAppointment,
+        // 确认后进行更新，刷新预约视图
+        () => {
+          appointmentAPI
+            .updateAppointment({
+              appointmentJsonStr: JSON.stringify(changedAppointment),
+            })
+            .then(() => {
+              confirm(true)
+              this.refreshApptViewList()
+            })
+        },
+        () => {
+          // 取消，则预约回归到原始位置，不做任何处理
+          confirm(false)
+        },
+      )
     },
-  },
-  components: {
-    calendar,
-    dayTable,
-    apptCard,
+    onDetail({ detail }) {
+      this.$utils.push({
+        url: '/baseSubpackages/apptForm/apptDetail?appointmentId=' + detail.id,
+      })
+    },
+    async initData() {
+      this.$utils.showPageLoading()
+      // 1. 设置访问机构。对于总部/大区，访问机构需；对于非总部/大区，访问机构则为登录人当前机构
+      if (this.isHeaderWithLargeArea) {
+        const {
+          data: institutionTree,
+        } = await institutionAPI.getInstitutionList({
+          medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
+          institutionChainTypes: `${INSTITUTION_CHAIN},${INSTITUTION_REGIONAL}`,
+        })
+
+        const {
+          data: lastAccessInstitutionId,
+        } = await appointmentAPI.getLastAccessMedicalInstitution()
+
+        if (lastAccessInstitutionId !== -1) {
+          this.accessMedicalInstitution = findInstitutionInTree(
+            institutionTree,
+            lastAccessInstitutionId,
+          )
+        }
+      } else {
+        this.accessMedicalInstitution = this.medicalInstitution
+      }
+      // 2. 初始化为所有医生
+      this.apptViewDoctor = {
+        staffId: 'all',
+        staffName: '全部医生',
+        position: 2,
+      }
+      // 3. 获取医生列表和预约列表
+      const { data: doctorList } = await getDoctorListByInstitutionId(
+        this.accessMedicalInstitution.medicalInstitutionId,
+      )
+      this.doctorList = doctorList
+
+      await this.refreshApptViewList()
+      this.$utils.hidePageLoading()
+    },
+    initEvent() {
+      uni.$on(globalEventKeys.onSelectApptViewDoctor, (doctor) => {
+        console.log('onSelectApptViewDoctor:', doctor)
+        this.doctorList = uni.getStorageSync('doctorList')
+        this.accessMedicalInstitution = uni.getStorageSync(
+          'accessMedicalInstitution',
+        )
+        this.apptViewDoctor = doctor
+        this.refreshApptViewList()
+      })
+      uni.$on(globalEventKeys.apptFormWithSaveSuccess, () =>
+        this.refreshApptViewList(),
+      )
+    },
+    async refreshApptViewList() {
+      if (!this.apptViewDoctor || !this.accessMedicalInstitution) {
+        return
+      }
+
+      // 1. 请求预约数据
+      const {
+        data: appointmentList,
+      } = await appointmentAPI.getAppointmentViewListFromStaff({
+        appointmentBeginTime: this.appointmentBeginTime,
+        appointmentEndTime: this.appointmentEndTime,
+        medicalInstitutionId: this.accessMedicalInstitution
+          .medicalInstitutionId,
+        position: POSITION_DOCTOR,
+        staffId: this.apptViewDoctor.staffId,
+        staffIds: this.staffIds,
+      })
+      this.appointmentList = appointmentList
+
+      // 2. 请求日程数据
+      const {
+        data: blockEventList,
+      } = await appointmentAPI.getApptBlockListByStaff({
+        blockBeginTime: this.appointmentBeginTime,
+        blockEndTime: this.appointmentEndTime,
+        medicalInstitutionId: this.accessMedicalInstitution
+          .medicalInstitutionId,
+        blockEventType: STAFF_BLOCK,
+        businessIds: this.staffIds,
+      })
+      this.blockEventList = blockEventList
+    },
   },
 }
 </script>
@@ -636,87 +310,5 @@ export default {
 page {
   width: 100%;
   height: 100%;
-}
-.apptViewPage {
-  width: 100%;
-  height: 100%;
-  .emptyInstitution {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .apptView {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-
-    .apptCardInfo {
-      position: relative;
-      z-index: 1;
-
-      .topGray {
-        width: 100%;
-        height: 20rpx;
-      }
-      .curCardInfo {
-        background-color: #fff;
-        box-sizing: border-box;
-        padding: 0 24rpx 0 24rpx;
-        font-size: 26rpx;
-        width: 100%;
-        height: 76rpx;
-        line-height: 76rpx;
-        box-shadow: 0 5rpx 10rpx rgba($color: #000000, $alpha: 0.15);
-        display: flex;
-        justify-content: space-between;
-
-        .leftCardInfo {
-          display: flex;
-          flex: 1;
-          overflow: hidden;
-          padding-right: 20rpx;
-          .doctorName {
-            font-size: 28rpx;
-            max-width: 50%;
-            display: inline-block;
-            overflow: hidden;
-            .doctorShowName {
-              overflow: hidden;
-              max-width: calc(100% - 50rpx);
-            }
-          }
-          .doctorSelect {
-            display: flex;
-            align-items: center;
-
-            .changeDoctorIcon {
-              display: flex;
-            }
-          }
-        }
-
-        .rightCardInfo {
-          display: flex;
-        }
-        .iconfont {
-          font-size: 40rpx;
-          color: $common-color;
-        }
-      }
-    }
-
-    .apptSearch {
-      flex: 1 1 100%;
-
-      .emptyPatient {
-        color: rgba(0, 0, 0, 0.65);
-        font-size: 28rpx;
-      }
-    }
-  }
 }
 </style>
