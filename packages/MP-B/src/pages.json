@@ -365,6 +365,7 @@
         }
       ]
     },
+
     {
       "root": "pages/charge",
       "name": "charge",
@@ -415,6 +416,48 @@
           "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/finance-report",
+      "name": "finance",
+      "pages": [
+        {
+          "path": "arrearsPatient",
+          "style": {
+            "navigationBarTitleText": "欠费患者"
+          }
+        },
+        {
+          "path": "billDetails",
+          "style": {
+            "navigationBarTitleText": "账单明细"
+          }
+        },
+        {
+          "path": "dealDetails",
+          "style": {
+            "navigationBarTitleText": "明细交易"
+          }
+        },
+        {
+          "path": "paymentReconclie",
+          "style": {
+            "navigationBarTitleText": "支付方式对账"
+          }
+        },
+        {
+          "path": "projectDetails",
+          "style": {
+            "navigationBarTitleText": "项目明细"
+          }
+        },
+        {
+          "path": "reconclieCalendar",
+          "style": {
+            "navigationBarTitleText": "对账日历"
           }
         }
       ]

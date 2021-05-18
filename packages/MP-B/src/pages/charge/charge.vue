@@ -76,7 +76,6 @@ import itemType from './common/itemType'
 import chargeItem from './common/chargeItem'
 import bottomWrap from './common/bottomWrap'
 import chargeButton from './common/chargeButton'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import billAPI from '@/APIS/bill/bill.api'
 
@@ -227,7 +226,7 @@ export default {
       immediate: true,
     },
   },
-  components: { chargeItem, itemType, bottomWrap, chargeButton, actionSheet },
+  components: { chargeItem, itemType, bottomWrap, chargeButton },
 }
 </script>
 <style lang="scss" scoped>

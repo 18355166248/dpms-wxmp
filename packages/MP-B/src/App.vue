@@ -235,6 +235,9 @@ button::after {
 .icon-search:before {
   content: '\e631';
 }
+.icon-bill-fill::before {
+  content: '\e67d';
+}
 
 /* iconfont图标 end */
 </style>
