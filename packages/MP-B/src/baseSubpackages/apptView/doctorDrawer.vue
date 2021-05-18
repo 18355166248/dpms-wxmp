@@ -8,30 +8,32 @@
         :value="accessMedicalInstitution.medicalInstitutionSimpleCode"
         @click.native="openSelectMedicalInstitution"
       />
-      <view class="p-16">
-        <view class="title">按医生查看：</view>
-        <view class="btnGroup">
-          <view
-            v-for="doctor in doctorSelectList"
-            :key="doctor.staffId"
-            :class="{
-              btn: true,
-              btnActive: doctor.staffId === apptViewDoctor.staffId,
-              block: doctor.staffId === 'all',
-            }"
-            @click="onSelectDoctor(doctor)"
-          >
-            {{ doctor.staffName }}
+      <scroll-view scroll-y style="height: calc(100% - 155px);">
+        <view class="p-16">
+          <view class="title">按医生查看：</view>
+          <view class="btnGroup">
+            <view
+              v-for="doctor in doctorSelectList"
+              :key="doctor.staffId"
+              :class="{
+                btn: true,
+                btnActive: doctor.staffId === apptViewDoctor.staffId,
+                block: doctor.staffId === 'all',
+              }"
+              @click="onSelectDoctor(doctor)"
+            >
+              {{ doctor.staffName }}
+            </view>
+          </view>
+          <view class="title">其他：</view>
+          <view class="btnGroup">
+            <view class="btn btnActive">
+              待定预约
+            </view>
           </view>
         </view>
-        <view class="title">其他：</view>
-        <view class="btnGroup">
-          <view class="btn btnActive">
-            待定预约
-          </view>
-        </view>
-        <view class="btnConfirm btnActive" @click="confirm">确认</view>
-      </view>
+      </scroll-view>
+      <view class="btnConfirm btnActive" @click="confirm">确认</view>
     </uni-drawer>
     <!-- 选择诊所弹窗 -->
     <selectMedicalInstitution

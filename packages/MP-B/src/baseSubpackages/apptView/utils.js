@@ -36,11 +36,11 @@ export function appointment2schedulerResource(data) {
         doctorId = staff.staffId
       }
     }
-
+    
     // subtitle为性别和诊断类型
     let subTitle = GENDER_ENUM.properties[d.patient.gender].text.zh_CN
-    if (d.visType !== null && d.visType !== undefined) {
-      subTitle = subTitle + ',' + VIS_TYPE_ENUM.properties[d.visType].text.zh_CN
+    if (d.visTypeName) {
+      subTitle = subTitle + ',' + d.visTypeName
     }
 
     return {
