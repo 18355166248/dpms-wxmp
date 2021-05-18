@@ -169,7 +169,6 @@ import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import payResult from './common/payResult'
@@ -210,7 +209,6 @@ export default {
   },
   components: {
     ChargestandTitle,
-    actionSheet,
     payResult,
   },
   computed: {

@@ -23,7 +23,7 @@
               </div>
               <div
                 @click="onEditPirce(item)"
-                v-if="btnPremisstion('changes_unit_price')"
+                v-if="btnPremisstion('changes_unit_price') || chargeType === 1"
                 class="iconfont icon-edit edit-icon-style"
               />
             </div>
@@ -107,6 +107,7 @@ export default {
   },
   computed: {
     ...mapState('dispose', ['disposeList', 'receivableAmount']),
+    ...mapState('checkstand', ['chargeType']),
     hasDiscountItem() {
       return this.disposeList.some((item) => item.allBillDiscount)
     },

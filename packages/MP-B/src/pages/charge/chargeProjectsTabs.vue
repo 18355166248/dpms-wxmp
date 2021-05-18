@@ -14,18 +14,22 @@
       @change="changeTab"
     />
     <!--搜索-->
-    <searchInput v-if="currentTab===0||currentTab===2" :disabled="disabled" @click.native="search" ></searchInput>
+    <searchInput
+      v-if="currentTab === 0 || currentTab === 2"
+      :disabled="disabled"
+      @click.native="search"
+    ></searchInput>
     <view class="main-container">
       <!--诊疗服务-->
-      <view  v-show="currentTab===0">
+      <view v-show="currentTab === 0">
         <chargeTab0></chargeTab0>
       </view>
       <!--套餐项目-->
-      <view v-show="currentTab===1">
+      <view v-show="currentTab === 1">
         <chargeTab1></chargeTab1>
       </view>
       <!--销售商品-->
-      <view v-show="currentTab===2">
+      <view v-show="currentTab === 2">
         <chargeTab2></chargeTab2>
       </view>
     </view>
@@ -33,7 +37,7 @@
     <view class="bottom-wrap">
       <view class="btns">
         <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
-        >下一步
+          >下一步
         </chargeButton>
       </view>
     </view>
@@ -50,51 +54,43 @@ export default {
   name: '',
   data() {
     return {
-      currentTab:2,
+      currentTab: 2,
       tabList: [
         { name: '诊疗服务', val: 0 },
         { name: '套餐项目', val: 1 },
         { name: '销售商品', val: 2 },
       ],
       buttonStyle: { width: '686rpx' },
-      classifyList:[],
-      disabled:true
+      classifyList: [],
+      disabled: true,
     }
   },
-  computed: {
-
-  },
-  onLoad() {
-
-  },
-  onShow() {
-
-  },
+  computed: {},
+  onLoad() {},
+  onShow() {},
   onHide() {},
   onUnload() {},
   methods: {
-    changeTab(i){
+    changeTab(i) {
       this.currentTab = this.tabList[i].val
     },
     //下一步
-    nextStep(){
-
-    },
-    search(){
-      console.log('search');
-      if (this.currentTab===0){
+    nextStep() {},
+    search() {
+      console.log('search')
+      if (this.currentTab === 0) {
         uni.navigateTo({
           url: `/pages/charge/searchChargeItem`,
         })
-      }else{
+      } else {
         uni.navigateTo({
           url: `/pages/charge/searchMerchandise`,
         })
       }
-    }
+    },
   },
   watch: {},
-  components: { searchInput,chargeButton,chargeTab0,chargeTab1,chargeTab2 },
+  components: { searchInput, chargeButton, chargeTab0, chargeTab1, chargeTab2 },
 }
 </script>
 <style lang="scss" scoped>
@@ -114,7 +110,7 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  .main-container{
+  .main-container {
     display: flex;
     flex-grow: 20;
     overflow-y: scroll;
@@ -130,6 +126,5 @@ export default {
       justify-content: space-between;
     }
   }
-
 }
 </style>

@@ -1,6 +1,13 @@
 import httper from '../http'
 
 const billAPI = {
+  // 小程序-财务对账
+  calendarList(data) {
+    return httper.get('billing/stat/reconciliation/calendar/list',data)
+  },
+  calendarDetail(data) {
+    return httper.get('/billing/stat/reconciliation/calendar/detail',data)
+  },
   //小程序-统计报表-营收报表-营收日报表
   revenueList(data) {
     return httper.get('billing/mini-apps/analyze/revenue/list', data)
@@ -83,7 +90,10 @@ const billAPI = {
   },
   //获取套餐项目分类
   getCategoryList(data) {
-    return httper.get('billing/settings/charge-package-type/category-list', data)
+    return httper.get(
+      'billing/settings/charge-package-type/category-list',
+      data,
+    )
   },
   //获取销售商品列表
   getMerchandiseList(data) {

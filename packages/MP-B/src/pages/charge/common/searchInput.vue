@@ -1,6 +1,6 @@
 <template>
   <!--搜索-->
-  <view class="search-input" >
+  <view class="search-input">
     <view class="iconfont icon-search"></view>
     <input
       type="text"
@@ -13,34 +13,29 @@
   </view>
 </template>
 <script>
-
 export default {
   name: '',
   data() {
-    return {
-
-    }
+    return {}
   },
-  props:{
-    disabled:{
-      type:Boolean,
-      default:false
-    }
+  props: {
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {},
   onLoad() {},
-  onShow() {
-
-  },
+  onShow() {},
   onHide() {},
   onUnload() {},
   methods: {
-    searchProject(searchVal){
-      this.$emit('onSearch',searchVal)
-    }
+    searchProject(searchVal) {
+      this.$emit('onSearch', searchVal)
+    },
   },
   watch: {},
-  components: {  },
+  components: {},
 }
 </script>
 <style lang="scss" scoped>

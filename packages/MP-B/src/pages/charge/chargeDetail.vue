@@ -57,7 +57,9 @@
         type='solid'
         @click='overdueCharge'
         :buttonStyle="{ width:'686rpx' }"
-      >收欠费
+        v-if="btnPremisstion('arrears_of_fees')"
+      >
+        收欠费
       </chargeButton>
     </view>
     <!-- 底部收费项-->

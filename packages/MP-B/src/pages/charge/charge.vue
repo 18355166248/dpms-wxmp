@@ -76,7 +76,6 @@ import itemType from './common/itemType'
 import chargeItem from './common/chargeItem'
 import bottomWrap from './common/bottomWrap'
 import chargeButton from './common/chargeButton'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import billAPI from '@/APIS/bill/bill.api'
 
@@ -213,9 +212,9 @@ export default {
     //选择收费方式 跳转到对应的选择收费项目页面
     selectType(item) {
       this.setChargeType(item.type)
-      let url='/pages/charge/selectChargeTypes'
-      if (item.type!==1){
-        url='/pages/charge/chargeProjectsTabs'
+      let url = '/pages/charge/selectChargeTypes'
+      if (item.type !== 1) {
+        url = '/pages/charge/chargeProjectsTabs'
       }
       uni.navigateTo({
         url: url,
@@ -235,7 +234,7 @@ export default {
       immediate: true,
     },
   },
-  components: { chargeItem, itemType, bottomWrap, chargeButton, actionSheet },
+  components: { chargeItem, itemType, bottomWrap, chargeButton },
 }
 </script>
 <style lang="scss" scoped>
@@ -273,7 +272,7 @@ export default {
       width: 0;
       border: 2rpx dashed rgba(0, 0, 0, 0.15);
       transform-origin: 50% 0;
-      transform: scale(0.5,1);
+      transform: scale(0.5, 1);
     }
   }
 

@@ -1,5 +1,5 @@
 <template>
-  <view class="container-wrap" >
+  <view class="container-wrap">
     <!--选择项目-->
     <view class="projects-wrap">
       <view class="list-wrap">
@@ -10,35 +10,52 @@
           :key="item.settingsChargePackageTypeId"
         >
           <view class="header" @click="toggleClassify(item)">
-            <view class="ellipsisChargeName">{{item.settingsChargePackageTypeName }}</view>
+            <view class="ellipsisChargeName">{{
+              item.settingsChargePackageTypeName
+            }}</view>
             <view class="icon-wrap">
               <view class="iconfont iconup1" v-if="item.open"></view>
               <view class="iconfont icondown1" v-else></view>
             </view>
           </view>
           <!--二级分类-->
-          <view class="classify-second" v-if="item.children&&item.children.length>0&&item.open ">
-              <view v-for="item2 in item.children" :key="item2.settingsChargePackageTypeId">
-                <view class="header" @click="toggleClassify(item2)">
-                  <view class="ellipsisChargeName">{{item2.settingsChargePackageTypeName}}</view>
-                  <view class="icon-wrap">
-                    <view class="iconfont iconup1" v-if="item2.open"></view>
-                    <view class="iconfont icondown1" v-else></view>
-                  </view>
+          <view
+            class="classify-second"
+            v-if="item.children && item.children.length > 0 && item.open"
+          >
+            <view
+              v-for="item2 in item.children"
+              :key="item2.settingsChargePackageTypeId"
+            >
+              <view class="header" @click="toggleClassify(item2)">
+                <view class="ellipsisChargeName">{{
+                  item2.settingsChargePackageTypeName
+                }}</view>
+                <view class="icon-wrap">
+                  <view class="iconfont iconup1" v-if="item2.open"></view>
+                  <view class="iconfont icondown1" v-else></view>
                 </view>
-                <view class="classify-third" v-if="item2.children&&item2.children.length>0&&item2.open">
-                  <!--三级分类-->
-                  <view class="header" v-for="item3 in item2.children" :key="item3.settingsChargePackageTypeId">
-                    {{item3.settingsChargePackageTypeName}}
-                    <view class="checkBox">
-                      <dpmsCheckbox
-                        shape="square"
-                        v-model="item3.checked"
-                      ></dpmsCheckbox>
-                    </view>
+              </view>
+              <view
+                class="classify-third"
+                v-if="item2.children && item2.children.length > 0 && item2.open"
+              >
+                <!--三级分类-->
+                <view
+                  class="header"
+                  v-for="item3 in item2.children"
+                  :key="item3.settingsChargePackageTypeId"
+                >
+                  {{ item3.settingsChargePackageTypeName }}
+                  <view class="checkBox">
+                    <dpmsCheckbox
+                      shape="square"
+                      v-model="item3.checked"
+                    ></dpmsCheckbox>
                   </view>
                 </view>
               </view>
+            </view>
           </view>
         </view>
       </view>
@@ -52,38 +69,37 @@ export default {
   data() {
     return {
       //分类列表
-      classifyList:[],
+      classifyList: [],
     }
   },
   created() {
-      this.getCategoryList()
+    this.getCategoryList()
   },
   methods: {
-    getCategoryList(){
-      billAPI.getCategoryList().then((res)=>{
-        if (res.code===0&&res?.data){
-          this.handleClassifyList(res.data,'children')
+    getCategoryList() {
+      billAPI.getCategoryList().then((res) => {
+        if (res.code === 0 && res?.data) {
+          this.handleClassifyList(res.data, 'children')
         }
       })
     },
-    handleClassifyList(list,key){
+    handleClassifyList(list, key) {
       list.forEach((item) => {
         item.open = false
-        if (item[key]&&item[key].length > 0) {
-            this.handleClassifyList(item[key],key)
-        }else{
+        if (item[key] && item[key].length > 0) {
+          this.handleClassifyList(item[key], key)
+        } else {
           item.checked = false
         }
       })
       this.classifyList = list
     },
-    toggleClassify(item){
+    toggleClassify(item) {
       item.open = !item.open
-    }
+    },
   },
-  watch: {
-  },
-  components: {  },
+  watch: {},
+  components: {},
 }
 </script>
 <style lang="scss" scoped>
@@ -95,7 +111,7 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
-.container-wrap{
+.container-wrap {
   width: 750rpx;
   display: flex;
   flex-grow: 20;
@@ -116,8 +132,8 @@ export default {
       justify-content: space-between;
       padding: 32rpx 0;
       border-bottom: 2rpx solid #f5f5f5;
-      .icon-wrap{
-        width:48rpx;
+      .icon-wrap {
+        width: 48rpx;
         height: 48rpx;
         display: flex;
         align-items: center;
@@ -136,7 +152,8 @@ export default {
       }
     }
 
-    .classify-second,.classify-third{
+    .classify-second,
+    .classify-third {
       margin-left: 32rpx;
     }
     .checkBox {
@@ -144,5 +161,4 @@ export default {
     }
   }
 }
-
 </style>

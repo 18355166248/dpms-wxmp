@@ -12,17 +12,13 @@
           :key="index"
         >
           <view class="left-infos">
-            <view>{{
-                item.settingsChargeItemName
-              }}</view>
-            <span>{{
-                item.settingsChargeItemCode
-              }}</span>
+            <view>{{ item.settingsChargeItemName }}</view>
+            <span>{{ item.settingsChargeItemCode }}</span>
           </view>
           <view class="right-infos">
             <span v-if="item.unitAmount">{{
-                item.unitAmount | thousandFormatter(2, '￥')
-              }}</span>
+              item.unitAmount | thousandFormatter(2, '￥')
+            }}</span>
             <view class="checkBox">
               <dpmsCheckbox shape="square" v-model="item.checked">
               </dpmsCheckbox>
@@ -38,7 +34,7 @@
     <view class="bottom-wrap">
       <view class="btns">
         <chargeButton type="solid" :buttonStyle="buttonStyle" @click="complete"
-        >完成
+          >完成
         </chargeButton>
       </view>
     </view>
@@ -62,9 +58,7 @@ export default {
   onLoad(params) {
     this.searchItem('')
   },
-  onShow() {
-
-  },
+  onShow() {},
   onHide() {},
   onUnload() {},
   methods: {
@@ -76,19 +70,19 @@ export default {
     },
     searchItem(searchVal) {
       billAPI
-      .searchChargeItem({
-        searchValue: searchVal || '',
-      })
-      .then((res) => {
-        if (res.data?.length > 0) {
-          this.handleResult(res.data)
-        } else {
+        .searchChargeItem({
+          searchValue: searchVal || '',
+        })
+        .then((res) => {
+          if (res.data?.length > 0) {
+            this.handleResult(res.data)
+          } else {
+            this.handleResult([])
+          }
+        })
+        .catch((err) => {
           this.handleResult([])
-        }
-      })
-      .catch((err) => {
-        this.handleResult([])
-      })
+        })
     },
     //搜索
     handleResult(list) {
@@ -103,7 +97,7 @@ export default {
     },
   },
   watch: {},
-  components: { chargeButton,searchInput },
+  components: { chargeButton, searchInput },
 }
 </script>
 <style lang="scss" scoped>
@@ -167,7 +161,7 @@ export default {
     border-top: 1rpx solid #e5e5e5;
     padding-bottom: constant(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
-    .btns{
+    .btns {
       padding: 16rpx 32rpx;
       display: flex;
       justify-content: space-between;

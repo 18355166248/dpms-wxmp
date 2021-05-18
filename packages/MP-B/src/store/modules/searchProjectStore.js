@@ -1,6 +1,6 @@
 const state = {
   searchProjectList: [],
-  searchChargeList:[]
+  searchChargeList: [],
 }
 
 const mutations = {
