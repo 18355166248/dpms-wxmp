@@ -81,6 +81,14 @@ const billAPI = {
   searchChargeItem(data) {
     return httper.get('billing/settings/charge-item/select-list/fuzzy', data)
   },
+  //获取套餐项目分类
+  getCategoryList(data) {
+    return httper.get('billing/settings/charge-package-type/category-list', data)
+  },
+  //获取销售商品列表
+  getMerchandiseList(data) {
+    return httper.get('physical/merchandise/list-select', data)
+  },
   //支付方式
   getPayTypes(data) {
     return httper.get('pay/settings/pay-transaction-channel/list', data)

@@ -14,16 +14,21 @@
       @change="changeTab"
     />
     <!--搜索-->
-    <searchInput></searchInput>
+    <searchInput v-if="currentTab===0||currentTab===2" :disabled="disabled" @click.native="search" ></searchInput>
     <view class="main-container">
       <!--诊疗服务-->
-      <chargeTab0 v-if="currentTab===0"></chargeTab0>
+      <view  v-show="currentTab===0">
+        <chargeTab0></chargeTab0>
+      </view>
       <!--套餐项目-->
-      <view v-if="currentTab===1"></view>
+      <view v-show="currentTab===1">
+        <chargeTab1></chargeTab1>
+      </view>
       <!--销售商品-->
-      <view v-if="currentTab===2"></view>
+      <view v-show="currentTab===2">
+        <chargeTab2></chargeTab2>
+      </view>
     </view>
-
     <!--下一步-->
     <view class="bottom-wrap">
       <view class="btns">
@@ -39,19 +44,21 @@ import billAPI from '@/APIS/bill/bill.api'
 import searchInput from './common/searchInput'
 import chargeButton from './common/chargeButton'
 import chargeTab0 from './common/chargeTab0'
+import chargeTab1 from './common/chargeTab1'
+import chargeTab2 from './common/chargeTab2'
 export default {
   name: '',
-
   data() {
     return {
-      currentTab:0,
+      currentTab:2,
       tabList: [
         { name: '诊疗服务', val: 0 },
         { name: '套餐项目', val: 1 },
         { name: '销售商品', val: 2 },
       ],
       buttonStyle: { width: '686rpx' },
-      classifyList:[]
+      classifyList:[],
+      disabled:true
     }
   },
   computed: {
@@ -69,9 +76,25 @@ export default {
     changeTab(i){
       this.currentTab = this.tabList[i].val
     },
+    //下一步
+    nextStep(){
+
+    },
+    search(){
+      console.log('search');
+      if (this.currentTab===0){
+        uni.navigateTo({
+          url: `/pages/charge/searchChargeItem`,
+        })
+      }else{
+        uni.navigateTo({
+          url: `/pages/charge/searchMerchandise`,
+        })
+      }
+    }
   },
   watch: {},
-  components: { searchInput,chargeButton,chargeTab0 },
+  components: { searchInput,chargeButton,chargeTab0,chargeTab1,chargeTab2 },
 }
 </script>
 <style lang="scss" scoped>
@@ -94,6 +117,7 @@ export default {
   .main-container{
     display: flex;
     flex-grow: 20;
+    overflow-y: scroll;
   }
   .bottom-wrap {
     background: #fff;

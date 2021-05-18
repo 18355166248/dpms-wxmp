@@ -418,6 +418,18 @@
           }
         },
         {
+          "path": "searchChargeItem",
+          "style": {
+            "navigationBarTitleText": "搜索诊疗项目"
+          }
+        },
+        {
+          "path": "searchMerchandise",
+          "style": {
+            "navigationBarTitleText": "搜索销售商品"
+          }
+        },
+        {
           "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"

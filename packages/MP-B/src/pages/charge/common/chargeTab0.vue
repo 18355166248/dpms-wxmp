@@ -1,6 +1,6 @@
 <template>
   <!--诊疗服务-->
-  <view class="container-wrap" >
+  <view class="container-wrap" v-if="classifyList.length>0">
     <!--一级类目列表-->
     <view class="left-scroll">
       <scroll-view
@@ -34,7 +34,7 @@
         @scroll="onItemListScroll"
       >
         <view class="scroll-view-item"
-              v-for="(type,index) in classifyList"
+              v-for="(type) in classifyList"
               :key="type.settingsChargeTypeId"
               :id="`item`+type.settingsChargeTypeId"
         >
@@ -43,13 +43,14 @@
             <view class="ellipsisChargeName">{{type.settingsChargeTypeName}}</view>
           </view>
           <!--二级类目-->
-          <view class="chargeItem" v-for="(item,index) in type.chargeItemList" :key="item.settingsChargeItemId">
+          <view class="chargeItem" v-for="(item) in type.chargeItemList" :key="item.settingsChargeItemId">
             <view class="left-item">
               <view class="ellipsisChargeName name">{{item.settingsChargeItemName}}</view>
               <view class="price">{{item.unitAmount | thousandFormatter(2, '￥')}}</view>
             </view>
-            <view class="check-box" @click="toggleChecked(item)">
-              <view class="iconfont icon-check-square-fill" v-if="item.checked" :style="{ color: '#5cbb89' }" ></view>
+            <view class="check-box">
+              <dpmsCheckbox shape="square" :value="item.checked" @change="onCheckBoxChange($event, item)">
+              </dpmsCheckbox>
             </view>
           </view>
         </view>
@@ -59,6 +60,7 @@
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
+import { mapState } from 'vuex';
 export default {
   name: '',
   data() {
@@ -69,17 +71,23 @@ export default {
       classifyList:[],
       //滚动的锚点id
       scrollTypeId:'',
-      scrollItemId:''
+      scrollItemId:'',
     }
+  },
+  computed:{
+    ...mapState('searchProjectStore', ['searchChargeList']),
+    ...mapState('dispose', ['disposeList']),
+  },
+  created() {
+    this.getChargeItems()
   },
   mounted() {
     this.getScrollHeight();
-    this.getChargeItems()
   },
   methods: {
     getScrollHeight(){
       uni.getSystemInfo({
-        success: res => {
+        success: () => {
           let info = uni.createSelectorQuery().select('.main-container');
           info.boundingClientRect(data => {
             this.scrollHeight = data.height + 'px';
@@ -93,7 +101,7 @@ export default {
       .getChargeItems()
       .then((res) => {
         if (res?.data.length > 0) {
-          this.handleClassifyList(res.data,'chargeItemList')
+          this.classifyList = this.handleClassifyList(res.data,'chargeItemList')
           this.$nextTick(()=>{
             this.getChargeItemHeight(res.data)
           })
@@ -103,8 +111,8 @@ export default {
     },
     //处理列表数据
     handleClassifyList(list, key) {
-      list.forEach((item,index) => {
-        if (item[key].length > 0) {
+      return list.map((item,index) => {
+        if (item[key]&&item[key].length > 0) {
           if (index===0){
             this.currentTypeId=item.settingsChargeTypeId
           }
@@ -112,17 +120,17 @@ export default {
             project.checked = false
           })
         }
+        return item
       })
-      this.classifyList = list
     },
     //切换一级目录
     toggleChargeType(item){
       this.currentTypeId=item.settingsChargeTypeId;
       this.scrollItemId='item'+item.settingsChargeTypeId
     },
-    //二级目录选中和取消
-    toggleChecked(item){
-      item.checked=!item.checked
+    //选中和取消
+    onCheckBoxChange(value,item){
+      item.checked=value
     },
     //右侧列表滚动
     onItemListScroll(event){
@@ -153,8 +161,42 @@ export default {
         }
       })
     },
+    //合并数据
+    mergeChargeList(){
+      this.classifyList.forEach((item)=>{
+        item?.chargeItemList?.length>0&&item.chargeItemList.forEach((charge)=>{
+          if (this.checkChargeSelected(this.searchChargeList,charge)){
+            charge.checked=true
+          }
+        })
+      })
+    },
+    filterData(){
+      this.classifyList.forEach((item)=>{
+        item?.chargeItemList?.length>0&&item.chargeItemList.forEach((charge)=>{
+          if (this.checkChargeSelected(this.disposeList,charge)){
+            charge.checked=true
+          }else{
+            charge.checked=false
+          }
+        })
+      })
+    },
+    checkChargeSelected(list,charge){
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].settingsChargeItemId === charge.settingsChargeItemId) {
+          return true
+        }
+      }
+    },
   },
   watch: {
+    searchChargeList(){
+      this.mergeChargeList()
+    },
+    disposeList(){
+      this.filterData()
+    }
   },
   components: {  },
 }
@@ -168,10 +210,10 @@ export default {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
 }
-//container-wrap
 .container-wrap{
   display: flex;
-  flex-grow: 20;
+  flex-grow: 2;
+  width: 750rpx;
   .left-scroll{
     display: flex;
     width: 250rpx;
@@ -238,16 +280,12 @@ export default {
             }
           }
           .check-box{
-            width: 28rpx;
-            height: 28rpx;
-            box-sizing: border-box;
-            border: 2rpx solid #d9d9d9;
-            border-radius: 4rpx;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
           }
         }
+      }
+      .scroll-view-item:last-child{
+        border-bottom:none
       }
     }
   }
