@@ -31,7 +31,6 @@
           <view class="children" v-if="item.open">
             <!--一级和二级分类-->
             <view
-              v-if="chargeType === 1"
               class="project"
               v-for="project in item.children"
               :key="project.settingsChargeTypeId"
@@ -45,21 +44,6 @@
                   v-model="project.checked"
                   @change="handleData"
                 >
-                </dpmsCheckbox>
-              </view>
-            </view>
-            <!--二级和三级分类-->
-            <view
-              v-else
-              class="project"
-              v-for="project in item.chargeItemList"
-              :key="project.settingsChargeItemId"
-            >
-              <view class="ellipsisChargeName">{{
-                project.settingsChargeItemName
-              }}</view>
-              <view class="checkBox">
-                <dpmsCheckbox shape="square" v-model="project.checked">
                 </dpmsCheckbox>
               </view>
             </view>
@@ -97,30 +81,18 @@ export default {
     ...mapState('checkstand', ['chargeType', 'itemType']),
   },
   onLoad() {
-    this.getChargeList()
+    this.getChargeTypes()
   },
   onShow() {
     const mergeList = [...this.searchProjectList, ...this.disposeList]
     if (this.classifyList.length > 0) {
-      if (this.chargeType === 1) {
-        this.chargeTypesMerge(mergeList)
-      } else {
-        this.chargeItemsMerge(mergeList)
-      }
+      this.chargeTypesMerge(mergeList)
     }
   },
   onHide() {},
   onUnload() {},
   methods: {
     ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
-    //获取收费项目收费项目
-    async getChargeList() {
-      if (this.chargeType === 1) {
-        this.getChargeTypes()
-      } else {
-        this.getChargeItems()
-      }
-    },
     //获取一级和二级分类
     getChargeTypes() {
       billAPI
@@ -134,17 +106,6 @@ export default {
           console.log(err)
         })
     },
-    //获取二级和三级分类
-    getChargeItems() {
-      billAPI
-        .getChargeItems()
-        .then((res) => {
-          if (res?.data.length > 0) {
-            this.handleClassifyList(res.data, 'chargeItemList')
-          }
-        })
-        .catch(() => {})
-    },
     //处理列表数据
     handleClassifyList(list, key) {
       list.forEach((item) => {
@@ -157,25 +118,7 @@ export default {
       })
       this.classifyList = list
     },
-    //合并数据  从搜索页面和收费项目清单列表返回的时候 需要将那两页的数据进行合并
-    chargeItemsMerge(mergeList) {
-      this.classifyList.forEach((item) => {
-        if (this.checkTypeId(item.settingsChargeTypeId, mergeList)) {
-          item.open = true
-          item?.chargeItemList.forEach((charge) => {
-            charge.checked = !!this.checkItemId(
-              charge.settingsChargeItemId,
-              mergeList,
-            )
-          })
-        } else {
-          item.open = false
-          tem?.chargeItemList.forEach((item) => {
-            item.checked = false
-          })
-        }
-      })
-    },
+    //合并数据 从搜索页面回来 或者从收费项目清单页面回来
     chargeTypesMerge(mergeList) {
       this.classifyList.forEach((item) => {
         if (this.checkParentTypeId(item.settingsChargeTypeId, mergeList)) {
@@ -194,6 +137,7 @@ export default {
         }
       })
     },
+    //判断一级分类是否被选中
     checkParentTypeId(id, list) {
       for (let i = 0; i < list.length; i++) {
         const parentId =
@@ -203,16 +147,10 @@ export default {
         }
       }
     },
+    //判断一级分类的id
     checkTypeId(id, list) {
       for (let i = 0; i < list.length; i++) {
         if (list[i] && list[i].settingsChargeTypeId === id) {
-          return true
-        }
-      }
-    },
-    checkItemId(id, list) {
-      for (let i = 0; i < list.length; i++) {
-        if (list[i] && list[i].settingsChargeItemId === id) {
           return true
         }
       }
@@ -241,6 +179,7 @@ export default {
         url: '/pages/charge/chargeProjectsList',
       })
     },
+    //处理数据给收费项目清单页面
     handleData() {
       let targetList = []
       let index = 0
@@ -259,18 +198,11 @@ export default {
             if (project.checked) {
               index += 1
               project.pageSerialNo = index
-              project.allBillDiscount =
-                this.chargeType === 1 ? true : project.allBillDiscount
-              project.isSingleDiscount =
-                this.chargeType === 1 ? false : project.isSingleDiscount
-              project.itemCode =
-                project.settingsChargeItemCode || project.settingsChargeTypeCode
-              project.itemName =
-                project.settingsChargeItemName || project.settingsChargeTypeName
-              project.parentItemCode =
-                this.chargeType === 1
-                  ? item.settingsChargeTypeParentId
-                  : item.settingsChargeTypeCode
+              project.allBillDiscount = true
+              project.isSingleDiscount = false
+              project.itemCode = project.settingsChargeTypeCode
+              project.itemName = project.settingsChargeTypeName
+              project.parentItemCode = item.settingsChargeTypeParentId
               project.totalAmount = 0
               project.singleDiscountAfterAmount = 0
               project.receivableAmount = 0

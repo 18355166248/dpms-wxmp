@@ -108,6 +108,14 @@ export default {
           text: '简易收费',
           type: 1,
         },
+        {
+          text: '明细收费',
+          type: 2,
+        },
+        {
+          text: '处置收费',
+          type: 3,
+        },
       ],
       showActionSheet: false,
       receivableData: {
@@ -201,15 +209,15 @@ export default {
     hideActionSheet() {
       this.showActionSheet = false
     },
-    //选择收费方式
+    //选择收费方式 跳转到对应的选择收费项目页面
     selectType(item) {
       this.setChargeType(item.type)
-      this.toSelectChargeProjects()
-    },
-    //选择收费项目
-    toSelectChargeProjects() {
+      let url = '/pages/charge/selectChargeTypes'
+      if (item.type !== 1) {
+        url = '/pages/charge/chargeProjectsTabs'
+      }
       uni.navigateTo({
-        url: '/pages/charge/selectChargeProjects',
+        url: url,
       })
     },
     //收欠费
@@ -264,7 +272,7 @@ export default {
       width: 0;
       border: 2rpx dashed rgba(0, 0, 0, 0.15);
       transform-origin: 50% 0;
-      transform: scale(0.5,1);
+      transform: scale(0.5, 1);
     }
   }
 
