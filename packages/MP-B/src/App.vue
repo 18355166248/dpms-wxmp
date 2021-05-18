@@ -235,6 +235,9 @@ button::after {
 .icon-search:before {
   content: '\e631';
 }
+.icon-check-square-fill:before {
+  content: '\e84b';
+}
 
 /* iconfont图标 end */
 </style>

@@ -376,7 +376,13 @@
           }
         },
         {
-          "path": "selectChargeProjects",
+          "path": "selectChargeTypes",
+          "style": {
+            "navigationBarTitleText": "选择收费项目"
+          }
+        },
+        {
+          "path": "chargeProjectsTabs",
           "style": {
             "navigationBarTitleText": "选择收费项目"
           }
@@ -409,6 +415,18 @@
           "path": "searchProjects",
           "style": {
             "navigationBarTitleText": "搜索收费项目"
+          }
+        },
+        {
+          "path": "searchChargeItem",
+          "style": {
+            "navigationBarTitleText": "搜索诊疗项目"
+          }
+        },
+        {
+          "path": "searchMerchandise",
+          "style": {
+            "navigationBarTitleText": "搜索销售商品"
           }
         },
         {
