@@ -477,6 +477,12 @@
           "style": {
             "navigationBarTitleText": "对账日历"
           }
+        },
+        {
+          "path": "reconclieCalendarDetail",
+          "style": {
+            "navigationBarTitleText": "对账日历详情"
+          }
         }
       ]
     },

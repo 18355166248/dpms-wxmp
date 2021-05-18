@@ -5,7 +5,7 @@
       <div class="close-icon"></div>
     </div>
     <div class="item-group-wrapper">
-      <div class="item-wrapper flex-center" v-for="(item, index) in btnList" :key="index">
+      <div @click="handleItemClick(item)" class="item-wrapper flex-center" v-for="(item, index) in btnList" :key="index">
         <div>{{ item.name }}</div>
       </div>
     </div>
@@ -17,32 +17,32 @@
 const defaultBtnList = [
   {
     name: '对账日历',
-    path: '',
+    path: '/pages/finance-report/reconclieCalendar',
     permission: ['report-center', 'finance-reconclie', 'reconclie-calendar'],
   },
   {
     name: '支付方式对账',
-    path: '',
+    path: '/pages/finance-report/paymentReconclie',
     permission: ['report-center', 'finance-reconclie', 'payment-reconclie'],
   },
   {
-    name: '账单明细bill',
-    path: '',
+    name: '账单明细',
+    path: '/pages/finance-report/billDetails',
     permission: ['report-center', 'finance-reconclie', 'bill-details'],
   },
   {
     name: '明细交易',
-    path: '',
+    path: '/pages/finance-report/dealDetails',
     permission: ['report-center', 'finance-reconclie', 'deal-details'],
   },
   {
     name: '项目明细',
-    path: '',
+    path: '/pages/finance-report/projectDetails',
     permission: ['report-center', 'finance-reconclie', 'project-details'],
   },
   {
     name: '欠款患者',
-    path: '',
+    path: '/pages/finance-report/arrearsPatient',
     permission: ['report-center', 'finance-reconclie', 'arrears-patient'],
   },
 ];
@@ -56,7 +56,14 @@ export default {
   mounted() {
     this.btnList = defaultBtnList.filter(item => this.menuPermission(item.permission));
   },
-  methods: {},
+  methods: {
+    handleItemClick(record) {
+      uni.navigateTo({
+        url: record.path,
+      })
+      this.$emit('closeModal')
+    }
+  },
 };
 </script>
 

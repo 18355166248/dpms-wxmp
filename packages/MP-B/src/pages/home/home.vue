@@ -218,7 +218,7 @@
       id="achevementpopup"
     />
     <actionSheet background="#fff" @close="showActionSheet = false" v-if="showActionSheet">
-      <billReport />
+      <billReport @closeModal="showActionSheet = false"/>
     </actionSheet>
   </view>
 </template>
