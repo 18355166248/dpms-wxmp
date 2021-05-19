@@ -3,7 +3,6 @@ import { commonUtil } from 'mpcommon'
 import institutionAPI from 'APIS/institution/institution.api'
 
 const GENDER_ENUM = commonUtil.getEnums('Gender')
-const VIS_TYPE_ENUM = commonUtil.getEnums('VisType')
 const STAFF_STATUS_ENUM = commonUtil.getEnums('StaffStatus')
 const STAFF_POSITION_ENUM = commonUtil.getEnums('StaffPosition')
 

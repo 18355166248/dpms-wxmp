@@ -9,7 +9,7 @@
         @click.native="openSelectMedicalInstitution"
       />
       <scroll-view scroll-y style="height: calc(100% - 155px);">
-        <view class="p-16">
+        <view style="padding: 16px;">
           <view class="title">按医生查看：</view>
           <view class="btnGroup">
             <view
@@ -27,13 +27,15 @@
           </view>
           <view class="title">其他：</view>
           <view class="btnGroup">
-            <view class="btn btnActive">
-              待定预约
+            <view class="btn btnActive" @click="gotoUndeterminedList">
+              {{`待定预约(${undeterminedCount})`}}
             </view>
           </view>
         </view>
       </scroll-view>
-      <view class="btnConfirm btnActive" @click="confirm">确认</view>
+      <view class="btnConfirmContainer">
+        <view class="btnConfirm btnActive" @click="confirm">确认</view>
+      </view>
     </uni-drawer>
     <!-- 选择诊所弹窗 -->
     <selectMedicalInstitution
@@ -48,6 +50,7 @@
 import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { getDoctorListByInstitutionId } from './utils'
+import appointmentAPI from 'APIS/appointment/appointment.api'
 
 const ALL_DOCTOR_ITEM = { staffId: 'all', staffName: '所有医生' }
 export default {
@@ -59,6 +62,7 @@ export default {
       accessMedicalInstitution: null,
       doctorList: [],
       apptViewDoctor: null,
+      undeterminedCount: 0,
     }
   },
   computed: {
@@ -75,6 +79,7 @@ export default {
       this.doctorList = uni.getStorageSync('doctorList')
       this.apptViewDoctor = uni.getStorageSync('apptViewDoctor')
       this.$refs.drawer.open()
+      this.getUndeterminedCount()
     },
     close() {
       this.$refs.drawer.close()
@@ -115,6 +120,15 @@ export default {
       this.doctorList = res.data
       this.apptViewDoctor = ALL_DOCTOR_ITEM
     },
+    gotoUndeterminedList() {
+      this.$utils.push({ url: '/baseSubpackages/apptView/undeterminedList' })
+      this.close()
+    },
+    getUndeterminedCount() {
+      appointmentAPI
+        .getUndeterminedAppointmentCount()
+        .then((res) => (this.undeterminedCount = res.data))
+    },
   },
 }
 </script>
@@ -131,7 +145,7 @@ $primary-color: #5cbb89;
   }
   .btn {
     display: inline-block;
-    width: 130px;
+    width: 128px;
     height: 34px;
     line-height: 34px;
     border: 1px solid $primary-color;
@@ -140,7 +154,7 @@ $primary-color: #5cbb89;
     border-radius: 4px;
     text-align: center;
     font-size: 14px;
-    margin: 5px;
+    margin: 4px;
   }
   .block {
     display: block;
@@ -151,14 +165,18 @@ $primary-color: #5cbb89;
     color: #ffffff;
   }
 
-  .btnConfirm {
+  .btnConfirmContainer {
     position: fixed;
-    width: 269px;
-    height: 40px;
     bottom: 42px;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 16px;
+  }
+
+  .btnConfirm {
+    height: 40px;
     font-size: 18px;
     border-radius: 20px;
-    margin: auto 0;
     text-align: center;
     line-height: 40px;
   }

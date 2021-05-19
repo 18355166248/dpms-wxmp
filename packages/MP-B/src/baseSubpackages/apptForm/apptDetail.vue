@@ -135,6 +135,25 @@
             编辑
           </button>
         </template>
+        <template v-if="statusEnumKey === 'UNDETERMINED'">
+          <button
+            class="button button-ghost"
+            @click="cancelUndeterminedAppointment"
+          >
+            删除
+          </button>
+          <button
+            class="button"
+            @click="
+              toPage('/baseSubpackages/apptForm/apptForm', {
+                type: 'editAppt',
+                appointmentId: appointmentId,
+              })
+            "
+          >
+            修改
+          </button>
+        </template>
         <button
           v-else-if="statusEnumKey === 'REGISTERED'"
           class="button"
@@ -284,6 +303,27 @@ export default {
     toPatient(id) {
       this.$utils.push({
         url: '/pages/patient/patient?patientId=' + id,
+      })
+    },
+    // 取消待定预约
+    cancelUndeterminedAppointment() {
+      uni.showModal({
+        title: `确认要删除患者 ${this.dataSource.patient.patientName} 的待定预约吗`,
+        showCancel: true,
+        success: ({ confirm }) => {
+          if (confirm) {
+            appointmentAPI
+              .updateAppointmentStatus({
+                appointmentId: this.appointmentId,
+                appointmentStatus: this.APPOINTMENT_STATUS_ENUM.CANCELED.value,
+              })
+              .then(({ code }) => {
+                if (code === 0) {
+                  this.$utils.back()
+                }
+              })
+          }
+        },
       })
     },
   },

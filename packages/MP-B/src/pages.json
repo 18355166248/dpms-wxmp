@@ -184,6 +184,12 @@
             "navigationBarTitleText": "预约视图",
             "disableScroll": true
           }
+        },
+        {
+          "path": "undeterminedList",
+          "style": {
+            "navigationBarTitleText": "待定预约"
+          }
         }
       ]
     },
