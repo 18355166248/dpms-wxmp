@@ -10,6 +10,10 @@
         {{ detail.visTimeFormated }} {{ detail.medicalInstitutionSimpleCode }}
       </div>
       <div class="row">
+        <div class="label">创建人：</div>
+        {{ detail.doctorStaffName || '' }}
+      </div>
+      <div class="row">
         <div class="label">医生：</div>
         {{ detail.doctorStaffName || '' }}
       </div>
