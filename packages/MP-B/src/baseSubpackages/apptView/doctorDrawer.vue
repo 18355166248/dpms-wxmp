@@ -1,6 +1,6 @@
 <template>
   <view class="drawerPage">
-    <uni-drawer ref="drawer" mode="left" :width="300">
+    <uni-drawer ref="drawer" mode="left" :width="drawerWidth">
       <dpmsCell
         v-if="isHeaderWithLargeArea"
         title="诊所"
@@ -9,7 +9,7 @@
         @click.native="openSelectMedicalInstitution"
       />
       <scroll-view scroll-y style="height: calc(100% - 155px);">
-        <view class="p-16">
+        <view style="padding: 0 32rpx;">
           <view class="title">按医生查看：</view>
           <view class="btnGroup">
             <view
@@ -25,15 +25,19 @@
               {{ doctor.staffName }}
             </view>
           </view>
-          <view class="title">其他：</view>
-          <view class="btnGroup">
-            <view class="btn btnActive">
-              待定预约
+          <template v-if="!isHeaderWithLargeArea">
+            <view class="title">其他：</view>
+            <view class="btnGroup">
+              <view class="btn btnActive" @click="gotoUndeterminedList">
+                {{ `待定预约(${undeterminedCount})` }}
+              </view>
             </view>
-          </view>
+          </template>
         </view>
       </scroll-view>
-      <view class="btnConfirm btnActive" @click="confirm">确认</view>
+      <view class="btnConfirmContainer">
+        <view class="btnConfirm btnActive" @click="confirm">确认</view>
+      </view>
     </uni-drawer>
     <!-- 选择诊所弹窗 -->
     <selectMedicalInstitution
@@ -48,6 +52,7 @@
 import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { getDoctorListByInstitutionId } from './utils'
+import appointmentAPI from 'APIS/appointment/appointment.api'
 
 const ALL_DOCTOR_ITEM = { staffId: 'all', staffName: '所有医生' }
 export default {
@@ -59,9 +64,13 @@ export default {
       accessMedicalInstitution: null,
       doctorList: [],
       apptViewDoctor: null,
+      undeterminedCount: 0,
     }
   },
   computed: {
+    drawerWidth() {
+      return uni.upx2px(600)
+    },
     // 显示供选择的医生，需在原有基础上加上所有医生
     doctorSelectList() {
       return [ALL_DOCTOR_ITEM].concat(this.doctorList)
@@ -75,6 +84,7 @@ export default {
       this.doctorList = uni.getStorageSync('doctorList')
       this.apptViewDoctor = uni.getStorageSync('apptViewDoctor')
       this.$refs.drawer.open()
+      this.getUndeterminedCount()
     },
     close() {
       this.$refs.drawer.close()
@@ -115,6 +125,15 @@ export default {
       this.doctorList = res.data
       this.apptViewDoctor = ALL_DOCTOR_ITEM
     },
+    gotoUndeterminedList() {
+      this.$utils.push({ url: '/baseSubpackages/apptView/undeterminedList' })
+      this.close()
+    },
+    getUndeterminedCount() {
+      appointmentAPI
+        .getUndeterminedAppointmentCount()
+        .then((res) => (this.undeterminedCount = res.data))
+    },
   },
 }
 </script>
@@ -123,24 +142,25 @@ export default {
 $primary-color: #5cbb89;
 .drawerPage {
   .title {
-    margin-top: 16px;
-    margin-bottom: 8px;
+    font-size: 36rpx;
+    margin-top: 32rpx;
+    margin-bottom: 16rpx;
   }
   .btnGroup {
-    margin: 0 -4px;
+    margin: 0 -8rpx;
   }
   .btn {
     display: inline-block;
-    width: 130px;
-    height: 34px;
-    line-height: 34px;
-    border: 1px solid $primary-color;
+    width: 256rpx;
+    height: 68rpx;
+    line-height: 68rpx;
+    border: 1rpx solid $primary-color;
     color: $primary-color;
     background: #ffffff;
-    border-radius: 4px;
+    border-radius: 8rpx;
     text-align: center;
-    font-size: 14px;
-    margin: 5px;
+    font-size: 28rpx;
+    margin: 8rpx;
   }
   .block {
     display: block;
@@ -151,16 +171,20 @@ $primary-color: #5cbb89;
     color: #ffffff;
   }
 
-  .btnConfirm {
+  .btnConfirmContainer {
     position: fixed;
-    width: 269px;
-    height: 40px;
-    bottom: 42px;
-    font-size: 18px;
-    border-radius: 20px;
-    margin: auto 0;
+    bottom: 84rpx;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 32rpx;
+  }
+
+  .btnConfirm {
+    height: 80rpx;
+    font-size: 36rpx;
+    border-radius: 80rpx;
     text-align: center;
-    line-height: 40px;
+    line-height: 80rpx;
   }
 }
 </style>

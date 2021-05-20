@@ -142,6 +142,7 @@ export default {
       return Math.min(groupCount, 4)
     },
     schedulerHourParts() {
+      // 预约的最小时间刻度和登陆用户的机构关联
       return 60 / this.apptSetting.appointmentDuration
     },
   },

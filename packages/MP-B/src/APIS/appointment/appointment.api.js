@@ -27,6 +27,17 @@ const appointmentAPI = {
       params,
     )
   },
+  // 获取待定预约个数
+  getUndeterminedAppointmentCount() {
+    return httper.get('appointment/appointment/mini-apps/undetermin-appointment-count')
+  },
+  // 获取待定预约列表
+  getUndeterminedAppointmentPage(params) {
+    return httper.get(
+      'appointment/appointment/undetermin-appointment-page',
+      params,
+    )
+  },
   // 预约状态修改
   updateAppointmentStatus(data) {
     return httper.post('appointment/appointment/update/status', data)
