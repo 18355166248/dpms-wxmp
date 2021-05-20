@@ -1,6 +1,6 @@
 <template>
   <view class="drawerPage">
-    <uni-drawer ref="drawer" mode="left" :width="300">
+    <uni-drawer ref="drawer" mode="left" :width="drawerWidth">
       <dpmsCell
         v-if="isHeaderWithLargeArea"
         title="诊所"
@@ -9,7 +9,7 @@
         @click.native="openSelectMedicalInstitution"
       />
       <scroll-view scroll-y style="height: calc(100% - 155px);">
-        <view style="padding: 16px;">
+        <view style="padding: 0 32rpx;">
           <view class="title">按医生查看：</view>
           <view class="btnGroup">
             <view
@@ -25,12 +25,14 @@
               {{ doctor.staffName }}
             </view>
           </view>
-          <view class="title">其他：</view>
-          <view class="btnGroup">
-            <view class="btn btnActive" @click="gotoUndeterminedList">
-              {{`待定预约(${undeterminedCount})`}}
+          <template v-if="!isHeaderWithLargeArea">
+            <view class="title">其他：</view>
+            <view class="btnGroup">
+              <view class="btn btnActive" @click="gotoUndeterminedList">
+                {{ `待定预约(${undeterminedCount})` }}
+              </view>
             </view>
-          </view>
+          </template>
         </view>
       </scroll-view>
       <view class="btnConfirmContainer">
@@ -66,6 +68,9 @@ export default {
     }
   },
   computed: {
+    drawerWidth() {
+      return uni.upx2px(600)
+    },
     // 显示供选择的医生，需在原有基础上加上所有医生
     doctorSelectList() {
       return [ALL_DOCTOR_ITEM].concat(this.doctorList)
@@ -137,24 +142,25 @@ export default {
 $primary-color: #5cbb89;
 .drawerPage {
   .title {
-    margin-top: 16px;
-    margin-bottom: 8px;
+    font-size: 36rpx;
+    margin-top: 32rpx;
+    margin-bottom: 16rpx;
   }
   .btnGroup {
-    margin: 0 -4px;
+    margin: 0 -8rpx;
   }
   .btn {
     display: inline-block;
-    width: 128px;
-    height: 34px;
-    line-height: 34px;
-    border: 1px solid $primary-color;
+    width: 256rpx;
+    height: 68rpx;
+    line-height: 68rpx;
+    border: 1rpx solid $primary-color;
     color: $primary-color;
     background: #ffffff;
-    border-radius: 4px;
+    border-radius: 8rpx;
     text-align: center;
-    font-size: 14px;
-    margin: 4px;
+    font-size: 28rpx;
+    margin: 8rpx;
   }
   .block {
     display: block;
@@ -167,18 +173,18 @@ $primary-color: #5cbb89;
 
   .btnConfirmContainer {
     position: fixed;
-    bottom: 42px;
+    bottom: 84rpx;
     box-sizing: border-box;
     width: 100%;
-    padding: 0 16px;
+    padding: 0 32rpx;
   }
 
   .btnConfirm {
-    height: 40px;
-    font-size: 18px;
-    border-radius: 20px;
+    height: 80rpx;
+    font-size: 36rpx;
+    border-radius: 80rpx;
     text-align: center;
-    line-height: 40px;
+    line-height: 80rpx;
   }
 }
 </style>

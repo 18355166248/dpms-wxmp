@@ -35,12 +35,20 @@ export function appointment2schedulerResource(data) {
         doctorId = staff.staffId
       }
     }
-    
+
     // subtitle为性别和诊断类型
     let subTitle = GENDER_ENUM.properties[d.patient.gender].text.zh_CN
     if (d.visTypeName) {
       subTitle = subTitle + ',' + d.visTypeName
     }
+
+    // 多个预约项目
+    const appointmentItems =
+      d?.appointmentResourceMap?.COMMON_DATA_APPOINTMENT_ITEM || []
+    const itemsForShow = appointmentItems.map((item) => ({
+      typeName: item.appointmentSettingsAppointmentItemName,
+      typeStyle: 'background: #fff2e8; color:#FA541C',
+    }))
 
     return {
       id: d.appointmentId,
@@ -49,8 +57,7 @@ export function appointment2schedulerResource(data) {
       subTitle: `(${subTitle})`,
       lock: false,
       showTime: true,
-      typeName: '预约项目',
-      typeStyle: 'background: #fff2e8; color:#FA541C',
+      items: itemsForShow,
       cardStyle: 'border-left:4px solid #5cbb89; background:#fff',
       begin: d.appointmentBeginTime,
       end: d.appointmentEndTime,
@@ -72,8 +79,13 @@ export function blockEvent2schedulerResource(data) {
       subTitle: '(日程)',
       lock: true,
       showTime: true,
-      typeName: b.appointmentBlockEventName,
-      typeStyle: 'border:1px solid rgba(0,0,0,0.15); color:#595959; background:#f6f6f6;',
+      items: [
+        {
+          typeName: b.appointmentBlockEventName,
+          typeStyle:
+            'border:1px solid rgba(0,0,0,0.15); color:#595959; background:#f6f6f6;',
+        },
+      ],
       cardStyle: 'border-left:4px solid #595959; background:#f6f6f6;',
       begin: b.blockBeginTime,
       end: b.blockEndTime,

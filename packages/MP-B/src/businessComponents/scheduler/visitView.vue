@@ -21,10 +21,11 @@
         </view>
         <view
           class="type"
-          v-if="timeInfo.origin.typeName"
-          :style="timeInfo.origin.typeStyle"
+          v-for="(item, index) in timeInfo.origin.items"
+          :key="index"
+          :style="item.typeStyle"
         >
-          <view class="ellipsis">{{ timeInfo.origin.typeName }}</view>
+          <view class="ellipsis">{{ item.typeName }}</view>
         </view>
       </view>
       <view v-if="timeInfo.origin.showTime" class="ellipsis appointmentTime">{{
@@ -424,7 +425,8 @@ export default {
   }
   .type {
     display: inline-block;
-    margin: 4px 8px;
+    margin-left: 8px;
+    margin-bottom: 8px;
     padding: 2px 8px;
     font-size: 13px;
     border-radius: 2px;

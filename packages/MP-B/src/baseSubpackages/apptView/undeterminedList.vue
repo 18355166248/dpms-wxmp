@@ -4,8 +4,9 @@
       <view v-for="appt in appointmentList" :key="appt.appointmentId">
         <appt-card :appt="appt" @click.native="clickAppointmentCard(appt)" />
       </view>
-      <load-more :status="dataSourceStatus.status" />
+      <load-more :status="status" />
     </view>
+    <empty :disabled="true" v-else text="暂无待定预约" />
   </scroll-view>
 </template>
 
@@ -25,16 +26,10 @@ export default {
       current: 1, //默认展示 第一页数据
       size: 10, //默认展示 15条数据
       total: 1, //默认 总条目，
-      dataSourceStatus: {
-        // 数据列表的状态
-        loading: true,
-        status: 'loading',
-        request: 'loading',
-      },
-      paramsObj: {},
+      status: 'loading', // 数据列表的状态
     }
   },
-  onShow(){
+  onShow() {
     this.init()
   },
   onReachBottom() {
@@ -72,14 +67,16 @@ export default {
       this.total = total
 
       if (total === this.appointmentList.length) {
-        this.dataSourceStatus.status = 'noMore'
+        this.status = 'noMore'
       } else {
-        this.dataSourceStatus.status = 'more'
+        this.status = 'more'
       }
     },
     clickAppointmentCard(appt) {
       this.$utils.push({
-        url: '/baseSubpackages/apptForm/apptDetail?appointmentId=' + appt.appointmentId,
+        url:
+          '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
+          appt.appointmentId,
       })
     },
   },

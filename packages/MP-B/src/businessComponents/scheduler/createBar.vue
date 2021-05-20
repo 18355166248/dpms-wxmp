@@ -46,14 +46,14 @@ export default {
       currentHeight: 0,
       minHeight: 50,
       visitTime: [],
-      part: 2,
+      part: 1,
     }
   },
   watch: {
     show: {
       immediate: true,
       handler() {
-        this.part = 2
+        this.part = 1
       },
     },
     frame: {
