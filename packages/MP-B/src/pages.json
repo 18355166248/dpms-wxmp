@@ -483,6 +483,24 @@
           "style": {
             "navigationBarTitleText": "对账日历详情"
           }
+        },
+        {
+          "path": "filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        },
+        {
+          "path": "projectList",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        },
+        {
+          "path": "staffList",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
         }
       ]
     },
