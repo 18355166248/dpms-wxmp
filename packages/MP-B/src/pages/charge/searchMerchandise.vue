@@ -6,6 +6,7 @@
       <merchandiseList
         :list="merchandiseList"
         v-if="merchandiseList.length > 0"
+        ref="merchandiseListRef"
       ></merchandiseList>
       <!--无数据-->
       <view v-else>
@@ -40,6 +41,7 @@ export default {
     this.getMerchandiseList('')
   },
   methods: {
+    ...mapMutations('searchProjectStore', ['setSearchMerchandiseList']),
     getMerchandiseList(value) {
       billAPI
         .getMerchandiseList({
@@ -63,6 +65,11 @@ export default {
       })
       return list
     },
+    complete(){
+      const selectedList= this.$refs.merchandiseListRef.merchandiseList.filter(item=>item.checked)
+      this.setSearchMerchandiseList(selectedList);
+      uni.navigateBack()
+    }
   },
   watch: {},
   components: { searchInput, merchandiseList, chargeButton },

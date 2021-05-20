@@ -65,11 +65,12 @@ export default {
     }
   },
   computed: {},
-  onLoad(params) {
-    console.log(params)
+  onLoad() {
     this.searchProject('')
   },
-  onShow() {},
+  onShow() {
+
+  },
   onHide() {},
   onUnload() {},
   methods: {

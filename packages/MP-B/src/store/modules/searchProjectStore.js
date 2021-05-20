@@ -1,6 +1,7 @@
 const state = {
   searchProjectList: [],
   searchChargeList: [],
+  searchMerchandiseList:[]
 }
 
 const mutations = {
@@ -9,6 +10,9 @@ const mutations = {
   },
   setSearchChargeList(state, value) {
     state.searchChargeList = value || []
+  },
+  setSearchMerchandiseList(state, value) {
+    state.searchMerchandiseList = value || []
   },
 }
 

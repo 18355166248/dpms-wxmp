@@ -87,7 +87,7 @@
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex';
 export default {
   name: '',
   data() {
@@ -112,6 +112,7 @@ export default {
     this.getScrollHeight()
   },
   methods: {
+    ...mapMutations('dispose', ['setDisposeList']),
     getScrollHeight() {
       uni.getSystemInfo({
         success: () => {
@@ -210,18 +211,7 @@ export default {
           })
       })
     },
-    filterData() {
-      this.classifyList.forEach((item) => {
-        item?.chargeItemList?.length > 0 &&
-          item.chargeItemList.forEach((charge) => {
-            if (this.checkChargeSelected(this.disposeList, charge)) {
-              charge.checked = true
-            } else {
-              charge.checked = false
-            }
-          })
-      })
-    },
+    //判断是否选中
     checkChargeSelected(list, charge) {
       for (let i = 0; i < list.length; i++) {
         if (list[i].settingsChargeItemId === charge.settingsChargeItemId) {
@@ -229,13 +219,24 @@ export default {
         }
       }
     },
+    //获取处置列表
+    getDisposeList(){
+      const disposeList=[]
+      this.classifyList.forEach((item) => {
+        item?.chargeItemList?.length > 0 &&
+        item.chargeItemList.forEach((charge) => {
+          if (charge.checked){
+            charge.itemType=5
+            disposeList.push(charge)
+          }
+        })
+      })
+      return disposeList
+    }
   },
   watch: {
     searchChargeList() {
       this.mergeChargeList()
-    },
-    disposeList() {
-      this.filterData()
     },
   },
   components: {},

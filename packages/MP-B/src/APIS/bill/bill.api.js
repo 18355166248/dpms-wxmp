@@ -95,6 +95,13 @@ const billAPI = {
       data,
     )
   },
+  //获取套餐下的收费项目
+  getPackageChargeItems(data) {
+    return httper.get(
+      'billing/settings/charge-package-item/selectByTypeId',
+      data,
+    )
+  },
   //获取销售商品列表
   getMerchandiseList(data) {
     return httper.get('physical/merchandise/list-select', data)
