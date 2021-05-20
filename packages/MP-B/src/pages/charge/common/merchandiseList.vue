@@ -26,7 +26,7 @@
             </view>
           </view>
           <view class="checkBox">
-            <dpmsCheckbox shape="square" :value="item.checked"></dpmsCheckbox>
+            <dpmsCheckbox shape="square" :value="item.checked"  @change="onCheckBoxChange($event, item)"></dpmsCheckbox>
           </view>
         </view>
         <view class="bottom-content">
@@ -74,7 +74,11 @@ export default {
     },
   },
   created() {},
-  methods: {},
+  methods: {
+    onCheckBoxChange(value,item){
+      item.checked = value
+    }
+  },
   watch: {
     list: {
       handler(newVal) {
