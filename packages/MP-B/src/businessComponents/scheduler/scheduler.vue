@@ -69,6 +69,7 @@
                 :cellWidth="columnWidth"
                 :scroll="scrollOld"
                 :columnGroup="sColumnGroup"
+                :disable="disable"
               >
                 <column
                   v-for="item in sColumnGroup"
@@ -88,6 +89,7 @@
                     :offSetTop="offSetTop"
                     :cellWidth="columnWidth"
                     :columnGroup="sColumnGroup"
+                    :disable="disable"
                   />
                 </block>
               </timeGrid>
@@ -189,6 +191,10 @@ const defaultProps = {
   resources: {
     type: Array,
     default: [],
+  },
+  disable: {
+    type: Boolean,
+    default: false,
   },
 }
 export default {

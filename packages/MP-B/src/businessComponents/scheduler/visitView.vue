@@ -71,6 +71,7 @@ const defaultProps = {
   },
   cellWidth: Number,
   columnGroup: Array,
+  disable: Boolean,
 }
 export default {
   props: defaultProps,
@@ -134,8 +135,8 @@ export default {
       })
     },
     onLongpress(e) {
-      const { timeInfo, scroll } = this
-      if (!timeInfo.origin.lock) {
+      const { timeInfo, scroll, disable } = this
+      if (!timeInfo.origin.lock && !disable) {
         uni.$emit('hideCreateBar')
         this.triggerEvent(
           'disableScroll',

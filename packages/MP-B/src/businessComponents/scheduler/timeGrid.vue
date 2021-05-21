@@ -30,6 +30,7 @@
         :beginHour="beginHour"
         :endHour="endHour"
         :partHeight="partHeight"
+        :disable="disable"
         @onCreate.stop="onCreateAppointment"
       />
       <slot></slot>
@@ -43,6 +44,7 @@ import createBar from './createBar'
 import { getClientRect, getTimeFrame, getExactValue } from './utils'
 const defaultProps = {
   currentDate: [String, Number],
+  disable: Boolean,
   isAll: {
     type: Boolean,
     default: false,
@@ -129,23 +131,25 @@ export default {
   },
   methods: {
     async onClick({ detail }) {
-      if (this.showCreateBar) {
-        this.showCreateBar = false
-      } else {
-        const result = await getClientRect(this, '#grid')
-        const { x, y } = detail
-        const { hourParts, partHeight, cellWidth } = this
-        const { top, left } = result
-        this.showCreateBar = true
-        this.frame = getTimeFrame(
-          x,
-          y,
-          top,
-          left,
-          hourParts,
-          cellWidth,
-          partHeight,
-        )
+      if (!this.disable) {
+        if (this.showCreateBar) {
+          this.showCreateBar = false
+        } else {
+          const result = await getClientRect(this, '#grid')
+          const { x, y } = detail
+          const { hourParts, partHeight, cellWidth } = this
+          const { top, left } = result
+          this.showCreateBar = true
+          this.frame = getTimeFrame(
+            x,
+            y,
+            top,
+            left,
+            hourParts,
+            cellWidth,
+            partHeight,
+          )
+        }
       }
     },
     onCreateAppointment(data) {
