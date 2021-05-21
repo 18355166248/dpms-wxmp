@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex';
+
 const defaultBtnList = [
   {
     name: '对账日历',
@@ -57,7 +59,9 @@ export default {
     this.btnList = defaultBtnList.filter(item => this.menuPermission(item.permission));
   },
   methods: {
+    ...mapMutations('finaceReport',['clearState']),
     handleItemClick(record) {
+      this.clearState()
       uni.navigateTo({
         url: record.path,
       })

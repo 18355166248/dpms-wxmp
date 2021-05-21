@@ -369,6 +369,7 @@
 import Pinyin from './js/characterToPinyin.js'
 import { isEqual } from './js/objEqual.js'
 import { mapState } from 'vuex'
+import { numberUtils } from '@/utils/utils';
 
 export default {
   onReachBottom() {
@@ -476,8 +477,8 @@ export default {
             total += parseFloat(num)
           })
           bottomComputed[this.computedCol[index]] =
-            this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
-            this.$utils.formatPrice(total)
+            numberUtils.thousandFormatter(this.summary[this.computedCol[index]]) ||
+            numberUtils.thousandFormatter(total)
         })
         let header = this.headers[index]
         let result = this.computedCol.includes(header.key)
@@ -1040,8 +1041,8 @@ export default {
           total += parseFloat(num)
         })
         result[this.computedCol[index]] =
-          this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
-          this.$utils.formatPrice(total)
+          numberUtils.thousandFormatter(this.summary[this.computedCol[index]]) ||
+          numberUtils.thousandFormatter(total)
       })
       this.bottomComputed = result
     },
@@ -1305,6 +1306,7 @@ export default {
 @import './css/loader.css';
 
 .wyb-table-box {
+  word-break: break-all;
   .ios-header-bug {
     height: 0;
     width: 1px;
@@ -1346,6 +1348,7 @@ export default {
     align-items: center;
     box-sizing: border-box;
     position: relative;
+    word-break: break-all;
   }
 
   .wyb-table-header-icon {
@@ -1365,6 +1368,7 @@ export default {
     flex-direction: row;
     align-items: center;
     box-sizing: border-box;
+    padding: 20rpx;
   }
 
   .wyb-table-checkbox {

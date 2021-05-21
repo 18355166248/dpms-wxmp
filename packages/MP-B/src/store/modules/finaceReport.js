@@ -25,7 +25,7 @@ const mutations = {
   clearState(state) {
     state.patientInfo=''
     state.billOrderNo = ''
-    state.setParentChargeType = { parentChargeTypeIds:'',parentChargeTypeNames:'' }
+    state.parentChargeType = { parentChargeTypeIds:'',parentChargeTypeNames:'' }
     state.doctor = { doctorIds:'', doctorNames:'' }
     state.consultant = { consultantIds:'', consultantNames:''}
   }
