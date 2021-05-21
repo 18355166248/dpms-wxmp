@@ -360,7 +360,7 @@ export default {
       uni.hideLoading()
     },
     onFilterClick() {
-      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds'])
+      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds','parentChargeType'])
       this.$utils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })

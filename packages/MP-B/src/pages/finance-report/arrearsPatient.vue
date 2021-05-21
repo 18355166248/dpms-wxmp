@@ -2,12 +2,6 @@
   <div class="arrearsPatient-wrapper">
     <view class="filter">
       <view class="uni-list-cell">
-        <view @click="openCalendar" class="left">
-          {{ dateFilterText }}
-          <view class="iconfont icon-closed"></view>
-        </view>
-      </view>
-      <view class="uni-list-cell">
         <view
           :class="['left', isFilter ? 'right' : '']"
           @click.native="onFilterClick"
@@ -328,7 +322,7 @@ export default {
     height: 80rpx;
     display: flex;
     .uni-list-cell {
-      width: 50vw;
+      width: 100vw;
       .left {
         display: flex;
         justify-content: center;
