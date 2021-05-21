@@ -27,9 +27,10 @@
       </dpmsCollapse>
     </dpmsCheckboxGroup>
 
-    <empty :disabled="true" v-if="isAppt" text="暂无预约项目" />
-    <empty :disabled="true" v-else text="暂无就诊项目" />
-
+    <view v-else>
+      <empty :disabled="true" v-if="isAppt" text="暂无预约项目" />
+      <empty :disabled="true" v-else text="暂无就诊项目" />
+    </view>
     <div class="mt-56">
       <dpmsButton @click="onSave" v-if="list && list.length" />
       <!-- <button class="button" @click.stop="this.$utils.back()" v-else>

@@ -186,9 +186,9 @@
           }
         },
         {
-          "path": "doctorList",
+          "path": "undeterminedList",
           "style": {
-            "navigationBarTitleText": "医生"
+            "navigationBarTitleText": "待定预约"
           }
         }
       ]
