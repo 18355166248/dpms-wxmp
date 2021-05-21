@@ -7,7 +7,7 @@ const diagnosisAPI = {
   },
   //病历审批
   medicalRecords({ id }, data) {
-    return httper.post(`/diagnosis/medical-records/`, data)
+    return httper.post(`/diagnosis/medical-records/${id}`, data)
   },
   // 今日工作
   getTodayWorkStatistics(data) {
