@@ -1,6 +1,9 @@
 import httper from '../http'
 
 const diagnosisAPI = {
+  getRole(data) {
+    return httper.get('diagnosis/medical-records/approve-configs/role', data)
+  },
   // 今日工作
   getTodayWorkStatistics(data) {
     return httper.get('diagnosis/register-stat/today-work', data)
