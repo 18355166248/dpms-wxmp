@@ -37,6 +37,7 @@ const defaultProps = {
   hourParts: Number,
   frame: Object,
   show: Boolean,
+  disable: Boolean,
 }
 export default {
   props: defaultProps,

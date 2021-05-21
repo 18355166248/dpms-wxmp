@@ -1,4 +1,4 @@
-<template>
+`<template>
   <view class="apptView">
     <doctor-drawer ref="doctorDrawer" />
     <calendar
@@ -9,6 +9,7 @@
     <view style="height: 10px;" />
     <scheduler
       :isAll="true"
+      :disable="isHeaderWithLargeArea"
       :height="schedulerHeight"
       :currentDate="calendarDate"
       :columnGroup="schedulerGroup"
@@ -108,8 +109,18 @@ export default {
     appointmentEndTime() {
       return moment(this.calendarDate).endOf('day').valueOf()
     },
-    // 预约视图中数据请求需要的医生列表
-    staffIds() {
+    // 预约视图数据请求单个医生的id，感觉没用到？
+    reqStaffId() {
+      if (!this.apptViewDoctor) {
+        return undefined
+      }
+
+      return this.apptViewDoctor.staffId === 'all'
+        ? undefined
+        : this.apptViewDoctor.staffId
+    },
+    // 预约视图数据请求所有医生的id
+    reqStaffIds() {
       if (!this.apptViewDoctor) {
         return ''
       }
@@ -285,8 +296,8 @@ export default {
         medicalInstitutionId: this.accessMedicalInstitution
           .medicalInstitutionId,
         position: POSITION_DOCTOR,
-        staffId: this.apptViewDoctor.staffId,
-        staffIds: this.staffIds,
+        staffId: this.reqStaffId,
+        staffIds: this.reqStaffIds,
       })
       this.appointmentList = appointmentList
 

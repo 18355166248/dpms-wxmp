@@ -6,7 +6,7 @@
       </view>
       <load-more :status="status" />
     </view>
-    <empty :disabled="true" v-else text="暂无待定预约" />
+    <empty :disabled="true" v-else-if="status !== 'loading'" text="暂无待定预约" />
   </scroll-view>
 </template>
 
@@ -44,6 +44,7 @@ export default {
       this.getPageData()
     },
     async getPageData() {
+      this.status = 'loading'
       uni.showLoading({
         title: '数据加载中',
         mask: true,

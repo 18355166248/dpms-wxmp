@@ -31,21 +31,33 @@
           <view class="description-item-label">预约时间</view>
           <view class="description-item-con">{{ apptTime }}</view>
         </view>
+        <view v-if="statusEnumKey === 'UNDETERMINED'" class="description-item">
+          <view class="description-item-label">待定日期</view>
+          <view class="description-item-con">{{ apptDate }}</view>
+        </view>
         <view class="description-item">
           <view class="description-item-label">咨询师</view>
           <view class="description-item-con">{{ staff.consultant }}</view>
         </view>
-        <view class="description-item">
-          <view class="description-item-label">医生</view>
-          <view class="description-item-con">{{ staff.doctor }}</view>
+        <view v-if="statusEnumKey === 'UNDETERMINED'" class="description-item">
+          <view class="description-item-label">洁牙师</view>
+          <view class="description-item-con">{{ staff.dentist }}</view>
         </view>
         <view class="description-item">
+          <view class="description-item-label">预约医生</view>
+          <view class="description-item-con">{{ staff.doctor }}</view>
+        </view>
+        <view class="description-item" v-if="statusEnumKey !== 'UNDETERMINED'">
           <view class="description-item-label">助理</view>
           <view class="description-item-con">{{ staff.assistant }}</view>
         </view>
         <view class="description-item">
           <view class="description-item-label">预约项目</view>
           <view class="description-item-con">{{ apptItemsStr }}</view>
+        </view>
+        <view class="description-item" v-if="statusEnumKey === 'UNDETERMINED'">
+          <view class="description-item-label">预约牙位</view>
+          <view class="description-item-con">{{ toothPositionStr }}</view>
         </view>
         <view class="description-item">
           <view class="description-item-label">预约备注</view>
@@ -342,10 +354,12 @@ export default {
         const consultantValue = this.STAFF_POSITION_ENUM.CONSULTANT.value
         const assistantManagerValue = this.STAFF_POSITION_ENUM.ASSISTANT_MANAGER
           .value
+        const dentistValue = this.STAFF_POSITION_ENUM.DENTIST.value
 
-        let doctor
-        let consultant
-        let assistant
+        let doctor = '--'
+        let consultant = '--'
+        let assistant = '--'
+        let dentist = '--'
 
         staff.forEach((item) => {
           if (item.position === doctorValue) {
@@ -357,18 +371,17 @@ export default {
           if (item.position === assistantManagerValue) {
             assistant = item.staffName
           }
+          if (item.position === dentistValue) {
+            dentist = item.staffName
+          }
         })
 
         return {
           doctor,
           consultant,
           assistant,
+          dentist,
         }
-      }
-      return {
-        doctor: '--',
-        consultant: '--',
-        assistant: '--',
       }
     },
     statusBadge() {
@@ -378,7 +391,7 @@ export default {
         [this.APPOINTMENT_STATUS_ENUM.TREATED.value]: '#1890ff',
         [this.APPOINTMENT_STATUS_ENUM.CONSULTATION.value]: '#00e6f1',
         [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
-        [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
+        [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#f8d08a',
         [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
       }
 
@@ -412,10 +425,27 @@ export default {
 
       return '--'
     },
+    toothPositionStr() {
+      if (this.dataSource?.appointmentResourceMap?.TOOTH_POSITION) {
+        return this.dataSource.appointmentResourceMap.TOOTH_POSITION.map(
+          (item) => item.toothPosition,
+        ).join('、')
+      }
+      return '--'
+    },
     apptTime() {
-      return `${moment(this.dataSource.appointmentBeginTimeStamp).format(
-        'YYYY-MM-DD HH:mm',
-      )}`
+      const { appointmentBeginTime, appointmentEndTime } = this.dataSource
+      if (this.statusEnumKey === 'UNDETERMINED') {
+        const minutes =
+          (appointmentEndTime - appointmentBeginTime) / (1000 * 60)
+        return `待定-${minutes}分钟`
+      } else {
+        return `${moment(appointmentBeginTime).format('YYYY-MM-DD HH:mm')}`
+      }
+    },
+    // 待定预约日期
+    apptDate() {
+      return moment(this.dataSource.appointmentBeginTime).format('YYYY-MM-DD')
     },
   },
 }
