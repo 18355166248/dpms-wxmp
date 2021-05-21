@@ -11,9 +11,22 @@ const billAPI = {
   getStatPage(data) {
     return httper.get('/billing/project/detail/stat/page',data)
   },
+  //
   getOrderPage(data) {
     return httper.get('/billing/stat/bill/order/page',data)
   },
+  // 项目明细
+  getDetailStatPage(data) {
+    return httper.get('/billing/project/detail/stat/page',data)
+  },
+  payReconciliation(data) {
+    return httper.get('/pay/statement-manager/pay-style-reconciliation/list',data)
+  },
+  // 交易明细
+  getItemStatPage(data) {
+    return httper.get('/billing/pay/item/stat/page',data)
+  },
+
 
   //小程序-统计报表-营收报表-营收日报表
   revenueList(data) {

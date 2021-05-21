@@ -212,6 +212,11 @@ export default {
       this.loadData()
     })
   },
+  beforeDestroy() {
+    uni.$off('chooseCalendarOption')
+    uni.$off('emitPage')
+    uni.$off('finFilter')
+  },
   computed: {
     ...mapState('finaceReport', ['doctor','consultant','patientInfo','billOrderNo']),
   },
@@ -260,6 +265,8 @@ export default {
           label: '退款',
           key: 'refundAmount',
         }]
+
+
       const lastComputed = [
         'arrearsAmount','refundAmount'
       ]
@@ -298,12 +305,8 @@ export default {
       this.summary = summary || {}
       uni.hideLoading()
     },
-    beforeDestroy() {
-      uni.$off('chooseCalendarOption')
-      uni.$off('emitPage')
-    },
     onFilterClick() {
-      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds','parentChargeTypeIds'])
+      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds'])
       this.$utils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })
