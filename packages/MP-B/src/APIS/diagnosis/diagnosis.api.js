@@ -1,6 +1,7 @@
 import httper from '../http'
 
 const diagnosisAPI = {
+  // 获取当前登录员工在病历审批中的角色
   getRole(data) {
     return httper.get('diagnosis/medical-records/approve-configs/role', data)
   },
