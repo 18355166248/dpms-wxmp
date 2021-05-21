@@ -203,10 +203,8 @@ export default {
         patientInfo: this.patientInfo,
         billOrderNo: this.billOrderNo,
         doctorIds: this.doctor.doctorIds,
-        // beginTime: this.beginTimeMillis,
-        // endTime: this.endTimeMillis
-        beginTimeMillis: 1619798400000,
-        endTimeMillis: 1622476799999
+        beginTimeMillis: this.beginTimeMillis,
+        endTimeMillis: this.endTimeMillis,
       }
       let {
         data: {total, current, records, summary, statBillOrderPayStyleHeaderVOList}

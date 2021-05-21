@@ -15,6 +15,10 @@ const billAPI = {
   getOrderPage(data) {
     return httper.get('/billing/stat/bill/order/page',data)
   },
+  // 项目明细
+  getDetailStatPage(data) {
+    return httper.get('/billing/project/detail/stat/page',data)
+  },
   payReconciliation(data) {
     return httper.get('/pay/statement-manager/pay-style-reconciliation/list',data)
   },

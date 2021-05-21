@@ -1,5 +1,5 @@
 <template>
-  <div class="projectDetails-wrapper">
+  <div class="dealDetails-wrapper">
     <view class="filter">
       <view class="uni-list-cell">
         <view @click="openCalendar" class="left">
@@ -47,7 +47,7 @@ import moment from 'moment';
 import billAPI from 'APIS/bill/bill.api';
 
 export default {
-  name: 'projectDetails',
+  name: 'dealDetails',
   data() {
     return {
       headers:[
@@ -56,61 +56,76 @@ export default {
           key: 'billSerialNo',
         },
         {
-          label: '开单时间',
-          key: 'createTime',
-        },
-
-        {
           label: '账单类型',
-          key: 'billType',
+          key: 'billTypeName',
         },
         {
-          label: '患者姓名',
-          key: 'patientName',
+          label: '账单状态',
+          key: 'payStatusName',
         },
         {
           label: '病历号',
           key: 'medicalRecordNo',
         },
         {
+          label: '患者姓名',
+          key: 'patientName',
+        },
+        {
           label: '联系电话',
-          key: 'patientMobile',
+          key: 'mobile',
         },
         {
-          label: '开单诊所',
-          key: 'createMedicalInstitutionName',
+          label: '患者所属机构',
+          key: 'patientMedicalInstitutionName',
         },
         {
-          label: '开单人',
-          key: 'createStaffName',
+          label: '费用类型',
+          key: 'settingsExpensesTypeName',
         },
         {
-          label: '账单状态',
-          key: 'billStatus',
+          label: '收费大类',
+          key: 'patientSettingsChargeTypeName',
         },
         {
-          label: '就诊时间',
-          key: 'visTime',
+          label: '收费小类',
+          key: 'settingsChargeTypeName',
         },
         {
-          label: '就诊类型',
-          key: 'visTypeStr',
+          label: '收费项目',
+          key: 'settingsChargeItemName',
+        },
+        {
+          label: '是否参与整单折扣',
+          key: 'allBillDiscountName',
+        },
+        {
+          label: '是否划扣项目',
+          key: 'deductSignName',
+        },
+        {
+          label: '治疗步骤',
+          key: 'plannedDeductionStep',
+        },
+        {
+          label: '医生科室',
+          key: 'doctorDepartmentName',
         },
         {
           label: '医生',
           key: 'doctorStaffName',
         },
         {
-          label: '咨询师',
-          key: 'consultantStaffName',
-        },
-        {
           label: '护士',
           key: 'nurseStaffName',
         },
         {
+          label: '开单咨询师',
+          key: 'counselorName',
+        },
+        {
           label: '销售人员',
-          key: 'salesmanStaffName',
+          key: 'salesName',
         },
         {
           label: '备注',
@@ -118,32 +133,101 @@ export default {
         },
         {
           label: '原因跟踪',
-          key: 'reasonTrack',
+          key: 'reason',
         },
         {
           label: '最近交易时间',
-          key: 'lastTransactionTime',
+          key: 'lastDealTime',
         },
         {
-          label: '操作诊所',
-          key: 'lastUpdateMedicalInstitutionName',
+          label: '最近操作诊所',
+          key: 'lastMedicalInstitutionName',
         },
         {
-          label: '总计原价',
+          label: '单价',
+          key: 'unitAmount',
+        },
+        {
+          label: '数量',
+          key: 'itemNum',
+        },
+        {
+          label: '总价',
           key: 'totalAmount',
         },
         {
-          label: '整单折扣',
-          key: 'mainOrderDiscount',
+          label: '单项折扣',
+          key: 'discount',
         },
         {
-          label: '折后应收金额',
-          key: 'discountReceiveAmount',
-        }
+          label: '整单折扣',
+          key: 'allDiscount',
+        },
+        {
+          label: '折后应收',
+          key: 'afterDiscountAmount',
+        },
+        {
+          label: '优惠总金额',
+          key: 'promotionAmount',
+        },
+        {
+          label: '已收款',
+          key: 'paymentAmount',
+        },
+        {
+          label: '退款',
+          key: 'refundAmount',
+        },
+        {
+          label: '欠款',
+          key: 'oweAmount',
+        },
+        {
+          label: '现金收款',
+          key: 'cashAmount',
+        },
+        {
+          label: '虚拟收款',
+          key: 'virtualAmount',
+        },
+        {
+          label: '预收款抵扣',
+          key: 'deductionOfAdvancePayment',
+        },
+        {
+          label: '营业收入',
+          key: 'revenueAmount',
+        },
+        {
+          label: '普通收费收入',
+          key: 'generalAmount',
+        },
+        {
+          label: '划扣收入',
+          key: 'plannedAmount',
+        },
+        {
+          label: '已划扣总比例',
+          key: 'afterDiscount',
+        },
+        {
+          label: '最新划扣时间',
+          key: 'lastPlannedDeductionTime',
+        },
       ],
       computedCol:[
-        'totalAmount',
-        'discountReceiveAmount',
+        'afterDiscountAmount',
+        'promotionAmount',
+        'paymentAmount',
+        'refundAmount',
+        'oweAmount',
+        'cashAmount',
+        'virtualAmount',
+        'deductionOfAdvancePayment',
+        'revenueAmount',
+        'generalAmount',
+        'plannedAmount'
       ],
       contents:[],
       total: 0,
@@ -221,7 +305,6 @@ export default {
     ...mapState('finaceReport', ['doctor','consultant','patientInfo','billOrderNo']),
   },
   methods: {
-    ...mapMutations('finaceReport',['clearState']),
     init() {
       this.current = 1
       this.loadData()
@@ -237,62 +320,35 @@ export default {
         billOrderNo: this.billOrderNo,
         doctorIds: this.doctor.doctorIds,
         consultantIds: this.consultant.consultantIds,
-        beginTime: this.beginTimeMillis,
-        endTime: this.endTimeMillis
+        // beginTimeMillis: this.beginTimeMillis,
+        // endTimeMillis: this.endTimeMillis,
+        beginTimeMillis: 1619798400000,
+        endTimeMillis: 1622476799999,
       }
       let {
-        data: {total, current, records, summary, statBillOrderPayStyleHeaderVOList}
-      } = await billAPI.getOrderPage({
+        data: {total, current, records, summary}
+      } = await billAPI.getItemStatPage({
         current: this.current,
         size: this.size,
         ...params
       })
-      let computedColAdd = []
-      const channelList = statBillOrderPayStyleHeaderVOList?.map((item, index) => {
-        computedColAdd.push(`payStyleTotalAmountList${index+1}`)
-        summary[`payStyleTotalAmountList${index+1}`] = item.payAmount
-        return {
-          label:item.transactionChannelIdName,
-          key:`payStyleTotalAmountList${index+1}`
-        }
-      })
-      const lastList = [
-        {
-          label: '欠款',
-          key: 'arrearsAmount',
-        },
-        {
-          label: '退款',
-          key: 'refundAmount',
-        }]
-      const lastComputed = [
-        'arrearsAmount','refundAmount'
-      ]
 
 
       records = records.map(item => {
-        for (let i=0;i<channelList.length;i++) {
-          item[`payStyleTotalAmountList${i+1}`] = this.$utils.formatPrice(item.payStyleTotalAmountList[i])
-        }
+        item.cashierDate = moment(item.cashierDate).format('YYYY-MM-DD')
+        item.lastDealTime = moment(item.lastDealTime).format('YYYY-MM-DD hh:mm:ss')
         item.totalAmount = this.$utils.formatPrice(item.totalAmount)
-        item.discountReceiveAmount = this.$utils.formatPrice(item.discountReceiveAmount)
-        item.arrearsAmount = this.$utils.formatPrice(item.arrearsAmount)
-        item.refundAmount = this.$utils.formatPrice(item.refundAmount)
-        item.billType = this.$utils.getEnumsText('BillType',item.billType)
-        item.billStatus = this.$utils.getEnumsText('BillStatus',item.billStatus)
-        item.createTime = moment(item.createTime).format('YYYY-MM-DD')
-        // console.log(this.$utils.getEnumsText('BillType',4));
-        console.log(this.$utils.getEnumsText('BillStatus', 4));
+        this.computedCol.forEach(it => {
+          item[it] = this.$utils.formatPrice(item[it])
+        })
         return item
-
       })
       if(this.current === 1) {
         this.contents = records
       } else {
         this.contents = this.contents.concat(records)
       }
-      this.headers = [...this.headers,...channelList,...lastList]
-      this.computedCol = [...this.computedCol,...computedColAdd,...lastComputed]
+
       this.total = total
       this.current = current
       if(total === this.contents.length) {
@@ -304,7 +360,7 @@ export default {
       uni.hideLoading()
     },
     onFilterClick() {
-      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds','parentChargeTypeIds'])
+      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds'])
       this.$utils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })
@@ -320,7 +376,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.projectDetails-wrapper {
+.dealDetails-wrapper {
   background: rgba(0, 0, 0, 0.04);
   overflow-y: auto;
   .filter {
