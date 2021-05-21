@@ -9,6 +9,7 @@
     <view style="height: 10px;" />
     <scheduler
       :isAll="true"
+      :disable="isHeaderWithLargeArea"
       :height="schedulerHeight"
       :currentDate="calendarDate"
       :columnGroup="schedulerGroup"

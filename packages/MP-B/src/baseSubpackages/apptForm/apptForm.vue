@@ -286,10 +286,8 @@ export default {
   computed: {
     ...mapState('workbenchStore', {
       apptSetting: (state) => state.apptSetting,
+      medicalInstitution: (state) => state.medicalInstitution,
     }),
-    medicalInstitution() {
-      return uni.getStorageSync('accessMedicalInstitution')
-    },
     isAppt() {
       return (
         this.paramsObj.type === 'createAppt' ||
