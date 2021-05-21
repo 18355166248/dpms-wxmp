@@ -29,6 +29,19 @@ export default {
     }
   },
 
+  getEnumsText(key,value) {
+    let enumObj = uni.getStorageSync("enums")[key];
+    if (enumObj) {
+      let enums = CCEnumUtil.create(enumObj);
+      for (let key in enums.properties)
+        enums.properties[key] = {
+          ...enums.properties[key],
+          zh_CN: enums.properties[key].text.zh_CN,
+        };
+      return enums.properties[value].text.zh_CN
+    }
+  },
+
   /**
    * 千分位数字字符串
    * @param  {Number|String} money 原始金额

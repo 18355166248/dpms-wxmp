@@ -2,18 +2,21 @@
   <div class="finance_filter">
     <dpmsCellInput
       title="患者信息"
+      v-if="showItem('patientInfo')"
       :value="patientInfo"
       @input="setPatientInfo"
       placeholder="请输入患者姓名/联系电话模糊查询"
     />
     <dpmsCellInput
       title="单据号"
+      v-if="showItem('billOrderNo')"
       :value="billOrderNo"
       @input="setBillOrderNo"
       placeholder="请输入单据号"
     />
     <dpmsCell
       title="项目"
+      v-if="showItem('parentChargeTypeIds')"
       :value="parentChargeType.parentChargeTypeNames"
       isLink
       @click.native="onProjectClick"
@@ -21,6 +24,7 @@
     />
     <dpmsCell
       title="医生"
+      v-if="showItem('doctorIds')"
       :value="doctor.doctorNames"
       isLink
       @click.native="onStaffClick('doctor')"
@@ -28,6 +32,7 @@
     />
     <dpmsCell
       title="咨询师"
+      v-if="showItem('consultantIds')"
       :value="consultant.consultantNames"
       isLink
       @click.native="onStaffClick('consultant')"
@@ -72,11 +77,17 @@ export default {
         url:'/pages/finance-report/projectList'
       })
     },
+    showItem(str) {
+      return this.filtersList.includes(str)
+    },
     onSave() {
-
+      uni.$emit('finFilter','filter')
+      this.$utils.back()
     },
     onReset() {
       this.clearState()
+      uni.$emit('finFilter','empty')
+      this.$utils.back()
     }
   },
 };

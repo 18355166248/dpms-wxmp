@@ -8,6 +8,13 @@ const billAPI = {
   calendarDetail(data) {
     return httper.get('/billing/stat/reconciliation/calendar/detail',data)
   },
+  getStatPage(data) {
+    return httper.get('/billing/project/detail/stat/page',data)
+  },
+  getOrderPage(data) {
+    return httper.get('/billing/stat/bill/order/page',data)
+  },
+
   //小程序-统计报表-营收报表-营收日报表
   revenueList(data) {
     return httper.get('billing/mini-apps/analyze/revenue/list', data)
