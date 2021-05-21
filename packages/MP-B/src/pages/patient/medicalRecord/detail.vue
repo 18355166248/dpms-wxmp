@@ -133,51 +133,60 @@
       </div>
       <div class="row">
         <div class="label">备注：</div>
-        <input :type="text" @input="remarkChange" :maxlength="60" />
+        <input
+          :type="text"
+          @input="remarkChange"
+          :maxlength="60"
+          v-model="approveRemark"
+        />
       </div>
     </div>
     <div class="bottom">
-      <div v-if="currentStaffApproveType === 0">
-        <div v-if="detail.approveStatus === 3">
-          <button @click="deleteMedicalRecord">删 除</button>
-          <button @click="toEdit">编 辑</button>
-        </div>
+      <div>
+        <button @click="passing(detail)">不 通 过</button>
+        <button @click="noPassing(detail)">通 过</button>
       </div>
-      <div v-if="currentStaffApproveType === 1">
-        <div v-if="detail.approveStatus === 2">
-          <button @click="passing(detail)">不 通 过</button>
-          <button @click="noPassing(detail)">通 过</button>
-        </div>
-        <div v-if="detail.approveStatus === 3">
-          <button @click="deleteMedicalRecord">删 除</button>
-          <button @click="toEdit">编 辑</button>
-        </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 0">
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
       </div>
-      <div v-if="currentStaffApproveType === 2">
-        <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
-          <button @click="againEdit(detail)">重 新 修 改</button>
-        </div>
-        <div v-if="detail.approveStatus === 2">
-          <button @click="withdraw(detail)">撤 回</button>
-        </div>
-        <div v-if="detail.approveStatus === 3">
-          <button @click="deleteMedicalRecord">删 除</button>
-          <button @click="toEdit">编 辑</button>
-        </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 1">
+      <div v-if="detail.approveStatus === 2">
+        <button @click="passing(detail)">不 通 过</button>
+        <button @click="noPassing(detail)">通 过</button>
       </div>
-      <div v-if="currentStaffApproveType === 3">
-        <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
-          <button @click="againEdit(detail)">重 新 修 改</button>
-        </div>
-        <div v-if="detail.approveStatus === 2">
-          <button @click="withdraw(detail)">撤 回</button>
-          <button @click="passing(detail)">不 通 过</button>
-          <button @click="noPassing(detail)">通 过</button>
-        </div>
-        <div v-if="detail.approveStatus === 3">
-          <button @click="deleteMedicalRecord">删 除</button>
-          <button @click="toEdit">编 辑</button>
-        </div>
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 2">
+      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
+        <button @click="againEdit(detail)">重 新 修 改</button>
+      </div>
+      <div v-if="detail.approveStatus === 2">
+        <button @click="withdraw(detail)">撤 回</button>
+      </div>
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 3">
+      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
+        <button @click="againEdit(detail)">重 新 修 改</button>
+      </div>
+      <div v-if="detail.approveStatus === 2">
+        <button @click="withdraw(detail)">撤 回</button>
+        <button @click="passing(detail)">不 通 过</button>
+        <button @click="noPassing(detail)">通 过</button>
+      </div>
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
       </div>
     </div>
   </div>
@@ -194,6 +203,7 @@ export default {
     return {
       currentStaffApproveType: 0,
       detail: {},
+      approveRemark: '',
     }
   },
   methods: {
@@ -214,6 +224,8 @@ export default {
         ),
         ...res.data,
       }
+      console.log('---detail---')
+      console.log(this.detail)
     },
     deleteMedicalRecord() {
       uni.showModal({
@@ -240,17 +252,47 @@ export default {
     againEdit(detail) {
       console.log(detail)
     },
-    passing(detail) {
-      console.log(detail)
+    async passing(detail) {
+      let data = {
+        id: detail.registerId,
+        approveStatus: 3,
+        approveRemark: this.approveRemark,
+      }
+      const res = await diagnosisAPI.medicalRecords(
+        { id: detail.registerId },
+        data,
+      )
+      console.log('---res---')
+      console.log(res)
     },
-    noPassing(detail) {
-      console.log(detail)
+    async noPassing(detail) {
+      let data = {
+        id: detail.registerId,
+        approveStatus: 4,
+        approveRemark: this.approveRemark,
+      }
+      const res = await diagnosisAPI.medicalRecords(
+        { id: detail.registerId },
+        data,
+      )
+      console.log('---res---')
+      console.log(res)
     },
-    withdraw(detail) {
-      console.log(detail)
+    async withdraw(detail) {
+      let data = {
+        id: detail.registerId,
+        approveStatus: 1,
+        approveRemark: this.approveRemark,
+      }
+      const res = await diagnosisAPI.medicalRecords(
+        { id: detail.registerId },
+        data,
+      )
+      console.log('---res---')
+      console.log(res)
     },
     remarkChange(ev) {
-      console.log(ev.target.value)
+      this.approveRemark = ev.target.value
     },
   },
   onLoad({ medicalRecordId, patientId }) {

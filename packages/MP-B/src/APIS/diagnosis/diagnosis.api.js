@@ -5,6 +5,10 @@ const diagnosisAPI = {
   getRole(data) {
     return httper.get('diagnosis/medical-records/approve-configs/role', data)
   },
+  //病历审批
+  medicalRecords({ id }, data) {
+    return httper.post(`/diagnosis/medical-records/`, data)
+  },
   // 今日工作
   getTodayWorkStatistics(data) {
     return httper.get('diagnosis/register-stat/today-work', data)
