@@ -78,7 +78,7 @@ export default {
   computed: {
     ...mapState('searchProjectStore', ['searchProjectList']),
     ...mapState('dispose', ['disposeList']),
-    ...mapState('checkstand', ['chargeType', 'itemType']),
+    ...mapState('checkstand', ['chargeType']),
   },
   onLoad() {
     this.getChargeTypes()
@@ -188,7 +188,7 @@ export default {
         deductSign: false,
         singleDiscountLimit: 0,
         itemNum: 1,
-        itemType: this.itemType,
+        itemType: 12,
         singleDiscount: 100,
       }
       this.classifyList.forEach((item) => {

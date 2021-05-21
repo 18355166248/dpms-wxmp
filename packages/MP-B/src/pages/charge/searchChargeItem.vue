@@ -38,6 +38,7 @@
         </chargeButton>
       </view>
     </view>
+
   </view>
 </template>
 <script>
@@ -95,6 +96,7 @@ export default {
         this.searchResultList = []
       }
     },
+
   },
   watch: {},
   components: { chargeButton, searchInput },

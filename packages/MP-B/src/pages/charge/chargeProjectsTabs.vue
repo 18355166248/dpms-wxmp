@@ -22,15 +22,15 @@
     <view class="main-container">
       <!--诊疗服务-->
       <view v-show="currentTab === 0">
-        <chargeTab0></chargeTab0>
+        <chargeTab0 ref="chargeTab0Ref"></chargeTab0>
       </view>
       <!--套餐项目-->
       <view v-show="currentTab === 1">
-        <chargeTab1></chargeTab1>
+        <chargeTab1 ref="chargeTab1Ref"></chargeTab1>
       </view>
       <!--销售商品-->
       <view v-show="currentTab === 2">
-        <chargeTab2></chargeTab2>
+        <chargeTab2 ref="chargeTab2Ref"></chargeTab2>
       </view>
     </view>
     <!--下一步-->
@@ -41,6 +41,7 @@
         </chargeButton>
       </view>
     </view>
+    <u-toast ref="uToast" />
   </view>
 </template>
 <script>
@@ -50,11 +51,13 @@ import chargeButton from './common/chargeButton'
 import chargeTab0 from './common/chargeTab0'
 import chargeTab1 from './common/chargeTab1'
 import chargeTab2 from './common/chargeTab2'
+import { mapMutations, mapState } from 'vuex';
+import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils'
 export default {
   name: '',
   data() {
     return {
-      currentTab: 2,
+      currentTab: 0,
       tabList: [
         { name: '诊疗服务', val: 0 },
         { name: '套餐项目', val: 1 },
@@ -65,19 +68,70 @@ export default {
       disabled: true,
     }
   },
-  computed: {},
+  computed: {
+    ...mapState('dispose', ['disposeList']),
+    ...mapState('checkstand', ['billType','itemType']),
+  },
   onLoad() {},
   onShow() {},
-  onHide() {},
-  onUnload() {},
   methods: {
+    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
     changeTab(i) {
       this.currentTab = this.tabList[i].val
     },
     //下一步
-    nextStep() {},
+    nextStep() {
+      const list0=this.$refs.chargeTab0Ref.getDisposeList();
+      const list1=this.$refs.chargeTab1Ref.filterPackageChargeItemList();
+      const list2=this.$refs.chargeTab2Ref.filterMerchandiseList();
+      let mergeList=[...list0,...list1,...list2];
+      if (mergeList.length <= 0) {
+        this.$refs.uToast.show({
+          title: '请选择收费项目!',
+          type: 'warning',
+        })
+        return false
+      }
+      this.handleData(mergeList)
+      uni.navigateTo({
+        url: '/pages/charge/chargeProjectsList',
+      })
+    },
+    //整合和处理相关的数据给到下个页面
+    handleData(list){
+      console.log(this.billType);
+      let targetList = []
+      let index = 0
+      list.forEach((project) => {
+        index += 1
+        let filterData={}
+        filterData.pageSerialNo = index
+        filterData.itemType=project.itemType
+        filterData.itemNum=project.itemNum||1
+        filterData.salesList=project.salesList||[]
+        filterData.deductSign=project.salesList
+        filterData.allBillDiscount=project.allBillDiscount
+        filterData.isSingleDiscount=project.isSingleDiscount
+        filterData.singleDiscountLimit=project.singleDiscountLimit
+        filterData.itemName = project.settingsChargeItemName||project.commonName
+        filterData.itemCode =project.itemCode||project.settingsChargeItemCode||project.merchandiseNo
+        filterData.parentItemCode=project.parentItemCode||project.settingsChargeTypeId||0
+        filterData.unitAmount=project.unitAmount||project.retailAmount
+        const amount=changeTwoDecimal(filterData.unitAmount)
+        filterData.totalAmount = amount
+        filterData.singleDiscountAfterAmount = amount
+        filterData.receivableAmount =amount
+        targetList.push(filterData)
+      })
+      console.log(targetList);
+      this.setDisposeList(targetList)
+      this.setReceivableAmount(0)
+    },
+    // //判断是否已经选择了收费项目
+    // getMergeList(){
+    //
+    // },
     search() {
-      console.log('search')
       if (this.currentTab === 0) {
         uni.navigateTo({
           url: `/pages/charge/searchChargeItem`,

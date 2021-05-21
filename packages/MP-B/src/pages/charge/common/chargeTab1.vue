@@ -51,6 +51,7 @@
                     <dpmsCheckbox
                       shape="square"
                       v-model="item3.checked"
+                      @change="onChargeChange(item3)"
                     ></dpmsCheckbox>
                   </view>
                 </view>
@@ -97,6 +98,46 @@ export default {
     toggleClassify(item) {
       item.open = !item.open
     },
+    onChargeChange(item){
+      if (item.checked&&(!item.chargeItemList)){
+        this.getPackageChargeItems(item)
+      }
+    },
+    getPackageChargeItems(item){
+      billAPI.getPackageChargeItems({
+        settingsChargePackageTypeId:item.settingsChargePackageTypeId
+      }).then((res)=>{
+        if (res.code===0&&res?.data){
+          item.chargeItemList=res.data
+        }
+      }).catch((err)=>{
+        console.log(err);
+      })
+    },
+    //过滤数据  刷选没被选中的收费项目
+    filterPackageChargeItemList(){
+      let list=[]
+      this.classifyList.forEach((item)=>{
+        if (item?.children?.length>0){
+          item.children.forEach((item2)=>{
+            if (item2?.children?.length>0){
+              item2.children.forEach((item3)=>{
+                if (item3.checked){
+                  item3?.chargeItemList?.forEach((item4)=>{
+                      item4.settingsChargeItem.itemType=2
+                      //这里要取外层的这个字段 不要取里面的 里面的是假的
+                      item4.settingsChargeItem.parentItemCode=item4.settingsChargePackageTypeId
+                      item4.settingsChargeItem.itemCode=item4.settingsChargePackageItemId
+                      list.push(item4.settingsChargeItem)
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+      return list
+    }
   },
   watch: {},
   components: {},
@@ -115,6 +156,7 @@ export default {
   width: 750rpx;
   display: flex;
   flex-grow: 20;
+  margin-top: 16rpx;
   .projects-wrap {
     display: flex;
     line-height: 30rpx;

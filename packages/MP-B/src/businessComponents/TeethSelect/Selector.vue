@@ -1,7 +1,7 @@
 <template>
   <div class="selector">
     <div class="teeth-select">
-      <TeethSelect class="handle" :value="toothPositionStr" />
+      <TeethSelect class="handle" :value="toothPositionStr" :disabled="true"/>
     </div>
     <div class="sets">
       <div @click="setClick(teeth[0][0], teeth[1][0])">上半口-乳</div>

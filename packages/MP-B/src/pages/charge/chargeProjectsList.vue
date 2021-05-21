@@ -42,6 +42,22 @@
         <div class="row-2 flex-v-center">
           是否整单折扣: {{ item.allBillDiscount ? '是' : '否' }}
         </div>
+        <!--牙位图组件-->
+        <div class="teeth-select" v-if="chargeType===3">
+          <!--牙位 -->
+          <div class="flex">
+            <div class="label">牙位：</div>
+            <TeethSelect
+              class="teeth"
+              @input="(val, index) =>setTeethSelect(val,index)"
+            />
+          </div>
+         <!--处置说明 -->
+          <div class="flex" >
+            <span class="label2">处置说明：</span>
+            <div class="des">处置说明处置说明处置说明处置说明处置</div>
+          </div>
+        </div>
       </div>
       <dpmsCellInput
         :disabledProps="
@@ -89,9 +105,12 @@
 <script>
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import { mapMutations, mapState } from 'vuex'
-
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 export default {
   name: 'chargeProjectsList',
+  components: {
+    TeethSelect,
+  },
   data() {
     return {
       mainOrderDiscount: 100,
@@ -100,6 +119,7 @@ export default {
     }
   },
   onShow() {
+    console.log(this.chargeType);
     if (!this.receivableAmount) {
       // 如果没有receivableAmount，需要计算
       this.calculateAmount()
@@ -157,6 +177,11 @@ export default {
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
     ]),
+    //牙位图数据
+    setTeethSelect(value,index){
+      console.log(value);
+      console.log(index);
+    },
     onNextStep() {
       // 保存vuex并跳转
       if (this.disposeList.length === 0) {
@@ -190,6 +215,7 @@ export default {
       let record = this.activeRecord
       record.unitAmount = this.tempValue
       record.totalAmount = BigCalculate(record.itemNum, '*', record.unitAmount)
+      record.singleDiscountAfterAmount=record.totalAmount
       this.activeRecord = {}
       this.calculateAmount()
     },
@@ -206,7 +232,6 @@ export default {
           result = BigCalculate(result, '+', value)
         }
       })
-
       this.setReceivableAmount(changeTwoDecimal(result))
     },
     calculateDiscount() {
@@ -381,8 +406,7 @@ export default {
 
     .disposal-item {
       width: 750rpx;
-      height: 240rpx;
-      padding: 32rpx;
+      padding: 32rpx 32rpx 0;
       box-sizing: border-box;
       background: #fff;
       margin-bottom: 14rpx;
@@ -422,6 +446,47 @@ export default {
         line-height: 32rpx;
         font-size: 28rpx;
         color: #595959;
+        margin: 16rpx 0 32rpx 0;
+      }
+      .teeth-select {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 32rpx 0;
+        box-sizing: border-box;
+        border-top: 1rpx solid #e5e5e5;;
+        .flex{
+          display: flex;
+          width: 100%;
+          color: #4c4c4c;
+          .label{
+            width: 116rpx;
+            flex-shrink: 0;
+            color: #191919;
+          }
+          .teeth{
+            width: 100%;
+          }
+          .label2{
+            width: 182rpx;
+            flex-shrink: 0;
+            color: #191919;
+          }
+          .des{
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+          }
+        }
+        .flex:last-child{
+          padding-top:16rpx;
+        }
+
       }
     }
   }

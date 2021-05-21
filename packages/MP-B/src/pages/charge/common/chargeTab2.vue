@@ -1,17 +1,21 @@
 <template>
   <view class="container-wrap">
-    <merchandiseList :list="merchandiseList"></merchandiseList>
+    <merchandiseList :list="merchandiseList" ref="merchandiseListRef"></merchandiseList>
   </view>
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
 import merchandiseList from './merchandiseList'
+import { mapState } from 'vuex';
 export default {
   name: '',
   data() {
     return {
       merchandiseList: [],
     }
+  },
+  computed:{
+    ...mapState('searchProjectStore', ['searchMerchandiseList']),
   },
   created() {
     this.getMerchandiseList()
@@ -35,8 +39,36 @@ export default {
       })
       return list
     },
+    //合并数据
+    mergeMerchandiseList() {
+      this.merchandiseList=this.$refs.merchandiseListRef.merchandiseList
+      this.merchandiseList.length>0&&this.merchandiseList.forEach((merchandise) => {
+        if (this.checkMerchandiseSelected(this.searchMerchandiseList,merchandise)){
+          merchandise.checked=true
+        }
+      })
+    },
+    //判断是否选中
+    checkMerchandiseSelected(list, merchandise) {
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].merchandiseId === merchandise.merchandiseId) {
+          return true
+        }
+      }
+    },
+    filterMerchandiseList(){
+      this.merchandiseList=this.$refs.merchandiseListRef.merchandiseList
+      return this.merchandiseList.filter((item)=>{
+        item.itemType=13
+        return item.checked
+      })
+    }
   },
-  watch: {},
+  watch: {
+    searchMerchandiseList(val) {
+      this.mergeMerchandiseList()
+    },
+  },
   components: { merchandiseList },
 }
 </script>
