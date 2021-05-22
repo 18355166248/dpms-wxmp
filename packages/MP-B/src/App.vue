@@ -238,6 +238,12 @@ button::after {
 .icon-whole:before {
   content: '\e661';
 }
+.icon-bill-fill::before {
+  content: '\e67d';
+}
+.icon-check-square-fill:before {
+  content: '\e84b';
+}
 
 /* iconfont图标 end */
 </style>

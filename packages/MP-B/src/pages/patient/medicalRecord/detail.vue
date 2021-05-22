@@ -3,11 +3,23 @@
     <div class="time">
       <div class="iconfont icon-time-circle"></div>
       {{ detail.visTimeFormated }}
+      <div class="review-status" v-if="detail.approveStatus === 1">草稿</div>
+      <div class="review-status" v-if="detail.approveStatus === 2">审核中</div>
+      <div class="review-status" v-if="detail.approveStatus === 3">
+        审核通过
+      </div>
+      <div class="review-status" v-if="detail.approveStatus === 4">
+        审核不通过
+      </div>
     </div>
     <div class="rows">
       <div class="row">
         <div class="label">就诊信息：</div>
         {{ detail.visTimeFormated }} {{ detail.medicalInstitutionSimpleCode }}
+      </div>
+      <div class="row">
+        <div class="label">创建人：</div>
+        {{ detail.createStaffName || '' }}
       </div>
       <div class="row">
         <div class="label">医生：</div>
@@ -119,9 +131,60 @@
         <div class="label">医嘱：</div>
         {{ detail.doctorAdvice || '' }}
       </div>
+      <div class="row">
+        <div class="label">备注：</div>
+        <input
+          :type="text"
+          @input="remarkChange"
+          :maxlength="60"
+          v-model="approveRemark"
+        />
+      </div>
     </div>
-    <div class="bottom" v-if="detail.isEdit">
+    <div class="bottom">
       <div>
+        <button @click="passing(detail)">不 通 过</button>
+        <button @click="noPassing(detail)">通 过</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 0">
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 1">
+      <div v-if="detail.approveStatus === 2">
+        <button @click="passing(detail)">不 通 过</button>
+        <button @click="noPassing(detail)">通 过</button>
+      </div>
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 2">
+      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
+        <button @click="againEdit(detail)">重 新 修 改</button>
+      </div>
+      <div v-if="detail.approveStatus === 2">
+        <button @click="withdraw(detail)">撤 回</button>
+      </div>
+      <div v-if="detail.approveStatus === 3">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 3">
+      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
+        <button @click="againEdit(detail)">重 新 修 改</button>
+      </div>
+      <div v-if="detail.approveStatus === 2">
+        <button @click="withdraw(detail)">撤 回</button>
+        <button @click="passing(detail)">不 通 过</button>
+        <button @click="noPassing(detail)">通 过</button>
+      </div>
+      <div v-if="detail.approveStatus === 3">
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
@@ -133,14 +196,21 @@
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
+
 export default {
   components: { TeethSelect },
   data() {
     return {
+      currentStaffApproveType: 0,
       detail: {},
+      approveRemark: '',
     }
   },
   methods: {
+    async getRole() {
+      const res = await diagnosisAPI.getRole({})
+      this.currentStaffApproveType = res?.data?.currentStaffApproveType
+    },
     async getMedicalRecordDetail() {
       this.$utils.showLoading('加载中...')
       const res = await diagnosisAPI.getMedicalRecordDetail({
@@ -154,6 +224,8 @@ export default {
         ),
         ...res.data,
       }
+      console.log('---detail---')
+      console.log(this.detail)
     },
     deleteMedicalRecord() {
       uni.showModal({
@@ -177,12 +249,58 @@ export default {
         url: `/pages/patient/medicalRecord/create?patientId=${this.patientId}&medicalRecordId=${this.medicalRecordId}`,
       })
     },
+    againEdit(detail) {
+      console.log(detail)
+    },
+    async passing(detail) {
+      let data = {
+        id: detail.registerId,
+        approveStatus: 3,
+        approveRemark: this.approveRemark,
+      }
+      const res = await diagnosisAPI.medicalRecords(
+        { id: detail.registerId },
+        data,
+      )
+      console.log('---res---')
+      console.log(res)
+    },
+    async noPassing(detail) {
+      let data = {
+        id: detail.registerId,
+        approveStatus: 4,
+        approveRemark: this.approveRemark,
+      }
+      const res = await diagnosisAPI.medicalRecords(
+        { id: detail.registerId },
+        data,
+      )
+      console.log('---res---')
+      console.log(res)
+    },
+    async withdraw(detail) {
+      let data = {
+        id: detail.registerId,
+        approveStatus: 1,
+        approveRemark: this.approveRemark,
+      }
+      const res = await diagnosisAPI.medicalRecords(
+        { id: detail.registerId },
+        data,
+      )
+      console.log('---res---')
+      console.log(res)
+    },
+    remarkChange(ev) {
+      this.approveRemark = ev.target.value
+    },
   },
   onLoad({ medicalRecordId, patientId }) {
     this.medicalRecordId = medicalRecordId
     this.patientId = patientId
   },
   onShow() {
+    this.getRole()
     this.getMedicalRecordDetail()
   },
 }
@@ -194,6 +312,7 @@ export default {
   font-size: 28rpx;
   background: white;
 }
+
 .time {
   height: 80rpx;
   background: rgba(0, 0, 0, 0.04);
@@ -201,38 +320,53 @@ export default {
   display: flex;
   align-items: center;
   padding: 0 34rpx;
+
   .iconfont {
     margin-right: 14rpx;
   }
+
+  .review-status {
+    width: 370rpx;
+    text-align: right;
+  }
 }
+
 .rows {
   padding: 15rpx 20rpx;
 }
+
 .row {
   padding: 15rpx 0;
   display: flex;
+
   .label {
     flex: none;
     width: 5em;
     white-space: nowrap;
     color: rgba(0, 0, 0, 0.9);
     text-align: right;
+
     & + div {
       flex: auto;
     }
   }
+
   .teeth-content {
     width: 570rpx;
+
     > div {
       margin-bottom: 16rpx;
+
       &:last-child {
         margin-bottom: none;
       }
     }
   }
 }
+
 .bottom {
   height: 90rpx;
+
   > div {
     box-sizing: border-box;
     border-top: #5cbb89 solid 1rpx;
@@ -243,6 +377,7 @@ export default {
     left: 0;
     height: 90rpx;
   }
+
   button {
     width: 50%;
     height: 100%;
@@ -250,6 +385,7 @@ export default {
     color: #ffffff;
     font-size: 36rpx;
     border-radius: 0;
+
     &:first-child {
       background: #ffffff;
       color: #5cbb89;

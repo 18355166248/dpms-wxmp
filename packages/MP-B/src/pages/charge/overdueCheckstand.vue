@@ -169,7 +169,6 @@ import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import payResult from './common/payResult'
@@ -210,7 +209,6 @@ export default {
   },
   components: {
     ChargestandTitle,
-    actionSheet,
     payResult,
   },
   computed: {
@@ -276,15 +274,16 @@ export default {
     //支付方式监听
     onPayTypeInputChange(value, item) {
       if (value === '' || value === undefined) {
-        item.paymentAmount='-'
+        item.paymentAmount = '-'
       }
       if (item.balance) {
-        item.paymentAmount = value > item.balance ? item.balance + '' : Number(value)
-      }else {
-        item.paymentAmount=Number(value)
+        item.paymentAmount =
+          value > item.balance ? item.balance + '' : Number(value)
+      } else {
+        item.paymentAmount = Number(value)
       }
       this.$nextTick(() => {
-        item.paymentAmount = changeTwoDecimal(value,2)
+        item.paymentAmount = changeTwoDecimal(value, 2)
         this.errTipText = ''
         this.checkPaidAmount()
       })
@@ -342,7 +341,7 @@ export default {
     //-----------------------总计金额、折扣、应收
     onDebtDiscountChange(value) {
       if (value === '' || value === undefined) {
-        this.form.debtDiscount='-'
+        this.form.debtDiscount = '-'
       }
       if (value > 100) {
         this.form.debtDiscount = '100'
@@ -364,7 +363,7 @@ export default {
     //应收金额
     onReceivableAmountChange(value) {
       if (value === '' || value === undefined) {
-        this.form.receivableAmount='-'
+        this.form.receivableAmount = '-'
       }
       if (value > this.overdueAmount) {
         this.form.receivableAmount = this.overdueAmount + ''
@@ -372,7 +371,10 @@ export default {
         this.form.receivableAmount = Number(value)
       }
       this.$nextTick(() => {
-        this.form.receivableAmount = changeTwoDecimal(this.form.receivableAmount,2)
+        this.form.receivableAmount = changeTwoDecimal(
+          this.form.receivableAmount,
+          2,
+        )
         const debtDiscount = BigCalculate(
           BigCalculate(this.form.receivableAmount, '/', this.overdueAmount),
           '*',
@@ -393,8 +395,10 @@ export default {
         })
         .then((res) => {
           if (res?.data.length > 0) {
-            if(this.billType === 3) {
-              res.data = res.data.filter(item => (item.payStyle !== 8 && item.payStyle !== 9))
+            if (this.billType === 3) {
+              res.data = res.data.filter(
+                (item) => item.payStyle !== 8 && item.payStyle !== 9,
+              )
             }
             res.data.forEach((item, index) => {
               item.checked = false
@@ -452,7 +456,7 @@ export default {
       _data.patientId = this.patientDetail.patientId
       _data.debtDiscount = this.form.debtDiscount
       _data.memo = this.form.memo
-      _data.receivableAmount =this.form.receivableAmount
+      _data.receivableAmount = this.form.receivableAmount
       _data.payChannelList = this.form.payChannelList
       _data.salesVOList = []
 

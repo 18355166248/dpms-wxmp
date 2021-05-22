@@ -9,7 +9,8 @@
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
             支付方式（应收金额<span style="font-weight: bold;">
-            {{receivableAmount | thousandFormatter(2, '￥')}}</span>）
+              {{ receivableAmount | thousandFormatter(2, '￥') }}</span
+            >）
           </div>
         </div>
         <div slot="extra">
@@ -178,8 +179,8 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance">&nbsp;
-          &nbsp;(余额{{ item.balance | thousandFormatter }})
+        <template v-if="item.balance"
+          >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
           :disabled="checkDisableFn(item.checked)"
@@ -200,7 +201,6 @@ import patientAPI from '@/APIS/patient/patient.api'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils'
 import payResult from './common/payResult'
@@ -242,7 +242,6 @@ export default {
   },
   components: {
     ChargestandTitle,
-    actionSheet,
     payResult,
   },
   computed: {
@@ -312,7 +311,7 @@ export default {
       'setRealDiscountPromotionAmount',
     ]),
     onSubmitBill(type) {
-      if(this.changeAmount > 0) {
+      if (this.changeAmount > 0) {
         return
       }
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
@@ -460,9 +459,9 @@ export default {
     },
     setPayChannelList(backChannelList) {
       // 处理储值卡，优惠卷收费的模式，此时没有backChannelList
-      if(!backChannelList) {
-        console.log('this.form.payChannelList', this.form.payChannelList);
-        this.form.payChannelList = this.form.payChannelList.map(item => {
+      if (!backChannelList) {
+        console.log('this.form.payChannelList', this.form.payChannelList)
+        this.form.payChannelList = this.form.payChannelList.map((item) => {
           item.paymentAmount = this.receivableAmount
           return item
         })
@@ -575,8 +574,10 @@ export default {
         })
         .then((res) => {
           if (res?.data.length > 0) {
-            if(this.billType === 3) {
-              res.data = res.data.filter(item => (item.payStyle !== 8 && item.payStyle !== 9))
+            if (this.billType === 3) {
+              res.data = res.data.filter(
+                (item) => item.payStyle !== 8 && item.payStyle !== 9,
+              )
             }
             res.data.forEach((item, index) => {
               item.checked = false

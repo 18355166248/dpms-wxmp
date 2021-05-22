@@ -15,11 +15,20 @@
         <div class="head">
           <div class="iconfont icon-time-circle"></div>
           {{ r.visTimeFormated }}
+          <div class="review-status" v-if="r.approveStatus === 1">草稿</div>
+          <div class="review-status" v-if="r.approveStatus === 2">审核中</div>
+          <div class="review-status" v-if="r.approveStatus === 3">审核通过</div>
+          <div class="review-status" v-if="r.approveStatus === 4">
+            审核不通过
+          </div>
         </div>
         <div class="row">
           就诊信息：<span class="content"
             >{{ r.visTimeFormated }} {{ r.medicalInstitutionSimpleCode }}</span
           >
+        </div>
+        <div class="row">
+          创建人：<span class="content">{{ r.createStaffName }}</span>
         </div>
         <div class="row">
           医生：<span class="content">{{ r.doctorStaffName }}</span>
@@ -29,6 +38,9 @@
         </div>
         <div class="row">
           主诉：<span class="content">{{ r.mainComplaint }}</span>
+        </div>
+        <div class="row">
+          备注：<span class="content">{{ r.approveRemark }}</span>
         </div>
       </div>
     </scroll-view>
@@ -111,11 +123,11 @@ export default {
 
 <style lang="scss" scoped>
 .records {
-  padding: 32rpx;
-  padding-bottom: 0;
+  padding: 32rpx 32rpx 0 32rpx;
   height: calc(100vh - 90rpx);
   box-sizing: border-box;
 }
+
 .record {
   background: #ffffff;
   border-radius: 8rpx;
@@ -123,28 +135,39 @@ export default {
   color: rgba(0, 0, 0, 0.9);
   padding: 0 24rpx 16rpx;
   margin-bottom: 25rpx;
+
   .head {
     height: 84rpx;
     display: flex;
     align-items: center;
     border-bottom: solid 1rpx rgba(0, 0, 0, 0.1);
     margin-bottom: 16rpx;
+
     .icon-time-circle {
       margin-right: 10rpx;
     }
+
+    .review-status {
+      width: 370rpx;
+      text-align: right;
+    }
   }
+
   .row {
     line-height: 1.9;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
     .content {
       color: rgba(0, 0, 0, 0.7);
     }
   }
 }
+
 .bottom {
   height: 90rpx;
+
   button {
     height: 90rpx;
     background: #5cbb89;
