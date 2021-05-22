@@ -49,173 +49,174 @@ import billAPI from 'APIS/bill/bill.api';
 export default {
   name: 'dealDetails',
   data() {
+    this._headers = [
+      {
+        label: '单据号',
+        key: 'billSerialNo',
+      },
+      {
+        label: '账单类型',
+        key: 'billTypeName',
+      },
+      {
+        label: '账单状态',
+        key: 'payStatusName',
+      },
+      {
+        label: '病历号',
+        key: 'medicalRecordNo',
+      },
+      {
+        label: '患者姓名',
+        key: 'patientName',
+      },
+      {
+        label: '联系电话',
+        key: 'mobile',
+      },
+      {
+        label: '患者所属机构',
+        key: 'patientMedicalInstitutionName',
+      },
+      {
+        label: '费用类型',
+        key: 'settingsExpensesTypeName',
+      },
+      {
+        label: '收费大类',
+        key: 'patientSettingsChargeTypeName',
+      },
+      {
+        label: '收费小类',
+        key: 'settingsChargeTypeName',
+      },
+      {
+        label: '收费项目',
+        key: 'settingsChargeItemName',
+      },
+      {
+        label: '是否参与整单折扣',
+        key: 'allBillDiscountName',
+      },
+      {
+        label: '是否划扣项目',
+        key: 'deductSignName',
+      },
+      {
+        label: '治疗步骤',
+        key: 'plannedDeductionStep',
+      },
+      {
+        label: '医生科室',
+        key: 'doctorDepartmentName',
+      },
+      {
+        label: '医生',
+        key: 'doctorStaffName',
+      },
+      {
+        label: '护士',
+        key: 'nurseStaffName',
+      },
+      {
+        label: '开单咨询师',
+        key: 'counselorName',
+      },
+      {
+        label: '销售人员',
+        key: 'salesName',
+      },
+      {
+        label: '备注',
+        key: 'memo',
+      },
+      {
+        label: '原因跟踪',
+        key: 'reason',
+      },
+      {
+        label: '最近交易时间',
+        key: 'lastDealTime',
+      },
+      {
+        label: '最近操作诊所',
+        key: 'lastMedicalInstitutionName',
+      },
+      {
+        label: '单价',
+        key: 'unitAmount',
+      },
+      {
+        label: '数量',
+        key: 'itemNum',
+      },
+      {
+        label: '总价',
+        key: 'totalAmount',
+      },
+      {
+        label: '单项折扣',
+        key: 'discount',
+      },
+      {
+        label: '整单折扣',
+        key: 'allDiscount',
+      },
+      {
+        label: '折后应收',
+        key: 'afterDiscountAmount',
+      },
+      {
+        label: '优惠总金额',
+        key: 'promotionAmount',
+      },
+      {
+        label: '已收款',
+        key: 'paymentAmount',
+      },
+      {
+        label: '退款',
+        key: 'refundAmount',
+      },
+      {
+        label: '欠款',
+        key: 'oweAmount',
+      },
+      {
+        label: '现金收款',
+        key: 'cashAmount',
+      },
+      {
+        label: '虚拟收款',
+        key: 'virtualAmount',
+      },
+      {
+        label: '预收款抵扣',
+        key: 'deductionOfAdvancePayment',
+      },
+      {
+        label: '营业收入',
+        key: 'revenueAmount',
+      },
+      {
+        label: '普通收费收入',
+        key: 'generalAmount',
+      },
+      {
+        label: '划扣收入',
+        key: 'plannedAmount',
+      },
+      {
+        label: '已划扣总比例',
+        key: 'afterDiscount',
+      },
+      {
+        label: '最新划扣时间',
+        key: 'lastPlannedDeductionTime',
+      },
+    ]
     return {
-      headers:[
-        {
-          label: '单据号',
-          key: 'billSerialNo',
-        },
-        {
-          label: '账单类型',
-          key: 'billTypeName',
-        },
-        {
-          label: '账单状态',
-          key: 'payStatusName',
-        },
-        {
-          label: '病历号',
-          key: 'medicalRecordNo',
-        },
-        {
-          label: '患者姓名',
-          key: 'patientName',
-        },
-        {
-          label: '联系电话',
-          key: 'mobile',
-        },
-        {
-          label: '患者所属机构',
-          key: 'patientMedicalInstitutionName',
-        },
-        {
-          label: '费用类型',
-          key: 'settingsExpensesTypeName',
-        },
-        {
-          label: '收费大类',
-          key: 'patientSettingsChargeTypeName',
-        },
-        {
-          label: '收费小类',
-          key: 'settingsChargeTypeName',
-        },
-        {
-          label: '收费项目',
-          key: 'settingsChargeItemName',
-        },
-        {
-          label: '是否参与整单折扣',
-          key: 'allBillDiscountName',
-        },
-        {
-          label: '是否划扣项目',
-          key: 'deductSignName',
-        },
-        {
-          label: '治疗步骤',
-          key: 'plannedDeductionStep',
-        },
-        {
-          label: '医生科室',
-          key: 'doctorDepartmentName',
-        },
-        {
-          label: '医生',
-          key: 'doctorStaffName',
-        },
-        {
-          label: '护士',
-          key: 'nurseStaffName',
-        },
-        {
-          label: '开单咨询师',
-          key: 'counselorName',
-        },
-        {
-          label: '销售人员',
-          key: 'salesName',
-        },
-        {
-          label: '备注',
-          key: 'memo',
-        },
-        {
-          label: '原因跟踪',
-          key: 'reason',
-        },
-        {
-          label: '最近交易时间',
-          key: 'lastDealTime',
-        },
-        {
-          label: '最近操作诊所',
-          key: 'lastMedicalInstitutionName',
-        },
-        {
-          label: '单价',
-          key: 'unitAmount',
-        },
-        {
-          label: '数量',
-          key: 'itemNum',
-        },
-        {
-          label: '总价',
-          key: 'totalAmount',
-        },
-        {
-          label: '单项折扣',
-          key: 'discount',
-        },
-        {
-          label: '整单折扣',
-          key: 'allDiscount',
-        },
-        {
-          label: '折后应收',
-          key: 'afterDiscountAmount',
-        },
-        {
-          label: '优惠总金额',
-          key: 'promotionAmount',
-        },
-        {
-          label: '已收款',
-          key: 'paymentAmount',
-        },
-        {
-          label: '退款',
-          key: 'refundAmount',
-        },
-        {
-          label: '欠款',
-          key: 'oweAmount',
-        },
-        {
-          label: '现金收款',
-          key: 'cashAmount',
-        },
-        {
-          label: '虚拟收款',
-          key: 'virtualAmount',
-        },
-        {
-          label: '预收款抵扣',
-          key: 'deductionOfAdvancePayment',
-        },
-        {
-          label: '营业收入',
-          key: 'revenueAmount',
-        },
-        {
-          label: '普通收费收入',
-          key: 'generalAmount',
-        },
-        {
-          label: '划扣收入',
-          key: 'plannedAmount',
-        },
-        {
-          label: '已划扣总比例',
-          key: 'afterDiscount',
-        },
-        {
-          label: '最新划扣时间',
-          key: 'lastPlannedDeductionTime',
-        },
-      ],
+      headers:[...this._headers],
       computedCol:[
         'afterDiscountAmount',
         'promotionAmount',
@@ -320,14 +321,12 @@ export default {
         billOrderNo: this.billOrderNo,
         doctorIds: this.doctor.doctorIds,
         consultantIds: this.consultant.consultantIds,
-        // beginTimeMillis: this.beginTimeMillis,
-        // endTimeMillis: this.endTimeMillis,
-        beginTimeMillis: 1619798400000,
-        endTimeMillis: 1622476799999,
+        beginTimeMillis: this.beginTimeMillis,
+        endTimeMillis: this.endTimeMillis,
       }
       let {
         data: {total, current, records, summary}
-      } = await billAPI.getItemStatPage({
+      } = await billAPI.getDetailStatePage({
         current: this.current,
         size: this.size,
         ...params
@@ -335,9 +334,11 @@ export default {
 
 
       records = records.map(item => {
-        item.cashierDate = moment(item.cashierDate).format('YYYY-MM-DD')
         item.lastDealTime = moment(item.lastDealTime).format('YYYY-MM-DD hh:mm:ss')
         item.totalAmount = this.$utils.formatPrice(item.totalAmount)
+        item.unitAmount = this.$utils.formatPrice(item.unitAmount)
+        item.discount = item.discount + '%'
+        item.allDiscount = item.allDiscount + '%'
         this.computedCol.forEach(it => {
           item[it] = this.$utils.formatPrice(item[it])
         })

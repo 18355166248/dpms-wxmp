@@ -135,10 +135,8 @@ export default {
       })
       this.dataSourceStatus = 'loading'
       const params = {
-        // startSearchTimeStamp: this.beginTimeMillis,
-        // endSearchTimeStamp: this.endTimeMillis,
-        startSearchTimeStamp: 1621526400000,
-        endSearchTimeStamp: 1621612799999
+        startSearchTimeStamp: this.beginTimeMillis,
+        endSearchTimeStamp: this.endTimeMillis,
       }
       let {
         data: {total, current, records, summary, payStyleReconciliationTableHeaderList}
@@ -192,12 +190,6 @@ export default {
       }
       this.summary = summary || {}
       uni.hideLoading()
-    },
-    onFilterClick() {
-      const filter = JSON.stringify(['patientInfo','billOrderNo','doctorIds','consultantIds','parentChargeTypeIds'])
-      this.$utils.push({
-        url: `/pages/finance-report/filter?filter=${filter}`,
-      })
     },
     openCalendar() {
       this.$refs.calendar.open()
