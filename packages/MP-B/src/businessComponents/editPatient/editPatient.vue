@@ -351,6 +351,12 @@ export default {
         contactLabel: {
           type: 'any',
         },
+        gender: {
+          type: 'any',
+        },
+        nationality: {
+          type: 'any',
+        },
         mobile: [
           {
             pattern: /^\d{11}$/,
@@ -589,6 +595,8 @@ export default {
         this.$emit('submit', this.form)
         return
       }
+      console.log(2,this.newRules,this.form);
+      return
       this.$utils.formValidate(
         this.newRules,
         this.form,
