@@ -762,15 +762,15 @@ export default {
 
 .addRegist {
   color: #5cbb89;
-  padding: 10 rpx;
+  padding: 10rpx;
   display: block;
-  font-size: 40 rpx;
+  font-size: 40rpx;
 }
 
 .text {
-  padding-top: 18 rpx;
+  padding-top: 18rpx;
   box-sizing: border-box;
-  min-height: 62 rpx;
+  min-height: 62rpx;
   white-space: normal;
   width: 100%;
   color: rgba(0, 0, 0, 0.65);
@@ -788,44 +788,44 @@ export default {
   align-items: center;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-bottom: 32 rpx;
-  border-bottom: rgba(0, 0, 0, 0.15) solid 2 rpx;
+  padding-bottom: 32rpx;
+  border-bottom: rgba(0, 0, 0, 0.15) solid 2rpx;
 
   .handle {
-    padding: 32 rpx 0;
-    width: 570 rpx;
+    padding: 32rpx 0;
+    width: 570rpx;
   }
 
   .btn {
     flex: none;
-    font-size: 28 rpx;
+    font-size: 28rpx;
     color: #5cbb89;
     background: none;
     padding: 0;
-    margin: 0 0 0 60 rpx;
+    margin: 0 0 0 60rpx;
   }
 }
 
 .bottom-func {
-  padding-top: 32 rpx;
+  padding-top: 32rpx;
   color: #5cbb89;
-  font-size: 34 rpx;
+  font-size: 34rpx;
   display: flex;
   justify-content: center;
   align-items: center;
 
   .iconfont {
     font-size: inherit;
-    margin-right: 16 rpx;
+    margin-right: 16rpx;
   }
 }
 
 .bottom {
-  height: 90 rpx;
+  height: 90rpx;
 
   .inner {
     display: flex;
-    height: 90 rpx;
+    height: 90rpx;
   }
 
   .funcs {
@@ -834,14 +834,14 @@ export default {
     align-items: center;
     justify-content: space-evenly;
     color: #4c4c4c;
-    font-size: 24 rpx;
+    font-size: 24rpx;
     background: white;
-    border-top: rgba(0, 0, 0, 0.15) solid 2 rpx;
+    border-top: rgba(0, 0, 0, 0.15) solid 2rpx;
     text-align: center;
 
     .iconfont {
       color: #5cbb89;
-      font-size: 36 rpx;
+      font-size: 36rpx;
     }
   }
 
@@ -850,7 +850,7 @@ export default {
     height: 100%;
     background: #5cbb89;
     color: #ffffff;
-    font-size: 36 rpx;
+    font-size: 36rpx;
     border-radius: 0;
   }
 }
