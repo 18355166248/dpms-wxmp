@@ -351,6 +351,12 @@ export default {
         contactLabel: {
           type: 'any',
         },
+        gender: {
+          type: 'any',
+        },
+        nationality: {
+          type: 'any',
+        },
         mobile: [
           {
             pattern: /^\d{11}$/,
