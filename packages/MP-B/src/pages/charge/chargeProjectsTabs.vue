@@ -51,7 +51,7 @@ import chargeButton from './common/chargeButton'
 import chargeTab0 from './common/chargeTab0'
 import chargeTab1 from './common/chargeTab1'
 import chargeTab2 from './common/chargeTab2'
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils'
 export default {
   name: '',
@@ -70,21 +70,25 @@ export default {
   },
   computed: {
     ...mapState('dispose', ['disposeList']),
-    ...mapState('checkstand', ['billType','itemType']),
+    ...mapState('checkstand', ['billType', 'itemType']),
   },
   onLoad() {},
   onShow() {},
   methods: {
-    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
+    ...mapMutations('dispose', [
+      'setDisposeList',
+      'setSelectedDisposeList',
+      'setReceivableAmount',
+    ]),
     changeTab(i) {
       this.currentTab = this.tabList[i].val
     },
     //下一步
     nextStep() {
-      const list0=this.$refs.chargeTab0Ref.getDisposeList();
-      const list1=this.$refs.chargeTab1Ref.filterPackageChargeItemList();
-      const list2=this.$refs.chargeTab2Ref.filterMerchandiseList();
-      let mergeList=[...list0,...list1,...list2];
+      const list0 = this.$refs.chargeTab0Ref.getDisposeList()
+      const list1 = this.$refs.chargeTab1Ref.filterPackageChargeItemList()
+      const list2 = this.$refs.chargeTab2Ref.filterMerchandiseList()
+      let mergeList = [...list0, ...list1, ...list2]
       if (mergeList.length <= 0) {
         this.$refs.uToast.show({
           title: '请选择收费项目!',
@@ -98,32 +102,37 @@ export default {
       })
     },
     //整合和处理相关的数据给到下个页面
-    handleData(list){
-      console.log(this.billType);
+    handleData(list) {
+      console.log(this.billType)
       let targetList = []
       let index = 0
       list.forEach((project) => {
         index += 1
-        let filterData={}
+        let filterData = {}
         filterData.pageSerialNo = index
-        filterData.itemType=project.itemType
-        filterData.itemNum=project.itemNum||1
-        filterData.salesList=project.salesList||[]
-        filterData.deductSign=project.salesList
-        filterData.allBillDiscount=project.allBillDiscount
-        filterData.isSingleDiscount=project.isSingleDiscount
-        filterData.singleDiscountLimit=project.singleDiscountLimit
-        filterData.itemName = project.settingsChargeItemName||project.commonName
-        filterData.itemCode =project.itemCode||project.settingsChargeItemCode||project.merchandiseNo
-        filterData.parentItemCode=project.parentItemCode||project.settingsChargeTypeId||0
-        filterData.unitAmount=project.unitAmount||project.retailAmount
-        const amount=changeTwoDecimal(filterData.unitAmount)
+        filterData.itemType = project.itemType
+        filterData.itemNum = project.itemNum || 1
+        filterData.salesList = project.salesList || []
+        filterData.deductSign = project.salesList
+        filterData.allBillDiscount = project.allBillDiscount
+        filterData.isSingleDiscount = project.isSingleDiscount
+        filterData.singleDiscountLimit = project.singleDiscountLimit
+        filterData.itemName =
+          project.settingsChargeItemName || project.commonName
+        filterData.itemCode =
+          project.itemCode ||
+          project.settingsChargeItemCode ||
+          project.merchandiseNo
+        filterData.parentItemCode =
+          project.parentItemCode || project.settingsChargeTypeId || 0
+        filterData.unitAmount = project.unitAmount || project.retailAmount
+        const amount = changeTwoDecimal(filterData.unitAmount)
         filterData.totalAmount = amount
         filterData.singleDiscountAfterAmount = amount
-        filterData.receivableAmount =amount
+        filterData.receivableAmount = amount
         targetList.push(filterData)
       })
-      console.log(targetList);
+      this.setSelectedDisposeList(targetList)
       this.setDisposeList(targetList)
       this.setReceivableAmount(0)
     },

@@ -43,19 +43,24 @@
           是否整单折扣: {{ item.allBillDiscount ? '是' : '否' }}
         </div>
         <!--牙位图组件-->
-        <div class="teeth-select" v-if="chargeType===3">
+        <div class="teeth-select" v-if="chargeType === 3">
           <!--牙位 -->
           <div class="flex">
             <div class="label">牙位：</div>
-            <TeethSelect
-              class="teeth"
-              @input="(val, index) =>setTeethSelect(val,index)"
-            />
+            <TeethSelect class="teeth" @input="setTeethSelect($event, item)" />
           </div>
-         <!--处置说明 -->
-          <div class="flex" >
+          <!--处置说明 -->
+          <div class="flex">
             <span class="label2">处置说明：</span>
-            <div class="des">处置说明处置说明处置说明处置说明处置</div>
+            <div class="memo">
+              <textarea
+                v-model="item.toothPositionDesc"
+                auto-height
+                placeholder="请输入处置说明"
+                placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+                :maxlength="150"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -90,7 +95,12 @@
       </div>
     </div>
     <u-toast ref="uToast" />
-    <u-modal v-model="showEditPrice" confirm-color='#5CBB89' @confirm="confirmPrice" title="请输入单价">
+    <u-modal
+      v-model="showEditPrice"
+      confirm-color="#5CBB89"
+      @confirm="confirmPrice"
+      title="请输入单价"
+    >
       <view class="slot-content">
         <dpmsCellInput
           title="单价(¥)"
@@ -119,7 +129,7 @@ export default {
     }
   },
   onShow() {
-    console.log(this.chargeType);
+    console.log(this.chargeType)
     if (!this.receivableAmount) {
       // 如果没有receivableAmount，需要计算
       this.calculateAmount()
@@ -178,9 +188,9 @@ export default {
       'setRealDiscountPromotionAmount',
     ]),
     //牙位图数据
-    setTeethSelect(value,index){
-      console.log(value);
-      console.log(index);
+    setTeethSelect(value, item) {
+      console.log(value)
+      console.log(item)
     },
     onNextStep() {
       // 保存vuex并跳转
@@ -215,7 +225,7 @@ export default {
       let record = this.activeRecord
       record.unitAmount = this.tempValue
       record.totalAmount = BigCalculate(record.itemNum, '*', record.unitAmount)
-      record.singleDiscountAfterAmount=record.totalAmount
+      record.singleDiscountAfterAmount = record.totalAmount
       this.activeRecord = {}
       this.calculateAmount()
     },
@@ -359,13 +369,13 @@ export default {
           this.setReceivableAmount(changeTwoDecimal(maxPrice))
           this.calculateDiscount()
         })
-      } else if(v === '' || v===undefined){
-            this.setReceivableAmount('-')
-            this.$nextTick(() => {
-              this.setReceivableAmount(changeTwoDecimal(minPrice))
-              this.calculateDiscount()
-            })
-      }else {
+      } else if (v === '' || v === undefined) {
+        this.setReceivableAmount('-')
+        this.$nextTick(() => {
+          this.setReceivableAmount(changeTwoDecimal(minPrice))
+          this.calculateDiscount()
+        })
+      } else {
         if (v !== value) {
           this.setReceivableAmount(v)
           this.$nextTick(() => {
@@ -456,37 +466,31 @@ export default {
         justify-content: space-between;
         padding: 32rpx 0;
         box-sizing: border-box;
-        border-top: 1rpx solid #e5e5e5;;
-        .flex{
+        border-top: 1rpx solid #e5e5e5;
+        .flex {
           display: flex;
           width: 100%;
           color: #4c4c4c;
-          .label{
+          .label {
             width: 116rpx;
             flex-shrink: 0;
             color: #191919;
           }
-          .teeth{
+          .teeth {
             width: 100%;
           }
-          .label2{
+          .label2 {
             width: 182rpx;
             flex-shrink: 0;
             color: #191919;
           }
-          .des{
+          .memo {
             width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
           }
         }
-        .flex:last-child{
-          padding-top:16rpx;
+        .flex:last-child {
+          padding-top: 16rpx;
         }
-
       }
     }
   }
