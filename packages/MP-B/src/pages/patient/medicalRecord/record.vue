@@ -17,7 +17,12 @@
           {{ r.visTimeFormated }}
           <div class="review-status" v-if="r.approveStatus === 1">草稿</div>
           <div class="review-status" v-if="r.approveStatus === 2">审核中</div>
-          <div class="review-status" v-if="r.approveStatus === 3">审核通过</div>
+          <div
+            class="review-status"
+            v-if="r.approveStatus === 3 || !r.approveStatus"
+          >
+            审核通过
+          </div>
           <div class="review-status" v-if="r.approveStatus === 4">
             审核不通过
           </div>
@@ -65,6 +70,8 @@
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+import { mapMutations } from 'vuex'
+import login from '@/pages/login/login'
 
 export default {
   components: { fixedFooter },
@@ -76,6 +83,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('medicalRecord', ['setMedicalRecordObj']),
     async getMedicalRecordList() {
       if (this.total && this.total <= (this.current - 1) * 10)
         return this.$utils.show('没有更多了')
@@ -97,7 +105,7 @@ export default {
         })),
       ]
     },
-    toDetail({ medicalRecordId }) {
+    toDetail({ medicalRecordId, approveStatus }) {
       this.$utils.push({
         url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`,
       })
@@ -117,6 +125,7 @@ export default {
     this.current = 1
     this.getMedicalRecordList()
     this.onUpdate()
+    this.setMedicalRecordObj(null)
   },
 }
 </script>

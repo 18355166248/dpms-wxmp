@@ -15,6 +15,7 @@ import checkstand from './modules/checkstand'
 // 收费账单报表
 import finaceReport from '@/store/modules/finaceReport'
 
+import medicalRecord from './modules/medicalRecord'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -27,5 +28,6 @@ export default new Vuex.Store({
     overdue,
     checkstand,
     finaceReport,
+    medicalRecord,
   },
 })
