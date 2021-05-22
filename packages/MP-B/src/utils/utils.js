@@ -1,5 +1,6 @@
 import { getStorage, STORAGE_KEY } from './storage'
 import uma from 'umtrack-wx'
+import moment from 'moment'
 const Big = require('big.js')
 
 /**
@@ -109,4 +110,26 @@ export function changeTwoDecimal(params, precision = 2) {
   if (typeof params !== 'number') params = Number(params)
   if (params < 0.01 && params > 0) params = 0.01 // 计算金额精度最小值为0.01
   return Number(params.toFixed(precision))
+}
+
+// 根据时间戳返回周一～周日，星期几
+export function getWeek(date) {
+  // 参数时间戳
+  let week = moment(date).day()
+  switch (week) {
+    case 1:
+      return '周一'
+    case 2:
+      return '周二'
+    case 3:
+      return '周三'
+    case 4:
+      return '周四'
+    case 5:
+      return '周五'
+    case 6:
+      return '周六'
+    case 0:
+      return '周日'
+  }
 }

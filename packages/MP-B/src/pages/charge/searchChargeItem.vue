@@ -1,16 +1,7 @@
 <template>
-  <view class="select-charge-wrap">
+  <view class="search-wrap">
     <!--搜索-->
-    <view class="search-input">
-      <view class="iconfont icon-search"></view>
-      <input
-        type="text"
-        :placeholder="'请输入项目名称或拼音快速搜索'"
-        placeholder-style="color:#bfbfbf"
-        @input="searchProject($event.detail.value)"
-        class="input"
-      />
-    </view>
+    <searchInput @onSearch="searchItem"></searchInput>
     <!--选择项目-->
     <view class="projects-wrap">
       <!--有数据-->
@@ -21,12 +12,8 @@
           :key="index"
         >
           <view class="left-infos">
-            <view>{{
-              item.settingsChargeItemName || item.settingsChargeTypeName
-            }}</view>
-            <span>{{
-              item.settingsChargeItemCode || item.settingsChargeTypeCode
-            }}</span>
+            <view>{{ item.settingsChargeItemName }}</view>
+            <span>{{ item.settingsChargeItemCode }}</span>
           </view>
           <view class="right-infos">
             <span v-if="item.unitAmount">{{
@@ -45,9 +32,11 @@
       </view>
     </view>
     <view class="bottom-wrap">
-      <chargeButton type="solid" :buttonStyle="buttonStyle" @click="complete"
-        >完成
-      </chargeButton>
+      <view class="btns">
+        <chargeButton type="solid" :buttonStyle="buttonStyle" @click="complete"
+          >完成
+        </chargeButton>
+      </view>
     </view>
   </view>
 </template>
@@ -55,6 +44,7 @@
 import billAPI from '@/APIS/bill/bill.api'
 import chargeButton from './common/chargeButton'
 import { mapMutations } from 'vuex'
+import searchInput from './common/searchInput'
 export default {
   name: '',
   data() {
@@ -65,23 +55,23 @@ export default {
     }
   },
   computed: {},
-  onLoad() {
-    this.searchProject('')
+  onLoad(params) {
+    this.searchItem('')
   },
   onShow() {},
   onHide() {},
   onUnload() {},
   methods: {
-    ...mapMutations('searchProjectStore', ['setSearchProjectList']),
+    ...mapMutations('searchProjectStore', ['setSearchChargeList']),
     complete() {
       let list = this.searchResultList.filter((item) => item.checked)
-      this.setSearchProjectList(list)
+      this.setSearchChargeList(list)
       uni.navigateBack()
     },
-    searchProject(searchVal) {
+    searchItem(searchVal) {
       billAPI
-        .searchChargeType({
-          settingsChargeTypeName: searchVal || '',
+        .searchChargeItem({
+          searchValue: searchVal || '',
         })
         .then((res) => {
           if (res.data?.length > 0) {
@@ -107,41 +97,17 @@ export default {
     },
   },
   watch: {},
-  components: { chargeButton },
+  components: { chargeButton, searchInput },
 }
 </script>
 <style lang="scss" scoped>
-.select-charge-wrap {
+.search-wrap {
   width: 100%;
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
-
-  .search-input {
-    margin: 16rpx 32rpx;
-    display: flex;
-    align-items: center;
-    background: #fff;
-    border-radius: 8rpx;
-    padding: 0 28rpx;
-
-    .icon-search {
-      margin-right: 20rpx;
-      color: #bfbfbf;
-      width: 32rpx;
-      height: 32rpx;
-    }
-
-    .input {
-      width: 600rpx;
-      height: 76rpx;
-      font-size: 28rpx;
-    }
-  }
 
   .projects-wrap {
     font-size: 30rpx;
@@ -191,11 +157,15 @@ export default {
   }
 
   .bottom-wrap {
-    padding: 16rpx 32rpx;
-    display: flex;
-    justify-content: space-between;
     background: #fff;
     border-top: 1rpx solid #e5e5e5;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+    .btns {
+      padding: 16rpx 32rpx;
+      display: flex;
+      justify-content: space-between;
+    }
   }
 }
 </style>
