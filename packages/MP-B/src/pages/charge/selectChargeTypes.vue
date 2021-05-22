@@ -77,14 +77,14 @@ export default {
   },
   computed: {
     ...mapState('searchProjectStore', ['searchProjectList']),
-    ...mapState('dispose', ['disposeList']),
+    ...mapState('dispose', ['disposeList', 'selectedDisposeList']),
     ...mapState('checkstand', ['chargeType']),
   },
   onLoad() {
     this.getChargeTypes()
   },
   onShow() {
-    const mergeList = [...this.searchProjectList, ...this.disposeList]
+    const mergeList = [...this.searchProjectList, ...this.selectedDisposeList]
     if (this.classifyList.length > 0) {
       this.chargeTypesMerge(mergeList)
     }
@@ -92,7 +92,11 @@ export default {
   onHide() {},
   onUnload() {},
   methods: {
-    ...mapMutations('dispose', ['setDisposeList', 'setReceivableAmount']),
+    ...mapMutations('dispose', [
+      'setDisposeList',
+      'setSelectedDisposeList',
+      'setReceivableAmount',
+    ]),
     //获取一级和二级分类
     getChargeTypes() {
       billAPI
@@ -213,6 +217,7 @@ export default {
           })
         }
       })
+      this.setSelectedDisposeList(targetList)
       this.setDisposeList(targetList)
       this.setReceivableAmount(0)
     },

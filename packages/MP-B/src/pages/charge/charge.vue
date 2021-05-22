@@ -165,6 +165,11 @@ export default {
   },
   methods: {
     ...mapMutations('checkstand', ['setChargeType']),
+    ...mapMutations('dispose', [
+      'setDisposeList',
+      'setSelectedDisposeList',
+      'setReceivableAmount',
+    ]),
     initData() {
       //获取消费预览和诊疗项目数据
       // Promise.all()
@@ -211,6 +216,8 @@ export default {
     },
     //选择收费方式 跳转到对应的选择收费项目页面
     selectType(item) {
+      this.setSelectedDisposeList([])
+      this.setDisposeList([])
       this.setChargeType(item.type)
       let url = '/pages/charge/selectChargeTypes'
       if (item.type !== 1) {
