@@ -341,7 +341,7 @@ export default {
           message: '请选择出生日期',
         },
         age: {
-          pattern: /^(?:[1-9][0-9]?|1[01][0-9]|140)$/,
+          pattern: /^(?:[0-9][0-9]?|1[01][0-9]|140)$/,
           message: '年龄不合法',
         },
         certificatesNo: {
@@ -349,6 +349,12 @@ export default {
           message: '身份证不合法',
         },
         contactLabel: {
+          type: 'any',
+        },
+        gender: {
+          type: 'any',
+        },
+        nationality: {
           type: 'any',
         },
         mobile: [
