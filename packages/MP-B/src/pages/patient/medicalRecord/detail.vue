@@ -5,7 +5,10 @@
       {{ detail.visTimeFormated }}
       <div class="review-status" v-if="detail.approveStatus === 1">草稿</div>
       <div class="review-status" v-if="detail.approveStatus === 2">审核中</div>
-      <div class="review-status" v-if="detail.approveStatus === 3">
+      <div
+        class="review-status"
+        v-if="detail.approveStatus === 3 || !detail.approveStatus"
+      >
         审核通过
       </div>
       <div class="review-status" v-if="detail.approveStatus === 4">
@@ -141,14 +144,8 @@
         />
       </div>
     </div>
-    <div class="bottom">
-      <div>
-        <button @click="passing(detail)">不 通 过</button>
-        <button @click="noPassing(detail)">通 过</button>
-      </div>
-    </div>
     <div class="bottom" v-if="currentStaffApproveType === 0">
-      <div v-if="detail.approveStatus === 3">
+      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
@@ -158,7 +155,7 @@
         <button @click="passing(detail)">不 通 过</button>
         <button @click="noPassing(detail)">通 过</button>
       </div>
-      <div v-if="detail.approveStatus === 3">
+      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
@@ -170,7 +167,7 @@
       <div v-if="detail.approveStatus === 2">
         <button @click="withdraw(detail)">撤 回</button>
       </div>
-      <div v-if="detail.approveStatus === 3">
+      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
@@ -196,6 +193,7 @@
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
+import { mapMutations } from 'vuex'
 
 export default {
   components: { TeethSelect },
@@ -207,6 +205,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('medicalRecord', ['setMedicalRecordObj']),
     async getRole() {
       const res = await diagnosisAPI.getRole({})
       this.currentStaffApproveType = res?.data?.currentStaffApproveType
@@ -224,8 +223,6 @@ export default {
         ),
         ...res.data,
       }
-      console.log('---detail---')
-      console.log(this.detail)
     },
     deleteMedicalRecord() {
       uni.showModal({
@@ -250,46 +247,52 @@ export default {
       })
     },
     againEdit(detail) {
-      console.log(detail)
+      this.setMedicalRecordObj(detail)
+      this.$utils.push({
+        url: `/pages/patient/medicalRecord/create`,
+      })
     },
-    async passing(detail) {
+    async passing() {
       let data = {
-        id: detail.registerId,
+        medicalRecordId: this.medicalRecordId,
         approveStatus: 3,
         approveRemark: this.approveRemark,
       }
-      const res = await diagnosisAPI.medicalRecords(
-        { id: detail.registerId },
-        data,
-      )
-      console.log('---res---')
-      console.log(res)
+      const res = await diagnosisAPI.medicalRecords(data)
+      if (res.code === 0) {
+        this.$utils.show('审核成功', { icon: 'success' })
+        setTimeout(() => {
+          this.$utils.back()
+        }, 2000)
+      }
     },
-    async noPassing(detail) {
+    async noPassing() {
       let data = {
-        id: detail.registerId,
+        medicalRecordId: this.medicalRecordId,
         approveStatus: 4,
         approveRemark: this.approveRemark,
       }
-      const res = await diagnosisAPI.medicalRecords(
-        { id: detail.registerId },
-        data,
-      )
-      console.log('---res---')
-      console.log(res)
+      const res = await diagnosisAPI.medicalRecords(data)
+      if (res.code === 0) {
+        this.$utils.show('审核成功', { icon: 'success' })
+        setTimeout(() => {
+          this.$utils.back()
+        }, 2000)
+      }
     },
-    async withdraw(detail) {
+    async withdraw() {
       let data = {
-        id: detail.registerId,
+        medicalRecordId: this.medicalRecordId,
         approveStatus: 1,
         approveRemark: this.approveRemark,
       }
-      const res = await diagnosisAPI.medicalRecords(
-        { id: detail.registerId },
-        data,
-      )
-      console.log('---res---')
-      console.log(res)
+      const res = await diagnosisAPI.medicalRecords(data)
+      if (res.code === 0) {
+        this.$utils.show('撤回成功', { icon: 'success' })
+        setTimeout(() => {
+          this.$utils.back()
+        }, 2000)
+      }
     },
     remarkChange(ev) {
       this.approveRemark = ev.target.value

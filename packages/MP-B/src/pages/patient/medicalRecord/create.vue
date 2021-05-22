@@ -24,26 +24,6 @@
           </div>
         </picker>
       </dpmsCell>
-      <!-- <dpmsCellPicker
-        title="就诊信息"
-        placeholder="暂无就诊信息"
-        v-model="form.registerId"
-        :list="registerList"
-        defaultType="registerId"
-        :defaultProps="{ label: 'registerLabel', value: 'registerId' }"
-        :disabled="!registerList.length"
-      >
-        <template #title>
-          <div @focus="ev => ev.stopPropagation()">
-            就诊信息
-            <dpmsDatetimePicker
-              isCell
-            >
-              <span class="iconfont icon-plus-circle addRegist" />
-            </dpmsDatetimePicker>
-          </div>
-        </template>
-      </dpmsCellPicker> -->
       <dpmsCellPicker
         title="医生"
         placeholder="请选择医生"
@@ -52,13 +32,6 @@
         defaultType="doctorId"
         v-model="form.doctorStaffId"
       />
-
-      <!--      <dpmsEnumsPicker-->
-      <!--        enumsKey="VisType"-->
-      <!--        v-model="form.medicalRecordRegisterVO.visType"-->
-      <!--        title="就诊类型"-->
-      <!--        placeholder="请选择就诊类型"-->
-      <!--      />-->
       <dpmsCellPicker
         :list="TreatmentTypes"
         v-model="form.visType"
@@ -430,6 +403,7 @@ import HistoryMedicalSelect from '@/businessComponents/MedicalSelect/HistorySele
 import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSelect.vue'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -469,11 +443,15 @@ export default {
     }
   },
   computed: {
+    ...mapState('medicalRecord', ['medicalRecordObj']),
     registerText() {
       return (
         (this.registerList &&
-          this.registerList.find((l) => l.registerId === this.form.registerId)
-            ?.registerLabel) ||
+          this.registerList.find(
+            (l) =>
+              l.registerId ===
+              (this.form.registerId || this.medicalRecordObj.registerId),
+          )?.registerLabel) ||
         ''
       )
     },
@@ -600,7 +578,13 @@ export default {
         icon: 'success',
       })
       uni.$emit('medicalRecordListUpdate')
-      this.$utils.back()
+      if (this.medicalRecordObj?.patientId) {
+        this.$utils.push({
+          url: `/pages/patient/medicalRecord/record?patientId=${this.medicalRecordObj?.patientId}`,
+        })
+      } else {
+        this.$utils.back()
+      }
       setTimeout(() => {
         this.$nextTick(() => {
           this.pending = false
@@ -725,9 +709,15 @@ export default {
     },
   },
   onLoad({ patientId, medicalRecordId }) {
-    this.patientId = patientId
-    this.medicalRecordId = medicalRecordId
-    this.getRegisterList({ patientId })
+    this.form = { ...this.form, ...this.medicalRecordObj }
+    this.patientId = patientId || this.medicalRecordObj?.patientId
+    this.medicalRecordId =
+      medicalRecordId || this.medicalRecordObj?.medicalRecordId
+    this.getRegisterList(
+      patientId
+        ? { patientId: patientId }
+        : { patientId: this.medicalRecordObj?.patientId },
+    )
     this.onTextareaChange()
     this.onEdit()
     this.getDoctors()
@@ -769,19 +759,22 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .addRegist {
   color: #5cbb89;
-  padding: 10rpx;
+  padding: 10 rpx;
   display: block;
-  font-size: 40rpx;
+  font-size: 40 rpx;
 }
+
 .text {
-  padding-top: 18rpx;
+  padding-top: 18 rpx;
   box-sizing: border-box;
-  min-height: 62rpx;
+  min-height: 62 rpx;
   white-space: normal;
   width: 100%;
   color: rgba(0, 0, 0, 0.65);
+
   &:empty {
     &::before {
       content: attr(data-placeholder);
@@ -789,65 +782,75 @@ export default {
     }
   }
 }
+
 .teeth-select {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding-bottom: 32rpx;
-  border-bottom: rgba(0, 0, 0, 0.15) solid 2rpx;
+  padding-bottom: 32 rpx;
+  border-bottom: rgba(0, 0, 0, 0.15) solid 2 rpx;
+
   .handle {
-    padding: 32rpx 0;
-    width: 570rpx;
+    padding: 32 rpx 0;
+    width: 570 rpx;
   }
+
   .btn {
     flex: none;
-    font-size: 28rpx;
+    font-size: 28 rpx;
     color: #5cbb89;
     background: none;
     padding: 0;
-    margin: 0 0 0 60rpx;
+    margin: 0 0 0 60 rpx;
   }
 }
+
 .bottom-func {
-  padding-top: 32rpx;
+  padding-top: 32 rpx;
   color: #5cbb89;
-  font-size: 34rpx;
+  font-size: 34 rpx;
   display: flex;
   justify-content: center;
   align-items: center;
+
   .iconfont {
     font-size: inherit;
-    margin-right: 16rpx;
+    margin-right: 16 rpx;
   }
 }
+
 .bottom {
-  height: 90rpx;
+  height: 90 rpx;
+
   .inner {
     display: flex;
-    height: 90rpx;
+    height: 90 rpx;
   }
+
   .funcs {
     width: 50%;
     display: flex;
     align-items: center;
     justify-content: space-evenly;
     color: #4c4c4c;
-    font-size: 24rpx;
+    font-size: 24 rpx;
     background: white;
-    border-top: rgba(0, 0, 0, 0.15) solid 2rpx;
+    border-top: rgba(0, 0, 0, 0.15) solid 2 rpx;
     text-align: center;
+
     .iconfont {
       color: #5cbb89;
-      font-size: 36rpx;
+      font-size: 36 rpx;
     }
   }
+
   button {
     width: 50%;
     height: 100%;
     background: #5cbb89;
     color: #ffffff;
-    font-size: 36rpx;
+    font-size: 36 rpx;
     border-radius: 0;
   }
 }

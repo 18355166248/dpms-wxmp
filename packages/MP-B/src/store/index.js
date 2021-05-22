@@ -13,6 +13,7 @@ import overdue from './modules/overdue'
 //收银台
 import checkstand from './modules/checkstand'
 
+import medicalRecord from './modules/medicalRecord'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -24,5 +25,6 @@ export default new Vuex.Store({
     dispose,
     overdue,
     checkstand,
+    medicalRecord,
   },
 })
