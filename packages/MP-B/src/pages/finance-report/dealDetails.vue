@@ -49,65 +49,66 @@ import billAPI from 'APIS/bill/bill.api';
 export default {
   name: 'dealDetails',
   data() {
+    this._headers= [
+      {
+        label: '单据号',
+        key: 'billSerialNo',
+      },
+      {
+        label: '账单类型',
+        key: 'billTypeName',
+      },
+      {
+        label: '开单机构',
+        key: 'billOrderMedicalInstitutionName',
+      },
+      {
+        label: '病历号',
+        key: 'medicalRecordNo',
+      },
+      {
+        label: '患者姓名',
+        key: 'patientName',
+      },
+      {
+        label: '联系电话',
+        key: 'mobile',
+      },
+      {
+        label: '患者所属机构',
+        key: 'patientMedicalInstitutionName',
+      },
+      {
+        label: '交易时间',
+        key: 'cashierDate',
+      },
+      {
+        label: '交易状态',
+        key: 'payStatusName',
+      },
+      {
+        label: '交易类型',
+        key: 'payTradeTypeName',
+      },
+      {
+        label: '操作诊所',
+        key: 'payOrderMedicalInstitutionName',
+      },
+      {
+        label: '收款人',
+        key: 'cashierStaffName',
+      },
+      {
+        label: '备注',
+        key: 'payMemo',
+      },
+      {
+        label: '原因跟踪',
+        key: 'billOrderMemo',
+      },
+    ]
     return {
-      headers: [
-        {
-          label: '单据号',
-          key: 'billSerialNo',
-        },
-        {
-          label: '账单类型',
-          key: 'billTypeName',
-        },
-        {
-          label: '开单机构',
-          key: 'billOrderMedicalInstitutionName',
-        },
-        {
-          label: '病历号',
-          key: 'medicalRecordNo',
-        },
-        {
-          label: '患者姓名',
-          key: 'patientName',
-        },
-        {
-          label: '联系电话',
-          key: 'mobile',
-        },
-        {
-          label: '患者所属机构',
-          key: 'patientMedicalInstitutionName',
-        },
-        {
-          label: '交易时间',
-          key: 'cashierDate',
-        },
-        {
-          label: '交易状态',
-          key: 'payStatusName',
-        },
-        {
-          label: '交易类型',
-          key: 'payTradeTypeName',
-        },
-        {
-          label: '操作诊所',
-          key: 'payOrderMedicalInstitutionName',
-        },
-        {
-          label: '收款人',
-          key: 'cashierStaffName',
-        },
-        {
-          label: '备注',
-          key: 'payMemo',
-        },
-        {
-          label: '原因跟踪',
-          key: 'billOrderMemo',
-        },
-      ],
+      headers: [...this._headers],
       computedCol:[
         'totalAmount',
         'discountReceiveAmount',
@@ -280,7 +281,7 @@ export default {
           item[it] = this.$utils.formatPrice(item[it])
         })
 
-        item.cashierDate = moment(item.cashierDate).format('YYYY-MM-DD')
+        item.cashierDate = moment(item.cashierDate).format('YYYY-MM-DD hh:mm:ss')
         return item
       })
       if(this.current === 1) {
@@ -288,7 +289,7 @@ export default {
       } else {
         this.contents = this.contents.concat(records)
       }
-      this.headers = [...this.headers,...channelList,...lastList]
+      this.headers = [...this._headers,...channelList,...lastList]
       this.computedCol = [...this.computedCol,...computedColAdd,...lastComputed]
       this.total = total
       this.current = current

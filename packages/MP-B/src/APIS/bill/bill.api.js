@@ -26,8 +26,14 @@ const billAPI = {
   getItemStatPage(data) {
     return httper.get('/billing/pay/item/stat/page',data)
   },
-
-
+  // 项目明细
+  getDetailStatePage(data) {
+    return httper.get('/billing/project/detail/stat/page',data)
+  },
+  // 欠费患者
+  getArrearsList(data) {
+    return httper.get('/billing/stat/patient/arrears/list',data)
+  },
   //小程序-统计报表-营收报表-营收日报表
   revenueList(data) {
     return httper.get('billing/mini-apps/analyze/revenue/list', data)
