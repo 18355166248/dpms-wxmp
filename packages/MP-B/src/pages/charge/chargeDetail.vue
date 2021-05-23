@@ -26,6 +26,27 @@
             <view>护士：{{ item.nurseNameStr }}</view>
             <view>其他：{{ item.otherNameStr }}</view>
           </view>
+          <!--牙位图组件-->
+          <div class="teeth-select" v-if="item.toothPositionStr">
+            <!--牙位 -->
+            <div class="flex">
+              <div class="label">牙位：</div>
+              <TeethSelect class="teeth" :value="JSON.parse(item.toothPositionStr)"/>
+            </div>
+            <!--处置说明 -->
+            <div class="flex">
+              <span class="label2">处置说明：</span>
+              <div class="memo">
+                <textarea
+                  v-model="item.toothPositionDesc||'-'"
+                  auto-height
+                  placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+                  :maxlength="150"
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
           <view class='lineHr'></view>
         </view>
         <view class='listChargeTotal'>
@@ -70,6 +91,7 @@
 <script>
 import billAPI from '@/APIS/bill/bill.api';
 import chargeButton from './common/chargeButton';
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 
 export default {
   data() {
@@ -80,6 +102,7 @@ export default {
   },
   components: {
     chargeButton,
+    TeethSelect
   },
   onLoad(params) {
     this.billSerialNo = params.billSerialNo;
@@ -230,6 +253,42 @@ export default {
   color: #595959;
   line-height: 90rpx;
   font-size: 28rpx;
+}
+
+
+.teeth-select {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 32rpx ;
+  box-sizing: border-box;
+  border-top: 1rpx solid #e5e5e5;
+  .flex {
+    display: flex;
+    width: 100%;
+    color: #4c4c4c;
+    .label {
+      width: 116rpx;
+      flex-shrink: 0;
+      color: #191919;
+    }
+    .teeth {
+      width: 100%;
+    }
+    .label2 {
+      width: 182rpx;
+      flex-shrink: 0;
+      color: #191919;
+    }
+    .memo {
+      width: 100%;
+    }
+  }
+  .flex:last-child {
+    padding-top: 16rpx;
+  }
 }
 
 
