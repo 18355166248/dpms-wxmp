@@ -191,6 +191,18 @@ export default {
     setTeethSelect(value, item) {
       console.log(value)
       console.log(item)
+      const toothTemp = {
+        teeth: {},
+        activatedToothNumber: null,
+      };
+
+      Object.keys(value.teeth).forEach((x) => {
+        toothTemp.teeth[x] = true;
+        toothTemp.activatedToothNumber = x;
+      });
+      console.log(toothTemp);
+      item.toothPosition = toothTemp;
+      item.toothPositionStr=toothTemp;
     },
     onNextStep() {
       // 保存vuex并跳转
