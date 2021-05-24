@@ -100,12 +100,37 @@ class MultiwayTree {
     const node = new ItemNode(data)
     if (this.root === null) {
       this.root = node
+      this.prevRoot = node
       this.itemNodeArray.push(this.root)
       return
     }
-    if (this.root.contains(node, true)) {
-      traverseDF(this.root, node)
+    const a = this.root.contains(node, true)
+    const b = this.root.contains(node)
+    if (a && b) {
+      const temp = this.prevRoot
+      if (this.root.children.length === 0 && this.root.level > 1) {
+        if (this.prevRoot.contains(node, true)) {
+          this.root.level += 1
+          this.root = this.prevRoot
+          this.prevRoot = temp
+          traverseDF(this.root, node)
+          this.prevRoot = this.root
+          this.root = temp
+        } else {
+          this.root.level -= 1
+          node.level = this.root.level
+          traverseDF(this.root, node)
+        }
+      } else {
+        traverseDF(this.root, node)
+      }
+    } else if (a && !b) {
+      node.level = this.root.level
+      this.prevRoot = this.root
+      this.root = node
+      this.itemNodeArray.push(this.root)
     } else {
+      this.prevRoot = node
       this.root = node
       this.itemNodeArray.push(this.root)
     }
