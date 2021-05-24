@@ -1,5 +1,5 @@
 <template>
-  <scroll-view class="searchCustomer">
+  <div class="page-wrap">
     <div data-layout-align="space-between center">
       <div class="search-input">
         <dpmsSearch
@@ -13,33 +13,35 @@
         />
       </div>
     </div>
-
-    <!-- 搜索提示、结果文字 -->
-    <div
-      class="search-tip-text pt-28 pl-24 pr-24"
-      v-if="customerList.length === 0 && isSearchedValue"
-    >
-      没有找到“
-      <span class="patient-name">{{ isSearchedValue }}</span>
-      ”这个客户
-    </div>
-
-    <!-- 搜索列表 -->
-    <div v-if="customerList.length !== 0">
-      <div v-for="customer in customerList" :key="customer.customerId">
-        <div @click="clickPatientCard(customer)" class="card">
-          <div class="title">
-            <div class="name">
-              {{ customer.customerName }}
-            </div>
-            <tag :text="customer.genderText" :circle="false" type="error"></tag>
-          </div>
-          <div class="moble">手机号：{{ customer.mobile }}</div>
+    <div class="searchCustomer-wrap">
+      <scroll-view class="searchCustomer" :scroll-y="true" @scrolltolower="onScrollToLower">
+        <!-- 搜索提示、结果文字 -->
+        <div
+          class="search-tip-text pt-28 pl-24 pr-24"
+          v-if="customerList.length === 0 && isSearchedValue"
+        >
+          没有找到“
+          <span class="patient-name">{{ isSearchedValue }}</span>
+          ”这个客户
         </div>
-      </div>
-      <load-more :status="dataSourceStatus.status" />
+        <!-- 搜索列表 -->
+        <div v-if="customerList.length !== 0">
+          <div v-for="customer in customerList" :key="customer.customerId">
+            <div @click="clickPatientCard(customer)" class="card">
+              <div class="title">
+                <div class="name">
+                  {{ customer.customerName }}
+                </div>
+                <tag :text="customer.genderText" :circle="false" type="error"></tag>
+              </div>
+              <div class="moble">手机号：{{ customer.mobile||'-' }}</div>
+            </div>
+          </div>
+          <load-more :status="dataSourceStatus.status" />
+        </div>
+      </scroll-view>
     </div>
-  </scroll-view>
+  </div>
 </template>
 
 <script>
@@ -74,14 +76,18 @@ export default {
     this.paramsObj = option
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
     this.init()
+
   },
   onReachBottom() {
-    if (this.customerList.length < this.total) {
-      this.current += 1
-      this.getCustomers()
-    }
+
   },
   methods: {
+    onScrollToLower(){
+      if (this.customerList.length < this.total) {
+        this.current += 1
+        this.getCustomers()
+      }
+    },
     init() {
       this.current = 1
       this.customerList = []
@@ -107,6 +113,7 @@ export default {
         regularParam: this.searchValue,
         current: this.current,
         size: this.size,
+        keywords:this.searchValue
       })
 
       this.isSearchedValue = this.searchValue
@@ -157,6 +164,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.page-wrap{
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  .searchCustomer-wrap{
+    display: flex;
+    flex-flow: 2;
+    overflow-y: auto;
+  }
+  .searchCustomer{
+    height: 100%;
+  }
+}
 .searchCustomer {
   [data-layout-align] {
     display: flex;
