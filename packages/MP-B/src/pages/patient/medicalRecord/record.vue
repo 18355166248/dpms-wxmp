@@ -13,17 +13,16 @@
         @click="toDetail(r)"
       >
         <div class="head">
-          <div class="iconfont icon-time-circle"></div>
-          {{ r.visTimeFormated }}
-          <div class="review-status" v-if="r.approveStatus === 1">草稿</div>
-          <div class="review-status" v-if="r.approveStatus === 2">审核中</div>
-          <div
-            class="review-status"
-            v-if="r.approveStatus === 3 || !r.approveStatus"
-          >
+          <div class="head-memo">
+            <div class="iconfont icon-time-circle"></div>
+            {{ r.visTimeFormated }}
+          </div>
+          <div v-if="r.approveStatus === 1">草稿</div>
+          <div v-if="r.approveStatus === 2">审核中</div>
+          <div v-if="r.approveStatus === 3 || !r.approveStatus">
             审核通过
           </div>
-          <div class="review-status" v-if="r.approveStatus === 4">
+          <div v-if="r.approveStatus === 4">
             审核不通过
           </div>
         </div>
@@ -149,16 +148,18 @@ export default {
     height: 84rpx;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     border-bottom: solid 1rpx rgba(0, 0, 0, 0.1);
     margin-bottom: 16rpx;
+    white-space: nowrap;
+
+    .head-memo {
+      display: flex;
+      align-items: center;
+    }
 
     .icon-time-circle {
       margin-right: 10rpx;
-    }
-
-    .review-status {
-      width: 370rpx;
-      text-align: right;
     }
   }
 

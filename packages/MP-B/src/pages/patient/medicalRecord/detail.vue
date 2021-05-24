@@ -1,17 +1,16 @@
 <template>
   <div class="container" v-if="detail.medicalRecordId">
     <div class="time">
-      <div class="iconfont icon-time-circle"></div>
-      {{ detail.visTimeFormated }}
-      <div class="review-status" v-if="detail.approveStatus === 1">草稿</div>
-      <div class="review-status" v-if="detail.approveStatus === 2">审核中</div>
-      <div
-        class="review-status"
-        v-if="detail.approveStatus === 3 || !detail.approveStatus"
-      >
+      <div class="head-memo">
+        <div class="iconfont icon-time-circle"></div>
+        {{ detail.visTimeFormated }}
+      </div>
+      <div v-if="detail.approveStatus === 1">草稿</div>
+      <div v-if="detail.approveStatus === 2">审核中</div>
+      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
         审核通过
       </div>
-      <div class="review-status" v-if="detail.approveStatus === 4">
+      <div v-if="detail.approveStatus === 4">
         审核不通过
       </div>
     </div>
@@ -322,15 +321,17 @@ export default {
   color: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 34rpx;
+  white-space: nowrap;
+
+  .head-memo {
+    display: flex;
+    align-items: center;
+  }
 
   .iconfont {
     margin-right: 14rpx;
-  }
-
-  .review-status {
-    width: 370rpx;
-    text-align: right;
   }
 }
 
