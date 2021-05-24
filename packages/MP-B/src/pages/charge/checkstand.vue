@@ -71,6 +71,7 @@
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
           v-model="form.doctorStaffId"
+          :required="doctorRequire"
         />
         <dpmsCellPicker
           title="护士"
@@ -79,6 +80,7 @@
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
           v-model="form.nurseStaffId"
+          :required="nurseRequire"
         />
         <dpmsCellPicker
           title="咨询师"
@@ -87,6 +89,7 @@
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
           v-model="form.consultedStaffId"
+          :required="consultedRequire"
         />
         <dpmsCellPicker
           title="销售人员"
@@ -126,12 +129,13 @@
           <div class="ellipsis" style="width: 550rpx;">项目明细</div>
         </div>
       </chargestand-title>
-      <dpmsCell
-        v-for="(item, index) in disposeList"
-        :key="item.itemCode"
-        :title="item.itemName"
-        :value="formatDisposeItem(item)"
-      />
+      <div class="dispose-list">
+        <div v-for="item in disposeList" :key="item.itemCode" class="dispose">
+          <div class="name">{{ item.itemName }}</div>
+          <div>{{ formatDisposeItem(item) }}</div>
+        </div>
+      </div>
+
       <div class="empty-wrapper"></div>
     </div>
     <div class="footer-wrapper">
@@ -238,6 +242,12 @@ export default {
       showActionSheet: false,
       nowDate: moment(new Date().valueOf()).format('YYYY-MM-DD HH:mm'),
       staff: {},
+      //医生是否为必填项
+      doctorRequire: false,
+      //护士是否为必填项
+      nurseRequire: false,
+      //咨询师是否为必填项
+      consultedRequire: false,
     }
   },
   components: {
@@ -253,7 +263,7 @@ export default {
       'realMainOrderDiscount',
       'realDiscountPromotionAmount',
     ]),
-    ...mapState('checkstand', ['billType']),
+    ...mapState('checkstand', ['billType', 'chargeType']),
     paidAmount() {
       return this.form.payChannelList.reduce(
         (pre, item) => BigCalculate(Number(item.paymentAmount), '+', pre),
@@ -301,6 +311,7 @@ export default {
   },
   onShow() {
     this.btnPremisstion()
+    this.getRequireConfig()
   },
   onUnload() {},
   methods: {
@@ -310,11 +321,62 @@ export default {
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
     ]),
+    getRequireConfig() {
+      billAPI
+        .getChargeRequiredConfig()
+        .then((res) => {
+          console.log(res.data)
+          if (res.data) {
+            this.setChargeRequiredConfig(res.data)
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    setChargeRequiredConfig(data) {
+      const idsDic = {
+        1: 'simpleBillEnumIds',
+        2: 'ordinaryBillEnumIds',
+        3: 'disposalBillEnumIds',
+      }
+      const ids = idsDic[this.chargeType]
+      this.doctorRequire = data[ids].includes('2')
+      this.nurseRequire = data[ids].includes('4')
+      this.consultedRequire = data[ids].includes('6')
+    },
+    checkRequire(form) {
+      if (this.doctorRequire && !form.doctorStaffId) {
+        this.$refs.uToast.show({
+          title: '请选择医生!',
+          type: 'warning',
+        })
+        return false
+      }
+      if (this.nurseRequire && !form.nurseStaffId) {
+        this.$refs.uToast.show({
+          title: '请选择护士!',
+          type: 'warning',
+        })
+        return false
+      }
+      if (this.consultedRequire && !form.consultedStaffId) {
+        this.$refs.uToast.show({
+          title: '请选择咨询师!',
+          type: 'warning',
+        })
+        return false
+      }
+      return true
+    },
     onSubmitBill(type) {
+      const { staff, nowDate, form, patientDetail, receivableAmount } = this
       if (this.changeAmount > 0) {
         return
       }
-      const { staff, nowDate, form, patientDetail, receivableAmount } = this
+      if (!this.checkRequire(form)) {
+        return
+      }
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,
@@ -701,7 +763,25 @@ export default {
       height: 244rpx;
     }
   }
-
+  .dispose-list {
+    .dispose {
+      display: flex;
+      justify-content: space-between;
+      padding: 35rpx 32rpx;
+      align-items: center;
+      color: #4c4c4c;
+      font-size: 30rpx;
+      background-color: #fff;
+      .name {
+        max-width: 460rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+      }
+    }
+  }
   .footer-wrapper {
     width: 100%;
     background: #fff;
