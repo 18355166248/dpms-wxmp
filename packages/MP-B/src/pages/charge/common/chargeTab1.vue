@@ -1,7 +1,7 @@
 <template>
   <view class="container-wrap">
     <!--选择项目-->
-    <view class="projects-wrap">
+    <view class="projects-wrap" v-if="classifyList.length>0">
       <view class="list-wrap">
         <!--一级类目-->
         <view
@@ -60,6 +60,9 @@
           </view>
         </view>
       </view>
+    </view>
+    <view v-else>
+      <empty :disabled="true" text="暂无数据"></empty>
     </view>
   </view>
 </template>
