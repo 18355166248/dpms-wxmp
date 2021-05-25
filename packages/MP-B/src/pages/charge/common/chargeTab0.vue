@@ -1,6 +1,6 @@
 <template>
   <!--诊疗服务-->
-  <view class="container-wrap" v-if="classifyList.length > 0">
+  <view class="container-wrap" v-if="classifyList.length >0">
     <!--一级类目列表-->
     <view class="left-scroll">
       <scroll-view
@@ -84,6 +84,9 @@
       </scroll-view>
     </view>
   </view>
+  <view v-else>
+    <empty :disabled="true" text="暂无数据"></empty>
+  </view>
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
@@ -106,9 +109,9 @@ export default {
     ...mapState('dispose', ['disposeList']),
   },
   created() {
-    this.getChargeItems()
   },
   mounted() {
+    this.getChargeItems()
     this.getScrollHeight()
   },
   methods: {

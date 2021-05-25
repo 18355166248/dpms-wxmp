@@ -1,6 +1,6 @@
 <template>
   <view class="list-wrap">
-    <scroll-view scroll-y="true" class="scroll-wrap">
+    <scroll-view scroll-y="true" class="scroll-wrap" @scrolltolower="onScrollToLower">
       <view
         class="item"
         v-for="item in merchandiseList"
@@ -77,6 +77,10 @@ export default {
   methods: {
     onCheckBoxChange(value,item){
       item.checked = value
+    },
+    onScrollToLower(){
+      console.log('1234');
+      this.$emit('onScrollToLower')
     }
   },
   watch: {
@@ -97,7 +101,6 @@ export default {
   flex-direction: column;
   flex-grow: 2;
   height: 100%;
-  overflow-y: scroll;
   .scroll-wrap {
     flex-shrink: 0;
     height: 100%;
