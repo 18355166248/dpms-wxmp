@@ -5,13 +5,11 @@
         <div class="iconfont icon-time-circle"></div>
         {{ detail.visTimeFormated }}
       </div>
-      <div v-if="detail.approveStatus === 1">草稿</div>
-      <div v-else-if="detail.approveStatus === 2">审核中</div>
-      <div v-else-if="detail.approveStatus === 3">
-        审核通过
-      </div>
-      <div v-else-if="detail.approveStatus === 4">
-        审核不通过
+      <div>
+        {{
+          ['', '草稿', '审核中', '审核通过', '审核不通过'][r.approveStatus] ||
+          ''
+        }}
       </div>
     </div>
     <div class="rows">
