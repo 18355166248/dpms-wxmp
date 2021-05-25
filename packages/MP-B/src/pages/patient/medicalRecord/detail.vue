@@ -371,6 +371,7 @@ export default {
   height: 90rpx;
 
   > div {
+    background: #fff;
     box-sizing: border-box;
     border-top: #5cbb89 solid 1rpx;
     display: flex;
