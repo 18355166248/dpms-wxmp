@@ -84,6 +84,9 @@
       </scroll-view>
     </view>
   </view>
+  <view v-else>
+    <empty :disabled="true" text="暂无数据"></empty>
+  </view>
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
@@ -105,10 +108,9 @@ export default {
     ...mapState('searchProjectStore', ['searchChargeList']),
     ...mapState('dispose', ['disposeList']),
   },
-  created() {
-    this.getChargeItems()
-  },
+  created() {},
   mounted() {
+    this.getChargeItems()
     this.getScrollHeight()
   },
   methods: {
