@@ -6,11 +6,11 @@
         {{ detail.visTimeFormated }}
       </div>
       <div v-if="detail.approveStatus === 1">草稿</div>
-      <div v-if="detail.approveStatus === 2">审核中</div>
-      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
+      <div v-else-if="detail.approveStatus === 2">审核中</div>
+      <div v-else-if="detail.approveStatus === 3">
         审核通过
       </div>
-      <div v-if="detail.approveStatus === 4">
+      <div v-else-if="detail.approveStatus === 4">
         审核不通过
       </div>
     </div>

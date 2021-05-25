@@ -18,11 +18,11 @@
             {{ r.visTimeFormated }}
           </div>
           <div v-if="r.approveStatus === 1">草稿</div>
-          <div v-if="r.approveStatus === 2">审核中</div>
-          <div v-if="r.approveStatus === 3 || !r.approveStatus">
+          <div v-else-if="r.approveStatus === 2">审核中</div>
+          <div v-else-if="r.approveStatus === 3">
             审核通过
           </div>
-          <div v-if="r.approveStatus === 4">
+          <div v-else-if="r.approveStatus === 4">
             审核不通过
           </div>
         </div>
