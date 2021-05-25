@@ -79,6 +79,7 @@
               height: checkColWidth * 0.5 + 'rpx',
               backgroundColor: checkerBoxBgColor,
               border: '1px solid ' + checkerBorderColor,
+              boxSizing: 'borderBox'
             }"
           >
             <text
@@ -170,12 +171,6 @@
         <view
           v-if="computedCol.length !== 0"
           class="wyb-table-content-line"
-          :style="{
-            position: bottomComputedFixed ? 'sticky' : 'static',
-            bottom: 0,
-            zIndex: 25,
-            borderTop: '1px solid' + borderColor,
-          }"
         >
           <view
             class="wyb-table-content-item"
@@ -274,6 +269,7 @@
                 height: checkColWidth * 0.5 + 'rpx',
                 backgroundColor: checkerBoxBgColor,
                 border: '1px solid ' + checkerBorderColor,
+                boxSizing: 'borderBox'
               }"
             >
               <text
@@ -322,7 +318,7 @@
               left: enableCheck ? checkColWidth + 'rpx' : 0,
               position: hIndex === 0 && firstLineFixed ? 'sticky' : 'static',
             }"
-            >{{ autoContentItem(cIndex, hIndex) }}</view
+          >{{ autoContentItem(cIndex, hIndex) }}</view
           >
         </view>
         <view class="wyb-table-content-line">
@@ -341,12 +337,12 @@
             }"
           >
             <view>{{
-              dataSourceStatus === 'more'
-                ? '点击加载更多'
-                : dataSourceStatus === 'loading'
-                ? '加载中...'
-                : '没有更多了'
-            }}</view>
+                dataSourceStatus === 'more'
+                  ? '点击加载更多'
+                  : dataSourceStatus === 'loading'
+                  ? '加载中...'
+                  : '没有更多了'
+              }}</view>
           </view>
           <view
             @click="emitPage"
@@ -369,7 +365,7 @@
 import Pinyin from './js/characterToPinyin.js'
 import { isEqual } from './js/objEqual.js'
 import { mapState } from 'vuex'
-import { numberUtils } from '@/utils/utils';
+import { numberUtils } from '@/utils/utils'
 
 export default {
   onReachBottom() {
@@ -477,15 +473,16 @@ export default {
             total += parseFloat(num)
           })
           bottomComputed[this.computedCol[index]] =
-            numberUtils.thousandFormatter(this.summary[this.computedCol[index]]) ||
-            numberUtils.thousandFormatter(total)
+            numberUtils.thousandFormatter(
+              this.summary[this.computedCol[index]],
+            ) || numberUtils.thousandFormatter(total)
         })
         let header = this.headers[index]
         let result = this.computedCol.includes(header.key)
           ? bottomComputed[header.key]
           : index === 0
-          ? '总计'
-          : this.emptyString
+            ? '总计'
+            : this.emptyString
         if (this.formatCol.length !== 0) {
           this.formatCol.forEach((item) => {
             if (item.bottomComputedFormat) {
@@ -938,9 +935,9 @@ export default {
     let pagerWidth = 0
     this.headers.forEach((v) => {
       if (v.width) {
-        pagerWidth += v.width
+        pagerWidth += (v.width - 1)
       } else {
-        pagerWidth += this.defaultColWidth
+        pagerWidth += (this.defaultColWidth - 1)
       }
     })
     this.pagerWidth = (pagerWidth - 750) / Number(this.headers.length)
@@ -968,16 +965,16 @@ export default {
             ) {
               return spell[1]
             })
-              .charAt(0)
-              .charCodeAt()
+            .charAt(0)
+            .charCodeAt()
             let B = Pinyin.getSpell(b[key].charAt(0), function (
               charactor,
               spell,
             ) {
               return spell[1]
             })
-              .charAt(0)
-              .charCodeAt()
+            .charAt(0)
+            .charCodeAt()
             return A - B
           })
         }
@@ -998,16 +995,16 @@ export default {
             ) {
               return spell[1]
             })
-              .charAt(0)
-              .charCodeAt()
+            .charAt(0)
+            .charCodeAt()
             let B = Pinyin.getSpell(b[key].charAt(0), function (
               charactor,
               spell,
             ) {
               return spell[1]
             })
-              .charAt(0)
-              .charCodeAt()
+            .charAt(0)
+            .charCodeAt()
             return B - A
           })
         }
@@ -1041,8 +1038,9 @@ export default {
           total += parseFloat(num)
         })
         result[this.computedCol[index]] =
-          numberUtils.thousandFormatter(this.summary[this.computedCol[index]]) ||
-          numberUtils.thousandFormatter(total)
+          numberUtils.thousandFormatter(
+            this.summary[this.computedCol[index]],
+          ) || numberUtils.thousandFormatter(total)
       })
       this.bottomComputed = result
     },
@@ -1167,7 +1165,7 @@ export default {
       } else if (this.enableCheck === 'multiple') {
         this.contentsSort[cIndex]['checked'] = !this.contentsSort[cIndex][
           'checked'
-        ]
+          ]
       }
       if (this.contentsSort[cIndex]['checked']) {
         if (this.enableCheck === 'single') {
@@ -1334,7 +1332,6 @@ export default {
   }
 
   .wyb-table-header {
-    position: sticky;
     top: 0;
     display: grid;
     grid-auto-flow: column;

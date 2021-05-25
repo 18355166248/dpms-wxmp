@@ -171,6 +171,7 @@ export default {
 
           item[`payStyleTotalAmountList${i+1}`] = this.$utils.formatPrice(item.payStyleReconciliationItemList[i].totalAmount)
         }
+        item.totalAmount = this.$utils.formatPrice(this.totalAmount)
         return item
 
       })
