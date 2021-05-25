@@ -209,6 +209,10 @@ const billAPI = {
   getChargeRequiredConfig(data) {
     return httper.get('/billing/charge-required/select-config', data)
   },
+  //获取查询结果
+  getResultBySerialNoList(data) {
+    return httper.get('/pay/pay-order/select-by-pay-serial-no-list', data)
+  },
 }
 
 export default billAPI

@@ -147,6 +147,15 @@ export default {
     align-items: center;
     font-size: 28rpx;
     line-height: 28rpx;
+
+    .flex {
+      max-width: 420rpx;
+      display: flex;
+      flex-wrap: wrap;
+      .infos {
+        max-width: 100%;
+      }
+    }
     .infos {
       padding-right: 12rpx;
     }

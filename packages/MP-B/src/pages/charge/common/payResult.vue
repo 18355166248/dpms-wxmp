@@ -1,23 +1,20 @@
 <template>
   <u-modal
-    v-model='show'
-    :show-title='false'
-    confirm-text='我知道了'
-    confirm-color='#5CBB89'
-    @confirm='onConfirm'
+    v-model="show"
+    :show-title="false"
+    confirm-text="我知道了"
+    confirm-color="#5CBB89"
+    @confirm="onConfirm"
   >
-    <view class='slot-content' v-if='payResult.length > 0'>
-      <view class='item' v-for='(item, index) in payResult' :key='index'>
-        <view class='amount-wrap'>
-          <view class='type-name'>{{ item.transactionChannelName }}</view>
-          <view class='amount'>{{
-              item.paymentAmount | thousandFormatter(2, '￥')
-            }}
+    <view class="slot-content" v-if="payResult.length > 0">
+      <view class="item" v-for="(item, index) in payResult" :key="index">
+        <view class="amount-wrap">
+          <view class="type-name">{{ item.transactionChannelName }}</view>
+          <view class="amount"
+            >{{ item.paymentAmount | thousandFormatter(2, '￥') }}
           </view>
         </view>
-        <view
-          :style='{color:payStatusDic[`${item.payStatus}`].color }'
-        >
+        <view :style="{ color: payStatusDic[`${item.payStatus}`].color }">
           {{ payStatusDic[`${item.payStatus}`].text }}
         </view>
       </view>
@@ -26,7 +23,11 @@
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
-
+function checkAllStatus(list) {
+  return list.some((item) => {
+    return item.payStatus === 2
+  })
+}
 export default {
   name: '',
   data() {
@@ -67,15 +68,30 @@ export default {
   },
   methods: {
     open(orderNo) {
-      billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res) => {
-        const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
-        return billAPI.getDeductionData({ paySerialNos: paySerialNos })
-      }).then((res) => {
-        this.payResult = res?.data?.payOrderList || []
-        this.show = true
-      }).catch((err)=>{
-        console.log(err)
-      })
+      billAPI
+        .getPayChannelResult({ payBatchNo: orderNo })
+        .then((res) => {
+          const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
+          this.getResult(paySerialNos)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    getResult(paySerialNos) {
+      billAPI
+        .getResultBySerialNoList({ paySerialNos: paySerialNos })
+        .then((res) => {
+          console.log(res)
+          if (res.data) {
+            if (checkAllStatus(res.data)) {
+              this.getResult(paySerialNos)
+            } else {
+              this.payResult = res?.data
+              this.show = true
+            }
+          }
+        })
     },
     onConfirm() {
       this.$emit('confirm')
@@ -84,7 +100,7 @@ export default {
   components: {},
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 //
 .slot-content {
   padding: 48rpx;

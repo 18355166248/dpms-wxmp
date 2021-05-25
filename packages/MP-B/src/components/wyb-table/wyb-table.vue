@@ -79,7 +79,7 @@
               height: checkColWidth * 0.5 + 'rpx',
               backgroundColor: checkerBoxBgColor,
               border: '1px solid ' + checkerBorderColor,
-              boxSizing: 'borderBox'
+              boxSizing: 'borderBox',
             }"
           >
             <text
@@ -168,10 +168,7 @@
         </view>
       </view>
       <view class="wyb-table-content">
-        <view
-          v-if="computedCol.length !== 0"
-          class="wyb-table-content-line"
-        >
+        <view v-if="computedCol.length !== 0" class="wyb-table-content-line">
           <view
             class="wyb-table-content-item"
             v-if="enableCheck"
@@ -269,7 +266,7 @@
                 height: checkColWidth * 0.5 + 'rpx',
                 backgroundColor: checkerBoxBgColor,
                 border: '1px solid ' + checkerBorderColor,
-                boxSizing: 'borderBox'
+                boxSizing: 'borderBox',
               }"
             >
               <text
@@ -935,9 +932,9 @@ export default {
     let pagerWidth = 0
     this.headers.forEach((v) => {
       if (v.width) {
-        pagerWidth += (v.width - 1)
+        pagerWidth += v.width - 1
       } else {
-        pagerWidth += (this.defaultColWidth - 1)
+        pagerWidth += this.defaultColWidth - 1
       }
     })
     this.pagerWidth = (pagerWidth - 750) / Number(this.headers.length)
