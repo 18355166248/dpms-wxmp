@@ -26,7 +26,11 @@
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
-
+function checkAllStatus(list) {
+  return list.some((item) => {
+    return item.payStatus === 2;
+  });
+}
 export default {
   name: '',
   data() {
@@ -69,12 +73,22 @@ export default {
     open(orderNo) {
       billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res) => {
         const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
-        return billAPI.getDeductionData({ paySerialNos: paySerialNos })
-      }).then((res) => {
-        this.payResult = res?.data?.payOrderList || []
-        this.show = true
+        this.getResult(paySerialNos)
       }).catch((err)=>{
         console.log(err)
+      })
+    },
+    getResult(paySerialNos){
+      billAPI.getResultBySerialNoList({ paySerialNos: paySerialNos }).then(res=>{
+        console.log(res);
+        if (res.data){
+          if (checkAllStatus(res.data)) {
+            this.getResult(paySerialNos);
+          } else {
+            this.payResult=res?.data
+            this.show = true
+          }
+        }
       })
     },
     onConfirm() {
