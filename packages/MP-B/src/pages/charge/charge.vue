@@ -56,7 +56,7 @@
       </view>
     </view>
 
-    <actionSheet @close="hideActionSheet" v-if="showActionSheet">
+    <actionSheet @close="hideActionSheet" v-if="showActionSheet" :background="'#fff'">
       <view
         class="action-item"
         v-for="(item, index) in list"
@@ -341,7 +341,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1rpx solid #f2f2f2;
+  border-top: 1rpx solid #e5e5e5;
 }
 
 .action-item:first-child {

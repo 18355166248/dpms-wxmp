@@ -318,9 +318,8 @@ export default {
               color: #191919;
               line-height: 36rpx;
               max-width: 400rpx;
+              font-size: 28rpx;
             }
-          }
-          .check-box {
           }
         }
       }
