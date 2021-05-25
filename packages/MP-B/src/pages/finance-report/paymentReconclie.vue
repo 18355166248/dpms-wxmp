@@ -181,6 +181,7 @@ export default {
             item.payStyleReconciliationItemList[i].totalAmount,
           )
         }
+        item.totalAmount = this.$utils.formatPrice(item.totalAmount)
         return item
       })
       if (this.current === 1) {

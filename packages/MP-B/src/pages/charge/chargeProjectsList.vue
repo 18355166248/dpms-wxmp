@@ -57,7 +57,7 @@
                 v-model="item.toothPositionDesc"
                 auto-height
                 placeholder="请输入处置说明"
-                placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+                placeholder-style="font-size: 28rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
                 :maxlength="150"
               />
             </div>
@@ -189,8 +189,20 @@ export default {
     ]),
     //牙位图数据
     setTeethSelect(value, item) {
-      console.log(value)
-      console.log(item)
+      console.log(value.teeth)
+      const toothTemp = {
+        teeth: {},
+        activatedToothNumber: null,
+      }
+      console.log(Object.keys(value.teeth))
+      Object.keys(value.teeth).forEach((x) => {
+        console.log(value.teeth[x])
+        toothTemp.teeth[x] = value.teeth[x]
+        toothTemp.activatedToothNumber = x
+      })
+      console.log(toothTemp)
+      item.toothPosition = toothTemp
+      item.toothPositionStr = toothTemp
     },
     onNextStep() {
       // 保存vuex并跳转
@@ -429,6 +441,7 @@ export default {
           height: 96rpx;
           font-size: 34rpx;
           color: #191919;
+          font-weight: 500;
         }
 
         .action {
@@ -483,9 +496,17 @@ export default {
             width: 182rpx;
             flex-shrink: 0;
             color: #191919;
+            line-height: 1.2;
+            font-size: 28rpx;
           }
           .memo {
-            width: 100%;
+            flex-grow: 2;
+            width: 500rpx;
+            textarea {
+              width: 100%;
+              line-height: 1.2;
+              font-size: 28rpx;
+            }
           }
         }
         .flex:last-child {

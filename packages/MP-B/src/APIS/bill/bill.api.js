@@ -205,6 +205,14 @@ const billAPI = {
       },
     })
   },
+  //获取账单员工必填项设置
+  getChargeRequiredConfig(data) {
+    return httper.get('/billing/charge-required/select-config', data)
+  },
+  //获取查询结果
+  getResultBySerialNoList(data) {
+    return httper.get('/pay/pay-order/select-by-pay-serial-no-list', data)
+  },
 }
 
 export default billAPI

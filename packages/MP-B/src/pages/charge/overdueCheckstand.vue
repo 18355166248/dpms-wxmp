@@ -72,22 +72,9 @@
           ></div>
           <div class="ellipsis" style="width: 550rpx;">开单信息</div>
         </div>
-        <div slot="extra">
-          <div
-            style="padding-left: 36rpx;"
-            @click="toggleInfomation = !toggleInfomation"
-          >
-            <template v-if="toggleInfomation">
-              <span class="iconfont icon-closed" style="font-size: 22rpx;" />
-            </template>
-            <template v-else>
-              <span class="iconfont icon-open" style="font-size: 22rpx;" />
-            </template>
-          </div>
-        </div>
       </chargestand-title>
       <!--展开部分-->
-      <template v-if="toggleInfomation">
+      <template>
         <dpmsCell title="收费时间" :value="form.cashierTime" />
         <dpmsCell title="收费人" :value="form.staffName" />
         <dpmsCell title="备注" hideBorderBottom />
@@ -186,7 +173,6 @@ export default {
         debtDiscount: 100,
         receivableAmount: 0.0,
       },
-      toggleInfomation: true,
       otherList: [],
       visitTimeList: [],
       //支付方式
@@ -621,6 +607,7 @@ export default {
         color: #5cbb89;
         border: 2rpx solid #5cbb89;
         width: 176rpx;
+        background: #fff;
       }
 
       .charge-btn {

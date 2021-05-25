@@ -79,6 +79,7 @@
               height: checkColWidth * 0.5 + 'rpx',
               backgroundColor: checkerBoxBgColor,
               border: '1px solid ' + checkerBorderColor,
+              boxSizing: 'borderBox',
             }"
           >
             <text
@@ -167,16 +168,7 @@
         </view>
       </view>
       <view class="wyb-table-content">
-        <view
-          v-if="computedCol.length !== 0"
-          class="wyb-table-content-line"
-          :style="{
-            position: bottomComputedFixed ? 'sticky' : 'static',
-            bottom: 0,
-            zIndex: 25,
-            borderTop: '1px solid' + borderColor,
-          }"
-        >
+        <view v-if="computedCol.length !== 0" class="wyb-table-content-line">
           <view
             class="wyb-table-content-item"
             v-if="enableCheck"
@@ -274,6 +266,7 @@
                 height: checkColWidth * 0.5 + 'rpx',
                 backgroundColor: checkerBoxBgColor,
                 border: '1px solid ' + checkerBorderColor,
+                boxSizing: 'borderBox',
               }"
             >
               <text
@@ -939,9 +932,9 @@ export default {
     let pagerWidth = 0
     this.headers.forEach((v) => {
       if (v.width) {
-        pagerWidth += v.width
+        pagerWidth += v.width - 1
       } else {
-        pagerWidth += this.defaultColWidth
+        pagerWidth += this.defaultColWidth - 1
       }
     })
     this.pagerWidth = (pagerWidth - 750) / Number(this.headers.length)
@@ -1336,7 +1329,6 @@ export default {
   }
 
   .wyb-table-header {
-    position: sticky;
     top: 0;
     display: grid;
     grid-auto-flow: column;
