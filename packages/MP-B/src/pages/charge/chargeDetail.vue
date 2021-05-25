@@ -31,7 +31,7 @@
             <!--牙位 -->
             <div class="flex">
               <div class="label">牙位：</div>
-              <TeethSelect class="teeth" :value="JSON.parse(item.toothPositionStr)"/>
+              <TeethSelect class="teeth" :value="getTeethVal(item)"/>
             </div>
             <!--处置说明 -->
             <div class="flex">
@@ -74,14 +74,16 @@
     </view>
 
     <view class='btn-wrap' v-if='isOverdue'>
-      <chargeButton
-        type='solid'
-        @click='overdueCharge'
-        :buttonStyle="{ width:'686rpx' }"
-        v-if="btnPremisstion('arrears_of_fees')"
-      >
-        收欠费
-      </chargeButton>
+      <view class="btns">
+        <chargeButton
+          type='solid'
+          @click='overdueCharge'
+          :buttonStyle="{ width:'686rpx' }"
+          v-if="btnPremisstion('arrears_of_fees')"
+        >
+          收欠费
+        </chargeButton>
+      </view>
     </view>
     <!-- 底部收费项-->
   </view>
@@ -116,6 +118,16 @@ export default {
     },
   },
   methods: {
+    getTeethVal(item){
+      if (item.toothPositionStr){
+        try {
+          return JSON.parse(item.toothPositionStr)
+        }catch (err){
+          return { teeth: {} }
+        }
+      }
+      return { teeth: {} }
+    },
     init() {
       billAPI
       .orderDetail({
@@ -144,9 +156,6 @@ export default {
   background: rgba(0, 0, 0, 0.04);
   height: 100%;
   box-sizing: border-box;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
-
   .list-wrap {
     display: flex;
     flex-grow: 100;
@@ -232,6 +241,8 @@ export default {
     justify-content: center;
     background: #fff;
     padding: 16rpx 32rpx;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
