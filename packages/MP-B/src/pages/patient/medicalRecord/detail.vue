@@ -150,8 +150,8 @@
     </div>
     <div class="bottom" v-if="currentStaffApproveType === 1">
       <div v-if="detail.approveStatus === 2">
-        <button @click="passing(detail)">不 通 过</button>
-        <button @click="noPassing(detail)">通 过</button>
+        <button @click="noPassing(detail)">不 通 过</button>
+        <button @click="passing(detail)">通 过</button>
       </div>
       <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
         <button @click="deleteMedicalRecord">删 除</button>
@@ -176,8 +176,8 @@
       </div>
       <div v-if="detail.approveStatus === 2">
         <button @click="withdraw(detail)">撤 回</button>
-        <button @click="passing(detail)">不 通 过</button>
-        <button @click="noPassing(detail)">通 过</button>
+        <button @click="noPassing(detail)">不 通 过</button>
+        <button @click="passing(detail)">通 过</button>
       </div>
       <div v-if="detail.approveStatus === 3">
         <button @click="deleteMedicalRecord">删 除</button>
@@ -260,8 +260,9 @@ export default {
       if (res.code === 0) {
         this.$utils.show('审核成功', { icon: 'success' })
         setTimeout(() => {
+          uni.$emit('medicalRecordListUpdate')
           this.$utils.back()
-        }, 2000)
+        }, 1000)
       }
     },
     async noPassing() {
@@ -274,8 +275,9 @@ export default {
       if (res.code === 0) {
         this.$utils.show('审核成功', { icon: 'success' })
         setTimeout(() => {
+          uni.$emit('medicalRecordListUpdate')
           this.$utils.back()
-        }, 2000)
+        }, 1000)
       }
     },
     async withdraw() {
@@ -288,8 +290,9 @@ export default {
       if (res.code === 0) {
         this.$utils.show('撤回成功', { icon: 'success' })
         setTimeout(() => {
+          uni.$emit('medicalRecordListUpdate')
           this.$utils.back()
-        }, 2000)
+        }, 1000)
       }
     },
     remarkChange(ev) {
