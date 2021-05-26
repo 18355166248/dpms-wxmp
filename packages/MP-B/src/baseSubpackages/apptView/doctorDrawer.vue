@@ -8,7 +8,7 @@
         :value="accessMedicalInstitution.medicalInstitutionSimpleCode"
         @click.native="openSelectMedicalInstitution"
       />
-      <scroll-view scroll-y style="height: calc(100% - 155px);">
+      <scroll-view scroll-y :style="{ height: scrollViewHeight + 'px' }">
         <view style="padding: 0 32rpx;">
           <view class="title">按医生查看：</view>
           <view class="btnGroup">
@@ -74,6 +74,14 @@ export default {
     // 显示供选择的医生，需在原有基础上加上所有医生
     doctorSelectList() {
       return [ALL_DOCTOR_ITEM].concat(this.doctorList)
+    },
+    scrollViewHeight() {
+      const institutionSelectHeight = this.isHeaderWithLargeArea ? 112 : 0
+      return (
+        this.$systemInfo.windowHeight -
+        uni.upx2px(institutionSelectHeight) -
+        uni.upx2px(112) - 20
+      )
     },
   },
   methods: {
@@ -173,10 +181,10 @@ $primary-color: #5cbb89;
 
   .btnConfirmContainer {
     position: fixed;
-    bottom: 84rpx;
+    bottom: 0;
     box-sizing: border-box;
     width: 100%;
-    padding: 0 32rpx;
+    padding: 16rpx 32rpx;
   }
 
   .btnConfirm {
