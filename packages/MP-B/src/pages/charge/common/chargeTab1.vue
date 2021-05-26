@@ -52,6 +52,10 @@
                       shape="square"
                       v-model="item3.checked"
                       @change="onChargeChange(item3)"
+                      :disabled="
+                        item3.chargeItemList &&
+                        item3.chargeItemList.length === 0
+                      "
                     ></dpmsCheckbox>
                   </view>
                 </view>
@@ -64,6 +68,7 @@
     <view v-else>
       <empty :disabled="true" text="暂无数据"></empty>
     </view>
+    <u-toast ref="uToast" />
   </view>
 </template>
 <script>
@@ -112,8 +117,15 @@ export default {
           settingsChargePackageTypeId: item.settingsChargePackageTypeId,
         })
         .then((res) => {
-          if (res.code === 0 && res?.data) {
+          if (res?.data?.length > 0) {
             item.chargeItemList = res.data
+          } else {
+            this.$refs.uToast.show({
+              title: '该套餐未绑定收费项目',
+              type: 'warning',
+            })
+            item.checked = false
+            item.chargeItemList = []
           }
         })
         .catch((err) => {
