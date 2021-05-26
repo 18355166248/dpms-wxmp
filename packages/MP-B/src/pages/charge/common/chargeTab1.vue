@@ -1,7 +1,7 @@
 <template>
   <view class="container-wrap">
     <!--选择项目-->
-    <view class="projects-wrap" v-if="classifyList.length>0">
+    <view class="projects-wrap" v-if="classifyList.length > 0">
       <view class="list-wrap">
         <!--一级类目-->
         <view
@@ -101,37 +101,43 @@ export default {
     toggleClassify(item) {
       item.open = !item.open
     },
-    onChargeChange(item){
-      if (item.checked&&(!item.chargeItemList)){
+    onChargeChange(item) {
+      if (item.checked && !item.chargeItemList) {
         this.getPackageChargeItems(item)
       }
     },
-    getPackageChargeItems(item){
-      billAPI.getPackageChargeItems({
-        settingsChargePackageTypeId:item.settingsChargePackageTypeId
-      }).then((res)=>{
-        if (res.code===0&&res?.data){
-          item.chargeItemList=res.data
-        }
-      }).catch((err)=>{
-        console.log(err);
-      })
+    getPackageChargeItems(item) {
+      billAPI
+        .getPackageChargeItems({
+          settingsChargePackageTypeId: item.settingsChargePackageTypeId,
+        })
+        .then((res) => {
+          if (res.code === 0 && res?.data) {
+            item.chargeItemList = res.data
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
     //过滤数据  刷选没被选中的收费项目
-    filterPackageChargeItemList(){
-      let list=[]
-      this.classifyList.forEach((item)=>{
-        if (item?.children?.length>0){
-          item.children.forEach((item2)=>{
-            if (item2?.children?.length>0){
-              item2.children.forEach((item3)=>{
-                if (item3.checked){
-                  item3?.chargeItemList?.forEach((item4)=>{
-                      item4.settingsChargeItem.itemType=2
-                      //这里要取外层的这个字段 不要取里面的 里面的是假的
-                      item4.settingsChargeItem.parentItemCode=item4.settingsChargePackageTypeId
-                      item4.settingsChargeItem.itemCode=item4.settingsChargePackageItemId
-                      list.push(item4.settingsChargeItem)
+    filterPackageChargeItemList() {
+      let list = []
+      this.classifyList.forEach((item) => {
+        if (item?.children?.length > 0) {
+          item.children.forEach((item2) => {
+            if (item2?.children?.length > 0) {
+              item2.children.forEach((item3) => {
+                if (item3.checked) {
+                  item3?.chargeItemList?.forEach((item4) => {
+                    item4.settingsChargeItem.itemType = 2
+                    //这里要取外层的这个字段 不要取里面的 里面的是假的
+                    item4.settingsChargeItem.parentItemCode =
+                      item4.settingsChargePackageTypeId
+                    item4.settingsChargeItem.itemCode =
+                      item4.settingsChargePackageItemId
+                    item4.settingsChargeItem.itemNum = item4.itemQuantity || 1
+                    list.push(item4.settingsChargeItem)
                   })
                 }
               })
@@ -140,7 +146,7 @@ export default {
         }
       })
       return list
-    }
+    },
   },
   watch: {},
   components: {},
@@ -160,6 +166,7 @@ export default {
   display: flex;
   flex-grow: 20;
   margin-top: 16rpx;
+  flex-direction: column;
   .projects-wrap {
     display: flex;
     line-height: 30rpx;

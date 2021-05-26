@@ -237,14 +237,14 @@ export default {
   flex-direction: row;
   align-items: center;
   position: relative;
-  &::after{
+  &::after {
     position: absolute;
     content: '';
-    width: 200%;
-    height: 200%;
+    width: 300%;
+    height: 300%;
     left: 50%;
     top: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
   }
 }
 

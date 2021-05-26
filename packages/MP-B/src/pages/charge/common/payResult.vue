@@ -1,22 +1,22 @@
 <template>
   <u-modal
-    v-model='show'
-    :show-title='false'
-    confirm-text='我知道了'
-    confirm-color='#5CBB89'
-    @confirm='onConfirm'
+    v-model="show"
+    :show-title="false"
+    confirm-text="我知道了"
+    confirm-color="#5CBB89"
+    @confirm="onConfirm"
   >
-    <view class='slot-content' v-if='payResult.length > 0'>
-      <view class='item' v-for='(item, index) in payResult' :key='index'>
-        <view class='amount-wrap'>
-          <view class='type-name'>{{ item.transactionChannelName }}</view>
-          <view class='amount'>{{
-              item.paymentAmount | thousandFormatter(2, '￥')
-            }}
+    <view class="slot-content" v-if="payResult.length > 0">
+      <view class="item" v-for="(item, index) in payResult" :key="index">
+        <view class="amount-wrap">
+          <view class="type-name">{{ item.transactionChannelName }}</view>
+          <view class="amount"
+            >{{ item.paymentAmount | thousandFormatter(2, '￥') }}
           </view>
         </view>
         <view
-          :style='{color:payStatusDic[`${item.payStatus}`].color }'
+          :style="{ color: payStatusDic[`${item.payStatus}`].color }"
+          class="status"
         >
           {{ payStatusDic[`${item.payStatus}`].text }}
         </view>
@@ -28,8 +28,8 @@
 import billAPI from '@/APIS/bill/bill.api'
 function checkAllStatus(list) {
   return list.some((item) => {
-    return item.payStatus === 1 ||item.payStatus === 2;
-  });
+    return item.payStatus === 1 || item.payStatus === 2
+  })
 }
 export default {
   name: '',
@@ -71,25 +71,33 @@ export default {
   },
   methods: {
     open(orderNo) {
-      billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res) => {
-        const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
-        this.getResult(paySerialNos,res.data)
-      }).catch((err)=>{
-        console.log(err)
-      })
+      billAPI
+        .getPayChannelResult({ payBatchNo: orderNo })
+        .then((res) => {
+          const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
+          this.getResult(paySerialNos, res.data)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
-    getResult(paySerialNos,list){
-      billAPI.getResultBySerialNoList({ paySerialNos: paySerialNos }).then(res=>{
-        console.log(res);
-        if (res.data){
-          if (checkAllStatus(res.data)) {
-            this.getResult(paySerialNos,list);
-          } else {
-            this.payResult=list
-            this.show = true
+    getResult(paySerialNos, list) {
+      billAPI
+        .getResultBySerialNoList({ paySerialNos: paySerialNos })
+        .then((res) => {
+          console.log(res)
+          if (res.data) {
+            if (checkAllStatus(res.data)) {
+              this.getResult(paySerialNos, list)
+            } else {
+              list.forEach((item, index) => {
+                item.payStatus = res.data[index].payStatus
+              })
+              this.payResult = list
+              this.show = true
+            }
           }
-        }
-      })
+        })
     },
     onConfirm() {
       this.$emit('confirm')
@@ -98,7 +106,7 @@ export default {
   components: {},
 }
 </script>
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 //
 .slot-content {
   padding: 48rpx;
@@ -109,12 +117,16 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding-bottom: 32rpx;
-
+    align-items: center;
     .amount-wrap {
       display: flex;
       font-size: 34rpx;
       color: #191919;
-
+      max-width: 400rpx;
+      justify-content: space-between;
+      padding-right: 20rpx;
+      box-sizing: border-box;
+      align-items: center;
       .type-name {
         color: #595959;
         width: 150rpx;
@@ -122,13 +134,20 @@ export default {
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        padding-right: 60rpx;
+        flex-shrink: 0;
       }
 
       .amount {
         color: #191919;
         font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
       }
+    }
+    .status {
+      flex-shrink: 0;
     }
   }
 
