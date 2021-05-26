@@ -51,6 +51,10 @@ export default {
   data() {
     this._headers = [
       {
+        label: '患者姓名',
+        key: 'patientName',
+      },
+      {
         label: '单据号',
         key: 'billSerialNo',
       },
@@ -65,10 +69,6 @@ export default {
       {
         label: '病历号',
         key: 'medicalRecordNo',
-      },
-      {
-        label: '患者姓名',
-        key: 'patientName',
       },
       {
         label: '联系电话',
@@ -105,6 +105,10 @@ export default {
       {
         label: '原因跟踪',
         key: 'billOrderMemo',
+      },
+      {
+        label: '实收金额',
+        key: '_realAmount', //前端自定义字段=本次收款+本次退款
       },
     ]
     return {
@@ -206,6 +210,7 @@ export default {
         patientInfo: this.patientInfo,
         billOrderNo: this.billOrderNo,
         doctorIds: this.doctor.doctorIds,
+        consultantIds: this.consultant.consultantIds,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
       }
@@ -294,6 +299,9 @@ export default {
       ]
 
       records = records.map((item) => {
+        item._realAmount = this.$utils.formatPrice(
+          item.payAmount + item.payRefundAmount,
+        )
         for (let i = 0; i < channelList.length; i++) {
           item[`payStyleTotalAmountList${i + 1}`] = this.$utils.formatPrice(
             item.payStyleTotalAmountList[i],
@@ -343,7 +351,19 @@ export default {
     openCalendar() {
       this.$refs.calendar.open()
     },
-    confirmCalendar() {},
+    confirmCalendar({ range, fulldate }) {
+      const { before, after, data } = range
+      if (data.length === 0) {
+        this.beginTimeMillis = moment(fulldate).startOf('day').format('x')
+        this.endTimeMillis = moment(fulldate).endOf('day').format('x')
+      } else {
+        this.beginTimeMillis = moment(before).format('x')
+        this.endTimeMillis = moment(after).endOf('day').format('x')
+      }
+      this.dateFilterText = '自定义'
+      this.current = 1
+      this.loadData()
+    },
   },
 }
 </script>
