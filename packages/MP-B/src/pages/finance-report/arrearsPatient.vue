@@ -38,13 +38,14 @@ export default {
     return {
       headers:[
         {
-          label: '病历号',
-          key: 'medicalRecordNo',
-        },
-        {
           label: '患者姓名',
           key: 'patientName',
         },
+        {
+          label: '病历号',
+          key: 'medicalRecordNo',
+        },
+
         {
           label: '联系电话',
           key: 'phoneNumber',

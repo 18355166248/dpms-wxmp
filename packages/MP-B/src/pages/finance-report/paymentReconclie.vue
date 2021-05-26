@@ -40,17 +40,18 @@ import billAPI from 'APIS/bill/bill.api';
 export default {
   name: 'paymentReconclie',
   data() {
+    this._headers = [
+      {
+        label: '日期',
+        key: 'day',
+      },
+      {
+        label: '小计',
+        key: 'totalAmount',
+      }
+    ]
     return {
-      headers: [
-        {
-          label: '机构',
-          key: 'medicalInstitutionName',
-        },
-        {
-          label: '日期',
-          key: 'day',
-        },
-      ],
+      headers: [...this._headers],
       computedCol:[
         'totalAmount',
         'discountReceiveAmount',
@@ -157,9 +158,9 @@ export default {
       })
       const lastList = [
         {
-          label: '小计',
-          key: 'totalAmount',
-        },
+          label: '机构',
+          key: 'medicalInstitutionName',
+        }
       ]
       const lastComputed = [
         'totalAmount'
@@ -180,7 +181,7 @@ export default {
       } else {
         this.contents = this.contents.concat(records)
       }
-      this.headers = [...this.headers,...channelList,...lastList]
+      this.headers = [...this._headers,...channelList,...lastList]
       this.computedCol = [...this.computedCol,...computedColAdd,...lastComputed]
       this.total = total
       this.current = current
@@ -195,8 +196,18 @@ export default {
     openCalendar() {
       this.$refs.calendar.open()
     },
-    confirmCalendar() {
-
+    confirmCalendar({ range, fulldate }) {
+      const { before, after, data } = range
+      if (data.length === 0) {
+        this.beginTimeMillis = moment(fulldate).startOf('day').format('x')
+        this.endTimeMillis = moment(fulldate).endOf('day').format('x')
+      } else {
+        this.beginTimeMillis = moment(before).format('x')
+        this.endTimeMillis = moment(after).endOf('day').format('x')
+      }
+      this.dateFilterText = '自定义'
+      this.current = 1
+      this.loadData()
     },
   }
 };
