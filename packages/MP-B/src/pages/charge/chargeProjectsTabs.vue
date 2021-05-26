@@ -21,16 +21,16 @@
     ></searchInput>
     <view class="main-container">
       <!--诊疗服务-->
-      <view v-show="currentTab === 0">
-        <chargeTab0 ref="chargeTab0Ref"></chargeTab0>
+      <view v-show="currentTab === 0" class="tab-container">
+        <chargeTab0 ref="chargeTab0Ref" ></chargeTab0>
       </view>
       <!--套餐项目-->
-      <view v-show="currentTab === 1">
+      <view v-show="currentTab === 1" class="tab-container">
         <chargeTab1 ref="chargeTab1Ref"></chargeTab1>
       </view>
       <!--销售商品-->
-      <view v-show="currentTab === 2">
-        <chargeTab2 ref="chargeTab2Ref"></chargeTab2>
+      <view v-show="currentTab === 2" class="tab-container">
+        <chargeTab2 ref="chargeTab2Ref" class="tab-Component"></chargeTab2>
       </view>
     </view>
     <!--下一步-->
@@ -136,10 +136,6 @@ export default {
       this.setDisposeList(targetList)
       this.setReceivableAmount(0)
     },
-    // //判断是否已经选择了收费项目
-    // getMergeList(){
-    //
-    // },
     search() {
       if (this.currentTab === 0) {
         uni.navigateTo({
@@ -176,7 +172,18 @@ export default {
   .main-container {
     display: flex;
     flex-grow: 20;
-    overflow-y: scroll;
+    overflow-y: auto;
+    width: 100%;
+    .tab-container{
+      height: 100%;
+      width: 100%;
+      .tab-Component{
+        display: flex;
+        flex-grow: 2;
+        height: 100%;
+        width: 100%;
+      }
+    }
   }
   .bottom-wrap {
     background: #fff;

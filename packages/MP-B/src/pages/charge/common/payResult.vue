@@ -28,7 +28,7 @@
 import billAPI from '@/APIS/bill/bill.api'
 function checkAllStatus(list) {
   return list.some((item) => {
-    return item.payStatus === 2;
+    return item.payStatus === 1 ||item.payStatus === 2;
   });
 }
 export default {
@@ -73,19 +73,19 @@ export default {
     open(orderNo) {
       billAPI.getPayChannelResult({ payBatchNo: orderNo }).then((res) => {
         const paySerialNos = res?.data?.map((item) => item.paySerialNo).join()
-        this.getResult(paySerialNos)
+        this.getResult(paySerialNos,res.data)
       }).catch((err)=>{
         console.log(err)
       })
     },
-    getResult(paySerialNos){
+    getResult(paySerialNos,list){
       billAPI.getResultBySerialNoList({ paySerialNos: paySerialNos }).then(res=>{
         console.log(res);
         if (res.data){
           if (checkAllStatus(res.data)) {
-            this.getResult(paySerialNos);
+            this.getResult(paySerialNos,list);
           } else {
-            this.payResult=res?.data
+            this.payResult=list
             this.show = true
           }
         }

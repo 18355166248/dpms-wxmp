@@ -51,8 +51,8 @@
           </div>
         </div>
       </chargestand-title>
-      <dpmsCell title="收费时间" :value="nowDate" />
-      <dpmsCell title="收费人" :value="staff.staffName" />
+      <dpmsCell title="收费时间" :value="nowDate" disabled />
+      <dpmsCell title="收费人" :value="staff.staffName" disabled />
       <template v-if="toggleInfomation">
         <dpmsCellPicker
           title="就诊时间"
@@ -341,9 +341,9 @@ export default {
         3:'disposalBillEnumIds'
       }
       const ids=idsDic[this.chargeType]
-      this.doctorRequire=data[ids].includes('2');
-      this.nurseRequire=data[ids].includes('4');
-      this.consultedRequire=data[ids].includes('6');
+      this.doctorRequire=data[ids]?.includes('2');
+      this.nurseRequire=data[ids]?.includes('4');
+      this.consultedRequire=data[ids]?.includes('6');
     },
     checkRequire(form){
       if (this.doctorRequire&&(!form.doctorStaffId)){
