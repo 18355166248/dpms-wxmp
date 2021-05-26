@@ -78,7 +78,7 @@
             确认
           </button>
           <button
-            class="button button-ghost no-right-border"
+            class="button button-ghost"
             @click="
               toPage('/baseSubpackages/apptForm/cancleAppt', {
                 appointmentId: appointmentId,
@@ -111,7 +111,7 @@
           </button>
         </template>
         <template v-if="statusEnumKey === 'CONFIRM'">
-          <button class="button button-ghost" @click="cancelConfirm">
+          <button class="button button-ghost button-long" @click="cancelConfirm">
             取消确认
           </button>
           <button
@@ -492,7 +492,7 @@ export default {
     }
     &-main-cotent {
       margin-top: 48rpx;
-      padding: 0 32rpx;
+      padding: 0 48rpx;
       color: $common-text-color;
       font-size: $dpms-font-size-base;
 
@@ -504,10 +504,9 @@ export default {
         margin-bottom: $dpms-spacing-col-base;
         &-label {
           position: relative;
-          display: -webkit-inline-box;
-          display: -ms-inline-flexbox;
-          display: inline-flex;
-          min-width: 150rpx;
+          width: 140rpx;
+          text-align: right;
+          font-weight: bold;
           -webkit-box-align: center;
           -ms-flex-align: center;
           align-items: center;
@@ -526,23 +525,21 @@ export default {
   .button-group {
     display: flex;
     align-items: center;
+    padding: 16rpx 32rpx;
     .button {
       flex: 1;
-      height: 90rpx;
-      line-height: 90rpx;
+      height: 80rpx;
+      line-height: 80rpx;
       text-align: center;
-      font-size: 32rpx;
+      font-size: 36rpx;
       background-color: $dpms-color-primary;
       color: #fff;
       box-sizing: border-box;
-      border-radius: 0;
-      border-bottom: 1px solid $dpms-color-primary;
+      border-radius: 40rpx;
+      margin-right: 16rpx;
 
-      &:first-child {
-        border-right: none;
-      }
-      &::after {
-        border: none;
+      &:last-child {
+        margin-right: 0;
       }
     }
     .button-ghost {
@@ -550,8 +547,10 @@ export default {
       color: $dpms-color-primary;
       border: 2rpx solid $dpms-color-primary;
     }
-    .no-right-border {
-      border-right: none;
+
+    // 四个字的按钮，要指定最小宽度，避免文字显示不全
+    .button-long {
+      min-width: 224rpx;
     }
   }
 }
