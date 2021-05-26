@@ -31,7 +31,7 @@
         type="digit"
         :value="form.receivableAmount"
         :max="12"
-        @input="onReceivableAmountChange($event)"
+        @blur="onReceivableAmountChange($event)"
       />
       <!--支付方式-->
       <chargestand-title>
@@ -55,8 +55,8 @@
         :key="item.transactionChannelId"
         type="digit"
         :title="`${item.transactionChannelName}(￥)`"
-        :value="item.paymentAmount"
-        @input="onPayTypeInputChange($event, item)"
+        v-model="item.paymentAmount"
+        @blur="onPayTypeInputChange($event, item)"
         :max="12"
       />
       <!--支付金额大于应收金额的验证-->
@@ -134,7 +134,7 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance"
+        <template v-if="item.balance >= 0"
           >&nbsp;&nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
@@ -258,27 +258,24 @@ export default {
       this.showActionSheet = false
     },
     //支付方式监听
-    onPayTypeInputChange(value, item) {
-      if (value === '' || value === undefined) {
-        item.paymentAmount = '-'
+    onPayTypeInputChange(value, record) {
+      if (!value) {
+        value = 0
+      } else if (value > 9999999.99) {
+        value = 9999999.99
       }
-      if (item.balance) {
-        item.paymentAmount =
-          value > item.balance ? item.balance + '' : Number(value)
-      } else {
-        item.paymentAmount = Number(value)
+      if (record.balance >= 0) {
+        if (value > record.balance) {
+          value = record.balance
+          this.$refs.uToast.show({
+            title: `不能超过${record.transactionChannelName}余额`,
+            type: 'warning',
+          })
+        }
       }
-      this.$nextTick(() => {
-        item.paymentAmount = changeTwoDecimal(value, 2)
-        this.errTipText = ''
-        this.checkPaidAmount()
-      })
-    },
-    changePayChannel(value, record) {
-      if (record.balance) {
-        value = value - record.balance > 0 ? record.balance : value
-      }
-      record.paymentAmount = value
+      record.paymentAmount = Number(value)
+      this.errTipText = ''
+      this.checkPaidAmount()
     },
     //校验实付金额是否大于应付金额
     checkPaidAmount() {

@@ -22,10 +22,10 @@
       <dpmsCellInput
         v-for="(item, index) in form.payChannelList"
         :key="item.transactionChannelId"
-        type="number"
+        type="digit"
         :title="item.transactionChannelName"
         v-model="item.paymentAmount"
-        @input="changePayChannel($event, item)"
+        @blur="changePayChannel($event, item)"
       />
       <div v-if="changeAmount > 0" class="validateCount">
         支付总金额不能大于应收金额
@@ -113,7 +113,7 @@
             v-model="form.memo"
             auto-height
             placeholder="请输入备注"
-            placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+            placeholder-style="font-size: 30rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
             :maxlength="150"
             @focus="bindFocus"
             @blur="closeBlur"
@@ -183,7 +183,7 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance"
+        <template v-if="item.balance >= 0"
           >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
@@ -342,8 +342,8 @@ export default {
       }
       const ids = idsDic[this.chargeType]
       this.doctorRequire = data[ids]?.includes('2')
-      this.nurseRequire = data[ids]?.includes('4')
-      this.consultedRequire = data[ids]?.includes('6')
+      this.consultedRequire = data[ids]?.includes('4')
+      this.nurseRequire = data[ids]?.includes('6')
     },
     checkRequire(form) {
       if (this.doctorRequire && !form.doctorStaffId) {
@@ -561,10 +561,17 @@ export default {
       } else if (value > 9999999.99) {
         value = 9999999.99
       }
-      if (record.balance) {
-        value = value - record.balance > 0 ? record.balance : value
+      if (record.balance >= 0) {
+        if (value > record.balance) {
+          console.log(record)
+          value = record.balance
+          this.$refs.uToast.show({
+            title: `不能超过${record.transactionChannelName}余额`,
+            type: 'warning',
+          })
+        }
       }
-      record.paymentAmount = value
+      record.paymentAmount = Number(value)
     },
     formatDisposeItem(item) {
       return (
@@ -753,7 +760,6 @@ export default {
       color: #191919;
       font-size: 30rpx;
       box-sizing: border-box;
-
       textarea {
         width: 100%;
       }

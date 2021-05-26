@@ -22,11 +22,11 @@
     <view class="main-container">
       <!--诊疗服务-->
       <view v-show="currentTab === 0" class="tab-container">
-        <chargeTab0 ref="chargeTab0Ref"></chargeTab0>
+        <chargeTab0 ref="chargeTab0Ref" class="tab-Component"></chargeTab0>
       </view>
       <!--套餐项目-->
       <view v-show="currentTab === 1" class="tab-container">
-        <chargeTab1 ref="chargeTab1Ref"></chargeTab1>
+        <chargeTab1 ref="chargeTab1Ref" class="tab-Component"></chargeTab1>
       </view>
       <!--销售商品-->
       <view v-show="currentTab === 2" class="tab-container">
@@ -113,7 +113,7 @@ export default {
         filterData.itemType = project.itemType
         filterData.itemNum = project.itemNum || 1
         filterData.salesList = project.salesList || []
-        filterData.deductSign = project.salesList
+        filterData.deductSign = project.isDiscountPlan
         filterData.allBillDiscount = project.allBillDiscount
         filterData.isSingleDiscount = project.isSingleDiscount
         filterData.singleDiscountLimit = project.singleDiscountLimit
@@ -130,7 +130,9 @@ export default {
         filterData.totalAmount = amount
         filterData.singleDiscountAfterAmount = amount
         filterData.receivableAmount = amount
+        filterData.unit = project.unit || project.inventoryUnitStr || ''
         targetList.push(filterData)
+        console.log(filterData)
       })
       this.setSelectedDisposeList(targetList)
       this.setDisposeList(targetList)

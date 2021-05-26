@@ -14,7 +14,10 @@
             >{{ item.paymentAmount | thousandFormatter(2, '￥') }}
           </view>
         </view>
-        <view :style="{ color: payStatusDic[`${item.payStatus}`].color }">
+        <view
+          :style="{ color: payStatusDic[`${item.payStatus}`].color }"
+          class="status"
+        >
           {{ payStatusDic[`${item.payStatus}`].text }}
         </view>
       </view>
@@ -87,6 +90,9 @@ export default {
             if (checkAllStatus(res.data)) {
               this.getResult(paySerialNos, list)
             } else {
+              list.forEach((item, index) => {
+                item.payStatus = res.data[index].payStatus
+              })
               this.payResult = list
               this.show = true
             }
@@ -111,12 +117,16 @@ export default {
     align-items: center;
     justify-content: space-between;
     padding-bottom: 32rpx;
-
+    align-items: center;
     .amount-wrap {
       display: flex;
       font-size: 34rpx;
       color: #191919;
-
+      max-width: 400rpx;
+      justify-content: space-between;
+      padding-right: 20rpx;
+      box-sizing: border-box;
+      align-items: center;
       .type-name {
         color: #595959;
         width: 150rpx;
@@ -124,13 +134,20 @@ export default {
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-box-orient: vertical;
-        padding-right: 60rpx;
+        flex-shrink: 0;
       }
 
       .amount {
         color: #191919;
         font-weight: 500;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
       }
+    }
+    .status {
+      flex-shrink: 0;
     }
   }
 
