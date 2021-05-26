@@ -1,96 +1,99 @@
 <template>
   <!--诊疗服务-->
-  <view class="container-wrap" v-if="classifyList.length >0">
-    <!--一级类目列表-->
-    <view class="left-scroll">
-      <scroll-view
-        scroll-y="true"
-        class="scroll-Y"
-        :style="{ height: scrollHeight }"
-        :scroll-into-view="scrollTypeId"
-        :scroll-with-animation="true"
-      >
-        <view
-          class="scroll-view-item"
-          v-for="(type, index) in classifyList"
-          :key="type.settingsChargeTypeId"
-          :class="{ active: currentTypeId === type.settingsChargeTypeId }"
-          :id="`type` + type.settingsChargeTypeId"
-          @click="toggleChargeType(type)"
+  <view class="container-wrap">
+    <view v-if="classifyList.length > 0" class="srcoll-wrap">
+      <!--一级类目列表-->
+      <view class="left-scroll">
+        <scroll-view
+          scroll-y="true"
+          class="scroll-Y"
+          :style="{ height: scrollHeight }"
+          :scroll-into-view="scrollTypeId"
+          :scroll-with-animation="true"
         >
           <view
-            class="name"
-            :style="{
-              borderBottom:
-                currentTypeId === type.settingsChargeTypeId ||
-                index === classifyList.length - 1
-                  ? 'none'
-                  : '1rpx solid rgba(0,0,0,0.15)',
-            }"
+            class="scroll-view-item"
+            v-for="(type, index) in classifyList"
+            :key="type.settingsChargeTypeId"
+            :class="{ active: currentTypeId === type.settingsChargeTypeId }"
+            :id="`type` + type.settingsChargeTypeId"
+            @click="toggleChargeType(type)"
           >
-            <view class="ellipsisChargeName">{{
-              type.settingsChargeTypeName
-            }}</view>
+            <view
+              class="name"
+              :style="{
+                borderBottom:
+                  currentTypeId === type.settingsChargeTypeId ||
+                  index === classifyList.length - 1
+                    ? 'none'
+                    : '1rpx solid rgba(0,0,0,0.15)',
+              }"
+            >
+              <view class="ellipsisChargeName">{{
+                type.settingsChargeTypeName
+              }}</view>
+            </view>
           </view>
-        </view>
-      </scroll-view>
-    </view>
-    <!--二级类目列表-->
-    <view class="right-scroll">
-      <scroll-view
-        scroll-y="true"
-        class="scroll-Y"
-        :style="{ height: scrollHeight }"
-        :scroll-into-view="scrollItemId"
-        :scroll-with-animation="true"
-        @scroll="onItemListScroll"
-      >
-        <view
-          class="scroll-view-item"
-          v-for="type in classifyList"
-          :key="type.settingsChargeTypeId"
-          :id="`item` + type.settingsChargeTypeId"
+        </scroll-view>
+      </view>
+      <!--二级类目列表-->
+      <view class="right-scroll">
+        <scroll-view
+          scroll-y="true"
+          class="scroll-Y"
+          :style="{ height: scrollHeight }"
+          :scroll-into-view="scrollItemId"
+          :scroll-with-animation="true"
+          @scroll="onItemListScroll"
         >
-          <!--一级类目-->
-          <view class="chargeType">
-            <view class="ellipsisChargeName">{{
-              type.settingsChargeTypeName
-            }}</view>
-          </view>
-          <!--二级类目-->
           <view
-            class="chargeItem"
-            v-for="item in type.chargeItemList"
-            :key="item.settingsChargeItemId"
+            class="scroll-view-item"
+            v-for="type in classifyList"
+            :key="type.settingsChargeTypeId"
+            :id="`item` + type.settingsChargeTypeId"
           >
-            <view class="left-item">
-              <view class="ellipsisChargeName name">{{
-                item.settingsChargeItemName
-              }}</view>
-              <view class="price">{{
-                item.unitAmount | thousandFormatter(2, '￥')
+            <!--一级类目-->
+            <view class="chargeType">
+              <view class="ellipsisChargeName">{{
+                type.settingsChargeTypeName
               }}</view>
             </view>
-            <view class="check-box">
-              <dpmsCheckbox
-                shape="square"
-                :value="item.checked"
-                @change="onCheckBoxChange($event, item)"
-              >
-              </dpmsCheckbox>
+            <!--二级类目-->
+            <view
+              class="chargeItem"
+              v-for="item in type.chargeItemList"
+              :key="item.settingsChargeItemId"
+            >
+              <view class="left-item">
+                <view class="ellipsisChargeName name">{{
+                  item.settingsChargeItemName
+                }}</view>
+                <view class="price">{{
+                  item.unitAmount | thousandFormatter(2, '￥')
+                }}</view>
+              </view>
+              <view class="check-box">
+                <dpmsCheckbox
+                  shape="square"
+                  :value="item.checked"
+                  @change="onCheckBoxChange($event, item)"
+                >
+                </dpmsCheckbox>
+              </view>
             </view>
           </view>
-        </view>
-      </scroll-view>
+        </scroll-view>
+      </view>
     </view>
-  </view>
-  <view v-else>
-    <empty :disabled="true" text="暂无数据"></empty>
+
+    <view v-else>
+      <empty :disabled="true" text="暂无数据"></empty>
+    </view>
   </view>
 </template>
 <script>
 import billAPI from '@/APIS/bill/bill.api'
-import { mapMutations, mapState } from 'vuex';
+import { mapMutations, mapState } from 'vuex'
 export default {
   name: '',
   data() {
@@ -108,8 +111,7 @@ export default {
     ...mapState('searchProjectStore', ['searchChargeList']),
     ...mapState('dispose', ['disposeList']),
   },
-  created() {
-  },
+  created() {},
   mounted() {
     this.getChargeItems()
     this.getScrollHeight()
@@ -223,19 +225,19 @@ export default {
       }
     },
     //获取处置列表
-    getDisposeList(){
-      const disposeList=[]
+    getDisposeList() {
+      const disposeList = []
       this.classifyList.forEach((item) => {
         item?.chargeItemList?.length > 0 &&
-        item.chargeItemList.forEach((charge) => {
-          if (charge.checked){
-            charge.itemType=5
-            disposeList.push(charge)
-          }
-        })
+          item.chargeItemList.forEach((charge) => {
+            if (charge.checked) {
+              charge.itemType = 5
+              disposeList.push(charge)
+            }
+          })
       })
       return disposeList
-    }
+    },
   },
   watch: {
     searchChargeList() {
@@ -258,6 +260,12 @@ export default {
   display: flex;
   flex-grow: 2;
   width: 750rpx;
+  flex-flow: column;
+  .srcoll-wrap {
+    height: 100%;
+    display: flex;
+    flex-grow: 2;
+  }
   .left-scroll {
     display: flex;
     width: 250rpx;
