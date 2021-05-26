@@ -21,6 +21,9 @@
               <div class="edit-price" style="flex: 1;">
                 ¥{{ item.unitAmount }}
               </div>
+              <div class="unit" v-if="item.unit">
+                {{ item.unit }}
+              </div>
               <div
                 @click="onEditPirce(item)"
                 v-if="btnPremisstion('changes_unit_price') || chargeType === 1"
@@ -83,7 +86,7 @@
         "
         title="折后金额(¥)"
         :value="receivableAmount"
-        @input="onReceivableAmount"
+        @blur="onReceivableAmount"
         type="digit"
       />
     </div>
@@ -193,16 +196,16 @@ export default {
       const toothTemp = {
         teeth: {},
         activatedToothNumber: null,
-      };
-      console.log(Object.keys(value.teeth));
+      }
+      console.log(Object.keys(value.teeth))
       Object.keys(value.teeth).forEach((x) => {
-        console.log(value.teeth[x]);
-        toothTemp.teeth[x] = value.teeth[x];
-        toothTemp.activatedToothNumber = x;
-      });
-      console.log(toothTemp);
-      item.toothPosition = toothTemp;
-      item.toothPositionStr=toothTemp;
+        console.log(value.teeth[x])
+        toothTemp.teeth[x] = value.teeth[x]
+        toothTemp.activatedToothNumber = x
+      })
+      console.log(toothTemp)
+      item.toothPosition = toothTemp
+      item.toothPositionStr = toothTemp
     },
     onNextStep() {
       // 保存vuex并跳转
@@ -453,6 +456,11 @@ export default {
             color: #7f7f7f;
             font-size: 28rpx;
           }
+          .unit {
+            color: #595959;
+            font-size: 28rpx;
+            padding-left: 8rpx;
+          }
 
           .edit-icon-style {
             color: #5cbb89;
@@ -502,7 +510,7 @@ export default {
           .memo {
             flex-grow: 2;
             width: 500rpx;
-            textarea{
+            textarea {
               width: 100%;
               line-height: 1.2;
               font-size: 28rpx;
