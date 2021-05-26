@@ -27,7 +27,10 @@
             <view>其他：{{ item.otherNameStr }}</view>
           </view>
           <!--牙位图组件-->
-          <div class="teeth-select" v-if="item.toothPositionStr">
+          <div
+            class="teeth-select"
+            v-if="item.toothPositionStr || item.toothPositionDesc"
+          >
             <!--牙位 -->
             <div class="flex">
               <div class="label">牙位：</div>
@@ -290,6 +293,13 @@ export default {
     }
     .memo {
       width: 100%;
+      background-color: #fff;
+      color: #191919;
+      font-size: 30rpx;
+      box-sizing: border-box;
+      textarea {
+        width: 100%;
+      }
     }
   }
   .flex:last-child {

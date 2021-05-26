@@ -136,6 +136,7 @@ export default {
                       item4.settingsChargePackageTypeId
                     item4.settingsChargeItem.itemCode =
                       item4.settingsChargePackageItemId
+                    item4.settingsChargeItem.itemNum = item4.itemQuantity || 1
                     list.push(item4.settingsChargeItem)
                   })
                 }
@@ -165,6 +166,7 @@ export default {
   display: flex;
   flex-grow: 20;
   margin-top: 16rpx;
+  flex-direction: column;
   .projects-wrap {
     display: flex;
     line-height: 30rpx;

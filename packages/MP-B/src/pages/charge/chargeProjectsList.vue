@@ -21,6 +21,9 @@
               <div class="edit-price" style="flex: 1;">
                 ¥{{ item.unitAmount }}
               </div>
+              <div class="unit" v-if="item.unit">
+                {{ item.unit }}
+              </div>
               <div
                 @click="onEditPirce(item)"
                 v-if="btnPremisstion('changes_unit_price') || chargeType === 1"
@@ -83,7 +86,7 @@
         "
         title="折后金额(¥)"
         :value="receivableAmount"
-        @input="onReceivableAmount"
+        @blur="onReceivableAmount"
         type="digit"
       />
     </div>
@@ -452,6 +455,11 @@ export default {
             justify-content: flex-end;
             color: #7f7f7f;
             font-size: 28rpx;
+          }
+          .unit {
+            color: #595959;
+            font-size: 28rpx;
+            padding-left: 8rpx;
           }
 
           .edit-icon-style {
