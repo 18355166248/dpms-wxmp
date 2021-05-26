@@ -2,7 +2,9 @@
   <div class="reconclieCalendar-wrapper">
     <div class="header flex-center">
       <span @click="subtractMonth" class="iconfont icon-arrow-left btn" />
-      <span class="month-text">{{ monthValueFormat }}</span>
+      <picker mode="date" fields="month" :value="date" @change="bindDateChange">
+        <span class="month-text">{{ monthValueFormat }}</span>
+      </picker>
       <span @click="addMonth" class="iconfont icon-arrow-right btn" />
     </div>
     <div class="content">
@@ -38,6 +40,7 @@
       <template v-else>
         <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
       </template>
+
     </div>
   </div>
 </template>
@@ -75,6 +78,11 @@ export default {
         .then((res) => {
           this.reconclieList = res.data
         })
+    },
+    bindDateChange(e) {
+      const date = e.mp.detail.value
+      this.monthValue = moment(`${date}-01`).valueOf()
+      this.loadData()
     },
     addMonth() {
       const temp = moment(this.monthValue).startOf('month').add('month', 1)
