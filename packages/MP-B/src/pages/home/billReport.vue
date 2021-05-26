@@ -37,7 +37,7 @@ const defaultBtnList = [
     permission: ['report-center', 'finance-reconclie', 'bill-details'],
   },
   {
-    name: '交易明细',
+    name: '明细交易',
     path: '/pages/finance-report/dealDetails',
     permission: ['report-center', 'finance-reconclie', 'deal-details'],
   },
