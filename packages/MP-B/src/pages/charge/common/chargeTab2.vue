@@ -109,11 +109,14 @@ export default {
       }
     },
     filterMerchandiseList() {
-      this.merchandiseList = this.$refs.merchandiseListRef.merchandiseList
-      return this.merchandiseList.filter((item) => {
-        item.itemType = 13
-        return item.checked
-      })
+      this.merchandiseList = this.$refs.merchandiseListRef?.merchandiseList
+      if (this.merchandiseList?.length > 0) {
+        return this.merchandiseList.filter((item) => {
+          item.itemType = 13
+          return item.checked
+        })
+      }
+      return []
     },
     onScrollToLower() {
       console.log('onScrollToLower')

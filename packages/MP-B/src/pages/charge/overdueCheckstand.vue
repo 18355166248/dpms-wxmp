@@ -75,8 +75,8 @@
       </chargestand-title>
       <!--展开部分-->
       <template>
-        <dpmsCell title="收费时间" :value="form.cashierTime" />
-        <dpmsCell title="收费人" :value="form.staffName" />
+        <dpmsCell title="收费时间" :value="form.cashierTime" disabled />
+        <dpmsCell title="收费人" :value="form.staffName" disabled />
         <dpmsCell title="备注" hideBorderBottom />
         <view class="memo">
           <textarea
