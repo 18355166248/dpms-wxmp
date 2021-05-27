@@ -236,12 +236,15 @@ export default {
       this.dataSourceStatus = 'loading'
       const params = {
         patientInfo: this.patientInfo,
-        billOrderNo: this.billOrderNo,
         doctorIds: this.doctor.doctorIds,
         consultantIds: this.consultant.consultantIds,
         beginTime: this.beginTimeMillis,
         endTime: this.endTimeMillis,
       }
+      if(this.billOrderNo) {
+        params.billSerialNo = this.billOrderNo
+      }
+
       let {
         data: {
           total,

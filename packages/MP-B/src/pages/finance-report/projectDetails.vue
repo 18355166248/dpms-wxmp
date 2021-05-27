@@ -51,6 +51,10 @@ export default {
   data() {
     this._headers = [
       {
+        label: '患者姓名',
+        key: 'patientName',
+      },
+      {
         label: '单据号',
         key: 'billSerialNo',
       },
@@ -65,10 +69,6 @@ export default {
       {
         label: '病历号',
         key: 'medicalRecordNo',
-      },
-      {
-        label: '患者姓名',
-        key: 'patientName',
       },
       {
         label: '联系电话',
