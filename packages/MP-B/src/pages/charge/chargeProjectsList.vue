@@ -61,7 +61,7 @@
                 auto-height
                 placeholder="请输入处置说明"
                 placeholder-style="font-size: 28rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-                :maxlength="150"
+                :maxlength="500"
               />
             </div>
           </div>

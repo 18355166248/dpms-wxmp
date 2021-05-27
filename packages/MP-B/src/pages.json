@@ -457,7 +457,7 @@
         {
           "path": "dealDetails",
           "style": {
-            "navigationBarTitleText": "明细交易"
+            "navigationBarTitleText": "交易明细"
           }
         },
         {

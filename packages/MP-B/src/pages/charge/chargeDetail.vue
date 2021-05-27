@@ -27,10 +27,7 @@
             <view>其他：{{ item.otherNameStr }}</view>
           </view>
           <!--牙位图组件-->
-          <div
-            class="teeth-select"
-            v-if="item.toothPositionStr || item.toothPositionDesc"
-          >
+          <div class="teeth-select" v-if="data.billType === 6">
             <!--牙位 -->
             <div class="flex">
               <div class="label">牙位：</div>
@@ -44,7 +41,7 @@
                   v-model="item.toothPositionDesc || '-'"
                   auto-height
                   placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-                  :maxlength="150"
+                  :maxlength="500"
                   disabled
                 />
               </div>
