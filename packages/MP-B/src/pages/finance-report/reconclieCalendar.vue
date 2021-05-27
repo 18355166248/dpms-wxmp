@@ -9,7 +9,7 @@
     </div>
     <div class="content">
       <template v-if="reconclieList.length">
-        <div @click="reconclieItemClick(item)" class="reconclieItem flex-v-center" v-for="(item) in reconclieList" :key="item.statReconciliationCalendarId">
+        <div @click="reconclieItemClick(item)" class="reconclieItem flex-v-center" v-for="(item) in reconclieList" :key="item.statDate">
           <div class="date-wrapper flex-v-center">{{ item.statDate | filterDate('MM月DD日') }}</div>
           <div class="week-wrapper flex-v-center">{{ item.statDate | filterWeek}}</div>
           <div class="amount-wrapper">

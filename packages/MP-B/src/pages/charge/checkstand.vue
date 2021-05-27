@@ -163,7 +163,7 @@
           </div>
         </div>
         <div class="btn-wrapper flexBt">
-          <button @click="onSubmitBill('save')" class="save-btn">保存</button>
+          <button v-if="showSaveBtn" @click="onSubmitBill('save')" class="save-btn">保存</button>
           <button @click="onSubmitBill('charge')" class="charge-btn">
             收费
           </button>
@@ -248,6 +248,7 @@ export default {
       nurseRequire: false,
       //咨询师是否为必填项
       consultedRequire: false,
+      // 账单类型
     }
   },
   components: {
@@ -264,6 +265,9 @@ export default {
       'realDiscountPromotionAmount',
     ]),
     ...mapState('checkstand', ['billType', 'chargeType']),
+    showSaveBtn() {
+      return !(this.billType === 4 || this.billType === 3)
+    },
     paidAmount() {
       return this.form.payChannelList.reduce(
         (pre, item) => BigCalculate(Number(item.paymentAmount), '+', pre),
