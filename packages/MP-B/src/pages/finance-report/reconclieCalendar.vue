@@ -15,11 +15,13 @@
           <div class="amount-wrapper">
             <div class="flex-h-between">
               <div>现金实收</div>
-              <div>{{item.cacheReceiveAmount | thousandFormatter(2, '￥')}}</div>
+              <div v-if="item.cacheReceiveAmount === undefined">暂无数据</div>
+              <div v-else>{{item.cacheReceiveAmount | thousandFormatter(2, '￥')}}</div>
             </div>
             <div class="flex-h-between">
               <div>新增欠款</div>
-              <div style="color: rgba(82,196,26,1)">{{item.arrearsAmount | thousandFormatter(2, '￥')}}</div>
+              <div v-if="item.arrearsAmount === undefined" style="color: rgba(82,196,26,1)">暂无数据</div>
+              <div v-else style="color: rgba(82,196,26,1)">{{item.arrearsAmount | thousandFormatter(2, '￥')}}</div>
             </div>
           </div>
         </div>
@@ -35,6 +37,11 @@
 <script>
 import moment from 'moment';
 import billAPI from 'APIS/bill/bill.api';
+const arrearsAmount = {
+  statDate: undefined,
+  cacheReceiveAmount: undefined,
+  arrearsAmount: undefined
+}
 
 export default {
   name: 'reconclieCalendar.vue',
@@ -61,8 +68,46 @@ export default {
         statBeginDate: this.monthValue,
         statEndDate: this.monthValueEnd,
       }).then(res => {
-        this.reconclieList = res.data;
+        this.initData().then(defaultValue => {
+          this.reconclieList = this._formatData(defaultValue,res.data);
+        })
+
       });
+    },
+    initData() {
+      return new Promise((resolve, reject) => {
+        let result = Array.from({length: moment().daysInMonth()},(item,index) => ({
+          day:index+1,
+          dayValue:moment(this.monthValue).add(index,'day').valueOf()
+        }))
+        let nowDay = moment().startOf('day').valueOf()
+        result = result.map(item => {
+          if(item.dayValue <= nowDay) {
+            item.cacheReceiveAmount = 0
+            item.arrearsAmount = 0
+          } else {
+            item.cacheReceiveAmount = undefined
+            item.arrearsAmount = undefined
+          }
+          item.statDate = item.dayValue
+          return item
+        })
+        resolve(result)
+      })
+    },
+    _formatData(defaultValue, resData) {
+      let resDataObj = {}
+      console.log('resData', resData);
+      resData.forEach(item => {
+        resDataObj[item.statDate] = item
+      })
+      return defaultValue.map(item => {
+        if(resDataObj[item.statDate]) {
+          item.cacheReceiveAmount = resDataObj[item.statDate]?.cacheReceiveAmount
+          item.arrearsAmount = resDataObj[item.statDate]?.arrearsAmount
+        }
+        return item
+      })
     },
     bindDateChange(e) {
       const date = e.mp.detail.value
