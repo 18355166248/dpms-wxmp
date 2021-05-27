@@ -44,7 +44,7 @@
                   v-model="item.toothPositionDesc || '-'"
                   auto-height
                   placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-                  :maxlength="150"
+                  :maxlength="500"
                   disabled
                 />
               </div>
