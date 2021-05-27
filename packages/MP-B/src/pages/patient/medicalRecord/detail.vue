@@ -19,7 +19,7 @@
         {{ detail.visTimeFormated }} {{ detail.medicalInstitutionSimpleCode }}
       </div>
       <div class="row">
-        <div class="label">创建人：</div>
+        <div class="label">发起人：</div>
         {{ detail.createStaffName || '' }}
       </div>
       <div class="row">
