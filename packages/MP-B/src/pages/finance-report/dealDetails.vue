@@ -108,7 +108,7 @@ export default {
       },
       {
         label: '实收金额',
-        key: '_realAmount', //前端自定义字段=本次收款+本次退款
+        key: 'payAmount', //前端自定义字段=本次收款+本次退款
       }
     ]
     return {
@@ -234,10 +234,6 @@ export default {
           key: 'afterDiscountAmount',
         },
         {
-          label: '已收款总金额',
-          key: 'paymentAmount',
-        },
-        {
           label: '本次收款',
           key: 'payAmount',
         },
@@ -274,12 +270,12 @@ export default {
           key: 'plannedAmount',
         }]
       const lastComputed = [
-        'afterDiscountAmount','paymentAmount','payAmount','payRefundAmount','oweAmount','cashAmount','virtualAmount','deductionOfAdvancePayment','revenueAmount','generalAmount','plannedAmount'
+        'afterDiscountAmount','payAmount','payRefundAmount','oweAmount','cashAmount','virtualAmount','deductionOfAdvancePayment','revenueAmount','generalAmount','plannedAmount'
       ]
 
 
       records = records.map(item => {
-        item._realAmount = this.$utils.formatPrice(item.payAmount + item.payRefundAmount)
+        // item._realAmount = this.$utils.formatPrice(item.payAmount + item.payRefundAmount)
         for (let i=0;i<channelList.length;i++) {
           item[`payStyleTotalAmountList${i+1}`] = this.$utils.formatPrice(item.payStyleTotalAmountList[i])
         }
