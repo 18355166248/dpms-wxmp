@@ -31,7 +31,7 @@
           >
         </div>
         <div class="row">
-          创建人：<span class="content">{{ r.createStaffName }}</span>
+          发起人：<span class="content">{{ r.createStaffName }}</span>
         </div>
         <div class="row">
           医生：<span class="content">{{ r.doctorStaffName }}</span>
