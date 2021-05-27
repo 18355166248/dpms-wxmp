@@ -285,8 +285,8 @@ export default {
   },
   computed: {
     ...mapState('workbenchStore', {
-      medicalInstitution: (state) => state.medicalInstitution,
       apptSetting: (state) => state.apptSetting,
+      medicalInstitution: (state) => state.medicalInstitution,
     }),
     isAppt() {
       return (

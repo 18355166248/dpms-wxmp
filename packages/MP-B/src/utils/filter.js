@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { numberUtils } from './utils'
+import { numberUtils, getWeek } from './utils'
 import moment from 'moment'
 const filters = {
   //金额千分位带小数点 金额前加￥或者$符号
@@ -12,6 +12,7 @@ const filters = {
   filterTime(value, format = 'YYYY-MM-DD HH:mm:ss') {
     return value !== '-' ? moment(value).format(format) : '-'
   },
+  filterWeek: getWeek,
 }
 Object.keys(filters).forEach((k) => {
   Vue.filter(k, filters[k])

@@ -13,13 +13,14 @@ const golbalMixin = {
     menuPermission(keyArr = ['report-center', 'performance', 'doctors']) {
       if (!Array.isArray(keyArr)) return false
       const { menuList } = this.menu
+      let _keyArr = [...keyArr]
       let findObj
       const checkPermission = (menuList) => {
-        const menukey = keyArr.shift()
+        const menukey = _keyArr.shift()
         findObj = menuList.find((v) => {
           return v.enumValue === menukey
         })
-        if (findObj && keyArr.length > 0) {
+        if (findObj && _keyArr.length > 0) {
           checkPermission(findObj.children)
         }
         return findObj

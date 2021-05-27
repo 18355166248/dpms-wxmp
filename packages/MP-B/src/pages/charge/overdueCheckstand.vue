@@ -31,7 +31,7 @@
         type="digit"
         :value="form.receivableAmount"
         :max="12"
-        @input="onReceivableAmountChange($event)"
+        @blur="onReceivableAmountChange($event)"
       />
       <!--支付方式-->
       <chargestand-title>
@@ -55,8 +55,8 @@
         :key="item.transactionChannelId"
         type="digit"
         :title="`${item.transactionChannelName}(￥)`"
-        :value="item.paymentAmount"
-        @input="onPayTypeInputChange($event, item)"
+        v-model="item.paymentAmount"
+        @blur="onPayTypeInputChange($event, item)"
         :max="12"
       />
       <!--支付金额大于应收金额的验证-->
@@ -72,24 +72,11 @@
           ></div>
           <div class="ellipsis" style="width: 550rpx;">开单信息</div>
         </div>
-        <div slot="extra">
-          <div
-            style="padding-left: 36rpx;"
-            @click="toggleInfomation = !toggleInfomation"
-          >
-            <template v-if="toggleInfomation">
-              <span class="iconfont icon-closed" style="font-size: 22rpx;" />
-            </template>
-            <template v-else>
-              <span class="iconfont icon-open" style="font-size: 22rpx;" />
-            </template>
-          </div>
-        </div>
       </chargestand-title>
       <!--展开部分-->
-      <template v-if="toggleInfomation">
-        <dpmsCell title="收费时间" :value="form.cashierTime" />
-        <dpmsCell title="收费人" :value="form.staffName" />
+      <template>
+        <dpmsCell title="收费时间" :value="form.cashierTime" disabled />
+        <dpmsCell title="收费人" :value="form.staffName" disabled />
         <dpmsCell title="备注" hideBorderBottom />
         <view class="memo">
           <textarea
@@ -147,7 +134,7 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance"
+        <template v-if="item.balance >= 0"
           >&nbsp;&nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
@@ -169,7 +156,6 @@ import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
 import moment from 'moment'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import payResult from './common/payResult'
@@ -187,7 +173,6 @@ export default {
         debtDiscount: 100,
         receivableAmount: 0.0,
       },
-      toggleInfomation: true,
       otherList: [],
       visitTimeList: [],
       //支付方式
@@ -210,7 +195,6 @@ export default {
   },
   components: {
     ChargestandTitle,
-    actionSheet,
     payResult,
   },
   computed: {
@@ -274,26 +258,24 @@ export default {
       this.showActionSheet = false
     },
     //支付方式监听
-    onPayTypeInputChange(value, item) {
-      if (value === '' || value === undefined) {
-        item.paymentAmount='-'
+    onPayTypeInputChange(value, record) {
+      if (!value) {
+        value = 0
+      } else if (value > 9999999.99) {
+        value = 9999999.99
       }
-      if (item.balance) {
-        item.paymentAmount = value > item.balance ? item.balance + '' : Number(value)
-      }else {
-        item.paymentAmount=Number(value)
+      if (record.balance >= 0) {
+        if (value > record.balance) {
+          value = record.balance
+          this.$refs.uToast.show({
+            title: `不能超过${record.transactionChannelName}余额`,
+            type: 'warning',
+          })
+        }
       }
-      this.$nextTick(() => {
-        item.paymentAmount = changeTwoDecimal(value,2)
-        this.errTipText = ''
-        this.checkPaidAmount()
-      })
-    },
-    changePayChannel(value, record) {
-      if (record.balance) {
-        value = value - record.balance > 0 ? record.balance : value
-      }
-      record.paymentAmount = value
+      record.paymentAmount = Number(value)
+      this.errTipText = ''
+      this.checkPaidAmount()
     },
     //校验实付金额是否大于应付金额
     checkPaidAmount() {
@@ -342,7 +324,7 @@ export default {
     //-----------------------总计金额、折扣、应收
     onDebtDiscountChange(value) {
       if (value === '' || value === undefined) {
-        this.form.debtDiscount='-'
+        this.form.debtDiscount = '-'
       }
       if (value > 100) {
         this.form.debtDiscount = '100'
@@ -364,7 +346,7 @@ export default {
     //应收金额
     onReceivableAmountChange(value) {
       if (value === '' || value === undefined) {
-        this.form.receivableAmount='-'
+        this.form.receivableAmount = '-'
       }
       if (value > this.overdueAmount) {
         this.form.receivableAmount = this.overdueAmount + ''
@@ -372,7 +354,10 @@ export default {
         this.form.receivableAmount = Number(value)
       }
       this.$nextTick(() => {
-        this.form.receivableAmount = changeTwoDecimal(this.form.receivableAmount,2)
+        this.form.receivableAmount = changeTwoDecimal(
+          this.form.receivableAmount,
+          2,
+        )
         const debtDiscount = BigCalculate(
           BigCalculate(this.form.receivableAmount, '/', this.overdueAmount),
           '*',
@@ -393,8 +378,10 @@ export default {
         })
         .then((res) => {
           if (res?.data.length > 0) {
-            if(this.billType === 3) {
-              res.data = res.data.filter(item => (item.payStyle !== 8 && item.payStyle !== 9))
+            if (this.billType === 3) {
+              res.data = res.data.filter(
+                (item) => item.payStyle !== 8 && item.payStyle !== 9,
+              )
             }
             res.data.forEach((item, index) => {
               item.checked = false
@@ -452,7 +439,7 @@ export default {
       _data.patientId = this.patientDetail.patientId
       _data.debtDiscount = this.form.debtDiscount
       _data.memo = this.form.memo
-      _data.receivableAmount =this.form.receivableAmount
+      _data.receivableAmount = this.form.receivableAmount
       _data.payChannelList = this.form.payChannelList
       _data.salesVOList = []
 
@@ -617,6 +604,7 @@ export default {
         color: #5cbb89;
         border: 2rpx solid #5cbb89;
         width: 176rpx;
+        background: #fff;
       }
 
       .charge-btn {
