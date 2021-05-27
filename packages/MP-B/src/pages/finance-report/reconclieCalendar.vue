@@ -13,7 +13,7 @@
           @click="reconclieItemClick(item)"
           class="reconclieItem flex-v-center"
           v-for="item in reconclieList"
-          :key="item.statReconciliationCalendarId"
+          :key="item.statDate"
         >
           <div class="date-wrapper flex-v-center">
             {{ item.statDate | filterDate('MM月DD日') }}

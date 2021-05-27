@@ -237,15 +237,15 @@ export default {
   flex-direction: row;
   align-items: center;
   position: relative;
-  &::after {
-    position: absolute;
-    content: '';
-    width: 300%;
-    height: 300%;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
+  //&::after {
+  //  position: absolute;
+  //  content: '';
+  //  width: 300%;
+  //  height: 300%;
+  //  left: 50%;
+  //  top: 50%;
+  //  transform: translate(-50%, -50%);
+  //}
 }
 
 .dpms-checkbox__label {
