@@ -87,7 +87,7 @@ export default {
     nextStep() {
       const list0 = this.$refs.chargeTab0Ref.getDisposeList()
       const list1 = this.$refs.chargeTab1Ref.filterPackageChargeItemList()
-      const list2 = this.$refs.chargeTab2Ref.filterMerchandiseList()
+      const list2 = this.$refs.chargeTab2Ref.filterMerchandiseList()||[]
       let mergeList = [...list0, ...list1, ...list2]
       if (mergeList.length <= 0) {
         this.$refs.uToast.show({

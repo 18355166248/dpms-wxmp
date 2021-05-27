@@ -29,7 +29,7 @@
           <!--牙位图组件-->
           <div
             class="teeth-select"
-            v-if="item.toothPositionStr || item.toothPositionDesc"
+            v-if="data.billType===6"
           >
             <!--牙位 -->
             <div class="flex">
