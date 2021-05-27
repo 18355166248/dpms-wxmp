@@ -108,12 +108,12 @@ export default {
       },
       {
         label: '实收金额',
-        key: 'payAmount', //前端自定义字段=本次收款+本次退款
+        key: 'paymentAmount', //前端自定义字段=本次收款+本次退款
       },
     ]
     return {
       headers: [...this._headers],
-      computedCol: ['totalAmount', 'discountReceiveAmount'],
+      computedCol: ['totalAmount', 'discountReceiveAmount','paymentAmount'],
       contents: [],
       total: 0,
       current: 0,

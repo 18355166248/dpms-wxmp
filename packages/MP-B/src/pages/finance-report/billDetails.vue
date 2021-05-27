@@ -236,8 +236,8 @@ export default {
       this.dataSourceStatus = 'loading'
       const params = {
         patientInfo: this.patientInfo,
-        doctorIds: this.doctor.doctorIds,
-        consultantIds: this.consultant.consultantIds,
+        doctorStaffIds: this.doctor.doctorIds,
+        consultantStaffIds: this.consultant.consultantIds,
         beginTime: this.beginTimeMillis,
         endTime: this.endTimeMillis,
       }
