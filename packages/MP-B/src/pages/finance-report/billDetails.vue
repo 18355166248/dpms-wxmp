@@ -138,10 +138,14 @@ export default {
         label: '折后应收金额',
         key: 'discountReceiveAmount',
       },
+      {
+        label: '已收款',
+        key: 'paymentAmount',
+      },
     ]
     return {
       headers: [],
-      computedCol: ['totalAmount', 'discountReceiveAmount'],
+      computedCol: ['totalAmount', 'discountReceiveAmount','paymentAmount'],
       contents: [],
       total: 0,
       current: 0,
@@ -293,6 +297,7 @@ export default {
           item.discountReceiveAmount,
         )
         item.arrearsAmount = this.$utils.formatPrice(item.arrearsAmount)
+        item.paymentAmount = this.$utils.formatPrice(item.paymentAmount)
         item.refundAmount = this.$utils.formatPrice(item.refundAmount)
         item.billType = this.$utils.getEnumsText('BillType', item.billType)
         item.billStatus = this.$utils.getEnumsText(
