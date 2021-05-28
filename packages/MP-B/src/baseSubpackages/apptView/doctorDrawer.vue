@@ -13,11 +13,11 @@
           <view class="title">按医生查看：</view>
           <view class="btnGroup">
             <view
-              v-for="doctor in doctorSelectList"
+              v-for="doctor in doctorOptions"
               :key="doctor.staffId"
               :class="{
                 btn: true,
-                btnActive: doctor.staffId === apptViewDoctor.staffId,
+                btnActive: doctorActive(doctor),
                 block: doctor.staffId === 'all',
               }"
               @click="onSelectDoctor(doctor)"
@@ -53,6 +53,7 @@ import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { getDoctorListByInstitutionId } from './utils'
 import appointmentAPI from 'APIS/appointment/appointment.api'
+import _ from 'lodash'
 
 const ALL_DOCTOR_ITEM = { staffId: 'all', staffName: '所有医生' }
 export default {
@@ -62,8 +63,8 @@ export default {
         '预约中心/预约视图/诊所的查询条件',
       ),
       accessMedicalInstitution: null,
-      doctorList: [],
-      apptViewDoctor: null,
+      doctorList: [], // 数据请求获取到的医生选项，不包含all
+      selectedDoctorList: [],
       undeterminedCount: 0,
     }
   },
@@ -71,17 +72,17 @@ export default {
     drawerWidth() {
       return uni.upx2px(600)
     },
-    // 显示供选择的医生，需在原有基础上加上所有医生
-    doctorSelectList() {
-      return [ALL_DOCTOR_ITEM].concat(this.doctorList)
-    },
     scrollViewHeight() {
       const institutionSelectHeight = this.isHeaderWithLargeArea ? 112 : 0
       return (
         this.$systemInfo.windowHeight -
         uni.upx2px(institutionSelectHeight) -
-        uni.upx2px(112) - 20
+        uni.upx2px(112) -
+        20
       )
+    },
+    doctorOptions() {
+      return [ALL_DOCTOR_ITEM].concat(this.doctorList)
     },
   },
   methods: {
@@ -90,12 +91,18 @@ export default {
         'accessMedicalInstitution',
       )
       this.doctorList = uni.getStorageSync('doctorList')
-      this.apptViewDoctor = uni.getStorageSync('apptViewDoctor')
+      this.selectedDoctorList = uni.getStorageSync('drawerSelectedDoctorList')
       this.$refs.drawer.open()
       this.getUndeterminedCount()
     },
     close() {
       this.$refs.drawer.close()
+    },
+    doctorActive(doctor) {
+      const index = _.findIndex(this.selectedDoctorList, {
+        staffId: doctor.staffId,
+      })
+      return index > -1
     },
     // 打开选择诊所弹窗
     openSelectMedicalInstitution() {
@@ -107,7 +114,6 @@ export default {
         return
       }
 
-      this.apptViewDoctor = {}
       this.accessMedicalInstitution = {
         medicalInstitutionSimpleCode: value.name,
         medicalInstitutionId: value.id,
@@ -115,7 +121,36 @@ export default {
       this.reloadDoctorList()
     },
     onSelectDoctor(doctor) {
-      this.apptViewDoctor = doctor
+      // 如果当前选择所有医生，清除其他所有
+      if (doctor.staffId === 'all') {
+        this.selectedDoctorList = [ALL_DOCTOR_ITEM]
+        return
+      }
+
+      // 如果之前是选择的所有医生
+      const preSelectAll =
+        this.selectedDoctorList.length === 1 &&
+        this.selectedDoctorList[0].staffId === 'all'
+      if (preSelectAll) {
+        this.selectedDoctorList = []
+        this.selectedDoctorList = [doctor]
+        return
+      }
+
+      if (this.doctorActive(doctor)) {
+        // 如果医生已被选中，则清除
+        const index = this.selectedDoctorList.findIndex(
+          (d) => d.staffId === doctor.staffId,
+        )
+        this.selectedDoctorList.splice(index, 1)
+
+        // 如果最后一个医生被清除，则选择全部
+        if (this.selectedDoctorList.length === 0) {
+          this.selectedDoctorList = [ALL_DOCTOR_ITEM]
+        }
+      } else {
+        this.selectedDoctorList.push(doctor)
+      }
     },
     confirm() {
       uni.setStorageSync(
@@ -123,7 +158,7 @@ export default {
         this.accessMedicalInstitution,
       )
       uni.setStorageSync('doctorList', this.doctorList)
-      uni.$emit(globalEventKeys.onSelectApptViewDoctor, this.apptViewDoctor)
+      uni.$emit(globalEventKeys.onSelectApptViewDoctor, this.selectedDoctorList)
       this.close()
     },
     async reloadDoctorList() {
@@ -131,7 +166,7 @@ export default {
         this.accessMedicalInstitution.medicalInstitutionId,
       )
       this.doctorList = res.data
-      this.apptViewDoctor = ALL_DOCTOR_ITEM
+      this.selectedDoctorList = [ALL_DOCTOR_ITEM]
     },
     gotoUndeterminedList() {
       this.$utils.push({ url: '/baseSubpackages/apptView/undeterminedList' })
@@ -169,6 +204,9 @@ $primary-color: #5cbb89;
     text-align: center;
     font-size: 28rpx;
     margin: 8rpx;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .block {
     display: block;

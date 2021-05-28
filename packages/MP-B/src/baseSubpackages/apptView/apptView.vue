@@ -69,8 +69,8 @@ export default {
       calendarCollapsed: true,
       // 可选的医生列表：对于总部/大区，会根据机构的选择动态变化
       doctorList: [],
-      // 当前预约显示的医生，init中初始化为全部医生
-      apptViewDoctor: null,
+      // 当前选中的医生，用于和drawer进行数据传递，init中初始化为全部医生
+      drawerSelectedDoctorList: [],
       // 当前的预约列表
       appointmentList: [],
       // 当前的日程列表
@@ -89,8 +89,8 @@ export default {
       uni.setStorageSync('doctorList', newVal)
     },
     // 每次视图关联的doctor变更，则写入storage
-    apptViewDoctor(newVal) {
-      uni.setStorageSync('apptViewDoctor', newVal)
+    drawerSelectedDoctorList(newVal) {
+      uni.setStorageSync('drawerSelectedDoctorList', newVal)
     },
     accessMedicalInstitution(newVal) {
       uni.setStorageSync('accessMedicalInstitution', newVal)
@@ -109,25 +109,15 @@ export default {
     appointmentEndTime() {
       return moment(this.calendarDate).endOf('day').valueOf()
     },
-    // 预约视图数据请求单个医生的id，感觉没用到？
-    reqStaffId() {
-      if (!this.apptViewDoctor) {
-        return undefined
-      }
+    actualApptViewDoctors() {
+      const isAll =
+        this.drawerSelectedDoctorList.length === 1 &&
+        this.drawerSelectedDoctorList[0].staffId === 'all'
 
-      return this.apptViewDoctor.staffId === 'all'
-        ? undefined
-        : this.apptViewDoctor.staffId
+      return isAll ? this.doctorList : this.drawerSelectedDoctorList
     },
-    // 预约视图数据请求所有医生的id
     reqStaffIds() {
-      if (!this.apptViewDoctor) {
-        return ''
-      }
-      const { staffId } = this.apptViewDoctor
-      return staffId === 'all'
-        ? this.doctorList.map((d) => d.staffId).join(',')
-        : staffId
+      return this.actualApptViewDoctors.map((d) => d.staffId).join(',')
     },
     schedulerHeight() {
       const calendarHeightRpx = this.calendarCollapsed ? 192 : 592
@@ -139,14 +129,7 @@ export default {
         .concat(blockEvent2schedulerResource(this.blockEventList))
     },
     schedulerGroup() {
-      const doctor = this.apptViewDoctor
-      if (!doctor) {
-        return []
-      } else if (doctor.staffId === 'all') {
-        return data2schedulerGroup(this.doctorList)
-      } else {
-        return data2schedulerGroup([doctor])
-      }
+      return data2schedulerGroup(this.actualApptViewDoctors)
     },
     schedulerGroupCount() {
       const groupCount = this.schedulerGroup.length
@@ -165,7 +148,7 @@ export default {
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
     uni.$off(globalEventKeys.onSelectApptViewDoctor)
     uni.removeStorageSync('doctorList')
-    uni.removeStorageSync('apptViewDoctor')
+    uni.removeStorageSync('drawerSelectedDoctorList')
     uni.removeStorageSync('accessMedicalInstitution')
   },
   methods: {
@@ -255,11 +238,13 @@ export default {
         this.accessMedicalInstitution = this.medicalInstitution
       }
       // 2. 初始化为所有医生
-      this.apptViewDoctor = {
-        staffId: 'all',
-        staffName: '全部医生',
-        position: 2,
-      }
+      this.drawerSelectedDoctorList = [
+        {
+          staffId: 'all',
+          staffName: '全部医生',
+          position: 2,
+        },
+      ]
       // 3. 获取医生列表和预约列表
       const { data: doctorList } = await getDoctorListByInstitutionId(
         this.accessMedicalInstitution.medicalInstitutionId,
@@ -270,12 +255,12 @@ export default {
       this.$utils.hidePageLoading()
     },
     initEvent() {
-      uni.$on(globalEventKeys.onSelectApptViewDoctor, (doctor) => {
+      uni.$on(globalEventKeys.onSelectApptViewDoctor, (selectedDoctorList) => {
         this.doctorList = uni.getStorageSync('doctorList')
         this.accessMedicalInstitution = uni.getStorageSync(
           'accessMedicalInstitution',
         )
-        this.apptViewDoctor = doctor
+        this.drawerSelectedDoctorList = selectedDoctorList
         this.refreshApptViewList()
       })
       uni.$on(globalEventKeys.apptFormWithSaveSuccess, () =>
@@ -283,7 +268,10 @@ export default {
       )
     },
     async refreshApptViewList() {
-      if (!this.apptViewDoctor || !this.accessMedicalInstitution) {
+      if (
+        this.drawerSelectedDoctorList.length === 0 ||
+        !this.accessMedicalInstitution
+      ) {
         return
       }
 
@@ -296,7 +284,6 @@ export default {
         medicalInstitutionId: this.accessMedicalInstitution
           .medicalInstitutionId,
         position: POSITION_DOCTOR,
-        staffId: this.reqStaffId,
         staffIds: this.reqStaffIds,
       })
       this.appointmentList = appointmentList
