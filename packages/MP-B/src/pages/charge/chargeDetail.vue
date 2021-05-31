@@ -1,62 +1,59 @@
 <template>
-  <view class='page-wrap'>
+  <view class="page-wrap">
     <!-- 列表-->
-    <view class='list-wrap'>
-      <view class='chargeContentDetail'>
-        <view class='paymentTitle'>账单号：{{ data.billSerialNo }}</view>
+    <view class="list-wrap">
+      <view class="chargeContentDetail">
+        <view class="paymentTitle">账单号：{{ data.billSerialNo }}</view>
         <view
-          class='listChargeDetail'
-          v-for='item in data.orderItemVOList'
-          :key='item.billOrderItemId'
+          class="listChargeDetail"
+          v-for="item in data.orderItemVOList"
+          :key="item.billOrderItemId"
         >
-          <view class='listTitle'>{{ item.itemName }}</view>
-          <view class='listLine grey'>
+          <view class="listTitle">{{ item.itemName }}</view>
+          <view class="listLine grey">
             <view
-            >{{ $utils.formatPrice(item.unitAmount) }}&nbsp;&nbsp;&nbsp;×
+              >{{ $utils.formatPrice(item.unitAmount) }}&nbsp;&nbsp;&nbsp;×
               {{ item.itemNum }}（{{ item.unit || '-' }}）
             </view>
             <view>{{ $utils.formatPrice(item.totalAmount) }}</view>
           </view>
-          <view class='listLine'>
+          <view class="listLine">
             <view>应收金额：</view>
             <view> {{ $utils.formatPrice(item.receivableAmount) }}</view>
           </view>
-          <view class='listLineBottom'>
+          <view class="listLineBottom">
             <view>医生：{{ item.doctorNameStr }}</view>
             <view>护士：{{ item.nurseNameStr }}</view>
             <view>其他：{{ item.otherNameStr }}</view>
           </view>
-          <view class='lineHr'></view>
+          <view class="lineHr"></view>
         </view>
-        <view class='listChargeTotal'>
-          <view class='line'>
+        <view class="listChargeTotal">
+          <view class="line">
             <view>总计金额</view>
             <view>{{ $utils.formatPrice(data.totalAmount) }}</view>
           </view>
-          <view class='line'>
+          <view class="line">
             <view>整单折扣</view>
             <view>{{ data.mainOrderDiscount }}%</view>
           </view>
-          <view class='lineTotal'>
-            <view style='display: flex;'
-            >应收金额：
-              <view
-                style='color: red; font-size: 36rpx; line-height: 36rpx;'
-              >{{ $utils.formatPrice(data.receivableAmount) }}
-              </view
-              >
-            </view
-            >
+          <view class="lineTotal">
+            <view style="display: flex;"
+              >应收金额：
+              <view style="color: red; font-size: 36rpx; line-height: 36rpx;"
+                >{{ $utils.formatPrice(data.receivableAmount) }}
+              </view>
+            </view>
           </view>
         </view>
       </view>
     </view>
 
-    <view class='btn-wrap' v-if='isOverdue'>
+    <view class="btn-wrap" v-if="canOperation && isOverdue">
       <chargeButton
-        type='solid'
-        @click='overdueCharge'
-        :buttonStyle="{ width:'686rpx' }"
+        type="solid"
+        @click="overdueCharge"
+        :buttonStyle="{ width: '686rpx' }"
         v-if="btnPremisstion('arrears_of_fees')"
       >
         收欠费
@@ -64,55 +61,78 @@
     </view>
     <!-- 底部收费项-->
   </view>
-
 </template>
 
 <script>
-import billAPI from '@/APIS/bill/bill.api';
-import chargeButton from './common/chargeButton';
+import billAPI from '@/APIS/bill/bill.api'
+import chargeButton from './common/chargeButton'
+import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
       billSerialNo: '',
+      createYouSelf: 'false',
       data: {},
-    };
+    }
   },
   components: {
     chargeButton,
   },
   onLoad(params) {
-    this.billSerialNo = params.billSerialNo;
-    this.init();
+    this.billSerialNo = params.billSerialNo
+    this.createYouSelf = params.createYouSelf || 'false'
+    this.init()
   },
   computed: {
+    ...mapState('workbenchStore', ['medicalInstitution']),
     isOverdue() {
       return (
-        this.btnPremisstion('paid_arrears') && (this.data.receivableAmount > this.data.paymentAmount)
-      );
+        this.btnPremisstion('paid_arrears') &&
+        this.data.receivableAmount > this.data.paymentAmount
+      )
+    },
+    canOperation() {
+      const { institutionChainType, topParentId } = this.medicalInstitution
+      // 1，单店，2，直营(如果topParentId===0则为总部，总部也是直营)，3，大区，4，加盟
+      // 注意：web端与小程序的判断不一样！！！
+      if (
+        institutionChainType === 3 ||
+        (institutionChainType === 2 && topParentId === 0)
+      ) {
+        return false
+      }
+      return true
     },
   },
   methods: {
     init() {
       billAPI
-      .orderDetail({
-        billSerialNo: this.billSerialNo,
-      })
-      .then((res) => {
-        this.data = res.data;
-      });
+        .orderDetail({
+          billSerialNo: this.billSerialNo,
+        })
+        .then((res) => {
+          this.data = res.data
+        })
     },
     //收欠费
     overdueCharge() {
-      uni.redirectTo({
-        url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
-      });
+      if (this.createYouSelf === 'true') {
+        uni.redirectTo({
+          url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
+        })
+      } else {
+        this.$refs.uToast.show({
+          title: '收欠费需到对应机构操作!',
+          type: 'warning',
+        })
+      }
     },
   },
-};
+}
 </script>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .page-wrap {
   display: flex;
   flex-grow: 2;
@@ -162,7 +182,7 @@ export default {
         width: 686rpx;
         color: #7f7f7f;
         margin: 18rpx 32rpx 32rpx;
-        view{
+        view {
           width: 33.33%;
           overflow-x: hidden;
           text-overflow: ellipsis;
@@ -212,7 +232,6 @@ export default {
   }
 }
 
-
 .lineHr {
   width: 686rpx;
   height: 2rpx;
@@ -231,6 +250,4 @@ export default {
   line-height: 90rpx;
   font-size: 28rpx;
 }
-
-
 </style>

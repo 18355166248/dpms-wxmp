@@ -40,7 +40,10 @@
           </view>
         </view>
       </view>
-      <view class="bottom-wrap" v-if="isOverdue || isCreateOrder">
+      <view
+        class="bottom-wrap"
+        v-if="canOperation && (isOverdue || isCreateOrder)"
+      >
         <view class="btns">
           <chargeButton
             type="solid"
@@ -142,6 +145,7 @@ export default {
   computed: {
     ...mapState('searchProjectStore', ['searchProjectList']),
     ...mapState('patient', ['patientDetail']),
+    ...mapState('workbenchStore', ['medicalInstitution']),
     isOverdue() {
       return (
         this.btnPremisstion('arrears_of_fees') &&
@@ -151,6 +155,18 @@ export default {
     },
     isCreateOrder() {
       return this.btnPremisstion('patient_new_bill') && this.isGetResult
+    },
+    canOperation() {
+      const { institutionChainType, topParentId } = this.medicalInstitution
+      // 1，单店，2，直营(如果topParentId===0则为总部，总部也是直营)，3，大区，4，加盟
+      // 注意：web端与小程序的判断不一样！！！
+      if (
+        institutionChainType === 3 ||
+        (institutionChainType === 2 && topParentId === 0)
+      ) {
+        return false
+      }
+      return true
     },
   },
   created() {
@@ -265,7 +281,7 @@ export default {
       width: 0;
       border: 2rpx dashed rgba(0, 0, 0, 0.15);
       transform-origin: 50% 0;
-      transform: scale(0.5,1);
+      transform: scale(0.5, 1);
     }
   }
 
