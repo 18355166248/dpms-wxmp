@@ -1,4 +1,4 @@
-`<template>
+<template>
   <view class="apptView">
     <doctor-drawer ref="doctorDrawer" />
     <calendar
@@ -8,8 +8,8 @@
     />
     <view style="height: 10px;" />
     <scheduler
+      v-if="hackVisible"
       :isAll="true"
-      :disable="isHeaderWithLargeArea"
       :height="schedulerHeight"
       :currentDate="calendarDate"
       :columnGroup="schedulerGroup"
@@ -29,6 +29,7 @@ import moment from 'moment'
 import _ from 'lodash'
 import institutionAPI from 'APIS/institution/institution.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
+import diagnosisAPI from 'APIS/diagnosis/diagnosis.api.js'
 import calendar from '@/businessComponents/calendar/calendar'
 import scheduler from '@/businessComponents/scheduler/scheduler'
 import { commonUtil } from 'mpcommon'
@@ -46,12 +47,9 @@ import { apptDataService } from '@/baseSubpackages/apptForm/apptData.service'
 import doctorDrawer from './doctorDrawer'
 
 const STAFF_POSITION_ENUM = commonUtil.getEnums('StaffPosition')
-const INSTITUTION_CHAIN_TYPE_ENUM = commonUtil.getEnums('InstitutionChainType')
 const BLOCK_EVENT_TYPE_ENUM = commonUtil.getEnums('BlockEventType')
 
 const POSITION_DOCTOR = STAFF_POSITION_ENUM.DOCTOR.value
-const INSTITUTION_CHAIN = INSTITUTION_CHAIN_TYPE_ENUM.CHAIN.value
-const INSTITUTION_REGIONAL = INSTITUTION_CHAIN_TYPE_ENUM.REGIONAL.value
 const STAFF_BLOCK = BLOCK_EVENT_TYPE_ENUM.STAFF_BLOCK_EVENT.value
 
 export default {
@@ -77,10 +75,18 @@ export default {
       blockEventList: [],
       // 接入的机构：对于总部/大区，该值可以选择；其他，则为所在机构，不变
       accessMedicalInstitution: {},
+      // 上一次的预约视图
+      preAccessMedicalInstitution: {},
       // 检测是否为机构或者大区？具体含义未知，沿用之前判断
       isHeaderWithLargeArea: frontAuthUtil.check(
         '预约中心/预约视图/诊所的查询条件',
       ),
+      // 所选机构的预约配置相关参数
+      apptSetting: {},
+      // 获取当前机构的业务规则配置信息
+      medicalConfig: {},
+      // 重置预约视图的hack变量
+      hackVisible: false,
     }
   },
   watch: {
@@ -95,11 +101,13 @@ export default {
     accessMedicalInstitution(newVal) {
       uni.setStorageSync('accessMedicalInstitution', newVal)
     },
+    medicalConfig(newVal) {
+      uni.setStorageSync('currentMedicalInstitutionConfig', newVal)
+    },
   },
   computed: {
     ...mapState('workbenchStore', {
       medicalInstitution: (state) => state.medicalInstitution,
-      apptSetting: (state) => state.apptSetting,
     }),
     // 预约视图数据请求的开始时间
     appointmentBeginTime() {
@@ -137,7 +145,7 @@ export default {
     },
     schedulerHourParts() {
       // 预约的最小时间刻度和登陆用户的机构关联
-      return 60 / this.apptSetting.appointmentDuration
+      return 60 / (this.apptSetting.appointmentDuration || 30)
     },
   },
   onLoad() {
@@ -146,6 +154,7 @@ export default {
   },
   onUnload() {
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
+    uni.$off(globalEventKeys.cancleApptSuccess)
     uni.$off(globalEventKeys.onSelectApptViewDoctor)
     uni.removeStorageSync('doctorList')
     uni.removeStorageSync('drawerSelectedDoctorList')
@@ -168,6 +177,7 @@ export default {
         .concat(`&startTimeStamp=${begin.valueOf()}`)
         .concat(`&endTimeStamp=${end.valueOf()}`)
         .concat(`&doctorId=${group.key}`)
+        .concat('&type=createAppt')
       this.$utils.push({ url })
     },
     onChangeAppointment({ detail }) {
@@ -216,7 +226,6 @@ export default {
           data: institutionTree,
         } = await institutionAPI.getInstitutionList({
           medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
-          institutionChainTypes: `${INSTITUTION_CHAIN},${INSTITUTION_REGIONAL}`,
         })
 
         const {
@@ -252,20 +261,33 @@ export default {
       this.doctorList = doctorList
 
       await this.refreshApptViewList()
+
+      const { data: config } = await diagnosisAPI.getWeakFlow()
+      this.medicalConfig = config
+
       this.$utils.hidePageLoading()
     },
     initEvent() {
-      uni.$on(globalEventKeys.onSelectApptViewDoctor, (selectedDoctorList) => {
-        this.doctorList = uni.getStorageSync('doctorList')
-        this.accessMedicalInstitution = uni.getStorageSync(
-          'accessMedicalInstitution',
-        )
+      uni.$on(globalEventKeys.onSelectApptViewDoctor, (data) => {
+        const {
+          doctorList,
+          selectedDoctorList,
+          accessMedicalInstitution,
+        } = data
+        this.doctorList = doctorList
+        this.preAccessMedicalInstitution = this.accessMedicalInstitution
+        this.accessMedicalInstitution = accessMedicalInstitution
         this.drawerSelectedDoctorList = selectedDoctorList
         this.refreshApptViewList()
       })
-      uni.$on(globalEventKeys.apptFormWithSaveSuccess, () =>
-        this.refreshApptViewList(),
-      )
+      uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
+        // form创建成功
+        this.refreshApptViewList()
+      })
+      uni.$on(globalEventKeys.cancleApptSuccess, () => {
+        // form取消成功
+        this.refreshApptViewList()
+      })
     },
     async refreshApptViewList() {
       if (
@@ -274,8 +296,23 @@ export default {
       ) {
         return
       }
+      this.$utils.showPageLoading()
+      // 1. 请求预约刻度信息
+      const { data: apptSetting } = await appointmentAPI.getSetting({
+        medicalInstitutionId: this.accessMedicalInstitution
+          .medicalInstitutionId,
+      })
+      this.apptSetting = apptSetting
 
-      // 1. 请求预约数据
+      // 若当前机构与上一个机构有变化则重置视图
+      if (
+        this.preAccessMedicalInstitution.medicalInstitutionId !==
+        this.accessMedicalInstitution.medicalInstitutionId
+      ) {
+        this.resetScheduler()
+      }
+
+      // 2. 请求预约数据
       const {
         data: appointmentList,
       } = await appointmentAPI.getAppointmentViewListFromStaff({
@@ -288,7 +325,7 @@ export default {
       })
       this.appointmentList = appointmentList
 
-      // 2. 请求日程数据
+      // 3. 请求日程数据
       const {
         data: blockEventList,
       } = await appointmentAPI.getApptBlockListByStaff({
@@ -300,6 +337,14 @@ export default {
         businessIds: this.staffIds,
       })
       this.blockEventList = blockEventList
+
+      this.$utils.hidePageLoading()
+    },
+    resetScheduler() {
+      this.hackVisible = false
+      this.$nextTick(() => {
+        this.hackVisible = true
+      })
     },
   },
 }

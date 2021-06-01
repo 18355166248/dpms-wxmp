@@ -23,49 +23,34 @@
 </template>
 
 <script>
-const staffTitle = {
-  5: { title: '选择助理', key: 'ASSISTANT_MANAGER', formKey: 'help' },
-  6: { title: '选择护士', key: 'NURSE', formKey: 'nurse' },
-}
 export default {
   data() {
     return {
       staffList: [],
       checked: [], // 选中值
-      key: '', // 后台数据接收key值
-      formKey: '', // 表单接收值
+      key: '', // 返回时透传的key
     }
   },
   created() {},
-  onLoad: function ({ option, checked }) {
-    if (option && staffTitle[option]) {
+  onLoad: function ({ title, checked, key }) {
+    if (title) {
       uni.setNavigationBarTitle({
-        title: staffTitle[option].title,
+        title: title,
       })
-
-      this.key = staffTitle[option].key
-      this.formKey = staffTitle[option].formKey
-      const staffListInfo = uni.getStorageSync('staffListInfo')
-      const staffList = staffListInfo[this.key + '_LIST'] || []
-
-      this.staffList = staffList
-      this.checked = checked.split(',').map((v) => Number(v))
     }
+    this.staffList = uni.getStorageSync('apptStaffSelectList')
+    this.key = key
+    this.checked = checked.split(',').map((v) => Number(v))
   },
   methods: {
     onSave() {
-      const checkedList = this.staffList.filter((staff) =>
-        this.checked.includes(staff.staffId),
-      )
-
-      uni.$emit('apptFormWithUpdateStaffList', {
-        key: this.formKey,
+      uni.$emit('updateApptStaffCheckedList', {
+        key: this.key,
         value: this.checked,
-        list: checkedList,
       })
-
       this.$utils.back()
     },
+    // 保证未指定医生和其他选项互斥
     onCheckStaff(staffId) {
       if (this.checked.length === 0) {
         this.checked = [-1]

@@ -61,6 +61,7 @@ export function appointment2schedulerResource(data) {
       cardStyle: 'border-left:4px solid #5cbb89; background:#fff',
       begin: d.appointmentBeginTime,
       end: d.appointmentEndTime,
+      flag: d.acrossInstitutionAppointmentFlag ? '跨' : undefined,
     }
   })
 }

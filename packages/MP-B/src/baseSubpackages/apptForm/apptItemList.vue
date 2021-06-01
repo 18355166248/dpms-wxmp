@@ -65,7 +65,6 @@ export default {
   methods: {
     onSave() {
       uni.$emit('updateApptItemCheckedList', this.checked)
-
       this.$utils.back()
     },
     // 格式化列表进行展示
