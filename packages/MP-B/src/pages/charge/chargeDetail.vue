@@ -122,9 +122,9 @@ export default {
           url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
         })
       } else {
-        this.$refs.uToast.show({
+        uni.showToast({
           title: '收欠费需到对应机构操作!',
-          type: 'warning',
+          icon: 'none',
         })
       }
     },
