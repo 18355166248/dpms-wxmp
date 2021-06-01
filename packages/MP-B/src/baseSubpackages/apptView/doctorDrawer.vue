@@ -43,7 +43,7 @@
     <selectMedicalInstitution
       ref="selectMedicalInstitution"
       @confirm="onSelectInstitution"
-      :medicalInstitutionType="2"
+      :medicalInstitutionType="isJoinAlone ? 2 : 0"
     ></selectMedicalInstitution>
   </view>
 </template>
@@ -71,6 +71,14 @@ export default {
   computed: {
     drawerWidth() {
       return uni.upx2px(600)
+    },
+    isJoinAlone() {
+      const loginMedicalInstitution = uni.getStorageSync('medicalInstitution')
+      const scheme = loginMedicalInstitution.institutionChainSchema
+      if (scheme === 1 || scheme === 2) {
+        return true
+      }
+      return false
     },
     scrollViewHeight() {
       const institutionSelectHeight = this.isHeaderWithLargeArea ? 112 : 0

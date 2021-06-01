@@ -58,6 +58,14 @@ const institutionAPI = {
   getPermission(data) {
     return httper.get('institution/permission/query', data)
   },
+  // 获取指定机构各岗位的员工信息
+  getInstitutionStaffList(data) {
+    return httper.post('institution/staff/get/list/position', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
 }
 
 export default institutionAPI

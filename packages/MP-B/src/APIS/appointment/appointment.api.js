@@ -29,7 +29,9 @@ const appointmentAPI = {
   },
   // 获取待定预约个数
   getUndeterminedAppointmentCount() {
-    return httper.get('appointment/appointment/mini-apps/undetermin-appointment-count')
+    return httper.get(
+      'appointment/appointment/mini-apps/undetermin-appointment-count',
+    )
   },
   // 获取待定预约列表
   getUndeterminedAppointmentPage(params) {
@@ -64,8 +66,8 @@ const appointmentAPI = {
     )
   },
   //获取预约视图设置
-  getSetting() {
-    return httper.get('appointment/appointment-view/setting/detail')
+  getSetting(params) {
+    return httper.get('appointment/appointment-view/setting/detail', params)
   },
   //确认预约
   confirmAppointmentStatus(params) {
