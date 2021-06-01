@@ -43,7 +43,6 @@
     <selectMedicalInstitution
       ref="selectMedicalInstitution"
       @confirm="onSelectInstitution"
-      :medicalInstitutionType="isJoinAlone ? 2 : 0"
     ></selectMedicalInstitution>
   </view>
 </template>
@@ -54,9 +53,13 @@ import { globalEventKeys } from '@/config/global.eventKeys'
 import { getDoctorListByInstitutionId } from './utils'
 import appointmentAPI from 'APIS/appointment/appointment.api'
 import _ from 'lodash'
+import selectMedicalInstitution from './selectMedicalInstitution'
 
 const ALL_DOCTOR_ITEM = { staffId: 'all', staffName: '所有医生' }
 export default {
+  components: {
+    selectMedicalInstitution
+  },
   data() {
     return {
       isHeaderWithLargeArea: frontAuthUtil.check(
@@ -71,14 +74,6 @@ export default {
   computed: {
     drawerWidth() {
       return uni.upx2px(600)
-    },
-    isJoinAlone() {
-      const loginMedicalInstitution = uni.getStorageSync('medicalInstitution')
-      const scheme = loginMedicalInstitution.institutionChainSchema
-      if (scheme === 1 || scheme === 2) {
-        return true
-      }
-      return false
     },
     scrollViewHeight() {
       const institutionSelectHeight = this.isHeaderWithLargeArea ? 112 : 0
@@ -161,12 +156,11 @@ export default {
       }
     },
     confirm() {
-      uni.setStorageSync(
-        'accessMedicalInstitution',
-        this.accessMedicalInstitution,
-      )
-      uni.setStorageSync('doctorList', this.doctorList)
-      uni.$emit(globalEventKeys.onSelectApptViewDoctor, this.selectedDoctorList)
+      uni.$emit(globalEventKeys.onSelectApptViewDoctor,  {
+        selectedDoctorList: this.selectedDoctorList,
+        doctorList: this.doctorList,
+        accessMedicalInstitution: this.accessMedicalInstitution
+      })
       this.close()
     },
     async reloadDoctorList() {
