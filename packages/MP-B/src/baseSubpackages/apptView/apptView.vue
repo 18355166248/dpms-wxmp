@@ -8,6 +8,7 @@
     />
     <view style="height: 10px;" />
     <scheduler
+      v-if="hackVisible"
       :isAll="true"
       :height="schedulerHeight"
       :currentDate="calendarDate"
@@ -74,6 +75,8 @@ export default {
       blockEventList: [],
       // 接入的机构：对于总部/大区，该值可以选择；其他，则为所在机构，不变
       accessMedicalInstitution: {},
+      // 上一次的预约视图
+      preAccessMedicalInstitution: {},
       // 检测是否为机构或者大区？具体含义未知，沿用之前判断
       isHeaderWithLargeArea: frontAuthUtil.check(
         '预约中心/预约视图/诊所的查询条件',
@@ -82,6 +85,8 @@ export default {
       apptSetting: {},
       // 获取当前机构的业务规则配置信息
       medicalConfig: {},
+      // 重置预约视图的hack变量
+      hackVisible: false,
     }
   },
   watch: {
@@ -263,11 +268,15 @@ export default {
       this.$utils.hidePageLoading()
     },
     initEvent() {
-      uni.$on(globalEventKeys.onSelectApptViewDoctor, (selectedDoctorList) => {
-        this.doctorList = uni.getStorageSync('doctorList')
-        this.accessMedicalInstitution = uni.getStorageSync(
-          'accessMedicalInstitution',
-        )
+      uni.$on(globalEventKeys.onSelectApptViewDoctor, (data) => {
+        const {
+          doctorList,
+          selectedDoctorList,
+          accessMedicalInstitution,
+        } = data
+        this.doctorList = doctorList
+        this.preAccessMedicalInstitution = this.accessMedicalInstitution
+        this.accessMedicalInstitution = accessMedicalInstitution
         this.drawerSelectedDoctorList = selectedDoctorList
         this.refreshApptViewList()
       })
@@ -294,6 +303,15 @@ export default {
           .medicalInstitutionId,
       })
       this.apptSetting = apptSetting
+
+      // 若当前机构与上一个机构有变化则重置视图
+      if (
+        this.preAccessMedicalInstitution.medicalInstitutionId !==
+        this.accessMedicalInstitution.medicalInstitutionId
+      ) {
+        this.resetScheduler()
+      }
+
       // 2. 请求预约数据
       const {
         data: appointmentList,
@@ -321,6 +339,12 @@ export default {
       this.blockEventList = blockEventList
 
       this.$utils.hidePageLoading()
+    },
+    resetScheduler() {
+      this.hackVisible = false
+      this.$nextTick(() => {
+        this.hackVisible = true
+      })
     },
   },
 }
