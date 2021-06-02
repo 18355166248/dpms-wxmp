@@ -42,8 +42,9 @@
             <text class="iconfont icon-close"></text>
           </view>
         </label>
-        <label>
+        <label style="position: relative;">
           <text class="iconfont icon-password mr-20" />
+          <input style="position: absolute; z-index: -1;" />
           <input
             password
             placeholder="请输入密码"
