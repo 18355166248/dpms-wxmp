@@ -9,7 +9,8 @@
           ></div>
           <div class="ellipsis" style="width: 550rpx;">
             支付方式（应收金额<span style="font-weight: bold;">
-            {{receivableAmount | thousandFormatter(2, '￥')}}</span>）
+              {{ receivableAmount | thousandFormatter(2, '￥') }}</span
+            >）
           </div>
         </div>
         <div slot="extra">
@@ -157,7 +158,7 @@
             </view>
           </div>
         </div>
-        <div class="btn-wrapper flexBt">
+        <div class="btn-wrapper flexBt" v-if="canOperation">
           <button @click="onSubmitBill('save')" class="save-btn">保存</button>
           <button @click="onSubmitBill('charge')" class="charge-btn">
             收费
@@ -178,8 +179,8 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance">&nbsp;
-          &nbsp;(余额{{ item.balance | thousandFormatter }})
+        <template v-if="item.balance"
+          >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
           :disabled="checkDisableFn(item.checked)"
@@ -246,7 +247,7 @@ export default {
     payResult,
   },
   computed: {
-    ...mapState('workbenchStore', ['menu']),
+    ...mapState('workbenchStore', ['menu', 'medicalInstitution']),
     ...mapState('patient', ['patientDetail']),
     ...mapState('dispose', [
       'disposeList',
@@ -293,6 +294,18 @@ export default {
         (item) => item.position === STAFF_ENUMS.get('salesMan'),
       )
     },
+    canOperation() {
+      const { institutionChainType, topParentId } = this.medicalInstitution
+      // 1，单店，2，直营(如果topParentId===0则为总部，总部也是直营)，3，大区，4，加盟
+      // 注意：web端与小程序的判断不一样！！！
+      if (
+        institutionChainType === 3 ||
+        (institutionChainType === 2 && topParentId === 0)
+      ) {
+        return false
+      }
+      return true
+    },
   },
   onLoad(query) {
     this.staff = uni.getStorageSync('staff')
@@ -312,7 +325,7 @@ export default {
       'setRealDiscountPromotionAmount',
     ]),
     onSubmitBill(type) {
-      if(this.changeAmount > 0) {
+      if (this.changeAmount > 0) {
         return
       }
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
@@ -460,9 +473,9 @@ export default {
     },
     setPayChannelList(backChannelList) {
       // 处理储值卡，优惠卷收费的模式，此时没有backChannelList
-      if(!backChannelList) {
-        console.log('this.form.payChannelList', this.form.payChannelList);
-        this.form.payChannelList = this.form.payChannelList.map(item => {
+      if (!backChannelList) {
+        console.log('this.form.payChannelList', this.form.payChannelList)
+        this.form.payChannelList = this.form.payChannelList.map((item) => {
           item.paymentAmount = this.receivableAmount
           return item
         })
@@ -575,8 +588,10 @@ export default {
         })
         .then((res) => {
           if (res?.data.length > 0) {
-            if(this.billType === 3) {
-              res.data = res.data.filter(item => (item.payStyle !== 8 && item.payStyle !== 9))
+            if (this.billType === 3) {
+              res.data = res.data.filter(
+                (item) => item.payStyle !== 8 && item.payStyle !== 9,
+              )
             }
             res.data.forEach((item, index) => {
               item.checked = false
