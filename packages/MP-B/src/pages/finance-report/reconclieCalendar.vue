@@ -95,7 +95,7 @@ export default {
     initData() {
       return new Promise((resolve, reject) => {
         let result = Array.from(
-          { length: moment().daysInMonth() },
+          { length: moment(this.monthValue).daysInMonth() },
           (item, index) => ({
             day: index + 1,
             dayValue: moment(this.monthValue).add(index, 'day').valueOf(),
