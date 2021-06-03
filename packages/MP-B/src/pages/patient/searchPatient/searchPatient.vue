@@ -5,7 +5,7 @@
         <dpmsSearch
           type="text"
           confirmType="search"
-          placeholder="搜索患者"
+          placeholder="请输入姓名/拼音/手机号查找患者"
           v-model="searchValue"
           @change="changeValue"
           @search="searchPatients"
@@ -15,10 +15,8 @@
       <div class="create-patient" @click="toCreatePatient">新建</div>
     </div>
 
-    <!-- 搜索提示、结果文字 -->
-    <div class="search-tip-text pt-28" v-if="!(searchValue && isSearchedValue)">
-      请输入姓名/拼音/手机号查找患者
-    </div>
+    <FilterArea @getList="getList"></FilterArea>
+
     <div
       class="search-tip-text pt-28 pl-24 pr-24"
       v-if="searchValue && isSearchedValue && patientList.length === 0"
@@ -29,7 +27,7 @@
     </div>
 
     <!-- 历史搜索 -->
-    <div class="mt-64 history-search-section" v-if="searchRecords.length !== 0">
+    <div class="mt-20 history-search-section" v-if="searchRecords.length !== 0">
       <div data-layout-align="space-between center">
         <span class="title">历史搜索</span>
         <span class="iconfont icon-delete" @click="clearHistorySearch"></span>
@@ -64,22 +62,16 @@
       </div>
       <load-more :status="dataSourceStatus.status" />
     </div>
+    <empty :disabled="true" v-else-if="dataSourceStatus.status !== 'loading'" />
   </scroll-view>
 </template>
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
 import loadMore from '@/components/load-more/load-more.vue'
+import FilterArea from './modules/FilterArea.vue'
 import { globalEventKeys } from 'config/global.eventKeys.js'
-
-const paramsConfigWithType = {
-  createAppt: {
-    name: 'createAppt',
-  },
-  editAppt: {
-    name: 'editAppt',
-  },
-}
+import empty from '@/components/empty/empty.vue'
 
 export default {
   data() {
@@ -98,7 +90,23 @@ export default {
         request: 'loading',
       },
       paramsObj: {},
+      filterParamsObj: {
+        time: {
+          dateType: 1,
+          registerBeginMilliSecond: '',
+          registerEndMilliSecond: '',
+        },
+        doctor: {
+          doctorType: 1,
+          doctorId: '',
+        },
+      },
     }
+  },
+  components: {
+    loadMore,
+    FilterArea,
+    empty,
   },
   onLoad(option) {
     this.paramsObj = option
@@ -112,6 +120,18 @@ export default {
     }
   },
   methods: {
+    getList(params, type) {
+      this.current = 1
+      // 先清空筛选入参，再更新入参
+      for (const key in this.filterParamsObj[type]) {
+        this.filterParamsObj[key] = ''
+      }
+      for (const key in params) {
+        this.filterParamsObj[type][key] =
+          params[key] === 'all' ? '' : params[key]
+      }
+      this.getPatients()
+    },
     init() {
       this.current = 1
       this.getPatients()
@@ -144,6 +164,13 @@ export default {
         regularParam: this.searchValue,
         current: this.current,
         size: this.size,
+        dateType: this.filterParamsObj.time.dateType,
+        registerBeginMilliSecond: this.filterParamsObj.time
+          .registerBeginMilliSecond,
+        registerEndMilliSecond: this.filterParamsObj.time
+          .registerEndMilliSecond,
+        doctorType: this.filterParamsObj.doctor.doctorType,
+        doctorId: this.filterParamsObj.doctor.doctorId,
       })
 
       this.isSearchedValue = this.searchValue
