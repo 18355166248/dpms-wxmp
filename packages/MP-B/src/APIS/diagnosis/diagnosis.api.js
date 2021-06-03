@@ -126,6 +126,10 @@ const diagnosisAPI = {
   getTreatmentTypes(params) {
     return httper.get('diagnosis/treatment-type/list', params)
   },
+  // 获取挂号次数
+  getRegisterCount(params) {
+    return httper.get('diagnosis/register/list-patient/count', params)
+  },
 }
 
 export default diagnosisAPI
