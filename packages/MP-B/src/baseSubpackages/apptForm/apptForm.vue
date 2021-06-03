@@ -323,7 +323,7 @@ export default {
       )
     },
     formType() {
-      // createAppt/editAppt/createRegister/editRegister
+      // 目前如下几个类型：createAppt/editAppt/createRegister/editRegister
       return this.pageOption.type
     },
   },
@@ -404,6 +404,24 @@ export default {
     this.initEvents()
   },
   watch: {
+    'form.patient': function (newPatient) {
+      // 在新建预约和新建挂号时，选择患者后，根据该患者在所选机构是否有就诊记录初始化就诊类型
+      // 有：初始化为复诊，无：初始化为初诊
+      if (
+        this.formType === 'createAppt' ||
+        this.formType === 'createRegister'
+      ) {
+        diagnosisAPI
+          .getRegisterCount({
+            patientId: newPatient.patientId,
+            currentInstitution: this.form.medicalInstitutionId,
+          })
+          .then((res) => {
+            // 1: 初诊, 2: 复诊, 这两种类型id固定
+            this.form.visType = res.data > 0 ? 2 : 1
+          })
+      }
+    },
     'form.appointmentMedicalInstitutionId': function (newVal) {
       // 清除和机构相关的填入数据
       this.form.visType = undefined
