@@ -20,6 +20,11 @@
             >取消</text
           >
         </view>
+        <view class="uni-calendar__header-btn-box" @click="clear">
+          <text class="uni-calendar__header-text uni-calendar--fixed-width"
+            >清空</text
+          >
+        </view>
         <view class="uni-calendar__header-btn-box" @click="confirm">
           <text class="uni-calendar__header-text uni-calendar--fixed-width"
             >确定</text
@@ -262,6 +267,13 @@ export default {
           this.$emit('close')
         }, 300)
       })
+    },
+    /**
+     * 清空当前选择
+     */
+    clear() {
+      this.cale.cleanMultipleStatus()
+      this.init(this.date)
     },
     /**
      * 确认按钮
