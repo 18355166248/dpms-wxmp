@@ -1,4 +1,4 @@
-<template>
+`<template>
   <view class="apptForm">
     <scroll-view scroll-y class="h100">
       <view class="bg" />
@@ -399,6 +399,10 @@ export default {
           this.refreshMedicalInstitutionList()
           this.refreshInstitutionRelatedOptions()
         })
+    } else if (option.type === 'createRegister') {
+      this.form.appointmentMedicalInstitutionId = this.loginMedicalInstitution.medicalInstitutionId
+      this.refreshMedicalInstitutionList()
+      this.refreshInstitutionRelatedOptions()
     }
 
     this.initEvents()
@@ -757,3 +761,4 @@ export default {
   }
 }
 </style>
+`
