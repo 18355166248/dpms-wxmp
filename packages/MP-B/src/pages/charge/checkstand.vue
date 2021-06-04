@@ -162,7 +162,7 @@
             </view>
           </div>
         </div>
-        <div class="btn-wrapper flexBt">
+        <div class="btn-wrapper flexBt" v-if="canOperation">
           <button
             v-if="showSaveBtn"
             @click="onSubmitBill('save')"
@@ -262,7 +262,7 @@ export default {
     payResult,
   },
   computed: {
-    ...mapState('workbenchStore', ['menu']),
+    ...mapState('workbenchStore', ['menu', 'medicalInstitution']),
     ...mapState('patient', ['patientDetail']),
     ...mapState('dispose', [
       'disposeList',
@@ -311,6 +311,18 @@ export default {
       return this.otherList.filter(
         (item) => item.position === STAFF_ENUMS.get('salesMan'),
       )
+    },
+    canOperation() {
+      const { institutionChainType, topParentId } = this.medicalInstitution
+      // 1，单店，2，直营(如果topParentId===0则为总部，总部也是直营)，3，大区，4，加盟
+      // 注意：web端与小程序的判断不一样！！！
+      if (
+        institutionChainType === 3 ||
+        (institutionChainType === 2 && topParentId === 0)
+      ) {
+        return false
+      }
+      return true
     },
   },
   onLoad(query) {

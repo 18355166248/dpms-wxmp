@@ -70,7 +70,7 @@
       </view>
     </view>
 
-    <view class="btn-wrap" v-if="isOverdue">
+    <view class="btn-wrap" v-if="canOperation && isOverdue">
       <view class="btns">
         <chargeButton
           type="solid"
@@ -90,11 +90,13 @@
 import billAPI from '@/APIS/bill/bill.api'
 import chargeButton from './common/chargeButton'
 import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
+import { mapState } from 'vuex'
 
 export default {
   data() {
     return {
       billSerialNo: '',
+      createYouSelf: 'false',
       data: {},
     }
   },
@@ -104,14 +106,28 @@ export default {
   },
   onLoad(params) {
     this.billSerialNo = params.billSerialNo
+    this.createYouSelf = params.createYouSelf || 'false'
     this.init()
   },
   computed: {
+    ...mapState('workbenchStore', ['medicalInstitution']),
     isOverdue() {
       return (
         this.btnPremisstion('paid_arrears') &&
         this.data.receivableAmount > this.data.paymentAmount
       )
+    },
+    canOperation() {
+      const { institutionChainType, topParentId } = this.medicalInstitution
+      // 1，单店，2，直营(如果topParentId===0则为总部，总部也是直营)，3，大区，4，加盟
+      // 注意：web端与小程序的判断不一样！！！
+      if (
+        institutionChainType === 3 ||
+        (institutionChainType === 2 && topParentId === 0)
+      ) {
+        return false
+      }
+      return true
     },
   },
   methods: {
@@ -136,9 +152,19 @@ export default {
     },
     //收欠费
     overdueCharge() {
-      uni.redirectTo({
-        url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
-      })
+      // uni.redirectTo({
+      //   url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
+      // })
+      if (this.createYouSelf === 'true') {
+        uni.redirectTo({
+          url: `/pages/charge/overdueCharge?billOrderId=${this.data.billOrderId}`,
+        })
+      } else {
+        uni.showToast({
+          title: '收欠费需到对应机构操作!',
+          icon: 'none',
+        })
+      }
     },
   },
 }
