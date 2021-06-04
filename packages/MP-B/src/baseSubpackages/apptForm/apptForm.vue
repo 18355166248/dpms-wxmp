@@ -626,31 +626,36 @@ export default {
     },
     async submit() {
       this.submitting = true
+      let res = {}
       const submitData = formatAppointmentData(this.form, this.options)
       if (this.formType === 'createAppt') {
-        await appointmentAPI.createAppointment({
+        res = await appointmentAPI.createAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
         this.$utils.show('新增预约成功')
       } else if (this.formType === 'editAppt') {
-        await appointmentAPI.updateAppointment({
+        res = await appointmentAPI.updateAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
         this.$utils.show('更新预约成功')
       } else if (this.formType === 'editRegister') {
         // 在预约上挂号
-        await diagnosisAPI.createRegister({
+        res = await diagnosisAPI.createRegister({
           appointmentJsonStr: JSON.stringify(submitData),
         })
         this.$utils.show('挂号成功')
       } else if (this.formType === 'createRegister') {
         // 直接挂号
         const data = formatRegisterData(this.form)
-        await diagnosisAPI.createNewRegister(data)
+        res = await diagnosisAPI.createNewRegister(data)
         this.$utils.show('新增挂号成功')
       }
 
-      uni.$emit(globalEventKeys.apptFormWithSaveSuccess)
+      uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
+        isSuccess: true,
+        params: this.pageOption,
+        appt: { ...submitData, ...res.data },
+      })
       this.$utils.back()
     },
     // 选择患者
