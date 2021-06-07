@@ -87,6 +87,8 @@ export default {
       medicalConfig: {},
       // 重置预约视图的hack变量
       hackVisible: false,
+      // 是否正在初始化加载
+      isInitLoading: false,
     }
   },
   watch: {
@@ -149,12 +151,17 @@ export default {
     },
   },
   onLoad() {
-    this.initData()
     this.initEvent()
+    this.initData()
+  },
+  onShow() {
+    if (!this.isInitLoading) {
+      this.refreshApptViewList()
+    }
   },
   onUnload() {
-    uni.$off(globalEventKeys.apptFormWithSaveSuccess)
-    uni.$off(globalEventKeys.cancleApptSuccess)
+    // uni.$off(globalEventKeys.apptFormWithSaveSuccess)
+    // uni.$off(globalEventKeys.cancleApptSuccess)
     uni.$off(globalEventKeys.onSelectApptViewDoctor)
     uni.removeStorageSync('doctorList')
     uni.removeStorageSync('drawerSelectedDoctorList')
@@ -219,6 +226,7 @@ export default {
       })
     },
     async initData() {
+      this.isInitLoading = true
       this.$utils.showPageLoading()
       // 1. 设置访问机构。对于总部/大区，访问机构需先获取上一次访问的机构；对于非总部/大区，访问机构则为登录人当前机构
       if (this.isHeaderWithLargeArea) {
@@ -266,6 +274,7 @@ export default {
       this.medicalConfig = config
 
       this.$utils.hidePageLoading()
+      this.isInitLoading = false
     },
     initEvent() {
       uni.$on(globalEventKeys.onSelectApptViewDoctor, (data) => {
@@ -278,14 +287,6 @@ export default {
         this.preAccessMedicalInstitution = this.accessMedicalInstitution
         this.accessMedicalInstitution = accessMedicalInstitution
         this.drawerSelectedDoctorList = selectedDoctorList
-        this.refreshApptViewList()
-      })
-      uni.$on(globalEventKeys.apptFormWithSaveSuccess, () => {
-        // form创建成功
-        this.refreshApptViewList()
-      })
-      uni.$on(globalEventKeys.cancleApptSuccess, () => {
-        // form取消成功
         this.refreshApptViewList()
       })
     },
@@ -309,6 +310,7 @@ export default {
         this.preAccessMedicalInstitution.medicalInstitutionId !==
         this.accessMedicalInstitution.medicalInstitutionId
       ) {
+        this.preAccessMedicalInstitution = { ...this.accessMedicalInstitution }
         this.resetScheduler()
       }
 

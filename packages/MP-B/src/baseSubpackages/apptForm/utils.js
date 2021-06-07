@@ -117,7 +117,7 @@ export function joinCheckedStaffName(checkedKeys, staffList) {
 
 export function formatAppointmentData(form, options) {
   console.log(form, options)
-  // 1. 添加资源数据
+  // 1. 添加资源数据，冗余，后期建议去掉，form已包含相关id信息
   const resourceMap = {}
 
   // 1.1 添加员工信息
@@ -176,10 +176,19 @@ export function formatAppointmentData(form, options) {
     }))
   resourceMap.COMMON_DATA_APPOINTMENT_ITEM = appointmentItems
 
+  // 2. 添加 appointmentMedicalInstitutionObj，冗余的，建议后期去掉，form中已包含机构id
+  const appointmentMedicalInstitutionObj = options.medicalInstitutionList.find(
+    (m) =>
+      m.appointmentMedicalInstitutionId ===
+      form.appointmentMedicalInstitutionId,
+  )
+
   const formatValues = {
     ...form,
+    appointmentMedicalInstitutionObj,
     appointmentResourceMap: resourceMap,
   }
+
   return _.omit(formatValues, ['appointmentItems'])
 }
 
@@ -192,7 +201,6 @@ export function getFormValueFromResourceMap(formKey, resourceMap) {
   // appointmentItems: [], // 预约项目
   // institutionConsultingRoomId: -1, // 诊室
 
-  console.log(formKey)
   if (formKey === 'doctor') {
     return resourceMap.STAFF.find((s) => s.position === POSITION_DOCTOR).staffId
   }
@@ -226,7 +234,10 @@ export function getFormValueFromResourceMap(formKey, resourceMap) {
   }
 
   if (formKey === 'institutionConsultingRoomId') {
-    if (!resourceMap.CONSULTING_ROOM || resourceMap.CONSULTING_ROOM.length === 0) {
+    if (
+      !resourceMap.CONSULTING_ROOM ||
+      resourceMap.CONSULTING_ROOM.length === 0
+    ) {
       return -1
     }
     return resourceMap.CONSULTING_ROOM[0].institutionConsultingRoomId
