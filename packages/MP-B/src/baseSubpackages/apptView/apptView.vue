@@ -297,7 +297,6 @@ export default {
       ) {
         return
       }
-      this.$utils.showPageLoading()
       // 1. 请求预约刻度信息
       const { data: apptSetting } = await appointmentAPI.getSetting({
         medicalInstitutionId: this.accessMedicalInstitution
@@ -339,8 +338,6 @@ export default {
         businessIds: this.staffIds,
       })
       this.blockEventList = blockEventList
-
-      this.$utils.hidePageLoading()
     },
     resetScheduler() {
       this.hackVisible = false
