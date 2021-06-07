@@ -558,6 +558,12 @@ export default {
       if (this.pending) return
       this.pending = true
       this.$utils.showLoading('请稍后...')
+      const clonedForm = JSON.parse(JSON.stringify(this.form))
+      // 复诊不传：现病史、既往史
+      if (clonedForm.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
+        delete clonedForm.presentIllnessHistory
+        delete clonedForm.pastIllnessHistory
+      }
       await diagnosisAPI[
         this.medicalRecordId ? 'updateMedicalRecord' : 'createMedicalRecord'
       ]({
@@ -566,7 +572,7 @@ export default {
           patientId: this.patientId,
           medicalInstitutionId: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
             .medicalInstitutionId,
-          ...this.form,
+          ...clonedForm,
           medicalRecordRegisterVO: {
             ...this.form.medicalRecordRegisterVO,
             visType: this.form.visType,
