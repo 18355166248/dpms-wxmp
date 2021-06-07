@@ -1,4 +1,4 @@
-`<template>
+<template>
   <view class="apptForm">
     <scroll-view scroll-y class="h100">
       <view class="bg" />
@@ -766,4 +766,3 @@ export default {
   }
 }
 </style>
-`
