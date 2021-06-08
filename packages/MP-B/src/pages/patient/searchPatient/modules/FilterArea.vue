@@ -234,11 +234,14 @@ export default {
           beginTime = moment(fulldate).startOf('day').format('x')
           endTime = moment(fulldate).endOf('day').format('x')
         } else {
-          const first = moment(before).format('x')
-          const last = moment(after).endOf('day').format('x')
           // 按照大小顺序取
-          beginTime = first > last ? last : first
-          endTime = last > first ? last : first
+          if (before > after) {
+            beginTime = moment(after).startOf('day').format('x')
+            endTime = moment(before).endOf('day').format('x')
+          } else {
+            beginTime = moment(before).startOf('day').format('x')
+            endTime = moment(after).endOf('day').format('x')
+          }
         }
       }
       this.handleTime(beginTime, endTime)
