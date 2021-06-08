@@ -274,7 +274,7 @@ export default {
       if (GENDER_ENUM && GENDER_ENUM.properties && gender) {
         return GENDER_ENUM.properties[gender].text.zh_CN
       }
-      return ''
+      return '未知'
     },
   },
   computed: {
@@ -342,6 +342,14 @@ export default {
       }
       if (option.doctorId) {
         this.form.doctor = Number(option.doctorId)
+      }
+      if (option.patientId) {
+        patientAPI
+          .getPatientDetail({ patientId: option.patientId })
+          .then((res) => {
+            this.form.patient = res.data
+            this.form.patientId = option.patientId
+          })
       }
 
       // 2. 初始化机构，预约视图接入机构或者当前机构
