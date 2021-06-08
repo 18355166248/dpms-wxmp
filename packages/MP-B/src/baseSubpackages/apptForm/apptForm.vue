@@ -385,9 +385,9 @@ export default {
             moment(appointmentBeginTime),
             'minute',
           )
-          this.form.visType = visType
           this.form.appointmentType = appointmentType
           this.form.appointmentMedicalInstitutionId = appointmentMedicalInstitutionId
+          this.form.visType = visType
           this.form.appointmentMemo = appointmentMemo
           const otherFields = [
             'doctor',
@@ -436,8 +436,6 @@ export default {
     },
     'form.appointmentMedicalInstitutionId': function (newVal) {
       // 清除和机构相关的填入数据
-      this.form.visType = undefined
-      // this.form.doctor = -1
       this.form.consultant = -1 // 咨询师
       this.form.dentalHygienist = -1 // 洁牙师
       this.form.help = [-1] // 助理，注意此位置字段为help
