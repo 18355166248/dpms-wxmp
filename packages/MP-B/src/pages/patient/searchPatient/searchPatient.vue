@@ -5,7 +5,7 @@
         <dpmsSearch
           type="text"
           confirmType="search"
-          placeholder="请输入姓名/拼音/手机号查找患者"
+          placeholder="请输入姓名/拼音/手机号/病历号查找患者"
           v-model="searchValue"
           @change="changeValue"
           @search="searchPatients"
