@@ -2,7 +2,7 @@
   <section>
     <div class="filter-area">
       <div
-        class="filter-item first-item"
+        class="filter-item"
         :class="{ active: selectTab === 'time' }"
         @click="clickTab('time')"
       >
@@ -14,7 +14,7 @@
         ></u-icon>
       </div>
       <div
-        class="filter-item last-item"
+        class="filter-item"
         :class="{ active: selectTab === 'doctor' }"
         @click="clickTab('doctor')"
       >
@@ -234,8 +234,11 @@ export default {
           beginTime = moment(fulldate).startOf('day').format('x')
           endTime = moment(fulldate).endOf('day').format('x')
         } else {
-          beginTime = moment(before).format('x')
-          endTime = moment(after).endOf('day').format('x')
+          const first = moment(before).format('x')
+          const last = moment(after).endOf('day').format('x')
+          // 按照大小顺序取
+          beginTime = first > last ? last : first
+          endTime = last > first ? last : first
         }
       }
       this.handleTime(beginTime, endTime)
@@ -277,9 +280,13 @@ export default {
   align-items: center;
   justify-content: space-between;
   .filter-item {
+    flex: 1;
     display: flex;
     align-items: center;
+    justify-content: center;
     white-space: nowrap;
+    flex-shrink: 0;
+    color: #4c4c4c;
     .arrow-icon {
       margin-left: 10rpx;
     }
@@ -289,13 +296,6 @@ export default {
       text-overflow: ellipsis;
       max-width: 118rpx;
     }
-  }
-  .first-item {
-    flex: 1;
-  }
-  .last-item {
-    flex-shrink: 0;
-    justify-content: flex-end;
   }
   .active {
     color: #5cbb89;
