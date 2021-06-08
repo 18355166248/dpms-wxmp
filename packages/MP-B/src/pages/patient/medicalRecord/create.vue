@@ -651,7 +651,17 @@ export default {
       this.form.medicalRecordRegisterVO.registerTime = registerTime
     },
     registerChange({ detail }) {
-      this.form.registerId = this.registerList[detail.value].registerId
+      const item = this.registerList[detail.value]
+      // 这里为医生、就诊类型未根据选择的就诊时间联动
+      // 存在 doctorStaffId 为 -1 的情况, 这种老数据暂时未做处理
+      if (item) {
+        this.form.registerId = item.registerId
+        this.form.visType = item.visType
+        if (item.doctorStaffId && item.doctorStaffId !== -1) {
+          this.form.doctorStaffId = item.doctorStaffId
+        }
+      }
+      console.log(this.registerList[detail.value], '12323123')
     },
     historyMedicalChange(contents) {
       const keyP = {
