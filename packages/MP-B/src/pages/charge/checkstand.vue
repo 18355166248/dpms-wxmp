@@ -170,7 +170,11 @@
           >
             保存
           </button>
-          <button @click="onSubmitBill('charge')" class="charge-btn">
+          <button
+            v-if="btnPremisstion('new_bill_charges')"
+            @click="onSubmitBill('charge')"
+            class="charge-btn"
+          >
             收费
           </button>
         </div>

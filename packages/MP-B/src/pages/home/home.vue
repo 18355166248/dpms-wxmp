@@ -314,16 +314,16 @@ export default {
       const { menuList, pageElementsList } = this.menu
 
       this.iconShow.isStatisticsShow =
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11004'
         }) > -1 ||
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11003'
         }) > -1 ||
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11002'
         }) > -1 ||
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11001'
         }) > -1
 
