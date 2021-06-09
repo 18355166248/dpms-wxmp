@@ -639,18 +639,21 @@ export default {
       const registerId = -1
       const registerTime = moment(dt).valueOf()
       const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
-      const newRegisterIndex = this.registerList.indexOf(
+      const newRegisterIndex = this.registerList.findIndex(
         (l) => l.registerId === registerId,
       )
+      console.log(this.registerList)
+      console.log('newRegisterIndex', newRegisterIndex)
       if (newRegisterIndex !== -1) {
-        this.registerList = this.registerList.filter(
-          (l) => l.registerId !== registerId,
-        )
+        this.registerList[newRegisterIndex].registerTime = registerTime
+        this.registerList[newRegisterIndex].registerLabel = registerLabel
+      } else {
+        this.registerList = [
+          ...(this.registerList || []),
+          { registerId, registerTime, registerLabel },
+        ]
       }
-      this.registerList = [
-        ...(this.registerList || []),
-        { registerId, registerTime, registerLabel },
-      ]
+
       this.form.registerId = registerId
       this.form.medicalRecordRegisterVO.registerTime = registerTime
     },
