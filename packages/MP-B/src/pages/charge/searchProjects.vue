@@ -1,7 +1,7 @@
 <template>
   <view class="select-charge-wrap">
     <!--搜索-->
-    <view class="search-input" >
+    <view class="search-input">
       <view class="iconfont icon-search"></view>
       <input
         type="text"
@@ -65,10 +65,10 @@ export default {
     }
   },
   computed: {},
-  onLoad() {},
-  onShow() {
+  onLoad() {
     this.searchProject('')
   },
+  onShow() {},
   onHide() {},
   onUnload() {},
   methods: {

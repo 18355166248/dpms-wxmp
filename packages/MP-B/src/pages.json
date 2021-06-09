@@ -186,9 +186,9 @@
           }
         },
         {
-          "path": "doctorList",
+          "path": "undeterminedList",
           "style": {
-            "navigationBarTitleText": "医生"
+            "navigationBarTitleText": "待定预约"
           }
         }
       ]
@@ -365,6 +365,7 @@
         }
       ]
     },
+
     {
       "root": "pages/charge",
       "name": "charge",
@@ -376,7 +377,13 @@
           }
         },
         {
-          "path": "selectChargeProjects",
+          "path": "selectChargeTypes",
+          "style": {
+            "navigationBarTitleText": "选择收费项目"
+          }
+        },
+        {
+          "path": "chargeProjectsTabs",
           "style": {
             "navigationBarTitleText": "选择收费项目"
           }
@@ -412,9 +419,87 @@
           }
         },
         {
+          "path": "searchChargeItem",
+          "style": {
+            "navigationBarTitleText": "搜索诊疗项目"
+          }
+        },
+        {
+          "path": "searchMerchandise",
+          "style": {
+            "navigationBarTitleText": "搜索销售商品"
+          }
+        },
+        {
           "path": "chargeDetail",
           "style": {
             "navigationBarTitleText": "账单明细"
+          }
+        }
+      ]
+    },
+    {
+      "root": "pages/finance-report",
+      "name": "finance",
+      "pages": [
+        {
+          "path": "arrearsPatient",
+          "style": {
+            "navigationBarTitleText": "欠费患者"
+          }
+        },
+        {
+          "path": "billDetails",
+          "style": {
+            "navigationBarTitleText": "账单明细"
+          }
+        },
+        {
+          "path": "dealDetails",
+          "style": {
+            "navigationBarTitleText": "交易明细"
+          }
+        },
+        {
+          "path": "paymentReconclie",
+          "style": {
+            "navigationBarTitleText": "支付方式对账"
+          }
+        },
+        {
+          "path": "projectDetails",
+          "style": {
+            "navigationBarTitleText": "项目明细"
+          }
+        },
+        {
+          "path": "reconclieCalendar",
+          "style": {
+            "navigationBarTitleText": "对账日历"
+          }
+        },
+        {
+          "path": "reconclieCalendarDetail",
+          "style": {
+            "navigationBarTitleText": "对账日历详情"
+          }
+        },
+        {
+          "path": "filter",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        },
+        {
+          "path": "projectList",
+          "style": {
+            "navigationBarTitleText": "筛选"
+          }
+        },
+        {
+          "path": "staffList",
+          "style": {
+            "navigationBarTitleText": "筛选"
           }
         }
       ]

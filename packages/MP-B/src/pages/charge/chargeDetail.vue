@@ -26,6 +26,27 @@
             <view>护士：{{ item.nurseNameStr }}</view>
             <view>其他：{{ item.otherNameStr }}</view>
           </view>
+          <!--牙位图组件-->
+          <div class="teeth-select" v-if="data.billType === 6">
+            <!--牙位 -->
+            <div class="flex">
+              <div class="label">牙位：</div>
+              <TeethSelect class="teeth" :value="getTeethVal(item)" />
+            </div>
+            <!--处置说明 -->
+            <div class="flex">
+              <span class="label2">处置说明：</span>
+              <div class="memo">
+                <textarea
+                  v-model="item.toothPositionDesc || '-'"
+                  auto-height
+                  placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+                  :maxlength="500"
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
           <view class="lineHr"></view>
         </view>
         <view class="listChargeTotal">
@@ -50,14 +71,16 @@
     </view>
 
     <view class="btn-wrap" v-if="canOperation && isOverdue">
-      <chargeButton
-        type="solid"
-        @click="overdueCharge"
-        :buttonStyle="{ width: '686rpx' }"
-        v-if="btnPremisstion('arrears_of_fees')"
-      >
-        收欠费
-      </chargeButton>
+      <view class="btns">
+        <chargeButton
+          type="solid"
+          @click="overdueCharge"
+          :buttonStyle="{ width: '686rpx' }"
+          v-if="btnPremisstion('arrears_of_fees')"
+        >
+          收欠费
+        </chargeButton>
+      </view>
     </view>
     <!-- 底部收费项-->
   </view>
@@ -67,6 +90,7 @@
 import billAPI from '@/APIS/bill/bill.api'
 import chargeButton from './common/chargeButton'
 import { mapState } from 'vuex'
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 
 export default {
   data() {
@@ -78,6 +102,7 @@ export default {
   },
   components: {
     chargeButton,
+    TeethSelect,
   },
   onLoad(params) {
     this.billSerialNo = params.billSerialNo
@@ -106,6 +131,16 @@ export default {
     },
   },
   methods: {
+    getTeethVal(item) {
+      if (item.toothPositionStr) {
+        try {
+          return JSON.parse(item.toothPositionStr)
+        } catch (err) {
+          return { teeth: {} }
+        }
+      }
+      return { teeth: {} }
+    },
     init() {
       billAPI
         .orderDetail({
@@ -141,9 +176,6 @@ export default {
   background: rgba(0, 0, 0, 0.04);
   height: 100%;
   box-sizing: border-box;
-  padding-bottom: constant(safe-area-inset-bottom);
-  padding-bottom: env(safe-area-inset-bottom);
-
   .list-wrap {
     display: flex;
     flex-grow: 100;
@@ -229,6 +261,8 @@ export default {
     justify-content: center;
     background: #fff;
     padding: 16rpx 32rpx;
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
@@ -249,5 +283,47 @@ export default {
   color: #595959;
   line-height: 90rpx;
   font-size: 28rpx;
+}
+
+.teeth-select {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 32rpx;
+  box-sizing: border-box;
+  border-top: 1rpx solid #e5e5e5;
+  .flex {
+    display: flex;
+    width: 100%;
+    color: #4c4c4c;
+    .label {
+      width: 116rpx;
+      flex-shrink: 0;
+      color: #191919;
+    }
+    .teeth {
+      width: 100%;
+    }
+    .label2 {
+      width: 182rpx;
+      flex-shrink: 0;
+      color: #191919;
+    }
+    .memo {
+      width: 100%;
+      background-color: #fff;
+      color: #191919;
+      font-size: 30rpx;
+      box-sizing: border-box;
+      textarea {
+        width: 100%;
+      }
+    }
+  }
+  .flex:last-child {
+    padding-top: 16rpx;
+  }
 }
 </style>

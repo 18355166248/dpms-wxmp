@@ -59,7 +59,11 @@
       </view>
     </view>
 
-    <actionSheet @close="hideActionSheet" v-if="showActionSheet">
+    <actionSheet
+      @close="hideActionSheet"
+      v-if="showActionSheet"
+      :background="'#fff'"
+    >
       <view
         class="action-item"
         v-for="(item, index) in list"
@@ -79,7 +83,6 @@ import itemType from './common/itemType'
 import chargeItem from './common/chargeItem'
 import bottomWrap from './common/bottomWrap'
 import chargeButton from './common/chargeButton'
-import actionSheet from './common/actionSheet'
 import { mapMutations, mapState } from 'vuex'
 import billAPI from '@/APIS/bill/bill.api'
 
@@ -111,6 +114,14 @@ export default {
         {
           text: '简易收费',
           type: 1,
+        },
+        {
+          text: '明细收费',
+          type: 2,
+        },
+        {
+          text: '处置收费',
+          type: 3,
         },
       ],
       showActionSheet: false,
@@ -174,6 +185,11 @@ export default {
   },
   methods: {
     ...mapMutations('checkstand', ['setChargeType']),
+    ...mapMutations('dispose', [
+      'setDisposeList',
+      'setSelectedDisposeList',
+      'setReceivableAmount',
+    ]),
     initData() {
       //获取消费预览和诊疗项目数据
       // Promise.all()
@@ -218,15 +234,17 @@ export default {
     hideActionSheet() {
       this.showActionSheet = false
     },
-    //选择收费方式
+    //选择收费方式 跳转到对应的选择收费项目页面
     selectType(item) {
+      this.setSelectedDisposeList([])
+      this.setDisposeList([])
       this.setChargeType(item.type)
-      this.toSelectChargeProjects()
-    },
-    //选择收费项目
-    toSelectChargeProjects() {
+      let url = '/pages/charge/selectChargeTypes'
+      if (item.type !== 1) {
+        url = '/pages/charge/chargeProjectsTabs'
+      }
       uni.navigateTo({
-        url: '/pages/charge/selectChargeProjects',
+        url: url,
       })
     },
     //收欠费
@@ -243,7 +261,7 @@ export default {
       immediate: true,
     },
   },
-  components: { chargeItem, itemType, bottomWrap, chargeButton, actionSheet },
+  components: { chargeItem, itemType, bottomWrap, chargeButton },
 }
 </script>
 <style lang="scss" scoped>
@@ -343,7 +361,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  border-top: 1rpx solid #f2f2f2;
+  border-top: 1rpx solid #e5e5e5;
 }
 
 .action-item:first-child {

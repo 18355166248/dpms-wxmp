@@ -59,6 +59,7 @@
 <script>
 import systemAPI from '@/APIS/system.api'
 import { mapState } from 'vuex'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
   name: 'selectMedicalInstitution',
@@ -111,9 +112,14 @@ export default {
   },
   methods: {
     show() {
+      // 后台返回的机构信息memberCode可能为空 ，需要从登陆信息中获取
+      const loginInfo = getStorage(STORAGE_KEY.LOGIN_INFO)
       systemAPI
         .getInstitutionListScrm({
-          memberName: this.memberCode || this.medicalInstitution.memberCode,
+          memberName:
+            this.memberCode ||
+            this.medicalInstitution.memberCode ||
+            loginInfo.memberCode,
           username: this.username || this.staff.username,
         })
         .then((res) => {

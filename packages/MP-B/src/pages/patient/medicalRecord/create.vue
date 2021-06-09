@@ -24,26 +24,6 @@
           </div>
         </picker>
       </dpmsCell>
-      <!-- <dpmsCellPicker
-        title="就诊信息"
-        placeholder="暂无就诊信息"
-        v-model="form.registerId"
-        :list="registerList"
-        defaultType="registerId"
-        :defaultProps="{ label: 'registerLabel', value: 'registerId' }"
-        :disabled="!registerList.length"
-      >
-        <template #title>
-          <div @focus="ev => ev.stopPropagation()">
-            就诊信息
-            <dpmsDatetimePicker
-              isCell
-            >
-              <span class="iconfont icon-plus-circle addRegist" />
-            </dpmsDatetimePicker>
-          </div>
-        </template>
-      </dpmsCellPicker> -->
       <dpmsCellPicker
         title="医生"
         placeholder="请选择医生"
@@ -52,13 +32,6 @@
         defaultType="doctorId"
         v-model="form.doctorStaffId"
       />
-
-      <!--      <dpmsEnumsPicker-->
-      <!--        enumsKey="VisType"-->
-      <!--        v-model="form.medicalRecordRegisterVO.visType"-->
-      <!--        title="就诊类型"-->
-      <!--        placeholder="请选择就诊类型"-->
-      <!--      />-->
       <dpmsCellPicker
         :list="TreatmentTypes"
         v-model="form.visType"
@@ -430,6 +403,7 @@ import HistoryMedicalSelect from '@/businessComponents/MedicalSelect/HistorySele
 import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSelect.vue'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   components: {
@@ -469,11 +443,15 @@ export default {
     }
   },
   computed: {
+    ...mapState('medicalRecord', ['medicalRecordObj']),
     registerText() {
       return (
         (this.registerList &&
-          this.registerList.find((l) => l.registerId === this.form.registerId)
-            ?.registerLabel) ||
+          this.registerList.find(
+            (l) =>
+              l.registerId ===
+              (this.form.registerId || this.medicalRecordObj.registerId),
+          )?.registerLabel) ||
         ''
       )
     },
@@ -600,7 +578,13 @@ export default {
         icon: 'success',
       })
       uni.$emit('medicalRecordListUpdate')
-      this.$utils.back()
+      if (this.medicalRecordObj?.patientId) {
+        this.$utils.push({
+          url: `/pages/patient/medicalRecord/record?patientId=${this.medicalRecordObj?.patientId}`,
+        })
+      } else {
+        this.$utils.back()
+      }
       setTimeout(() => {
         this.$nextTick(() => {
           this.pending = false
@@ -725,9 +709,15 @@ export default {
     },
   },
   onLoad({ patientId, medicalRecordId }) {
-    this.patientId = patientId
-    this.medicalRecordId = medicalRecordId
-    this.getRegisterList({ patientId })
+    this.form = { ...this.form, ...this.medicalRecordObj }
+    this.patientId = patientId || this.medicalRecordObj?.patientId
+    this.medicalRecordId =
+      medicalRecordId || this.medicalRecordObj?.medicalRecordId
+    this.getRegisterList(
+      patientId
+        ? { patientId: patientId }
+        : { patientId: this.medicalRecordObj?.patientId },
+    )
     this.onTextareaChange()
     this.onEdit()
     this.getDoctors()
@@ -769,12 +759,14 @@ export default {
   display: flex;
   align-items: center;
 }
+
 .addRegist {
   color: #5cbb89;
   padding: 10rpx;
   display: block;
   font-size: 40rpx;
 }
+
 .text {
   padding-top: 18rpx;
   box-sizing: border-box;
@@ -782,6 +774,7 @@ export default {
   white-space: normal;
   width: 100%;
   color: rgba(0, 0, 0, 0.65);
+
   &:empty {
     &::before {
       content: attr(data-placeholder);
@@ -789,6 +782,7 @@ export default {
     }
   }
 }
+
 .teeth-select {
   display: flex;
   align-items: center;
@@ -796,10 +790,12 @@ export default {
   justify-content: space-between;
   padding-bottom: 32rpx;
   border-bottom: rgba(0, 0, 0, 0.15) solid 2rpx;
+
   .handle {
     padding: 32rpx 0;
     width: 570rpx;
   }
+
   .btn {
     flex: none;
     font-size: 28rpx;
@@ -809,6 +805,7 @@ export default {
     margin: 0 0 0 60rpx;
   }
 }
+
 .bottom-func {
   padding-top: 32rpx;
   color: #5cbb89;
@@ -816,17 +813,21 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+
   .iconfont {
     font-size: inherit;
     margin-right: 16rpx;
   }
 }
+
 .bottom {
   height: 90rpx;
+
   .inner {
     display: flex;
     height: 90rpx;
   }
+
   .funcs {
     width: 50%;
     display: flex;
@@ -837,11 +838,13 @@ export default {
     background: white;
     border-top: rgba(0, 0, 0, 0.15) solid 2rpx;
     text-align: center;
+
     .iconfont {
       color: #5cbb89;
       font-size: 36rpx;
     }
   }
+
   button {
     width: 50%;
     height: 100%;

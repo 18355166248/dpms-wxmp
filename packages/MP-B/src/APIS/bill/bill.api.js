@@ -1,6 +1,42 @@
 import httper from '../http'
 
 const billAPI = {
+  // 小程序-财务对账
+  calendarList(data) {
+    return httper.get('billing/stat/reconciliation/calendar/list', data)
+  },
+  calendarDetail(data) {
+    return httper.get('/billing/stat/reconciliation/calendar/detail', data)
+  },
+  getStatPage(data) {
+    return httper.get('/billing/project/detail/stat/page', data)
+  },
+  //
+  getOrderPage(data) {
+    return httper.get('/billing/stat/bill/order/page', data)
+  },
+  // 项目明细
+  getDetailStatPage(data) {
+    return httper.get('/billing/project/detail/stat/page', data)
+  },
+  payReconciliation(data) {
+    return httper.get(
+      '/pay/statement-manager/pay-style-reconciliation/list',
+      data,
+    )
+  },
+  // 交易明细
+  getItemStatPage(data) {
+    return httper.get('/billing/pay/item/stat/page', data)
+  },
+  // 项目明细
+  getDetailStatePage(data) {
+    return httper.get('/billing/project/detail/stat/page', data)
+  },
+  // 欠费患者
+  getArrearsList(data) {
+    return httper.get('/billing/stat/patient/arrears/list', data)
+  },
   //小程序-统计报表-营收报表-营收日报表
   revenueList(data) {
     return httper.get('billing/mini-apps/analyze/revenue/list', data)
@@ -81,6 +117,24 @@ const billAPI = {
   searchChargeItem(data) {
     return httper.get('billing/settings/charge-item/select-list/fuzzy', data)
   },
+  //获取套餐项目分类
+  getCategoryList(data) {
+    return httper.get(
+      'billing/settings/charge-package-type/category-list',
+      data,
+    )
+  },
+  //获取套餐下的收费项目
+  getPackageChargeItems(data) {
+    return httper.get(
+      'billing/settings/charge-package-item/selectByTypeId',
+      data,
+    )
+  },
+  //获取销售商品列表
+  getMerchandiseList(data) {
+    return httper.get('physical/merchandise/list-select', data)
+  },
   //支付方式
   getPayTypes(data) {
     return httper.get('pay/settings/pay-transaction-channel/list', data)
@@ -150,6 +204,17 @@ const billAPI = {
         'content-type': 'application/json',
       },
     })
+  },
+  //获取账单员工必填项设置
+  getChargeRequiredConfig(data) {
+    return httper.get('/billing/charge-required/select-config', data)
+  },
+  //获取查询结果
+  // getResultBySerialNoList(data) {
+  //   return httper.get("/pay/pay-order/select-by-pay-serial-no-list",data);
+  // }
+  getResultBySerialNoList(data) {
+    return httper.get('/billing/bill/pay/status', data)
   },
 }
 
