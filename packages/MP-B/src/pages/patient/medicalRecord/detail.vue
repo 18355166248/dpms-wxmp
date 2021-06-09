@@ -221,7 +221,7 @@ export default {
     // 获取自定义的就诊类型
     getCustomType(typeId) {
       if (this.TreatmentTypes.length) {
-        return this.TreatmentTypes.find((e) => e.codeId === typeId).name || ''
+        return this.TreatmentTypes.find((e) => e.codeId === typeId)?.name || ''
       } else {
         return ''
       }

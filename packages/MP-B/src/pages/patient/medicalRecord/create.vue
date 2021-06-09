@@ -646,10 +646,7 @@ export default {
         this.registerList[newRegisterIndex].registerTime = registerTime
         this.registerList[newRegisterIndex].registerLabel = registerLabel
       } else {
-        this.registerList = [
-          ...(this.registerList || []),
-          { registerId, registerTime, registerLabel },
-        ]
+        this.registerList.unshift({ registerId, registerTime, registerLabel })
       }
 
       this.form.registerId = registerId
@@ -666,7 +663,6 @@ export default {
           this.form.doctorStaffId = item.doctorStaffId
         }
       }
-      console.log(this.registerList[detail.value], '12323123')
     },
     historyMedicalChange(contents) {
       const keyP = {
@@ -756,7 +752,6 @@ export default {
     'form.registerId'(newVal) {
       if (newVal) {
         this.form.medicalRecordRegisterVO.createRegister = false
-        this.form.mainComplaint = ''
         this.registerList.forEach((ele) => {
           if (ele.registerId === Number(newVal)) {
             const { patientMainComplaintList } = ele
