@@ -55,8 +55,8 @@ export default {
       isAppt: false,
     }
   },
-  onLoad({ checked,isAppt }) {
-    this.isAppt = isAppt=="true";    
+  onLoad({ checked, isAppt }) {
+    this.isAppt = isAppt == 'true'
     if (checked) {
       this.checked = checked.split(',').map((v) => Number(v))
     }
