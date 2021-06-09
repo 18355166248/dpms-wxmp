@@ -642,8 +642,6 @@ export default {
       const newRegisterIndex = this.registerList.findIndex(
         (l) => l.registerId === registerId,
       )
-      console.log(this.registerList)
-      console.log('newRegisterIndex', newRegisterIndex)
       if (newRegisterIndex !== -1) {
         this.registerList[newRegisterIndex].registerTime = registerTime
         this.registerList[newRegisterIndex].registerLabel = registerLabel
