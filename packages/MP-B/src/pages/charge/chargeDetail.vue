@@ -89,8 +89,8 @@
 <script>
 import billAPI from '@/APIS/bill/bill.api'
 import chargeButton from './common/chargeButton'
-import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import { mapState } from 'vuex'
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 
 export default {
   data() {
