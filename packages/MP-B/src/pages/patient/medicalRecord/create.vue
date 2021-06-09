@@ -559,6 +559,9 @@ export default {
       this.pending = true
       this.$utils.showLoading('请稍后...')
       const clonedForm = JSON.parse(JSON.stringify(this.form))
+      // registerId 为-1 ，说明为自定义时间，但是给后端传-1 ，参数校验不通过，所以传null
+      if (clonedForm.registerId === -1) clonedForm.registerId = null
+
       // 复诊不传：现病史、既往史
       if (clonedForm.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
         delete clonedForm.presentIllnessHistory
@@ -576,6 +579,7 @@ export default {
           medicalRecordRegisterVO: {
             ...this.form.medicalRecordRegisterVO,
             visType: this.form.visType,
+            createRegister: clonedForm.registerId ? false : true,
           },
         }),
       })
@@ -632,13 +636,13 @@ export default {
       this.teethSync = detail.value
     },
     registNew({ dt }) {
-      const registerId = null
+      const registerId = -1
       const registerTime = moment(dt).valueOf()
       const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
       const newRegisterIndex = this.registerList.indexOf(
         (l) => l.registerId === registerId,
       )
-      if (newRegisterIndex !== null) {
+      if (newRegisterIndex !== -1) {
         this.registerList = this.registerList.filter(
           (l) => l.registerId !== registerId,
         )
@@ -755,7 +759,7 @@ export default {
         this.registerList.forEach((ele) => {
           if (ele.registerId === Number(newVal)) {
             const { patientMainComplaintList } = ele
-            if (patientMainComplaintList.length > 0) {
+            if (patientMainComplaintList?.length > 0) {
               this.form.mainComplaint = patientMainComplaintList
                 .map((ele) => ele.content)
                 .join('，')
