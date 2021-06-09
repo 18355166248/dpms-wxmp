@@ -27,14 +27,18 @@
         {{ detail.doctorStaffName || '' }}
       </div>
       <div class="row">
+        <div class="label">就诊类型：</div>
+        {{ visTypeMap[detail.visType].zh_CN || '' }}
+      </div>
+      <div class="row">
         <div class="label">主诉：</div>
         {{ detail.mainComplaint || '' }}
       </div>
-      <div class="row">
+      <div class="row" v-if="detail.visType !== 2">
         <div class="label">现病史：</div>
         {{ detail.presentIllnessHistory || '' }}
       </div>
-      <div class="row">
+      <div class="row" v-if="detail.visType !== 2">
         <div class="label">既往史：</div>
         {{ detail.pastIllnessHistory || '' }}
       </div>
@@ -200,6 +204,7 @@ export default {
       currentStaffApproveType: 0,
       detail: {},
       approveRemark: '',
+      visTypeMap: this.$utils.getEnums('VisType').properties,
     }
   },
   methods: {

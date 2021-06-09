@@ -558,6 +558,12 @@ export default {
       if (this.pending) return
       this.pending = true
       this.$utils.showLoading('请稍后...')
+      const clonedForm = JSON.parse(JSON.stringify(this.form))
+      // 复诊不传：现病史、既往史
+      if (clonedForm.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
+        delete clonedForm.presentIllnessHistory
+        delete clonedForm.pastIllnessHistory
+      }
       await diagnosisAPI[
         this.medicalRecordId ? 'updateMedicalRecord' : 'createMedicalRecord'
       ]({
@@ -566,7 +572,7 @@ export default {
           patientId: this.patientId,
           medicalInstitutionId: getStorage(STORAGE_KEY.MEDICALINSTITUTION)
             .medicalInstitutionId,
-          ...this.form,
+          ...clonedForm,
           medicalRecordRegisterVO: {
             ...this.form.medicalRecordRegisterVO,
             visType: this.form.visType,
@@ -645,7 +651,17 @@ export default {
       this.form.medicalRecordRegisterVO.registerTime = registerTime
     },
     registerChange({ detail }) {
-      this.form.registerId = this.registerList[detail.value].registerId
+      const item = this.registerList[detail.value]
+      // 这里为医生、就诊类型未根据选择的就诊时间联动
+      // 存在 doctorStaffId 为 -1 的情况, 这种老数据暂时未做处理
+      if (item) {
+        this.form.registerId = item.registerId
+        this.form.visType = item.visType
+        if (item.doctorStaffId && item.doctorStaffId !== -1) {
+          this.form.doctorStaffId = item.doctorStaffId
+        }
+      }
+      console.log(this.registerList[detail.value], '12323123')
     },
     historyMedicalChange(contents) {
       const keyP = {
