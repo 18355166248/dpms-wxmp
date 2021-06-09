@@ -184,6 +184,18 @@
           </view>
           <view
             class="menu-area-item"
+            @click="openBillPopup"
+            v-if="menuPermission(['report-center', 'finance-reconclie'])"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color8">
+              <text class="iconfont icon-bill-fill"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              财务对账
+            </view>
+          </view>
+          <view
+            class="menu-area-item"
             @click="openAchPopup"
             v-if="menuPermission(['report-center', 'performance'])"
           >
@@ -201,10 +213,14 @@
       ref="selectMedicalInstitution"
       @confirm="selectClinic"
     ></selectMedicalInstitution>
-    <achevementpopup
-      ref="achevementpopup"
-      id="achevementpopup"
-    ></achevementpopup>
+    <achevementpopup ref="achevementpopup" id="achevementpopup" />
+    <actionSheet
+      background="#fff"
+      @close="showActionSheet = false"
+      v-if="showActionSheet"
+    >
+      <billReport @closeModal="showActionSheet = false" />
+    </actionSheet>
   </view>
 </template>
 
@@ -221,12 +237,14 @@ import dropDown from './dropDown.vue'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { mapState } from 'vuex'
 import { setCustomOpenId } from '@/utils/utils'
+import billReport from '@/pages/home/billReport'
 
 export default {
   components: {
     navBar,
     toggle,
     dropDown,
+    billReport,
   },
   data() {
     return {
@@ -267,6 +285,7 @@ export default {
         isStatisticsShow: false,
         isReportShow: false,
       },
+      showActionSheet: false,
     }
   },
   onShareAppMessage() {
@@ -295,16 +314,16 @@ export default {
       const { menuList, pageElementsList } = this.menu
 
       this.iconShow.isStatisticsShow =
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11004'
         }) > -1 ||
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11003'
         }) > -1 ||
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11002'
         }) > -1 ||
-        pageElementsList.findIndex((v) => {
+        pageElementsList?.findIndex((v) => {
           return v.enumValue === '11001'
         }) > -1
 
@@ -392,6 +411,9 @@ export default {
     },
     openAchPopup() {
       this.$refs.achevementpopup.open()
+    },
+    openBillPopup() {
+      this.showActionSheet = true
     },
     toUrl(url) {
       this.$utils.push({
@@ -659,6 +681,10 @@ export default {
         }
         &-icon-color7 {
           $values: #bfdf27, #8bbb11;
+          @include colors($values...);
+        }
+        &-icon-color8 {
+          $values: #ff8487, #ff4d4f;
           @include colors($values...);
         }
         &-txt {

@@ -21,6 +21,9 @@
               <div class="edit-price" style="flex: 1;">
                 ¥{{ item.unitAmount }}
               </div>
+              <div class="unit" v-if="item.unit">
+                {{ item.unit }}
+              </div>
               <div
                 @click="onEditPirce(item)"
                 v-if="btnPremisstion('changes_unit_price') || chargeType === 1"
@@ -42,6 +45,27 @@
         <div class="row-2 flex-v-center">
           是否整单折扣: {{ item.allBillDiscount ? '是' : '否' }}
         </div>
+        <!--牙位图组件-->
+        <div class="teeth-select" v-if="chargeType === 3">
+          <!--牙位 -->
+          <div class="flex">
+            <div class="label">牙位：</div>
+            <TeethSelect class="teeth" @input="setTeethSelect($event, item)" />
+          </div>
+          <!--处置说明 -->
+          <div class="flex">
+            <span class="label2">处置说明：</span>
+            <div class="memo">
+              <textarea
+                v-model="item.toothPositionDesc"
+                auto-height
+                placeholder="请输入处置说明"
+                placeholder-style="font-size: 28rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+                :maxlength="500"
+              />
+            </div>
+          </div>
+        </div>
       </div>
       <dpmsCellInput
         :disabledProps="
@@ -62,7 +86,7 @@
         "
         title="折后金额(¥)"
         :value="receivableAmount"
-        @input="onReceivableAmount"
+        @blur="onReceivableAmount"
         type="digit"
       />
     </div>
@@ -74,7 +98,12 @@
       </div>
     </div>
     <u-toast ref="uToast" />
-    <u-modal v-model="showEditPrice" confirm-color='#5CBB89' @confirm="confirmPrice" title="请输入单价">
+    <u-modal
+      v-model="showEditPrice"
+      confirm-color="#5CBB89"
+      @confirm="confirmPrice"
+      title="请输入单价"
+    >
       <view class="slot-content">
         <dpmsCellInput
           title="单价(¥)"
@@ -89,9 +118,12 @@
 <script>
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import { mapMutations, mapState } from 'vuex'
-
+import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 export default {
   name: 'chargeProjectsList',
+  components: {
+    TeethSelect,
+  },
   data() {
     return {
       mainOrderDiscount: 100,
@@ -100,6 +132,7 @@ export default {
     }
   },
   onShow() {
+    console.log(this.chargeType)
     if (!this.receivableAmount) {
       // 如果没有receivableAmount，需要计算
       this.calculateAmount()
@@ -157,6 +190,23 @@ export default {
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
     ]),
+    //牙位图数据
+    setTeethSelect(value, item) {
+      console.log(value.teeth)
+      const toothTemp = {
+        teeth: {},
+        activatedToothNumber: null,
+      }
+      console.log(Object.keys(value.teeth))
+      Object.keys(value.teeth).forEach((x) => {
+        console.log(value.teeth[x])
+        toothTemp.teeth[x] = value.teeth[x]
+        toothTemp.activatedToothNumber = x
+      })
+      console.log(toothTemp)
+      item.toothPosition = toothTemp
+      item.toothPositionStr = toothTemp
+    },
     onNextStep() {
       // 保存vuex并跳转
       if (this.disposeList.length === 0) {
@@ -190,6 +240,7 @@ export default {
       let record = this.activeRecord
       record.unitAmount = this.tempValue
       record.totalAmount = BigCalculate(record.itemNum, '*', record.unitAmount)
+      record.singleDiscountAfterAmount = record.totalAmount
       this.activeRecord = {}
       this.calculateAmount()
     },
@@ -206,7 +257,6 @@ export default {
           result = BigCalculate(result, '+', value)
         }
       })
-
       this.setReceivableAmount(changeTwoDecimal(result))
     },
     calculateDiscount() {
@@ -334,13 +384,13 @@ export default {
           this.setReceivableAmount(changeTwoDecimal(maxPrice))
           this.calculateDiscount()
         })
-      } else if(v === '' || v===undefined){
-            this.setReceivableAmount('-')
-            this.$nextTick(() => {
-              this.setReceivableAmount(changeTwoDecimal(minPrice))
-              this.calculateDiscount()
-            })
-      }else {
+      } else if (v === '' || v === undefined) {
+        this.setReceivableAmount('-')
+        this.$nextTick(() => {
+          this.setReceivableAmount(changeTwoDecimal(minPrice))
+          this.calculateDiscount()
+        })
+      } else {
         if (v !== value) {
           this.setReceivableAmount(v)
           this.$nextTick(() => {
@@ -381,8 +431,7 @@ export default {
 
     .disposal-item {
       width: 750rpx;
-      height: 240rpx;
-      padding: 32rpx;
+      padding: 32rpx 32rpx 0;
       box-sizing: border-box;
       background: #fff;
       margin-bottom: 14rpx;
@@ -395,6 +444,7 @@ export default {
           height: 96rpx;
           font-size: 34rpx;
           color: #191919;
+          font-weight: 500;
         }
 
         .action {
@@ -405,6 +455,11 @@ export default {
             justify-content: flex-end;
             color: #7f7f7f;
             font-size: 28rpx;
+          }
+          .unit {
+            color: #595959;
+            font-size: 28rpx;
+            padding-left: 8rpx;
           }
 
           .edit-icon-style {
@@ -422,6 +477,49 @@ export default {
         line-height: 32rpx;
         font-size: 28rpx;
         color: #595959;
+        margin: 16rpx 0 32rpx 0;
+      }
+      .teeth-select {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 32rpx 0;
+        box-sizing: border-box;
+        border-top: 1rpx solid #e5e5e5;
+        .flex {
+          display: flex;
+          width: 100%;
+          color: #4c4c4c;
+          .label {
+            width: 116rpx;
+            flex-shrink: 0;
+            color: #191919;
+          }
+          .teeth {
+            width: 100%;
+          }
+          .label2 {
+            width: 182rpx;
+            flex-shrink: 0;
+            color: #191919;
+            line-height: 1.2;
+            font-size: 28rpx;
+          }
+          .memo {
+            flex-grow: 2;
+            width: 500rpx;
+            textarea {
+              width: 100%;
+              line-height: 1.2;
+              font-size: 28rpx;
+            }
+          }
+        }
+        .flex:last-child {
+          padding-top: 16rpx;
+        }
       }
     }
   }

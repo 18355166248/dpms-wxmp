@@ -42,8 +42,11 @@
             <text class="iconfont icon-close"></text>
           </view>
         </label>
-        <label>
+        <label style="position: relative;">
           <text class="iconfont icon-password mr-20" />
+          <!--  ios系统 置于passward input 前面的一个textinput框会有类型错误的bug（导致不能切换第三方输入法）
+           这个input不做实际用 ，仅仅隐藏起来作为一个占位-->
+          <input style="position: absolute; z-index: -1;" />
           <input
             password
             placeholder="请输入密码"

@@ -79,6 +79,7 @@
               height: checkColWidth * 0.5 + 'rpx',
               backgroundColor: checkerBoxBgColor,
               border: '1px solid ' + checkerBorderColor,
+              boxSizing: 'borderBox',
             }"
           >
             <text
@@ -167,16 +168,7 @@
         </view>
       </view>
       <view class="wyb-table-content">
-        <view
-          v-if="computedCol.length !== 0"
-          class="wyb-table-content-line"
-          :style="{
-            position: bottomComputedFixed ? 'sticky' : 'static',
-            bottom: 0,
-            zIndex: 25,
-            borderTop: '1px solid' + borderColor,
-          }"
-        >
+        <view v-if="computedCol.length !== 0" class="wyb-table-content-line">
           <view
             class="wyb-table-content-item"
             v-if="enableCheck"
@@ -274,6 +266,7 @@
                 height: checkColWidth * 0.5 + 'rpx',
                 backgroundColor: checkerBoxBgColor,
                 border: '1px solid ' + checkerBorderColor,
+                boxSizing: 'borderBox',
               }"
             >
               <text
@@ -369,6 +362,7 @@
 import Pinyin from './js/characterToPinyin.js'
 import { isEqual } from './js/objEqual.js'
 import { mapState } from 'vuex'
+import { numberUtils } from '@/utils/utils'
 
 export default {
   onReachBottom() {
@@ -476,8 +470,9 @@ export default {
             total += parseFloat(num)
           })
           bottomComputed[this.computedCol[index]] =
-            this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
-            this.$utils.formatPrice(total)
+            numberUtils.thousandFormatter(
+              this.summary[this.computedCol[index]],
+            ) || numberUtils.thousandFormatter(total)
         })
         let header = this.headers[index]
         let result = this.computedCol.includes(header.key)
@@ -937,9 +932,9 @@ export default {
     let pagerWidth = 0
     this.headers.forEach((v) => {
       if (v.width) {
-        pagerWidth += v.width
+        pagerWidth += v.width - 1
       } else {
-        pagerWidth += this.defaultColWidth
+        pagerWidth += this.defaultColWidth - 1
       }
     })
     this.pagerWidth = (pagerWidth - 750) / Number(this.headers.length)
@@ -1040,8 +1035,9 @@ export default {
           total += parseFloat(num)
         })
         result[this.computedCol[index]] =
-          this.$utils.formatPrice(this.summary[this.computedCol[index]]) ||
-          this.$utils.formatPrice(total)
+          numberUtils.thousandFormatter(
+            this.summary[this.computedCol[index]],
+          ) || numberUtils.thousandFormatter(total)
       })
       this.bottomComputed = result
     },
@@ -1305,6 +1301,7 @@ export default {
 @import './css/loader.css';
 
 .wyb-table-box {
+  word-break: break-all;
   .ios-header-bug {
     height: 0;
     width: 1px;
@@ -1332,7 +1329,6 @@ export default {
   }
 
   .wyb-table-header {
-    position: sticky;
     top: 0;
     display: grid;
     grid-auto-flow: column;
@@ -1346,6 +1342,7 @@ export default {
     align-items: center;
     box-sizing: border-box;
     position: relative;
+    word-break: break-all;
   }
 
   .wyb-table-header-icon {
@@ -1365,6 +1362,7 @@ export default {
     flex-direction: row;
     align-items: center;
     box-sizing: border-box;
+    padding: 20rpx;
   }
 
   .wyb-table-checkbox {

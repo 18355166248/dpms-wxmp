@@ -52,6 +52,7 @@
         @click="
           toPage('/pages/charge/chargeDetail', {
             billSerialNo: order.billSerialNo,
+            createYouSelf: order.createYouSelf,
           })
         "
         v-for="order in chargedList"
