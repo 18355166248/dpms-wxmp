@@ -49,7 +49,7 @@
           <input style="position: absolute; z-index: -1;" disabled />
           <input
             password
-            placeholder="请输入密码1"
+            placeholder="请输入密码"
             placeholder-style="color:rgba(0,0,0,0.25)"
             v-model="loginForm.password"
             @blur="handleBlur('password')"
