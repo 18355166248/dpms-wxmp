@@ -147,6 +147,17 @@
               患者
             </view>
           </view>
+          <view
+            class="menu-area-item"
+            @click="toUrl('/baseSubpackages/menuModification/menuModification')"
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color3">
+              <text class="iconfont icon-whole"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              全部
+            </view>
+          </view>
         </view>
       </view>
 

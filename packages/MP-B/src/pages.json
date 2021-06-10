@@ -278,6 +278,18 @@
       ]
     },
     {
+      "root": "baseSubpackages/menuModification",
+      "name": "menuModification",
+      "pages": [
+        {
+          "path": "menuModification",
+          "style": {
+            "navigationBarTitleText": "功能排序"
+          }
+        }
+      ]
+    },
+    {
       "root": "pages/achievement",
       "name": "doctor",
       "pages": [
@@ -541,6 +553,10 @@
     "baseSubpackages/apptView/apptView": {
       "network": "all",
       "packages": ["apptForm"]
+    },
+    "pages/home/home": {
+      "network": "all",
+      "packages": ["baseSubpackages/menuModification"]
     }
   },
   "globalStyle": {
