@@ -37,6 +37,10 @@ const institutionAPI = {
   details(data) {
     return httper.get('institution/current/details', data)
   },
+  // 机构切换
+  switchInstitution(data) {
+    return httper.get('institution/current/switch', data)
+  },
   getStaffListByPositionFromAllInstitution(data) {
     return httper.get('institution/staff/list/position-all-institution', data)
   },
