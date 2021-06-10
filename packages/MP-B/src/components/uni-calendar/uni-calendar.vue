@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import Calendar from './util.js'
 import calendarItem from './uni-calendar-item.vue'
 /**
@@ -313,10 +314,54 @@ export default {
       })
     },
     chooseDate(name) {
-      this.activeView = name
-      // tab选择需要清除日期状态
+      let beginTime = ''
+      let endTime = ''
+      switch (name) {
+        case 'today':
+          this.current()
+          beginTime = moment().startOf('day').format('YYYY-MM-DD')
+          break
+        case 'yesterday':
+          this.current()
+          beginTime = moment()
+            .subtract(1, 'day')
+            .startOf('day')
+            .format('YYYY-MM-DD')
+          break
+        case 'thisMonth':
+          this.current()
+          beginTime = moment().startOf('month').format('YYYY-MM-DD')
+          endTime = moment().endOf('month').format('YYYY-MM-DD')
+          break
+        case 'lastMonth':
+          this.pre()
+          beginTime = moment()
+            .subtract(1, 'month')
+            .startOf('month')
+            .format('YYYY-MM-DD')
+          endTime = moment()
+            .subtract(1, 'month')
+            .endOf('month')
+            .format('YYYY-MM-DD')
+          break
+        default:
+          break
+      }
+
+      // 先清空日历状态
       this.cale.cleanMultipleStatus()
-      this.init(this.date)
+      // 区分单日和区间
+      if (endTime) {
+        this.cale.setTwoStatus(beginTime, endTime)
+        this.cale.setDate(beginTime)
+        this.cale.setDate(endTime)
+      } else {
+        this.cale.setMultiple(beginTime)
+        this.cale.setDate(beginTime)
+      }
+      this.change()
+      this.weeks = this.cale.weeks
+      this.activeView = name
       uni.$emit('chooseCalendarOption', name)
       this.close()
     },
@@ -368,6 +413,14 @@ export default {
       }
       this.cale.setMultiple(date)
       this.weeks = this.cale.weeks
+    },
+    /**
+     * 当前月
+     */
+    current() {
+      const currentDate = this.cale.getDate(new Date()).fullDate
+      this.setDate(currentDate)
+      this.monthSwitch()
     },
     /**
      * 上个月
