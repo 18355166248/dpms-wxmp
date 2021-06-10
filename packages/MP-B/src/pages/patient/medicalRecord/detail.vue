@@ -28,7 +28,7 @@
       </div>
       <div class="row">
         <div class="label">就诊类型：</div>
-        {{ visTypeMap[detail.visType].zh_CN || '' }}
+        {{ visTypeMap[detail.visType].zh_CN || getCustomType(detail.visType) }}
       </div>
       <div class="row">
         <div class="label">主诉：</div>
@@ -205,10 +205,27 @@ export default {
       detail: {},
       approveRemark: '',
       visTypeMap: this.$utils.getEnums('VisType').properties,
+      TreatmentTypes: [], // 就诊类型
     }
   },
   methods: {
     ...mapMutations('medicalRecord', ['setMedicalRecordObj']),
+    // 获取就诊类型列表
+    initTreatmentTypes() {
+      diagnosisAPI.getTreatmentTypes().then((res) => {
+        if (res?.data?.length > 0) {
+          this.TreatmentTypes = res.data
+        }
+      })
+    },
+    // 获取自定义的就诊类型
+    getCustomType(typeId) {
+      if (this.TreatmentTypes.length) {
+        return this.TreatmentTypes.find((e) => e.codeId === typeId)?.name || ''
+      } else {
+        return ''
+      }
+    },
     async getRole() {
       const res = await diagnosisAPI.getRole({})
       this.currentStaffApproveType = res?.data?.currentStaffApproveType
@@ -307,6 +324,7 @@ export default {
   onLoad({ medicalRecordId, patientId }) {
     this.medicalRecordId = medicalRecordId
     this.patientId = patientId
+    this.initTreatmentTypes()
   },
   onShow() {
     this.getRole()

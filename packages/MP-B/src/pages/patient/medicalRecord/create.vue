@@ -559,6 +559,9 @@ export default {
       this.pending = true
       this.$utils.showLoading('请稍后...')
       const clonedForm = JSON.parse(JSON.stringify(this.form))
+      // registerId 为-1 ，说明为自定义时间，但是给后端传-1 ，参数校验不通过，所以传null
+      if (clonedForm.registerId === -1) clonedForm.registerId = null
+
       // 复诊不传：现病史、既往史
       if (clonedForm.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
         delete clonedForm.presentIllnessHistory
@@ -576,6 +579,7 @@ export default {
           medicalRecordRegisterVO: {
             ...this.form.medicalRecordRegisterVO,
             visType: this.form.visType,
+            createRegister: clonedForm.registerId ? false : true,
           },
         }),
       })
@@ -632,26 +636,33 @@ export default {
       this.teethSync = detail.value
     },
     registNew({ dt }) {
-      const registerId = null
+      const registerId = -1
       const registerTime = moment(dt).valueOf()
       const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
-      const newRegisterIndex = this.registerList.indexOf(
+      const newRegisterIndex = this.registerList.findIndex(
         (l) => l.registerId === registerId,
       )
-      if (newRegisterIndex !== null) {
-        this.registerList = this.registerList.filter(
-          (l) => l.registerId !== registerId,
-        )
+      if (newRegisterIndex !== -1) {
+        this.registerList[newRegisterIndex].registerTime = registerTime
+        this.registerList[newRegisterIndex].registerLabel = registerLabel
+      } else {
+        this.registerList.unshift({ registerId, registerTime, registerLabel })
       }
-      this.registerList = [
-        ...(this.registerList || []),
-        { registerId, registerTime, registerLabel },
-      ]
+
       this.form.registerId = registerId
       this.form.medicalRecordRegisterVO.registerTime = registerTime
     },
     registerChange({ detail }) {
-      this.form.registerId = this.registerList[detail.value].registerId
+      const item = this.registerList[detail.value]
+      // 这里为医生、就诊类型未根据选择的就诊时间联动
+      // 存在 doctorStaffId 为 -1 的情况, 这种老数据暂时未做处理
+      if (item) {
+        this.form.registerId = item.registerId
+        this.form.visType = item.visType
+        if (item.doctorStaffId && item.doctorStaffId !== -1) {
+          this.form.doctorStaffId = item.doctorStaffId
+        }
+      }
     },
     historyMedicalChange(contents) {
       const keyP = {
@@ -741,11 +752,10 @@ export default {
     'form.registerId'(newVal) {
       if (newVal) {
         this.form.medicalRecordRegisterVO.createRegister = false
-        this.form.mainComplaint = ''
         this.registerList.forEach((ele) => {
           if (ele.registerId === Number(newVal)) {
             const { patientMainComplaintList } = ele
-            if (patientMainComplaintList.length > 0) {
+            if (patientMainComplaintList?.length > 0) {
               this.form.mainComplaint = patientMainComplaintList
                 .map((ele) => ele.content)
                 .join('，')
