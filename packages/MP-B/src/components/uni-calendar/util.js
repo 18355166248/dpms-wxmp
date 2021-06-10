@@ -279,6 +279,19 @@ class Calendar {
     this._getWeek(data)
   }
 
+  setTwoStatus(start, end) {
+    if (!start || !end) return
+    if (this.dateCompare(start, end)) {
+      this.multipleStatus.before = start
+      this.multipleStatus.after = end
+      this.multipleStatus.data = this.geDateAll(start, end)
+    } else {
+      this.multipleStatus.before = end
+      this.multipleStatus.after = start
+      this.multipleStatus.data = this.geDateAll(end, start)
+    }
+  }
+
   /**
    *  获取多选状态
    */
