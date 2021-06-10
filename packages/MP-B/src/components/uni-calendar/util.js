@@ -40,7 +40,7 @@ class Calendar {
   /**
    * 重置开始日期
    */
-  resetSatrtDate(startDate) {
+  resetStartDate(startDate) {
     // 范围开始
     this.startDate = startDate
   }
