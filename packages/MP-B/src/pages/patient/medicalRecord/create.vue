@@ -479,6 +479,13 @@ export default {
         // 如果有就诊记录，那就证明是复诊
         // this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
         this.form.medicalRecordRegisterVO.visType = this.registerList[0].visType
+        // 如果第一条有医生id，且医生id不为-1 ，即存在，就默认选中当前就诊记录上的医生
+        if (
+          this.registerList[0].doctorStaffId &&
+          this.registerList[0].doctorStaffId !== -1
+        ) {
+          this.form.doctorStaffId = this.registerList[0].doctorStaffId
+        }
         this.form.visType = this.registerList[0].visType
         const { patientMainComplaintList } = this.registerList[0]
         if (
