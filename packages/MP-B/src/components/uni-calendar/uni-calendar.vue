@@ -20,6 +20,11 @@
             >取消</text
           >
         </view>
+        <view class="uni-calendar__header-btn-box" @click="clear">
+          <text class="uni-calendar__header-text uni-calendar--fixed-width"
+            >清空</text
+          >
+        </view>
         <view class="uni-calendar__header-btn-box" @click="confirm">
           <text class="uni-calendar__header-text uni-calendar--fixed-width"
             >确定</text
@@ -27,16 +32,28 @@
         </view>
       </view>
       <view class="uni-calendar__header" style="justify-content: flex-start;">
-        <view @click="chooseDate('today')" class="uni-calendar__option"
+        <view
+          @click="chooseDate('today')"
+          class="uni-calendar__option"
+          :class="{ 'active-view': activeView === 'today' }"
           >今天</view
         >
-        <view class="uni-calendar__option" @click="chooseDate('yesterday')"
+        <view
+          class="uni-calendar__option"
+          :class="{ 'active-view': activeView === 'yesterday' }"
+          @click="chooseDate('yesterday')"
           >昨天</view
         >
-        <view class="uni-calendar__option" @click="chooseDate('thisMonth')"
+        <view
+          class="uni-calendar__option"
+          :class="{ 'active-view': activeView === 'thisMonth' }"
+          @click="chooseDate('thisMonth')"
           >本月</view
         >
-        <view class="uni-calendar__option" @click="chooseDate('lastMonth')"
+        <view
+          class="uni-calendar__option"
+          :class="{ 'active-view': activeView === 'lastMonth' }"
+          @click="chooseDate('lastMonth')"
           >上月</view
         >
       </view>
@@ -112,6 +129,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import Calendar from './util.js'
 import calendarItem from './uni-calendar-item.vue'
 /**
@@ -185,6 +203,7 @@ export default {
       calendar: {},
       nowDate: '',
       aniMaskShow: false,
+      activeView: '',
     }
   },
   watch: {
@@ -193,7 +212,7 @@ export default {
       this.init(newVal)
     },
     startDate(val) {
-      this.cale.resetSatrtDate(val)
+      this.cale.resetStartDate(val)
     },
     endDate(val) {
       this.cale.resetEndDate(val)
@@ -222,7 +241,6 @@ export default {
     clean() {},
     bindDateChange(e) {
       const value = e.detail.value + '-1'
-      console.log(this.cale.getDate(value))
       this.init(value)
     },
     /**
@@ -264,6 +282,14 @@ export default {
       })
     },
     /**
+     * 清空当前选择
+     */
+    clear() {
+      this.activeView = ''
+      this.cale.cleanMultipleStatus()
+      this.init(this.date)
+    },
+    /**
      * 确认按钮
      */
     confirm() {
@@ -288,6 +314,54 @@ export default {
       })
     },
     chooseDate(name) {
+      let beginTime = ''
+      let endTime = ''
+      switch (name) {
+        case 'today':
+          this.current()
+          beginTime = moment().startOf('day').format('YYYY-MM-DD')
+          break
+        case 'yesterday':
+          this.current()
+          beginTime = moment()
+            .subtract(1, 'day')
+            .startOf('day')
+            .format('YYYY-MM-DD')
+          break
+        case 'thisMonth':
+          this.current()
+          beginTime = moment().startOf('month').format('YYYY-MM-DD')
+          endTime = moment().endOf('month').format('YYYY-MM-DD')
+          break
+        case 'lastMonth':
+          this.pre()
+          beginTime = moment()
+            .subtract(1, 'month')
+            .startOf('month')
+            .format('YYYY-MM-DD')
+          endTime = moment()
+            .subtract(1, 'month')
+            .endOf('month')
+            .format('YYYY-MM-DD')
+          break
+        default:
+          break
+      }
+
+      // 先清空日历状态
+      this.cale.cleanMultipleStatus()
+      // 区分单日和区间
+      if (endTime) {
+        this.cale.setTwoStatus(beginTime, endTime)
+        this.cale.setDate(beginTime)
+        this.cale.setDate(endTime)
+      } else {
+        this.cale.setMultiple(beginTime)
+        this.cale.setDate(beginTime)
+      }
+      this.change()
+      this.weeks = this.cale.weeks
+      this.activeView = name
       uni.$emit('chooseCalendarOption', name)
       this.close()
     },
@@ -313,6 +387,7 @@ export default {
      */
     choiceDate(weeks) {
       if (weeks.disable) return
+      this.activeView = ''
       this.calendar = weeks
       // 设置多选
       this.cale.setMultiple(this.calendar.fullDate)
@@ -323,11 +398,29 @@ export default {
      * 回到今天
      */
     backtoday() {
-      console.log(this.cale.getDate(new Date()).fullDate)
       let date = this.cale.getDate(new Date()).fullDate
-      // this.cale.setDate(date)
+      // 需先清空状态
+      this.activeView = ''
+      this.cale.cleanMultipleStatus()
       this.init(date)
       this.change()
+      // 兼容重复点击“回到今天”
+      if (
+        this.cale.multipleStatus.before === date &&
+        !this.cale.multipleStatus.after
+      ) {
+        return
+      }
+      this.cale.setMultiple(date)
+      this.weeks = this.cale.weeks
+    },
+    /**
+     * 当前月
+     */
+    current() {
+      const currentDate = this.cale.getDate(new Date()).fullDate
+      this.setDate(currentDate)
+      this.monthSwitch()
     },
     /**
      * 上个月
@@ -384,8 +477,12 @@ export default {
 }
 
 .uni-calendar__option {
-  padding-left: 32rpx;
-  padding-right: 32rpx;
+  padding: 5rpx 25rpx;
+  border-radius: 5rpx;
+}
+
+.active-view {
+  background-color: #5cbb89;
 }
 
 .uni-calendar--mask-show {

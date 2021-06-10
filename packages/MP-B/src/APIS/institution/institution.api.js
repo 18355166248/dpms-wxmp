@@ -37,6 +37,10 @@ const institutionAPI = {
   details(data) {
     return httper.get('institution/current/details', data)
   },
+  // 机构切换
+  switchInstitution(data) {
+    return httper.get('institution/current/switch', data)
+  },
   getStaffListByPositionFromAllInstitution(data) {
     return httper.get('institution/staff/list/position-all-institution', data)
   },
@@ -57,6 +61,14 @@ const institutionAPI = {
   },
   getPermission(data) {
     return httper.get('institution/permission/query', data)
+  },
+  // 获取指定机构各岗位的员工信息
+  getInstitutionStaffList(data) {
+    return httper.post('institution/staff/get/list/position', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
   },
 }
 

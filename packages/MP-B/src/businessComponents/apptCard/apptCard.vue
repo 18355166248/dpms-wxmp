@@ -108,7 +108,7 @@ export default {
       })
     },
     getGender(gender) {
-      return this.GENDER_ENUM.properties[gender].text.zh_CN
+      return this.GENDER_ENUM.properties[gender]?.text.zh_CN || '未知'
     },
     getApptTime() {
       return `${moment(this.appt.appointmentBeginTimeStamp).format(

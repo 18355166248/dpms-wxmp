@@ -37,7 +37,7 @@ export function appointment2schedulerResource(data) {
     }
 
     // subtitle为性别和诊断类型
-    let subTitle = GENDER_ENUM.properties[d.patient.gender].text.zh_CN
+    let subTitle = GENDER_ENUM.properties[d.patient.gender]?.text.zh_CN || '未知'
     if (d.visTypeName) {
       subTitle = subTitle + ',' + d.visTypeName
     }
@@ -61,6 +61,7 @@ export function appointment2schedulerResource(data) {
       cardStyle: 'border-left:4px solid #5cbb89; background:#fff',
       begin: d.appointmentBeginTime,
       end: d.appointmentEndTime,
+      flag: d.acrossInstitutionAppointmentFlag ? '跨' : undefined,
     }
   })
 }

@@ -177,6 +177,7 @@ export default {
     font-size: 28rpx;
     height: calc(100% - 110rpx);
     .tabs {
+      height: calc(100% - 80rpx);
       background: #f0f0f0;
       width: 250rpx;
       flex: none;
@@ -204,6 +205,7 @@ export default {
       }
     }
     .content {
+      height: calc(100% - 100rpx);
       color: #191919;
       padding: 16rpx;
       flex: auto;

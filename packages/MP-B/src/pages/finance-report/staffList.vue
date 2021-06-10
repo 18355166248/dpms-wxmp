@@ -51,12 +51,12 @@ export default {
           this.checked = this.doctor.doctorIds
             .split(',')
             .map((item) => Number(item))
-            .filter(item => item)
+            .filter((item) => item)
         } else if (name === 'consultant') {
           this.checked = this.consultant.consultantIds
             .split(',')
             .map((item) => Number(item))
-            .filter(item => item)
+            .filter((item) => item)
         }
       })
       .finally(() => {
