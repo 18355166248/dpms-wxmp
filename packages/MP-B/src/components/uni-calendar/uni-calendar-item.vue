@@ -5,8 +5,6 @@
       'uni-calendar-item--disable': weeks.disable,
       'uni-calendar-item--isDay':
         calendar.fullDate === weeks.fullDate && weeks.isDay,
-      'uni-calendar-item--checked':
-        calendar.fullDate === weeks.fullDate && !weeks.isDay,
       'uni-calendar-item--before-checked': weeks.beforeMultiple,
       'uni-calendar-item--multiple': weeks.multiple,
       'uni-calendar-item--after-checked': weeks.afterMultiple,
@@ -24,8 +22,6 @@
           'uni-calendar-item--isDay-text': weeks.isDay,
           'uni-calendar-item--isDay':
             calendar.fullDate === weeks.fullDate && weeks.isDay,
-          'uni-calendar-item--checked':
-            calendar.fullDate === weeks.fullDate && !weeks.isDay,
           'uni-calendar-item--before-checked': weeks.beforeMultiple,
           'uni-calendar-item--multiple': weeks.multiple,
           'uni-calendar-item--after-checked': weeks.afterMultiple,
@@ -40,8 +36,6 @@
           'uni-calendar-item--isDay-text': weeks.isDay,
           'uni-calendar-item--isDay':
             calendar.fullDate === weeks.fullDate && weeks.isDay,
-          'uni-calendar-item--checked':
-            calendar.fullDate === weeks.fullDate && !weeks.isDay,
           'uni-calendar-item--before-checked': weeks.beforeMultiple,
           'uni-calendar-item--multiple': weeks.multiple,
           'uni-calendar-item--after-checked': weeks.afterMultiple,
@@ -55,8 +49,6 @@
           'uni-calendar-item--isDay-text': weeks.isDay,
           'uni-calendar-item--isDay':
             calendar.fullDate === weeks.fullDate && weeks.isDay,
-          'uni-calendar-item--checked':
-            calendar.fullDate === weeks.fullDate && !weeks.isDay,
           'uni-calendar-item--before-checked': weeks.beforeMultiple,
           'uni-calendar-item--multiple': weeks.multiple,
           'uni-calendar-item--after-checked': weeks.afterMultiple,
@@ -78,8 +70,6 @@
           'uni-calendar-item--isDay-text': weeks.isDay,
           'uni-calendar-item--isDay':
             calendar.fullDate === weeks.fullDate && weeks.isDay,
-          'uni-calendar-item--checked':
-            calendar.fullDate === weeks.fullDate && !weeks.isDay,
           'uni-calendar-item--before-checked': weeks.beforeMultiple,
           'uni-calendar-item--multiple': weeks.multiple,
           'uni-calendar-item--after-checked': weeks.afterMultiple,
@@ -189,6 +179,7 @@ $uni-color-primary: #ceeadb;
   opacity: 0.8;
 }
 
+// 移除预checked样式
 .uni-calendar-item--checked {
   background-color: $uni-color-primary;
   color: #333;
