@@ -608,7 +608,6 @@ export default {
             title: `确定要把患者${this.form.patient.patientName}预约到${medicalInstitution.appointmentMedicalInstitutionName}吗？`,
             showCancel: true,
             success: ({ confirm, cancel }) => {
-              this.submitting = true
               if (confirm) {
                 this.verify()
               }
@@ -624,13 +623,7 @@ export default {
     },
     verify() {
       const data = formatAppointmentData(this.form, this.options)
-      apptDataService.getApptVerify(
-        data,
-        () => this.submit(),
-        () => (this.saveLoading = false),
-        () => (this.saveLoading = false),
-        () => (this.saveLoading = false),
-      )
+      apptDataService.getApptVerify(data, () => this.submit())
     },
     async submit() {
       this.submitting = true
