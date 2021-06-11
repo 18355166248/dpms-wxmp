@@ -278,6 +278,18 @@
       ]
     },
     {
+      "root": "baseSubpackages/approvalManagement",
+      "name": "approvalManagement",
+      "pages": [
+        {
+          "path": "approvalManagement",
+          "style": {
+            "navigationBarTitleText": "审批管理"
+          }
+        }
+      ]
+    },
+    {
       "root": "baseSubpackages/menuModification",
       "name": "menuModification",
       "pages": [
@@ -556,7 +568,10 @@
     },
     "pages/home/home": {
       "network": "all",
-      "packages": ["baseSubpackages/menuModification"]
+      "packages": [
+        "baseSubpackages/menuModification",
+        "baseSubpackages/approvalManagement"
+      ]
     }
   },
   "globalStyle": {

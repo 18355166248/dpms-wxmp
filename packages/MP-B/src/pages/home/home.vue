@@ -159,8 +159,22 @@
             </view>
           </view>
         </view>
+        <view class="menu-area-body mt-41">
+          <view
+            class="menu-area-item"
+            @click="
+              toUrl('/baseSubpackages/approvalManagement/approvalManagement')
+            "
+          >
+            <view class="menu-area-item-icon menu-area-item-icon-color3">
+              <text class="iconfont icon-dingdan-mian"></text>
+            </view>
+            <view class="menu-area-item-txt mt-24">
+              审批管理
+            </view>
+          </view>
+        </view>
       </view>
-
       <view
         class="menu-area pb-48 ph-32"
         v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
