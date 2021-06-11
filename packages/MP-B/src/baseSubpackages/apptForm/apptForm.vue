@@ -86,7 +86,8 @@
         <dpmsCellPicker
           v-if="isAppt"
           :list="options.medicalInstitutionList"
-          v-model="form.appointmentMedicalInstitutionId"
+          :value="form.appointmentMedicalInstitutionId"
+          @input="handleInstitutionChange"
           defaultType="appointmentMedicalInstitutionId"
           :defaultProps="{
             label: 'medicalInstitutionSimpleCode',
@@ -360,7 +361,6 @@ export default {
         defaultMedicalInstitution.medicalInstitutionId
 
       this.refreshMedicalInstitutionList()
-      this.refreshInstitutionRelatedOptions()
     } else if (option.type === 'editAppt' || option.type === 'editRegister') {
       this.form.appointmentId = option.appointmentId
       appointmentAPI
@@ -405,12 +405,10 @@ export default {
             )
           })
           this.refreshMedicalInstitutionList()
-          this.refreshInstitutionRelatedOptions()
         })
     } else if (option.type === 'createRegister') {
       this.form.appointmentMedicalInstitutionId = this.loginMedicalInstitution.medicalInstitutionId
       this.refreshMedicalInstitutionList()
-      this.refreshInstitutionRelatedOptions()
     }
 
     this.initEvents()
@@ -433,17 +431,6 @@ export default {
             this.form.visType = res.data > 0 ? 2 : 1
           })
       }
-    },
-    'form.appointmentMedicalInstitutionId': function (newVal) {
-      // 清除和机构相关的填入数据
-      this.form.consultant = -1 // 咨询师
-      this.form.dentalHygienist = -1 // 洁牙师
-      this.form.help = [-1] // 助理，注意此位置字段为help
-      this.form.nurse = [-1] // 护士
-      this.form.appointmentItems = [] // 预约项目
-      this.form.institutionConsultingRoomId = -1 // 预约项目
-      // 刷新机构相关的一些可选项数据，如医生、洁牙师、...
-      this.refreshInstitutionRelatedOptions()
     },
     // 存储供预约项目列表使用
     'options.apptItemList': function (newVal) {
@@ -472,6 +459,19 @@ export default {
     uni.removeStorageSync('apptItemList')
   },
   methods: {
+    handleInstitutionChange(institutionId) {
+      this.form.appointmentMedicalInstitutionId = institutionId
+
+      // 清除和机构相关的填入数据
+      this.form.consultant = -1 // 咨询师
+      this.form.dentalHygienist = -1 // 洁牙师
+      this.form.help = [-1] // 助理，注意此位置字段为help
+      this.form.nurse = [-1] // 护士
+      this.form.appointmentItems = [] // 预约项目
+      this.form.institutionConsultingRoomId = -1 // 预约项目
+      // 刷新机构相关的一些可选项数据，如医生、洁牙师、...
+      this.refreshInstitutionRelatedOptions()
+    },
     // 刷新所有机构相关的可选项
     refreshInstitutionRelatedOptions() {
       getTreatmentTypeByInstitution(
@@ -534,13 +534,15 @@ export default {
       const hasTarget =
         medicalInstitutionList.findIndex(
           (m) =>
-            m.medicalInstitutionId ===
+            m.appointmentMedicalInstitutionId ===
             this.form.appointmentMedicalInstitutionId,
         ) > -1
+
       if (!hasTarget) {
         this.form.appointmentMedicalInstitutionId =
           medicalInstitutionList[0].appointmentMedicalInstitutionId
       }
+      this.refreshInstitutionRelatedOptions()
     },
     onBlurWithDuration(value) {
       // TODO 设置和机构相关，预约视图也有此问题
