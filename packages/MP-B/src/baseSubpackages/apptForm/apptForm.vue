@@ -603,7 +603,7 @@ export default {
           return
         }
 
-        if (medicalInstitution.isCurrentInstitutionFlag) {
+        if (!medicalInstitution.isCurrentInstitutionFlag) {
           uni.showModal({
             title: `确定要把患者${this.form.patient.patientName}预约到${medicalInstitution.appointmentMedicalInstitutionName}吗？`,
             showCancel: true,
