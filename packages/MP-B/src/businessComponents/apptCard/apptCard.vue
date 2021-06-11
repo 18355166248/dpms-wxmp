@@ -32,7 +32,7 @@
       </view>
       <view class="subTitle mb-16">
         <text class="subTag mr-8">{{ getGender(appt.patient.gender) }}</text>
-        <text class="subTag">{{ appt.patient.age }}</text>
+        <text class="subTag" v-if="appt.patient.age">{{ appt.patient.age }}</text>
       </view>
       <view class="apptDetail">
         <view v-if="appt.visType && isVisType">
