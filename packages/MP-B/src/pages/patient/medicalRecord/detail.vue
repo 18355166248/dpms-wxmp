@@ -338,6 +338,8 @@ export default {
   color: rgba(0, 0, 0, 0.7);
   font-size: 28rpx;
   background: white;
+  overflow: auto;
+  height: calc(100% - 90rpx);
 }
 
 .time {
