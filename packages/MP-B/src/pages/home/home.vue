@@ -151,8 +151,8 @@
             class="menu-area-item"
             @click="toUrl('/baseSubpackages/menuModification/menuModification')"
           >
-            <view class="menu-area-item-icon menu-area-item-icon-color3">
-              <text class="iconfont icon-whole"></text>
+            <view class="menu-area-item-icon menu-area-item-icon-color10">
+              <text class="iconfont icon-manage_fill"></text>
             </view>
             <view class="menu-area-item-txt mt-24">
               全部
@@ -166,8 +166,8 @@
               toUrl('/baseSubpackages/approvalManagement/approvalManagement')
             "
           >
-            <view class="menu-area-item-icon menu-area-item-icon-color3">
-              <text class="iconfont icon-dingdan-mian"></text>
+            <view class="menu-area-item-icon menu-area-item-icon-color9">
+              <text class="iconfont icon-shenpi"></text>
             </view>
             <view class="menu-area-item-txt mt-24">
               审批管理
@@ -716,6 +716,14 @@ export default {
         }
         &-icon-color8 {
           $values: #ff8487, #ff4d4f;
+          @include colors($values...);
+        }
+        &-icon-color9 {
+          $values: #13cdde, #089eba;
+          @include colors($values...);
+        }
+        &-icon-color10 {
+          $values: #b5b5b5, #cdcdcd;
           @include colors($values...);
         }
         &-txt {
