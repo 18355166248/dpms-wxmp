@@ -40,7 +40,7 @@ class Calendar {
   /**
    * 重置开始日期
    */
-  resetSatrtDate(startDate) {
+  resetStartDate(startDate) {
     // 范围开始
     this.startDate = startDate
   }
@@ -277,6 +277,19 @@ class Calendar {
   setSelectInfo(data, value) {
     this.selected = value
     this._getWeek(data)
+  }
+
+  setTwoStatus(start, end) {
+    if (!start || !end) return
+    if (this.dateCompare(start, end)) {
+      this.multipleStatus.before = start
+      this.multipleStatus.after = end
+      this.multipleStatus.data = this.geDateAll(start, end)
+    } else {
+      this.multipleStatus.before = end
+      this.multipleStatus.after = start
+      this.multipleStatus.data = this.geDateAll(end, start)
+    }
   }
 
   /**

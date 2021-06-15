@@ -494,13 +494,19 @@ export default {
       this.switchClinicStatus = 'loading'
 
       const [err, res] = await this.$utils.asyncTasks(
-        institutionAPI.details({
+        // institutionAPI.details({
+        //   _mtId: val.source.medicalInstitutionId,
+        //   _cmtId: val.source.topParentId,
+        //   _cmtType: val.source.institutionChainType,
+        // }),
+        institutionAPI.switchInstitution({
           _mtId: val.source.medicalInstitutionId,
           _cmtId: val.source.topParentId,
           _cmtType: val.source.institutionChainType,
         }),
       )
-
+      console.log('错误信息', err)
+      console.log('返回结果', res)
       if (err) {
         this.switchClinicStatus = 'error'
       }
