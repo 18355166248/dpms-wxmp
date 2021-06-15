@@ -30,9 +30,9 @@
               >
                 <text
                   v-if="item.source.institutionChainType === 4"
-                  class="icon icon-jia"
-                  >加</text
-                >
+                  class="icon icon-jia">
+                  加
+                </text>
                 <text v-else class="icon icon-zhi">直</text>
                 {{ item.name }}
               </view>
