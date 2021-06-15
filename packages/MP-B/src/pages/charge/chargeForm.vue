@@ -34,6 +34,7 @@ import pending from './pending'
 import charged from './charged'
 import payment from './payment'
 import institutionAPI from 'APIS/institution/institution.api'
+import { mapMutations } from 'vuex';
 
 export default {
   components: {
@@ -56,12 +57,23 @@ export default {
       touchStartY: 0, // 触屏起始点y
       patientId: 0,
       customerId: 0,
+      memberId: 0,
     }
   },
   onLoad(params) {
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
     this.currentTab = Number(params.tab) || 0
+
+    // 存储到patient store中
+    if(params.isqywx) {
+      this.setPatientDetail({
+        patientId: this.patientId,
+        customerId: this.customerId,
+        memberId: this.memberId,
+      })
+    }
+
     this.init()
   },
   onReachBottom() {
@@ -79,6 +91,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('patient', ['setPatientDetail']),
     init() {
       institutionAPI
         .getStaffListByPositionFromAllInstitution({
