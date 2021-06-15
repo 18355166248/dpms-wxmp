@@ -67,11 +67,14 @@ export default {
 
     // 存储到patient store中
     if(params.isqywx) {
-      this.setPatientDetail({
+      const currentIds = {
         patientId: this.patientId,
         customerId: this.customerId,
-        memberId: this.memberId,
-      })
+      }
+      if(this.memberId) {
+        currentIds.memberId = this.memberId
+      }
+      this.setPatientDetail(currentIds)
     }
 
     this.init()
