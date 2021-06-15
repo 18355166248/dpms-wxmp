@@ -1,6 +1,6 @@
 <template>
   <view class="mainWrapper">
-    <view class="topBar">
+    <view class="topBar mb-18">
       <view>
         <span>我发起的</span>
       </view>
@@ -10,7 +10,7 @@
     </view>
     <view class="bodyDetails mh-24">
       <view class="typeSearch">
-        <text style="line-height: 76rpx;">审批类型： </text>
+        <text style="line-height: 76rpx;">审批类型：</text>
         <view>
           <u-input v-model="value" :type="type" @click="show = true" border />
           <u-action-sheet
@@ -23,24 +23,20 @@
       </view>
       <view class="singleContainer mt-32">
         <view class="firstLevel pt-32 ph-24 pb-16">
-          <view>收费</view>
+          <view style="font-weight: 500;">收费</view>
           <view>
             <view></view>
             <span>审核中</span>
           </view>
         </view>
-        <view class="secondLevel">
-          <view class="secondLevelLeft mh-16 mv-16">
-            <view>
-              <span class="mr-16">发起机构：</span>
-              <span>审核人：</span>
-            </view>
-            <view>向武汉诊所借调物品</view>
-            <view>备注：</view>
-          </view>
-          <view class="secondLevelRight mh-16 mv-16">
-            <view>查看</view>
-          </view>
+        <view class="secondLevel ph-24">
+          <view class="mb-8 lh">发起机构：</view>
+          <view class="lh">审核人：</view>
+          <span class="mv-32 lh">向武汉诊所借调物品</span>
+          <view class="mb-40 lh">备注：</view>
+        </view>
+        <view class="buttonControl pr-24">
+          <u-button type="success" @click="clickHandler">查看</u-button>
         </view>
       </view>
     </view>
@@ -76,6 +72,9 @@ export default {
       console.log((this.value = this.actionSheetList[index].text))
       this.value = this.actionSheetList[index].text
     },
+    clickHandler(e) {
+      console.log(e)
+    },
   },
 
   filters: {
@@ -93,11 +92,15 @@ export default {
 <style lang="scss" scoped>
 .mainWrapper {
   background: #f5f5f5;
+  .lh {
+    line-height: 36rpx;
+  }
   .topBar {
     height: 96rpx;
     display: flex;
     flex-direction: row;
     justify-content: center;
+    background: #ffffff;
     > view {
       line-height: 96rpx;
       width: 100%;
@@ -146,17 +149,31 @@ export default {
           }
           > span {
             margin-left: 16rpx;
+            color: #fa8c16;
           }
         }
       }
       .secondLevel {
         display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        .secondLevelLeft {
-          display: flex;
-          flex-direction: column;
+        flex-direction: column;
+        > view {
+          color: #595959;
         }
+      }
+      .buttonControl {
+        display: flex;
+        flex-direction: row-reverse;
+      }
+      /deep/ .u-btn {
+        width: 120rpx;
+        height: 56rpx;
+        line-height: 56rpx;
+        background: #5cbb89;
+        border-radius: 28rpx;
+      }
+      /deep/ .u-size-default {
+        padding: 0;
+        font-size: 28rpx;
       }
     }
   }
