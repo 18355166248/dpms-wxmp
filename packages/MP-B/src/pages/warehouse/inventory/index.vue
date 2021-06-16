@@ -1,8 +1,12 @@
 <template>
-  <view>库存列表</view>
+  <view>
+    <inventoryDetail />
+  </view>
 </template>
 <script>
+import inventoryDetail from './inventoryDetail'
 export default {
+  components: { inventoryDetail },
   data() {
     return {}
   },
