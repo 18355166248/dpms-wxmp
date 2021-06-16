@@ -155,6 +155,10 @@ const patientAPI = {
   getDisposeList(data) {
     return httper.get('/diagnosis/mini-apps/dispose/list-dispose', data)
   },
+  // 获取处置记录列表
+  getMustData(data) {
+    return httper.get('/patient/patient/common/service/patient/field/get', data)
+  },
 }
 
 export default patientAPI
