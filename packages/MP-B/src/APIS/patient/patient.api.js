@@ -155,6 +155,10 @@ const patientAPI = {
   getDisposeList(data) {
     return httper.get('/diagnosis/mini-apps/dispose/list-dispose', data)
   },
+  // 获取患者绑定好友列表
+  getConnectFriends(data) {
+    return httper.get('communication/channel/customer-communication-list', data)
+  },
 }
 
 export default patientAPI

@@ -133,6 +133,59 @@
             处置记录
           </view>
         </view>
+        <view
+          v-if="
+            menu.pageElementsList.some((m) => m.enumValue === 'disposalRecord')
+          "
+          class="menu-area-item"
+          @click="handleShowModal"
+        >
+          <view class="menu-area-item-icon">
+            <text class="iconfont icon-wechat-fill"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            微信聊天
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="mask-pop" v-if="modalVisible">
+      <view class="pop-content">
+        <view class="friend-list">
+          <view class="item">
+            <view class="avatar"></view>
+            <view class="nick-name-wrap">
+              <view class="name">小猫鱼</view>
+              <view class="belong-wechat">所属微信：张护士</view>
+            </view>
+            <view class="chat-btn" @click="handleCopy">聊天</view>
+          </view>
+          <view class="item">
+            <view class="avatar"></view>
+            <view class="nick-name-wrap">
+              <view class="name">小猫鱼</view>
+              <view class="belong-wechat">所属微信：张护士</view>
+            </view>
+            <view class="chat-btn">聊天</view>
+          </view>
+          <view class="item">
+            <view class="avatar"></view>
+            <view class="nick-name-wrap">
+              <view class="name">小猫鱼</view>
+              <view class="belong-wechat">所属微信：张护士</view>
+            </view>
+            <view class="chat-btn">聊天</view>
+          </view>
+          <view class="item">
+            <view class="avatar"></view>
+            <view class="nick-name-wrap">
+              <view class="name">小猫鱼</view>
+              <view class="belong-wechat">所属微信：张护士</view>
+            </view>
+            <view class="chat-btn">聊天</view>
+          </view>
+        </view>
+        <view class="bottom-close" @click="closeModal">关闭</view>
       </view>
     </view>
   </view>
@@ -156,6 +209,7 @@ export default {
         1: '初诊',
         2: '复诊',
       },
+      modalVisible: false,
     }
   },
   computed: {
@@ -228,6 +282,25 @@ export default {
         url,
       })
     },
+    handleCopy() {
+      wx.setClipboardData({
+        data: 'data123',
+        success(res) {
+          wx.hideToast()
+          wx.showToast({
+            title:
+              '当前客户微信昵称已复制，请打开企微/个微，在好友列表顶部搜索框中粘贴，可快捷查找到好友，并与其聊天。',
+            icon: 'none',
+          })
+        },
+      })
+    },
+    closeModal() {
+      this.modalVisible = false
+    },
+    handleShowModal() {
+      this.modalVisible = true
+    },
   },
   components: {
     card,
@@ -248,6 +321,85 @@ export default {
 }
 .content {
   padding-top: 40rpx;
+  .mask-pop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .pop-content {
+      position: relative;
+      width: 640rpx;
+      height: 920rpx;
+      opacity: 1;
+      background: #ffffff;
+      border-radius: 24rpx;
+      box-shadow: 0rpx 18rpx 56rpx 16rpx rgba(0, 0, 0, 0.05),
+        0rpx 12rpx 32rpx 0rpx rgba(0, 0, 0, 0.08),
+        0rpx 6rpx 12rpx -8rpx rgba(0, 0, 0, 0.12);
+      .friend-list {
+        padding: 32rpx 0;
+        width: 100%;
+        .item {
+          width: 100%;
+          padding: 0 32rpx;
+          display: flex;
+          align-items: center;
+          height: 96rpx;
+          box-sizing: border-box;
+          margin-bottom: 66rpx;
+          .avatar {
+            width: 96rpx;
+            height: 96rpx;
+          }
+          .nick-name-wrap {
+            margin-left: 16rpx;
+            margin-right: auto;
+            .name {
+              font-size: 34rpx;
+              font-family: PingFangSC, PingFangSC-Medium;
+              font-weight: 500;
+              color: #191919;
+            }
+            .belong-wechat {
+              font-size: 28rpx;
+              font-family: PingFangSC, PingFangSC-Regular;
+              color: #7f7f7f;
+            }
+          }
+          .chat-btn {
+            color: #ffffff;
+            width: 120rpx;
+            height: 56rpx;
+            background: #5cbb89;
+            border-radius: 28rpx;
+            text-align: center;
+            line-height: 56rpx;
+            font-size: 28rpx;
+          }
+        }
+      }
+      .bottom-close {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 111rpx;
+        border-top: 2rpx solid #e5e5e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34rpx;
+        font-family: PingFangSC, PingFangSC-Regular;
+        color: #5cbb89;
+      }
+    }
+  }
 }
 .menu-area {
   padding: 0 32rpx;
