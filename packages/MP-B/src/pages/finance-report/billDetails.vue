@@ -145,7 +145,7 @@ export default {
     ]
     return {
       headers: [],
-      computedCol: ['totalAmount', 'discountReceiveAmount','paymentAmount'],
+      computedCol: ['totalAmount', 'discountReceiveAmount', 'paymentAmount'],
       contents: [],
       total: 0,
       current: 0,
@@ -245,7 +245,7 @@ export default {
         beginTime: this.beginTimeMillis,
         endTime: this.endTimeMillis,
       }
-      if(this.billOrderNo) {
+      if (this.billOrderNo) {
         params.billSerialNo = this.billOrderNo
       }
 

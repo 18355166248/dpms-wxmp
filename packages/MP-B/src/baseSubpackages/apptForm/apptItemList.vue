@@ -55,8 +55,8 @@ export default {
       isAppt: false,
     }
   },
-  onLoad({ checked,isAppt }) {
-    this.isAppt = isAppt=="true";    
+  onLoad({ checked, isAppt }) {
+    this.isAppt = isAppt == 'true'
     if (checked) {
       this.checked = checked.split(',').map((v) => Number(v))
     }
@@ -65,7 +65,6 @@ export default {
   methods: {
     onSave() {
       uni.$emit('updateApptItemCheckedList', this.checked)
-
       this.$utils.back()
     },
     // 格式化列表进行展示

@@ -185,13 +185,16 @@ export default {
       flex: auto;
       overflow: auto;
       overscroll-behavior: contain;
+      height: calc(100% - 100rpx);
       .item {
         padding: 0 16rpx;
-        height: 68rpx;
-        line-height: 68rpx;
+        min-height: 68rpx;
         color: #191919;
         border-radius: 8rpx;
         margin-bottom: 16rpx;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
         &.active {
           color: #5cbb89;
           font-weight: bold;

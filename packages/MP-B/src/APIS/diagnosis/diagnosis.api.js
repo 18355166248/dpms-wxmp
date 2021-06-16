@@ -123,8 +123,12 @@ const diagnosisAPI = {
   getMainComplaint(data) {
     return httper.get('diagnosis/patient-main-complaint/list', data)
   },
-  getTreatmentTypes() {
-    return httper.get('diagnosis/treatment-type/list')
+  getTreatmentTypes(params) {
+    return httper.get('diagnosis/treatment-type/list', params)
+  },
+  // 获取挂号次数
+  getRegisterCount(params) {
+    return httper.get('diagnosis/register/list-patient/count', params)
   },
 }
 

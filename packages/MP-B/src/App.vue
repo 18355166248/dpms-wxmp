@@ -72,6 +72,7 @@ button::after {
 .icon-plus::before {
   content: '\e8fe';
 }
+/*今日就诊*/
 .icon-medicine-chest::before {
   content: '\e863';
 }
@@ -108,6 +109,7 @@ button::after {
 .icon-password::before {
   content: '\e626';
 }
+/*患者*/
 .icon-user::before {
   content: '\e627';
 }
@@ -147,6 +149,7 @@ button::after {
 .icon-new-weet::before {
   content: '\e8f0';
 }
+/*预约*/
 .icon-time-circle::before {
   content: '\e784';
 }
@@ -249,6 +252,30 @@ button::after {
 }
 .icon-check-square-fill:before {
   content: '\e84b';
+}
+/*全部*/
+.icon-all-fill:before {
+  content: '\e70b';
+}
+/*物品一览*/
+.icon-goods-preview-fill:before {
+  content: '\e885';
+}
+/*采购*/
+.icon-purchase-fill:before {
+  content: '\e887';
+}
+/*领用*/
+.icon-receive-fill:before {
+  content: '\e88a';
+}
+/*库存*/
+.icon-inventory-fill:before {
+  content: '\e88d';
+}
+/*患者归档*/
+.icon-patient-archive-fill:before {
+  content: '\e65d';
 }
 
 /* iconfont图标 end */

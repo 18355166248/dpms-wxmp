@@ -67,11 +67,39 @@
         </view>
       </view>
     </view>
-    <fixed-footer
-      v-if="
-        isHeaderWithLargeArea && !dataSource.acrossInstitutionAppointmentFlag
-      "
-    >
+    <!-- 跨不现实任何操作按钮 -->
+    <fixed-footer v-if="dataSource.acrossInstitutionAppointmentFlag">
+    </fixed-footer>
+    <fixed-footer v-else-if="isHeaderOrLargeArea">
+      <view class="button-group">
+        <template
+          v-if="statusEnumKey === 'APPOINTMENT' || statusEnumKey === 'CONFIRM'"
+        >
+          <button
+            class="button button-ghost"
+            @click="
+              toPage('/baseSubpackages/apptForm/cancleAppt', {
+                appointmentId: appointmentId,
+              })
+            "
+          >
+            取消
+          </button>
+          <button
+            class="button"
+            @click="
+              toPage('/baseSubpackages/apptForm/apptForm', {
+                type: 'editAppt',
+                appointmentId: appointmentId,
+              })
+            "
+          >
+            编辑
+          </button>
+        </template>
+      </view>
+    </fixed-footer>
+    <fixed-footer v-else>
       <view class="button-group">
         <template v-if="statusEnumKey === 'APPOINTMENT'">
           <button class="button button-ghost" @click="confirmAppointment">
@@ -111,7 +139,10 @@
           </button>
         </template>
         <template v-if="statusEnumKey === 'CONFIRM'">
-          <button class="button button-ghost button-long" @click="cancelConfirm">
+          <button
+            class="button button-ghost button-long"
+            @click="cancelConfirm"
+          >
             取消确认
           </button>
           <button
@@ -183,13 +214,14 @@
 <script>
 import moment from 'moment'
 import qs from 'qs'
-import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import appointmentAPI from '@/APIS/appointment/appointment.api'
 import diagnosisApi from '@/APIS/diagnosis/diagnosis.api'
 import card from '@/components/card/card.vue'
 import requestError from '@/components/request-error/request-error.vue'
 import { globalEventKeys } from '@/config/global.eventKeys'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
+import { checkIsHeaderOrLargeArea } from './utils'
+import FixedFooter from '../../components/fixed-footer/fixed-footer.vue'
 
 export default {
   data() {
@@ -205,9 +237,7 @@ export default {
       APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
       STAFF_POSITION_ENUM: this.$utils.getEnums('StaffPosition'),
       REGISTER_ENUM: this.$utils.getEnums('Register'),
-      isHeaderWithLargeArea: frontAuthUtil.check(
-        '预约中心/预约视图/新建修改、取消、日志',
-      ),
+      isHeaderOrLargeArea: false,
     }
   },
   components: {
@@ -216,6 +246,9 @@ export default {
   },
   onLoad(option) {
     this.appointmentId = Number(option.appointmentId)
+    this.isHeaderOrLargeArea = checkIsHeaderOrLargeArea(
+      uni.getStorageSync('medicalInstitution'),
+    )
     this.loadData()
 
     uni.$on(globalEventKeys.cancleApptSuccess, () => {
