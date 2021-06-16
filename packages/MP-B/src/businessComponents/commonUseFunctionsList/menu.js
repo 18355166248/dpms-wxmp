@@ -5,6 +5,7 @@ export  const menuDic= {
       background:'linear-gradient(323deg,#5bda99 10%, #34c57a 89%)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #34c57a'
     },
+    url:'/baseSubpackages/todayWork/todayWork',
     text:'今日就诊'
   },
   appoint:{
@@ -13,6 +14,7 @@ export  const menuDic= {
       background:'linear-gradient(139deg,#fb8d51 12%, #feb277 90%)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #fb8e51'
     },
+    url:'/baseSubpackages/apptView/apptView',
     text:'预约'
   },
   patient:{
@@ -22,6 +24,7 @@ export  const menuDic= {
       background:'linear-gradient(137deg,#4a93fe 12%, #6ea7fc 89%)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #4d94fe'
     },
+    url:'/pages/patient/searchPatient/searchPatient',
     text:'患者'
   },
   preview:{
@@ -67,6 +70,16 @@ export  const menuDic= {
       boxShadow: '0rpx 20rpx 20rpx -20rpx #3abad0'
     },
     text:'患者归档'
+  },
+  approval:{
+    iconName:'icon-shenpi',
+    iconColor:'#fff',
+    menuStyle:{
+      background:'linear-gradient(319deg,#13cdde 12%, #089eba 89%)',
+      boxShadow: '0rpx 20rpx 20rpx -20rpx #0ba8c2'
+    },
+    url:'/baseSubpackages/approvalManagement/approvalManagement',
+    text:'审批'
   },
   all:{
     iconName:'icon-all-fill',

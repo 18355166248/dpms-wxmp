@@ -81,7 +81,7 @@
       <!--常用功能-->
       <view class="common-functions-List-wrap pb-32">
         <view class="menu-area-header ph-32 pb-32">常用功能</view>
-        <commonUseFunctionsList></commonUseFunctionsList>
+        <commonUseFunctionsList ></commonUseFunctionsList>
       </view>
       <!--统计报表-->
       <view

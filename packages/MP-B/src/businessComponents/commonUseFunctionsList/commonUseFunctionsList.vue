@@ -1,6 +1,6 @@
 <template>
   <view class="common-functions-List">
-    <view class="menu-item" v-for="(item,index) in filterMenuList" :key="index">
+    <view class="menu-item" v-for="(item,index) in filterMenuList" :key="index" @click="viewPage(menuDic[item.type])">
       <menuIcon
         :icon="menuDic[item.type].iconName"
         :menu-style="menuDic[item.type].menuStyle"
@@ -8,7 +8,7 @@
       </menuIcon>
       <view class="menu-text">{{menuDic[item.type].text}}</view>
     </view>
-    <view class="menu-item" @click="viewAll(menuDic.all.url)">
+    <view class="menu-item" @click="viewAll(menuDic.all.url)" >
       <menuIcon
         :icon="menuDic.all.iconName"
         :fontSize="menuDic.all.fontSize"
@@ -60,14 +60,25 @@ export default {
       return this.menuList.filter((item,index)=>index<7)
     }
   },
+  created() {
+    console.log(this.$attrs)
+  },
   methods: {
     //全部
     viewAll(url){
-      console.log(url);
       this.$utils.push({
         url,
       })
     },
+    viewPage(item){
+      if (item.url){
+        const url=item.url
+        this.$utils.push({
+          url,
+        })
+      }
+
+    }
   },
   watch: {
     watchData: {
@@ -85,7 +96,8 @@ export default {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  padding: 0 32rpx;
+  padding-left: 32rpx;
+  box-sizing: border-box;
   .menu-item{
     display: flex;
     flex-direction: column;

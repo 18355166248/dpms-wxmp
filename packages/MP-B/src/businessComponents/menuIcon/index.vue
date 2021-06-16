@@ -1,7 +1,7 @@
 <template>
   <view :style="[mergeMenuStyle]" class="menu-icon">
     <dpmsIcons :color="iconColor" :type="icon" :size="fontSize" />
-    <view class="close-wrap" v-if="showCloseIcon" @click="close">
+    <view class="close-wrap" v-if="showCloseIcon" @touchstart.stop="close">
       <dpmsIcons color="#e64040" type="icon-close" size="42" />
     </view>
   </view>
