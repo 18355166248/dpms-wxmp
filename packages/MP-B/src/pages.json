@@ -23,6 +23,13 @@
       }
     },
     {
+      "path": "pages/login/qyLogin",
+      "style": {
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
+    },
+    {
       "path": "businessComponents/TeethSelect/Selector",
       "style": {
         "navigationBarTitleText": "选择牙位"
