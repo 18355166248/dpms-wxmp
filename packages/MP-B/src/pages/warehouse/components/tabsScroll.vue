@@ -1,6 +1,18 @@
 <template>
   <view class="tabs">
-    <view v-for="(item, index) in data" :key="index">{{ item.name }}</view>
+    <view class="tabs-main">
+      <text
+        class="tabs-main-item"
+        :class="{ activeColor: selectvalue == item[fieldKey] }"
+        v-for="(item, index) in list"
+        :key="index"
+        @click="handleSelect(item)"
+        >{{ item[fieldName] }}</text
+      >
+    </view>
+    <view class="tabs-icon"
+      ><text @click="handleClickIcon" class="iconfont icon-search"></text
+    ></view>
   </view>
 </template>
 <script>
@@ -11,19 +23,14 @@ export default {
       default: null,
     },
     // 列表数据源
-    data: {
+    list: {
       type: Array,
       required: true,
       default: () => [],
     },
-    // 激活颜色
-    activeColor: {
-      type: String,
-      default: 'red',
-    },
     fieldKey: {
       type: String,
-      default: 'key',
+      default: 'id',
     },
     fieldName: {
       type: String,
@@ -31,9 +38,52 @@ export default {
     },
   },
   data() {
-    return {}
+    return {
+      selectvalue: this.value,
+    }
   },
   created() {},
-  methods: {},
+  methods: {
+    handleSelect(item) {
+      this.selectvalue = item[this.fieldKey]
+      this.$emit('on-change', item)
+    },
+    handleClickIcon() {
+      this.$emit('on-open')
+    },
+  },
 }
 </script>
+<style lang="scss" scoped>
+.tabs {
+  width: 100%;
+  height: 80rpx;
+  display: flex;
+  &-main {
+    flex: 1;
+    display: flex;
+    white-space: nowrap;
+    align-items: center;
+    &-item {
+      display: inline-block;
+      padding: 16rpx;
+      font-size: 24rpx;
+      color: #595959;
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 8rpx;
+      margin-right: 16rpx;
+    }
+    .activeColor {
+      background-color: #5cbb89;
+      color: #ffffff;
+    }
+  }
+  &-icon {
+    flex-shrink: 0;
+    width: 64rpx;
+    height: 80rpx;
+    text-align: center;
+    line-height: 80rpx;
+  }
+}
+</style>

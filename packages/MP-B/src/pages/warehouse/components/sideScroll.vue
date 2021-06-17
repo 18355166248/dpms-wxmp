@@ -2,11 +2,11 @@
   <view class="s-main">
     <view
       class="s-main-item"
-      :style="{ background: selectvalue == item.id ? activeColor : 'none' }"
-      v-for="(item, index) in data"
+      :class="{ activeColor: selectvalue == item[fieldKey] }"
+      v-for="(item, index) in list"
       :key="index"
       @click="handleSelect(item)"
-      >{{ item.name }}</view
+      >{{ item[fieldName] }}</view
     >
   </view>
 </template>
@@ -18,19 +18,14 @@ export default {
       default: null,
     },
     // 列表数据源
-    data: {
+    list: {
       type: Array,
       required: true,
       default: () => [],
     },
-    // 激活颜色
-    activeColor: {
-      type: String,
-      default: 'red',
-    },
     fieldKey: {
       type: String,
-      default: 'key',
+      default: 'id',
     },
     fieldName: {
       type: String,
@@ -44,8 +39,8 @@ export default {
   },
   methods: {
     handleSelect(item) {
-      this.selectvalue = item.id
-      this.$emit('on-chang', item)
+      this.selectvalue = item[this.fieldKey]
+      this.$emit('on-change', item)
     },
   },
 }
@@ -54,13 +49,19 @@ export default {
 .s-main {
   width: 100%;
   height: 100%;
+  background-color: #f5f5f5;
   overflow-y: scroll;
+  font-size: 30rpx;
   &-item {
     width: 100%;
-    height: 160rpx;
+    height: 100rpx;
     text-align: center;
-    line-height: 160rpx;
+    line-height: 100rpx;
     font-size: 26rpx;
+  }
+  .activeColor {
+    background-color: #ffffff;
+    color: #5cbb89;
   }
 }
 </style>

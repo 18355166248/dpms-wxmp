@@ -559,6 +559,39 @@
           }
         }
       ]
+    },
+    {
+      "root": "pages/warehouse",
+      "name": "warehouse",
+      "pages": [
+        {
+          "path": "goods/index",
+          "style": {
+            "navigationBarTitleText": "物品列表",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "goods/searchGood",
+          "style": {
+            "navigationBarTitleText": "搜索",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "goods/goodDetail",
+          "style": {
+            "navigationBarTitleText": "物品详情",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "inventory/index",
+          "style": {
+            "navigationBarTitleText": "库存列表"
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
