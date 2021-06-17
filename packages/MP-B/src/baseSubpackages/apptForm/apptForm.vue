@@ -530,17 +530,19 @@ export default {
         appointmentStartTimeStamp: this.form.appointmentBeginTimeStamp,
         staffId: this.form.doctor,
       })
-      this.options.medicalInstitutionList = medicalInstitutionList
-      const hasTarget =
-        medicalInstitutionList.findIndex(
-          (m) =>
-            m.appointmentMedicalInstitutionId ===
-            this.form.appointmentMedicalInstitutionId,
-        ) > -1
+      if (medicalInstitutionList && medicalInstitutionList.length > 0) {
+        this.options.medicalInstitutionList = medicalInstitutionList
+        const hasTarget =
+          medicalInstitutionList.findIndex(
+            (m) =>
+              m.appointmentMedicalInstitutionId ===
+              this.form.appointmentMedicalInstitutionId,
+          ) > -1
 
-      if (!hasTarget) {
-        this.form.appointmentMedicalInstitutionId =
-          medicalInstitutionList[0].appointmentMedicalInstitutionId
+        if (!hasTarget) {
+          this.form.appointmentMedicalInstitutionId =
+            medicalInstitutionList[0].appointmentMedicalInstitutionId
+        }
       }
       this.refreshInstitutionRelatedOptions()
     },
