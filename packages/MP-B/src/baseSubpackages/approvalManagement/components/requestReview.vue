@@ -45,15 +45,6 @@
         >
       </view>
     </view>
-    <u-modal
-      v-model="showPassModal"
-      cancel-text="取消"
-      confirm-text="通过"
-      title="审批通过确认"
-      show-cancel-button
-    >
-      <!--      <u-textarea rows="10" cols="10"></u-textarea>-->
-    </u-modal>
   </view>
 </template>
 
@@ -66,7 +57,6 @@ export default {
       type: 'select',
       show: false,
       activeTab: 0,
-      showPassModal: false,
       //uView按钮样式调整
       passedBtn: {
         background: '#ffffff',
@@ -116,12 +106,12 @@ export default {
       this.value = this.actionSheetList[index].text
     },
 
-    clickHandler(e) {
-      console.log(e)
-    },
+    clickHandler() {},
     //通过模态框弹窗
     onPassHandler() {
-      this.showPassModal = !this.showPassModal
+      wx.redirectTo({
+        url: '/baseSubpackages/approvalManagement/components/applicationOnPass',
+      })
     },
     changeTab(index) {
       console.log('当前选中的项：' + index)

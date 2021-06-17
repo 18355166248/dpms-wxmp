@@ -298,6 +298,12 @@
           "style": {
             "navigationBarTitleText": "审批管理"
           }
+        },
+        {
+          "path": "components/applicationOnPass",
+          "style": {
+            "navigationBarTitleText": "审批通过"
+          }
         }
       ]
     },
