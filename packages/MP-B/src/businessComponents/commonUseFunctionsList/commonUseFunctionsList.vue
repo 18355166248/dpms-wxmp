@@ -1,14 +1,19 @@
 <template>
   <view class="common-functions-List">
-    <view class="menu-item" v-for="(item,index) in filterMenuList" :key="index" @click="viewPage(menuDic[item.type])">
+    <view
+      class="menu-item"
+      v-for="(item, index) in filterMenuList"
+      :key="index"
+      @click="viewPage(menuDic[item.type])"
+    >
       <menuIcon
         :icon="menuDic[item.type].iconName"
         :menu-style="menuDic[item.type].menuStyle"
       >
       </menuIcon>
-      <view class="menu-text">{{menuDic[item.type].text}}</view>
+      <view class="menu-text">{{ menuDic[item.type].text }}</view>
     </view>
-    <view class="menu-item" @click="viewAll(menuDic.all.url)" >
+    <view class="menu-item" @click="viewAll(menuDic.all.url)">
       <menuIcon
         :icon="menuDic.all.iconName"
         :fontSize="menuDic.all.fontSize"
@@ -21,75 +26,73 @@
 </template>
 <script>
 import menuIcon from '../menuIcon'
-import { menuDic } from  './menu'
+import { menuDic } from './menu'
 export default {
-  name: "commonFunctionsList",
+  name: 'commonFunctionsList',
   data() {
     return {
-      menuDic:menuDic,
-      menuList:[
+      menuDic: menuDic,
+      menuList: [
         {
-          type:'visiting'
+          type: 'visiting',
         },
         {
-          type:'appoint'
+          type: 'appoint',
         },
         {
-          type:'patient'
+          type: 'patient',
         },
         {
-          type:'preview'
+          type: 'preview',
         },
         {
-          type:'purchase'
+          type: 'approval',
         },
         {
-          type:'receive'
+          type: 'receive',
         },
         {
-          type:'inventory'
+          type: 'inventory',
         },
         {
-          type:'archive'
+          type: 'archive',
         },
-      ]
-    };
+      ],
+    }
   },
   computed: {
-    filterMenuList(){
-      return this.menuList.filter((item,index)=>index<7)
-    }
+    filterMenuList() {
+      return this.menuList.filter((item, index) => index < 7)
+    },
   },
   created() {
     console.log(this.$attrs)
   },
   methods: {
     //全部
-    viewAll(url){
+    viewAll(url) {
       this.$utils.push({
         url,
       })
     },
-    viewPage(item){
-      if (item.url){
-        const url=item.url
+    viewPage(item) {
+      if (item.url) {
+        const url = item.url
         this.$utils.push({
           url,
         })
       }
-
-    }
+    },
   },
   watch: {
     watchData: {
-      handler(newVal, oldVal) {
-      },
+      handler(newVal, oldVal) {},
       deep: true,
-      immediate: true
-    }
+      immediate: true,
+    },
   },
-  components: {menuIcon},
-};
+  components: { menuIcon },
+}
 </script>
 <style lang="scss" scoped>
 .common-functions-List {
@@ -98,20 +101,20 @@ export default {
   flex-wrap: wrap;
   padding-left: 32rpx;
   box-sizing: border-box;
-  .menu-item{
+  .menu-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-right:80rpx ;
-    margin-bottom:32rpx ;
-    .menu-text{
+    margin-right: 80rpx;
+    margin-bottom: 32rpx;
+    .menu-text {
       font-size: 28rpx;
       line-height: 28rpx;
       padding-top: 24rpx;
     }
   }
-  .menu-item:nth-child(4n){
-    margin-right:0
+  .menu-item:nth-child(4n) {
+    margin-right: 0;
   }
 }
 </style>
