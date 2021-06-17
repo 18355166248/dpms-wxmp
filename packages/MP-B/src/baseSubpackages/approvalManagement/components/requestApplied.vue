@@ -15,7 +15,7 @@
     <view class="singleContainer mv-32">
       <view class="firstLevel pt-32 ph-24 pb-16">
         <view style="font-weight: 500;">收费</view>
-        <view>
+        <view class="ApplicationOnPending">
           <view></view>
           <span>审核中</span>
         </view>
@@ -55,7 +55,19 @@ export default {
         },
         {
           value: '3',
+          text: '退费',
+        },
+        {
+          value: '4',
+          text: '领用',
+        },
+        {
+          value: '5',
           text: '借调',
+        },
+        {
+          value: '6',
+          text: '病例',
         },
       ],
     }
@@ -63,7 +75,7 @@ export default {
   methods: {
     // 点击actionSheet回调
     actionSheetCallback(index) {
-      console.log((this.value = this.actionSheetList[index].text))
+      console.log((this.value = this.actionSheetList[index].value))
       this.value = this.actionSheetList[index].text
     },
     clickHandler(e) {
@@ -134,6 +146,8 @@ export default {
       > view {
         display: flex;
         align-items: center;
+      }
+      .ApplicationOnPending {
         > view {
           width: 16rpx;
           height: 16rpx;

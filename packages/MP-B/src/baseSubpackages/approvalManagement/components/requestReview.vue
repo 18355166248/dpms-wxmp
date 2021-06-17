@@ -2,7 +2,7 @@
   <view class="bodyDetails mh-24">
     <view class="typeSearch">
       <text style="line-height: 76rpx;">审批类型：</text>
-      <view>
+      <view class="inputControl">
         <u-input v-model="value" :type="type" @click="show = true" border />
         <u-action-sheet
           :list="actionSheetList"
@@ -30,10 +30,19 @@
       </view>
       <view class="buttonControl pr-24">
         <u-button type="success" @click="clickHandler">查看</u-button>
-        <u-button type="success" class="mh-16" @click="clickHandler"
+        <u-button
+          type="success"
+          :custom-style="failedBtn"
+          class="mh-16"
+          @click="clickHandler"
           >不通过</u-button
         >
-        <u-button type="success" @click="clickHandler">通过</u-button>
+        <u-button
+          type="success"
+          :custom-style="passedBtn"
+          @click="onPassHandler"
+          >通过</u-button
+        >
       </view>
     </view>
   </view>
@@ -48,6 +57,20 @@ export default {
       type: 'select',
       show: false,
       activeTab: 0,
+      //uView按钮样式调整
+      passedBtn: {
+        background: '#ffffff',
+        color: '#5cbb89',
+        border: '2rpx solid #5cbb89',
+        borderRadius: '30rpx',
+      },
+      failedBtn: {
+        width: '148rpx',
+        background: '#ffffff',
+        color: '#5cbb89',
+        border: '2rpx solid #5cbb89',
+        borderRadius: '30rpx',
+      },
       actionSheetList: [
         {
           value: '1',
@@ -59,7 +82,19 @@ export default {
         },
         {
           value: '3',
+          text: '退费',
+        },
+        {
+          value: '4',
+          text: '领用',
+        },
+        {
+          value: '5',
           text: '借调',
+        },
+        {
+          value: '6',
+          text: '病例',
         },
       ],
     }
@@ -70,8 +105,13 @@ export default {
       console.log((this.value = this.actionSheetList[index].text))
       this.value = this.actionSheetList[index].text
     },
-    clickHandler(e) {
-      console.log(e)
+
+    clickHandler() {},
+    //通过模态框弹窗
+    onPassHandler() {
+      wx.redirectTo({
+        url: '/baseSubpackages/approvalManagement/components/applicationOnPass',
+      })
     },
     changeTab(index) {
       console.log('当前选中的项：' + index)

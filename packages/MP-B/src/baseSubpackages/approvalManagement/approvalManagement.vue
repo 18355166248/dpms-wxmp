@@ -51,20 +51,6 @@ export default {
 <style lang="scss" scoped>
 .mainWrapper {
   background: #f5f5f5;
-  ///deep/ .u-btn {
-  //  width: 120rpx;
-  //  height: 56rpx;
-  //  line-height: 56rpx;
-  //  background: #5cbb89;
-  //  border-radius: 28rpx;
-  //  &:nth-child(2){
-  //    width: 148rpx;
-  //  }
-  //}
-  ///deep/ .u-size-default {
-  //  padding: 0;
-  //  font-size: 28rpx;
-  //}
   /deep/ .u-input__right-icon {
     line-height: 76rpx;
     padding-right: 10rpx;
