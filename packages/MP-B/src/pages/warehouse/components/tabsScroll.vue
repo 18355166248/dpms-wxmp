@@ -42,6 +42,11 @@ export default {
       selectvalue: this.value,
     }
   },
+  watch: {
+    value() {
+      this.selectvalue = this.value
+    },
+  },
   created() {},
   methods: {
     handleSelect(item) {

@@ -5,18 +5,31 @@
         <view class="goods-search-main-input">
           <text @click="handleClickIcon" class="iconfont icon-search"></text>
           <input
+            focus
+            @focus="handleFocus"
+            @blur="showHistory = false"
+            ref="merchandiseName"
             placeholder="物品编码、物品名称、生产厂商"
             confirm-type="“search”"
+            v-model="merchandiseName"
             @confirm="confirm"
           />
         </view>
-        <view class="goods-search-main-cancel"><text>取消</text></view>
+        <view v-if="showHistory" class="goods-search-main-cancel"
+          ><text>取消</text></view
+        >
       </view>
     </view>
     <!-- 搜索历史 -->
-    <view class="search-history"> </view>
+    <view class="search-history" v-if="showHistory">
+      <searchHistory
+        :list="historyList"
+        @on-click="selectHistory"
+        @on-clear="clearHistory"
+      />
+    </view>
     <!-- 主体内容展示 -->
-    <view class="goods-main">
+    <view class="goods-main" v-else>
       <!-- 一级分类 -->
       <view class="goods-main-one">
         <scroll-view scroll-x="true" style="width: 100%; height: 100%;">
@@ -49,12 +62,14 @@
       <view class="goods-main-list">
         <scroll-view
           scroll-y="true"
-          style="height: 100%; padding: 24rpx;"
+          style="height: 100%;"
           show-scrollbar="true"
+          @scrolltolower="loadMore"
         >
-          <view v-for="(item, index) in goodList" :key="index">
+          <view v-for="(item, index) in pagination.records" :key="index">
             <goodsInfo :detail="item" />
           </view>
+          <loadMore :status="statusText" />
         </scroll-view>
       </view>
     </view>
@@ -72,10 +87,13 @@
   </view>
 </template>
 <script>
+import History from '@/utils/history.util.js'
 import goodAPI from '@/APIS/warehouse/good.api.js'
 import tabScroll from '../components/tabsScroll.vue'
 import goodsInfo from '../components/goods-info.vue'
 import expandFilter from '../components/expand-filter.vue'
+import searchHistory from '../components/search-history.vue'
+import loadMore from '@/components/load-more/load-more.vue'
 const all = [
   {
     merchandiseCategoryId: null,
@@ -83,22 +101,35 @@ const all = [
     children: [],
   },
 ]
+
+const history = new History('goods', [], 10)
 export default {
-  components: { tabScroll, goodsInfo, expandFilter },
+  components: { tabScroll, goodsInfo, expandFilter, searchHistory, loadMore },
   data() {
     return {
+      showHistory: true,
       oneCategoryId: null,
       twoCategoryId: null,
       threeCategoryId: null,
       oneCategoryList: [],
       twoCategoryList: [],
       threeCategoryList: [],
-      goodList: [],
+      historyList: [],
+      merchandiseName: '',
+      pagination: {
+        total: 0,
+        current: 1,
+        pages: 1,
+        records: [],
+      },
+      statusText: 'more',
     }
   },
   onLoad() {
+    this.historyList = history.getHistory()
     this.getCategoryList()
   },
+  mounted() {},
   methods: {
     // 获取物品分类
     async getCategoryList() {
@@ -107,13 +138,29 @@ export default {
       this.oneCategoryList.push(...arr)
     },
     // 查询物品
-    async getGoodsList(merchandiseCategoryId, current = 1, size = 10) {
-      const res = await goodAPI.getGoodsList({
-        merchandiseCategoryId,
-        current,
-        size,
-      })
-      this.goodList = res.data.records
+    async getGoodsList(params) {
+      const res = await goodAPI.getGoodsList(params)
+      let { records, total, current, pages } = res.data
+      return { records, total, current, pages }
+    },
+    // 加载更多
+    async loadMore() {
+      if (this.pagination.current >= this.pagination.pages) {
+        this.statusText = 'noMore'
+        return false
+      }
+      this.statusText = 'loading'
+      let _current = (this.pagination.current += 1)
+      let params = {
+        current: _current,
+        merchandiseName: this.merchandiseName,
+        merchandiseCategoryId: null,
+      }
+      const res = await this.getGoodsList(params)
+      this.statusText = 'more'
+      let newRecords = this.pagination.records.concat(res.records)
+      let { total, current, pages } = res
+      this.pagination = { records: newRecords, total, current, pages }
     },
     // 点击第一层级
     changeOneCategory(item) {
@@ -144,7 +191,26 @@ export default {
     openDrawer() {
       this.$refs.showRight.open()
     },
-    confirm() {},
+    async confirm() {
+      history.add(this.merchandiseName)
+      let params = { merchandiseName: this.merchandiseName }
+      const res = await this.getGoodsList(params)
+      this.pagination = res
+    },
+    // 点击历史记录
+    selectHistory(value) {
+      this.merchandiseName = value
+      console.log(this.merchandiseName)
+    },
+    // 清除历史记录
+    clearHistory() {
+      history.remove()
+      this.historyList = []
+    },
+    handleFocus() {
+      this.showHistory = true
+      this.historyList = history.getHistory()
+    },
   },
 }
 </script>
@@ -152,7 +218,7 @@ export default {
 .goods {
   width: 100%;
   height: 100%;
-  background-color: #e5e5e5;
+  background-color: #f5f5f5;
   &-search {
     width: 100%;
     height: 140rpx;
@@ -196,6 +262,7 @@ export default {
       line-height: 95rpx;
       white-space: nowrap;
       overflow-y: scroll;
+      background-color: #ffffff;
       border-bottom: 1rpx solid #cccccc;
       .activeColor {
         color: $common-color;
@@ -208,13 +275,25 @@ export default {
       }
     }
     &-two {
+      background-color: #ffffff;
       padding-left: 16rpx;
+      margin-bottom: 14rpx;
     }
     &-list {
       width: 100%;
       height: calc(100% - 96rpx - 80rpx);
       box-sizing: border-box;
       overflow: hidden;
+      background-color: #ffffff;
+      padding: 24rpx;
+      .noMore {
+        // width: 100%;
+        text-align: center;
+        padding: 32rpx 0;
+        font-size: 28rpx;
+        color: #7f7f7f;
+        background-color: #f5f5f5;
+      }
     }
   }
 }

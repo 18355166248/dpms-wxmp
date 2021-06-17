@@ -1,24 +1,24 @@
 <template>
   <view class="detail">
     <view class="detail-info">
-      <view class="detail-info-name">物品名称123</view>
-      <view>
+      <view class="detail-info-name mb16">{{ detail.commonName }}</view>
+      <view class="mb16">
         <text class="label">物品编号：</text>
-        <text class="value">ISO2104521421045210</text>
+        <text class="value">{{ detail.merchandiseNo }}</text>
       </view>
-      <view>
+      <view class="mb16">
         <text class="label">品牌：</text>
-        <text class="value">ISO2104521421045210</text>
+        <text class="value">{{ detail.brandName }}</text>
       </view>
       <view>
         <text class="label">物品类型：</text>
-        <text class="value">ISO2104521421045210</text>
+        <text class="value">{{ detail.merchandiseType }}</text>
       </view>
     </view>
 
     <view class="detail-item">
       <text>医（械）准字</text>
-      <text>A型*20个/包</text>
+      <text>{{ detail.medicalInstrumentNo }}</text>
     </view>
     <view class="detail-item">
       <text>所属分类</text>
@@ -26,41 +26,60 @@
     </view>
     <view class="detail-item">
       <text>条形码编号</text>
-      <text>A型*20个/包</text>
+      <text>{{ detail.barCode }}</text>
     </view>
     <view class="detail-item">
       <text>生产厂商</text>
-      <text>A型*20个/包</text>
+      <text>{{ detail.manufacturer }}</text>
     </view>
     <view class="detail-item">
       <text>启用状态</text>
-      <text>A型*20个/包</text>
+      <text>{{ detail.isEnable ? '启用' : '禁用' }}</text>
     </view>
     <view class="detail-divider">
       <text>规格信息</text>
     </view>
     <view class="detail-item">
       <text>采购单位</text>
-      <text>包</text>
+      <text>{{ detail.purchaseUnitIdStr }}</text>
     </view>
     <view class="detail-item">
       <text>库存单位</text>
-      <text>只</text>
+      <text>{{ detail.inventoryUnitStr }}</text>
     </view>
     <view class="detail-item">
       <text>单位进制</text>
-      <text>20</text>
+      <text>{{ detail.unitSystem }}</text>
     </view>
   </view>
 </template>
 <script>
-export default {}
+import goodAPI from '@/APIS/warehouse/good.api.js'
+export default {
+  data() {
+    return {
+      detail: {},
+    }
+  },
+  onLoad({ merchandiseIds }) {
+    this.getGoodsDetail(merchandiseIds)
+  },
+  methods: {
+    async getGoodsDetail(merchandiseIds) {
+      const res = await goodAPI.getGoodsDetail({ merchandiseIds })
+      this.detail = res.data[0]
+    },
+  },
+}
 </script>
 <style lang="scss" scoped>
+.mb16 {
+  margin-bottom: 16rpx;
+}
 .detail {
   width: 100%;
   height: 100%;
-  background-color: #e5e5e5;
+  background-color: #f5f5f5;
   &-info {
     width: 100%;
     padding: 32rpx 0 32rpx 32rpx;
@@ -69,6 +88,7 @@ export default {}
     &-name {
       font-size: 28rpx;
       color: #191919;
+      font-weight: 500;
     }
     .label {
       font-size: 28rpx;

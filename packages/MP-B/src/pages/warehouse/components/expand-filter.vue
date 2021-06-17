@@ -11,7 +11,7 @@
           :key="e[fieldKey]"
         >
           <text
-            :class="{ activeColor: currentId === e[fieldKey] }"
+            :class="{ activeColor: currentId == e[fieldKey] }"
             class="expand-item-content-tag"
             @click="selectTag(e[fieldKey])"
             >{{ e[fieldName] }}</text
@@ -48,8 +48,16 @@ export default {
   data() {
     return {
       currentParentId: this.parentId,
-      currentId: null,
+      currentId: this.value,
     }
+  },
+  watch: {
+    value() {
+      this.currentId = this.value
+    },
+    parentId() {
+      this.currentParentId = this.parentId
+    },
   },
   methods: {
     handleExpand(id) {

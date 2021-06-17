@@ -20,6 +20,15 @@ const goodAPI = {
   getGoodsList(params) {
     return httper.get('physical/merchandise/page', params)
   },
+
+  /**
+   * @description 获取物品详情
+   * @param {Number} params.merchandiseIds           // 物品id
+   * @returns
+   */
+  getGoodsDetail(params) {
+    return httper.get('physical/merchandise/list/by-merchandise-ids', params)
+  },
 }
 
 export default goodAPI
