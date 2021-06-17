@@ -113,7 +113,7 @@ export default {
     ]
     return {
       headers: [...this._headers],
-      computedCol: ['totalAmount', 'discountReceiveAmount','paymentAmount'],
+      computedCol: ['totalAmount', 'discountReceiveAmount', 'paymentAmount'],
       contents: [],
       total: 0,
       current: 0,

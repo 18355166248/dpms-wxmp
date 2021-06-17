@@ -27,14 +27,18 @@
         {{ detail.doctorStaffName || '' }}
       </div>
       <div class="row">
+        <div class="label">就诊类型：</div>
+        {{ visTypeMap[detail.visType].zh_CN || getCustomType(detail.visType) }}
+      </div>
+      <div class="row">
         <div class="label">主诉：</div>
         {{ detail.mainComplaint || '' }}
       </div>
-      <div class="row">
+      <div class="row" v-if="detail.visType !== 2">
         <div class="label">现病史：</div>
         {{ detail.presentIllnessHistory || '' }}
       </div>
-      <div class="row">
+      <div class="row" v-if="detail.visType !== 2">
         <div class="label">既往史：</div>
         {{ detail.pastIllnessHistory || '' }}
       </div>
@@ -200,10 +204,28 @@ export default {
       currentStaffApproveType: 0,
       detail: {},
       approveRemark: '',
+      visTypeMap: this.$utils.getEnums('VisType').properties,
+      TreatmentTypes: [], // 就诊类型
     }
   },
   methods: {
     ...mapMutations('medicalRecord', ['setMedicalRecordObj']),
+    // 获取就诊类型列表
+    initTreatmentTypes() {
+      diagnosisAPI.getTreatmentTypes().then((res) => {
+        if (res?.data?.length > 0) {
+          this.TreatmentTypes = res.data
+        }
+      })
+    },
+    // 获取自定义的就诊类型
+    getCustomType(typeId) {
+      if (this.TreatmentTypes.length) {
+        return this.TreatmentTypes.find((e) => e.codeId === typeId)?.name || ''
+      } else {
+        return ''
+      }
+    },
     async getRole() {
       const res = await diagnosisAPI.getRole({})
       this.currentStaffApproveType = res?.data?.currentStaffApproveType
@@ -302,6 +324,7 @@ export default {
   onLoad({ medicalRecordId, patientId }) {
     this.medicalRecordId = medicalRecordId
     this.patientId = patientId
+    this.initTreatmentTypes()
   },
   onShow() {
     this.getRole()
@@ -315,6 +338,8 @@ export default {
   color: rgba(0, 0, 0, 0.7);
   font-size: 28rpx;
   background: white;
+  height: calc(100% - 90rpx);
+  overflow: auto;
 }
 
 .time {

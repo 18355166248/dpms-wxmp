@@ -6,7 +6,11 @@
       </view>
       <load-more :status="status" />
     </view>
-    <empty :disabled="true" v-else-if="status !== 'loading'" text="暂无待定预约" />
+    <empty
+      :disabled="true"
+      v-else-if="status !== 'loading'"
+      text="暂无待定预约"
+    />
   </scroll-view>
 </template>
 

@@ -31,6 +31,18 @@
   ],
   "subPackages": [
     {
+      "root": "pages/commonUseFunctions",
+      "name": "commonUseFunctions",
+      "pages": [
+        {
+          "path": "commonUseFunctions",
+          "style": {
+            "navigationBarTitleText": "常用功能"
+          }
+        }
+      ]
+    },
+    {
       "root": "baseSubpackages/todayWork",
       "name": "todayWork",
       "pages": [
@@ -285,18 +297,6 @@
           "path": "approvalManagement",
           "style": {
             "navigationBarTitleText": "审批管理"
-          }
-        }
-      ]
-    },
-    {
-      "root": "baseSubpackages/menuModification",
-      "name": "menuModification",
-      "pages": [
-        {
-          "path": "menuModification",
-          "style": {
-            "navigationBarTitleText": "功能排序"
           }
         }
       ]
@@ -601,10 +601,7 @@
     },
     "pages/home/home": {
       "network": "all",
-      "packages": [
-        "baseSubpackages/menuModification",
-        "baseSubpackages/approvalManagement"
-      ]
+      "packages": ["baseSubpackages/approvalManagement"]
     }
   },
   "globalStyle": {

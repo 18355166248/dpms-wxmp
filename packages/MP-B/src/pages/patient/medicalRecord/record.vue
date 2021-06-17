@@ -37,7 +37,7 @@
           医生：<span class="content">{{ r.doctorStaffName }}</span>
         </div>
         <div class="row">
-          病历类型：<span class="content">{{ r.visText }}</span>
+          就诊类型：<span class="content">{{ r.visText }}</span>
         </div>
         <div class="row">
           主诉：<span class="content">{{ r.mainComplaint }}</span>

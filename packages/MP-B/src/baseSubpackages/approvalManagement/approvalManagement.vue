@@ -1,86 +1,48 @@
 <template>
   <view class="mainWrapper">
-    <view class="topBar">
-      <view>
-        <span>我发起的</span>
-      </view>
-      <view>
-        <span>我审核的</span>
-      </view>
+    <view class="topBar mb-18">
+      <tabs
+        style="width: 100%;"
+        height="96rpx"
+        v-model="activeTab"
+        :scroll="false"
+        :tabs="['我发起的', '我审核的']"
+        color="#5cbb89"
+        activeColor="#5cbb89"
+        lineColor="#5cbb89"
+        lineHeight="4rpx"
+        lineRadius="2rpx"
+        fontSize="30rpx"
+        lineScale="0.2"
+        @change="changeTab"
+      ></tabs>
     </view>
-    <view class="bodyDetails mh-48">
-      <view class="typeSearch">
-        <text>审批类型： </text>
-        <view class="selectArea">
-          <u-input v-model="value" :type="type" @click="show = true" border />
-          <u-action-sheet
-            :list="actionSheetList"
-            v-model="show"
-            @click="actionSheetCallback"
-          ></u-action-sheet>
-        </view>
-      </view>
-      <view class="singleContainer mt-32">
-        <view class="firstLevel mh-16 mv-16">
-          <view>收费</view>
-          <view>审核中</view>
-        </view>
-        <view class="secondLevel">
-          <view class="secondLevelLeft mh-16 mv-16">
-            <view>
-              <span class="mr-16">发起机构：</span>
-              <span>审核人：</span>
-            </view>
-            <view>向武汉诊所借调物品</view>
-            <view>备注：</view>
-          </view>
-          <view class="secondLevelRight mh-16 mv-16">
-            <view>查看</view>
-          </view>
-        </view>
-      </view>
-    </view>
+    <requestApplied v-if="currentTab === 0"></requestApplied>
+    <requestReview v-if="currentTab === 1"></requestReview>
   </view>
 </template>
 
 <script>
+import tabs from '@/components/tabs/tabs'
+import requestApplied from '@/baseSubpackages/approvalManagement/components/requestApplied'
+import requestReview from '@/baseSubpackages/approvalManagement/components/requestReview'
+
 export default {
   data() {
     return {
-      value: '全部',
-      type: 'select',
       show: false,
-      actionSheetList: [
-        {
-          value: '1',
-          text: '全部',
-        },
-        {
-          value: '2',
-          text: '收费',
-        },
-        {
-          value: '3',
-          text: '借调',
-        },
-      ],
+      activeTab: 0,
+      currentTab: 0,
     }
   },
-  methods: {
-    // 点击actionSheet回调
-    actionSheetCallback(index) {
-      console.log((this.value = this.actionSheetList[index].text))
-      this.value = this.actionSheetList[index].text
-    },
+  components: {
+    tabs,
+    requestApplied,
+    requestReview,
   },
-
-  filters: {
-    filterEnums(value, arr) {
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].value === value) {
-          return arr[i].text
-        }
-      }
+  methods: {
+    changeTab(index) {
+      this.currentTab = index
     },
   },
 }
@@ -88,45 +50,28 @@ export default {
 
 <style lang="scss" scoped>
 .mainWrapper {
-  .topBar {
-    height: 100rpx;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    > view {
-      line-height: 100rpx;
-      width: 100%;
-      text-align: center;
-    }
+  background: #f5f5f5;
+  ///deep/ .u-btn {
+  //  width: 120rpx;
+  //  height: 56rpx;
+  //  line-height: 56rpx;
+  //  background: #5cbb89;
+  //  border-radius: 28rpx;
+  //  &:nth-child(2){
+  //    width: 148rpx;
+  //  }
+  //}
+  ///deep/ .u-size-default {
+  //  padding: 0;
+  //  font-size: 28rpx;
+  //}
+  /deep/ .u-input__right-icon {
+    line-height: 76rpx;
+    padding-right: 10rpx;
   }
-  .bodyDetails {
-    .singleContainer {
-      border: 1px solid black;
-      border-radius: 5px;
-      width: 100%;
-      height: 350rpx;
-      .firstLevel {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-      }
-      .secondLevel {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        .secondLevelLeft {
-          display: flex;
-          flex-direction: column;
-        }
-      }
-    }
-    .selectArea {
-      display: inline-block;
-      width: 450rpx;
-      /deep/ .u-input__right-icon {
-        line-height: 70rpx;
-      }
-    }
+  /deep/ .u-input__input {
+    height: 76rpx;
+    padding-left: 10rpx;
   }
 }
 </style>
