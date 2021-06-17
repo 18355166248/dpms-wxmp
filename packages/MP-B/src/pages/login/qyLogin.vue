@@ -32,15 +32,16 @@ export default {
   methods: {
     async doLogin(code) {
       const option = uni.getLaunchOptionsSync()
-      // console.log('launch option:', option)
-
       const { query, path } = option
       // const corpId = query?.corpId || 'wwc436a6d7c6c66d49'
       // const agentId = query?.agentId || 1000039
       const corpId = query?.corpId
       const agentId = query?.agentId
       if (!corpId || !agentId) {
-        this.$utils.show('登录失败！corpId或agentId为空')
+        this.$utils.show('corpId或agentId为空，将跳转至登录页面')
+        this.$utils.reLaunch({
+          url: "/pages/login/login",
+        })
         return
       }
 
@@ -56,7 +57,7 @@ export default {
       await this.initData()
 
       const newPath = path.startsWith('/') ? path : `/${path}`
-      this.$utils.replace({
+      this.$utils.reLaunch({
         url: `${newPath}?${qs.stringify(query)}`,
       })
     },
