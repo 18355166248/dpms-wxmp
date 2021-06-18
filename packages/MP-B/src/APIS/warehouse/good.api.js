@@ -23,11 +23,47 @@ const goodAPI = {
 
   /**
    * @description 获取物品详情
-   * @param {Number} params.merchandiseIds           // 物品id
+   * @param {Number} params.merchandiseId            // 物品id
    * @returns
    */
   getGoodsDetail(params) {
-    return httper.get('physical/merchandise/list/by-merchandise-ids', params)
+    return httper.get('physical/merchandise/detail', params)
+  },
+
+  /**
+   * @description 获取入库记录
+   * @param {Number} params.merchandiseId                 物品id
+   * @returns
+   */
+  getGoodInputRecord(params) {
+    return httper.get('physical/inventory/input/record', params)
+  },
+  /**
+   * @description 获取出库记录
+   * @param {Number} params.merchandiseId                 物品id
+   * @returns
+   */
+  getGoodOutputRecord(params) {
+    return httper.get('physical/inventory/output/record', params)
+  },
+  /**
+   * @description 获取盘点记录
+   * @param {Number} params.merchandiseId                 物品id
+   * @returns
+   */
+  getGoodCheckRecord(params) {
+    return httper.get('physical/inventory/check/record', params)
+  },
+  /**
+   * @description 获取损益记录
+   * @param {Number} params.merchandiseId                 物品id
+   * @returns
+   */
+  getIncreaseDecreaseRecord(params) {
+    return httper.get(
+      'physical/inventory/increase-decrease/inventory-page',
+      params,
+    )
   },
 }
 

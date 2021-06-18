@@ -1,7 +1,11 @@
 <template>
   <!-- 物品列表 -->
-  <view>
-    <goodList />
+  <view class="container">
+    <goodList
+      type="good"
+      searchPath="/pages/warehouse/goods/searchGood"
+      detailPath="/pages/warehouse/goods/goodDetail"
+    />
   </view>
 </template>
 <script>
@@ -10,3 +14,10 @@ export default {
   components: { goodList },
 }
 </script>
+<style lang="scss" scoped>
+.container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+</style>

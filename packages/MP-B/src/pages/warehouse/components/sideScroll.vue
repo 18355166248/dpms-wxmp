@@ -54,10 +54,15 @@ export default {
   font-size: 30rpx;
   &-item {
     width: 100%;
+    box-sizing: border-box;
     height: 100rpx;
     text-align: center;
     line-height: 100rpx;
     font-size: 26rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 16rpx;
   }
   .activeColor {
     background-color: #ffffff;

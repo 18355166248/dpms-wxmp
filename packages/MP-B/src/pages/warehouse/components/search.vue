@@ -9,7 +9,7 @@
             @focus="handleFocus"
             ref="merchandiseName"
             placeholder="物品编码、物品名称、生产厂商"
-            confirm-type="“search”"
+            confirm-type="search"
             v-model="merchandiseName"
             @confirm="confirm"
           />
@@ -78,7 +78,13 @@
         <empty v-else disabled />
       </view>
     </view>
-    <uni-drawer ref="showRight" mode="right" :mask-click="false" :width="350">
+    <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="343">
+      <view class="drawer-title">
+        <text>筛选</text>
+      </view>
+      <view class="drawer-oneCategoryname">
+        <text>{{ oneCategoryName }}</text>
+      </view>
       <scroll-view class="drawer-right" style="height: 100%;" scroll-y="true">
         <expandFilter
           fieldKey="merchandiseCategoryId"
@@ -119,8 +125,11 @@ export default {
     empty,
   },
   props: {
+    type: {
+      type: String,
+    },
     // 点击物品信息跳转的路径path
-    path: {
+    detailPath: {
       type: String,
     },
     storgeKey: {
@@ -130,6 +139,7 @@ export default {
   },
   data() {
     return {
+      oneCategoryName: '全部',
       showHistory: true,
       oneCategoryId: 0,
       twoCategoryId: 0,
@@ -145,35 +155,50 @@ export default {
         pages: 1,
         records: [],
       },
-      statusText: 'more',
       history: new History(this.storgeKey, [], 10),
+      loading: false,
     }
   },
-  onLoad() {
+  computed: {
+    statusText() {
+      if (!this.loading) {
+        if (this.pagination.current === this.pagination.pages) {
+          return 'noMore'
+        } else {
+          return 'more'
+        }
+      } else {
+        return 'loading'
+      }
+    },
+  },
+  created() {
     this.historyList = this.history.getHistory()
-    this.getCategoryList()
   },
   mounted() {},
   methods: {
     // 获取物品分类
-    async getCategoryList() {
-      const res = await goodAPI.getCategoryList()
-      let arr = all.concat(res.data)
-      this.oneCategoryList.push(...arr)
-    },
+    // async getCategoryList() {
+    //   const res = await goodAPI.getCategoryList()
+    //   let arr = all.concat(res.data)
+    //   this.oneCategoryList.push(...arr)
+    // },
     // 查询物品
     async getGoodsList(params) {
-      const res = await goodAPI.getGoodsList(params)
-      let { records, total, current, pages } = res.data
+      this.loading = true
+      const res = await goodAPI.getGoodsList({ ...params, getCategory: true })
+      this.loading = false
+      let { records, total, current, pages, categoryList } = res.data
+      this.oneCategoryList = []
+      let arr = all.concat(categoryList)
+      this.oneCategoryList.push(...arr)
       return { records, total, current, pages }
     },
     // 加载更多
     async loadMore() {
       if (this.pagination.current >= this.pagination.pages) {
-        this.statusText = 'noMore'
         return false
       }
-      this.statusText = 'loading'
       let _current = (this.pagination.current += 1)
       let params = {
         current: _current,
@@ -181,7 +206,6 @@ export default {
         merchandiseCategoryId: null,
       }
       const res = await this.getGoodsList(params)
-      this.statusText = 'more'
       let newRecords = this.pagination.records.concat(res.records)
       let { total, current, pages } = res
       this.pagination = { records: newRecords, total, current, pages }
@@ -189,6 +213,7 @@ export default {
     // 点击第一层级
     async changeOneCategory(item) {
       this.oneCategoryId = item.merchandiseCategoryId
+      this.oneCategoryName = item.merchandiseCategoryName
       // 切换一级分类时,清空已选的二级和三级分类
       this.twoCategoryId = this.threeCategoryId = 0
       this.twoCategoryList =
@@ -236,13 +261,14 @@ export default {
       this.showHistory = false
       // 点击搜素后, 将搜索词添加到历史记录中
       this.history.add(this.merchandiseName)
-      let params = { merchandiseName: this.merchandiseName }
+      let params = { merchandiseName: this.merchandiseName || null }
       const res = await this.getGoodsList(params)
       this.pagination = res
     },
     // 点击历史记录
     selectHistory(value) {
       this.merchandiseName = value
+      this.confirm()
     },
     // 清除历史记录
     clearHistory() {
@@ -255,7 +281,9 @@ export default {
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$utils.push({ url: `${this.path}?merchandiseId=${merchandiseId}` })
+      this.$utils.push({
+        url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
+      })
     },
   },
 }
@@ -343,6 +371,25 @@ export default {
         background-color: #f5f5f5;
       }
     }
+  }
+  .drawer-title {
+    width: 100%;
+    height: 109rpx;
+    line-height: 109rpx;
+    text-align: center;
+    font-size: 36rpx;
+    color: #191919;
+    font-weight: 500;
+  }
+  .drawer-oneCategoryname {
+    width: 100%;
+    padding-left: 32rpx;
+    height: 113rpx;
+    line-height: 113rpx;
+    font-size: 30rpx;
+    color: #191919;
+    font-weight: 500;
+    border-bottom: 1rpx solid #e5e5e5;
   }
   .drawer-right {
     padding-left: 32rpx;

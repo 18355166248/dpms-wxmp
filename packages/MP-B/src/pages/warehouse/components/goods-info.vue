@@ -13,7 +13,7 @@
     >
     <view class="mb16"
       ><text class="text-label">物品类型：</text
-      ><text class="text-value">{{ detail.merchandiseType }}</text></view
+      ><text class="text-value">{{ detail.merchandiseTypeStr }}</text></view
     >
     <!-- 物品展示 -->
     <view class="mb16" v-if="type === 'good'"
@@ -23,7 +23,10 @@
     <!-- 库存展示 -->
     <view class="mb16" v-if="type === 'inventory'"
       ><text class="text-label">可用库存：</text
-      ><text class="text-value">{{ detail.inventoryNum || 0 }}</text></view
+      ><text class="text-value available"
+        >{{ detail.inventoryNum || '' }}
+        {{ detail.inventoryUnitStr || '' }}</text
+      ></view
     >
     <image
       v-if="!detail.isEnable"
@@ -79,6 +82,9 @@ export default {
     right: 0;
     width: 40rpx;
     height: 56rpx;
+  }
+  .available {
+    color: #fa8c16;
   }
 }
 </style>

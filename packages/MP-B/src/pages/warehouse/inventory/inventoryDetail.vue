@@ -1,14 +1,17 @@
 <template>
   <view style="height: 100%;">
-    <view class="baseInfo">
-      <text class="text ellipse">{{ baseInfo.title || '' }}</text>
-      <text class="text ellipse">物品编号：{{ baseInfo.No || '' }}</text>
+    <view class="baseInfo" @click="goToGoodDetail">
+      <text class="text ellipse">{{ baseInfo.commonName || '' }}</text>
       <text class="text ellipse"
-        >规格信息：{{ baseInfo.specification || '' }}</text
+        >物品编号：{{ baseInfo.merchandiseNo || '' }}</text
+      >
+      <text class="text ellipse"
+        >规格类型：{{ baseInfo.merchandiseTypeStr || '' }}</text
       >
       <view class="text"
         >可用库存：<text class="available ellipse"
-          >{{ baseInfo.availableNum || '' }} {{ baseInfo.unit || '' }}</text
+          >{{ detail.inventoryNum || '' }}
+          {{ detail.inventoryUnitStr || '' }}</text
         ></view
       >
     </view>
@@ -26,77 +29,78 @@
       lineScale="0.30"
       @change="changeTab"
     >
-      <view v-if="recordList.length">
-        <view class="record" v-for="(item, index) in recordList" :key="index">
-          <view class="time">{{ item.time || '-' }}</view>
-          <!--   入库记录 和 出库记录 有 类型  -->
-          <view class="type" v-if="currentTab === 0 || currentTab === 1">{{
-            item.type || '_'
-          }}</view>
-          <view class="amount">{{ item.value || '_' }}</view>
-        </view>
-        <view class="tips">已无更多数据</view>
-      </view>
-      <empty v-else :disabled="true" text="暂无数据" />
     </tabs>
+    <swiper
+      class="swiper"
+      :current="currentTab"
+      v-if="merchandiseId"
+      @change="changeSwiper"
+    >
+      <swiper-item>
+        <inputRecord :merchandiseId="merchandiseId" />
+      </swiper-item>
+      <swiper-item>
+        <outputRecord :merchandiseId="merchandiseId" />
+      </swiper-item>
+      <swiper-item>
+        <checkRecord :merchandiseId="merchandiseId" />
+      </swiper-item>
+      <swiper-item>
+        <increaseDecrease :merchandiseId="merchandiseId" />
+      </swiper-item>
+    </swiper>
   </view>
 </template>
 <script>
 import tabs from '@/components/tabs/tabs.vue'
+import inputRecord from './components/input-record.vue'
+import outputRecord from './components/output-record.vue'
+import checkRecord from './components/check-record.vue'
+import increaseDecrease from './components/increase-decrease.vue'
+import goodAPI from '@/APIS/warehouse/good.api.js'
 export default {
-  components: { tabs },
+  components: {
+    tabs,
+    inputRecord,
+    outputRecord,
+    checkRecord,
+    increaseDecrease,
+  },
   data() {
     return {
       currentTab: 0, //当前tab
-      baseInfo: {
-        title: '库存名称测试',
-        No: 'ISO213123123123123123',
-        specification: 'A型*20个/包',
-        availableNum: 10,
-        unit: '支',
-      },
+      baseInfo: {},
       tabs: [
         { name: '入库记录', val: 0 },
         { name: '出库记录', val: 1 },
         { name: '盘点记录', val: 2 },
         { name: '损益记录', val: 3 },
       ],
-      recordList: [],
-      mockData: [
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-        { time: '2020-1-1', type: '销售出库', value: '-1231223' },
-      ],
+      merchandiseId: null,
     }
   },
-  created() {
-    this.recordList = this.mockData
+  onLoad({ merchandiseId }) {
+    console.log('获取的参数是:', merchandiseId)
+    this.merchandiseId = merchandiseId
   },
+  created() {},
   methods: {
     changeTab(i) {
       this.currentTab = this.tabs[i].val
-      // 测试空数据展示效果
-      if (i === 1) {
-        this.recordList = []
-      } else {
-        this.recordList = this.mockData
-      }
-      //  TO DO 切换页面的时候 刷新/获取当前tab的数据
+    },
+    changeSwiper(event) {
+      console.log('滑动详情:', event)
+      // this.currentTab = index
+    },
+    async getGoodsDetail(merchandiseId) {
+      const res = await goodAPI.getGoodsDetail({ merchandiseId })
+      this.baseInfo = res.data
+    },
+    // 前往物品详情页
+    goToGoodDetail() {
+      this.$utils.push({
+        url: `/pages/warehouse/goods/goodDetail?merchandiseId=${this.merchandiseId}`,
+      })
     },
   },
 }
@@ -124,28 +128,6 @@ export default {
     }
   }
 }
-.record {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 96rpx;
-  padding: 0 32rpx;
-  background-color: #fff;
-  border-bottom: 2rpx solid #f7f7f7;
-  &:first-child {
-    border-top: 4rpx solid #f7f7f7;
-  }
-  .time {
-    font-size: 28rpx;
-  }
-  .type {
-    font-size: 28rpx;
-  }
-  .amount {
-    font-size: 28rpx;
-    color: #fa8c16;
-  }
-}
 .tips {
   height: 96rpx;
   line-height: 96rpx;
@@ -159,5 +141,9 @@ export default {
   word-break: break-all;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+.swiper {
+  width: 100%;
+  height: 100%;
 }
 </style>

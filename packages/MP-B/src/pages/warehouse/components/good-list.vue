@@ -35,19 +35,29 @@
             scroll-y="true"
             style="height: 100%;"
             @scrolltolower="loadMore"
+            v-if="pagination.records.length"
+            :scroll-top="scrollTop"
           >
             <view v-for="(item, index) in pagination.records" :key="index">
               <goodsInfo
                 :detail="item"
+                :type="type"
                 @on-click="goToDetail(item.merchandiseId)"
               />
             </view>
             <loadMore :status="statusText" />
           </scroll-view>
+          <empty v-else disabled />
         </view>
       </view>
     </view>
-    <uni-drawer ref="showRight" mode="right" :mask-click="false" :width="350">
+    <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="343">
+      <view class="drawer-title">
+        <text>筛选</text>
+      </view>
+      <view class="drawer-oneCategoryname">
+        <text>{{ oneCategoryName }}</text>
+      </view>
       <scroll-view class="drawer-right" style="height: 100%;" scroll-y="true">
         <expandFilter
           fieldKey="merchandiseCategoryId"
@@ -68,6 +78,7 @@ import expandFilter from './expand-filter.vue'
 import goodsInfo from './goods-info.vue'
 import goodAPI from '@/APIS/warehouse/good.api.js'
 import loadMore from '@/components/load-more/load-more.vue'
+import empty from '@/components/empty/empty.vue'
 const all = [
   {
     merchandiseCategoryId: 0,
@@ -77,15 +88,29 @@ const all = [
 ]
 
 export default {
-  components: { sideScroll, tabScroll, expandFilter, goodsInfo, loadMore },
+  components: {
+    sideScroll,
+    tabScroll,
+    expandFilter,
+    goodsInfo,
+    loadMore,
+    empty,
+  },
   props: {
+    type: {
+      type: String,
+    },
+    searchPath: {
+      type: String,
+    },
     // 点击物品信息跳转的路径path
-    path: {
+    detailPath: {
       type: String,
     },
   },
   data() {
     return {
+      oneCategoryName: '全部',
       oneCategoryId: 0,
       twoCategoryId: 0,
       threeCategoryId: 0,
@@ -98,10 +123,25 @@ export default {
         pages: 1,
         records: [],
       },
-      statusText: 'more',
+      // statusText: 'more',
+      loading: false,
+      scrollTop: 0,
     }
   },
-  async onLoad() {
+  computed: {
+    statusText() {
+      if (!this.loading) {
+        if (this.pagination.current === this.pagination.pages) {
+          return 'noMore'
+        } else {
+          return 'more'
+        }
+      } else {
+        return 'loading'
+      }
+    },
+  },
+  async created() {
     this.getCategoryList()
     const res = await this.getGoodsList()
     this.pagination = res
@@ -115,18 +155,17 @@ export default {
     },
     // 查询物品
     async getGoodsList(params) {
-      // merchandiseCategoryId, current = 1, size = 10
+      this.loading = true
       const res = await goodAPI.getGoodsList(params)
+      this.loading = false
       let { records, total, current, pages } = res.data
       return { records, total, current, pages }
     },
     // 加载更多
     async loadMore() {
       if (this.pagination.current >= this.pagination.pages) {
-        this.statusText = 'noMore'
         return false
       }
-      this.statusText = 'loading'
       let _current = (this.pagination.current += 1)
       let merchandiseCategoryId =
         this.threeCategoryId || this.twoCategoryId || this.oneCategoryId
@@ -135,7 +174,6 @@ export default {
         merchandiseCategoryId: merchandiseCategoryId || null,
       }
       const res = await this.getGoodsList(params)
-      this.statusText = 'more'
       let newRecords = this.pagination.records.concat(res.records)
       let { total, current, pages } = res
       this.pagination = { records: newRecords, total, current, pages }
@@ -143,6 +181,7 @@ export default {
     // 点击第一层级
     async changeOneCategory(item) {
       this.oneCategoryId = item.merchandiseCategoryId
+      this.oneCategoryName = item.merchandiseCategoryName
       // 切换一级分类时,清空已选的二级和三级分类
       this.twoCategoryId = this.threeCategoryId = 0
       this.twoCategoryList =
@@ -184,12 +223,13 @@ export default {
     },
     // 前往搜索页面
     goToSearch() {
-      this.$refs.showRight.open()
-      this.$utils.push({ url: 'warehouse/goods/searchGood' })
+      this.$utils.push({ url: this.searchPath })
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$utils.push({ url: `${this.path}?merchandiseId=${merchandiseId}` })
+      this.$utils.push({
+        url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
+      })
     },
     openDrawer() {
       this.$refs.showRight.open()
@@ -248,6 +288,25 @@ export default {
         overflow-y: hidden;
       }
     }
+  }
+  .drawer-title {
+    width: 100%;
+    height: 109rpx;
+    line-height: 109rpx;
+    text-align: center;
+    font-size: 36rpx;
+    color: #191919;
+    font-weight: 500;
+  }
+  .drawer-oneCategoryname {
+    width: 100%;
+    padding-left: 32rpx;
+    height: 113rpx;
+    line-height: 113rpx;
+    font-size: 30rpx;
+    color: #191919;
+    font-weight: 500;
+    border-bottom: 1rpx solid #e5e5e5;
   }
   .drawer-right {
     padding-left: 32rpx;

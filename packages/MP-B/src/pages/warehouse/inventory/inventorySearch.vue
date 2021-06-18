@@ -1,7 +1,11 @@
 <template>
   <!-- 库存搜索 -->
-  <view>
-    <search storgeKey="inventory" path="warehouse/inventory/inventoryDetail" />
+  <view class="container">
+    <search
+      type="inventory"
+      storgeKey="inventory"
+      detailPath="/pages/warehouse/inventory/inventoryDetail"
+    />
   </view>
 </template>
 <script>
@@ -10,3 +14,10 @@ export default {
   components: { search },
 }
 </script>
+<style lang="scss" scoped>
+.container {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+</style>

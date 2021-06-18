@@ -22,7 +22,7 @@
     </view>
     <view class="detail-item">
       <text>所属分类</text>
-      <text>A型*20个/包</text>
+      <text>{{ detail.merchandiseTypeStr }}</text>
     </view>
     <view class="detail-item">
       <text>条形码编号</text>
@@ -65,9 +65,9 @@ export default {
     this.getGoodsDetail(merchandiseId)
   },
   methods: {
-    async getGoodsDetail(merchandiseIds) {
-      const res = await goodAPI.getGoodsDetail({ merchandiseIds })
-      this.detail = res.data[0]
+    async getGoodsDetail(merchandiseId) {
+      const res = await goodAPI.getGoodsDetail({ merchandiseId })
+      this.detail = res.data
     },
   },
 }
