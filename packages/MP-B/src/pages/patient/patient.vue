@@ -133,14 +133,8 @@
             处置记录
           </view>
         </view>
-        <view
-          v-if="
-            menu.pageElementsList.some((m) => m.enumValue === 'disposalRecord')
-          "
-          class="menu-area-item"
-          @click="handleShowModal"
-        >
-          <view class="menu-area-item-icon">
+        <view class="menu-area-item" @click="handleShowModal">
+          <view class="menu-area-item-icon menu-area-item-icon-color7">
             <text class="iconfont icon-wechat-fill"></text>
           </view>
           <view class="menu-area-item-txt mt-24">
@@ -152,37 +146,20 @@
     <view class="mask-pop" v-if="modalVisible">
       <view class="pop-content">
         <view class="friend-list">
-          <view class="item">
-            <view class="avatar"></view>
+          <view class="item" v-for="(item, index) in friendsList" :key="index">
+            <view
+              class="avatar"
+              style="background-image: url({{item.receivePhotoUrl}})"
+            ></view>
             <view class="nick-name-wrap">
-              <view class="name">小猫鱼</view>
-              <view class="belong-wechat">所属微信：张护士</view>
+              <view class="name">{{ item.receiveNick }}</view>
+              <view class="belong-wechat"
+                >所属微信：{{ item.receiveRemark || '' }}</view
+              >
             </view>
-            <view class="chat-btn" @click="handleCopy">聊天</view>
-          </view>
-          <view class="item">
-            <view class="avatar"></view>
-            <view class="nick-name-wrap">
-              <view class="name">小猫鱼</view>
-              <view class="belong-wechat">所属微信：张护士</view>
-            </view>
-            <view class="chat-btn">聊天</view>
-          </view>
-          <view class="item">
-            <view class="avatar"></view>
-            <view class="nick-name-wrap">
-              <view class="name">小猫鱼</view>
-              <view class="belong-wechat">所属微信：张护士</view>
-            </view>
-            <view class="chat-btn">聊天</view>
-          </view>
-          <view class="item">
-            <view class="avatar"></view>
-            <view class="nick-name-wrap">
-              <view class="name">小猫鱼</view>
-              <view class="belong-wechat">所属微信：张护士</view>
-            </view>
-            <view class="chat-btn">聊天</view>
+            <view class="chat-btn" @click="handleCopy(item.receiveNick)"
+              >聊天</view
+            >
           </view>
         </view>
         <view class="bottom-close" @click="closeModal">关闭</view>
@@ -199,6 +176,7 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   data() {
     return {
+      friendsList: [],
       patientId: '',
       customerId: '',
       patient: {},
@@ -282,9 +260,9 @@ export default {
         url,
       })
     },
-    handleCopy() {
+    handleCopy(data) {
       wx.setClipboardData({
-        data: 'data123',
+        data: data,
         success(res) {
           wx.hideToast()
           wx.showToast({
@@ -299,7 +277,21 @@ export default {
       this.modalVisible = false
     },
     handleShowModal() {
-      this.modalVisible = true
+      patientAPI
+        .getConnectFriends({
+          customerId: this.customerId,
+        })
+        .then((res) => {
+          this.friendsList = res.data || []
+          if (res.data && res.data.length === 0) {
+            wx.showToast({
+              title: '当前患者未关联企微/个微',
+              icon: 'none',
+            })
+            return
+          }
+          this.modalVisible = true
+        })
     },
   },
   components: {
@@ -345,6 +337,8 @@ export default {
       .friend-list {
         padding: 32rpx 0;
         width: 100%;
+        height: 808rpx;
+        overflow-y: auto;
         .item {
           width: 100%;
           padding: 0 32rpx;
@@ -356,6 +350,10 @@ export default {
           .avatar {
             width: 96rpx;
             height: 96rpx;
+            background-position: center;
+            background-size: 100%;
+            background-repeat: no-repeat;
+            border-radius: 50%;
           }
           .nick-name-wrap {
             margin-left: 16rpx;
@@ -365,11 +363,19 @@ export default {
               font-family: PingFangSC, PingFangSC-Medium;
               font-weight: 500;
               color: #191919;
+              width: 306rpx;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
             .belong-wechat {
               font-size: 28rpx;
               font-family: PingFangSC, PingFangSC-Regular;
               color: #7f7f7f;
+              width: 306rpx;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
           }
           .chat-btn {
@@ -385,6 +391,7 @@ export default {
         }
       }
       .bottom-close {
+        background: #ffffff;
         position: absolute;
         bottom: 0;
         left: 0;
@@ -397,6 +404,7 @@ export default {
         font-size: 34rpx;
         font-family: PingFangSC, PingFangSC-Regular;
         color: #5cbb89;
+        border-radius: 0 0 24rpx 24rpx;
       }
     }
   }
