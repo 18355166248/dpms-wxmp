@@ -1,3 +1,5 @@
+import _ from 'lodash'
+
 const handleMustData = {
   /**
    * ** 获取是否展示/必填数据  **
@@ -23,7 +25,7 @@ const handleMustData = {
    * memo  备注
    * @returns
    */
-  initMustData(extend) {
+  initMustData() {
     const allPro = [
       'patientName',
       'gender',
@@ -67,21 +69,24 @@ const handleMustData = {
    * @param {*} extend 患者类型id
    * @returns
    */
-  formatMustData(obj, arr, extend) {
-    for (const key in obj) {
+  formatMustData(params) {
+    const { obj, arr, extend } = params
+    let tempObj = _.cloneDeep(obj)
+
+    for (const key in tempObj) {
       // 没有传extendName，则取第一个患者类型的数据
       if (!extend) {
-        obj = this.formatPro(obj, arr[0], key)
+        tempObj = this.formatPro(tempObj, arr[0], key)
       } else {
         arr.forEach((val) => {
           if (Number(val[0].extend) === Number(extend)) {
-            obj = this.formatPro(obj, val, key)
+            tempObj = this.formatPro(tempObj, val, key)
           }
         })
       }
     }
 
-    return obj
+    return tempObj
   },
 
   /**
@@ -92,14 +97,16 @@ const handleMustData = {
    * @returns
    */
   formatPro(obj, arr, key) {
+    let tempObj = _.cloneDeep(obj)
+
     arr.forEach((valA) => {
-      if (Number(valA.belongId) === Number(obj[key].key) + 1) {
-        obj[key].enableMust = Boolean(valA.enableMust)
-        obj[key].enableShow = Boolean(valA.enableShow)
+      if (Number(valA.belongId) === Number(tempObj[key].key) + 1) {
+        tempObj[key].enableMust = Boolean(valA.enableMust)
+        tempObj[key].enableShow = Boolean(valA.enableShow)
       }
     })
 
-    return obj
+    return tempObj
   },
 }
 

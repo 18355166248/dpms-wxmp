@@ -238,7 +238,10 @@
         isLink
         @click.native="onSelectTags"
       />
-      <dpmsFormTitle title="联系方式" />
+      <dpmsFormTitle
+        title="联系方式"
+        v-if="requiredObj.mobile && requiredObj.mobile.enableShow"
+      />
       <view
         class="group"
         v-if="requiredObj.mobile && requiredObj.mobile.enableShow"
@@ -326,7 +329,10 @@
           />
         </div>
       </div>
-      <view class="space"></view>
+      <view
+        class="space"
+        v-if="requiredObj.memo && requiredObj.memo.enableShow"
+      ></view>
       <div
         class="remark"
         :class="{ 'pb-68': isPhoneXCeil }"
@@ -423,6 +429,8 @@ export default {
       changeKeys: [],
       staffList: [],
       sourceName: '', //患者来源名称
+
+      // 注意设置了type: 'any'再设置required无效
       rules: {
         patientName: [
           {
@@ -437,11 +445,17 @@ export default {
         ],
         nickName: [
           {
+            message: '请输入个性称呼',
+          },
+          {
             max: 50,
             message: '个性称呼输入不应该超过 50 字',
           },
         ],
         medicalInsuranceCardNo: [
+          {
+            message: '请输入医保卡号',
+          },
           {
             max: 50,
             message: '医保卡号不应该超过 50 字',
@@ -465,14 +479,20 @@ export default {
         ],
         age: [
           {
+            message: '请输入年龄',
+          },
+          {
             pattern: /^(?:[0-9][0-9]?|1[01][0-9]|140)$/,
             message: '年龄不合法',
           },
         ],
         certificatesNo: [
           {
+            message: '请输入身份证号',
+          },
+          {
             pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/,
-            message: '身份证不合法',
+            message: '身份证号不合法',
           },
         ],
         contactLabel: [
@@ -483,22 +503,26 @@ export default {
         gender: [
           {
             message: '请选择性别',
-            type: 'any',
           },
         ],
         nationality: [
           {
             message: '请选择国籍',
-            type: 'any',
           },
         ],
         mobile: [
+          {
+            message: '请输入联系电话',
+          },
           {
             pattern: /^\d{11}$/,
             message: '联系电话格式不正确',
           },
         ],
         fixedTelephone: [
+          {
+            message: '请输入固定电话',
+          },
           {
             pattern: /^[^*][\d\-]{7,15}$/,
             message: '固定电话格式不正确',
@@ -557,7 +581,6 @@ export default {
         settingsPatientSourceId: [
           {
             message: '请选择患者来源',
-            type: 'any',
           },
         ],
         sourceName: [
@@ -568,15 +591,17 @@ export default {
         sourceValue: [
           {
             message: '请输入介绍人',
-            type: 'any',
           },
         ],
         memo: [
           {
-            message: '请填写备注',
+            message: '请输入备注',
           },
         ],
         introducer: [
+          {
+            message: '请输入介绍人',
+          },
           {
             max: 20,
             message: '介绍人输入不应该超过 20 字',
@@ -601,6 +626,7 @@ export default {
       this.getPatientMedicalRecordNo()
       // 需要重新赋值 requiredObj
       this.changeMustData()
+      this.getSettingsPatientSourceList()
     },
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
@@ -671,10 +697,11 @@ export default {
       }
       this.requiredArr = getData.data.createPatient_baseInfo
       // 获取数据，重新赋值
-      this.requiredObj = handleMustData.formatMustData(
-        this.requiredObj,
-        getData.data.createPatient_baseInfo,
-      )
+      const params = {
+        obj: this.requiredObj,
+        arr: getData.data.createPatient_baseInfo,
+      }
+      this.requiredObj = handleMustData.formatMustData(params)
       this.changeRules()
     },
     changeRules() {
@@ -719,6 +746,8 @@ export default {
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getSettingsPatientSourceList() {
+      // 此处为了兼容修改患者类型导致的列表不显示的问题
+      this.settingsPatientSourceList = []
       const res = await patientAPI.patientSource()
       this.settingsPatientSourceList = res.data || []
     },
@@ -873,6 +902,9 @@ export default {
 <style lang="scss" scoped>
 .editPatientForm {
   margin-bottom: 80rpx;
+  // 页面元素少的时候，整个页面没撑起来
+  min-height: calc(100vh - 80rpx);
+  background: #fff;
   .bt-68 {
     bottom: 68rpx !important;
   }
