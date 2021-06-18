@@ -33,6 +33,7 @@ export  const menuDic= {
       background:'linear-gradient(139deg,#722ed1 12%, #b37feb 90%)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #b37feb'
     },
+    url:'/pages/warehouse/goods/index',
     text:'物品一览'
   },
   purchase:{
@@ -60,6 +61,7 @@ export  const menuDic= {
       background:'linear-gradient(315deg,#ff8487, #ff4d4f)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #ff4d4f'
     },
+    url:'/pages/warehouse/inventory/index',
     text:'库存'
   },
   archive:{
