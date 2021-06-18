@@ -28,11 +28,11 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* Project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_h9yn44x7c5t.woff2?t=1620463589584')
+  src: url('//at.alicdn.com/t/font_1965288_1j3xt5gm04o.woff2?t=1623738868780')
       format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_h9yn44x7c5t.woff?t=1620463589584')
+    url('//at.alicdn.com/t/font_1965288_1j3xt5gm04o.woff?t=1623738868780')
       format('woff'),
-    url('//at.alicdn.com/t/font_1965288_h9yn44x7c5t.ttf?t=1620463589584')
+    url('//at.alicdn.com/t/font_1965288_1j3xt5gm04o.ttf?t=1623738868780')
       format('truetype');
 }
 /*********在线字体代码end*********/
@@ -243,6 +243,9 @@ button::after {
 }
 .icon-check-square-fill:before {
   content: '\e84b';
+}
+.icon-wechat-fill:before {
+  content: '\e68b';
 }
 
 /* iconfont图标 end */
