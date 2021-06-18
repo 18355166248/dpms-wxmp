@@ -149,7 +149,7 @@
           <view class="item" v-for="(item, index) in friendsList" :key="index">
             <view
               class="avatar"
-              style="background-image: url({{item.receivePhotoUrl}})"
+              :style="{ backgroundImage: `url(${item.receivePhotoUrl})` }"
             ></view>
             <view class="nick-name-wrap">
               <view class="name">{{ item.receiveNick }}</view>
