@@ -45,15 +45,16 @@ export default {
         {
           type: 'approval',
         },
-        // {
-        //   type: 'preview',
-        // },
+        {
+          type: 'preview',
+        },
+        {
+          type: 'inventory',
+        },
         // {
         //   type: 'receive',
         // },
-        // {
-        //   type: 'inventory',
-        // },
+
         // {
         //   type: 'archive',
         // },
