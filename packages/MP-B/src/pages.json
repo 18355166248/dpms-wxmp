@@ -178,6 +178,12 @@
           "style": {
             "navigationBarTitleText": "处置记录"
           }
+        },
+        {
+          "path": "coupon/coupon",
+          "style": {
+            "navigationBarTitleText": "发券"
+          }
         }
       ]
     },
