@@ -1,14 +1,18 @@
 <template>
-  <div class="h100 editPatientForm">
+  <div class="editPatientForm">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
-      <dpmsCellInput
-        required
-        title="姓名"
-        placeholder="请输入姓名"
-        v-model="form.patientName"
-      />
+      <view>
+        <dpmsCellInput
+          required
+          title="姓名"
+          placeholder="请输入姓名"
+          v-model="form.patientName"
+        />
+      </view>
       <dpmsEnumsPicker
+        v-if="requiredObj.gender && requiredObj.gender.enableShow"
+        :required="requiredObj.gender && requiredObj.gender.enableMust"
         title="性别"
         placeholder="请选择性别"
         v-model="form.gender"
@@ -16,18 +20,38 @@
         isLink
         headerText="选择性别"
       />
-      <dpmsCellInput
-        title="个性称呼"
-        placeholder="请输入个性称呼"
-        v-model="form.nickName"
-      />
-      <dpmsCellInput
-        type="idcard"
-        title="身份证号"
-        placeholder="请输入身份证号"
-        v-model="form.certificatesNo"
-      />
+      <view v-if="requiredObj.nickName && requiredObj.nickName.enableShow">
+        <dpmsCellInput
+          :required="requiredObj.nickName && requiredObj.nickName.enableMust"
+          title="个性称呼"
+          placeholder="请输入个性称呼"
+          v-model="form.nickName"
+        />
+      </view>
+      <view
+        v-if="
+          requiredObj.certificatesNo && requiredObj.certificatesNo.enableShow
+        "
+      >
+        <dpmsCellInput
+          :required="
+            requiredObj.certificatesNo && requiredObj.certificatesNo.enableMust
+          "
+          type="idcard"
+          title="身份证号"
+          placeholder="请输入身份证号"
+          v-model="form.certificatesNo"
+        />
+      </view>
       <dpmsTreePicker
+        v-if="
+          requiredObj.settingsPatientSourceId &&
+          requiredObj.settingsPatientSourceId.enableShow
+        "
+        :required="
+          requiredObj.settingsPatientSourceId &&
+          requiredObj.settingsPatientSourceId.enableMust
+        "
         title="患者来源"
         placeholder="请选择患者来源"
         :list="settingsPatientSourceList"
@@ -45,7 +69,15 @@
       <dpmsCell
         title="介绍人"
         :isLink="true"
-        v-if="sourceName === '朋友介绍' && form.systemInner === 1"
+        v-if="
+          sourceName === '朋友介绍' &&
+          form.systemInner === 1 &&
+          requiredObj.sourceValue &&
+          requiredObj.sourceValue.enableShow
+        "
+        :required="
+          requiredObj.sourceValue && requiredObj.sourceValue.enableMust
+        "
       >
         <input
           placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
@@ -64,7 +96,15 @@
         </template>
       </dpmsCell>
       <dpmsCellPicker
-        v-else-if="sourceName === '员工介绍' && form.systemInner === 1"
+        v-else-if="
+          sourceName === '员工介绍' &&
+          form.systemInner === 1 &&
+          requiredObj.sourceValue &&
+          requiredObj.sourceValue.enableShow
+        "
+        :required="
+          requiredObj.sourceValue && requiredObj.sourceValue.enableMust
+        "
         title="介绍人"
         placeholder="请选择介绍人"
         v-model="form.sourceValue"
@@ -76,7 +116,15 @@
       <dpmsCell
         title="介绍人"
         :isLink="true"
-        v-else-if="sourceName === '患者介绍' && form.systemInner === 1"
+        v-else-if="
+          sourceName === '患者介绍' &&
+          form.systemInner === 1 &&
+          requiredObj.sourceValue &&
+          requiredObj.sourceValue.enableShow
+        "
+        :required="
+          requiredObj.sourceValue && requiredObj.sourceValue.enableMust
+        "
       >
         <input
           placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
@@ -94,14 +142,26 @@
           <slot name="inputRight" />
         </template>
       </dpmsCell>
-      <dpmsCellInput
-        v-else
-        title="介绍人"
-        placeholder="请输入介绍人"
-        v-model="form.introducer"
-        max="20"
-      />
+      <view
+        v-else-if="
+          requiredObj.sourceValue && requiredObj.sourceValue.enableShow
+        "
+      >
+        <dpmsCellInput
+          :required="
+            requiredObj.sourceValue && requiredObj.sourceValue.enableMust
+          "
+          title="介绍人"
+          placeholder="请输入介绍人"
+          v-model="form.introducer"
+          max="20"
+        />
+      </view>
       <dpmsCellPicker
+        v-if="requiredObj.nationality && requiredObj.nationality.enableShow"
+        :required="
+          requiredObj.nationality && requiredObj.nationality.enableMust
+        "
         title="国籍"
         placeholder="请选择国籍"
         v-model="form.nationality"
@@ -113,25 +173,43 @@
         }"
         isLink
       />
-      <dpmsCellInput
-        title="医保卡号"
-        placeholder="请输入医保卡号"
-        v-model="form.medicalInsuranceCardNo"
-      />
+      <view v-if="requiredObj.nickName && requiredObj.nickName.enableShow">
+      </view>
+      <view
+        v-if="
+          requiredObj.medicalInsuranceCardNo &&
+          requiredObj.medicalInsuranceCardNo.enableShow
+        "
+      >
+        <dpmsCellInput
+          :required="
+            requiredObj.medicalInsuranceCardNo &&
+            requiredObj.medicalInsuranceCardNo.enableMust
+          "
+          title="医保卡号"
+          placeholder="请输入医保卡号"
+          v-model="form.medicalInsuranceCardNo"
+        />
+      </view>
       <dpmsDatePicker
+        v-if="requiredObj.birthday && requiredObj.birthday.enableShow"
+        :required="requiredObj.birthday && requiredObj.birthday.enableMust"
         title="出生日期"
         placeholder="请选择出生日期"
         v-model="form.birthday"
         :end="endDate"
         headerText="选择出生日期"
       />
-      <dpmsCellInput
-        title="年龄"
-        placeholder="请输入年龄"
-        v-model="form.age"
-        type="number"
-        @blur="ageBlur"
-      />
+      <view v-if="requiredObj.age && requiredObj.age.enableShow">
+        <dpmsCellInput
+          :required="requiredObj.age && requiredObj.age.enableMust"
+          title="年龄"
+          placeholder="请输入年龄"
+          v-model="form.age"
+          type="number"
+          @blur="ageBlur"
+        />
+      </view>
       <dpmsCellPicker
         title="患者类型"
         placeholder="请选择患者类型"
@@ -152,16 +230,25 @@
         />
       </view>
       <dpmsCell
+        v-if="requiredObj.tagIds && requiredObj.tagIds.enableShow"
+        :required="requiredObj.tagIds && requiredObj.tagIds.enableMust"
         title="患者标签"
         placeholder="请选择患者标签"
         :value="patientTagsCheckedText"
         isLink
         @click.native="onSelectTags"
       />
-      <dpmsFormTitle title="联系方式" />
-      <view class="group">
+      <dpmsFormTitle
+        title="联系方式"
+        v-if="requiredObj.mobile && requiredObj.mobile.enableShow"
+      />
+      <view
+        class="group"
+        v-if="requiredObj.mobile && requiredObj.mobile.enableShow"
+      >
         <view style="width: 375rpx;">
           <dpmsCellPicker
+            :required="requiredObj.mobile && requiredObj.mobile.enableMust"
             title="联系电话"
             placeholder="请选择电话标签"
             v-model="form.contactLabel"
@@ -174,14 +261,27 @@
           />
         </view>
         <view style="width: 375rpx; padding-top: 2px; background: #fff;">
-          <dpmsCellInput placeholder="请输入联系电话" v-model="form.mobile" />
+          <dpmsCellInput
+            placeholder="请输入联系电话"
+            v-model="form.mobile"
+            :required="requiredObj.mobile && requiredObj.mobile.enableMust"
+          />
         </view>
       </view>
-      <dpmsCellInput
-        title="固定电话"
-        placeholder="请输入固定电话"
-        v-model="form.fixedTelephone"
-      />
+      <view
+        v-if="
+          requiredObj.fixedTelephone && requiredObj.fixedTelephone.enableShow
+        "
+      >
+        <dpmsCellInput
+          :required="
+            requiredObj.fixedTelephone && requiredObj.fixedTelephone.enableMust
+          "
+          title="固定电话"
+          placeholder="请输入固定电话"
+          v-model="form.fixedTelephone"
+        />
+      </view>
       <dpmsCellInput
         v-if="editType"
         title="备用号码"
@@ -201,13 +301,25 @@
         v-model="form.qqNum"
       />
       <dpmsPlacePicker
+        v-if="requiredObj.region && requiredObj.region.enableShow"
+        :required="requiredObj.region && requiredObj.region.enableMust"
         title="家庭住址"
         placeholder="请选择地区"
         v-model="form.region"
         headerText="选择地区"
       />
-      <div class="dpms-cell-group dpms-cell-group-textarea">
-        <div class="dpms-cell" data-layout-align="space-between center">
+      <div
+        class="dpms-cell-group dpms-cell-group-textarea"
+        v-if="requiredObj.address && requiredObj.address.enableShow"
+      >
+        <div
+          class="dpms-cell"
+          :class="{
+            'required-icon-a':
+              requiredObj.address && requiredObj.address.enableMust,
+          }"
+          data-layout-align="space-between center"
+        >
           <textarea
             style="height: 142rpx; width: 686rpx; margin-top: 30rpx;"
             placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
@@ -217,9 +329,22 @@
           />
         </div>
       </div>
-      <view class="space"></view>
-      <div class="remark" :class="{ 'pb-68': isPhoneXCeil }">
-        <view class="title">备注</view>
+      <view
+        class="space"
+        v-if="requiredObj.memo && requiredObj.memo.enableShow"
+      ></view>
+      <div
+        class="remark"
+        :class="{ 'pb-68': isPhoneXCeil }"
+        v-if="requiredObj.memo && requiredObj.memo.enableShow"
+      >
+        <view
+          class="title"
+          :class="{
+            'required-icon': requiredObj.memo && requiredObj.memo.enableMust,
+          }"
+          >备注</view
+        >
         <textarea
           class="txt"
           placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
@@ -247,6 +372,7 @@ import _ from 'lodash'
 import { mapState } from 'vuex'
 import moment from 'moment'
 import patientAPI from '@/APIS/patient/patient.api'
+import { handleMustData } from '@/utils/mustData'
 
 const formDefault = {
   patientName: '',
@@ -271,7 +397,7 @@ const formDefault = {
   medicalInsuranceCardNo: '',
   introducer: '',
   sourceName: '',
-  memo:'',
+  memo: '',
 }
 
 export default {
@@ -303,6 +429,8 @@ export default {
       changeKeys: [],
       staffList: [],
       sourceName: '', //患者来源名称
+
+      // 注意设置了type: 'any'再设置required无效
       rules: {
         patientName: [
           {
@@ -317,11 +445,17 @@ export default {
         ],
         nickName: [
           {
+            message: '请输入个性称呼',
+          },
+          {
             max: 50,
             message: '个性称呼输入不应该超过 50 字',
           },
         ],
         medicalInsuranceCardNo: [
+          {
+            message: '请输入医保卡号',
+          },
           {
             max: 50,
             message: '医保卡号不应该超过 50 字',
@@ -338,72 +472,149 @@ export default {
             message: '病历号输入不应该超过 30 字',
           },
         ],
-        birthday: {
-          message: '请选择出生日期',
-        },
-        age: {
-          pattern: /^(?:[0-9][0-9]?|1[01][0-9]|140)$/,
-          message: '年龄不合法',
-        },
-        certificatesNo: {
-          pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/,
-          message: '身份证不合法',
-        },
-        contactLabel: {
-          type: 'any',
-        },
-        gender: {
-          type: 'any',
-        },
-        nationality: {
-          type: 'any',
-        },
+        birthday: [
+          {
+            message: '请选择出生日期',
+          },
+        ],
+        age: [
+          {
+            message: '请输入年龄',
+          },
+          {
+            pattern: /^(?:[0-9][0-9]?|1[01][0-9]|140)$/,
+            message: '年龄不合法',
+          },
+        ],
+        certificatesNo: [
+          {
+            message: '请输入身份证号',
+          },
+          {
+            pattern: /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/,
+            message: '身份证号不合法',
+          },
+        ],
+        contactLabel: [
+          {
+            type: 'any',
+          },
+        ],
+        gender: [
+          {
+            message: '请选择性别',
+          },
+        ],
+        nationality: [
+          {
+            message: '请选择国籍',
+          },
+        ],
         mobile: [
+          {
+            message: '请输入联系电话',
+          },
           {
             pattern: /^\d{11}$/,
             message: '联系电话格式不正确',
           },
         ],
-        fixedTelephone: {
-          pattern: /^[^*][\d\-]{1,15}$/,
-          message: '固定电话格式不正确',
-        },
-        alternateMobile: {
-          pattern: /^\d{11}$/,
-          message: '备用号码格式不正确',
-        },
-        weChatId: {
-          pattern: /^[^*]{0,20}$/g,
-          message: '请输入正确的微信号',
-        },
-        qqNum: {
-          pattern: /^[^*]\d{1,20}$/g,
-          message: '请输入正确的QQ格式',
-        },
-        address: {
-          pattern: /^[^*]{0,100}$/g,
-          message: '请填写详细地址',
-        },
-        settingsPatientSourceId: {
-          type: 'any',
-        },
-        sourceName: {
-          type: 'any',
-        },
-        sourceValue: {
-          type: 'any',
-        },
-        memo: {
-          type: 'any',
-        },
-        introducer: {
-          max: 20,
-          message: '介绍人输入不应该超过 20 字',
-        },
-        systemInner: {
-          type: 'any',
-        }, //不写validator的rules会变成undefiend，会报错
+        fixedTelephone: [
+          {
+            message: '请输入固定电话',
+          },
+          {
+            pattern: /^[^*][\d\-]{7,15}$/,
+            message: '固定电话格式不正确',
+          },
+        ],
+        alternateMobile: [
+          {
+            pattern: /^\d{11}$/,
+            message: '备用号码格式不正确',
+          },
+        ],
+        weChatId: [
+          {
+            pattern: /^[^*]{0,20}$/g,
+            message: '请输入正确的微信号',
+          },
+        ],
+        qqNum: [
+          {
+            pattern: /^[^*]\d{1,20}$/g,
+            message: '请输入正确的QQ格式',
+          },
+        ],
+        region: [
+          {
+            message: '请选择地区',
+            // region的初始值是[undefined, undefined, undefined]
+            validator: (rule, value, callback) => {
+              if (!value.some((val) => val) && rule.required) {
+                callback('请选择地区')
+              } else {
+                callback()
+              }
+            },
+          },
+        ],
+        tagIds: [
+          {
+            message: '请选择患者标签',
+            // tagIds的初始值是[]
+            validator: (rule, value, callback) => {
+              if (!value.some((val) => val) && rule.required) {
+                callback('请选择患者标签')
+              } else {
+                callback()
+              }
+            },
+          },
+        ],
+        address: [
+          {
+            pattern: /^[^*]{0,100}$/g,
+            message: '请填写详细地址',
+          },
+        ],
+        settingsPatientSourceId: [
+          {
+            message: '请选择患者来源',
+          },
+        ],
+        sourceName: [
+          {
+            type: 'any',
+          },
+        ],
+        sourceValue: [
+          {
+            message: '请输入介绍人',
+          },
+        ],
+        memo: [
+          {
+            message: '请输入备注',
+          },
+        ],
+        introducer: [
+          {
+            message: '请输入介绍人',
+          },
+          {
+            max: 20,
+            message: '介绍人输入不应该超过 20 字',
+          },
+        ],
+        systemInner: [
+          {
+            type: 'any',
+          },
+        ], //不写validator的rules会变成undefiend，会报错
       },
+      requiredObj: {},
+      requiredArr: [],
     }
   },
   watch: {
@@ -413,6 +624,9 @@ export default {
     },
     'form.settingsTypeId'() {
       this.getPatientMedicalRecordNo()
+      // 需要重新赋值 requiredObj
+      this.changeMustData()
+      this.getSettingsPatientSourceList()
     },
     'form.birthday'(val) {
       this.form.age = moment().weekYear() - moment(val).weekYear()
@@ -462,6 +676,8 @@ export default {
     this.getPatientContactLabel()
     this.getPatientNationality()
     this.getScrmStaffList()
+    // 获取是否显示、必填数据
+    this.getRequiredList()
   },
   beforeDestroy() {
     uni.$off('updateTagsCheckedList')
@@ -469,6 +685,45 @@ export default {
     uni.removeStorageSync('patientTagsList')
   },
   methods: {
+    async getRequiredList() {
+      this.requiredObj = handleMustData.initMustData()
+      const getData = await patientAPI.getMustData()
+      if (
+        getData.code !== 0 ||
+        (!getData.data.createPatient_baseInfo &&
+          !getData.data.createPatient_baseInfo.length)
+      ) {
+        return
+      }
+      this.requiredArr = getData.data.createPatient_baseInfo
+      // 获取数据，重新赋值
+      const params = {
+        obj: this.requiredObj,
+        arr: getData.data.createPatient_baseInfo,
+      }
+      this.requiredObj = handleMustData.formatMustData(params)
+      this.changeRules()
+    },
+    changeRules() {
+      for (const keyA in this.requiredObj) {
+        for (const keyB in this.rules) {
+          if (keyA === keyB) {
+            // 判断介绍人item，有两种情况，"sourceValue"以及"introducer"
+            if (keyA === 'sourceValue') {
+              this.sourceName === '员工介绍'
+                ? (this.rules['sourceValue'][0].required = this.requiredObj[
+                    keyA
+                  ].enableMust)
+                : (this.rules['introducer'][0].required = this.requiredObj[
+                    keyA
+                  ].enableMust)
+            } else {
+              this.rules[keyB][0].required = this.requiredObj[keyA].enableMust
+            }
+          }
+        }
+      }
+    },
     setPatientSource({
       settingsPatientSourceId,
       systemInner,
@@ -491,6 +746,8 @@ export default {
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
     },
     async getSettingsPatientSourceList() {
+      // 此处为了兼容修改患者类型导致的列表不显示的问题
+      this.settingsPatientSourceList = []
       const res = await patientAPI.patientSource()
       this.settingsPatientSourceList = res.data || []
     },
@@ -515,6 +772,24 @@ export default {
         patientType: this.form.settingsTypeId,
       })
       this.form.medicalRecordNo = res.data
+    },
+    changeMustData() {
+      // 修改mustObj的对应enable属性
+      const data = JSON.parse(JSON.stringify(this.requiredObj))
+      for (const key in data) {
+        this.requiredArr.forEach((val) => {
+          if (Number(val[0].extend) === Number(this.form.settingsTypeId)) {
+            val.forEach((valA) => {
+              if (Number(valA.belongId) === Number(data[key].key) + 1) {
+                data[key].enableMust = Boolean(valA.enableMust)
+                data[key].enableShow = Boolean(valA.enableShow)
+              }
+            })
+          }
+        })
+      }
+      this.requiredObj = data
+      this.changeRules()
     },
     ageBlur(val) {
       if (val !== '') {
@@ -626,13 +901,31 @@ export default {
 
 <style lang="scss" scoped>
 .editPatientForm {
+  margin-bottom: 80rpx;
+  // 页面元素少的时候，整个页面没撑起来
+  min-height: calc(100vh - 80rpx);
+  background: #fff;
   .bt-68 {
     bottom: 68rpx !important;
   }
   .remark {
     background: #ffffff;
     width: 100vw;
-    margin-bottom: 30rpx;
+  }
+  .required-icon {
+    &::after {
+      content: '*';
+      color: #eb4d4b;
+    }
+  }
+  .required-icon-a {
+    &::before {
+      content: '*';
+      color: #eb4d4b;
+      position: absolute;
+      left: 10rpx;
+      top: 20rpx;
+    }
   }
   .title {
     font-size: 35rpx;
@@ -707,6 +1000,7 @@ export default {
 
 .dpms-cell-group-textarea {
   height: 154rpx;
+  position: relative;
   .dpms-cell {
     height: 154rpx;
   }

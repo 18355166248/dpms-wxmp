@@ -168,6 +168,10 @@ const patientAPI = {
       },
     })
   },
+  // 获取处置记录列表
+  getMustData(data) {
+    return httper.get('/patient/patient/common/service/patient/field/get', data)
+  },
 }
 
 export default patientAPI
