@@ -94,13 +94,9 @@ export default {
     return {
       showTree: false,
       treeList: [],
-      range: [],
       enableList: [],
       pickerText: '',
     }
-  },
-  mounted() {
-    this.initTree(this.range)
   },
   methods: {
     show() {
@@ -110,11 +106,11 @@ export default {
       this.showTree = false
     },
     //初始化
-    initTree(range) {
+    initTree(list) {
       this.treeList = []
-      this.renderTreeList(range)
+      this.renderTreeList(list)
       this.$nextTick(() => {
-        this.defaultSelect(range)
+        this.defaultSelect(list)
       })
     },
     //扁平化树结构
@@ -204,15 +200,16 @@ export default {
     },
   },
   watch: {
-    range(list) {
-      this.initTree(list)
+    list: {
+      handler(val) {
+        if (val.length) {
+          this.initTree(val)
+        }
+      },
+      deep: true,
+      immediate: true,
     },
-    list(list) {
-      if (list.length) {
-        this.range = list
-        this.initTree(list)
-      }
-    },
+
     value(id) {
       this.pickerText = this.treeList.find((element) => element.id === id)?.name
     },
