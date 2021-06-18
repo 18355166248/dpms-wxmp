@@ -11,7 +11,7 @@
       >
     </view>
     <view class="tabs-icon"
-      ><text @click="handleClickIcon" class="iconfont icon-search"></text
+      ><text @click="handleClickIcon" class="iconfont icon-filter"></text
     ></view>
   </view>
 </template>
@@ -89,6 +89,9 @@ export default {
     height: 80rpx;
     text-align: center;
     line-height: 80rpx;
+  }
+  .icon-filter {
+    color: $common-color;
   }
 }
 </style>

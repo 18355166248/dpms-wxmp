@@ -1,16 +1,12 @@
 <template>
+  <!-- 库存列表 -->
   <view>
-    <inventoryDetail />
+    <goodList />
   </view>
 </template>
 <script>
-import inventoryDetail from './inventoryDetail'
+import goodList from '../components/good-list.vue'
 export default {
-  components: { inventoryDetail },
-  data() {
-    return {}
-  },
-  created() {},
-  methods: {},
+  components: { goodList },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <view class="good-details">
+  <view class="good-details" @click="onClick">
     <view class="good-name mb16"
       ><text>{{ detail.commonName }}</text></view
     >
@@ -15,9 +15,15 @@
       ><text class="text-label">物品类型：</text
       ><text class="text-value">{{ detail.merchandiseType }}</text></view
     >
-    <view class="mb16"
+    <!-- 物品展示 -->
+    <view class="mb16" v-if="type === 'good'"
       ><text class="text-label">规格类型：</text
       ><text class="text-value">{{ detail.specificationsStr }}</text></view
+    >
+    <!-- 库存展示 -->
+    <view class="mb16" v-if="type === 'inventory'"
+      ><text class="text-label">可用库存：</text
+      ><text class="text-value">{{ detail.inventoryNum || 0 }}</text></view
     >
     <image
       v-if="!detail.isEnable"
@@ -33,6 +39,15 @@ export default {
       type: Object,
       required: true,
       default: () => {},
+    },
+    type: {
+      type: String,
+      default: 'good', // good 物品  inventory 库存
+    },
+  },
+  methods: {
+    onClick() {
+      this.$emit('on-click')
     },
   },
 }

@@ -1,7 +1,7 @@
 <template>
-  <!-- 物品搜索 -->
+  <!-- 库存搜索 -->
   <view>
-    <search storgeKey="goods" path="warehouse/goods/goodDetail" />
+    <search storgeKey="inventory" path="warehouse/inventory/inventoryDetail" />
   </view>
 </template>
 <script>

@@ -594,7 +594,22 @@
         {
           "path": "inventory/index",
           "style": {
-            "navigationBarTitleText": "库存列表"
+            "navigationBarTitleText": "库存列表",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "inventory/inventorySearch",
+          "style": {
+            "navigationBarTitleText": "搜索",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "inventory/inventoryDetail",
+          "style": {
+            "navigationBarTitleText": "库存详情",
+            "disableScroll": true
           }
         }
       ]

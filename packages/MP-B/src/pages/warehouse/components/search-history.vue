@@ -2,7 +2,7 @@
   <view class="search-history">
     <view class="search-history-head">
       <text class="search-history-head-name">搜索历史</text>
-      <text @click="handleClickIcon" class="iconfont icon-search"></text>
+      <text @click="handleClickIcon" class="iconfont icon-delete"></text>
     </view>
     <view class="search-history-list">
       <view

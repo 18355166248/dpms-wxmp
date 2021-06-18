@@ -3,6 +3,11 @@
     <view class="expand-item" v-for="item in list" :key="item[fieldKey]">
       <view class="expand-item-head" @click="handleExpand(item[fieldKey])">
         <text>{{ item[fieldName] }}</text>
+        <text
+          v-if="currentParentId == item[fieldKey]"
+          class="iconfont icondown1"
+        ></text>
+        <text v-else class="iconfont icon-arrow-right"></text>
       </view>
       <template v-if="currentParentId == item[fieldKey]">
         <view
@@ -77,16 +82,22 @@ export default {
     width: 100%;
     &-head {
       width: 100%;
+      box-sizing: border-box;
       height: 112rpx;
       line-height: 112rpx;
       border-bottom: 1rpx solid #e5e5e5;
       font-size: 30rpx;
       color: #191919;
+      display: inline-flex;
+      justify-content: space-between;
+      padding-right: 58rpx;
     }
     &-content {
       padding-top: 20rpx;
+      display: inline-flex;
       &-tag {
         display: inline-block;
+        margin-right: 16rpx;
         padding: 8rpx 16rpx;
         background: rgba(0, 0, 0, 0.06);
         border-radius: 8rpx;
@@ -98,6 +109,9 @@ export default {
         background-color: $common-color;
       }
     }
+  }
+  .icondown1 {
+    font-size: 40rpx;
   }
 }
 </style>

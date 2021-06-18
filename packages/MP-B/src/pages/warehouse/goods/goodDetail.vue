@@ -61,8 +61,8 @@ export default {
       detail: {},
     }
   },
-  onLoad({ merchandiseIds }) {
-    this.getGoodsDetail(merchandiseIds)
+  onLoad({ merchandiseId }) {
+    this.getGoodsDetail(merchandiseId)
   },
   methods: {
     async getGoodsDetail(merchandiseIds) {
