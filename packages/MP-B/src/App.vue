@@ -247,6 +247,9 @@ button::after {
 .icon-card-voucher-face:before {
   content: '\e646';
 }
+.icon-wechat-fill:before {
+  content: '\e68b';
+}
 
 /* iconfont图标 end */
 </style>
