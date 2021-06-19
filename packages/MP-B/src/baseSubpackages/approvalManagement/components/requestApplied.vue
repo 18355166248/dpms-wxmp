@@ -1,20 +1,23 @@
 <template>
   <view class="bodyDetails mh-24">
-    <view class="singleContainer mv-32">
+    <view
+      class="singleContainer mv-32"
+      v-for="(item, index) in approvalList.records"
+    >
       <view class="firstLevel pt-32 ph-24 pb-16">
-        <view style="font-weight: 500;">收费</view>
+        <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
         <view class="ApplicationOnPending">
           <view></view>
           <span>审核中</span>
         </view>
       </view>
       <view class="secondLevel ph-24">
-        <view class="mb-8 lh">发起机构：</view>
-        <view class="lh">审核人：</view>
-        <span class="mv-32 lh">向武汉诊所借调物品</span>
-        <view class="note mb-40 lh"
-          >备注：12内容12345备注内容12345备注内容1234</view
+        <view class="mb-8 lh">发起机构：{{ item.medicalInstitutionName }}</view>
+        <view class="lh"
+          >审核人：{{ item.operateApproveAuditor.staffName }}</view
         >
+        <span class="mv-32 lh">{{ item.triggerCondition }}</span>
+        <view class="note mb-40 lh">备注：{{ item.comment }}</view>
       </view>
       <view class="buttonControl pr-24">
         <u-button type="success" @click="clickHandler">查看</u-button>

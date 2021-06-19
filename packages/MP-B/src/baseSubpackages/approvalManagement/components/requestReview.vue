@@ -1,21 +1,27 @@
 <template>
   <view class="bodyDetails mh-24">
     <scroll-view class="showDetail" @scrolltolower="onScrollToLower">
-      <view class="singleContainer mv-32" v-for="item in 5" :key="item">
+      <view
+        class="singleContainer mv-32"
+        v-for="(item, index) in approvalList.records"
+        :key="index"
+      >
         <view class="firstLevel pt-32 ph-24 pb-16">
-          <view style="font-weight: 500;">收费</view>
+          <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
           <view>
             <view></view>
             <span>审核中</span>
           </view>
         </view>
         <view class="secondLevel ph-24">
-          <view class="mb-8 lh">发起机构：</view>
-          <view class="lh">审核人：</view>
-          <span class="mv-32 lh">诊所</span>
-          <view class="note mb-40 lh"
-            >备注：12内容12345备注内容12345备注内容1234…</view
+          <view class="mb-8 lh"
+            >发起机构：{{ item.medicalInstitutionName }}</view
           >
+          <view class="lh"
+            >审核人：{{ item.operateApproveAuditor.staffName }}</view
+          >
+          <span class="mv-32 lh">{{ item.triggerCondition }}</span>
+          <view class="note mb-40 lh">备注：{{ item.comment }}</view>
         </view>
         <view class="buttonControl pr-24">
           <u-button type="success" @click="clickHandler">查看</u-button>
@@ -41,14 +47,14 @@
 <script>
 export default {
   name: 'requestReview',
+  props: {
+    approvalList: {
+      type: {},
+      require: true,
+    },
+  },
   data() {
     return {
-      props: {
-        approvalList: {
-          type: {},
-          require: true,
-        },
-      },
       current: 1, //默认展示第一页数据
       size: 10, //默认展示10条数据
       total: 1, //默认总条目
