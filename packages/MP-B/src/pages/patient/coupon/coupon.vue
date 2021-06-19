@@ -135,11 +135,14 @@ export default {
       isempty: false,
       disabled: false,
       couponDefinitionId: '',
+      env: '',
     }
   },
   onLoad(params) {
     this.patientId = params.patientId
     this.customerId = params.customerId
+    const res = wx.getSystemInfoSync()
+    this.env = res.environment || ''
     this.getCouponList()
   },
   methods: {
@@ -223,10 +226,28 @@ export default {
         })
         this.$utils.show('优惠劵发送成功')
         this.disabled = false
+        console.log(wx.qy)
+        if (this.env === 'wxwork') {
+          // 小程序可以在微信和企业微信中调用此接口，但是在企业微信中调用此接口时，会额外返回一个 environment 字段（微信中不返回），如此字段值为 wxwork，则表示当前小程序运行在企业微信环境中。
+          // todo
+          this.toWxWork()
+          console.log('wxwork')
+        } else {
+          // todo
+        }
       } catch (error) {
         console.log(error)
         this.disabled = false
       }
+    },
+    toWxWork() {
+      // console.log(q)
+      wx.qy.sendChatMessage({
+        msgtype: 'text', //消息类型，必填
+        text: {
+          content: '你获得了一张新优惠券', //文本内容
+        },
+      })
     },
   },
   filters: {
@@ -359,8 +380,8 @@ export default {
     background-color: #fff;
     padding: 16rpx 32rpx;
     padding-bottom: 16rpx;
-    padding-bottom: calc(16rpx + 'constant(safe-area-inset-bottom)');
-    padding-bottom: calc(16rpx + 'env(safe-area-inset-bottom)');
+    padding-bottom: calc(8px + constant(safe-area-inset-bottom)); /* no */
+    padding-bottom: calc(8px + env(safe-area-inset-bottom)); /* no */
     .ensurebutton {
       height: 80rpx;
       background: #5cbb89;
