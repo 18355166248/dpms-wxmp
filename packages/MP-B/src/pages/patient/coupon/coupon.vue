@@ -380,8 +380,8 @@ export default {
     background-color: #fff;
     padding: 16rpx 32rpx;
     padding-bottom: 16rpx;
-    padding-bottom: calc(16rpx + 'constant(safe-area-inset-bottom)');
-    padding-bottom: calc(16rpx + 'env(safe-area-inset-bottom)');
+    padding-bottom: calc(16rpx + constant(safe-area-inset-bottom)); /* no */
+    padding-bottom: calc(16rpx + env(safe-area-inset-bottom)); /* no */
     .ensurebutton {
       height: 80rpx;
       background: #5cbb89;
