@@ -133,6 +133,24 @@
             处置记录
           </view>
         </view>
+        <view
+          class="menu-area-item"
+          @click="
+            toUrl(
+              '/pages/patient/coupon/coupon?patientId=' +
+                patientId +
+                '&customerId=' +
+                customerId,
+            )
+          "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color8">
+            <text class="iconfont icon-card-voucher-face"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            发券
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -309,6 +327,10 @@ export default {
       }
       &-icon-color7 {
         $values: rgba(91, 218, 153, 1), rgba(52, 197, 122, 1);
+        @include colors($values...);
+      }
+      &-icon-color8 {
+        $values: rgba(113, 187, 255, 1), rgba(24, 144, 255, 1);
         @include colors($values...);
       }
 
