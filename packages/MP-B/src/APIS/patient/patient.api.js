@@ -171,6 +171,13 @@ const patientAPI = {
   // 获取处置记录列表
   getMustData(data) {
     return httper.get('/patient/patient/common/service/patient/field/get', data)
+    // 获取患者绑定好友列表
+  },
+  getConnectFriends(data) {
+    return scrmHttper.get(
+      'communication/channel/customer-communication-list',
+      data,
+    )
   },
 }
 
