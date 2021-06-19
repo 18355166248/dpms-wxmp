@@ -3,7 +3,7 @@
     <view class="textControl">
       <textarea
         cols="10"
-        rows="10"
+        rows="11"
         maxlength="200"
         placeholder="请输入200字以内审批通过信息"
         class="pl-32 pr-50 pt-32"
@@ -13,10 +13,18 @@
       <span class="numControl pr-32 pb-32">{{ val.length }}/200</span>
     </view>
     <view class="bottomBtn pv-16">
-      <u-button :custom-style="confirmBtn" type="success" class="pr-32 ml-14"
+      <u-button
+        :custom-style="confirmBtn"
+        type="success"
+        class="pr-32 ml-14"
+        @click="submit"
         >确定</u-button
       >
-      <u-button :custom-style="cancelBtn" type="success" class="pl-32"
+      <u-button
+        :custom-style="cancelBtn"
+        type="success"
+        class="pl-32"
+        @click="cancelSubmit"
         >取消</u-button
       >
     </view>
@@ -44,7 +52,26 @@ export default {
       },
     }
   },
-  methods: {},
+  methods: {
+    submit() {
+      wx.navigateBack({
+        url:
+          '/baseSubpackages/approvalManagement/approvalManagement?currentTab=1',
+      })
+    },
+    cancelSubmit() {
+      wx.navigateBack({
+        url:
+          '/baseSubpackages/approvalManagement/approvalManagement?currentTab=1',
+      })
+    },
+  },
+  // onLoad(){
+  //   this.val = ''
+  // },
+  onHide() {
+    this.val = ''
+  },
 }
 </script>
 

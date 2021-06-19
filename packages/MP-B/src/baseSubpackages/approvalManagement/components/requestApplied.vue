@@ -1,17 +1,5 @@
 <template>
   <view class="bodyDetails mh-24">
-    <view class="typeSearch">
-      <text style="line-height: 76rpx;">审批类型：</text>
-      <view>
-        <u-input v-model="value" :type="type" @click="show = true" border />
-        <u-action-sheet
-          :list="actionSheetList"
-          v-model="show"
-          @click="actionSheetCallback"
-        >
-        </u-action-sheet>
-      </view>
-    </view>
     <view class="singleContainer mv-32">
       <view class="firstLevel pt-32 ph-24 pb-16">
         <view style="font-weight: 500;">收费</view>
@@ -38,6 +26,12 @@
 <script>
 export default {
   name: 'requestApplied',
+  props: {
+    approvalList: {
+      type: {},
+      require: true,
+    },
+  },
   data() {
     return {
       value: '全部',
@@ -84,6 +78,10 @@ export default {
     changeTab(index) {
       console.log('当前选中的项：' + index)
     },
+    initData() {
+      this.current = 1
+      this.approvalList = []
+    },
   },
   filters: {
     filterEnums(value, arr) {
@@ -93,6 +91,13 @@ export default {
         }
       }
     },
+  },
+  onload() {
+    this.initData()
+  },
+  onReachBottom() {},
+  onPullDownRefresh() {
+    this.initData()
   },
 }
 </script>
