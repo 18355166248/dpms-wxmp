@@ -1,18 +1,21 @@
 <template>
   <view style="height: 100%;">
     <view class="baseInfo" @click="goToGoodDetail">
-      <text class="text ellipse">{{ baseInfo.commonName || '' }}</text>
+      <text>{{ baseInfo.commonName }}</text>
+      <text v-if="baseInfo.merchandiseName"
+        >/{{ baseInfo.merchandiseName }}</text
+      >
+      <text v-if="baseInfo.aliasName">/{{ baseInfo.aliasName }}</text>
       <text class="text ellipse"
         >物品编号：{{ baseInfo.merchandiseNo || '' }}</text
       >
       <text class="text ellipse"
-        >规格类型：{{ baseInfo.merchandiseTypeStr || '' }}</text
+        >规格类型：{{ baseInfo.specificationsStr || '' }}</text
       >
       <view class="text"
-        >可用库存：<text class="available ellipse"
-          >{{ detail.inventoryNum || '' }}
-          {{ detail.inventoryUnitStr || '' }}</text
-        ></view
+        >可用库存：<text class="available ellipse">{{
+          `${baseInfo.inventoryNum || 0} ${baseInfo.inventoryUnitStr || ''}`
+        }}</text></view
       >
     </view>
     <tabs
@@ -28,12 +31,11 @@
       lineColor="#5CBB89"
       lineScale="0.30"
       @change="changeTab"
-    >
-    </tabs>
+    ></tabs>
     <swiper
       class="swiper"
       :current="currentTab"
-      v-if="merchandiseId"
+      v-show="merchandiseId"
       @change="changeSwiper"
     >
       <swiper-item>
@@ -82,6 +84,7 @@ export default {
   onLoad({ merchandiseId }) {
     console.log('获取的参数是:', merchandiseId)
     this.merchandiseId = merchandiseId
+    this.getGoodsDetail(this.merchandiseId)
   },
   created() {},
   methods: {
@@ -94,6 +97,7 @@ export default {
     },
     async getGoodsDetail(merchandiseId) {
       const res = await goodAPI.getGoodsDetail({ merchandiseId })
+      console.log(97, res)
       this.baseInfo = res.data
     },
     // 前往物品详情页

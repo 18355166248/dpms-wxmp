@@ -186,6 +186,15 @@ export default {
       this.twoCategoryId = this.threeCategoryId = 0
       this.twoCategoryList =
         item.children && item.children.length ? all.concat(item.children) : []
+      this.threeCategoryList = this.twoCategoryList
+        .filter((e) => e.merchandiseCategoryId)
+        .map((e) => {
+          return {
+            ...e,
+            children:
+              e.children && e.children.length ? all.concat(e.children) : [],
+          }
+        })
       const res = await this.getGoodsList({
         merchandiseCategoryId: this.oneCategoryId || null,
       })
@@ -280,6 +289,7 @@ export default {
       flex: 1;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
       &-top {
         padding-top: 10rpx;
       }
