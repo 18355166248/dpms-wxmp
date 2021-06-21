@@ -8,7 +8,6 @@
       :navLeftText="medicalInstitutionSimpleCode"
       @click="switchClinic"
     />
-
     <view class="header-wrapper pt-47">
       <view class="header">
         <view
@@ -20,40 +19,12 @@
           </view>
           <text class="iconfont icon-search"></text>
         </view>
-
-        <template v-if="isHeadquartersAndRegion">
-          <dropDown
-            :list="[
-              {
-                name: '新建患者',
-                value: 'newPatient',
-                icon: 'icon-patient',
-              },
-            ]"
-            @select="dropMenuSelect"
-          >
-            <view class="btn-new">
-              <text>新建</text>
-            </view>
-          </dropDown>
-        </template>
-        <template v-else>
-          <dropDown
-            :list="[
-              {
-                name: '新建患者',
-                value: 'newPatient',
-                icon: 'icon-patient',
-              },
-              { name: '新建预约', value: 'newAppt', icon: 'icon-clock' },
-            ]"
-            @select="dropMenuSelect"
-          >
-            <view class="btn-new">
-              <text>新建</text>
-            </view>
-          </dropDown>
-        </template>
+        <!--新建-->
+        <dropDown :list="getDropDownList()" @select="dropMenuSelect">
+          <view class="btn-new">
+            <text>新建</text>
+          </view>
+        </dropDown>
       </view>
       <view class="c-white mt-36 fz-34 ml-32">你好，{{ staffName }}</view>
     </view>
@@ -107,49 +78,12 @@
           </view>
         </view>
       </view>
-
-      <view class="menu-area pb-48 ph-32">
-        <view class="menu-area-header pt-48">
-          常用功能
-        </view>
-        <view class="menu-area-body mt-41">
-          <view
-            v-if="!isHeadquartersAndRegion"
-            class="menu-area-item"
-            @click="toUrl('/baseSubpackages/todayWork/todayWork')"
-          >
-            <view class="menu-area-item-icon menu-area-item-icon-color1">
-              <text class="iconfont icon-medicine-chest"></text>
-            </view>
-            <view class="menu-area-item-txt mt-24">
-              今日就诊
-            </view>
-          </view>
-          <view
-            class="menu-area-item"
-            @click="toUrl('/baseSubpackages/apptView/apptView')"
-          >
-            <view class="menu-area-item-icon menu-area-item-icon-color2">
-              <text class="iconfont icon-clock"></text>
-            </view>
-            <view class="menu-area-item-txt mt-24">
-              预约
-            </view>
-          </view>
-          <view
-            class="menu-area-item"
-            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
-          >
-            <view class="menu-area-item-icon menu-area-item-icon-color3">
-              <text class="iconfont icon-patient"></text>
-            </view>
-            <view class="menu-area-item-txt mt-24">
-              患者
-            </view>
-          </view>
-        </view>
+      <!--常用功能-->
+      <view class="common-functions-List-wrap pb-32">
+        <view class="menu-area-header ph-32 pb-32">常用功能</view>
+        <commonUseFunctionsList ></commonUseFunctionsList>
       </view>
-
+      <!--统计报表-->
       <view
         class="menu-area pb-48 ph-32"
         v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
@@ -227,6 +161,7 @@
 <script>
 import moment from 'moment'
 import navBar from '@/components/nav-bar/nav-bar'
+import commonUseFunctionsList from 'businessComponents/commonUseFunctionsList/commonUseFunctionsList'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api'
 import appointmentAPI from 'APIS/appointment/appointment.api'
 import institutionAPI from 'APIS/institution/institution.api'
@@ -246,12 +181,12 @@ export default {
     toggle,
     dropDown,
     billReport,
+    commonUseFunctionsList,
   },
   data() {
     return {
       title: '首页',
       visible: true,
-
       // 下拉刷新的配置(可选, 绝大部分情况无需配置)
       downOption: {
         textColor: '#fff',
@@ -399,6 +334,20 @@ export default {
     },
   },
   methods: {
+    getDropDownList() {
+      let list = [
+        {
+          name: '新建患者',
+          value: 'newPatient',
+          icon: 'icon-patient',
+        },
+        { name: '新建预约', value: 'newAppt', icon: 'icon-clock' },
+      ]
+      if (this.isHeadquartersAndRegion) {
+        return list[0]
+      }
+      return list
+    },
     dropMenuSelect(val) {
       const urls = {
         newPatient: '/pages/patient/createPatient/createPatient',
@@ -481,19 +430,12 @@ export default {
       this.switchClinicStatus = 'loading'
 
       const [err, res] = await this.$utils.asyncTasks(
-        // institutionAPI.details({
-        //   _mtId: val.source.medicalInstitutionId,
-        //   _cmtId: val.source.topParentId,
-        //   _cmtType: val.source.institutionChainType,
-        // }),
         institutionAPI.switchInstitution({
           _mtId: val.source.medicalInstitutionId,
           _cmtId: val.source.topParentId,
           _cmtType: val.source.institutionChainType,
         }),
       )
-      console.log('错误信息', err)
-      console.log('返回结果', res)
       if (err) {
         this.switchClinicStatus = 'error'
       }
@@ -589,6 +531,9 @@ export default {
         }
       }
     }
+  }
+  .common-functions-List-wrap {
+    width: 100%;
   }
   .status_bar {
     height: var(--status-bar-height);

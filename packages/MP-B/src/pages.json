@@ -38,6 +38,18 @@
   ],
   "subPackages": [
     {
+      "root": "pages/commonUseFunctions",
+      "name": "commonUseFunctions",
+      "pages": [
+        {
+          "path": "commonUseFunctions",
+          "style": {
+            "navigationBarTitleText": "常用功能"
+          }
+        }
+      ]
+    },
+    {
       "root": "baseSubpackages/todayWork",
       "name": "todayWork",
       "pages": [
@@ -286,6 +298,25 @@
           "style": {
             "navigationBarTitleText": "医生明细",
             "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
+      "root": "baseSubpackages/approvalManagement",
+      "name": "approvalManagement",
+      "pages": [
+        {
+          "path": "approvalManagement",
+          "style": {
+            "navigationBarTitleText": "审批管理",
+            "enablePullDownRefresh": true
+          }
+        },
+        {
+          "path": "components/applicationOnPass",
+          "style": {
+            "navigationBarTitleText": "审批通过"
           }
         }
       ]
@@ -548,12 +579,64 @@
           }
         }
       ]
+    },
+    {
+      "root": "pages/warehouse",
+      "name": "warehouse",
+      "pages": [
+        {
+          "path": "goods/index",
+          "style": {
+            "navigationBarTitleText": "物品列表",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "goods/searchGood",
+          "style": {
+            "navigationBarTitleText": "搜索",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "goods/goodDetail",
+          "style": {
+            "navigationBarTitleText": "物品详情",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "inventory/index",
+          "style": {
+            "navigationBarTitleText": "库存列表",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "inventory/inventorySearch",
+          "style": {
+            "navigationBarTitleText": "搜索",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "inventory/inventoryDetail",
+          "style": {
+            "navigationBarTitleText": "库存详情",
+            "disableScroll": true
+          }
+        }
+      ]
     }
   ],
   "preloadRule": {
     "baseSubpackages/apptView/apptView": {
       "network": "all",
       "packages": ["apptForm"]
+    },
+    "pages/home/home": {
+      "network": "all",
+      "packages": ["baseSubpackages/approvalManagement"]
     }
   },
   "globalStyle": {
