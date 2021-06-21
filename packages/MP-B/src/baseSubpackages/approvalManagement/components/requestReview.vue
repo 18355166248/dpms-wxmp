@@ -8,9 +8,9 @@
       >
         <view class="firstLevel pt-32 ph-24 pb-16">
           <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
-          <view>
+          <view :class="approvalType[item.status].className">
             <view></view>
-            <span>审核中</span>
+            <span>{{ approvalType[item.status].text }}</span>
           </view>
         </view>
         <view class="secondLevel ph-24">
@@ -29,13 +29,16 @@
             type="success"
             :custom-style="failedBtn"
             class="mh-16"
-            @click="clickHandler"
+            @click="onFailHandler(item)"
+            v-if="approvalList.records.status === 0"
             >不通过</u-button
           >
+
           <u-button
             type="success"
             :custom-style="passedBtn"
-            @click="onPassHandler"
+            @click="onPassHandler(item)"
+            v-if="approvalList.records.status === 0"
             >通过</u-button
           >
         </view>
@@ -45,11 +48,12 @@
 </template>
 
 <script>
+import approvalApi from '@/APIS/approval/approval.api'
 export default {
   name: 'requestReview',
   props: {
     approvalList: {
-      type: {},
+      type: Object,
       require: true,
     },
   },
@@ -60,6 +64,24 @@ export default {
       total: 1, //默认总条目
       show: false,
       activeTab: 0,
+      approvalType: {
+        0: {
+          text: '审核中',
+          className: 'onPending',
+        },
+        1: {
+          text: '已通过',
+          className: 'passed',
+        },
+        2: {
+          text: '未通过',
+          className: 'failed',
+        },
+        3: {
+          text: '撤回',
+          className: 'reverted',
+        },
+      },
       //uView按钮样式调整
       passedBtn: {
         background: '#ffffff',
@@ -83,11 +105,19 @@ export default {
         //todo 调分页接口
       }
     },
-    clickHandler() {},
-
-    onPassHandler() {
+    onFailHandler(item) {
       wx.navigateTo({
-        url: '/baseSubpackages/approvalManagement/components/applicationOnPass',
+        url: `/baseSubpackages/approvalManagement/components/applicationApprovalNote?data=${JSON.stringify(
+          item,
+        )}&applicationStatus=2`,
+      })
+    },
+
+    onPassHandler(item) {
+      wx.navigateTo({
+        url: `/baseSubpackages/approvalManagement/components/applicationApprovalNote?data=${JSON.stringify(
+          item,
+        )}&applicationStatus=1`,
       })
     },
     changeTab(index) {
@@ -97,16 +127,6 @@ export default {
     initData() {
       this.current = 1
       this.approvalList = []
-    },
-  },
-  filters: {
-    //过滤枚举
-    filterEnums(value, arr) {
-      for (let i = 0; i < arr.length; i++) {
-        if (arr[i].value === value) {
-          return arr[i].text
-        }
-      }
     },
   },
 }
@@ -142,6 +162,21 @@ export default {
       > view {
         display: flex;
         align-items: center;
+      }
+      .onPending {
+        > view {
+          width: 16rpx;
+          height: 16rpx;
+          opacity: 1;
+          background: #0bd0da;
+          border-radius: 50%;
+        }
+        > span {
+          margin-left: 16rpx;
+          color: #0bd0da;
+        }
+      }
+      .reverted {
         > view {
           width: 16rpx;
           height: 16rpx;
@@ -152,6 +187,32 @@ export default {
         > span {
           margin-left: 16rpx;
           color: #fa8c16;
+        }
+      }
+      .passed {
+        > view {
+          width: 16rpx;
+          height: 16rpx;
+          opacity: 1;
+          background: #5cbb89;
+          border-radius: 50%;
+        }
+        > span {
+          margin-left: 16rpx;
+          color: #5cbb89;
+        }
+      }
+      .failed {
+        > view {
+          width: 16rpx;
+          height: 16rpx;
+          opacity: 1;
+          background: #f2647c;
+          border-radius: 50%;
+        }
+        > span {
+          margin-left: 16rpx;
+          color: #f2647c;
         }
       }
     }
