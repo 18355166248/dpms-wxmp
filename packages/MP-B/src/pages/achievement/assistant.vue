@@ -209,10 +209,10 @@ export default {
         data,
       } = await institutionAPI.getStaffListByPositionFromAllInstitution({
         workStatus:
-          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+          this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
         position:
-          this.$utils.getEnums('StaffPosition')?.ASSISTANT_MANAGER?.value || 5,
+          this.$dpmsUtils.getEnums('StaffPosition')?.ASSISTANT_MANAGER?.value || 5,
       })
       uni.setStorageSync('allAssistantList', data)
     },
@@ -252,18 +252,18 @@ export default {
       })
       records.forEach((element) => {
         element.statDate = moment(element.statDate).format('YYYY-MM-DD')
-        element.receivableAmount = this.$utils.formatPrice(
+        element.receivableAmount = this.$dpmsUtils.formatPrice(
           element.receivableAmount,
         )
-        element.refundAmount = this.$utils.formatPrice(element.refundAmount)
-        element.cashAmount = this.$utils.formatPrice(element.cashAmount)
-        element.virtualAmount = this.$utils.formatPrice(element.virtualAmount)
-        element.deductionOfAdvanceAmount = this.$utils.formatPrice(
+        element.refundAmount = this.$dpmsUtils.formatPrice(element.refundAmount)
+        element.cashAmount = this.$dpmsUtils.formatPrice(element.cashAmount)
+        element.virtualAmount = this.$dpmsUtils.formatPrice(element.virtualAmount)
+        element.deductionOfAdvanceAmount = this.$dpmsUtils.formatPrice(
           element.deductionOfAdvanceAmount,
         )
-        element.revenueAmount = this.$utils.formatPrice(element.revenueAmount)
-        element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
-        element.plannedRevenueAmount = this.$utils.formatPrice(
+        element.revenueAmount = this.$dpmsUtils.formatPrice(element.revenueAmount)
+        element.paymentAmount = this.$dpmsUtils.formatPrice(element.paymentAmount)
+        element.plannedRevenueAmount = this.$dpmsUtils.formatPrice(
           element.plannedRevenueAmount,
         )
       })
@@ -283,7 +283,7 @@ export default {
       uni.hideLoading()
     },
     onFilterClick() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/achievement/filter?name=assistant`,
       })
     },

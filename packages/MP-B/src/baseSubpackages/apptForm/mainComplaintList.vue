@@ -48,7 +48,7 @@ export default {
         this.checked.map((ele) => Number(ele)),
         this.list,
       )
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     async getMainComplaint() {
       uni.showLoading({

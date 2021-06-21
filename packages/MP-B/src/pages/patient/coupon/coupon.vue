@@ -214,7 +214,7 @@ export default {
     },
     async onSubmit() {
       if (!this.couponDefinitionId) {
-        return this.$utils.show('请选择优惠劵')
+        return this.$dpmsUtils.show('请选择优惠劵')
       }
       try {
         this.disabled = true
@@ -224,7 +224,7 @@ export default {
           customerId: this.customerId,
           chargeWay: 1,
         })
-        this.$utils.show('优惠劵发送成功')
+        this.$dpmsUtils.show('优惠劵发送成功')
         this.disabled = false
         console.log(wx.qy)
         if (this.env === 'wxwork') {

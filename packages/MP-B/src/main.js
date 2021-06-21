@@ -13,7 +13,7 @@ Vue.use(uView)
 Vue.config.productionTip = false
 Vue.use(uma)
 
-Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
+Vue.prototype.$dpmsUtils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
 Vue.prototype.$store = store
 
 Vue.prototype.$systemInfo = uni.getSystemInfoSync()

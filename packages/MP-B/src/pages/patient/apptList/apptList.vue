@@ -47,7 +47,7 @@ export default {
       primaryColor: this.$commonCss.commonColor,
       patient: {},
       dataSource: [],
-      INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums('InstitutionChainType'),
     }
   },
   onShow() {
@@ -63,7 +63,7 @@ export default {
   methods: {
     // 页面跳转
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,
@@ -71,10 +71,10 @@ export default {
     },
 
     async init() {
-      this.$utils.showLoading()
+      this.$dpmsUtils.showLoading()
       await this.getPatient()
       await this.loadData()
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
     },
     // 获取列表数据
     async loadData() {

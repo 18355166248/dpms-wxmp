@@ -47,7 +47,7 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
-      staffPosition: this.$utils.getEnums('StaffPosition').properties,
+      staffPosition: this.$dpmsUtils.getEnums('StaffPosition').properties,
     }
   },
   components: {
@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     toUrl(url) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
     },
@@ -73,7 +73,7 @@ export default {
       removeStorage(STORAGE_KEY.ENUMS)
       this.$store.commit('workbenchStore/delMedicalInstitution')
       this.$store.commit('workbenchStore/delStaff')
-      this.$utils.reLaunch({
+      this.$dpmsUtils.reLaunch({
         url: '/pages/login/login',
       })
     },

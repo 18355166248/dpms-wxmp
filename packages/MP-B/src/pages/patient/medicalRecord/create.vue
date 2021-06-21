@@ -435,7 +435,7 @@ export default {
       teethSync: true,
       registerList: null,
       doctors: [],
-      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
+      VIS_TYPE_ENUM: this.$dpmsUtils.getEnums('VisType'),
       historyMedicalVisible: false,
       patientId: '',
       templateMedicalVisible: false,
@@ -515,7 +515,7 @@ export default {
       })
     },
     openTextarea({ title = '', value = '', key = '' }) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/medicalRecord/Textarea?title=${title}&value=${
           value || ''
         }&key=${key}`,
@@ -561,10 +561,10 @@ export default {
         }
         return r || result
       }, false)
-      if (!inputed) return this.$utils.show('请至少填写一项内容')
+      if (!inputed) return this.$dpmsUtils.show('请至少填写一项内容')
       if (this.pending) return
       this.pending = true
-      this.$utils.showLoading('请稍后...')
+      this.$dpmsUtils.showLoading('请稍后...')
       const clonedForm = JSON.parse(JSON.stringify(this.form))
       // registerId 为-1 ，说明为自定义时间，但是给后端传-1 ，参数校验不通过，所以传null
       if (clonedForm.registerId === -1) clonedForm.registerId = null
@@ -591,17 +591,17 @@ export default {
           },
         }),
       })
-      this.$utils.clearLoading()
-      this.$utils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {
+      this.$dpmsUtils.clearLoading()
+      this.$dpmsUtils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {
         icon: 'success',
       })
       uni.$emit('medicalRecordListUpdate')
       if (this.medicalRecordObj?.patientId) {
-        this.$utils.push({
+        this.$dpmsUtils.push({
           url: `/pages/patient/medicalRecord/record?patientId=${this.medicalRecordObj?.patientId}`,
         })
       } else {
-        this.$utils.back()
+        this.$dpmsUtils.back()
       }
       setTimeout(() => {
         this.$nextTick(() => {
@@ -617,11 +617,11 @@ export default {
       this.getMedicalRecordDetail()
     },
     async getMedicalRecordDetail() {
-      this.$utils.showLoading('加载中...')
+      this.$dpmsUtils.showLoading('加载中...')
       const res = await diagnosisAPI.getMedicalRecordDetail({
         medicalRecordId: this.medicalRecordId,
       })
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
       const formKeys = Object.keys(this.form)
       this.form = formKeys.reduce((r, k) => {
         if (k.endsWith('VOList')) {

@@ -208,7 +208,7 @@ export default {
       },
 
       switchClinicStatus: 'success',
-      INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums('InstitutionChainType'),
       // 列表数据
       pageData: {
         patientCount: 0,
@@ -320,7 +320,7 @@ export default {
         : '--'
     },
     price() {
-      return this.$utils.formatPrice(this.pageData.actualIncome)
+      return this.$dpmsUtils.formatPrice(this.pageData.actualIncome)
     },
     scrollHeight() {
       return this.$systemInfo.windowHeight - this.navHeight + 'px'
@@ -367,7 +367,7 @@ export default {
       this.showActionSheet = true
     },
     toUrl(url) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
     },
@@ -389,7 +389,7 @@ export default {
       uni.stopPullDownRefresh()
     },
     async loadData() {
-      const [err, res] = await this.$utils.asyncTasks(
+      const [err, res] = await this.$dpmsUtils.asyncTasks(
         diagnosisAPI.getTodayWorkStatistics({
           beginTimestamp: moment().startOf('day').valueOf(),
           endTimestamp: moment().endOf('day').valueOf(),
@@ -429,7 +429,7 @@ export default {
       console.log('val:', val)
       this.switchClinicStatus = 'loading'
 
-      const [err, res] = await this.$utils.asyncTasks(
+      const [err, res] = await this.$dpmsUtils.asyncTasks(
         institutionAPI.switchInstitution({
           _mtId: val.source.medicalInstitutionId,
           _cmtId: val.source.topParentId,

@@ -34,16 +34,16 @@ export default {
   },
   methods: {
     getPatient() {
-      this.$utils.showLoading()
+      this.$dpmsUtils.showLoading()
       patientAPI
         .getPatientDetail({ patientId: this.patientId })
         .then((res) => {
           let { data } = res
           this.formData = data
-          this.$utils.clearLoading()
+          this.$dpmsUtils.clearLoading()
         })
         .catch(() => {
-          this.$utils.clearLoading()
+          this.$dpmsUtils.clearLoading()
         })
     },
     updatePatient(form) {
@@ -107,12 +107,12 @@ export default {
         })
         .then((res) => {
           let that = this
-          this.$utils.show('修改成功', {
+          this.$dpmsUtils.show('修改成功', {
             duration: 1000,
             complete() {
               setTimeout(() => {
                 that.$refs.editPatient.showBtn()
-                that.$utils.back()
+                that.$dpmsUtils.back()
               }, 1000)
             },
           })

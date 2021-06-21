@@ -1087,7 +1087,7 @@ export default {
                   url += `&${key}=${content[header['key']][2][key]}`
                 })
               }
-              this.$utils.push({ url })
+              this.$dpmsUtils.push({ url })
               break
             case 'http':
               this.openURL(content[header.key][1])

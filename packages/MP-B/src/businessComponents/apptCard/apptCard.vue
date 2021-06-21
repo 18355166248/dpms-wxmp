@@ -78,9 +78,9 @@ export default {
   data() {
     return {
       cardClass: '',
-      GENDER_ENUM: this.$utils.getEnums('Gender'),
-      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
-      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
+      GENDER_ENUM: this.$dpmsUtils.getEnums('Gender'),
+      APPOINTMENT_STATUS_ENUM: this.$dpmsUtils.getEnums('AppointmentStatus'),
+      VIS_TYPE_ENUM: this.$dpmsUtils.getEnums('VisType'),
       appointmentStatusColorMap: {},
     }
   },
@@ -101,7 +101,7 @@ export default {
   },
   methods: {
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,

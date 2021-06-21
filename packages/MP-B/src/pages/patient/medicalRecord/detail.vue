@@ -204,7 +204,7 @@ export default {
       currentStaffApproveType: 0,
       detail: {},
       approveRemark: '',
-      visTypeMap: this.$utils.getEnums('VisType').properties,
+      visTypeMap: this.$dpmsUtils.getEnums('VisType').properties,
       TreatmentTypes: [], // 就诊类型
     }
   },
@@ -231,11 +231,11 @@ export default {
       this.currentStaffApproveType = res?.data?.currentStaffApproveType
     },
     async getMedicalRecordDetail() {
-      this.$utils.showLoading('加载中...')
+      this.$dpmsUtils.showLoading('加载中...')
       const res = await diagnosisAPI.getMedicalRecordDetail({
         medicalRecordId: this.medicalRecordId,
       })
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
       this.detail = {
         visTimeFormated: moment(res.data.visTime).format('YYYY-MM-DD HH:mm'),
         createTimeFormated: moment(res.data.createTime).format(
@@ -249,26 +249,26 @@ export default {
         title: '确认删除这条病历吗？',
         success: async ({ confirm }) => {
           if (confirm) {
-            this.$utils.showLoading('请稍后...')
+            this.$dpmsUtils.showLoading('请稍后...')
             const res = await diagnosisAPI.deleteMedicalRecord({
               medicalRecordId: this.medicalRecordId,
             })
-            this.$utils.clearLoading()
-            this.$utils.show('删除成功', { icon: 'success' })
+            this.$dpmsUtils.clearLoading()
+            this.$dpmsUtils.show('删除成功', { icon: 'success' })
             uni.$emit('medicalRecordListUpdate')
-            this.$utils.back()
+            this.$dpmsUtils.back()
           }
         },
       })
     },
     toEdit() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/medicalRecord/create?patientId=${this.patientId}&medicalRecordId=${this.medicalRecordId}`,
       })
     },
     againEdit(detail) {
       this.setMedicalRecordObj(detail)
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/medicalRecord/create`,
       })
     },
@@ -280,10 +280,10 @@ export default {
       }
       const res = await diagnosisAPI.medicalRecords(data)
       if (res.code === 0) {
-        this.$utils.show('审核成功', { icon: 'success' })
+        this.$dpmsUtils.show('审核成功', { icon: 'success' })
         setTimeout(() => {
           uni.$emit('medicalRecordListUpdate')
-          this.$utils.back()
+          this.$dpmsUtils.back()
         }, 1000)
       }
     },
@@ -295,10 +295,10 @@ export default {
       }
       const res = await diagnosisAPI.medicalRecords(data)
       if (res.code === 0) {
-        this.$utils.show('审核成功', { icon: 'success' })
+        this.$dpmsUtils.show('审核成功', { icon: 'success' })
         setTimeout(() => {
           uni.$emit('medicalRecordListUpdate')
-          this.$utils.back()
+          this.$dpmsUtils.back()
         }, 1000)
       }
     },
@@ -310,10 +310,10 @@ export default {
       }
       const res = await diagnosisAPI.medicalRecords(data)
       if (res.code === 0) {
-        this.$utils.show('撤回成功', { icon: 'success' })
+        this.$dpmsUtils.show('撤回成功', { icon: 'success' })
         setTimeout(() => {
           uni.$emit('medicalRecordListUpdate')
-          this.$utils.back()
+          this.$dpmsUtils.back()
         }, 1000)
       }
     },

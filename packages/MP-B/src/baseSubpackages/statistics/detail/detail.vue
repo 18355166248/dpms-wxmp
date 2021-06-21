@@ -15,7 +15,7 @@
           v-if="type === 'genderData' || type === 'registerData'"
           >{{ total }}人</text
         >
-        <text v-else>{{ $utils.formatPrice(total) }}</text>
+        <text v-else>{{ $dpmsUtils.formatPrice(total) }}</text>
       </view>
     </view>
     <t-table border-color="#d9d9d9">
@@ -24,7 +24,7 @@
         <t-td v-if="type === 'genderData' || type === 'registerData'"
           >{{ item.data }}人</t-td
         >
-        <t-td v-else>{{ $utils.formatPrice(item.data) }}</t-td>
+        <t-td v-else>{{ $dpmsUtils.formatPrice(item.data) }}</t-td>
         <t-td>{{ ((item.data / total) * 100) | numFilter }}</t-td>
       </t-tr>
     </t-table>

@@ -555,7 +555,7 @@ export default {
     onSelectStaff(title, optionKey, formKey) {
       uni.setStorageSync('apptStaffSelectList', this.options[optionKey])
       const checked = this.form[formKey].join(',')
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/staffList?' +
           `&checked=${checked}` +
@@ -565,7 +565,7 @@ export default {
     },
     // 选择预约项目
     onSelectApptItem() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/apptItemList?checked=' +
           this.form.appointmentItems.join(',') +
@@ -574,7 +574,7 @@ export default {
       })
     },
     onSelectMainComplaintList() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/mainComplaintList?checked=' +
           this.form.patientMainComplaintIds.join(','),
@@ -587,7 +587,7 @@ export default {
 
       //  患者校验
       if (!this.form.patient) {
-        this.$utils.show('暂无患者信息，请先选择患者信息')
+        this.$dpmsUtils.show('暂无患者信息，请先选择患者信息')
         return
       }
 
@@ -601,7 +601,7 @@ export default {
 
         // 不能预约到总部或大区
         if (checkIsHeaderOrLargeArea(medicalInstitution)) {
-          this.$utils.show('不可预约到总部/大区')
+          this.$dpmsUtils.show('不可预约到总部/大区')
           return
         }
 
@@ -635,23 +635,23 @@ export default {
         res = await appointmentAPI.createAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
-        this.$utils.show('新增预约成功')
+        this.$dpmsUtils.show('新增预约成功')
       } else if (this.formType === 'editAppt') {
         res = await appointmentAPI.updateAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
-        this.$utils.show('更新预约成功')
+        this.$dpmsUtils.show('更新预约成功')
       } else if (this.formType === 'editRegister') {
         // 在预约上挂号
         res = await diagnosisAPI.createRegister({
           appointmentJsonStr: JSON.stringify(submitData),
         })
-        this.$utils.show('挂号成功')
+        this.$dpmsUtils.show('挂号成功')
       } else if (this.formType === 'createRegister') {
         // 直接挂号
         const data = formatRegisterData(this.form)
         res = await diagnosisAPI.createNewRegister(data)
-        this.$utils.show('新增挂号成功')
+        this.$dpmsUtils.show('新增挂号成功')
       }
 
       uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
@@ -659,11 +659,11 @@ export default {
         params: this.pageOption,
         appt: { ...submitData, ...res.data },
       })
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     // 选择患者
     selectPatient() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/pages/patient/searchPatient/searchPatient?type=createAppt',
       })
     },

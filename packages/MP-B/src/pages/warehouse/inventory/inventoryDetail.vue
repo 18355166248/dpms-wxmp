@@ -102,7 +102,7 @@ export default {
     },
     // 前往物品详情页
     goToGoodDetail() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/warehouse/goods/goodDetail?merchandiseId=${this.merchandiseId}`,
       })
     },

@@ -178,11 +178,11 @@ export default {
 
       records = records.map((item) => {
         for (let i = 0; i < channelList.length; i++) {
-          item[`payStyleTotalAmountList${i + 1}`] = this.$utils.formatPrice(
+          item[`payStyleTotalAmountList${i + 1}`] = this.$dpmsUtils.formatPrice(
             item.payStyleReconciliationItemList[i].totalAmount,
           )
         }
-        item.totalAmount = this.$utils.formatPrice(item.totalAmount)
+        item.totalAmount = this.$dpmsUtils.formatPrice(item.totalAmount)
         return item
       })
       if (this.current === 1) {
