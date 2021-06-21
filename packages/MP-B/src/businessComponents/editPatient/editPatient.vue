@@ -425,8 +425,6 @@ export default {
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
       oldForm: this.filterFormData(this.formData),
-      newRules: {},
-      changeKeys: [],
       staffList: [],
       sourceName: '', //患者来源名称
 
@@ -840,42 +838,9 @@ export default {
         .map((tagItem) => tagItem.name)
         .join(',')
     },
-    contrastForm() {
-      if (this.editType) {
-        let arr = []
-        for (let key in this.oldForm) {
-          if (
-            JSON.stringify(this.form[key]) !== JSON.stringify(this.oldForm[key])
-          ) {
-            arr.push(key)
-          }
-        }
-        this.changeKeys = arr.filter((value, index, self) => {
-          return self.indexOf(value) === index
-        })
-        if (this.changeKeys.length) {
-          this.changeKeys.forEach((item) => {
-            if (
-              item !== 'settingsTypeId' &&
-              item !== 'tagIds' &&
-              item !== 'region'
-            ) {
-              this.newRules[item] = this.rules[item]
-            }
-          })
-        }
-      } else this.newRules = this.rules
-    },
     async submit() {
-      this.contrastForm()
-      if (this.editType && !this.changeKeys.length) {
-        //保存患者时，添加禁用和loading效果
-        this.disabledSaveBtn = true
-        this.$emit('submit', this.form)
-        return
-      }
       this.$utils.formValidate(
-        this.newRules,
+        this.rules,
         this.form,
         (err, fileds, formValue) => {
           this.form = formValue
