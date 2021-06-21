@@ -101,10 +101,17 @@ export default {
   methods: {
     onScrollToLower() {
       if (this.approvalList.length < this.total) {
+        this.getApprovalDetail()
         this.current += 1
-        //todo 调分页接口
       }
     },
+    getApprovalDetail() {
+      approvalApi.getApprovalDetail({
+        current: this.current,
+        size: this.size,
+      })
+    },
+
     onFailHandler(item) {
       wx.navigateTo({
         url: `/baseSubpackages/approvalManagement/components/applicationApprovalNote?data=${JSON.stringify(

@@ -111,6 +111,9 @@ export default {
   onPullDownRefresh() {
     this.initData()
   },
+  onHide() {
+    this.initData()
+  },
 }
 </script>
 
