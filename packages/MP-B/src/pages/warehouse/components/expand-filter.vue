@@ -9,6 +9,7 @@
         ></text>
         <text v-else class="iconfont icon-arrow-right"></text>
       </view>
+      <!-- v-if="currentParentId == item[fieldKey] || currentParentId == index" -->
       <template v-if="currentParentId == item[fieldKey]">
         <view
           class="expand-item-content"
@@ -62,6 +63,10 @@ export default {
     },
     parentId() {
       this.currentParentId = this.parentId
+    },
+    list() {
+      // 默认获取第一个二级分类的id
+      this.currentParentId = this.list[0][this.fieldKey]
     },
   },
   methods: {

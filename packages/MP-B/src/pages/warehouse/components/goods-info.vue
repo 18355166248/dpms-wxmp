@@ -1,33 +1,34 @@
 <template>
   <view class="good-details" @click="onClick">
-    <view class="good-name mb16"
-      ><text>{{ detail.commonName }}</text></view
-    >
+    <view class="good-name mb16">
+      <text>{{ detail.commonName }}</text>
+      <text v-if="detail.merchandiseName">/{{ detail.merchandiseName }}</text>
+      <text v-if="detail.aliasName">/{{ detail.aliasName }}</text>
+    </view>
     <view class="mb16"
       ><text class="text-label">物品编号：</text
       ><text class="text-value">{{ detail.merchandiseNo }}</text></view
     >
-    <view class="mb16"
+    <view class="mb16" v-if="type === 'good'"
       ><text class="text-label">品牌：</text
       ><text class="text-value">{{ detail.brandName }}</text></view
     >
-    <view class="mb16"
+    <view class="mb16" v-if="type === 'good'"
       ><text class="text-label">物品类型：</text
       ><text class="text-value">{{ detail.merchandiseTypeStr }}</text></view
     >
     <!-- 物品展示 -->
-    <view class="mb16" v-if="type === 'good'"
+    <view class="mb16"
       ><text class="text-label">规格类型：</text
       ><text class="text-value">{{ detail.specificationsStr }}</text></view
     >
     <!-- 库存展示 -->
     <view class="mb16" v-if="type === 'inventory'"
-      ><text class="text-label">可用库存：</text
-      ><text class="text-value available"
-        >{{ detail.inventoryNum || '' }}
-        {{ detail.inventoryUnitStr || '' }}</text
-      ></view
-    >
+      ><text class="text-label">可用库存：</text>
+      <text class="text-value available">{{
+        `${detail.inventoryNum || 0} ${detail.inventoryUnitStr || ''}`
+      }}</text>
+    </view>
     <image
       v-if="!detail.isEnable"
       class="disable-img"
