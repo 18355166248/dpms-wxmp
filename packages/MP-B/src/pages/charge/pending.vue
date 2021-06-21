@@ -19,7 +19,7 @@
         <view class="listLine">
           <view class="ml-32">{{ order.billTypeText }}</view>
           <view class="totalFee"
-            >总计金额：{{ $utils.formatPrice(order.totalAmount) }}
+            >总计金额：{{ $dpmsUtils.formatPrice(order.totalAmount) }}
           </view>
         </view>
         <view class="listLine">
@@ -27,13 +27,13 @@
           <view class="chargeFee" v-if="order.billStatus === 0"
             >应收金额：
             <view class="feeRed">
-              {{ $utils.formatPrice(order.receivableAmount) }}</view
+              {{ $dpmsUtils.formatPrice(order.receivableAmount) }}</view
             >
           </view>
           <view class="chargeFee" v-if="order.billStatus === 1"
             >应退金额：
             <view class="feeGreen">{{
-              $utils.formatPrice(order.receivableAmount)
+              $dpmsUtils.formatPrice(order.receivableAmount)
             }}</view>
           </view>
         </view>
@@ -64,7 +64,7 @@ export default {
   data() {
     return {
       billSupperTypeArray: this.initEnumArray(
-        this.$utils.getEnums('BillSupperType'),
+        this.$dpmsUtils.getEnums('BillSupperType'),
       ),
       pendingList: [],
       current: 1,

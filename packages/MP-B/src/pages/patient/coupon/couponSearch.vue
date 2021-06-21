@@ -110,11 +110,11 @@ export default {
       this.isBlur = bool
     },
     onCancel(e) {
-      let value = this.$utils.omitEmojiValueInString(e.detail.value)
+      let value = this.$dpmsUtils.omitEmojiValueInString(e.detail.value)
       this.$emit('cancel', { value: value })
     },
     onChange(e) {
-      let value = this.$utils.omitEmojiValueInString(e.detail.value)
+      let value = this.$dpmsUtils.omitEmojiValueInString(e.detail.value)
 
       // this.inputValue = e.target.value
       this.$emit('change', { value: value })
@@ -123,7 +123,7 @@ export default {
       return value
     },
     onSearch(e) {
-      let value = this.$utils.omitEmojiValueInString(e.detail.value)
+      let value = this.$dpmsUtils.omitEmojiValueInString(e.detail.value)
 
       this.$emit('search', { value: value })
     },

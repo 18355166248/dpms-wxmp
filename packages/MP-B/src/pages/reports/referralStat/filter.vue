@@ -97,7 +97,7 @@ export default {
         oldDoctorStaffId: this.oldDoctorStaffId,
         oldInstitutionDepartmentId: this.oldInstitutionDepartmentId,
       })
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     onReset() {
       this.searchKey = ''

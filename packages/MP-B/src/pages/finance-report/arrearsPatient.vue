@@ -138,7 +138,7 @@ export default {
           'totalReceived',
         ]
         utilPriceList.forEach((it) => {
-          item[it] = this.$utils.formatPrice(item[it])
+          item[it] = this.$dpmsUtils.formatPrice(item[it])
         })
         return item
       })
@@ -157,7 +157,7 @@ export default {
     },
     onFilterClick() {
       const filter = JSON.stringify(['patientInfo'])
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })
     },

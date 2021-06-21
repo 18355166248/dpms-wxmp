@@ -85,7 +85,7 @@
           v-model="form.introducer"
           @click="
             () => {
-              this.$utils.push({
+              this.$dpmsUtils.push({
                 url: '/pages/patient/searchPatient/searchCustomer',
               })
             }
@@ -132,7 +132,7 @@
           v-model="form.introducer"
           @click="
             () => {
-              this.$utils.push({
+              this.$dpmsUtils.push({
                 url: '/pages/patient/searchPatient/searchPatient?type=source',
               })
             }
@@ -800,9 +800,9 @@ export default {
       }
     },
     onSyncClick() {
-      this.$utils.showLoading('刷新病例号中……')
+      this.$dpmsUtils.showLoading('刷新病例号中……')
       this.getPatientMedicalRecordNo()
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
     },
     filterFormData(data) {
       if (_.isEmpty(data)) {
@@ -820,7 +820,7 @@ export default {
       return data
     },
     onSelectTags() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/pages/patient/createPatient/personas?checked=' +
           this.form.tagIds.join(','),
@@ -874,13 +874,13 @@ export default {
         this.$emit('submit', this.form)
         return
       }
-      this.$utils.formValidate(
+      this.$dpmsUtils.formValidate(
         this.newRules,
         this.form,
         (err, fileds, formValue) => {
           this.form = formValue
           if (err) {
-            this.$utils.show(err[0]?.message)
+            this.$dpmsUtils.show(err[0]?.message)
             return
           }
           //保存患者时，添加禁用和loading效果

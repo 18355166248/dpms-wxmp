@@ -85,7 +85,7 @@ export default {
         institutionDepartmentId: this.institutionDepartmentId,
         triageConsultedStaffId: this.triageConsultedStaffId,
       })
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     onReset() {
       this.searchKey = ''

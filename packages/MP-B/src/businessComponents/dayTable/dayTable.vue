@@ -253,9 +253,9 @@ export default {
       editMeet: false, // 编辑会话中
       tableToTop: 0, // dayTable距离页面顶部距离
       moveTimer: undefined, // 移动拖拽时的定时器
-      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
-      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
-      GENDER_ENUM: this.$utils.getEnums('Gender'),
+      VIS_TYPE_ENUM: this.$dpmsUtils.getEnums('VisType'),
+      APPOINTMENT_STATUS_ENUM: this.$dpmsUtils.getEnums('AppointmentStatus'),
+      GENDER_ENUM: this.$dpmsUtils.getEnums('Gender'),
       isHeaderWithLargeArea: frontAuthUtil.check(
         '预约中心/预约视图/新建修改、取消、日志',
       ),

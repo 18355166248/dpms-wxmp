@@ -110,7 +110,7 @@ export default {
         chargeTypeName: this.chargeTypeName,
       })
       this.setStore()
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     onReset() {
       if (!this.achFilterDisabled) {
@@ -131,14 +131,14 @@ export default {
       })
     },
     onProjectClick() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/pages/achievement/projectList?checked=' +
           this.chargeTypeIds.join(','),
       })
     },
     onStaffClick() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/pages/achievement/staffList?checked=' +
           this.staffIds.join(',') +

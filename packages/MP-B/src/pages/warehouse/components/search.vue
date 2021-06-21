@@ -281,7 +281,7 @@ export default {
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
       })
     },

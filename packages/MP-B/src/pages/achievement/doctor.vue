@@ -165,9 +165,9 @@ export default {
         data,
       } = await institutionAPI.getStaffListByPositionFromAllInstitution({
         workStatus:
-          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+          this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
+        position: this.$dpmsUtils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
       })
       uni.setStorageSync('allDoctorList', data)
     },
@@ -214,7 +214,7 @@ export default {
       })
       const { beginTimeMillis, endTimeMillis, parentChargeTypeIds } = this
       records.forEach((element) => {
-        element.paidInAmount = this.$utils.formatPrice(element.paidInAmount)
+        element.paidInAmount = this.$dpmsUtils.formatPrice(element.paidInAmount)
         element.url = [
           element.doctorName,
           '/pages/achievement/doctorDetail',
@@ -242,7 +242,7 @@ export default {
       uni.hideLoading()
     },
     onFilterClick() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/achievement/filter?name=doctor`,
       })
     },

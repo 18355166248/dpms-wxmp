@@ -159,7 +159,7 @@ export default {
     },
     save() {
       uni.$emit(`teethSelectChange${this.uid}`, this.toothPositionStr)
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     initValue({ teeth }) {
       this.teethSelected = Object.keys(teeth).map((t) => ({
