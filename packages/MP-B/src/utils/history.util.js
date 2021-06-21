@@ -3,7 +3,7 @@ import { setStorage, getStorage, removeStorage } from './storage'
 export default class History {
   constructor(key, records = [], max = 10) {
     this.key = key
-    this.records = records
+    this.records = getStorage(this.key) || records
     this.max = max
     setStorage(key, records)
   }
