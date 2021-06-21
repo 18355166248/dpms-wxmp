@@ -308,9 +308,9 @@
           }
         },
         {
-          "path": "components/applicationOnPass",
+          "path": "components/applicationApprovalNote",
           "style": {
-            "navigationBarTitleText": "审批通过"
+            "navigationBarTitleText": "审批备注"
           }
         }
       ]
