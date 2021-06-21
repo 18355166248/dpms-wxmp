@@ -1,32 +1,37 @@
 <template>
   <view class="bodyDetails mh-24">
-    <view
-      class="singleContainer mv-32"
-      v-for="(item, index) in approvalList.records"
-    >
-      <view class="firstLevel pt-32 ph-24 pb-16">
-        <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
-        <view :class="approvalType[item.status].className">
-          <view></view>
-          <span>{{ approvalType[item.status].text }}</span>
+    <scroll-view class="showDetail" @scrolltolower="onScrollToLower">
+      <view
+        class="singleContainer mv-32"
+        v-for="(item, index) in approvalList.records"
+      >
+        <view class="firstLevel pt-32 ph-24 pb-16">
+          <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
+          <view :class="approvalType[item.status].className">
+            <view></view>
+            <span>{{ approvalType[item.status].text }}</span>
+          </view>
+        </view>
+        <view class="secondLevel ph-24">
+          <view class="mb-8 lh"
+            >发起机构：{{ item.medicalInstitutionName }}</view
+          >
+          <view class="lh"
+            >审核人：{{ item.operateApproveAuditor.staffName }}</view
+          >
+          <span class="mv-32 lh">{{ item.triggerCondition }}</span>
+          <view class="note mb-40 lh">备注：{{ item.comment }}</view>
+        </view>
+        <view class="buttonControl pr-24">
+          <u-button type="success" @click="showDetail(item)">查看</u-button>
         </view>
       </view>
-      <view class="secondLevel ph-24">
-        <view class="mb-8 lh">发起机构：{{ item.medicalInstitutionName }}</view>
-        <view class="lh"
-          >审核人：{{ item.operateApproveAuditor.staffName }}</view
-        >
-        <span class="mv-32 lh">{{ item.triggerCondition }}</span>
-        <view class="note mb-40 lh">备注：{{ item.comment }}</view>
-      </view>
-      <view class="buttonControl pr-24">
-        <u-button type="success" @click="clickHandler">查看</u-button>
-      </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
 <script>
+import approvalApi from '@/APIS/approval/approval.api'
 export default {
   name: 'requestApplied',
   props: {
@@ -41,6 +46,7 @@ export default {
       type: 'select',
       show: false,
       activeTab: 0,
+      medicalRecordId: null,
       approvalType: {
         0: {
           text: '审核中',
@@ -85,6 +91,9 @@ export default {
           text: '病例',
         },
       ],
+      current: 1, //默认展示第一页数据
+      size: 10, //默认展示10条数据
+      total: 1, //默认总条目
     }
   },
   methods: {
@@ -92,6 +101,24 @@ export default {
     actionSheetCallback(index) {
       console.log((this.value = this.actionSheetList[index].value))
       this.value = this.actionSheetList[index].text
+    },
+    onScrollToLower() {
+      if (this.approvalList.length < this.total) {
+        this.getApprovalDetail()
+        this.current += 1
+      }
+    },
+    showDetail(item) {
+      this.medicalRecordId = item.businessId
+      wx.navigateTo({
+        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${this.medicalRecordId}`,
+      })
+    },
+    getApprovalDetail() {
+      approvalApi.getApprovalDetail({
+        current: this.current,
+        size: this.size,
+      })
     },
     clickHandler(e) {
       console.log(e)
@@ -105,7 +132,7 @@ export default {
     },
   },
   onload() {
-    this.initData()
+    // this.initData()
   },
   onReachBottom() {},
   onPullDownRefresh() {

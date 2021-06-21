@@ -24,7 +24,7 @@
           <view class="note mb-40 lh">备注：{{ item.comment }}</view>
         </view>
         <view class="buttonControl pr-24">
-          <u-button type="success" @click="clickHandler">查看</u-button>
+          <u-button type="success" @click="showDetail(item)">查看</u-button>
           <u-button
             type="success"
             :custom-style="failedBtn"
@@ -64,6 +64,7 @@ export default {
       total: 1, //默认总条目
       show: false,
       activeTab: 0,
+      medicalRecordId: null,
       approvalType: {
         0: {
           text: '审核中',
@@ -111,6 +112,12 @@ export default {
         size: this.size,
       })
     },
+    showDetail(item) {
+      this.medicalRecordId = item.businessId
+      wx.navigateTo({
+        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${this.medicalRecordId}`,
+      })
+    },
 
     onFailHandler(item) {
       wx.navigateTo({
@@ -127,14 +134,16 @@ export default {
         )}&applicationStatus=1`,
       })
     },
-    changeTab(index) {
-      console.log('当前选中的项：' + index)
-    },
+
     //onLoad中重置数据
     initData() {
       this.current = 1
       this.approvalList = []
     },
+  },
+  onLoad() {
+    // this.getApprovalDetail()
+    // initData()
   },
 }
 </script>
