@@ -585,6 +585,7 @@ export default {
           ...clonedForm,
           medicalRecordRegisterVO: {
             ...this.form.medicalRecordRegisterVO,
+            doctorStaffId: clonedForm.doctorStaffId,
             visType: this.form.visType,
             createRegister: clonedForm.registerId ? false : true,
           },
@@ -749,7 +750,7 @@ export default {
   },
   watch: {
     'form.doctorStaffId'(newVal) {
-      if (newVal) {
+      if (newVal && newVal !== -1) {
         this.form.doctorStaffName = this.doctors.find(
           (d) => d.doctorId === newVal,
         )?.doctorName

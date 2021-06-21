@@ -271,6 +271,7 @@ const formDefault = {
   medicalInsuranceCardNo: '',
   introducer: '',
   sourceName: '',
+  memo:'',
 }
 
 export default {
@@ -390,6 +391,9 @@ export default {
           type: 'any',
         },
         sourceValue: {
+          type: 'any',
+        },
+        memo: {
           type: 'any',
         },
         introducer: {

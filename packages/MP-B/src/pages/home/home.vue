@@ -42,7 +42,7 @@
         <view class="statistics-body">
           <view
             class="statistics-item"
-            @click="toUrl('/pages/patient/searchPatient/searchPatient')"
+            @click="toUrl(`/pages/patient/searchPatient/searchPatient?type=3`)"
           >
             <view class="statistics-item-header">
               {{ pageData.patientCount }}

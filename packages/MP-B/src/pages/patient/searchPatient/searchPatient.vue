@@ -15,7 +15,7 @@
       <div class="create-patient" @click="toCreatePatient">新建</div>
     </div>
 
-    <FilterArea @getList="getList"></FilterArea>
+    <FilterArea @getList="getList" :isAddToday.sync="isAddToday"></FilterArea>
 
     <div
       class="search-tip-text pt-28 pl-24 pr-24"
@@ -83,6 +83,7 @@ export default {
       current: 1, //默认展示 第一页数据
       size: 10, //默认展示 15条数据
       total: 1, //默认 总条目，
+      isAddToday: '',
       dataSourceStatus: {
         // 数据列表的状态
         loading: true,
@@ -111,6 +112,18 @@ export default {
   onLoad(option) {
     this.paramsObj = option
     this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
+    if (this.paramsObj.type === '3') {
+      this.filterParamsObj.time.dateType = this.paramsObj.type
+      this.filterParamsObj.time.registerBeginMilliSecond = new Date().setHours(
+        0,
+        0,
+        0,
+        0,
+      )
+      this.filterParamsObj.time.registerEndMilliSecond =
+        new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000 - 1
+      this.isAddToday = true
+    }
     this.init()
   },
   onReachBottom() {

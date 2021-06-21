@@ -74,6 +74,13 @@ import institutionAPI from '@/APIS/institution/institution.api.js'
 
 export default {
   name: 'FilterArea',
+  props: {
+    // 由新增患者处点击进入
+    isAddToday: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       selectTab: '',
@@ -157,6 +164,15 @@ export default {
       }
       this.handleTime(beginTime, endTime)
     })
+  },
+  onReady() {
+    if (this.isAddToday) {
+      this.selectTimeItem = '创建时间'
+      this.selectTime = '今天'
+      this.selectTab = 'time'
+      this.showTabs = true
+      this.timeTab = 2
+    }
   },
   beforeDestroy() {
     uni.$off('chooseCalendarOption')
