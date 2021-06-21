@@ -10,8 +10,8 @@
       >
       <view class="text"
         >可用库存：<text class="available ellipse"
-          >{{ detail.inventoryNum || '' }}
-          {{ detail.inventoryUnitStr || '' }}</text
+          >{{ baseInfo.inventoryNum || '' }}
+          {{ baseInfo.inventoryUnitStr || '' }}</text
         ></view
       >
     </view>
@@ -29,26 +29,26 @@
       lineScale="0.30"
       @change="changeTab"
     >
+      <swiper
+        class="swiper"
+        :current="currentTab"
+        v-show="merchandiseId"
+        @change="changeSwiper"
+      >
+        <swiper-item>
+          <inputRecord :merchandiseId="merchandiseId" />
+        </swiper-item>
+        <swiper-item>
+          <outputRecord :merchandiseId="merchandiseId" />
+        </swiper-item>
+        <swiper-item>
+          <checkRecord :merchandiseId="merchandiseId" />
+        </swiper-item>
+        <swiper-item>
+          <increaseDecrease :merchandiseId="merchandiseId" />
+        </swiper-item>
+      </swiper>
     </tabs>
-    <swiper
-      class="swiper"
-      :current="currentTab"
-      v-if="merchandiseId"
-      @change="changeSwiper"
-    >
-      <swiper-item>
-        <inputRecord :merchandiseId="merchandiseId" />
-      </swiper-item>
-      <swiper-item>
-        <outputRecord :merchandiseId="merchandiseId" />
-      </swiper-item>
-      <swiper-item>
-        <checkRecord :merchandiseId="merchandiseId" />
-      </swiper-item>
-      <swiper-item>
-        <increaseDecrease :merchandiseId="merchandiseId" />
-      </swiper-item>
-    </swiper>
   </view>
 </template>
 <script>
@@ -82,6 +82,7 @@ export default {
   onLoad({ merchandiseId }) {
     console.log('获取的参数是:', merchandiseId)
     this.merchandiseId = merchandiseId
+    this.getGoodsDetail(this.merchandiseId)
   },
   created() {},
   methods: {
@@ -94,6 +95,7 @@ export default {
     },
     async getGoodsDetail(merchandiseId) {
       const res = await goodAPI.getGoodsDetail({ merchandiseId })
+      console.log(97, res)
       this.baseInfo = res.data
     },
     // 前往物品详情页
