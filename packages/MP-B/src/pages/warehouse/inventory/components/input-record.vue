@@ -57,6 +57,7 @@ export default {
     },
   },
   async created() {
+    console.log('入库记录获取的参数是:', this.merchandiseId)
     const res = await this.getGoodInputRecord()
     this.pagination = res
   },
