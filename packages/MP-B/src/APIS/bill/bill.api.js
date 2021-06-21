@@ -216,6 +216,13 @@ const billAPI = {
   getResultBySerialNoList(data) {
     return httper.get('/billing/bill/pay/status', data)
   },
+  // 获取实收金额是否默认展示
+  getAmountDisplaySet(data) {
+    return httper.get(
+      '/billing/settings/billing-general-service-config/list',
+      data,
+    )
+  },
 }
 
 export default billAPI

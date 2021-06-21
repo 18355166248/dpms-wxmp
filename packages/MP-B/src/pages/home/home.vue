@@ -173,6 +173,7 @@ import { globalEventKeys } from '@/config/global.eventKeys'
 import { mapState } from 'vuex'
 import { setCustomOpenId } from '@/utils/utils'
 import billReport from '@/pages/home/billReport'
+import billAPI from '../../APIS/bill/bill.api'
 
 export default {
   components: {
@@ -236,6 +237,7 @@ export default {
     uni.$on(globalEventKeys.newPatient, () => {
       this.init()
     })
+    this.getAmountDisplay()
   },
   onUnload() {
     uni.$off(globalEventKeys.newPatient)
@@ -401,6 +403,16 @@ export default {
       if (res) {
         this.pageData = res.data
         return [null, res]
+      }
+    },
+    async getAmountDisplay() {
+      const res = await billAPI.getAmountDisplaySet()
+      if (res.code === 0 && res.data) {
+        res.data.forEach((item) => {
+          if (item.configCode === 'payment_amount_show_switch') {
+            this.visible = item.configValue === '1' ? false : true
+          }
+        })
       }
     },
     async init() {

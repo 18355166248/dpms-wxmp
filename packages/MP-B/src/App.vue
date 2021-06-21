@@ -253,6 +253,12 @@ button::after {
 .icon-check-square-fill:before {
   content: '\e84b';
 }
+.icon-card-voucher-face:before {
+  content: '\e646';
+}
+.icon-wechat-fill:before {
+  content: '\e68b';
+}
 /*全部*/
 .icon-all-fill:before {
   content: '\e70b';
