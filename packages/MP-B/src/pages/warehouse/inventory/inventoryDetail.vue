@@ -28,27 +28,26 @@
       lineColor="#5CBB89"
       lineScale="0.30"
       @change="changeTab"
+    ></tabs>
+    <swiper
+      class="swiper"
+      :current="currentTab"
+      v-show="merchandiseId"
+      @change="changeSwiper"
     >
-      <swiper
-        class="swiper"
-        :current="currentTab"
-        v-show="merchandiseId"
-        @change="changeSwiper"
-      >
-        <swiper-item>
-          <inputRecord :merchandiseId="merchandiseId" />
-        </swiper-item>
-        <swiper-item>
-          <outputRecord :merchandiseId="merchandiseId" />
-        </swiper-item>
-        <swiper-item>
-          <checkRecord :merchandiseId="merchandiseId" />
-        </swiper-item>
-        <swiper-item>
-          <increaseDecrease :merchandiseId="merchandiseId" />
-        </swiper-item>
-      </swiper>
-    </tabs>
+      <swiper-item>
+        <inputRecord :merchandiseId="merchandiseId" />
+      </swiper-item>
+      <swiper-item>
+        <outputRecord :merchandiseId="merchandiseId" />
+      </swiper-item>
+      <swiper-item>
+        <checkRecord :merchandiseId="merchandiseId" />
+      </swiper-item>
+      <swiper-item>
+        <increaseDecrease :merchandiseId="merchandiseId" />
+      </swiper-item>
+    </swiper>
   </view>
 </template>
 <script>
