@@ -308,9 +308,9 @@
           }
         },
         {
-          "path": "components/applicationOnPass",
+          "path": "components/applicationApprovalNote",
           "style": {
-            "navigationBarTitleText": "审批通过"
+            "navigationBarTitleText": "审批备注"
           }
         }
       ]
@@ -616,8 +616,7 @@
         {
           "path": "inventory/inventoryDetail",
           "style": {
-            "navigationBarTitleText": "库存详情",
-            "disableScroll": true
+            "navigationBarTitleText": "库存详情"
           }
         }
       ]
