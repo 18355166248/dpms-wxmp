@@ -1,60 +1,63 @@
 <template>
   <view class="bodyDetails mh-24">
-    <view class="typeSearch">
-      <text style="line-height: 76rpx;">审批类型：</text>
-      <view class="inputControl">
-        <u-input v-model="value" :type="type" @click="show = true" border />
-        <u-action-sheet
-          :list="actionSheetList"
-          v-model="show"
-          @click="actionSheetCallback"
-        >
-        </u-action-sheet>
-      </view>
-    </view>
-    <view class="singleContainer mv-32">
-      <view class="firstLevel pt-32 ph-24 pb-16">
-        <view style="font-weight: 500;">收费</view>
-        <view>
-          <view></view>
-          <span>审核中</span>
+    <scroll-view class="showDetail" @scrolltolower="onScrollToLower">
+      <view
+        class="singleContainer mv-32"
+        v-for="(item, index) in approvalList.records"
+        :key="index"
+      >
+        <view class="firstLevel pt-32 ph-24 pb-16">
+          <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
+          <view>
+            <view></view>
+            <span>审核中</span>
+          </view>
+        </view>
+        <view class="secondLevel ph-24">
+          <view class="mb-8 lh"
+            >发起机构：{{ item.medicalInstitutionName }}</view
+          >
+          <view class="lh"
+            >审核人：{{ item.operateApproveAuditor.staffName }}</view
+          >
+          <span class="mv-32 lh">{{ item.triggerCondition }}</span>
+          <view class="note mb-40 lh">备注：{{ item.comment }}</view>
+        </view>
+        <view class="buttonControl pr-24">
+          <u-button type="success" @click="clickHandler">查看</u-button>
+          <u-button
+            type="success"
+            :custom-style="failedBtn"
+            class="mh-16"
+            @click="clickHandler"
+            >不通过</u-button
+          >
+          <u-button
+            type="success"
+            :custom-style="passedBtn"
+            @click="onPassHandler"
+            >通过</u-button
+          >
         </view>
       </view>
-      <view class="secondLevel ph-24">
-        <view class="mb-8 lh">发起机构：</view>
-        <view class="lh">审核人：</view>
-        <span class="mv-32 lh">诊所</span>
-        <view class="note mb-40 lh"
-          >备注：12内容12345备注内容12345备注内容1234…</view
-        >
-      </view>
-      <view class="buttonControl pr-24">
-        <u-button type="success" @click="clickHandler">查看</u-button>
-        <u-button
-          type="success"
-          :custom-style="failedBtn"
-          class="mh-16"
-          @click="clickHandler"
-          >不通过</u-button
-        >
-        <u-button
-          type="success"
-          :custom-style="passedBtn"
-          @click="onPassHandler"
-          >通过</u-button
-        >
-      </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
 <script>
 export default {
   name: 'requestReview',
+  props: {
+    approvalList: {
+      type: {},
+      require: true,
+    },
+  },
   data() {
     return {
-      value: '全部',
-      type: 'select',
+      current: 1, //默认展示第一页数据
+      size: 10, //默认展示10条数据
+      total: 1, //默认总条目
       show: false,
       activeTab: 0,
       //uView按钮样式调整
@@ -71,53 +74,33 @@ export default {
         border: '2rpx solid #5cbb89',
         borderRadius: '30rpx',
       },
-      actionSheetList: [
-        {
-          value: '1',
-          text: '全部',
-        },
-        {
-          value: '2',
-          text: '收费',
-        },
-        {
-          value: '3',
-          text: '退费',
-        },
-        {
-          value: '4',
-          text: '领用',
-        },
-        {
-          value: '5',
-          text: '借调',
-        },
-        {
-          value: '6',
-          text: '病例',
-        },
-      ],
     }
   },
   methods: {
-    // 点击actionSheet回调
-    actionSheetCallback(index) {
-      console.log((this.value = this.actionSheetList[index].text))
-      this.value = this.actionSheetList[index].text
+    onScrollToLower() {
+      if (this.approvalList.length < this.total) {
+        this.current += 1
+        //todo 调分页接口
+      }
     },
-
     clickHandler() {},
-    //通过模态框弹窗
+
     onPassHandler() {
-      wx.redirectTo({
+      wx.navigateTo({
         url: '/baseSubpackages/approvalManagement/components/applicationOnPass',
       })
     },
     changeTab(index) {
       console.log('当前选中的项：' + index)
     },
+    //onLoad中重置数据
+    initData() {
+      this.current = 1
+      this.approvalList = []
+    },
   },
   filters: {
+    //过滤枚举
     filterEnums(value, arr) {
       for (let i = 0; i < arr.length; i++) {
         if (arr[i].value === value) {
@@ -146,25 +129,6 @@ export default {
   }
 }
 .bodyDetails {
-  .typeSearch {
-    display: flex;
-    flex-direction: row;
-    > text {
-      flex-shrink: 0;
-    }
-    > view {
-      width: 100%;
-      background: #ffffff;
-      /deep/ .u-input__right-icon {
-        line-height: 76rpx;
-        padding-right: 10rpx;
-      }
-      /deep/ .u-input__input {
-        height: 76rpx;
-        padding-left: 10rpx;
-      }
-    }
-  }
   .singleContainer {
     border-radius: 8rpx;
     width: 100%;

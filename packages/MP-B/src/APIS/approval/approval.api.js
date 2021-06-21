@@ -1,8 +1,8 @@
-import httpScrm from '../http'
+import scrmHttper from '../httpScrm'
 
 const approvalApi = {
   getApprovalDetail(data) {
-    return httpScrm.get('approve/instances/page', data)
+    return scrmHttper.get('approve/instances/page', data)
   },
 }
 

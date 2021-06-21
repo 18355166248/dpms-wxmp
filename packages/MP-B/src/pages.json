@@ -23,6 +23,13 @@
       }
     },
     {
+      "path": "pages/login/qyLogin",
+      "style": {
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
+    },
+    {
       "path": "businessComponents/TeethSelect/Selector",
       "style": {
         "navigationBarTitleText": "选择牙位"
@@ -296,7 +303,8 @@
         {
           "path": "approvalManagement",
           "style": {
-            "navigationBarTitleText": "审批管理"
+            "navigationBarTitleText": "审批管理",
+            "enablePullDownRefresh": true
           }
         },
         {

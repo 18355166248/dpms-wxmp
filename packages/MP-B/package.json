@@ -18,6 +18,7 @@
     "build:mp-weixin-uat": "cross-env NODE_ENV=uat UNI_PLATFORM=mp-weixin vue-cli-service uni-build --minimize",
     "build:mp-weixin-pre": "cross-env NODE_ENV=staging UNI_PLATFORM=mp-weixin vue-cli-service uni-build --minimize",
     "build:mp-weixin-pro": "cross-env NODE_ENV=prod UNI_PLATFORM=mp-weixin vue-cli-service uni-build --minimize",
+    "build:mp-weixin-production": "cross-env NODE_ENV=production UNI_PLATFORM=mp-weixin vue-cli-service uni-build --minimize",
     "build:quickapp-native": "cross-env NODE_ENV=production UNI_PLATFORM=quickapp-native vue-cli-service uni-build",
     "build:quickapp-webview": "cross-env NODE_ENV=production UNI_PLATFORM=quickapp-webview vue-cli-service uni-build",
     "build:quickapp-webview-huawei": "cross-env NODE_ENV=production UNI_PLATFORM=quickapp-webview-huawei vue-cli-service uni-build",
