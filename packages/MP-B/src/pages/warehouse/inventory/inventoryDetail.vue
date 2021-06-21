@@ -31,26 +31,22 @@
       lineColor="#5CBB89"
       lineScale="0.30"
       @change="changeTab"
-    ></tabs>
-    <swiper
-      class="swiper"
-      :current="currentTab"
-      v-show="merchandiseId"
-      @change="changeSwiper"
     >
-      <swiper-item>
-        <inputRecord :merchandiseId="merchandiseId" />
-      </swiper-item>
-      <swiper-item>
-        <outputRecord :merchandiseId="merchandiseId" />
-      </swiper-item>
-      <swiper-item>
-        <checkRecord :merchandiseId="merchandiseId" />
-      </swiper-item>
-      <swiper-item>
-        <increaseDecrease :merchandiseId="merchandiseId" />
-      </swiper-item>
-    </swiper>
+      <scroll-view>
+        <view v-show="currentTab === 0">
+          <inputRecord :merchandiseId="merchandiseId" />
+        </view>
+        <view v-show="currentTab === 1">
+          <outputRecord :merchandiseId="merchandiseId" />
+        </view>
+        <view v-show="currentTab === 2">
+          <checkRecord :merchandiseId="merchandiseId" />
+        </view>
+        <view v-show="currentTab === 3">
+          <increaseDecrease :merchandiseId="merchandiseId" />
+        </view>
+      </scroll-view>
+    </tabs>
   </view>
 </template>
 <script>
@@ -90,10 +86,6 @@ export default {
   methods: {
     changeTab(i) {
       this.currentTab = this.tabs[i].val
-    },
-    changeSwiper(event) {
-      console.log('滑动详情:', event)
-      // this.currentTab = index
     },
     async getGoodsDetail(merchandiseId) {
       const res = await goodAPI.getGoodsDetail({ merchandiseId })

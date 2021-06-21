@@ -616,8 +616,7 @@
         {
           "path": "inventory/inventoryDetail",
           "style": {
-            "navigationBarTitleText": "库存详情",
-            "disableScroll": true
+            "navigationBarTitleText": "库存详情"
           }
         }
       ]
