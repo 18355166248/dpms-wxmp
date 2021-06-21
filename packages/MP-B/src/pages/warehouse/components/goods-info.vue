@@ -60,7 +60,7 @@ export default {
 .good-details {
   width: 100%;
   padding: 32rpx 0 16rpx 0rpx;
-  border-bottom: 1rpx solid #000000;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
   font-size: 28rpx;
   box-sizing: border-box;
   position: relative;

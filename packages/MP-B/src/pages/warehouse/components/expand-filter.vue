@@ -85,25 +85,26 @@ export default {
   width: 100%;
   &-item {
     width: 100%;
+    border-bottom: 1rpx solid #e5e5e5;
     &-head {
       width: 100%;
       box-sizing: border-box;
       height: 112rpx;
       line-height: 112rpx;
-      border-bottom: 1rpx solid #e5e5e5;
       font-size: 30rpx;
       color: #191919;
       display: inline-flex;
       justify-content: space-between;
-      padding-right: 58rpx;
     }
     &-content {
-      padding-top: 20rpx;
+      padding: 0 0 33rpx 0;
       display: inline-flex;
       &-tag {
         display: inline-block;
+        height: 48rpx;
+        line-height: 48rpx;
         margin-right: 16rpx;
-        padding: 8rpx 16rpx;
+        padding: 0 16rpx;
         background: rgba(0, 0, 0, 0.06);
         border-radius: 8rpx;
         font-size: 24rpx;
