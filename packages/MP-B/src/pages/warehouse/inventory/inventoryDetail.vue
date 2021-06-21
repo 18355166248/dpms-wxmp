@@ -32,7 +32,7 @@
       lineScale="0.30"
       @change="changeTab"
     >
-      <scroll-view>
+      <scroll-view v-if="merchandiseId">
         <view v-show="currentTab === 0">
           <inputRecord :merchandiseId="merchandiseId" />
         </view>

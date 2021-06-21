@@ -124,7 +124,6 @@ export default {
     },
   },
   onLoad(options) {
-    console.log('options', options)
     this.getApprovalDetail()
     if (options.currentTab) {
       this.currentTab = Number(options.currentTab)
@@ -132,7 +131,7 @@ export default {
   },
 
   onPullDownRefresh() {
-    // this.initData()
+    this.getApprovalDetail()
   },
 }
 </script>

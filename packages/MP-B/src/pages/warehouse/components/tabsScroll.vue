@@ -69,6 +69,7 @@ export default {
   height: 80rpx;
   display: flex;
   overflow: hidden;
+  border-bottom: 1rpx solid #e5e5e5;
   &-main {
     flex: 1;
     overflow: hidden;
@@ -85,7 +86,9 @@ export default {
       }
       .tabs-main-item {
         display: inline-block;
-        padding: 16rpx;
+        padding: 0 16rpx;
+        height: 48rpx;
+        line-height: 48rpx;
         font-size: 24rpx;
         color: #595959;
         background: rgba(0, 0, 0, 0.06);

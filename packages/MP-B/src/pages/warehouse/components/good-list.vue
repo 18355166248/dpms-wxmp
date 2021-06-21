@@ -55,19 +55,21 @@
       <view class="drawer-title">
         <text>筛选</text>
       </view>
-      <view class="drawer-oneCategoryname">
-        <text>{{ oneCategoryName }}</text>
+      <view class="drawer-main">
+        <view class="drawer-main-oneCategoryname">
+          <text>{{ oneCategoryName }}</text>
+        </view>
+        <scroll-view style="height: 100%;" scroll-y="true">
+          <expandFilter
+            fieldKey="merchandiseCategoryId"
+            fieldName="merchandiseCategoryName"
+            :parentId="twoCategoryId"
+            :list="threeCategoryList"
+            :value="threeCategoryId"
+            @on-change="changeThreeCategory"
+          />
+        </scroll-view>
       </view>
-      <scroll-view class="drawer-right" style="height: 100%;" scroll-y="true">
-        <expandFilter
-          fieldKey="merchandiseCategoryId"
-          fieldName="merchandiseCategoryName"
-          :parentId="twoCategoryId"
-          :list="threeCategoryList"
-          :value="threeCategoryId"
-          @on-change="changeThreeCategory"
-        />
-      </scroll-view>
     </uni-drawer>
   </view>
 </template>
@@ -307,19 +309,21 @@ export default {
     font-size: 36rpx;
     color: #191919;
     font-weight: 500;
-  }
-  .drawer-oneCategoryname {
-    width: 100%;
-    padding-left: 32rpx;
-    height: 113rpx;
-    line-height: 113rpx;
-    font-size: 30rpx;
-    color: #191919;
-    font-weight: 500;
     border-bottom: 1rpx solid #e5e5e5;
   }
-  .drawer-right {
-    padding-left: 32rpx;
+  .drawer-main {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 32px;
+    &-oneCategoryname {
+      width: 100%;
+      height: 113rpx;
+      line-height: 113rpx;
+      font-size: 30rpx;
+      color: #191919;
+      font-weight: 500;
+      border-bottom: 1rpx solid #e5e5e5;
+    }
   }
 }
 </style>
