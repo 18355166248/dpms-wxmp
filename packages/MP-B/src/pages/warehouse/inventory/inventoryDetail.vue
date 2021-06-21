@@ -10,7 +10,7 @@
         >物品编号：{{ baseInfo.merchandiseNo || '' }}</text
       >
       <text class="text ellipse"
-        >规格类型：{{ baseInfo.specificationsStr || '' }}</text
+        >规格信息：{{ baseInfo.specificationsStr || '' }}</text
       >
       <view class="text"
         >可用库存：<text class="available ellipse">{{

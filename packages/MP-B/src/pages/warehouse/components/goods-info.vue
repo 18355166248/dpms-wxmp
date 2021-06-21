@@ -19,7 +19,7 @@
     >
     <!-- 物品展示 -->
     <view class="mb16"
-      ><text class="text-label">规格类型：</text
+      ><text class="text-label">规格信息：</text
       ><text class="text-value">{{ detail.specificationsStr }}</text></view
     >
     <!-- 库存展示 -->
