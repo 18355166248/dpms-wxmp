@@ -248,7 +248,7 @@ export default {
             name: '',
             data: this.projectData.map((v) => v.data),
             format(val) {
-              return _self.$utils.formatPrice(val)
+              return _self.$dpmsUtils.formatPrice(val)
             },
           },
         ],
@@ -352,7 +352,7 @@ export default {
     link(type) {
       setStorage('statistics_detail', this[type])
 
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/statistics/detail/detail?type=' +
           type +

@@ -62,7 +62,7 @@ export default {
       appointmentMemo: '',
       appointmentId: null,
       dataSource: {},
-      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      APPOINTMENT_STATUS_ENUM: this.$dpmsUtils.getEnums('AppointmentStatus'),
       isSaveing: false,
     }
   },
@@ -81,7 +81,7 @@ export default {
     // 请求数据
     async loadData() {
       uni.showNavigationBarLoading()
-      const [listErr, listRes] = await this.$utils.asyncTasks(
+      const [listErr, listRes] = await this.$dpmsUtils.asyncTasks(
         appointmentAPI.getAppointmentDetail({
           appointmentId: this.appointmentId,
         }),
@@ -100,7 +100,7 @@ export default {
     async save() {
       this.isSaveing = true
 
-      const [listErr, listRes] = await this.$utils.asyncTasks(
+      const [listErr, listRes] = await this.$dpmsUtils.asyncTasks(
         appointmentAPI.updateAppointmentStatus({
           appointmentId: this.appointmentId,
           appointmentStatus: this.APPOINTMENT_STATUS_ENUM.CANCELED.value,
@@ -112,7 +112,7 @@ export default {
         uni.$emit(globalEventKeys.cancleApptSuccess, {
           appointmentId: this.appointmentId,
         })
-        this.$utils.back()
+        this.$dpmsUtils.back()
       }
 
       this.isSaveing = false

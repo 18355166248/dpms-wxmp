@@ -99,7 +99,7 @@ export default {
       this.showpopup = true
     },
     toUrl(url) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
       this.hide()

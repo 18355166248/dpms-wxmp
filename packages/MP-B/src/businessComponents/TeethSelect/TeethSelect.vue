@@ -71,7 +71,7 @@ export default {
   methods: {
     openSelector() {
       if (this.disabled) return
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/businessComponents/TeethSelect/Selector?value=${JSON.stringify(
           this.dataValue,
         )}&uid=${this._uid}`,

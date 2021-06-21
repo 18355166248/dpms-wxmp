@@ -72,14 +72,14 @@ export default {
   methods: {
     //全部
     viewAll(url) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
     },
     viewPage(item) {
       if (item.url) {
         const url = item.url
-        this.$utils.push({
+        this.$dpmsUtils.push({
           url,
         })
       }

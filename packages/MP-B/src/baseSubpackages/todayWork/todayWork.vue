@@ -504,9 +504,9 @@ export default {
         'switch-receptionist': 'RECEPTIONIST',
         'switch-doctor': 'DOCTOR',
       }, // 菜单权限与枚举映射关系
-      REGISTER_ENUM: this.$utils.getEnums('Register'),
-      TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
-      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
+      TODAY_WORK_ROLE_TYPE_ENUM: this.$dpmsUtils.getEnums('TodayWorkRoleType'),
+      APPOINTMENT_STATUS_ENUM: this.$dpmsUtils.getEnums('AppointmentStatus'),
       isWeakflow: 0,
       statusTextValue: {},
       statusTextArray: {},
@@ -566,7 +566,7 @@ export default {
                 status: this.REGISTER_ENUM.REGISTER_CANCELED.value,
               })
               .then(() => {
-                this.$utils.show('取消成功', { icon: 'success' })
+                this.$dpmsUtils.show('取消成功', { icon: 'success' })
                 this.emitPullDownRefresh()
               })
           } else if (res.cancel) {
@@ -586,7 +586,7 @@ export default {
     },
     // 页面跳转
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,
@@ -705,7 +705,7 @@ export default {
           mask: true,
         })
 
-        const [listErr, listRes] = await this.$utils.asyncTasks(
+        const [listErr, listRes] = await this.$dpmsUtils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.enumValue]]({
             beginTime: moment().startOf('day').valueOf(),
             endTime: moment().endOf('day').valueOf(),
@@ -995,7 +995,7 @@ export default {
             todayWorkRoleType,
           })
           .then(() => {
-            this.$utils.show('接诊成功', { icon: 'success' })
+            this.$dpmsUtils.show('接诊成功', { icon: 'success' })
             this.emitPullDownRefresh()
             this.disabled = false
             uni.hideLoading()
@@ -1018,7 +1018,7 @@ export default {
             todayWorkRoleType,
           })
           .then(() => {
-            this.$utils.show('治疗完成', { icon: 'success' })
+            this.$dpmsUtils.show('治疗完成', { icon: 'success' })
             this.emitPullDownRefresh()
             this.disabled = false
             uni.hideLoading()
@@ -1041,7 +1041,7 @@ export default {
             appointmentId,
           })
           .then(() => {
-            this.$utils.show('已离开', { icon: 'success' })
+            this.$dpmsUtils.show('已离开', { icon: 'success' })
             this.emitPullDownRefresh()
             this.disabled = false
             uni.hideLoading()
@@ -1066,7 +1066,7 @@ export default {
                     appointmentStatus: 2,
                   })
                   .then(() => {
-                    this.$utils.show('回退成功', { icon: 'success' })
+                    this.$dpmsUtils.show('回退成功', { icon: 'success' })
                     this.emitPullDownRefresh()
                     this.disabled = false
                   })
@@ -1077,7 +1077,7 @@ export default {
                 diagnosisApi
                   .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
                   .then(() => {
-                    this.$utils.show('回退成功', { icon: 'success' })
+                    this.$dpmsUtils.show('回退成功', { icon: 'success' })
                     this.emitPullDownRefresh()
                     this.disabled = false
                   })

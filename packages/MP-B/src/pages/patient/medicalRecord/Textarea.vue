@@ -140,7 +140,7 @@ export default {
         value: this.value,
         key: this.key,
       })
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     async getDict() {
       if (this.key.includes('diagnosisDesc')) {

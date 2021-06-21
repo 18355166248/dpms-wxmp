@@ -30,7 +30,7 @@
     <!-- 主体内容展示 -->
     <view class="goods-main" v-else>
       <!-- 一级分类 -->
-      <view class="goods-main-one">
+      <view class="goods-main-one" v-if="oneCategoryList.length">
         <scroll-view scroll-x="true" style="width: 100%; height: 100%;">
           <text
             class="goods-main-one-tag"
@@ -218,6 +218,15 @@ export default {
       this.twoCategoryId = this.threeCategoryId = 0
       this.twoCategoryList =
         item.children && item.children.length ? all.concat(item.children) : []
+      this.threeCategoryList = this.twoCategoryList
+        .filter((e) => e.merchandiseCategoryId)
+        .map((e) => {
+          return {
+            ...e,
+            children:
+              e.children && e.children.length ? all.concat(e.children) : [],
+          }
+        })
       const res = await this.getGoodsList({
         merchandiseCategoryId: this.oneCategoryId || null,
         merchandiseName: this.merchandiseName || null,
@@ -284,7 +293,7 @@ export default {
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
       })
     },

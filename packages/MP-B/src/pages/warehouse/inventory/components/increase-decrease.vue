@@ -11,7 +11,7 @@
         v-for="(item, index) in pagination.records"
         :key="index"
       >
-        <text class="time">{{ item.confirmTime }}</text>
+        <text class="time">{{ item.confirmTime | filterTime }}</text>
         <text class="amount">{{ item.adjustNum }}</text>
       </view>
       <loadMore :status="statusText" />

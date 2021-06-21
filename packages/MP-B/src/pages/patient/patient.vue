@@ -242,7 +242,7 @@ export default {
   methods: {
     ...mapMutations('patient', ['setPatientDetail']),
     getPatient() {
-      this.$utils.showLoading()
+      this.$dpmsUtils.showLoading()
       patientAPI
         .getPatientDetail({ patientId: this.patientId })
         .then((res) => {
@@ -256,14 +256,14 @@ export default {
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
-          this.$utils.clearLoading()
+          this.$dpmsUtils.clearLoading()
         })
         .catch(() => {
-          this.$utils.clearLoading()
+          this.$dpmsUtils.clearLoading()
         })
     },
     toUrl(url) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
     },
@@ -274,7 +274,7 @@ export default {
     },
     onDisposalRecord(url) {
       console.log('url', url)
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
     },

@@ -61,7 +61,7 @@ export default {
         .then((res) => {
           that.$refs.editPatient.showBtn()
 
-          that.$utils.show('新增患者成功', {
+          that.$dpmsUtils.show('新增患者成功', {
             duration: 1000,
             complete() {
               setTimeout(() => {
@@ -75,11 +75,11 @@ export default {
                     globalEventKeys.selectPatientCardFromSearchPatient,
                     res.data,
                   )
-                  that.$utils.back(2)
+                  that.$dpmsUtils.back(2)
                   return
                 }
 
-                return that.$utils.replace({
+                return that.$dpmsUtils.replace({
                   url: '/pages/patient/patient?patientId=' + res.data.patientId,
                 })
               }, 1000)

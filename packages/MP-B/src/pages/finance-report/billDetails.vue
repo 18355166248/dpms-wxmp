@@ -288,19 +288,19 @@ export default {
 
       records = records.map((item) => {
         for (let i = 0; i < channelList.length; i++) {
-          item[`payStyleTotalAmountList${i + 1}`] = this.$utils.formatPrice(
+          item[`payStyleTotalAmountList${i + 1}`] = this.$dpmsUtils.formatPrice(
             item.payStyleTotalAmountList[i],
           )
         }
-        item.totalAmount = this.$utils.formatPrice(item.totalAmount)
-        item.discountReceiveAmount = this.$utils.formatPrice(
+        item.totalAmount = this.$dpmsUtils.formatPrice(item.totalAmount)
+        item.discountReceiveAmount = this.$dpmsUtils.formatPrice(
           item.discountReceiveAmount,
         )
-        item.arrearsAmount = this.$utils.formatPrice(item.arrearsAmount)
-        item.paymentAmount = this.$utils.formatPrice(item.paymentAmount)
-        item.refundAmount = this.$utils.formatPrice(item.refundAmount)
-        item.billType = this.$utils.getEnumsText('BillType', item.billType)
-        item.billStatus = this.$utils.getEnumsText(
+        item.arrearsAmount = this.$dpmsUtils.formatPrice(item.arrearsAmount)
+        item.paymentAmount = this.$dpmsUtils.formatPrice(item.paymentAmount)
+        item.refundAmount = this.$dpmsUtils.formatPrice(item.refundAmount)
+        item.billType = this.$dpmsUtils.getEnumsText('BillType', item.billType)
+        item.billStatus = this.$dpmsUtils.getEnumsText(
           'BillStatus',
           item.billStatus,
         )
@@ -309,7 +309,7 @@ export default {
         item.lastTransactionTime = moment(item.lastTransactionTime).format(
           'YYYY-MM-DD hh:mm:ss',
         )
-        // console.log(this.$utils.getEnumsText('BillType',4));
+        // console.log(this.$dpmsUtils.getEnumsText('BillType',4));
         // console.log(item.lastTransactionTime);
         return item
       })
@@ -341,7 +341,7 @@ export default {
         'doctorIds',
         'consultantIds',
       ])
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })
     },

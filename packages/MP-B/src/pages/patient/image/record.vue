@@ -42,7 +42,7 @@
         <button
           class="leftBtn"
           @click="
-            $utils.push({
+            $dpmsUtils.push({
               url: `/pages/patient/image/upload?patientId=${patientId}`,
             })
           "
@@ -114,9 +114,9 @@ export default {
   },
   methods: {
     async getImageList(param) {
-      this.$utils.showLoading('加载中...')
+      this.$dpmsUtils.showLoading('加载中...')
       const res = await diagnosisAPI.getImageList(param)
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
       this.records = res.data
         .filter((d) => d.teethImageList)
         .map((d) => ({
@@ -132,7 +132,7 @@ export default {
       if (this.isBatch) return
       this.$store.commit('workbenchStore/setTeethPreviewParams', params)
       this.$store.commit('workbenchStore/setTeethPreviewImgs', imgs)
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/image/preview?index=${index}`,
       })
     },
@@ -150,13 +150,13 @@ export default {
         title: '确认删除这些影像？',
         success: async ({ confirm }) => {
           if (confirm) {
-            this.$utils.showLoading('请稍后...')
+            this.$dpmsUtils.showLoading('请稍后...')
             diagnosisAPI.batchDeleteImages({ teethImageIdStr }).then((res) => {
               if (res.code === 0) {
                 this.getImageList({ patientId: this.patientId })
                 this.checkedList = []
                 this.isBatch = false
-                this.$utils.show('删除成功', { icon: 'success' })
+                this.$dpmsUtils.show('删除成功', { icon: 'success' })
               }
             })
           }
@@ -166,7 +166,7 @@ export default {
     editRemark() {
       if (this.checkedList.length < 1) return (this.isBatch = false)
       const diagnosisTeethImageIdStr = JSON.stringify(this.checkedList)
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/image/editRemark?diagnosisTeethImageIdStr=${diagnosisTeethImageIdStr}`,
       })
       this.checkedList = []

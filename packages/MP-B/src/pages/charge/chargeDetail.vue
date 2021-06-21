@@ -12,14 +12,14 @@
           <view class="listTitle">{{ item.itemName }}</view>
           <view class="listLine grey">
             <view
-              >{{ $utils.formatPrice(item.unitAmount) }}&nbsp;&nbsp;&nbsp;×
+              >{{ $dpmsUtils.formatPrice(item.unitAmount) }}&nbsp;&nbsp;&nbsp;×
               {{ item.itemNum }}（{{ item.unit || '-' }}）
             </view>
-            <view>{{ $utils.formatPrice(item.totalAmount) }}</view>
+            <view>{{ $dpmsUtils.formatPrice(item.totalAmount) }}</view>
           </view>
           <view class="listLine">
             <view>应收金额：</view>
-            <view> {{ $utils.formatPrice(item.receivableAmount) }}</view>
+            <view> {{ $dpmsUtils.formatPrice(item.receivableAmount) }}</view>
           </view>
           <view class="listLineBottom">
             <view>医生：{{ item.doctorNameStr }}</view>
@@ -52,7 +52,7 @@
         <view class="listChargeTotal">
           <view class="line">
             <view>总计金额</view>
-            <view>{{ $utils.formatPrice(data.totalAmount) }}</view>
+            <view>{{ $dpmsUtils.formatPrice(data.totalAmount) }}</view>
           </view>
           <view class="line">
             <view>整单折扣</view>
@@ -62,7 +62,7 @@
             <view style="display: flex;"
               >应收金额：
               <view style="color: red; font-size: 36rpx; line-height: 36rpx;"
-                >{{ $utils.formatPrice(data.receivableAmount) }}
+                >{{ $dpmsUtils.formatPrice(data.receivableAmount) }}
               </view>
             </view>
           </view>

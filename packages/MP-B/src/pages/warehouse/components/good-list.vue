@@ -232,11 +232,11 @@ export default {
     },
     // 前往搜索页面
     goToSearch() {
-      this.$utils.push({ url: this.searchPath })
+      this.$dpmsUtils.push({ url: this.searchPath })
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
       })
     },

@@ -3,9 +3,11 @@ import { setStorage, getStorage, removeStorage } from './storage'
 export default class History {
   constructor(key, records = [], max = 10) {
     this.key = key
-    this.records = getStorage(this.key) || records
+    this.records = records
     this.max = max
-    setStorage(key, records)
+    if (!getStorage(this.key)) {
+      setStorage(key, records)
+    }
   }
 
   getHistory() {
@@ -14,8 +16,9 @@ export default class History {
   }
 
   add(value) {
-    if (!value) return
     let arr = this.getHistory() || []
+    // 为空不添加或者重复不添加
+    if (!value || arr.includes(value)) return
     if (arr.length === this.max) {
       arr.shift()
     }

@@ -164,19 +164,19 @@ export default {
       })
       records.forEach((element) => {
         element.statDate = moment(element.statDate).format('YYYY-MM-DD')
-        element.receivableAmount = this.$utils.formatPrice(
+        element.receivableAmount = this.$dpmsUtils.formatPrice(
           element.receivableAmount,
         )
-        element.paidInAmount = this.$utils.formatPrice(element.paidInAmount)
-        element.refundAmount = this.$utils.formatPrice(element.refundAmount)
-        element.cashAmount = this.$utils.formatPrice(element.cashAmount)
-        element.virtualAmount = this.$utils.formatPrice(element.virtualAmount)
-        element.deductionOfAdvanceAmount = this.$utils.formatPrice(
+        element.paidInAmount = this.$dpmsUtils.formatPrice(element.paidInAmount)
+        element.refundAmount = this.$dpmsUtils.formatPrice(element.refundAmount)
+        element.cashAmount = this.$dpmsUtils.formatPrice(element.cashAmount)
+        element.virtualAmount = this.$dpmsUtils.formatPrice(element.virtualAmount)
+        element.deductionOfAdvanceAmount = this.$dpmsUtils.formatPrice(
           element.deductionOfAdvanceAmount,
         )
-        element.revenueAmount = this.$utils.formatPrice(element.revenueAmount)
-        element.paymentAmount = this.$utils.formatPrice(element.paymentAmount)
-        element.plannedRevenueAmount = this.$utils.formatPrice(
+        element.revenueAmount = this.$dpmsUtils.formatPrice(element.revenueAmount)
+        element.paymentAmount = this.$dpmsUtils.formatPrice(element.paymentAmount)
+        element.plannedRevenueAmount = this.$dpmsUtils.formatPrice(
           element.plannedRevenueAmount,
         )
       })

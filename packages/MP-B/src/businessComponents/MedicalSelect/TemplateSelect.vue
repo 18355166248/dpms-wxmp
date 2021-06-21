@@ -98,7 +98,7 @@ export default {
     activedTemplate(newVal) {
       if (newVal) {
         this.$emit('change', newVal)
-        this.$utils.show('添加成功')
+        this.$dpmsUtils.show('添加成功')
       }
     },
   },

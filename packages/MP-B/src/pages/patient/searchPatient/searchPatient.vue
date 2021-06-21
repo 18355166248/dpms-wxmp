@@ -150,7 +150,7 @@ export default {
       this.getPatients()
     },
     toCreatePatient() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/pages/patient/createPatient/createPatient?type=' +
           this.paramsObj.type,
@@ -253,7 +253,7 @@ export default {
     clickPatientCard({ patientId, patientName }) {
       if (this.paramsObj.type === 'source') {
         uni.$emit('onSourceValueSelected', { patientId, patientName })
-        return this.$utils.back()
+        return this.$dpmsUtils.back()
       }
       if (
         this.paramsObj.type === 'createAppt' ||
@@ -265,12 +265,12 @@ export default {
           patientId,
           params: this.paramsObj,
         })
-        return this.$utils.back()
+        return this.$dpmsUtils.back()
       }
       this.toPatient(patientId)
     },
     toPatient(id) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/pages/patient/patient?patientId=' + id,
       })
     },

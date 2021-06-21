@@ -73,7 +73,7 @@ export default {
   methods: {
     onSave() {
       uni.$emit('updateTagsCheckedList', this.checked)
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     insertId(id) {
       this.checked.push(Number(id))
@@ -84,7 +84,7 @@ export default {
       })
     },
     jumpAdd(groupId) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/pages/patient/createPatient/addPersonas?groupId=' + groupId,
       })
     },

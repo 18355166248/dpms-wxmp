@@ -32,10 +32,12 @@
 </template>
 
 <script>
+import approvalApi from '@/APIS/approval/approval.api'
 export default {
   data() {
     return {
       val: '',
+      records: {},
       confirmBtn: {
         width: '336rpx',
         height: '80rpx',
@@ -52,12 +54,26 @@ export default {
       },
     }
   },
+  onLoad(options) {
+    this.records = JSON.parse(options.data)
+    this.records.status = options.applicationStatus
+    console.log(111, this.records)
+  },
   methods: {
     submit() {
-      wx.navigateBack({
-        url:
-          '/baseSubpackages/approvalManagement/approvalManagement?currentTab=1',
-      })
+      approvalApi
+        .updateApprovalStatus({
+          businessId: this.records.businessId,
+          instanceId: this.records.instanceId,
+          approveResult: Number(this.records.status),
+          approveComment: this.val,
+        })
+        .then(
+          wx.navigateBack({
+            url:
+              '/baseSubpackages/approvalManagement/approvalManagement?currentTab=1',
+          }),
+        )
     },
     cancelSubmit() {
       wx.navigateBack({

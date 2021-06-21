@@ -2,14 +2,16 @@
   <view class="tabs">
     <view class="tabs-main">
       <scroll-view scroll-x="true" class="scroll-area">
-        <text
-          class="tabs-main-item"
-          :class="{ activeColor: selectvalue == item[fieldKey] }"
-          v-for="(item, index) in list"
-          :key="index"
-          @click="handleSelect(item)"
-          >{{ item[fieldName] }}</text
-        >
+        <view class="scroll-area-list">
+          <text
+            class="tabs-main-item"
+            :class="{ activeColor: selectvalue == item[fieldKey] }"
+            v-for="(item, index) in list"
+            :key="index"
+            @click="handleSelect(item)"
+            >{{ item[fieldName] }}</text
+          >
+        </view>
       </scroll-view>
     </view>
     <view class="tabs-icon"
@@ -74,6 +76,13 @@ export default {
       width: 100%;
       height: 100%;
       white-space: nowrap;
+      &-list {
+        width: 100%;
+        height: 100%;
+        display: inline-flex;
+        align-items: center;
+        // white-space: nowrap;
+      }
       .tabs-main-item {
         display: inline-block;
         padding: 16rpx;
