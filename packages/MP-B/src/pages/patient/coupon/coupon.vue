@@ -213,6 +213,7 @@ export default {
       this.couponDefinitionId = counpon
     },
     async onSubmit() {
+      this.toWxWork()
       if (!this.couponDefinitionId) {
         return this.$utils.show('请选择优惠劵')
       }
