@@ -178,10 +178,6 @@ export default {
         title: '数据加载中',
         mask: true,
       })
-      console.log(
-        patientAPI.getCouponTemplateListByName,
-        'getCouponTemplateListByName',
-      )
       try {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
@@ -220,6 +216,10 @@ export default {
       if (!this.couponDefinitionId) {
         return this.$utils.show('请选择优惠劵')
       }
+      uni.showLoading({
+        title: '优惠劵发送中加载中',
+        mask: true,
+      })
       try {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
@@ -228,9 +228,9 @@ export default {
           customerId: this.customerId,
           chargeWay: 1,
         })
+        uni.hideLoading()
         this.$utils.show('优惠劵发送成功')
         this.disabled = false
-        console.log(wx.qy)
         if (this.env === 'wxwork') {
           // 小程序可以在微信和企业微信中调用此接口，但是在企业微信中调用此接口时，会额外返回一个 environment 字段（微信中不返回），如此字段值为 wxwork，则表示当前小程序运行在企业微信环境中。
           // todo
@@ -241,15 +241,24 @@ export default {
         }
       } catch (error) {
         console.log(error)
+        uni.hideLoading()
         this.disabled = false
       }
     },
     toWxWork() {
-      // console.log(q)
       wx.qy.sendChatMessage({
         msgtype: 'text', //消息类型，必填
         text: {
           content: '你获得了一张新优惠券', //文本内容
+        },
+        success: function (e) {
+          console.log(e, 'success')
+        },
+        fail: function (e) {
+          console.log(e, 'fail')
+        },
+        complete: function (e) {
+          console.log(e, 'complete')
         },
       })
     },
