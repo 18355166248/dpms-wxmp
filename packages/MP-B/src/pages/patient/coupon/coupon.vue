@@ -45,6 +45,7 @@
               class="list-wrap-item"
               v-for="item in list"
               :key="item.couponDefinitionId"
+              @click="onClickCoupon(item.couponDefinitionId)"
             >
               <div class="item-header">
                 <div class="item-header-name coupon-name">
@@ -56,7 +57,6 @@
                     'item-switch',
                     { active: item.couponDefinitionId === couponDefinitionId },
                   ]"
-                  @click="onClickCoupon(item.couponDefinitionId)"
                 >
                   <span></span>
                 </div>
@@ -178,6 +178,10 @@ export default {
         title: '数据加载中',
         mask: true,
       })
+      console.log(
+        patientAPI.getCouponTemplateListByName,
+        'getCouponTemplateListByName',
+      )
       try {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
