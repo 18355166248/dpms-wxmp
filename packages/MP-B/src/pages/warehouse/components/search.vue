@@ -220,6 +220,7 @@ export default {
         item.children && item.children.length ? all.concat(item.children) : []
       const res = await this.getGoodsList({
         merchandiseCategoryId: this.oneCategoryId || null,
+        merchandiseName: this.merchandiseName || null,
       })
       this.pagination = res
     },
@@ -241,6 +242,7 @@ export default {
       // 点击的如果是二级分类的全部, 按已选的一级分类查询
       const res = await this.getGoodsList({
         merchandiseCategoryId: this.twoCategoryId || this.oneCategoryId,
+        merchandiseName: this.merchandiseName || null,
       })
       this.pagination = res
     },
@@ -251,6 +253,7 @@ export default {
       const res = await this.getGoodsList({
         merchandiseCategoryId:
           this.threeCategoryId || this.twoCategoryId || this.oneCategoryId,
+        merchandiseName: this.merchandiseName || null,
       })
       this.pagination = res
     },
@@ -335,7 +338,6 @@ export default {
       height: 115rpx;
       line-height: 95rpx;
       white-space: nowrap;
-      overflow-y: scroll;
       background-color: #ffffff;
       .activeColor {
         color: $common-color;

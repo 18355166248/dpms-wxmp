@@ -1,7 +1,11 @@
 <template>
   <view class="detail">
     <view class="detail-info">
-      <view class="detail-info-name mb16">{{ detail.commonName }}</view>
+      <view class="detail-info-name mb16">
+        <text>{{ detail.commonName }}</text>
+        <text v-if="detail.merchandiseName">/{{ detail.merchandiseName }}</text>
+        <text v-if="detail.aliasName">/{{ detail.aliasName }}</text>
+      </view>
       <view class="mb16">
         <text class="label">物品编号：</text>
         <text class="value">{{ detail.merchandiseNo }}</text>
@@ -12,7 +16,7 @@
       </view>
       <view>
         <text class="label">物品类型：</text>
-        <text class="value">{{ detail.merchandiseType }}</text>
+        <text class="value">{{ detail.merchandiseTypeStr }}</text>
       </view>
     </view>
 
