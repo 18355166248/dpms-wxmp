@@ -16,7 +16,7 @@
       </view>
       <view>
         <text class="label">物品类型：</text>
-        <text class="value">{{ detail.merchandiseType }}</text>
+        <text class="value">{{ detail.merchandiseTypeStr }}</text>
       </view>
     </view>
 
