@@ -14,21 +14,19 @@
     <template v-else>
       <empty :disabled="true" text="暂无预约数据"></empty>
     </template>
-    <view v-if="!isHeadquartersAndRegion">
-      <fixed-footer :bgColor="primaryColor">
-        <button
-          class="button-new"
-          @click="
-            toPage('/baseSubpackages/apptForm/apptForm', {
-              type: 'createAppt',
-              patientId,
-            })
-          "
-        >
-          新建预约
-        </button>
-      </fixed-footer>
-    </view>
+    <fixed-footer :bgColor="primaryColor">
+      <button
+        class="button-new"
+        @click="
+          toPage('/baseSubpackages/apptForm/apptForm', {
+            type: 'createAppt',
+            patientId,
+          })
+        "
+      >
+        新建预约
+      </button>
+    </fixed-footer>
   </view>
 </template>
 
@@ -117,13 +115,6 @@ export default {
           ].key
         }
       }
-    },
-    isHeadquartersAndRegion() {
-      return (
-        (this.institutionChainTypeKey === 'CHAIN' &&
-          Number(this.medicalInstitution.topParentId) === 0) ||
-        this.institutionChainTypeKey === 'REGIONAL'
-      )
     },
   },
   components: {
