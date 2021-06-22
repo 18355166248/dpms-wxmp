@@ -207,8 +207,13 @@ export default {
       this.twoCategoryId = item.merchandiseCategoryId
       // 切换二级分类时,清除已选的三级分类
       this.threeCategoryId = 0
+      // 选择某个二级分类后, 三级筛选数据只有当前所选中的二级分类及对应的三级分类数据
       this.threeCategoryList = this.twoCategoryList
-        .filter((e) => e.merchandiseCategoryId)
+        .filter(
+          (e) =>
+            e.merchandiseCategoryId &&
+            e.merchandiseCategoryId == item.merchandiseCategoryId,
+        )
         .map((e) => {
           return {
             ...e,
@@ -285,13 +290,13 @@ export default {
       width: 192rpx;
       height: 100%;
       flex-shrink: 0;
-      padding-right: 32rpx;
     }
     &-main {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      box-sizing: border-box;
       &-top {
         padding-top: 10rpx;
       }

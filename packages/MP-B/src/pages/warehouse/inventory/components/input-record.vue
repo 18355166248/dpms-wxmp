@@ -13,7 +13,9 @@
       >
         <text class="time">{{ item.confirmTimeStr }}</text>
         <text class="type">{{ item.inputInventoryTypeStr }}</text>
-        <text class="amount">{{ item.inputInventoryTotalAmountStr }}</text>
+        <text class="amount">{{
+          item.inputInventoryNum | thousandFormatter(0, '+')
+        }}</text>
       </view>
       <loadMore :status="statusText" />
     </scroll-view>
@@ -58,7 +60,7 @@ export default {
   },
   async created() {
     console.log('入库记录获取的参数是:', this.merchandiseId)
-    const res = await this.getGoodInputRecord()
+    const res = await this.getGoodInputRecord({ size: 20 })
     this.pagination = res
   },
   methods: {

@@ -69,6 +69,8 @@ export default {
   height: 80rpx;
   display: flex;
   overflow: hidden;
+  box-sizing: border-box;
+  padding-left: 32rpx;
   border-bottom: 1rpx solid #e5e5e5;
   &-main {
     flex: 1;
