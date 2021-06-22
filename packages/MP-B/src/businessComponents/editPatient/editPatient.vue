@@ -685,8 +685,8 @@ export default {
       const getData = await patientAPI.getMustData()
       if (
         getData.code !== 0 ||
-        (!getData.data.createPatient_baseInfo &&
-          !getData.data.createPatient_baseInfo.length)
+        !getData.data.createPatient_baseInfo ||
+        !getData.data.createPatient_baseInfo.length
       ) {
         return
       }
