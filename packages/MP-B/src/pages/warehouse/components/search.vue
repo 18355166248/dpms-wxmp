@@ -82,19 +82,21 @@
       <view class="drawer-title">
         <text>筛选</text>
       </view>
-      <view class="drawer-oneCategoryname">
-        <text>{{ oneCategoryName }}</text>
+      <view class="drawer-main">
+        <view class="drawer-main-oneCategoryname">
+          <text>{{ oneCategoryName }}</text>
+        </view>
+        <scroll-view style="height: 100%;" scroll-y="true">
+          <expandFilter
+            fieldKey="merchandiseCategoryId"
+            fieldName="merchandiseCategoryName"
+            :parentId="twoCategoryId"
+            :list="threeCategoryList"
+            :value="threeCategoryId"
+            @on-change="changeThreeCategory"
+          />
+        </scroll-view>
       </view>
-      <scroll-view class="drawer-right" style="height: 100%;" scroll-y="true">
-        <expandFilter
-          fieldKey="merchandiseCategoryId"
-          fieldName="merchandiseCategoryName"
-          :parentId="twoCategoryId"
-          :list="threeCategoryList"
-          :value="threeCategoryId"
-          @on-change="changeThreeCategory"
-        />
-      </scroll-view>
     </uni-drawer>
   </view>
 </template>
@@ -238,9 +240,12 @@ export default {
       this.twoCategoryId = item.merchandiseCategoryId
       // 切换二级分类时,清除已选的三级分类
       this.threeCategoryId = 0
-      // 点击的如果是二级分类的全部, 按已选的一级分类查询
       this.threeCategoryList = this.twoCategoryList
-        .filter((e) => e.merchandiseCategoryId)
+        .filter(
+          (e) =>
+            e.merchandiseCategoryId &&
+            e.merchandiseCategoryId == item.merchandiseCategoryId,
+        )
         .map((e) => {
           return {
             ...e,
@@ -271,6 +276,12 @@ export default {
     },
     async confirm() {
       this.showHistory = false
+      // 搜索后清空数据
+      this.twoCategoryList = []
+      this.threeCategoryList = []
+      this.oneCategoryId = 0
+      this.twoCategoryId = 0
+      this.threeCategoryId = 0
       // 点击搜素后, 将搜索词添加到历史记录中
       this.history.add(this.merchandiseName)
       let params = { merchandiseName: this.merchandiseName || null }
@@ -362,7 +373,6 @@ export default {
     }
     &-two {
       background-color: #ffffff;
-      padding-left: 16rpx;
       margin-top: 1rpx;
     }
     &-list {
@@ -372,7 +382,6 @@ export default {
       box-sizing: border-box;
       overflow: hidden;
       background-color: #ffffff;
-      padding: 24rpx;
       .noMore {
         // width: 100%;
         text-align: center;
@@ -391,19 +400,21 @@ export default {
     font-size: 36rpx;
     color: #191919;
     font-weight: 500;
-  }
-  .drawer-oneCategoryname {
-    width: 100%;
-    padding-left: 32rpx;
-    height: 113rpx;
-    line-height: 113rpx;
-    font-size: 30rpx;
-    color: #191919;
-    font-weight: 500;
     border-bottom: 1rpx solid #e5e5e5;
   }
-  .drawer-right {
-    padding-left: 32rpx;
+  .drawer-main {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0 32px;
+    &-oneCategoryname {
+      width: 100%;
+      height: 113rpx;
+      line-height: 113rpx;
+      font-size: 30rpx;
+      color: #191919;
+      font-weight: 500;
+      border-bottom: 1rpx solid #e5e5e5;
+    }
   }
 }
 </style>

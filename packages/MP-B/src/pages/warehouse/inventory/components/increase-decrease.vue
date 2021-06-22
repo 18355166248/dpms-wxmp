@@ -12,7 +12,10 @@
         :key="index"
       >
         <text class="time">{{ item.confirmTime | filterTime }}</text>
-        <text class="amount">{{ item.adjustNum }}</text>
+        <text class="amount"
+          >{{ item.increaseOrDecreaseType == 1 ? '+' : '-'
+          }}{{ item.adjustNum | thousandFormatter(0, '') }}</text
+        >
       </view>
       <loadMore :status="statusText" />
     </scroll-view>

@@ -77,8 +77,6 @@ export default {
       //分页
       current: 1,
       size: 10,
-      operateDateBegin: '',
-      operateDateEnd: '',
       approvalList: {},
     }
   },
@@ -111,8 +109,6 @@ export default {
           approveTypeId: this.currentApprovalId,
           current: this.current,
           size: this.size,
-          operateDateBegin: this.operateDateBegin,
-          operateDateEnd: this.operateDateEnd,
           tabType: this.currentTab + 1,
         })
         .then((res) => {

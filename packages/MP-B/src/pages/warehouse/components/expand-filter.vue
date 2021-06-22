@@ -66,7 +66,11 @@ export default {
     },
     list() {
       // 默认获取第一个二级分类的id
-      this.currentParentId = this.list[0][this.fieldKey]
+      if (this.list.length) {
+        this.currentParentId = this.list[0][this.fieldKey]
+      } else {
+        this.currentParentId = 0
+      }
     },
   },
   methods: {

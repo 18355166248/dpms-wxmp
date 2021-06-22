@@ -14,7 +14,7 @@
       >
       <view class="text"
         >可用库存：<text class="available ellipse">{{
-          `${baseInfo.inventoryNum || 0} ${baseInfo.inventoryUnitStr || ''}`
+          `${baseInfo.availableNum || 0} ${baseInfo.inventoryUnitStr || ''}`
         }}</text></view
       >
     </view>
@@ -32,7 +32,10 @@
       lineScale="0.30"
       @change="changeTab"
     >
-      <scroll-view v-if="merchandiseId">
+      <!-- <scroll-view v-if="merchandiseId">
+        
+      </scroll-view> -->
+      <view v-if="merchandiseId">
         <view v-show="currentTab === 0">
           <inputRecord :merchandiseId="merchandiseId" />
         </view>
@@ -45,7 +48,7 @@
         <view v-show="currentTab === 3">
           <increaseDecrease :merchandiseId="merchandiseId" />
         </view>
-      </scroll-view>
+      </view>
     </tabs>
   </view>
 </template>
@@ -72,13 +75,12 @@ export default {
         { name: '入库记录', val: 0 },
         { name: '出库记录', val: 1 },
         { name: '盘点记录', val: 2 },
-        { name: '损益记录', val: 3 },
+        { name: '损溢记录', val: 3 },
       ],
       merchandiseId: null,
     }
   },
   onLoad({ merchandiseId }) {
-    console.log('获取的参数是:', merchandiseId)
     this.merchandiseId = merchandiseId
     this.getGoodsDetail(this.merchandiseId)
   },
@@ -88,7 +90,10 @@ export default {
       this.currentTab = this.tabs[i].val
     },
     async getGoodsDetail(merchandiseId) {
-      const res = await goodAPI.getGoodsDetail({ merchandiseId })
+      const res = await goodAPI.getGoodsDetail({
+        merchandiseId,
+        getAvailableInventory: true,
+      })
       console.log(97, res)
       this.baseInfo = res.data
     },
