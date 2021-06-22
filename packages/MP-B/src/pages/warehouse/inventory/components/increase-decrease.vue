@@ -11,11 +11,13 @@
         v-for="(item, index) in pagination.records"
         :key="index"
       >
-        <text class="time">{{ item.confirmTime | filterTime }}</text>
-        <text class="amount"
-          >{{ item.increaseOrDecreaseType == 1 ? '+' : '-'
-          }}{{ item.adjustNum | thousandFormatter(0, '') }}</text
-        >
+        <view class="increase-record-list-item-main">
+          <text class="time">{{ item.confirmTime | filterTime }}</text>
+          <text class="amount"
+            >{{ item.increaseOrDecreaseType == 1 ? '+' : '-'
+            }}{{ item.adjustNum | thousandFormatter(0, '') }}</text
+          >
+        </view>
       </view>
       <loadMore :status="statusText" />
     </scroll-view>
@@ -67,7 +69,7 @@ export default {
       this.loading = true
       const res = await goodAPI.getIncreaseDecreaseRecord({
         ...params,
-        merchandiseId: this.merchandiseId,
+        merchandiseIds: this.merchandiseId,
       })
       this.loading = false
       let { current, pages, records, total } = res.data
@@ -93,24 +95,29 @@ export default {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 32rpx;
+  background-color: #ffffff;
   &-list {
     width: 100%;
     height: 100%;
     &-item {
       width: 100%;
       height: 96rpx;
-      display: inline-flex;
-      justify-content: space-between;
-      align-items: center;
-      .time,
-      .type {
+      box-sizing: border-box;
+      padding: 0 32rpx;
+      border-bottom: 1rpx solid #e5e5e5;
+      &-main {
+        width: 100%;
+        height: 100%;
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
         font-size: 28rpx;
-        color: #191919;
-      }
-      .amount {
-        font-size: 28rpx;
-        color: #fa8c16;
+        .time {
+          color: #191919;
+        }
+        .amount {
+          color: #fa8c16;
+        }
       }
     }
   }

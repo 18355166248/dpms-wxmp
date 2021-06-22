@@ -1,22 +1,27 @@
 <template>
   <view style="height: 100%;">
-    <view class="baseInfo" @click="goToGoodDetail">
-      <text>{{ baseInfo.commonName }}</text>
-      <text v-if="baseInfo.merchandiseName"
-        >/{{ baseInfo.merchandiseName }}</text
-      >
-      <text v-if="baseInfo.aliasName">/{{ baseInfo.aliasName }}</text>
-      <text class="text ellipse"
-        >物品编号：{{ baseInfo.merchandiseNo || '' }}</text
-      >
-      <text class="text ellipse"
-        >规格信息：{{ baseInfo.specificationsStr || '' }}</text
-      >
-      <view class="text"
-        >可用库存：<text class="available ellipse">{{
+    <view class="detail-info" @click="goToGoodDetail">
+      <view class="detail-info-name mb16">
+        <text>{{ baseInfo.commonName }}</text>
+        <text v-if="baseInfo.merchandiseName"
+          >/{{ baseInfo.merchandiseName }}</text
+        >
+        <text v-if="baseInfo.aliasName">/{{ baseInfo.aliasName }}</text>
+      </view>
+      <view class="mb16">
+        <text class="label">物品编号：</text>
+        <text class="value">{{ baseInfo.merchandiseNo }}</text>
+      </view>
+      <view class="mb16">
+        <text class="label">规格信息：</text>
+        <text class="value">{{ baseInfo.specificationsStr }}</text>
+      </view>
+      <view>
+        <text class="label">可用库存：</text>
+        <text class="value available">{{
           `${baseInfo.availableNum || 0} ${baseInfo.inventoryUnitStr || ''}`
-        }}</text></view
-      >
+        }}</text>
+      </view>
     </view>
     <tabs
       sticky
@@ -107,26 +112,29 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.baseInfo {
-  background-color: #fff;
-  margin-bottom: 14rpx;
-  padding: 32rpx;
-  .text {
-    display: block;
+.mb16 {
+  margin-bottom: 16rpx;
+}
+.detail-info {
+  width: 100%;
+  padding: 32rpx 0 32rpx 32rpx;
+  background-color: #ffffff;
+  margin-bottom: 16rpx;
+  &-name {
     font-size: 28rpx;
-    line-height: 36rpx;
+    color: #191919;
+    font-weight: 500;
+  }
+  .label {
+    font-size: 28rpx;
     color: #4c4c4c;
-    margin-bottom: 16rpx;
-    &:first-child {
-      color: #191919;
-      font-weight: 500;
-    }
-    &:last-child {
-      margin-bottom: 0;
-    }
-    .available {
-      color: #fa8c16;
-    }
+  }
+  .value {
+    font-size: 28rpx;
+    color: #191919;
+  }
+  .available {
+    color: #fa8c16;
   }
 }
 .tips {

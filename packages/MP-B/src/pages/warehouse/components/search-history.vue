@@ -38,7 +38,8 @@ export default {
 .search-history {
   box-sizing: border-box;
   width: 100%;
-  height: auto;
+  height: 100%;
+  background-color: #ffffff;
   padding: 32rpx;
   &-head {
     width: 100%;
@@ -50,6 +51,9 @@ export default {
       font-size: 34rpx;
       color: #000000;
       font-weight: 500;
+    }
+    .icon-delete {
+      color: rgba(0, 0, 0, 0.5);
     }
   }
   &-list {

@@ -1,7 +1,11 @@
 <template>
   <!-- 物品搜索 -->
   <view class="container">
-    <search storgeKey="goods" detailPath="/pages/warehouse/goods/goodDetail" />
+    <search
+      type="good"
+      storgeKey="goods"
+      detailPath="/pages/warehouse/goods/goodDetail"
+    />
   </view>
 </template>
 <script>

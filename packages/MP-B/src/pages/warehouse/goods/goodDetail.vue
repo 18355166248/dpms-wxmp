@@ -14,9 +14,13 @@
         <text class="label">品牌：</text>
         <text class="value">{{ detail.brandName }}</text>
       </view>
-      <view>
+      <view class="mb16">
         <text class="label">物品类型：</text>
         <text class="value">{{ detail.merchandiseTypeStr }}</text>
+      </view>
+      <view>
+        <text class="label">规格信息：</text>
+        <text class="value">{{ detail.specificationsStr }}</text>
       </view>
     </view>
 
@@ -89,18 +93,16 @@ export default {
     padding: 32rpx 0 32rpx 32rpx;
     background-color: #ffffff;
     margin-bottom: 16rpx;
+    font-size: 28rpx;
     &-name {
-      font-size: 28rpx;
       color: #191919;
       font-weight: 500;
     }
     .label {
-      font-size: 28rpx;
-      color: #4c4c4c;
+      color: rgba(76, 76, 76, 0.7);
     }
     .value {
-      font-size: 28rpx;
-      color: #191919;
+      color: rgba(25, 25, 25, 0.9);
     }
   }
   &-divider {

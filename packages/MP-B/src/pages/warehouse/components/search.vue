@@ -317,6 +317,10 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #f5f5f5;
+  .search-history {
+    widows: 100%;
+    height: 100%;
+  }
   &-search {
     width: 100%;
     height: 140rpx;

@@ -26,8 +26,14 @@
       <!-- 库存展示 -->
       <view class="mt16" v-if="type === 'inventory'"
         ><text class="text-label">可用库存：</text>
-        <text class="text-value available">{{
+        <!-- <text class="text-value available">{{
           `${detail.inventoryNum || 0} ${detail.inventoryUnitStr || ''}`
+        }}</text> -->
+        <text class="text-value available">{{
+          detail.inventoryNum | thousandFormatter(0, '')
+        }}</text>
+        <text class="text-value available">{{
+          `${detail.inventoryUnitStr || ''}`
         }}</text>
       </view>
     </view>
