@@ -242,10 +242,10 @@ export default {
       // 切换二级分类时,清除已选的三级分类
       this.threeCategoryId = 0
       this.threeCategoryList = this.twoCategoryList
-        .filter(
-          (e) =>
-            e.merchandiseCategoryId &&
-            e.merchandiseCategoryId == item.merchandiseCategoryId,
+        .filter((e) =>
+          item.merchandiseCategoryId
+            ? e.merchandiseCategoryId == item.merchandiseCategoryId
+            : e.merchandiseCategoryId,
         )
         .map((e) => {
           return {
