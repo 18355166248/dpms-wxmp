@@ -11,11 +11,13 @@
         v-for="(item, index) in pagination.records"
         :key="index"
       >
-        <text class="time">{{ item.confirmTimeStr }}</text>
-        <text class="type">{{ item.outputInventoryTypeStr }}</text>
-        <text class="amount">{{
-          item.outputInventoryNum | thousandFormatter(0, '-')
-        }}</text>
+        <view class="output-record-list-item-main">
+          <view class="time">{{ item.confirmTimeStr }}</view>
+          <view class="type">{{ item.outputInventoryTypeStr }}</view>
+          <view class="amount">{{
+            item.outputInventoryNum | thousandFormatter(0, '-')
+          }}</view>
+        </view>
       </view>
       <loadMore :status="statusText" />
     </scroll-view>
@@ -96,24 +98,39 @@ export default {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  padding: 32rpx;
+  background-color: #ffffff;
   &-list {
     width: 100%;
     height: 100%;
     &-item {
       width: 100%;
       height: 96rpx;
-      display: inline-flex;
-      justify-content: space-between;
-      align-items: center;
-      .time,
-      .type {
+      box-sizing: border-box;
+      padding: 0 32rpx;
+      border-bottom: 1rpx solid #e5e5e5;
+      &-main {
+        width: 100%;
+        height: 100%;
+        display: inline-flex;
+        justify-content: space-between;
+        align-items: center;
         font-size: 28rpx;
-        color: #191919;
-      }
-      .amount {
-        font-size: 28rpx;
-        color: #fa8c16;
+        .time {
+          width: 254rpx;
+        }
+        .type {
+          width: 212rpx;
+          padding-left: 32rpx;
+        }
+        .time,
+        .type {
+          color: #191919;
+        }
+        .amount {
+          width: 220rpx;
+          text-align: right;
+          color: #fa8c16;
+        }
       }
     }
   }
