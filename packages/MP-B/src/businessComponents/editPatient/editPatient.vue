@@ -2,14 +2,21 @@
   <div class="editPatientForm">
     <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
       <dpmsFormTitle title="基本信息" />
-      <view>
-        <dpmsCellInput
-          required
-          title="姓名"
-          placeholder="请输入姓名"
-          v-model="form.patientName"
-        />
-      </view>
+      <dpmsCellInput
+        required
+        title="姓名"
+        placeholder="请输入姓名"
+        v-model="form.patientName"
+      />
+      <dpmsCellPicker
+        title="患者类型"
+        placeholder="请选择患者类型"
+        v-model="form.settingsTypeId"
+        :list="patientTypeList"
+        defaultType="settingsTypeId"
+        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
+        isLink
+      />
       <dpmsEnumsPicker
         v-if="requiredObj.gender && requiredObj.gender.enableShow"
         :required="requiredObj.gender && requiredObj.gender.enableMust"
@@ -210,15 +217,6 @@
           @blur="ageBlur"
         />
       </view>
-      <dpmsCellPicker
-        title="患者类型"
-        placeholder="请选择患者类型"
-        v-model="form.settingsTypeId"
-        :list="patientTypeList"
-        defaultType="settingsTypeId"
-        :defaultProps="{ label: 'settingsTypeName', value: 'settingsTypeId' }"
-        isLink
-      />
       <view style="display: relative;">
         <view class="iconfont icon-sync" @click="onSyncClick"></view>
         <dpmsCellInput
@@ -424,9 +422,6 @@ export default {
       endDate: moment().format('YYYY-MM-DD'),
       disabledSaveBtn: false,
       form: this.filterFormData(this.formData),
-      oldForm: this.filterFormData(this.formData),
-      newRules: {},
-      changeKeys: [],
       staffList: [],
       sourceName: '', //患者来源名称
 
@@ -515,7 +510,8 @@ export default {
             message: '请输入联系电话',
           },
           {
-            pattern: /^\d{11}$/,
+            // 手机号为1开头的11位数字
+            pattern: /^1[0-9]{10}$/,
             message: '联系电话格式不正确',
           },
         ],
@@ -620,7 +616,6 @@ export default {
   watch: {
     formData(newVal) {
       this.form = this.filterFormData(newVal)
-      this.oldForm = this.filterFormData(newVal)
     },
     'form.settingsTypeId'() {
       this.getPatientMedicalRecordNo()
@@ -840,42 +835,9 @@ export default {
         .map((tagItem) => tagItem.name)
         .join(',')
     },
-    contrastForm() {
-      if (this.editType) {
-        let arr = []
-        for (let key in this.oldForm) {
-          if (
-            JSON.stringify(this.form[key]) !== JSON.stringify(this.oldForm[key])
-          ) {
-            arr.push(key)
-          }
-        }
-        this.changeKeys = arr.filter((value, index, self) => {
-          return self.indexOf(value) === index
-        })
-        if (this.changeKeys.length) {
-          this.changeKeys.forEach((item) => {
-            if (
-              item !== 'settingsTypeId' &&
-              item !== 'tagIds' &&
-              item !== 'region'
-            ) {
-              this.newRules[item] = this.rules[item]
-            }
-          })
-        }
-      } else this.newRules = this.rules
-    },
-    async submit() {
-      this.contrastForm()
-      if (this.editType && !this.changeKeys.length) {
-        //保存患者时，添加禁用和loading效果
-        this.disabledSaveBtn = true
-        this.$emit('submit', this.form)
-        return
-      }
+    submit() {
       this.$dpmsUtils.formValidate(
-        this.newRules,
+        this.rules,
         this.form,
         (err, fileds, formValue) => {
           this.form = formValue

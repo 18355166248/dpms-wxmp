@@ -57,7 +57,6 @@ export default {
   onLoad(options) {
     this.records = JSON.parse(options.data)
     this.records.status = options.applicationStatus
-    console.log(111, this.records)
   },
   methods: {
     submit() {
@@ -67,6 +66,7 @@ export default {
           instanceId: this.records.instanceId,
           approveResult: Number(this.records.status),
           approveComment: this.val,
+          approveTypeId: this.records.approveTypeId,
         })
         .then(
           wx.navigateBack({
@@ -82,9 +82,6 @@ export default {
       })
     },
   },
-  // onLoad(){
-  //   this.val = ''
-  // },
   onHide() {
     this.val = ''
   },

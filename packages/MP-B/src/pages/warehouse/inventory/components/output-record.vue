@@ -13,7 +13,9 @@
       >
         <text class="time">{{ item.confirmTimeStr }}</text>
         <text class="type">{{ item.outputInventoryTypeStr }}</text>
-        <text class="amount">{{ item.outputInventoryUnitAmountStr }}</text>
+        <text class="amount">{{
+          item.outputInventoryNum | thousandFormatter(0, '-')
+        }}</text>
       </view>
       <loadMore :status="statusText" />
     </scroll-view>
