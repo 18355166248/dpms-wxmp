@@ -28,11 +28,11 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* Project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_1j3xt5gm04o.woff2?t=1623738868780')
+  src: url('//at.alicdn.com/t/font_1965288_6wryl6ll6n.woff2?t=1624366527331')
       format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_1j3xt5gm04o.woff?t=1623738868780')
+    url('//at.alicdn.com/t/font_1965288_6wryl6ll6n.woff?t=1624366527331')
       format('woff'),
-    url('//at.alicdn.com/t/font_1965288_1j3xt5gm04o.ttf?t=1623738868780')
+    url('//at.alicdn.com/t/font_1965288_6wryl6ll6n.ttf?t=1624366527331')
       format('truetype');
 }
 /*********在线字体代码end*********/
@@ -282,6 +282,9 @@ button::after {
 /*患者归档*/
 .icon-patient-archive-fill:before {
   content: '\e65d';
+}
+.icon-danxuan-xuanzhong:before {
+  content: '\e663';
 }
 
 /* iconfont图标 end */
