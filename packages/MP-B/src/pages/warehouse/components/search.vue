@@ -69,6 +69,7 @@
         >
           <view v-for="(item, index) in pagination.records" :key="index">
             <goodsInfo
+              :type="type"
               :detail="item"
               @on-click="goToDetail(item.merchandiseId)"
             />
