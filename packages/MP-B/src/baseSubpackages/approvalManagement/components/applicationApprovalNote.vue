@@ -82,9 +82,6 @@ export default {
       })
     },
   },
-  // onLoad(){
-  //   this.val = ''
-  // },
   onHide() {
     this.val = ''
   },

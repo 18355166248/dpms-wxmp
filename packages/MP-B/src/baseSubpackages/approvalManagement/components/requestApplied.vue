@@ -4,6 +4,7 @@
       <view
         class="singleContainer mv-32"
         v-for="(item, index) in approvalList.records"
+        :key="index"
       >
         <view class="firstLevel pt-32 ph-24 pb-16">
           <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
