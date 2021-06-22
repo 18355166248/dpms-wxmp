@@ -30,7 +30,7 @@
     </view>
     <view class="detail-item">
       <text>所属分类</text>
-      <text>{{ detail.merchandiseTypeStr }}</text>
+      <text>{{ detail.merchandiseCategoryThreeName }}</text>
     </view>
     <view class="detail-item">
       <text>条形码编号</text>
