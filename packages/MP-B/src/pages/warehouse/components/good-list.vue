@@ -209,10 +209,10 @@ export default {
       this.threeCategoryId = 0
       // 选择某个二级分类后, 三级筛选数据只有当前所选中的二级分类及对应的三级分类数据
       this.threeCategoryList = this.twoCategoryList
-        .filter(
-          (e) =>
-            e.merchandiseCategoryId &&
-            e.merchandiseCategoryId == item.merchandiseCategoryId,
+        .filter((e) =>
+          item.merchandiseCategoryId
+            ? e.merchandiseCategoryId == item.merchandiseCategoryId
+            : e.merchandiseCategoryId,
         )
         .map((e) => {
           return {
