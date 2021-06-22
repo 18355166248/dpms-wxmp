@@ -1,11 +1,6 @@
 <template>
   <view class="output-record">
-    <scroll-view
-      scroll-y="true"
-      class="output-record-list"
-      @scrolltolower="loadMore"
-      v-if="pagination.records.length"
-    >
+    <view class="output-record-list" v-if="pagination.records.length">
       <view
         class="output-record-list-item"
         v-for="(item, index) in pagination.records"
@@ -19,8 +14,8 @@
           }}</view>
         </view>
       </view>
-      <loadMore :status="statusText" />
-    </scroll-view>
+    </view>
+    <loadMore v-if="pagination.records.length" :status="statusText" />
     <empty v-else disabled />
   </view>
 </template>
@@ -70,6 +65,7 @@ export default {
       const res = await goodAPI.getGoodOutputRecord({
         ...params,
         merchandiseId: this.merchandiseId,
+        size: 20,
       })
       this.loading = false
       let { current, pages, records, total } = res.data
@@ -98,10 +94,10 @@ export default {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #ffffff;
   &-list {
     width: 100%;
     height: 100%;
+    background-color: #ffffff;
     &-item {
       width: 100%;
       height: 96rpx;

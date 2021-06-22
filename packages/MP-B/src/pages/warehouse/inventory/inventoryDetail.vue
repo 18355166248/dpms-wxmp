@@ -1,5 +1,10 @@
 <template>
-  <view style="height: 100%;">
+  <scroll-view
+    style="height: 100%;"
+    scroll-y="true"
+    @scrolltolower="loadMore"
+    :lower-threshold="100"
+  >
     <view class="detail-info" @click="goToGoodDetail">
       <view class="detail-info-name mb16">
         <text>{{ baseInfo.commonName }}</text>
@@ -42,20 +47,23 @@
       </scroll-view> -->
       <view v-if="merchandiseId">
         <view v-show="currentTab === 0">
-          <inputRecord :merchandiseId="merchandiseId" />
+          <inputRecord ref="inputRecord" :merchandiseId="merchandiseId" />
         </view>
         <view v-show="currentTab === 1">
-          <outputRecord :merchandiseId="merchandiseId" />
+          <outputRecord ref="outputRecord" :merchandiseId="merchandiseId" />
         </view>
         <view v-show="currentTab === 2">
-          <checkRecord :merchandiseId="merchandiseId" />
+          <checkRecord ref="checkRecord" :merchandiseId="merchandiseId" />
         </view>
         <view v-show="currentTab === 3">
-          <increaseDecrease :merchandiseId="merchandiseId" />
+          <increaseDecrease
+            ref="increaseDecrease"
+            :merchandiseId="merchandiseId"
+          />
         </view>
       </view>
     </tabs>
-  </view>
+  </scroll-view>
 </template>
 <script>
 import tabs from '@/components/tabs/tabs.vue'
@@ -107,6 +115,16 @@ export default {
       this.$dpmsUtils.push({
         url: `/pages/warehouse/goods/goodDetail?merchandiseId=${this.merchandiseId}`,
       })
+    },
+    loadMore() {
+      let refMap = {
+        0: 'inputRecord',
+        1: 'outputRecord',
+        2: 'checkRecord',
+        3: 'increaseDecrease',
+      }
+      const currentRef = refMap[this.currentTab]
+      this.$refs[currentRef].loadMore()
     },
   },
 }

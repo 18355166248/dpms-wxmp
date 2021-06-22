@@ -102,6 +102,7 @@
   </view>
 </template>
 <script>
+import tabs from '@/components/tabs/tabs.vue'
 import History from '@/utils/history.util.js'
 import goodAPI from '@/APIS/warehouse/good.api.js'
 import tabScroll from './tabsScroll.vue'
@@ -126,6 +127,7 @@ export default {
     searchHistory,
     loadMore,
     empty,
+    tabs,
   },
   props: {
     type: {
@@ -262,8 +264,9 @@ export default {
       this.pagination = res
     },
     // 点击第三层级
-    async changeThreeCategory(id) {
+    async changeThreeCategory({ id, parentId }) {
       this.threeCategoryId = id
+      this.twoCategoryId = parentId
       this.$refs.showRight.close()
       const res = await this.getGoodsList({
         merchandiseCategoryId:

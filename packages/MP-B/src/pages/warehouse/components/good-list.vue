@@ -228,8 +228,9 @@ export default {
       this.pagination = res
     },
     // 点击第三层级
-    async changeThreeCategory(id) {
+    async changeThreeCategory({ id, parentId }) {
       this.threeCategoryId = id
+      this.twoCategoryId = parentId
       this.$refs.showRight.close()
       const res = await this.getGoodsList({
         merchandiseCategoryId:
