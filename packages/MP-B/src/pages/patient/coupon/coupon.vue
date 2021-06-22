@@ -45,22 +45,20 @@
               class="list-wrap-item"
               v-for="item in list"
               :key="item.couponDefinitionId"
+              @click="onClickCoupon(item.couponDefinitionId)"
             >
               <div class="item-header">
                 <div class="item-header-name coupon-name">
                   <span class="item-label">优惠券名称：</span>
                   <span class="item-value">{{ item.couponName || '-' }}</span>
                 </div>
-                <div
-                  :class="[
-                    'item-switch',
-                    { active: item.couponDefinitionId === couponDefinitionId },
-                  ]"
-                  @click="onClickCoupon(item.couponDefinitionId)"
-                >
-                  <span></span>
-                </div>
+                <span
+                  v-if="item.couponDefinitionId === couponDefinitionId"
+                  class="iconfont icon-danxuan-xuanzhong"
+                ></span>
+                <span v-else class="iconfont icon-check-circle-no"></span>
               </div>
+
               <div class="item-type">
                 <span class="item-label">优惠券类型：</span>
                 <span class="item-value">{{
@@ -136,11 +134,13 @@ export default {
       disabled: false,
       couponDefinitionId: '',
       env: '',
+      isqywx: '',
     }
   },
   onLoad(params) {
     this.patientId = params.patientId
     this.customerId = params.customerId
+    this.isqywx = params.isqywx
     const res = wx.getSystemInfoSync()
     this.env = res.environment || ''
     this.getCouponList()
@@ -174,10 +174,10 @@ export default {
       this.getCouponList()
     },
     async getCouponList() {
-      uni.showLoading({
-        title: '数据加载中',
-        mask: true,
-      })
+      // uni.showLoading({
+      //   title: '数据加载中',
+      //   mask: true,
+      // })
       try {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
@@ -196,11 +196,12 @@ export default {
           this.dataSourceStatus.status = 'more'
         }
 
-        uni.hideLoading()
+        // uni.hideLoading()
       } catch (error) {
         console.log(error)
         this.dataSourceStatus.status = 'noMore'
-        uni.hideLoading()
+
+        // uni.hideLoading()
       }
     },
     onScrollToLower() {
@@ -216,6 +217,10 @@ export default {
       if (!this.couponDefinitionId) {
         return this.$dpmsUtils.show('请选择优惠劵')
       }
+      uni.showLoading({
+        title: '优惠劵发送中加载中',
+        mask: true,
+      })
       try {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
@@ -225,27 +230,32 @@ export default {
           chargeWay: 1,
         })
         this.$dpmsUtils.show('优惠劵发送成功')
+        uni.hideLoading()
         this.disabled = false
-        console.log(wx.qy)
-        if (this.env === 'wxwork') {
-          // 小程序可以在微信和企业微信中调用此接口，但是在企业微信中调用此接口时，会额外返回一个 environment 字段（微信中不返回），如此字段值为 wxwork，则表示当前小程序运行在企业微信环境中。
-          // todo
-          this.toWxWork()
-          console.log('wxwork')
-        } else {
-          // todo
-        }
+        // if (this.isqywx === '1') {
+        //   this.toWxWork()
+        // }
       } catch (error) {
         console.log(error)
+        uni.hideLoading()
         this.disabled = false
       }
     },
     toWxWork() {
-      // console.log(q)
+      // wx.qy.chec
       wx.qy.sendChatMessage({
         msgtype: 'text', //消息类型，必填
         text: {
           content: '你获得了一张新优惠券', //文本内容
+        },
+        success: function (e) {
+          console.log(e, 'success')
+        },
+        fail: function (e) {
+          console.log(e, 'fail')
+        },
+        complete: function (e) {
+          console.log(e, 'complete')
         },
       })
     },
@@ -307,11 +317,13 @@ export default {
     &-tips {
       position: relative;
       height: 64rpx;
-      line-height: 64rpx;
+      // line-height: 64rpx;
       background-color: #fefcec;
       color: #f86e21;
       padding: 0 24rpx;
       font-size: 26rpx;
+      display: flex;
+      align-items: center;
     }
     &-wrap {
       position: relative;
@@ -332,31 +344,12 @@ export default {
             text-overflow: ellipsis;
           }
 
-          .item-switch {
-            position: relative;
-            box-sizing: border-box;
-            display: block;
-            width: 32rpx;
-            height: 32rpx;
-            text-align: center;
-            line-height: 32rpx;
-            border-radius: 32rpx;
-            border: 2rpx solid #d9d9d9;
+          .icon-check-circle-no {
+            color: #d9d9d9;
           }
 
-          .active {
-            position: relative;
-            border-color: #5cbb89;
-            &::after {
-              position: absolute;
-              content: '';
-              top: 8rpx;
-              right: 8rpx;
-              width: 16rpx;
-              height: 16rpx;
-              background-color: #5cbb89;
-              border-radius: 16rpx;
-            }
+          .icon-danxuan-xuanzhong {
+            color: #5cbb89;
           }
         }
         .item-type {

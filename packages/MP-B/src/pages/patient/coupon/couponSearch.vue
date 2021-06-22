@@ -179,7 +179,7 @@ export default {
     .icon-search {
       font-size: 36rpx;
       color: #bfbfbf;
-      padding-bottom: 4rpx;
+      // padding-bottom: 4rpx;
     }
   }
 
