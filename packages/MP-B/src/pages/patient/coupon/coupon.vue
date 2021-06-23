@@ -6,7 +6,7 @@
           type="text"
           confirmType="search"
           placeholder="请输入优惠券名称"
-          v-model="couponName"
+          v-model="isSearchedValue"
           @change="changeValue"
           @search="searchPatients"
           @clear="cancelSearch"
@@ -68,9 +68,7 @@
               <div class="item-footer">
                 <div class="item-footer-date">
                   <span class="item-label">有效期：</span>
-                  <span class="item-value">{{
-                    item.effectiveEndTime | filterDate
-                  }}</span>
+                  <span class="item-value">{{ item | filterDate }}</span>
                 </div>
                 <div class="item-footer-num">
                   <span class="item-label">剩余总量：</span>
@@ -107,7 +105,8 @@ export default {
   },
   data() {
     return {
-      couponName: '',
+      isSearchedValue: '', //搜索框内的值
+      couponName: '', //执行搜索的值
       selectList: [
         { label: '全部', value: null },
         { label: '折扣券', value: 1 },
@@ -147,15 +146,17 @@ export default {
   },
   methods: {
     changeValue(e) {
-      this.couponName = e.value
+      this.isSearchedValue = e.value
     },
     searchPatients() {
       this.current = 1
       this.list = []
+      this.couponName = this.isSearchedValue
       this.couponDefinitionId = ''
       this.getCouponList()
     },
     cancelSearch() {
+      this.isSearchedValue = ''
       this.couponName = ''
       this.current = 1
       this.list = []
@@ -262,9 +263,19 @@ export default {
     },
   },
   filters: {
-    filterDate(date) {
-      if (!date) return '-'
-      return moment(date).format('YYYY-MM-DD')
+    filterDate(val) {
+      const effectiveTimeType = val.effectiveTimeType
+      const effectiveBeginTime =
+        moment(val.effectiveBeginTime).format('YYYY-MM-DD') || null
+      const effectiveEndTime =
+        moment(val.effectiveEndTime).format('YYYY-MM-DD') || null
+      const effectiveRange = {
+        1: `领当日起，${val.effectiveDays}天内可用`,
+        2: `领次日起，${val.effectiveDays}天内可用`,
+        3: `${effectiveBeginTime}~${effectiveBeginTime}`,
+      }[effectiveTimeType]
+
+      return effectiveRange || '-'
     },
     filterType(type) {
       return (
