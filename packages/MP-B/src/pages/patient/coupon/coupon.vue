@@ -6,7 +6,7 @@
           type="text"
           confirmType="search"
           placeholder="请输入优惠券名称"
-          v-model="couponName"
+          v-model="isSearchedValue"
           @change="changeValue"
           @search="searchPatients"
           @clear="cancelSearch"
@@ -20,7 +20,7 @@
           range-key="label"
         >
           <div class="uni-input">
-            <div class="select-text">优惠券类型：{{ selectName }}</div>
+            <div class="select-text">优惠券类型:{{ selectName }}</div>
             <div class="iconfont icon-closed"></div>
           </div>
         </picker>
@@ -45,22 +45,20 @@
               class="list-wrap-item"
               v-for="item in list"
               :key="item.couponDefinitionId"
+              @click="onClickCoupon(item.couponDefinitionId)"
             >
               <div class="item-header">
                 <div class="item-header-name coupon-name">
                   <span class="item-label">优惠券名称：</span>
                   <span class="item-value">{{ item.couponName || '-' }}</span>
                 </div>
-                <div
-                  :class="[
-                    'item-switch',
-                    { active: item.couponDefinitionId === couponDefinitionId },
-                  ]"
-                  @click="onClickCoupon(item.couponDefinitionId)"
-                >
-                  <span></span>
-                </div>
+                <span
+                  v-if="item.couponDefinitionId === couponDefinitionId"
+                  class="iconfont icon-danxuan-xuanzhong"
+                ></span>
+                <span v-else class="iconfont icon-check-circle-no"></span>
               </div>
+
               <div class="item-type">
                 <span class="item-label">优惠券类型：</span>
                 <span class="item-value">{{
@@ -70,9 +68,7 @@
               <div class="item-footer">
                 <div class="item-footer-date">
                   <span class="item-label">有效期：</span>
-                  <span class="item-value">{{
-                    item.effectiveEndTime | filterDate
-                  }}</span>
+                  <span class="item-value">{{ item | filterDate }}</span>
                 </div>
                 <div class="item-footer-num">
                   <span class="item-label">剩余总量：</span>
@@ -109,7 +105,8 @@ export default {
   },
   data() {
     return {
-      couponName: '',
+      isSearchedValue: '', //搜索框内的值
+      couponName: '', //执行搜索的值
       selectList: [
         { label: '全部', value: null },
         { label: '折扣券', value: 1 },
@@ -136,26 +133,30 @@ export default {
       disabled: false,
       couponDefinitionId: '',
       env: '',
+      isqywx: '',
     }
   },
   onLoad(params) {
     this.patientId = params.patientId
     this.customerId = params.customerId
+    this.isqywx = params.isqywx
     const res = wx.getSystemInfoSync()
     this.env = res.environment || ''
     this.getCouponList()
   },
   methods: {
     changeValue(e) {
-      this.couponName = e.value
+      this.isSearchedValue = e.value
     },
     searchPatients() {
       this.current = 1
       this.list = []
+      this.couponName = this.isSearchedValue
       this.couponDefinitionId = ''
       this.getCouponList()
     },
     cancelSearch() {
+      this.isSearchedValue = ''
       this.couponName = ''
       this.current = 1
       this.list = []
@@ -174,10 +175,10 @@ export default {
       this.getCouponList()
     },
     async getCouponList() {
-      uni.showLoading({
-        title: '数据加载中',
-        mask: true,
-      })
+      // uni.showLoading({
+      //   title: '数据加载中',
+      //   mask: true,
+      // })
       try {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
@@ -196,11 +197,12 @@ export default {
           this.dataSourceStatus.status = 'more'
         }
 
-        uni.hideLoading()
+        // uni.hideLoading()
       } catch (error) {
         console.log(error)
         this.dataSourceStatus.status = 'noMore'
-        uni.hideLoading()
+
+        // uni.hideLoading()
       }
     },
     onScrollToLower() {
@@ -216,6 +218,10 @@ export default {
       if (!this.couponDefinitionId) {
         return this.$utils.show('请选择优惠劵')
       }
+      uni.showLoading({
+        title: '优惠劵发送中加载中',
+        mask: true,
+      })
       try {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
@@ -224,36 +230,52 @@ export default {
           customerId: this.customerId,
           chargeWay: 1,
         })
+        uni.hideLoading()
         this.$utils.show('优惠劵发送成功')
         this.disabled = false
-        console.log(wx.qy)
-        if (this.env === 'wxwork') {
-          // 小程序可以在微信和企业微信中调用此接口，但是在企业微信中调用此接口时，会额外返回一个 environment 字段（微信中不返回），如此字段值为 wxwork，则表示当前小程序运行在企业微信环境中。
-          // todo
-          this.toWxWork()
-          console.log('wxwork')
-        } else {
-          // todo
-        }
+        uni.navigateBack()
+        // if (this.isqywx === '1') {
+        //   this.toWxWork()
+        // }
       } catch (error) {
         console.log(error)
+        uni.hideLoading()
         this.disabled = false
       }
     },
     toWxWork() {
-      // console.log(q)
+      // wx.qy.chec
       wx.qy.sendChatMessage({
         msgtype: 'text', //消息类型，必填
         text: {
           content: '你获得了一张新优惠券', //文本内容
         },
+        success: function (e) {
+          console.log(e, 'success')
+        },
+        fail: function (e) {
+          console.log(e, 'fail')
+        },
+        complete: function (e) {
+          console.log(e, 'complete')
+        },
       })
     },
   },
   filters: {
-    filterDate(date) {
-      if (!date) return '-'
-      return moment(date).format('YYYY-MM-DD')
+    filterDate(val) {
+      const effectiveTimeType = val.effectiveTimeType
+      const effectiveBeginTime =
+        moment(val.effectiveBeginTime).format('YYYY-MM-DD') || null
+      const effectiveEndTime =
+        moment(val.effectiveEndTime).format('YYYY-MM-DD') || null
+      const effectiveRange = {
+        1: `领当日起，${val.effectiveDays}天内可用`,
+        2: `领次日起，${val.effectiveDays}天内可用`,
+        3: `${effectiveBeginTime}~${effectiveBeginTime}`,
+      }[effectiveTimeType]
+
+      return effectiveRange || '-'
     },
     filterType(type) {
       return (
@@ -292,10 +314,10 @@ export default {
         display: flex;
         align-items: center;
         color: #595959;
-        padding-left: 32rpx;
+        padding-left: 30rpx;
         .iconfont {
           font-size: 24rpx;
-          margin-left: 10rpx;
+          margin-left: 8rpx;
         }
       }
     }
@@ -307,11 +329,13 @@ export default {
     &-tips {
       position: relative;
       height: 64rpx;
-      line-height: 64rpx;
+      // line-height: 64rpx;
       background-color: #fefcec;
       color: #f86e21;
       padding: 0 24rpx;
       font-size: 26rpx;
+      display: flex;
+      align-items: center;
     }
     &-wrap {
       position: relative;
@@ -332,31 +356,12 @@ export default {
             text-overflow: ellipsis;
           }
 
-          .item-switch {
-            position: relative;
-            box-sizing: border-box;
-            display: block;
-            width: 32rpx;
-            height: 32rpx;
-            text-align: center;
-            line-height: 32rpx;
-            border-radius: 32rpx;
-            border: 2rpx solid #d9d9d9;
+          .icon-check-circle-no {
+            color: #d9d9d9;
           }
 
-          .active {
-            position: relative;
-            border-color: #5cbb89;
-            &::after {
-              position: absolute;
-              content: '';
-              top: 8rpx;
-              right: 8rpx;
-              width: 16rpx;
-              height: 16rpx;
-              background-color: #5cbb89;
-              border-radius: 16rpx;
-            }
+          .icon-danxuan-xuanzhong {
+            color: #5cbb89;
           }
         }
         .item-type {
@@ -380,8 +385,8 @@ export default {
     background-color: #fff;
     padding: 16rpx 32rpx;
     padding-bottom: 16rpx;
-    padding-bottom: calc(16rpx + 'constant(safe-area-inset-bottom)');
-    padding-bottom: calc(16rpx + 'env(safe-area-inset-bottom)');
+    padding-bottom: calc(8px + constant(safe-area-inset-bottom)); /* no */
+    padding-bottom: calc(8px + env(safe-area-inset-bottom)); /* no */
     .ensurebutton {
       height: 80rpx;
       background: #5cbb89;
