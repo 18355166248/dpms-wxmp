@@ -334,6 +334,8 @@ export default {
       position: relative;
       width: 640rpx;
       // height: 920rpx;
+      max-height: 920rpx;
+      overflow: auto;
       opacity: 1;
       background: #ffffff;
       border-radius: 24rpx;
@@ -397,7 +399,7 @@ export default {
       }
       .bottom-close {
         background: #ffffff;
-        position: absolute;
+        position: sticky;
         bottom: 0;
         left: 0;
         right: 0;
