@@ -610,17 +610,17 @@ export default {
         ], //不写validator的rules会变成undefiend，会报错
       },
       requiredObj: {},
-      requiredArr: [],
     }
   },
   watch: {
     formData(newVal) {
       this.form = this.filterFormData(newVal)
+      this.getPatientTypeList()
     },
-    'form.settingsTypeId'() {
+    'form.settingsTypeId'(newVal) {
       this.getPatientMedicalRecordNo()
       // 需要重新赋值 requiredObj
-      this.changeMustData()
+      this.changeMustData(newVal)
       this.getSettingsPatientSourceList()
     },
     'form.birthday'(val) {
@@ -690,7 +690,6 @@ export default {
       ) {
         return
       }
-      this.requiredArr = getData.data.createPatient_baseInfo
       // 获取数据，重新赋值
       const params = {
         obj: this.requiredObj,
@@ -739,6 +738,24 @@ export default {
       const res = await patientAPI.getPatientTypeList()
       this.patientTypeList = res.data
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
+
+      // 判断是否是当前机构的患者类型，不是的话，患者类型名称后面带上患者所属机构名称
+      if (!this.formData.settingsTypeId) {
+        return
+      }
+      const bool = this.patientTypeList.some(
+        (val) =>
+          Number(val.settingsTypeId) === Number(this.formData.settingsTypeId),
+      )
+      const institution = !bool
+        ? `(${this.formData?.registerMedicalInstitutionName})`
+        : ''
+      const newTypeData = {
+        settingsTypeName: `${this.formData.settingsTypeName}${institution}`,
+        settingsTypeId: this.formData.settingsTypeId,
+      }
+      this.patientTypeList.unshift(newTypeData)
+      this.form.settingsTypeId = this.formData.settingsTypeId
     },
     async getSettingsPatientSourceList() {
       // 此处为了兼容修改患者类型导致的列表不显示的问题
@@ -768,22 +785,22 @@ export default {
       })
       this.form.medicalRecordNo = res.data
     },
-    changeMustData() {
+    async changeMustData(newVal) {
       // 修改mustObj的对应enable属性
-      const data = JSON.parse(JSON.stringify(this.requiredObj))
-      for (const key in data) {
-        this.requiredArr.forEach((val) => {
-          if (Number(val[0].extend) === Number(this.form.settingsTypeId)) {
-            val.forEach((valA) => {
-              if (Number(valA.belongId) === Number(data[key].key) + 1) {
-                data[key].enableMust = Boolean(valA.enableMust)
-                data[key].enableShow = Boolean(valA.enableShow)
-              }
-            })
-          }
-        })
+      const getData = await patientAPI.getMustData({ extend: newVal })
+      if (
+        getData.code !== 0 ||
+        !getData.data.createPatient_baseInfo ||
+        !getData.data.createPatient_baseInfo.length
+      ) {
+        return
       }
-      this.requiredObj = data
+      // 获取数据，重新赋值
+      const params = {
+        obj: this.requiredObj,
+        arr: getData.data.createPatient_baseInfo,
+      }
+      this.requiredObj = handleMustData.formatMustData(params)
       this.changeRules()
     },
     ageBlur(val) {
