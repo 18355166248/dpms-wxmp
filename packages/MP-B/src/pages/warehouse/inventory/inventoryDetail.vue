@@ -40,12 +40,13 @@
       activeColor="#5CBB89"
       lineColor="#5CBB89"
       lineScale="0.30"
+      color="#191919"
       @change="changeTab"
     >
       <!-- <scroll-view v-if="merchandiseId">
         
       </scroll-view> -->
-      <view v-if="merchandiseId">
+      <view class="tab-main" v-if="merchandiseId">
         <view v-show="currentTab === 0">
           <inputRecord ref="inputRecord" :merchandiseId="merchandiseId" />
         </view>
@@ -169,8 +170,8 @@ export default {
   text-overflow: ellipsis;
   overflow: hidden;
 }
-.swiper {
+.tab-main {
   width: 100%;
-  height: 100%;
+  border-top: 1rpx solid #e5e5e5;
 }
 </style>
