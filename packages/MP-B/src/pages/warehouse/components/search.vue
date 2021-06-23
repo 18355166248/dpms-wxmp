@@ -35,6 +35,7 @@
           <view
             class="goods-main-one-tag"
             :class="{
+              activeColor: oneCategoryId == item.merchandiseCategoryId,
               underline: oneCategoryId == item.merchandiseCategoryId,
             }"
             v-for="item in oneCategoryList"
@@ -344,10 +345,15 @@ export default {
         align-items: center;
         .icon-search {
           margin: 0 16rpx;
+          color: #bfbfbf;
         }
         input {
           flex: 1;
+          color: rgba(25, 25, 25, 0.9);
           padding-right: 16rpx;
+        }
+        input::placeholder {
+          color: #bfbfbf;
         }
       }
       &-cancel {
@@ -382,6 +388,11 @@ export default {
         padding: 0rpx 24rpx;
         font-size: 30rpx;
         color: #191919;
+        font-weight: 400;
+      }
+      .activeColor {
+        color: $common-color;
+        font-weight: 500;
       }
       .underline {
         position: relative;

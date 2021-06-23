@@ -1,7 +1,7 @@
 <template>
   <view class="good-details" @click="onClick">
     <view class="good-details-main">
-      <view>
+      <view class="good-name">
         <text>{{ detail.commonName }}</text>
         <text v-if="detail.merchandiseName">/{{ detail.merchandiseName }}</text>
         <text v-if="detail.aliasName">/{{ detail.aliasName }}</text>
@@ -67,6 +67,7 @@ export default {
 <style lang="scss" scoped>
 .good-details {
   width: 100%;
+  height: auto;
   padding: 32rpx 32rpx 0 32rpx;
   font-size: 28rpx;
   box-sizing: border-box;
@@ -76,6 +77,8 @@ export default {
     width: 100%;
     padding-bottom: 32rpx;
     border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+    position: relative;
+    z-index: 2;
   }
   .good-name {
     color: #191919;
@@ -94,8 +97,8 @@ export default {
     position: absolute;
     top: 32rpx;
     right: 0;
-    width: 40rpx;
-    height: 56rpx;
+    width: 80rpx;
+    height: 112rpx;
   }
   .available {
     color: #fa8c16;
