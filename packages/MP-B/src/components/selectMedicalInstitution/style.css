@@ -72,6 +72,9 @@
   height: 112rpx;
   opacity: 1;
 }
+.tki-tree-item.disabled {
+  color: #c2c2c2;
+}
 .tki-tree-item.showchild:before {
   transform: rotate(90deg);
 }
@@ -99,17 +102,27 @@
 
 .tki-tree-label .icon {
   border-radius: 50%;
-  width: 32rpx;
-  height: 32rpx;
-  line-height: 32rpx;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
   text-align: center;
-  font-size: 20rpx;
+  font-size: 28rpx;
   color: #fff;
   margin-right: 8rpx;
 }
+.tki-tree-label .icon-dan {
+  background-color: #f759ab;
+}
 .tki-tree-label .icon-zhi {
-  background-color: #8ad27d;
+  background-color: #69c0ff;
+}
+.tki-tree-label .icon-da {
+  background-color: #52c41a;
 }
 .tki-tree-label .icon-jia {
-  background-color: #f7c629;
+  background-color: #ffa940;
+}
+.tki-tree-label .iconDisabled {
+  background-color: #b7b7b7;
+  color: #fafafa;
 }
