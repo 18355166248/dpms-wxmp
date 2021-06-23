@@ -143,6 +143,9 @@ export default {
     const res = wx.getSystemInfoSync()
     this.env = res.environment || ''
     this.getCouponList()
+    if (this.isqywx === '1') {
+      wx.hideHomeButton()
+    }
   },
   methods: {
     changeValue(e) {
@@ -244,7 +247,7 @@ export default {
       }
     },
     toWxWork() {
-      // wx.qy.chec
+      // wx.qy.checkSession 需要先验证session_key有效，但是一直无效。。。
       wx.qy.sendChatMessage({
         msgtype: 'text', //消息类型，必填
         text: {
@@ -272,7 +275,7 @@ export default {
       const effectiveRange = {
         1: `领当日起，${val.effectiveDays}天内可用`,
         2: `领次日起，${val.effectiveDays}天内可用`,
-        3: `${effectiveBeginTime}~${effectiveBeginTime}`,
+        3: `${effectiveBeginTime}~${effectiveEndTime}`,
       }[effectiveTimeType]
 
       return effectiveRange || '-'
