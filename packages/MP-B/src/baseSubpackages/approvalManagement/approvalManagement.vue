@@ -118,6 +118,10 @@ export default {
           }
         })
     },
+    initData() {
+      this.current = 1
+      this.approvalList = []
+    },
   },
   onLoad(options) {
     this.getApprovalDetail()
@@ -125,7 +129,10 @@ export default {
       this.currentTab = Number(options.currentTab)
     }
   },
-
+  onShow() {
+    this.initData()
+    this.getApprovalDetail()
+  },
   onPullDownRefresh() {
     this.getApprovalDetail()
   },
