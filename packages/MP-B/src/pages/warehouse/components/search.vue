@@ -59,13 +59,12 @@
         />
       </view>
       <!-- 列表数据展示 -->
-      <view class="goods-main-list">
+      <view class="goods-main-list" v-if="pagination.records.length">
         <scroll-view
           scroll-y="true"
-          style="height: 100%;"
+          class="goods-main-list-scroll"
           show-scrollbar="true"
           @scrolltolower="loadMore"
-          v-if="pagination.records.length"
         >
           <view v-for="(item, index) in pagination.records" :key="index">
             <goodsInfo
@@ -74,10 +73,12 @@
               @on-click="goToDetail(item.merchandiseId)"
             />
           </view>
-          <loadMore :status="statusText" />
+          <view class="loadMore">
+            <loadMore :status="statusText" />
+          </view>
         </scroll-view>
-        <empty v-else disabled />
       </view>
+      <empty v-else disabled />
     </view>
     <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="343">
       <view class="drawer-title">
@@ -102,6 +103,7 @@
   </view>
 </template>
 <script>
+import tabs from '@/components/tabs/tabs.vue'
 import History from '@/utils/history.util.js'
 import goodAPI from '@/APIS/warehouse/good.api.js'
 import tabScroll from './tabsScroll.vue'
@@ -126,6 +128,7 @@ export default {
     searchHistory,
     loadMore,
     empty,
+    tabs,
   },
   props: {
     type: {
@@ -262,8 +265,9 @@ export default {
       this.pagination = res
     },
     // 点击第三层级
-    async changeThreeCategory(id) {
+    async changeThreeCategory({ id, parentId }) {
       this.threeCategoryId = id
+      this.twoCategoryId = parentId
       this.$refs.showRight.close()
       const res = await this.getGoodsList({
         merchandiseCategoryId:
@@ -316,14 +320,14 @@ export default {
 .goods {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
   background-color: #f5f5f5;
-  .search-history {
-    widows: 100%;
-    height: 100%;
-  }
+  // 顶部搜索区域
   &-search {
     width: 100%;
     height: 140rpx;
+    flex-shrink: 0;
     padding: 1rpx 0;
     background-color: $common-color;
     &-main {
@@ -354,13 +358,21 @@ export default {
       }
     }
   }
+  // 历史记录区域
+  .search-history {
+    // widows: 100%;
+    // height: 100%;
+    flex: 1;
+  }
   &-main {
-    width: 100%;
-    height: calc(100% - 142rpx);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
     &-one {
       width: 100%;
       height: 115rpx;
+      flex-shrink: 0;
       line-height: 95rpx;
       white-space: nowrap;
       background-color: #ffffff;
@@ -377,23 +389,24 @@ export default {
       }
     }
     &-two {
+      flex-shrink: 0;
       background-color: #ffffff;
       margin-top: 1rpx;
     }
     &-list {
-      width: 100%;
+      flex: 1;
       margin-top: 14rpx;
-      height: calc(100% - 96rpx - 80rpx);
       box-sizing: border-box;
       overflow: hidden;
-      background-color: #ffffff;
-      .noMore {
-        // width: 100%;
-        text-align: center;
-        padding: 32rpx 0;
-        font-size: 28rpx;
-        color: #7f7f7f;
-        background-color: #f5f5f5;
+      &-scroll {
+        width: 100%;
+        height: 100%;
+        // background-color: #ffffff;
+        .loadMore {
+          width: 100%;
+          height: 80rpx;
+          background-color: #f5f5f5;
+        }
       }
     }
   }

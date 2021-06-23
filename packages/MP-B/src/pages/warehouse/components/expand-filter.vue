@@ -19,7 +19,7 @@
           <text
             :class="{ activeColor: currentId == e[fieldKey] }"
             class="expand-item-content-tag"
-            @click="selectTag(e[fieldKey])"
+            @click="selectTag(e[fieldKey], item[fieldKey])"
             >{{ e[fieldName] }}</text
           >
         </view>
@@ -77,9 +77,9 @@ export default {
     handleExpand(id) {
       this.currentParentId = id === this.currentParentId ? null : id
     },
-    selectTag(id) {
+    selectTag(id, parentId) {
       this.currentId = id
-      this.$emit('on-change', id)
+      this.$emit('on-change', { id, parentId })
     },
   },
 }
