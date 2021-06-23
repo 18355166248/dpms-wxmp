@@ -7,7 +7,7 @@
         :key="index"
       >
         <view class="firstLevel pt-32 ph-24 pb-16">
-          <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
+          <view class="TypeDisplay">{{ item.approveTypeName }}</view>
           <view :class="approvalType[item.status].className">
             <view></view>
             <span>{{ approvalType[item.status].text }}</span>
@@ -18,10 +18,14 @@
             >发起机构：{{ item.medicalInstitutionName }}</view
           >
           <view class="lh"
-            >审核人：{{ item.operateApproveAuditor.staffName }}</view
+            >审核人：<span class="NormalText">{{
+              item.operateApproveAuditor.staffName
+            }}</span></view
           >
-          <span class="mv-32 lh">{{ item.triggerCondition }}</span>
-          <view class="note mb-40 lh">备注：{{ item.comment }}</view>
+          <span class="mv-32 lh NormalText">{{ item.triggerCondition }}</span>
+          <view class="note mb-40 lh"
+            >备注：<span class="NormalText">{{ item.comment }}</span></view
+          >
         </view>
         <view class="buttonControl pr-24">
           <u-button type="success" @click="showDetail(item)">查看</u-button>
@@ -121,12 +125,6 @@ export default {
         size: this.size,
       })
     },
-    clickHandler(e) {
-      console.log(e)
-    },
-    changeTab(index) {
-      console.log('当前选中的项：' + index)
-    },
     initData() {
       this.current = 1
       this.approvalList = []
@@ -141,6 +139,7 @@ export default {
   },
   onHide() {
     this.initData()
+    this.getApprovalDetail()
   },
 }
 </script>
@@ -191,6 +190,13 @@ export default {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      .TypeDisplay {
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.9);
+        line-height: 44rpx;
+        font-size: 34rpx;
+        text-align: left;
+      }
       > view {
         display: flex;
         align-items: center;
@@ -254,6 +260,8 @@ export default {
       > view {
         color: #595959;
         width: 100%;
+        line-height: 36rpx;
+        font-size: 28rpx;
       }
       .note {
         white-space: nowrap;
@@ -265,6 +273,13 @@ export default {
     .buttonControl {
       display: flex;
       flex-direction: row-reverse;
+    }
+    .NormalText {
+      font-weight: 400;
+      text-align: left;
+      color: #191919;
+      line-height: 36rpx;
+      font-size: 28rpx;
     }
   }
 }

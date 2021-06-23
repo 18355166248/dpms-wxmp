@@ -7,7 +7,7 @@
         :key="index"
       >
         <view class="firstLevel pt-32 ph-24 pb-16">
-          <view style="font-weight: 500;">{{ item.approveTypeName }}</view>
+          <view class="TypeDisplay">{{ item.approveTypeName }}</view>
           <view :class="approvalType[item.status].className">
             <view></view>
             <span>{{ approvalType[item.status].text }}</span>
@@ -15,13 +15,24 @@
         </view>
         <view class="secondLevel ph-24">
           <view class="mb-8 lh"
-            >发起机构：{{ item.medicalInstitutionName }}</view
+            >发起机构：<span class="NormalText">
+              {{ item.medicalInstitutionName }}
+            </span></view
+          >
+          <view class="mb-8 lh"
+            >发起人：<span class="NormalText">{{
+              item.createStaffName
+            }}</span></view
           >
           <view class="lh"
-            >审核人：{{ item.operateApproveAuditor.staffName }}</view
+            >审核人：<span class="NormalText">{{
+              item.operateApproveAuditor.staffName
+            }}</span></view
           >
-          <span class="mv-32 lh">{{ item.triggerCondition }}</span>
-          <view class="note mb-40 lh">备注：{{ item.comment }}</view>
+          <span class="mv-32 lh NormalText">{{ item.triggerCondition }}</span>
+          <view class="note mb-40 lh" v-show="item.comment"
+            >备注：<span class="NormalText">{{ item.comment }}</span></view
+          >
         </view>
         <view class="buttonControl pr-24">
           <u-button type="success" @click="showDetail(item)">查看</u-button>
@@ -30,7 +41,7 @@
             :custom-style="failedBtn"
             class="mh-16"
             @click="onFailHandler(item)"
-            v-if="approvalList.records.status === 0"
+            v-if="item.status === 0"
             >不通过</u-button
           >
 
@@ -38,7 +49,7 @@
             type="success"
             :custom-style="passedBtn"
             @click="onPassHandler(item)"
-            v-if="approvalList.records.status === 0"
+            v-if="item.status === 0"
             >通过</u-button
           >
         </view>
@@ -141,9 +152,9 @@ export default {
       this.approvalList = []
     },
   },
-  onLoad() {
-    // this.getApprovalDetail()
-    // initData()
+  onHide() {
+    this.getApprovalDetail()
+    initData()
   },
 }
 </script>
@@ -151,6 +162,13 @@ export default {
 <style lang="scss" scoped>
 .lh {
   line-height: 36rpx;
+}
+.NormalText {
+  font-weight: 400;
+  text-align: left;
+  color: #191919;
+  line-height: 36rpx;
+  font-size: 28rpx;
 }
 .topBar {
   height: 96rpx;
@@ -168,13 +186,20 @@ export default {
   .singleContainer {
     border-radius: 8rpx;
     width: 100%;
-    height: 436rpx;
+    height: 480rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     background: #feffff;
     .firstLevel {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
+      .TypeDisplay {
+        font-weight: 500;
+        color: rgba(0, 0, 0, 0.9);
+        line-height: 44rpx;
+        font-size: 34rpx;
+        text-align: left;
+      }
       > view {
         display: flex;
         align-items: center;
@@ -238,8 +263,11 @@ export default {
       > view {
         color: #595959;
         width: 100%;
+        line-height: 36rpx;
+        font-size: 28rpx;
       }
       .note {
+        display: flex;
         white-space: nowrap;
         word-break: break-all;
         text-overflow: ellipsis;
