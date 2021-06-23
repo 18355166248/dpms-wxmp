@@ -13,15 +13,15 @@
       </menuIcon>
       <view class="menu-text">{{ menuDic[item.type].text }}</view>
     </view>
-<!--    <view class="menu-item" @click="viewAll(menuDic.all.url)">-->
-<!--      <menuIcon-->
-<!--        :icon="menuDic.all.iconName"-->
-<!--        :fontSize="menuDic.all.fontSize"-->
-<!--        :menu-style="menuDic.all.menuStyle"-->
-<!--      >-->
-<!--      </menuIcon>-->
-<!--      <view class="menu-text">全部</view>-->
-<!--    </view>-->
+    <!--    <view class="menu-item" @click="viewAll(menuDic.all.url)">-->
+    <!--      <menuIcon-->
+    <!--        :icon="menuDic.all.iconName"-->
+    <!--        :fontSize="menuDic.all.fontSize"-->
+    <!--        :menu-style="menuDic.all.menuStyle"-->
+    <!--      >-->
+    <!--      </menuIcon>-->
+    <!--      <view class="menu-text">全部</view>-->
+    <!--    </view>-->
   </view>
 </template>
 <script>
@@ -42,9 +42,9 @@ export default {
         {
           type: 'patient',
         },
-        {
-          type: 'approval',
-        },
+        // {
+        //   type: 'approval',
+        // },
         {
           type: 'preview',
         },
@@ -66,9 +66,7 @@ export default {
       return this.menuList.filter((item, index) => index < 7)
     },
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     //全部
     viewAll(url) {
