@@ -36,11 +36,11 @@
         </view>
       </view>
       <requestApplied
-        v-show="currentTab === 0"
+        v-if="currentTab === 0"
         :approvalList="approvalList"
       ></requestApplied>
       <requestReview
-        v-show="currentTab === 1"
+        v-if="currentTab === 1"
         :approvalList="approvalList"
       ></requestReview>
     </view>

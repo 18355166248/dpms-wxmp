@@ -310,13 +310,20 @@
           "path": "approvalManagement",
           "style": {
             "navigationBarTitleText": "审批管理",
-            "enablePullDownRefresh": true
+            "enablePullDownRefresh": true,
+            "disableScroll": true
           }
         },
         {
           "path": "components/applicationApprovalNote",
           "style": {
             "navigationBarTitleText": "审批备注"
+          }
+        },
+        {
+          "path": "components/medicalRecords",
+          "style": {
+            "navigationBarTitleText": "病例详情"
           }
         }
       ]

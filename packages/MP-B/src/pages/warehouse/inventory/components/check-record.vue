@@ -8,9 +8,10 @@
       >
         <view class="check-record-list-item-main">
           <text class="time">{{ item.confirmTime | filterTime }}</text>
-          <text class="amount">{{
-            item.changeNum | thousandFormatter(0, '')
-          }}</text>
+          <text class="amount"
+            >{{ item.changeNum > 0 ? '+' : ''
+            }}{{ item.changeNum | thousandFormatter(0, '') }}</text
+          >
         </view>
       </view>
     </view>
