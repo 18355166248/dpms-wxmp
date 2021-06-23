@@ -310,7 +310,8 @@
           "path": "approvalManagement",
           "style": {
             "navigationBarTitleText": "审批管理",
-            "enablePullDownRefresh": true
+            "enablePullDownRefresh": true,
+            "disableScroll": true
           }
         },
         {
