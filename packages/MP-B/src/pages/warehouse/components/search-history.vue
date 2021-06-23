@@ -1,6 +1,6 @@
 <template>
   <view class="search-history">
-    <view class="search-history-head">
+    <view class="search-history-head" v-if="list.length">
       <text class="search-history-head-name">搜索历史</text>
       <text @click="handleClickIcon" class="iconfont icon-delete"></text>
     </view>

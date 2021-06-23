@@ -71,6 +71,7 @@ export default {
   font-size: 28rpx;
   box-sizing: border-box;
   position: relative;
+  background-color: #ffffff;
   &-main {
     width: 100%;
     padding-bottom: 32rpx;

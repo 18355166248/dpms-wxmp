@@ -1,11 +1,6 @@
 <template>
   <view class="input-record">
-    <scroll-view
-      scroll-y="true"
-      class="input-record-list"
-      @scrolltolower="loadMore"
-      v-if="pagination.records.length"
-    >
+    <view class="input-record-list" v-if="pagination.records.length">
       <view
         class="input-record-list-item"
         v-for="(item, index) in pagination.records"
@@ -19,8 +14,8 @@
           }}</view>
         </view>
       </view>
-      <loadMore :status="statusText" />
-    </scroll-view>
+    </view>
+    <loadMore v-if="pagination.records.length" :status="statusText" />
     <empty v-else disabled />
   </view>
 </template>
@@ -62,7 +57,7 @@ export default {
   },
   async created() {
     console.log('入库记录获取的参数是:', this.merchandiseId)
-    const res = await this.getGoodInputRecord({ size: 20 })
+    const res = await this.getGoodInputRecord({ size: 10 })
     this.pagination = res
   },
   methods: {
@@ -71,6 +66,7 @@ export default {
       const res = await goodAPI.getGoodInputRecord({
         ...params,
         merchandiseId: this.merchandiseId,
+        size: 20,
       })
       this.loading = false
       let { current, pages, records, total } = res.data
@@ -96,10 +92,10 @@ export default {
   height: 100%;
   overflow: hidden;
   box-sizing: border-box;
-  background-color: #ffffff;
   &-list {
     width: 100%;
     height: 100%;
+    background-color: #ffffff;
     &-item {
       width: 100%;
       height: 96rpx;
