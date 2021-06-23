@@ -239,6 +239,10 @@ export default {
         merchandiseName: this.merchandiseName || null,
       })
       this.pagination = res
+      this.scrollTop = 100
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     // 点击第二层级
     async changeTwoCategory(item) {
@@ -264,6 +268,10 @@ export default {
         merchandiseName: this.merchandiseName || null,
       })
       this.pagination = res
+      this.scrollTop = 100
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     // 点击第三层级
     async changeThreeCategory({ id, parentId }) {
@@ -276,6 +284,10 @@ export default {
         merchandiseName: this.merchandiseName || null,
       })
       this.pagination = res
+      this.scrollTop = 100
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     openDrawer() {
       this.$refs.showRight.open()
