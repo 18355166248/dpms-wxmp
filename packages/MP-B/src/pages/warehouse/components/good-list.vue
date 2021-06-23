@@ -203,6 +203,11 @@ export default {
         merchandiseCategoryId: this.oneCategoryId || null,
       })
       this.pagination = res
+      // scrollTop的坑, 先设置一个大于0的值, 再在dom渲染完成后, 设置为0 达到置顶的效果
+      this.scrollTop = 100
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     // 点击第二层级
     async changeTwoCategory(item) {
@@ -228,6 +233,10 @@ export default {
         merchandiseCategoryId: this.twoCategoryId || this.oneCategoryId,
       })
       this.pagination = res
+      this.scrollTop = 100
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     // 点击第三层级
     async changeThreeCategory({ id, parentId }) {
@@ -239,6 +248,10 @@ export default {
           this.threeCategoryId || this.twoCategoryId || this.oneCategoryId,
       })
       this.pagination = res
+      this.scrollTop = 100
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     // 前往搜索页面
     goToSearch() {

@@ -146,16 +146,6 @@ export default {
         )}&applicationStatus=1`,
       })
     },
-
-    //onLoad中重置数据
-    initData() {
-      this.current = 1
-      this.approvalList = []
-    },
-  },
-  onShow() {
-    initData()
-    this.getApprovalDetail()
   },
 }
 </script>
