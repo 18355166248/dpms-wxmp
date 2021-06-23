@@ -319,6 +319,12 @@
           "style": {
             "navigationBarTitleText": "审批备注"
           }
+        },
+        {
+          "path": "components/medicalRecords",
+          "style": {
+            "navigationBarTitleText": "病例详情"
+          }
         }
       ]
     },
