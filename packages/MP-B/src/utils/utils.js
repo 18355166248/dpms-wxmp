@@ -58,6 +58,7 @@ export function setCustomOpenId() {
 
 export const numberUtils = {
   thousandFormatter(value, places = 2, sysmbol = '￥') {
+    if (!value && places === 0) return `${sysmbol}${value}`
     const zero = ``
     if (isNaN(value) || value === '') return zero
 
