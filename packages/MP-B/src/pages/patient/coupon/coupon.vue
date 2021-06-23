@@ -232,6 +232,7 @@ export default {
         uni.hideLoading()
         this.$utils.show('优惠劵发送成功')
         this.disabled = false
+        uni.navigateBack()
         // if (this.isqywx === '1') {
         //   this.toWxWork()
         // }
