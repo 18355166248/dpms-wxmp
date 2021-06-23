@@ -65,6 +65,7 @@
           scroll-y="true"
           class="goods-main-list-scroll"
           show-scrollbar="true"
+          :lower-threshold="100"
           @scrolltolower="loadMore"
         >
           <view v-for="(item, index) in pagination.records" :key="index">

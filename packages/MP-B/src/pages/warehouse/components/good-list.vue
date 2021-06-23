@@ -35,6 +35,7 @@
             scroll-y="true"
             style="height: 100%;"
             @scrolltolower="loadMore"
+            :lower-threshold="100"
             v-if="pagination.records.length"
             :scroll-top="scrollTop"
           >
