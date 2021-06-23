@@ -32,15 +32,15 @@
       <!-- 一级分类 -->
       <view class="goods-main-one" v-if="oneCategoryList.length">
         <scroll-view scroll-x="true" style="width: 100%; height: 100%;">
-          <text
+          <view
             class="goods-main-one-tag"
             :class="{
-              activeColor: oneCategoryId == item.merchandiseCategoryId,
+              underline: oneCategoryId == item.merchandiseCategoryId,
             }"
             v-for="item in oneCategoryList"
             :key="item.merchandiseCategoryId"
             @click="changeOneCategory(item)"
-            >{{ item.merchandiseCategoryName }}</text
+            >{{ item.merchandiseCategoryName }}</view
           >
         </scroll-view>
       </view>
@@ -371,21 +371,30 @@ export default {
     overflow: hidden;
     &-one {
       width: 100%;
-      height: 115rpx;
+      height: 95rpx;
       flex-shrink: 0;
       line-height: 95rpx;
       white-space: nowrap;
       background-color: #ffffff;
-      .activeColor {
-        color: $common-color;
-        border-bottom: 4rpx solid $common-color;
-      }
       &-tag {
         display: inline-block;
         text-align: center;
-        padding: 8rpx 24rpx;
+        padding: 0rpx 24rpx;
         font-size: 30rpx;
         color: #191919;
+      }
+      .underline {
+        position: relative;
+      }
+      .underline::before {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        content: '';
+        width: 60rpx;
+        height: 4rpx;
+        background-color: $common-color;
       }
     }
     &-two {
