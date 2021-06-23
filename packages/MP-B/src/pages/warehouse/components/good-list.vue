@@ -45,7 +45,9 @@
                 @on-click="goToDetail(item.merchandiseId)"
               />
             </view>
-            <loadMore :status="statusText" />
+            <view class="loadMore">
+              <loadMore :status="statusText" />
+            </view>
           </scroll-view>
           <empty v-else disabled />
         </view>
@@ -285,7 +287,6 @@ export default {
     // height: 100%;
     height: calc(100% - 142rpx);
     display: flex;
-    background-color: #ffffff;
     color: #4c4c4c;
     &-left {
       width: 192rpx;
@@ -298,12 +299,18 @@ export default {
       flex-direction: column;
       overflow: hidden;
       box-sizing: border-box;
+      background-color: #ffffff;
       &-top {
         padding-top: 10rpx;
       }
       &-list {
         flex: 1;
         overflow-y: hidden;
+        // .loadMore {
+        //   width: 100%;
+        //   height: 80rpx;
+        //   background-color: #f5f5f5;
+        // }
       }
     }
   }
