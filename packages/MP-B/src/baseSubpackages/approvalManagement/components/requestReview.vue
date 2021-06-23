@@ -1,8 +1,8 @@
 <template>
   <view class="bodyDetails mh-24">
-    <scroll-view class="showDetail" @scrolltolower="onScrollToLower">
+    <scroll-view scroll-y class="content" @scrolltolower="onScrollToLower">
       <view
-        class="singleContainer mv-32"
+        class="singleContainer"
         v-for="(item, index) in approvalList.records"
         :key="index"
       >
@@ -31,7 +31,8 @@
           >
           <span class="mv-32 lh NormalText">{{ item.triggerCondition }}</span>
           <view class="note mb-40 lh" v-show="item.comment"
-            >备注：<span class="NormalText">{{ item.comment }}</span></view
+            ><span>备注：</span
+            ><span class="NormalText ellipsis">{{ item.comment }}</span></view
           >
         </view>
         <view class="buttonControl pr-24">
@@ -153,8 +154,8 @@ export default {
     },
   },
   onHide() {
-    this.getApprovalDetail()
     initData()
+    this.getApprovalDetail()
   },
 }
 </script>
@@ -162,6 +163,10 @@ export default {
 <style lang="scss" scoped>
 .lh {
   line-height: 36rpx;
+}
+.content {
+  margin-top: 32rpx;
+  height: calc(100vh - 224rpx);
 }
 .NormalText {
   font-weight: 400;
@@ -189,6 +194,7 @@ export default {
     height: 480rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     background: #feffff;
+    margin-bottom: 32rpx;
     .firstLevel {
       display: flex;
       flex-direction: row;
@@ -268,6 +274,14 @@ export default {
       }
       .note {
         display: flex;
+        width: 100%;
+        white-space: nowrap;
+        word-break: break-all;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+      .ellipsis {
+        width: 100%;
         white-space: nowrap;
         word-break: break-all;
         text-overflow: ellipsis;

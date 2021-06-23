@@ -1,8 +1,8 @@
 <template>
   <view class="bodyDetails mh-24">
-    <scroll-view class="showDetail" @scrolltolower="onScrollToLower">
+    <scroll-view scroll-y class="content" @scrolltolower="onScrollToLower">
       <view
-        class="singleContainer mv-32"
+        class="singleContainer"
         v-for="(item, index) in approvalList.records"
         :key="index"
       >
@@ -160,6 +160,10 @@ export default {
     text-align: center;
   }
 }
+.content {
+  margin-top: 32rpx;
+  height: calc(100vh - 224rpx);
+}
 .bodyDetails {
   .typeSearch {
     display: flex;
@@ -182,6 +186,7 @@ export default {
   }
   .singleContainer {
     border-radius: 8rpx;
+    margin-bottom: 32rpx;
     width: 100%;
     height: 436rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
