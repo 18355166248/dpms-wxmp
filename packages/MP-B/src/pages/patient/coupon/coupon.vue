@@ -20,7 +20,7 @@
           range-key="label"
         >
           <div class="uni-input">
-            <div class="select-text">优惠券类型：{{ selectName }}</div>
+            <div class="select-text">优惠券类型:{{ selectName }}</div>
             <div class="iconfont icon-closed"></div>
           </div>
         </picker>
@@ -314,10 +314,10 @@ export default {
         display: flex;
         align-items: center;
         color: #595959;
-        padding-left: 32rpx;
+        padding-left: 30rpx;
         .iconfont {
           font-size: 24rpx;
-          margin-left: 10rpx;
+          margin-left: 8rpx;
         }
       }
     }
