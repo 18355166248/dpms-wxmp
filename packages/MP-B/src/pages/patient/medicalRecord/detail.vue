@@ -139,11 +139,15 @@
       <div class="row">
         <div class="label">备注：</div>
         <input
+          v-if="detail.approveStatus === 2"
           :type="text"
           @input="remarkChange"
           :maxlength="60"
           v-model="approveRemark"
+          placeholder="请输入备注"
+          style="width: 100%;"
         />
+        <div v-else>{{ detail.approveRemark }}</div>
       </div>
     </div>
     <div class="bottom" v-if="currentStaffApproveType === 0">
