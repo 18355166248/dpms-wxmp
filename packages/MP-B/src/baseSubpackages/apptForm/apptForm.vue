@@ -550,7 +550,9 @@ export default {
       // TODO apptSetting和机构相关，从该数据从预约视图带过来，若直接进入此界面会获取不到数据
       const stepInMinutes = this.apptSetting?.appointmentDuration || 30
       const startMoment = moment(this.form.appointmentBeginTimeStamp)
-      const endMoment = moment().startOf('day').add(1, 'days')
+      const endMoment = moment(this.form.appointmentBeginTimeStamp)
+        .startOf('day')
+        .add(1, 'days')
 
       const maxStep = Math.floor(
         endMoment.diff(startMoment, 'minutes') / stepInMinutes,
