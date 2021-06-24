@@ -235,7 +235,7 @@ export default {
         if (resData.code === 0) {
           this.list[index].surplusTotal--
           uni.showToast({
-            title: '优惠劵发送成功',
+            title: '优惠券发送成功',
             icon: 'none',
             duration: 1000,
             mask: true,

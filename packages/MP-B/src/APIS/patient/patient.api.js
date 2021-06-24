@@ -156,11 +156,11 @@ const patientAPI = {
   getDisposeList(data) {
     return httper.get('/diagnosis/mini-apps/dispose/list-dispose', data)
   },
-  // 优惠劵列表
+  // 优惠券列表
   getCouponTemplateListByName(data) {
     return httper.get('/member/coupon/select/page-filter', data)
   },
-  // 发劵
+  // 发券
   createPromotion(data) {
     return httper.post('billing/promotion/create', data, {
       headers: {
