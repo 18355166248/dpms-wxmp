@@ -133,6 +133,58 @@
             处置记录
           </view>
         </view>
+        <view
+          class="menu-area-item"
+          @click="
+            toUrl(
+              '/pages/patient/coupon/coupon?patientId=' +
+                patientId +
+                '&customerId=' +
+                customerId,
+            )
+          "
+        >
+          <view class="menu-area-item-icon menu-area-item-icon-color8">
+            <text class="iconfont icon-card-voucher-face"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            发券
+          </view>
+        </view>
+        <view class="menu-area-item" @click="handleShowModal">
+          <view class="menu-area-item-icon menu-area-item-icon-color7">
+            <text class="iconfont icon-wechat-fill"></text>
+          </view>
+          <view class="menu-area-item-txt mt-24">
+            微信聊天
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="mask-pop" v-if="modalVisible">
+      <view class="pop-content" v-if="!showToast">
+        <view class="friend-list">
+          <view class="item" v-for="(item, index) in friendsList" :key="index">
+            <view
+              class="avatar"
+              :style="{ backgroundImage: `url(${item.receivePhotoUrl})` }"
+            ></view>
+            <view class="nick-name-wrap">
+              <view class="name">{{ item.receiveNick }}</view>
+              <view class="belong-wechat"
+                >所属微信：{{ item.senderNick || '' }}</view
+              >
+            </view>
+            <view class="chat-btn" @click="handleCopy(item.receiveNick)"
+              >聊天</view
+            >
+          </view>
+        </view>
+        <view class="bottom-close" @click="closeModal">关闭</view>
+      </view>
+      <view class="show-toast" v-if="showToast"
+        >当前客户微信昵称已复制，请打开企微/个微，在好友列表顶部搜索框中粘贴，可快捷查找到好友，并与其聊天。
+        <view class="close-toast" @click="hideToast">确定</view>
       </view>
     </view>
   </view>
@@ -146,6 +198,8 @@ import { mapState, mapMutations } from 'vuex'
 export default {
   data() {
     return {
+      showToast: false,
+      friendsList: [],
       patientId: '',
       customerId: '',
       patient: {},
@@ -156,6 +210,7 @@ export default {
         1: '初诊',
         2: '复诊',
       },
+      modalVisible: false,
     }
   },
   computed: {
@@ -192,7 +247,7 @@ export default {
   methods: {
     ...mapMutations('patient', ['setPatientDetail']),
     getPatient() {
-      this.$utils.showLoading()
+      this.$dpmsUtils.showLoading()
       patientAPI
         .getPatientDetail({ patientId: this.patientId })
         .then((res) => {
@@ -206,14 +261,14 @@ export default {
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
-          this.$utils.clearLoading()
+          this.$dpmsUtils.clearLoading()
         })
         .catch(() => {
-          this.$utils.clearLoading()
+          this.$dpmsUtils.clearLoading()
         })
     },
     toUrl(url) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
     },
@@ -224,9 +279,43 @@ export default {
     },
     onDisposalRecord(url) {
       console.log('url', url)
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url,
       })
+    },
+    handleCopy(data) {
+      const that = this
+      wx.setClipboardData({
+        data: data,
+        success(res) {
+          wx.hideToast()
+          that.showToast = true
+        },
+      })
+    },
+    closeModal() {
+      this.modalVisible = false
+    },
+    handleShowModal() {
+      patientAPI
+        .getConnectFriends({
+          customerId: this.customerId,
+        })
+        .then((res) => {
+          this.friendsList = res.data || []
+          if (res.data && res.data.length === 0) {
+            wx.showToast({
+              title: '当前患者未关联企微/个微',
+              icon: 'none',
+            })
+            return
+          }
+          this.modalVisible = true
+        })
+    },
+    hideToast() {
+      this.showToast = false
+      this.modalVisible = false
     },
   },
   components: {
@@ -248,6 +337,133 @@ export default {
 }
 .content {
   padding-top: 40rpx;
+  .mask-pop {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .pop-content {
+      position: relative;
+      width: 640rpx;
+      max-height: 920rpx;
+      overflow: auto;
+      opacity: 1;
+      background: #ffffff;
+      border-radius: 24rpx;
+      box-shadow: 0rpx 18rpx 56rpx 16rpx rgba(0, 0, 0, 0.05),
+        0rpx 12rpx 32rpx 0rpx rgba(0, 0, 0, 0.08),
+        0rpx 6rpx 12rpx -8rpx rgba(0, 0, 0, 0.12);
+      .friend-list {
+        padding: 32rpx 0 80rpx 0;
+        width: 100%;
+        overflow-y: auto;
+        .item {
+          width: 100%;
+          padding: 0 32rpx;
+          display: flex;
+          align-items: center;
+          height: 96rpx;
+          box-sizing: border-box;
+          margin-bottom: 66rpx;
+          .avatar {
+            width: 96rpx;
+            height: 96rpx;
+            background-position: center;
+            background-size: 100%;
+            background-repeat: no-repeat;
+            border-radius: 50%;
+          }
+          .nick-name-wrap {
+            margin-left: 16rpx;
+            margin-right: auto;
+            .name {
+              font-size: 34rpx;
+              font-family: PingFangSC, PingFangSC-Medium;
+              font-weight: 500;
+              color: #191919;
+              width: 306rpx;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+            .belong-wechat {
+              font-size: 28rpx;
+              font-family: PingFangSC, PingFangSC-Regular;
+              color: #7f7f7f;
+              width: 306rpx;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+          }
+          .chat-btn {
+            color: #ffffff;
+            width: 120rpx;
+            height: 56rpx;
+            background: #5cbb89;
+            border-radius: 28rpx;
+            text-align: center;
+            line-height: 56rpx;
+            font-size: 28rpx;
+          }
+        }
+      }
+      .bottom-close {
+        background: #ffffff;
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 111rpx;
+        border-top: 2rpx solid #e5e5e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 34rpx;
+        font-family: PingFangSC, PingFangSC-Regular;
+        color: #5cbb89;
+        border-radius: 0 0 24rpx 24rpx;
+      }
+    }
+    .show-toast {
+      box-sizing: border-box;
+      font-size: 34rpx;
+      font-family: PingFangSC, PingFangSC-Medium;
+      font-weight: 500;
+      color: #191919;
+      padding: 60rpx 48rpx;
+      z-index: 100;
+      position: absolute;
+      width: 620rpx;
+      height: 432rpx;
+      opacity: 1;
+      background: #ffffff;
+      border-radius: 24rpx;
+      box-shadow: 0rpx 10rpx 28rpx 8rpx rgba(0, 0, 0, 0.05),
+        0rpx 6rpx 16rpx 0rpx rgba(0, 0, 0, 0.08),
+        0rpx 4rpx 6rpx -4rpx rgba(0, 0, 0, 0.12);
+      .close-toast {
+        border-top: 2rpx solid #e5e5e5;
+        position: absolute;
+        width: 100%;
+        height: 111rpx;
+        bottom: 0;
+        left: 0;
+        font-size: 34rpx;
+        font-family: PingFangSC, PingFangSC-Regular;
+        font-weight: 400;
+        text-align: center;
+        color: #5cbb89;
+        line-height: 111rpx;
+      }
+    }
+  }
 }
 .menu-area {
   padding: 0 32rpx;
@@ -309,6 +525,10 @@ export default {
       }
       &-icon-color7 {
         $values: rgba(91, 218, 153, 1), rgba(52, 197, 122, 1);
+        @include colors($values...);
+      }
+      &-icon-color8 {
+        $values: rgba(113, 187, 255, 1), rgba(24, 144, 255, 1);
         @include colors($values...);
       }
 

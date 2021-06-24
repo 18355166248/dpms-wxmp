@@ -6,14 +6,22 @@ import { toastUtil, flyUtil, commonUtil, utils } from 'mpcommon'
 import '@/styles/common.scss'
 import './utils/filter'
 import './utils/globalMixin'
+import './polyfill'
+import statisticsAPI from './APIS/statistics.api'
 
 import uView from 'uview-ui'
+
 Vue.use(uView)
+
+Vue.config.errorHandler = (err, vm, info) => {
+  statisticsAPI.log({ message: err.message, stack: err.stack.toString() })
+  statisticsAPI.log({ info, data: vm.$data })
+}
 
 Vue.config.productionTip = false
 Vue.use(uma)
 
-Vue.prototype.$utils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
+Vue.prototype.$dpmsUtils = { ...commonUtil, ...toastUtil, ...flyUtil, ...utils }
 Vue.prototype.$store = store
 
 Vue.prototype.$systemInfo = uni.getSystemInfoSync()

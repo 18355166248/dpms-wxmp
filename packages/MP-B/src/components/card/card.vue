@@ -181,14 +181,14 @@ export default {
   },
   data() {
     return {
-      GENDER_ENUM: this.$utils.getEnums('Gender'),
-      REGISTER_ENUM: this.$utils.getEnums('Register'),
+      GENDER_ENUM: this.$dpmsUtils.getEnums('Gender'),
+      REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
     }
   },
   computed: {
     cardMargin() {
       const size =
-        this.marginConfig && this.$utils.isNumber(this.marginConfig.size)
+        this.marginConfig && this.$dpmsUtils.isNumber(this.marginConfig.size)
           ? this.marginConfig.size
           : 32
 
@@ -231,14 +231,14 @@ export default {
     },
     cornerMarkerFormat() {
       const val = this.cornerMarker
-      if (this.$utils.isObject(val)) {
+      if (this.$dpmsUtils.isObject(val)) {
         return {
-          size: this.$utils.isNumber(val.size) ? val.size : 60,
-          bgColor: this.$utils.isString(val.bgColor) ? val.bgColor : '#f6404a',
-          color: this.$utils.isString(val.color) ? val.color : '#fafafa',
+          size: this.$dpmsUtils.isNumber(val.size) ? val.size : 60,
+          bgColor: this.$dpmsUtils.isString(val.bgColor) ? val.bgColor : '#f6404a',
+          color: this.$dpmsUtils.isString(val.color) ? val.color : '#fafafa',
           text: val.text || '跨',
         }
-      } else if (this.$utils.isBoolean(val) && val) {
+      } else if (this.$dpmsUtils.isBoolean(val) && val) {
         return {
           size: 60,
           bgColor: '#f6404a',
@@ -258,7 +258,7 @@ export default {
     },
     badgeObj() {
       if (this.status) {
-        if (this.$utils.isNumber(this.status)) {
+        if (this.$dpmsUtils.isNumber(this.status)) {
           const text = this.status
             ? this.REGISTER_ENUM.properties[this.status]?.zh_CN
             : '--'
@@ -295,7 +295,7 @@ export default {
 
           return badge
         }
-        if (this.$utils.isObject(this.status)) {
+        if (this.$dpmsUtils.isObject(this.status)) {
           return this.status
         }
       }

@@ -1,70 +1,82 @@
 <template>
-  <view :id="elId" class="v-tabs">
-    <scroll-view
-      id="scrollContainer"
-      :scroll-x="scroll"
-      :scroll-left="scroll ? scrollLeft : 0"
-      :scroll-with-animation="scroll"
-      :style="{ position: fixed ? 'fixed' : 'relative', zIndex: 1993 }"
+  <view>
+    <view
+      :id="elId"
+      class="v-tabs"
+      :style="{
+        position: sticky ? '-webkit-sticky' : 'relative',
+        position: sticky ? 'sticky' : 'relative',
+        zIndex: 1993,
+        top: 0,
+      }"
     >
-      <view
-        class="v-tabs__container"
-        :style="{
-          display: scroll ? 'inline-flex' : 'flex',
-          whiteSpace: scroll ? 'nowrap' : 'normal',
-          background: bgColor,
-          height,
-          padding,
-        }"
+      <scroll-view
+        id="scrollContainer"
+        :scroll-x="scroll"
+        :scroll-left="scroll ? scrollLeft : 0"
+        :scroll-with-animation="scroll"
+        :style="{ position: fixed ? 'fixed' : 'relative', zIndex: 1993 }"
       >
         <view
-          class="v-tabs__container-item"
-          v-for="(v, i) in tabs"
-          :key="i"
+          class="v-tabs__container"
           :style="{
-            color: current == i ? activeColor : color,
-            fontSize: current == i ? fontSize : fontSize,
-            fontWeight: bold && current == i ? 'bold' : '',
-            justifyContent: !scroll ? 'center' : '',
-            flex: scroll ? '' : 1,
-            padding: paddingItem,
-          }"
-          @click="change(i)"
-        >
-          {{ field ? v[field] : v }}
-        </view>
-        <view
-          v-if="!pills"
-          class="v-tabs__container-line"
-          :style="{
-            background: lineColor,
-            width: lineWidth + 'px',
-            height: lineHeight,
-            borderRadius: lineRadius,
-            left: lineLeft + 'px',
-            transform: `translateX(-${lineWidth / 2}px)`,
-          }"
-        ></view>
-        <view
-          v-else
-          class="v-tabs__container-pills"
-          :style="{
-            background: pillsColor,
-            borderRadius: pillsBorderRadius,
-            left: pillsLeft + 'px',
-            width: currentWidth + 'px',
+            display: scroll ? 'inline-flex' : 'flex',
+            whiteSpace: scroll ? 'nowrap' : 'normal',
+            background: bgColor,
             height,
+            padding,
           }"
-        ></view>
-      </view>
-    </scroll-view>
-    <view
-      class="v-tabs__placeholder"
-      :style="{
-        height: fixed ? height : '0',
-        padding,
-      }"
-    ></view>
+        >
+          <view
+            class="v-tabs__container-item"
+            v-for="(v, i) in tabs"
+            :key="i"
+            :style="{
+              color: current == i ? activeColor : color,
+              fontSize: current == i ? fontSize : fontSize,
+              fontWeight: bold && current == i ? 'bold' : '',
+              justifyContent: !scroll ? 'center' : '',
+              flex: scroll ? '' : 1,
+              padding: paddingItem,
+            }"
+            @click="change(i)"
+          >
+            {{ field ? v[field] : v }}
+          </view>
+          <view
+            v-if="!pills"
+            class="v-tabs__container-line"
+            :style="{
+              background: lineColor,
+              width: lineWidth + 'px',
+              height: lineHeight,
+              borderRadius: lineRadius,
+              left: lineLeft + 'px',
+              transform: `translateX(-${lineWidth / 2}px)`,
+            }"
+          ></view>
+          <view
+            v-else
+            class="v-tabs__container-pills"
+            :style="{
+              background: pillsColor,
+              borderRadius: pillsBorderRadius,
+              left: pillsLeft + 'px',
+              width: currentWidth + 'px',
+              height,
+            }"
+          ></view>
+        </view>
+      </scroll-view>
+      <view
+        class="v-tabs__placeholder"
+        :style="{
+          height: fixed ? height : '0',
+          padding,
+        }"
+      ></view>
+    </view>
+    <slot />
   </view>
 </template>
 
@@ -90,6 +102,8 @@
  * @property {String} pillsBorderRadius = '10rpx' 胶囊圆角大小
  * @property {String} field 如果是对象，显示的键名
  * @property {Boolean} fixed = [true | false] 是否固定
+ * @property {Boolean} sticky = [true | false] 是否吸附到顶部
+
  * @property {String} paddingItem = '0 22rpx' 选项的边距
  *
  * @event {Function(current)} change 改变标签触发
@@ -175,6 +189,10 @@ export default {
       default: '',
     },
     fixed: {
+      type: Boolean,
+      default: false,
+    },
+    sticky: {
       type: Boolean,
       default: false,
     },

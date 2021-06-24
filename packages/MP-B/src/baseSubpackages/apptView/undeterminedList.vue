@@ -78,7 +78,7 @@ export default {
       }
     },
     clickAppointmentCard(appt) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/apptDetail?appointmentId=' +
           appt.appointmentId,

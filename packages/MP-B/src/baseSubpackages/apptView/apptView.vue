@@ -185,7 +185,7 @@ export default {
         .concat(`&endTimeStamp=${end.valueOf()}`)
         .concat(`&doctorId=${group.key}`)
         .concat('&type=createAppt')
-      this.$utils.push({ url })
+      this.$dpmsUtils.push({ url })
     },
     onChangeAppointment({ detail }) {
       const { origin, change, confirm } = detail
@@ -221,13 +221,13 @@ export default {
       )
     },
     onDetail({ detail }) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/baseSubpackages/apptForm/apptDetail?appointmentId=' + detail.id,
       })
     },
     async initData() {
       this.isInitLoading = true
-      this.$utils.showPageLoading()
+      this.$dpmsUtils.showPageLoading()
       // 1. 设置访问机构。对于总部/大区，访问机构需先获取上一次访问的机构；对于非总部/大区，访问机构则为登录人当前机构
       if (this.isHeaderWithLargeArea) {
         const {
@@ -273,7 +273,7 @@ export default {
       const { data: config } = await diagnosisAPI.getWeakFlow()
       this.medicalConfig = config
 
-      this.$utils.hidePageLoading()
+      this.$dpmsUtils.hidePageLoading()
       this.isInitLoading = false
     },
     initEvent() {

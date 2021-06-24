@@ -180,7 +180,7 @@ export default {
       return true
     },
   },
-  created() {
+  mounted() {
     this.initData()
   },
   methods: {

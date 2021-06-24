@@ -78,12 +78,12 @@ export default {
       'clearState',
     ]),
     onStaffClick(name) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/finance-report/staffList?name=${name}`,
       })
     },
     onProjectClick() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/pages/finance-report/projectList',
       })
     },
@@ -92,12 +92,12 @@ export default {
     },
     onSave() {
       uni.$emit('finFilter', 'filter')
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     onReset() {
       this.clearState()
       uni.$emit('finFilter', 'empty')
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
   },
 }
