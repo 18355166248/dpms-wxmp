@@ -739,8 +739,8 @@ export default {
       this.patientTypeList = res.data
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
 
-      // 判断是否是当前机构的患者类型，不是的话，患者类型名称后面带上患者所属机构名称
-      if (!this.formData.settingsTypeId) {
+      // 判断是否是当前机构的患者类型，不是的话，患者类型名称后面带上患者所属机构名称（不存在settingsTypeName的时候也return掉）
+      if (!this.formData.settingsTypeId || !this.formData.settingsTypeName) {
         return
       }
       const bool = this.patientTypeList.some(
