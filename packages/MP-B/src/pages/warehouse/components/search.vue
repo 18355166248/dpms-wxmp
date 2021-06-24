@@ -15,7 +15,7 @@
           />
         </view>
         <view v-if="showHistory" class="goods-search-main-cancel"
-          ><text @click="showHistory = false">取消</text></view
+          ><text @click="handleCancleHis">取消</text></view
         >
       </view>
     </view>
@@ -82,7 +82,7 @@
       </view>
       <empty v-else disabled />
     </view>
-    <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="343">
+    <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="302">
       <view class="drawer-title">
         <text>筛选</text>
       </view>
@@ -147,6 +147,7 @@ export default {
   },
   data() {
     return {
+      isFirstShow: true, // 是否是第一次进入搜索区域, 默认是
       oneCategoryName: '全部',
       showHistory: true,
       oneCategoryId: 0,
@@ -295,6 +296,8 @@ export default {
     },
     async confirm() {
       this.showHistory = false
+      // 查询过后 就不再是第一次进入
+      this.isFirstShow = false
       // 搜索后清空数据
       this.twoCategoryList = []
       this.threeCategoryList = []
@@ -306,6 +309,16 @@ export default {
       let params = { merchandiseName: this.merchandiseName || null }
       const res = await this.getGoodsList(params)
       this.pagination = res
+    },
+    // 处理 搜索界面点击取消
+    handleCancleHis() {
+      // 隐藏搜索
+      if (this.isFirstShow) {
+        this.$dpmsUtils.back()
+      } else {
+        // this.showHistory = false
+        this.confirm()
+      }
     },
     // 点击历史记录
     selectHistory(value) {
