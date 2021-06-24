@@ -143,9 +143,9 @@ export default {
     const res = wx.getSystemInfoSync()
     this.env = res.environment || ''
     this.getCouponList()
-    if (this.isqywx === '1') {
-      wx.hideHomeButton()
-    }
+    // if (this.isqywx === '1') {
+    //   wx.hideHomeButton()
+    // }
   },
   methods: {
     changeValue(e) {

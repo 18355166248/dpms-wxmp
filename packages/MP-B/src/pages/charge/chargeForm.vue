@@ -75,7 +75,7 @@ export default {
         currentIds.memberId = this.memberId
       }
       this.setPatientDetail(currentIds)
-      wx.hideHomeButton()
+      // wx.hideHomeButton()
     }
 
     this.init()
