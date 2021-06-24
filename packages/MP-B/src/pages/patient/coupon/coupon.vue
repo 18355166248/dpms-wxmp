@@ -234,9 +234,17 @@ export default {
           chargeWay: 1,
         })
         uni.hideLoading()
-        this.$utils.show('优惠劵发送成功')
+
+        uni.showToast({
+          title: '优惠劵发送成功',
+          icon: 'none',
+          duration: 2000,
+        })
+        setTimeout(() => {
+          uni.navigateBack()
+        }, 1000)
+
         this.disabled = false
-        uni.navigateBack()
         // if (this.isqywx === '1') {
         //   this.toWxWork()
         // }
