@@ -63,6 +63,7 @@ export default {
   onLoad(params) {
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
+    this.memberId = Number(params.memberId)
     this.currentTab = Number(params.tab) || 0
 
     // 存储到patient store中
