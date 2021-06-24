@@ -243,7 +243,7 @@ export default {
         })
         setTimeout(() => {
           uni.navigateBack()
-        }, 1000)
+        }, 500)
 
         this.disabled = false
         // if (this.isqywx === '1') {
