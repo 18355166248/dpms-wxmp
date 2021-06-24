@@ -216,10 +216,10 @@ export default {
       const index = this.list.findIndex(
         (item) => item.couponDefinitionId === this.couponDefinitionId,
       )
-      uni.showLoading({
-        title: '优惠劵发送中加载中',
-        mask: true,
-      })
+      // uni.showLoading({
+      //   title: '优惠劵发送中加载中',
+      //   mask: true,
+      // })
       const that = this
       try {
         this.disabled = true
@@ -230,7 +230,7 @@ export default {
           chargeWay: 1,
         })
 
-        uni.hideLoading()
+        // uni.hideLoading()
 
         if (resData.code === 0) {
           this.list[index].surplusTotal--
