@@ -7,7 +7,9 @@
         :key="index"
       >
         <view class="increase-record-list-item-main">
-          <text class="time">{{ item.confirmTime | filterTime }}</text>
+          <text class="time">{{
+            item.confirmTime | filterTime('YYYY-MM-DD HH:mm')
+          }}</text>
           <text class="amount"
             >{{ item.increaseOrDecreaseType == 1 ? '+' : '-'
             }}{{ item.adjustNum | thousandFormatter(0, '') }}</text
