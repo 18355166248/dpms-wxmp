@@ -75,7 +75,7 @@ export default {
         currentIds.memberId = this.memberId
       }
       this.setPatientDetail(currentIds)
-      wx.hideHomeButton()
+      // wx.hideHomeButton()
     }
 
     this.init()
@@ -102,7 +102,8 @@ export default {
           workStatus:
             this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
               ?.value || 1,
-          position: this.$dpmsUtils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
+          position:
+            this.$dpmsUtils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
         })
         .then((res) => {
           res?.data?.unshift({ staffId: 0, staffName: '全部医生' })
