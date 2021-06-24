@@ -116,7 +116,7 @@ export default {
     showDetail(item) {
       this.medicalRecordId = item.businessId
       wx.navigateTo({
-        url: `/baseSubpackages/approvalManagement/components/medicalRecords?medicalRecordId=${this.medicalRecordId}`,
+        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${this.medicalRecordId}`,
       })
     },
     getApprovalDetail() {
