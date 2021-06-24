@@ -33,7 +33,7 @@
     </view>
     <div class="mt-56">
       <dpmsButton @click="onSave" v-if="list && list.length" />
-      <!-- <button class="button" @click.stop="this.$utils.back()" v-else>
+      <!-- <button class="button" @click.stop="this.$dpmsUtils.back()" v-else>
         取消
       </button> -->
     </div>
@@ -65,7 +65,7 @@ export default {
   methods: {
     onSave() {
       uni.$emit('updateApptItemCheckedList', this.checked)
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     // 格式化列表进行展示
     formatList(list) {

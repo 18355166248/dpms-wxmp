@@ -92,7 +92,7 @@
           v-model="form.introducer"
           @click="
             () => {
-              this.$utils.push({
+              this.$dpmsUtils.push({
                 url: '/pages/patient/searchPatient/searchCustomer',
               })
             }
@@ -139,7 +139,7 @@
           v-model="form.introducer"
           @click="
             () => {
-              this.$utils.push({
+              this.$dpmsUtils.push({
                 url: '/pages/patient/searchPatient/searchPatient?type=source',
               })
             }
@@ -739,8 +739,8 @@ export default {
       this.patientTypeList = res.data
       this.form.settingsTypeId = this.patientTypeList[0].settingsTypeId
 
-      // 判断是否是当前机构的患者类型，不是的话，患者类型名称后面带上患者所属机构名称
-      if (!this.formData.settingsTypeId) {
+      // 判断是否是当前机构的患者类型，不是的话，患者类型名称后面带上患者所属机构名称（不存在settingsTypeName的时候也return掉）
+      if (!this.formData.settingsTypeId || !this.formData.settingsTypeName) {
         return
       }
       const bool = this.patientTypeList.some(
@@ -812,9 +812,9 @@ export default {
       }
     },
     onSyncClick() {
-      this.$utils.showLoading('刷新病例号中……')
+      this.$dpmsUtils.showLoading('刷新病例号中……')
       this.getPatientMedicalRecordNo()
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
     },
     filterFormData(data) {
       if (_.isEmpty(data)) {
@@ -832,7 +832,7 @@ export default {
       return data
     },
     onSelectTags() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/pages/patient/createPatient/personas?checked=' +
           this.form.tagIds.join(','),
@@ -859,7 +859,7 @@ export default {
         (err, fileds, formValue) => {
           this.form = formValue
           if (err) {
-            this.$utils.show(err[0]?.message)
+            this.$dpmsUtils.show(err[0]?.message)
             return
           }
           //保存患者时，添加禁用和loading效果

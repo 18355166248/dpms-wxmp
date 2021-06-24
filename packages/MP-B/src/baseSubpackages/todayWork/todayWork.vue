@@ -37,10 +37,7 @@
           class="today-work-list"
         >
           <template v-if="dataSource.length > 0">
-            <view
-              v-for="item in dataSource"
-              :key="item.roleTodayWorkRelationId"
-            >
+            <view v-for="item in dataSource" :key="item.appointmentId">
               <card
                 @card-click="
                   toPage('/pages/patient/patient', {
@@ -285,7 +282,15 @@
                               appointmentId: item.appointmentId,
                             })
                           "
-                          v-if="showCancel(item)"
+                          v-if="showCancelAppointment(item)"
+                        >
+                          取消
+                        </button>
+                        <button
+                          :disabled="disabled"
+                          class="button"
+                          @click.stop="cancelRegister(item)"
+                          v-if="showCancelRegister(item)"
                         >
                           取消
                         </button>
@@ -499,9 +504,9 @@ export default {
         'switch-receptionist': 'RECEPTIONIST',
         'switch-doctor': 'DOCTOR',
       }, // 菜单权限与枚举映射关系
-      REGISTER_ENUM: this.$utils.getEnums('Register'),
-      TODAY_WORK_ROLE_TYPE_ENUM: this.$utils.getEnums('TodayWorkRoleType'),
-      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
+      REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
+      TODAY_WORK_ROLE_TYPE_ENUM: this.$dpmsUtils.getEnums('TodayWorkRoleType'),
+      APPOINTMENT_STATUS_ENUM: this.$dpmsUtils.getEnums('AppointmentStatus'),
       isWeakflow: 0,
       statusTextValue: {},
       statusTextArray: {},
@@ -548,23 +553,22 @@ export default {
       const res = await diagnosisApi.getWeakFlow()
       this.isWeakflow = res.data?.isWeakflow
     },
-    // 治疗完成
-    finishTreatment(record, role) {
-      this.changeStatus(record, role)
-    },
-    // 接诊
-    treating(record, role) {
-      this.changeStatus(record, role)
-    },
     // 取消挂号
-    cancleRegister(record) {
+    cancelRegister(record) {
       uni.showModal({
         title: '提示',
         content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
         success: (res) => {
           if (res.confirm) {
-            const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
-            this.changeStatus(record)
+            diagnosisApi
+              .updateRegisterStatus({
+                registerId: record.registerId,
+                status: this.REGISTER_ENUM.REGISTER_CANCELED.value,
+              })
+              .then(() => {
+                this.$dpmsUtils.show('取消成功', { icon: 'success' })
+                this.emitPullDownRefresh()
+              })
           } else if (res.cancel) {
             console.log('用户点击取消')
           }
@@ -582,7 +586,7 @@ export default {
     },
     // 页面跳转
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,
@@ -591,58 +595,6 @@ export default {
     // 触发下拉事件
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
-    },
-    // 去重、合并角色数组
-    useConsolidateData(dataSource) {
-      if (dataSource.length > 0) {
-        const data = {}
-
-        dataSource.forEach((item) => {
-          if (item.todayWorkRoleType) {
-            if (data[item.todayWorkRoleType]) {
-              if (
-                data[item.todayWorkRoleType].roleTodayWorkRelationList &&
-                item.roleTodayWorkRelationList
-              ) {
-                // 合并角色的今日工作列表
-
-                const roleTodayWorkRelationList = [
-                  ...data[item.todayWorkRoleType].roleTodayWorkRelationList,
-                  ...item.roleTodayWorkRelationList,
-                ]
-
-                const distinctRoleTodayWorkRelationList = []
-
-                // 去重，保证角色的今日工作列表的唯一性
-                roleTodayWorkRelationList.forEach((item) => {
-                  const index = distinctRoleTodayWorkRelationList.findIndex(
-                    (record) => {
-                      return (
-                        record.todayWorkSettingId === item.todayWorkSettingId
-                      )
-                    },
-                  )
-
-                  if (index === -1) {
-                    distinctRoleTodayWorkRelationList.push(item)
-                  }
-                })
-
-                data[
-                  item.todayWorkRoleType
-                ].roleTodayWorkRelationList = distinctRoleTodayWorkRelationList
-              }
-            } else {
-              if (item?.roleTodayWorkRelationList?.length > 0) {
-                data[item.todayWorkRoleType] = item
-              }
-            }
-          }
-        })
-
-        return Object.values(data)
-      }
-      return []
     },
     // 初始化默认选中项
     initSelectedRole(distinctRoles) {
@@ -729,73 +681,7 @@ export default {
           this.enumStatus([newRowData])
 
           this.dataSource = [newRowData, ...this.dataSource]
-          console.log('this.dataSource:', this.dataSource)
         }
-      }
-    },
-    // 更新数据的挂号状态
-    updateDataForRegisterStatus(registerId, registerStatus, type, role) {
-      const rowIndex = this.dataSource.findIndex(
-        (item) => item.registerId === registerId,
-      )
-
-      if (type === 'REGISTER_CANCELED') {
-        this.dataSource.splice(rowIndex, 1)
-      } else {
-        const newRegisterStatus =
-          registerStatus < this.dataSource[rowIndex].registerStatus
-            ? this.dataSource[rowIndex].registerStatus
-            : registerStatus
-
-        const newRowData = {
-          ...this.dataSource[rowIndex],
-          registerStatus: newRegisterStatus,
-        }
-
-        if (role === 'DOCTOR') {
-          newRowData.doctorOperated = true
-        }
-        if (role === 'CONSULTANT') {
-          newRowData.consultedOperated = true
-        }
-
-        this.$set(this.dataSource, rowIndex, newRowData)
-      }
-
-      console.log('this.dataSource:', this.dataSource)
-    },
-    async changeStatus(record, role) {
-      const status = this.REGISTER_ENUM[record.type].value
-
-      uni.showLoading({
-        title: '正在提交',
-        mask: true,
-      })
-      const tips = {
-        REGISTER_CANCELED: '取消成功',
-        REGISTER_TREATING: '接诊成功',
-        REGISTER_TREATED: '治疗完成',
-      }
-      const [err, res] = await this.$utils.asyncTasks(
-        diagnosisApi.updateRegisterStatus({
-          registerId: record.registerId,
-          status,
-        }),
-      )
-
-      uni.hideLoading()
-
-      if (res) {
-        uni.showToast({
-          icon: 'success',
-          title: tips[record.type],
-        })
-        this.updateDataForRegisterStatus(
-          record.registerId,
-          status,
-          record.type,
-          role,
-        )
       }
     },
     // 获取列表数据
@@ -819,7 +705,7 @@ export default {
           mask: true,
         })
 
-        const [listErr, listRes] = await this.$utils.asyncTasks(
+        const [listErr, listRes] = await this.$dpmsUtils.asyncTasks(
           diagnosisApi[urlMap[this.selectedRole.enumValue]]({
             beginTime: moment().startOf('day').valueOf(),
             endTime: moment().endOf('day').valueOf(),
@@ -1004,14 +890,12 @@ export default {
       // 今日工作的角色枚举
       const { pageElementsList } = this.menu
 
-      console.log('TODAY_WORK_ROLE_TYPE_ENUM:', this.TODAY_WORK_ROLE_TYPE_ENUM)
       // 需要筛选的菜单枚举值enumValue
       const roles = pageElementsList
         .filter((element) => this.enumValue.includes(element.enumValue))
         .sort((prev, next) => prev.sort - next.sort)
 
       this.roles = roles
-      console.log('roles:', roles)
       this.initSelectedRole(roles)
 
       uni.startPullDownRefresh()
@@ -1049,10 +933,14 @@ export default {
     canUndo(record) {
       return record.registerStatus === this.REGISTER_ENUM.REGISTER_LEAVE?.value
     },
-    showCancel(item) {
+    showCancelAppointment(item) {
       return (
         item.registerStatus === this.REGISTER_ENUM.REGISTER_APPOINTED?.value ||
-        item.registerStatus === this.REGISTER_ENUM.REGISTER_CONFIRM?.value ||
+        item.registerStatus === this.REGISTER_ENUM.REGISTER_CONFIRM?.value
+      )
+    },
+    showCancelRegister(item) {
+      return (
         item.registerStatus === this.REGISTER_ENUM.REGISTER_REGISTERED?.value
       )
     },
@@ -1107,7 +995,7 @@ export default {
             todayWorkRoleType,
           })
           .then(() => {
-            this.$utils.show('接诊成功', { icon: 'success' })
+            this.$dpmsUtils.show('接诊成功', { icon: 'success' })
             this.emitPullDownRefresh()
             this.disabled = false
             uni.hideLoading()
@@ -1130,7 +1018,7 @@ export default {
             todayWorkRoleType,
           })
           .then(() => {
-            this.$utils.show('治疗完成', { icon: 'success' })
+            this.$dpmsUtils.show('治疗完成', { icon: 'success' })
             this.emitPullDownRefresh()
             this.disabled = false
             uni.hideLoading()
@@ -1153,7 +1041,7 @@ export default {
             appointmentId,
           })
           .then(() => {
-            this.$utils.show('已离开', { icon: 'success' })
+            this.$dpmsUtils.show('已离开', { icon: 'success' })
             this.emitPullDownRefresh()
             this.disabled = false
             uni.hideLoading()
@@ -1178,7 +1066,7 @@ export default {
                     appointmentStatus: 2,
                   })
                   .then(() => {
-                    this.$utils.show('回退成功', { icon: 'success' })
+                    this.$dpmsUtils.show('回退成功', { icon: 'success' })
                     this.emitPullDownRefresh()
                     this.disabled = false
                   })
@@ -1189,7 +1077,7 @@ export default {
                 diagnosisApi
                   .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
                   .then(() => {
-                    this.$utils.show('回退成功', { icon: 'success' })
+                    this.$dpmsUtils.show('回退成功', { icon: 'success' })
                     this.emitPullDownRefresh()
                     this.disabled = false
                   })

@@ -72,14 +72,14 @@ export default {
       const { type } = this
       let position
       if (type === 'doctor') {
-        position = this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2
+        position = this.$dpmsUtils.getEnums('StaffPosition')?.DOCTOR?.value || 2
       } else if (type === 'consultant') {
-        position = this.$utils.getEnums('StaffPosition')?.CONSULTANT?.value || 4
+        position = this.$dpmsUtils.getEnums('StaffPosition')?.CONSULTANT?.value || 4
       }
       return institutionAPI
         .getStaffListByPositionFromAllInstitution({
           workStatus:
-            this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+            this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
               ?.value || 1,
           position,
         })
@@ -106,7 +106,7 @@ export default {
         this.setConsultant(value)
       }
 
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
   },
 }

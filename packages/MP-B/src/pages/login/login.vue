@@ -185,7 +185,7 @@ export default {
     getEnums() {
       systemAPI.getDataDict().then((res) => {
         setStorage(STORAGE_KEY.ENUMS, res.data)
-        this.$utils.reLaunch({
+        this.$dpmsUtils.reLaunch({
           url: '/pages/home/home',
         })
       })
@@ -239,7 +239,7 @@ export default {
     openSelect() {
       this.validate((err, fileds) => {
         if (err) {
-          this.$utils.show(err[0].message)
+          this.$dpmsUtils.show(err[0].message)
           return
         }
 

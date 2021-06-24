@@ -341,12 +341,12 @@ export default {
         item.lastDealTime = moment(item.lastDealTime).format(
           'YYYY-MM-DD hh:mm:ss',
         )
-        item.totalAmount = this.$utils.formatPrice(item.totalAmount)
-        item.unitAmount = this.$utils.formatPrice(item.unitAmount)
+        item.totalAmount = this.$dpmsUtils.formatPrice(item.totalAmount)
+        item.unitAmount = this.$dpmsUtils.formatPrice(item.unitAmount)
         item.discount = item.discount + '%'
         item.allDiscount = item.allDiscount + '%'
         this.computedCol.forEach((it) => {
-          item[it] = this.$utils.formatPrice(item[it])
+          item[it] = this.$dpmsUtils.formatPrice(item[it])
         })
         return item
       })
@@ -374,7 +374,7 @@ export default {
         'consultantIds',
         'parentChargeType',
       ])
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })
     },

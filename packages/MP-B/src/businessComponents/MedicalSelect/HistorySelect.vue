@@ -123,7 +123,7 @@ export default {
     },
     activedContents(newVal, oldVal) {
       this.$emit('change', this.activedContents)
-      this.$utils.show('添加成功')
+      this.$dpmsUtils.show('添加成功')
     },
   },
 }

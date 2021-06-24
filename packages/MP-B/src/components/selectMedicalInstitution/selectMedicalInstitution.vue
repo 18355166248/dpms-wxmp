@@ -21,6 +21,7 @@
                 last: item.lastRank,
                 showchild: item.showChild,
                 open: item.open,
+                disabled: item.disabled,
               }"
             >
               <view
@@ -29,11 +30,25 @@
                 @tap="treeItemSelect(item, index)"
               >
                 <text
-                  v-if="item.source.institutionChainType === 4"
-                  class="icon icon-jia">
-                  加
-                </text>
-                <text v-else class="icon icon-zhi">直</text>
+                  v-if="item.source.medicalInstitutionType === 1"
+                  :class="['icon', 'icon-dan', { iconDisabled: item.disabled }]"
+                  >单</text
+                >
+                <text
+                  v-if="item.source.medicalInstitutionType === 2"
+                  :class="['icon', 'icon-zhi', { iconDisabled: item.disabled }]"
+                  >直</text
+                >
+                <text
+                  v-if="item.source.medicalInstitutionType === 3"
+                  :class="['icon', 'icon-da', { iconDisabled: item.disabled }]"
+                  >大</text
+                >
+                <text
+                  v-if="item.source.medicalInstitutionType === 4"
+                  :class="['icon', 'icon-jia', { iconDisabled: item.disabled }]"
+                  >加</text
+                >
                 {{ item.name }}
               </view>
               <view
@@ -169,6 +184,7 @@ export default {
           open: false, //是否打开
           show: rank === 0, // 自身是否显示
           hideArr: [],
+          disabled: item.status === 2 ? true : false, // 当前机构是否已停用
         })
         if (Array.isArray(item['children']) && item['children'].length > 0) {
           let parentid = [...parentId],

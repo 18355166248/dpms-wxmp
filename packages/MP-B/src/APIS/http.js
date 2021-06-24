@@ -197,9 +197,16 @@ httper.interceptors.response.use(
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
 
-      uni.reLaunch({
-        url: '/pages/login/login',
-      })
+      const systemInfo = uni.getSystemInfoSync()
+      if (systemInfo?.environment === 'wxwork') {
+        uni.redirectTo({
+          url: '/pages/login/qyLogin',
+        })
+      } else {
+        uni.reLaunch({
+          url: '/pages/login/login',
+        })
+      }
     } else {
       return Promise.reject(response.data)
     }

@@ -294,14 +294,14 @@ export default {
       ]
 
       records = records.map((item) => {
-        // item._realAmount = this.$utils.formatPrice(item.payAmount + item.payRefundAmount)
+        // item._realAmount = this.$dpmsUtils.formatPrice(item.payAmount + item.payRefundAmount)
         for (let i = 0; i < channelList.length; i++) {
-          item[`payStyleTotalAmountList${i + 1}`] = this.$utils.formatPrice(
+          item[`payStyleTotalAmountList${i + 1}`] = this.$dpmsUtils.formatPrice(
             item.payStyleTotalAmountList[i],
           )
         }
         lastComputed.forEach((it) => {
-          item[it] = this.$utils.formatPrice(item[it])
+          item[it] = this.$dpmsUtils.formatPrice(item[it])
         })
 
         item.cashierDate = moment(item.cashierDate).format(
@@ -337,7 +337,7 @@ export default {
         'doctorIds',
         'consultantIds',
       ])
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
       })
     },

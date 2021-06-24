@@ -130,7 +130,7 @@ export default {
     saveMyProfile() {
       this.validate((err, fileds) => {
         if (err) {
-          this.$utils.show(err[0].message)
+          this.$dpmsUtils.show(err[0].message)
           return
         }
         this.isLoading = true
@@ -148,11 +148,11 @@ export default {
               ...this.form,
             })
             let that = this
-            this.$utils.show('保存成功', {
+            this.$dpmsUtils.show('保存成功', {
               duration: 1000,
               complete() {
                 setTimeout(() => {
-                  that.$utils.back()
+                  that.$dpmsUtils.back()
                 }, 1000)
               },
             })

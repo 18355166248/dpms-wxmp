@@ -14,21 +14,19 @@
     <template v-else>
       <empty :disabled="true" text="暂无预约数据"></empty>
     </template>
-    <view v-if="!isHeadquartersAndRegion">
-      <fixed-footer :bgColor="primaryColor">
-        <button
-          class="button-new"
-          @click="
-            toPage('/baseSubpackages/apptForm/apptForm', {
-              type: 'createAppt',
-              patientId,
-            })
-          "
-        >
-          新建预约
-        </button>
-      </fixed-footer>
-    </view>
+    <fixed-footer :bgColor="primaryColor">
+      <button
+        class="button-new"
+        @click="
+          toPage('/baseSubpackages/apptForm/apptForm', {
+            type: 'createAppt',
+            patientId,
+          })
+        "
+      >
+        新建预约
+      </button>
+    </fixed-footer>
   </view>
 </template>
 
@@ -47,13 +45,22 @@ export default {
       primaryColor: this.$commonCss.commonColor,
       patient: {},
       dataSource: [],
-      INSTITUTION_CHAIN_TYPE_ENUM: this.$utils.getEnums('InstitutionChainType'),
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums('InstitutionChainType'),
     }
   },
   onShow() {
     this.init()
   },
   onLoad(params) {
+    // EXTRA: 企微侧边栏点击预约可以唤起小程序，并直接进入该页面，需屏蔽返回主页按钮
+    const systemInfo = uni.getSystemInfoSync()
+    if (
+      systemInfo?.environment === 'wxwork' &&
+      getCurrentPages().length === 1
+    ) {
+      uni.hideHomeButton()
+    }
+
     this.patientId = params.patientId
   },
   onReady() {
@@ -63,7 +70,7 @@ export default {
   methods: {
     // 页面跳转
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,
@@ -71,10 +78,10 @@ export default {
     },
 
     async init() {
-      this.$utils.showLoading()
+      this.$dpmsUtils.showLoading()
       await this.getPatient()
       await this.loadData()
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
     },
     // 获取列表数据
     async loadData() {
@@ -117,13 +124,6 @@ export default {
           ].key
         }
       }
-    },
-    isHeadquartersAndRegion() {
-      return (
-        (this.institutionChainTypeKey === 'CHAIN' &&
-          Number(this.medicalInstitution.topParentId) === 0) ||
-        this.institutionChainTypeKey === 'REGIONAL'
-      )
     },
   },
   components: {
