@@ -1,3 +1,4 @@
+import config from '../../config'
 import httper from '../http'
 import scrmHttper from '../httpScrm'
 
@@ -154,6 +155,29 @@ const patientAPI = {
   // 获取处置记录列表
   getDisposeList(data) {
     return httper.get('/diagnosis/mini-apps/dispose/list-dispose', data)
+  },
+  // 优惠劵列表
+  getCouponTemplateListByName(data) {
+    return httper.get('/member/coupon/select/page-filter', data)
+  },
+  // 发劵
+  createPromotion(data) {
+    return httper.post('billing/promotion/create', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
+  // 获取处置记录列表
+  getMustData(data) {
+    return httper.get('/patient/patient/common/service/patient/field/get', data)
+    // 获取患者绑定好友列表
+  },
+  getConnectFriends(data) {
+    return scrmHttper.get(
+      'communication/channel/customer-communication-list',
+      data,
+    )
   },
 }
 

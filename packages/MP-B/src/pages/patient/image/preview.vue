@@ -176,7 +176,7 @@ export default {
                     title: '删除成功',
                   })
                   if (this.imgs.length === 0) {
-                    this.$utils.back()
+                    this.$dpmsUtils.back()
                   }
                 }
               })
@@ -186,7 +186,7 @@ export default {
     },
     editRemark() {
       const { diagnosisTeethImageId } = this.imgs[this.swiperIndex]
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/image/editRemark?diagnosisTeethImageId=${diagnosisTeethImageId}&swiperIndex=${this.swiperIndex}`,
       })
     },

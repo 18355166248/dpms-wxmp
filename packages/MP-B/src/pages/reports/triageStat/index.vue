@@ -216,18 +216,18 @@ export default {
     async getDoctors() {
       const { data } = await institutionAPI.getWorkList({
         workStatus:
-          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+          this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
+        position: this.$dpmsUtils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
       })
       uni.setStorageSync('triageDoctorList', data)
     },
     async getConsultants() {
       const { data } = await institutionAPI.getWorkList({
         workStatus:
-          this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+          this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
-        position: this.$utils.getEnums('StaffPosition')?.CONSULTANT?.value || 4,
+        position: this.$dpmsUtils.getEnums('StaffPosition')?.CONSULTANT?.value || 4,
       })
       uni.setStorageSync('triageConsultantList', data)
     },
@@ -275,7 +275,7 @@ export default {
 
         el.gender = ['', '男', '女'][el.gender] || '未知'
 
-        el.payAmount = this.$utils.formatPrice(el.payAmount)
+        el.payAmount = this.$dpmsUtils.formatPrice(el.payAmount)
       })
       if (this.current === 1) {
         this.contents = records
@@ -299,7 +299,7 @@ export default {
       // // 分诊咨询师id
       // triageConsultedStaffId: '',
       // searchKey: '',
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/reports/triageStat/filter?searchKey=${this.searchKey}&doctorStaffId=${this.doctorStaffId}&institutionDepartmentId=${this.institutionDepartmentId}&triageConsultedStaffId=${this.triageConsultedStaffId}`,
       })
     },

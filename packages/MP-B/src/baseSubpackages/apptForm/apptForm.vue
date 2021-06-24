@@ -55,7 +55,7 @@
           type="number"
           title="持续时间"
           v-model="form.duration"
-          @blur="onBlurWithDuration"
+          @blur="onDurationInputBlur"
         >
           <template v-slot:inputRight>
             <span class="inputRightIcon">分钟</span>
@@ -185,7 +185,7 @@ import { mapState } from 'vuex'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import { commonUtil } from 'mpcommon'
 import _ from 'lodash'
-// import { apptFormUtil } from './apptForm.util'
+
 import {
   getStaffListOfInstitution,
   getTreatmentTypeByInstitution,
@@ -546,16 +546,27 @@ export default {
       }
       this.refreshInstitutionRelatedOptions()
     },
-    onBlurWithDuration(value) {
-      // TODO 设置和机构相关，预约视图也有此问题
-      const timeStep = this.apptSetting.appointmentDuration || 30
-      this.$set(this.form, 'duration', Math.ceil(value / timeStep) * timeStep)
+    onDurationInputBlur(value) {
+      // TODO apptSetting和机构相关，从该数据从预约视图带过来，若直接进入此界面会获取不到数据
+      const stepInMinutes = this.apptSetting?.appointmentDuration || 30
+      const startMoment = moment(this.form.appointmentBeginTimeStamp)
+      const endMoment = moment().startOf('day').add(1, 'days')
+
+      const maxStep = Math.floor(
+        endMoment.diff(startMoment, 'minutes') / stepInMinutes,
+      )
+      const currentStep = Math.ceil(value / stepInMinutes)
+      this.$set(
+        this.form,
+        'duration',
+        Math.min(maxStep, currentStep) * stepInMinutes,
+      )
     },
     // 跳转选择员工页面
     onSelectStaff(title, optionKey, formKey) {
       uni.setStorageSync('apptStaffSelectList', this.options[optionKey])
       const checked = this.form[formKey].join(',')
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/staffList?' +
           `&checked=${checked}` +
@@ -565,7 +576,7 @@ export default {
     },
     // 选择预约项目
     onSelectApptItem() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/apptItemList?checked=' +
           this.form.appointmentItems.join(',') +
@@ -574,7 +585,7 @@ export default {
       })
     },
     onSelectMainComplaintList() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/mainComplaintList?checked=' +
           this.form.patientMainComplaintIds.join(','),
@@ -587,7 +598,7 @@ export default {
 
       //  患者校验
       if (!this.form.patient) {
-        this.$utils.show('暂无患者信息，请先选择患者信息')
+        this.$dpmsUtils.show('暂无患者信息，请先选择患者信息')
         return
       }
 
@@ -601,7 +612,7 @@ export default {
 
         // 不能预约到总部或大区
         if (checkIsHeaderOrLargeArea(medicalInstitution)) {
-          this.$utils.show('不可预约到总部/大区')
+          this.$dpmsUtils.show('不可预约到总部/大区')
           return
         }
 
@@ -635,23 +646,23 @@ export default {
         res = await appointmentAPI.createAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
-        this.$utils.show('新增预约成功')
+        this.$dpmsUtils.show('新增预约成功')
       } else if (this.formType === 'editAppt') {
         res = await appointmentAPI.updateAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
-        this.$utils.show('更新预约成功')
+        this.$dpmsUtils.show('更新预约成功')
       } else if (this.formType === 'editRegister') {
         // 在预约上挂号
         res = await diagnosisAPI.createRegister({
           appointmentJsonStr: JSON.stringify(submitData),
         })
-        this.$utils.show('挂号成功')
+        this.$dpmsUtils.show('挂号成功')
       } else if (this.formType === 'createRegister') {
         // 直接挂号
         const data = formatRegisterData(this.form)
         res = await diagnosisAPI.createNewRegister(data)
-        this.$utils.show('新增挂号成功')
+        this.$dpmsUtils.show('新增挂号成功')
       }
 
       uni.$emit(globalEventKeys.apptFormWithSaveSuccess, {
@@ -659,11 +670,11 @@ export default {
         params: this.pageOption,
         appt: { ...submitData, ...res.data },
       })
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     // 选择患者
     selectPatient() {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/pages/patient/searchPatient/searchPatient?type=createAppt',
       })
     },

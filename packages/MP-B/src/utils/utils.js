@@ -58,6 +58,7 @@ export function setCustomOpenId() {
 
 export const numberUtils = {
   thousandFormatter(value, places = 2, sysmbol = '￥') {
+    if (!value && places === 0) return `${sysmbol}${value}`
     const zero = ``
     if (isNaN(value) || value === '') return zero
 
@@ -67,10 +68,12 @@ export const numberUtils = {
       let right = value.split('.')[1] // 小数点右边
       // 保留places位小数点，当长度没有到places时，用0补足。
       right = right
-        ? right.length >= places
+        ? right.length > places
           ? '.' + right.substr(0, places)
           : '.' + right + '0'.repeat(places - right.length)
-        : '.' + '0'.repeat(places)
+        : places > 0
+        ? '.' + '0'.repeat(places)
+        : ''
       var temp = left
         .split('')
         .reverse()

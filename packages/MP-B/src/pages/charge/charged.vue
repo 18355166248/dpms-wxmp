@@ -73,7 +73,7 @@
           <view class="listLine">
             <view class="ml-32">{{ order.billTypeText }}</view>
             <view class="totalFee"
-              >应收金额：{{ $utils.formatPrice(order.receivableAmount) }}</view
+              >应收金额：{{ $dpmsUtils.formatPrice(order.receivableAmount) }}</view
             >
           </view>
           <view class="listLine">
@@ -81,7 +81,7 @@
             <view class="chargeFee"
               >实收金额：
               <view class="feeRed">{{
-                $utils.formatPrice(order.receiptAmount)
+                $dpmsUtils.formatPrice(order.receiptAmount)
               }}</view>
             </view>
           </view>
@@ -90,7 +90,7 @@
             <view class="arrFee"
               >欠费：
               <view class="feeGreen">{{
-                $utils.formatPrice(order.arrearageAmount)
+                $dpmsUtils.formatPrice(order.arrearageAmount)
               }}</view>
             </view>
           </view>
@@ -122,12 +122,12 @@ export default {
   data() {
     return {
       billSettlementArray: this.initEnumArray(
-        this.$utils.getEnums('BillSettlement'),
+        this.$dpmsUtils.getEnums('BillSettlement'),
         'BillSettlement',
       ),
       billSettlementIndex: 0,
       billSupperTypeArray: this.initEnumArray(
-        this.$utils.getEnums('BillSupperType'),
+        this.$dpmsUtils.getEnums('BillSupperType'),
         'BillSupperType',
       ),
       billSupperTypeTypeIndex: 0,
@@ -243,7 +243,7 @@ export default {
       return array
     },
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,

@@ -30,7 +30,7 @@ export default {
   methods: {
     onSave() {
       if (!this.name || !this.groupId) {
-        return this.$utils.show('请输入标签内容')
+        return this.$dpmsUtils.show('请输入标签内容')
       }
       const _self = this
       _self.disabled = true
@@ -40,7 +40,7 @@ export default {
           name: _self.name,
         })
         .then(() => {
-          _self.$utils.back()
+          _self.$dpmsUtils.back()
           _self.disabled = false
         })
         .catch(() => {

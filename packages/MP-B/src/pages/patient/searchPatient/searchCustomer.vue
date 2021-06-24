@@ -66,7 +66,7 @@ export default {
         request: 'loading',
       },
       paramsObj: {},
-      GENDER_ENUM: this.$utils.getEnums('Gender'),
+      GENDER_ENUM: this.$dpmsUtils.getEnums('Gender'),
     }
   },
   components: {
@@ -157,7 +157,7 @@ export default {
         patientId: customerId,
         patientName: customerName,
       })
-      return this.$utils.back()
+      return this.$dpmsUtils.back()
     },
   },
 }

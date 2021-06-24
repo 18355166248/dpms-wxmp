@@ -67,7 +67,7 @@ export default {
           .join(','),
       }
       this.setParentChargeType(value)
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     getProject() {
       return billAPI.chargeTypeParentList().then((res) => {

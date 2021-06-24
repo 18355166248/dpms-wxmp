@@ -52,7 +52,7 @@
       <div class="bottom">
         <button
           @click="
-            $utils.push({
+            $dpmsUtils.push({
               url: `/pages/patient/medicalRecord/create?patientId=${patientId}`,
             })
           "
@@ -77,20 +77,20 @@ export default {
     return {
       records: [],
       primaryColor: this.$commonCss.commonColor,
-      VIS_TYPE_ENUM: this.$utils.getEnums('VisType'),
+      VIS_TYPE_ENUM: this.$dpmsUtils.getEnums('VisType'),
     }
   },
   methods: {
     ...mapMutations('medicalRecord', ['setMedicalRecordObj']),
     async getMedicalRecordList() {
       if (this.total && this.total <= (this.current - 1) * 10)
-        return this.$utils.show('没有更多了')
-      this.$utils.showLoading('加载中...')
+        return this.$dpmsUtils.show('没有更多了')
+      this.$dpmsUtils.showLoading('加载中...')
       const res = await diagnosisAPI.getMedicalRecordList({
         patientId: this.patientId,
         current: this.current,
       })
-      this.$utils.clearLoading()
+      this.$dpmsUtils.clearLoading()
       ++this.current
       this.total = res.data.total
       this.records = [
@@ -104,7 +104,7 @@ export default {
       ]
     },
     toDetail({ medicalRecordId, approveStatus }) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`,
       })
     },

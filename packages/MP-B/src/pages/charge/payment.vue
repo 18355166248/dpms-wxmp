@@ -56,7 +56,7 @@
             <view class="chargeFee"
               >实收：
               <view class="feeRed">{{
-                $utils.formatPrice(order.receiveAmount)
+                $dpmsUtils.formatPrice(order.receiveAmount)
               }}</view>
             </view>
           </view>
@@ -86,7 +86,7 @@ export default {
   data() {
     return {
       payTradeTypeArray: this.initEnumArray(
-        this.$utils.getEnums('PayTradeType'),
+        this.$dpmsUtils.getEnums('PayTradeType'),
         'PayTradeType',
       ),
       payTradeTypeIndex: 0,

@@ -24,7 +24,7 @@ export default {
           console.log(res)
           this.doLogin(res.code)
         } else {
-          this.$utils.show('登录失败！' + res.errMsg)
+          this.$dpmsUtils.show('登录失败！' + res.errMsg)
         }
       },
     })
@@ -38,8 +38,8 @@ export default {
       const corpId = query?.corpId
       const agentId = query?.agentId
       if (!corpId || !agentId) {
-        this.$utils.show('corpId或agentId为空，将跳转至登录页面')
-        this.$utils.reLaunch({
+        this.$dpmsUtils.show('corpId或agentId为空，将跳转至登录页面')
+        this.$dpmsUtils.reLaunch({
           url: "/pages/login/login",
         })
         return
@@ -47,7 +47,7 @@ export default {
 
       const loginResult = await authAPI.qyLogin({ code, corpId, agentId })
       if (loginResult.code !== 0) {
-        this.$utils.show('登录失败！')
+        this.$dpmsUtils.show('登录失败！')
         return
       }
 
@@ -57,7 +57,7 @@ export default {
       await this.initData()
 
       const newPath = path.startsWith('/') ? path : `/${path}`
-      this.$utils.reLaunch({
+      this.$dpmsUtils.reLaunch({
         url: `${newPath}?${qs.stringify(query)}`,
       })
     },

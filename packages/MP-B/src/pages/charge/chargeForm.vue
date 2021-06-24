@@ -34,7 +34,7 @@ import pending from './pending'
 import charged from './charged'
 import payment from './payment'
 import institutionAPI from 'APIS/institution/institution.api'
-import { mapMutations } from 'vuex';
+import { mapMutations } from 'vuex'
 
 export default {
   components: {
@@ -66,15 +66,16 @@ export default {
     this.currentTab = Number(params.tab) || 0
 
     // 存储到patient store中
-    if(params.isqywx) {
+    if (params.isqywx) {
       const currentIds = {
         patientId: this.patientId,
         customerId: this.customerId,
       }
-      if(this.memberId) {
+      if (this.memberId) {
         currentIds.memberId = this.memberId
       }
       this.setPatientDetail(currentIds)
+      wx.hideHomeButton()
     }
 
     this.init()
@@ -99,9 +100,9 @@ export default {
       institutionAPI
         .getStaffListByPositionFromAllInstitution({
           workStatus:
-            this.$utils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
+            this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
               ?.value || 1,
-          position: this.$utils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
+          position: this.$dpmsUtils.getEnums('StaffPosition')?.DOCTOR?.value || 2,
         })
         .then((res) => {
           res?.data?.unshift({ staffId: 0, staffName: '全部医生' })

@@ -234,9 +234,9 @@ export default {
       registerId: null,
       appointmentId: null,
       dataSource: {},
-      APPOINTMENT_STATUS_ENUM: this.$utils.getEnums('AppointmentStatus'),
-      STAFF_POSITION_ENUM: this.$utils.getEnums('StaffPosition'),
-      REGISTER_ENUM: this.$utils.getEnums('Register'),
+      APPOINTMENT_STATUS_ENUM: this.$dpmsUtils.getEnums('AppointmentStatus'),
+      STAFF_POSITION_ENUM: this.$dpmsUtils.getEnums('StaffPosition'),
+      REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
       isHeaderOrLargeArea: false,
     }
   },
@@ -318,7 +318,7 @@ export default {
     },
     // 页面跳转
     toPage(url, params) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: `${url}?${qs.stringify(params, {
           arrayFormat: 'comma', // a: [1, 2] => a=1,2
         })}`,
@@ -327,7 +327,7 @@ export default {
     // 请求数据
     async loadData() {
       uni.showNavigationBarLoading()
-      const [listErr, listRes] = await this.$utils.asyncTasks(
+      const [listErr, listRes] = await this.$dpmsUtils.asyncTasks(
         appointmentAPI.getAppointmentDetail({
           appointmentId: this.appointmentId,
         }),
@@ -346,7 +346,7 @@ export default {
       uni.hideNavigationBarLoading()
     },
     toPatient(id) {
-      this.$utils.push({
+      this.$dpmsUtils.push({
         url: '/pages/patient/patient?patientId=' + id,
       })
     },
@@ -364,7 +364,7 @@ export default {
               })
               .then(({ code }) => {
                 if (code === 0) {
-                  this.$utils.back()
+                  this.$dpmsUtils.back()
                 }
               })
           }

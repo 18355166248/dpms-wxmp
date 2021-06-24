@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      GENDER_ENUM: this.$utils.getEnums('Gender'),
+      GENDER_ENUM: this.$dpmsUtils.getEnums('Gender'),
     }
   },
   computed: {

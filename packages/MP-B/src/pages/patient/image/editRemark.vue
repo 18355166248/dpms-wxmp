@@ -65,7 +65,7 @@ export default {
               'workbenchStore/setTeethPreviewImgs',
               this.teethPreviewImgs,
             )
-            this.$utils.back()
+            this.$dpmsUtils.back()
             this.disabled = false
           })
           .catch(() => {
@@ -78,7 +78,7 @@ export default {
             remark: this.remark,
           })
           .then(() => {
-            this.$utils.back()
+            this.$dpmsUtils.back()
             this.disabled = false
           })
           .catch(() => {

@@ -118,9 +118,9 @@ export default {
         ...this.form,
         patientId: this.patientId,
       })
-      this.$utils.clearLoading()
-      this.$utils.show('上传成功', { icon: 'success' })
-      this.$utils.back()
+      this.$dpmsUtils.clearLoading()
+      this.$dpmsUtils.show('上传成功', { icon: 'success' })
+      this.$dpmsUtils.back()
       this.$nextTick(() => {
         this.pending = false
       })
@@ -128,12 +128,12 @@ export default {
     submit() {
       if (this.pending) return
       this.pending = true
-      this.$utils.showLoading('请稍后...')
-      this.$utils.formValidate(this.rules, this.form, (err) => {
+      this.$dpmsUtils.showLoading('请稍后...')
+      this.$dpmsUtils.formValidate(this.rules, this.form, (err) => {
         if (err) {
           this.pending = false
-          this.$utils.clearLoading()
-          return this.$utils.show(err[0].message)
+          this.$dpmsUtils.clearLoading()
+          return this.$dpmsUtils.show(err[0].message)
         }
         this.saveImageInfo()
       })

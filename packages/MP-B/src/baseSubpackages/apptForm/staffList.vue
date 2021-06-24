@@ -48,7 +48,7 @@ export default {
         key: this.key,
         value: this.checked,
       })
-      this.$utils.back()
+      this.$dpmsUtils.back()
     },
     // 保证未指定医生和其他选项互斥
     onCheckStaff(staffId) {

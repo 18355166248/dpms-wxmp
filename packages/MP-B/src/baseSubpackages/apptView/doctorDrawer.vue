@@ -171,7 +171,7 @@ export default {
       this.selectedDoctorList = [ALL_DOCTOR_ITEM]
     },
     gotoUndeterminedList() {
-      this.$utils.push({ url: '/baseSubpackages/apptView/undeterminedList' })
+      this.$dpmsUtils.push({ url: '/baseSubpackages/apptView/undeterminedList' })
       this.close()
     },
     getUndeterminedCount() {
