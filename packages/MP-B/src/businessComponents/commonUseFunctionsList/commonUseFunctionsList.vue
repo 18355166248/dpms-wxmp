@@ -35,26 +35,37 @@ export default {
       menuList: [
         {
           type: 'visiting',
+          key: ['any'],
         },
         {
           type: 'appoint',
+          key: ['any'],
         },
         {
           type: 'patient',
+          key: ['any'],
         },
+
         // {
         //   type: 'approval',
+        //   key:['supply-chain-management','approval']
         // },
         {
           type: 'preview',
+          key: ['supply-chain-management', 'basic-setting', 'item-management'],
         },
         {
           type: 'inventory',
+          key: [
+            'supply-chain-management',
+            'warehousing',
+            'warehouse-management',
+          ],
         },
         // {
         //   type: 'receive',
+        //   key:['supply-chain-management','receive']
         // },
-
         // {
         //   type: 'archive',
         // },
@@ -63,7 +74,9 @@ export default {
   },
   computed: {
     filterMenuList() {
-      return this.menuList.filter((item, index) => index < 7)
+      return this.menuList
+        .filter((item) => this.menuPermission(item.key))
+        .filter((item, index) => index < 7)
     },
   },
   created() {},

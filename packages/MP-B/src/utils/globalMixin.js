@@ -12,6 +12,7 @@ const golbalMixin = {
     },
     menuPermission(keyArr = ['report-center', 'performance', 'doctors']) {
       if (!Array.isArray(keyArr)) return false
+      if (keyArr[0] === 'any') return true
       const { menuList } = this.menu
       let _keyArr = [...keyArr]
       let findObj
