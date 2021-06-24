@@ -116,7 +116,7 @@ export default {
     showDetail(item) {
       this.medicalRecordId = item.businessId
       wx.navigateTo({
-        url: `/baseSubpackages/approvalManagement/components/medicalRecords?medicalRecordId=${this.medicalRecordId}`,
+        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${this.medicalRecordId}`,
       })
     },
     getApprovalDetail() {
@@ -130,16 +130,9 @@ export default {
       this.approvalList = []
     },
   },
-  onload() {
-    // this.initData()
-  },
   onReachBottom() {},
   onPullDownRefresh() {
     this.initData()
-  },
-  onHide() {
-    this.initData()
-    this.getApprovalDetail()
   },
 }
 </script>
