@@ -7,7 +7,9 @@
         :key="index"
       >
         <view class="check-record-list-item-main">
-          <text class="time">{{ item.confirmTime | filterTime }}</text>
+          <text class="time">{{
+            item.confirmTime | filterTime('YYYY-MM-DD HH:mm')
+          }}</text>
           <text class="amount"
             >{{ item.changeNum > 0 ? '+' : ''
             }}{{ item.changeNum | thousandFormatter(0, '') }}</text
