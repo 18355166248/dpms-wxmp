@@ -130,16 +130,9 @@ export default {
       this.approvalList = []
     },
   },
-  onload() {
-    // this.initData()
-  },
   onReachBottom() {},
   onPullDownRefresh() {
     this.initData()
-  },
-  onHide() {
-    this.initData()
-    this.getApprovalDetail()
   },
 }
 </script>
