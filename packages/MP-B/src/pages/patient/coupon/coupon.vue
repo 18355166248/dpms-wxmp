@@ -178,10 +178,6 @@ export default {
       this.getCouponList()
     },
     async getCouponList() {
-      // uni.showLoading({
-      //   title: '数据加载中',
-      //   mask: true,
-      // })
       try {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
@@ -199,13 +195,9 @@ export default {
         } else {
           this.dataSourceStatus.status = 'more'
         }
-
-        // uni.hideLoading()
       } catch (error) {
         console.log(error)
         this.dataSourceStatus.status = 'noMore'
-
-        // uni.hideLoading()
       }
     },
     onScrollToLower() {
@@ -221,10 +213,14 @@ export default {
       if (!this.couponDefinitionId) {
         return this.$utils.show('请选择优惠劵')
       }
+      const index = this.list.findIndex(
+        (item) => item.couponDefinitionId === this.couponDefinitionId,
+      )
       uni.showLoading({
         title: '优惠劵发送中加载中',
         mask: true,
       })
+      const that = this
       try {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
@@ -233,27 +229,37 @@ export default {
           customerId: this.customerId,
           chargeWay: 1,
         })
+
         uni.hideLoading()
 
-        uni.showToast({
-          title: '优惠劵发送成功',
-          icon: 'none',
-          duration: 2000,
-        })
-        setTimeout(() => {
-          uni.navigateBack()
-        }, 1000)
-
+        if (resData.code === 0) {
+          this.list[index].surplusTotal--
+          uni.showToast({
+            title: '优惠劵发送成功',
+            icon: 'none',
+            duration: 1000,
+            mask: true,
+            success(data) {
+              setTimeout(() => {
+                if (that.isqywx === '1') {
+                  uni.redirectTo({
+                    url: `/pages/patient/patient?patientId=${that.patientId}`,
+                  })
+                } else {
+                  uni.navigateBack()
+                }
+              }, 1000)
+            },
+          })
+        }
         this.disabled = false
-        // if (this.isqywx === '1') {
-        //   this.toWxWork()
-        // }
       } catch (error) {
         console.log(error)
         uni.hideLoading()
         this.disabled = false
       }
     },
+    async toSubmit() {},
     toWxWork() {
       // wx.qy.checkSession 需要先验证session_key有效，但是一直无效。。。
       wx.qy.sendChatMessage({
