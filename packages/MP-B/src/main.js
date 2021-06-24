@@ -6,9 +6,11 @@ import { toastUtil, flyUtil, commonUtil, utils } from 'mpcommon'
 import '@/styles/common.scss'
 import './utils/filter'
 import './utils/globalMixin'
+import './polyfill'
 import statisticsAPI from './APIS/statistics.api'
 
 import uView from 'uview-ui'
+
 Vue.use(uView)
 
 Vue.config.errorHandler = (err, vm, info) => {
