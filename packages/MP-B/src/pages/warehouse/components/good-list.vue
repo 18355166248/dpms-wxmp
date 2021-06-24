@@ -54,7 +54,7 @@
         </view>
       </view>
     </view>
-    <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="343">
+    <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="302">
       <view class="drawer-title">
         <text>筛选</text>
       </view>
