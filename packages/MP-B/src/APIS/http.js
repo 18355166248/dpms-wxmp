@@ -50,27 +50,6 @@ httper.interceptors.request.use((request) => {
         delete request.isNoNeedAuth
       }
     },
-    (request) => {
-      const systemInfo = uni.getSystemInfoSync()
-      if (systemInfo?.environment === 'wxwork') {
-        const options = uni.getLaunchOptionsSync()
-        const { qwMedicalInstitutionId: mId } = options.query
-
-        const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
-        if (mId && mId !== medicalInstitution?.medicalInstitutionId) {
-          // httper.lock();
-          // httper.clear();
-          // httper.unlock();
-          // 企微传入机构和当前机构不一致，需重新登录
-          uni.redirectTo({
-            url: '/pages/login/qyLogin',
-          })
-          return Promise.reject('重新登录')
-        }
-      }
-
-      return request
-    },
 
     // 默认参数
     (request) => {
