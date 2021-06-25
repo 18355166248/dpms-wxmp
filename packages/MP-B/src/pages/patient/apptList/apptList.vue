@@ -45,7 +45,9 @@ export default {
       primaryColor: this.$commonCss.commonColor,
       patient: {},
       dataSource: [],
-      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums('InstitutionChainType'),
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums(
+        'InstitutionChainType',
+      ),
     }
   },
   onShow() {
@@ -53,13 +55,13 @@ export default {
   },
   onLoad(params) {
     // EXTRA: 企微侧边栏点击预约可以唤起小程序，并直接进入该页面，需屏蔽返回主页按钮
-    const systemInfo = uni.getSystemInfoSync()
-    if (
-      systemInfo?.environment === 'wxwork' &&
-      getCurrentPages().length === 1
-    ) {
-      uni.hideHomeButton()
-    }
+    // const systemInfo = uni.getSystemInfoSync()
+    // if (
+    //   systemInfo?.environment === 'wxwork' &&
+    //   getCurrentPages().length === 1
+    // ) {
+    //   uni.hideHomeButton()
+    // }
 
     this.patientId = params.patientId
   },
