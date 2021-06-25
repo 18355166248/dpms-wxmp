@@ -37,6 +37,7 @@ import patientAPI from '@/APIS/patient/patient.api'
 import apptCard from '@/businessComponents/apptCard/apptCard.vue'
 import empty from '@/components/empty/empty.vue'
 import { mapState } from 'vuex'
+import { checkQwInstitution } from '@/utils/utils'
 
 export default {
   data() {
@@ -54,15 +55,7 @@ export default {
     this.init()
   },
   onLoad(params) {
-    // EXTRA: 企微侧边栏点击预约可以唤起小程序，并直接进入该页面，需屏蔽返回主页按钮
-    // const systemInfo = uni.getSystemInfoSync()
-    // if (
-    //   systemInfo?.environment === 'wxwork' &&
-    //   getCurrentPages().length === 1
-    // ) {
-    //   uni.hideHomeButton()
-    // }
-
+    checkQwInstitution(params)
     this.patientId = params.patientId
   },
   onReady() {

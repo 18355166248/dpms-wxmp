@@ -136,3 +136,18 @@ export function getWeek(date) {
       return '周日'
   }
 }
+
+/**
+ * 查看从企微启动的机构id和当前是否一致
+ * @param {*} params 页面的onLoad参数
+ */
+export function checkQwInstitution(params) {
+  const { isqywx, qwMedicalInstitutionId } = params
+  if (isqywx && qwMedicalInstitutionId) {
+    const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+    const mId = Number(qwMedicalInstitutionId)
+    if (mId !== medicalInstitution?.medicalInstitutionId) {
+      uni.redirectTo({ url: '/pages/login/qyLogin' })
+    }
+  }
+}
