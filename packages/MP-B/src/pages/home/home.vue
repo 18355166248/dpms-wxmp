@@ -81,7 +81,7 @@
       <!--常用功能-->
       <view class="common-functions-List-wrap pb-32">
         <view class="menu-area-header ph-32 pb-32">常用功能</view>
-        <commonUseFunctionsList ></commonUseFunctionsList>
+        <commonUseFunctionsList></commonUseFunctionsList>
       </view>
       <!--统计报表-->
       <view
@@ -208,7 +208,9 @@ export default {
       },
 
       switchClinicStatus: 'success',
-      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums('InstitutionChainType'),
+      INSTITUTION_CHAIN_TYPE_ENUM: this.$dpmsUtils.getEnums(
+        'InstitutionChainType',
+      ),
       // 列表数据
       pageData: {
         patientCount: 0,
@@ -344,7 +346,7 @@ export default {
         { name: '新建预约', value: 'newAppt', icon: 'icon-clock' },
       ]
       if (this.isHeadquartersAndRegion) {
-        return list[0]
+        return list.slice(0, 1)
       }
       return list
     },
@@ -534,6 +536,8 @@ export default {
   }
   .common-functions-List-wrap {
     width: 100%;
+    padding-top: 40rpx;
+    background-color: white;
   }
   .status_bar {
     height: var(--status-bar-height);
