@@ -1,6 +1,6 @@
 <template>
   <!--诊疗服务-->
-  <view class="container-wrap">
+  <view class="container-wrap" :key="randomKey">
     <view v-if="classifyList.length > 0" class="srcoll-wrap">
       <!--一级类目列表-->
       <view class="left-scroll">
@@ -8,16 +8,15 @@
           scroll-y="true"
           class="scroll-Y"
           :style="{ height: scrollHeight }"
-          :scroll-into-view="scrollTypeId"
           :scroll-with-animation="true"
+          @scroll="onLeftListScroll"
         >
           <view
             class="scroll-view-item"
             v-for="(type, index) in classifyList"
             :key="type.settingsChargeTypeId"
             :class="{ active: currentTypeId === type.settingsChargeTypeId }"
-            :id="`type` + type.settingsChargeTypeId"
-            @click="toggleChargeType(type)"
+            @click="getChargeItemData(type, index)"
           >
             <view
               class="name"
@@ -42,26 +41,17 @@
           scroll-y="true"
           class="scroll-Y"
           :style="{ height: scrollHeight }"
-          :scroll-into-view="scrollItemId"
           :scroll-with-animation="true"
-          @scroll="onItemListScroll"
         >
-          <view
-            class="scroll-view-item"
-            v-for="type in classifyList"
-            :key="type.settingsChargeTypeId"
-            :id="`item` + type.settingsChargeTypeId"
-          >
+          <view class="scroll-view-item">
             <!--一级类目-->
             <view class="chargeType">
-              <view class="ellipsisChargeName">{{
-                type.settingsChargeTypeName
-              }}</view>
+              <view class="ellipsisChargeName">{{ currentTypeName }}</view>
             </view>
             <!--二级类目-->
             <view
               class="chargeItem"
-              v-for="item in type.chargeItemList"
+              v-for="item in chargeItemList"
               :key="item.settingsChargeItemId"
             >
               <view class="left-item">
@@ -99,17 +89,27 @@ export default {
   data() {
     return {
       scrollHeight: 0,
+      currentIndex: 0,
       currentTypeId: '',
+      currentTypeName: '洁牙项目',
       //分类列表
       classifyList: [],
       //滚动的锚点id
       scrollTypeId: '',
-      scrollItemId: '',
+      //源数据
+      originDataList: [],
+      pageSize: 12,
+      currentPage: 1,
+      randomKey: Math.random(),
+      chargeItemList: [],
     }
   },
   computed: {
     ...mapState('searchProjectStore', ['searchChargeList']),
     ...mapState('dispose', ['disposeList']),
+    currentListLength() {
+      return this.currentPage * this.pageSize
+    },
   },
   created() {},
   mounted() {
@@ -136,24 +136,43 @@ export default {
         .getChargeItems()
         .then((res) => {
           if (res?.data.length > 0) {
+            this.originDataList = res.data
             this.classifyList = this.handleClassifyList(
-              res.data,
-              'chargeItemList',
+              res.data.slice(0, this.pageSize),
             )
-            this.$nextTick(() => {
-              this.getChargeItemHeight(res.data)
-            })
+            this.getChargeItemData(this.classifyList[0], this.currentIndex)
           }
         })
         .catch(() => {})
     },
+    onLeftListScroll() {
+      if (this.currentListLength >= this.originDataList.length) {
+        return
+      }
+      const addList = this.handleClassifyList(
+        this.originDataList.slice(
+          this.currentListLength,
+          this.currentListLength + this.pageSize,
+        ),
+      )
+      this.classifyList = this.classifyList.concat(addList)
+      this.currentPage += 1
+    },
+    getChargeItemData(item, index) {
+      this.randomKey = Math.random()
+      this.currentIndex = index
+      this.currentTypeId = item?.settingsChargeTypeId
+      this.currentTypeName = item?.settingsChargeTypeName
+
+      this.$nextTick(() => {
+        this.chargeItemList = item.chargeItemList
+        this.$forceUpdate()
+      })
+    },
     //处理列表数据
-    handleClassifyList(list, key) {
-      return list.map((item, index) => {
+    handleClassifyList(list, key = 'chargeItemList') {
+      return list.map((item) => {
         if (item[key] && item[key].length > 0) {
-          if (index === 0) {
-            this.currentTypeId = item.settingsChargeTypeId
-          }
           item[key].forEach((project) => {
             project.checked = false
           })
@@ -161,52 +180,35 @@ export default {
         return item
       })
     },
-    //切换一级目录
-    toggleChargeType(item) {
-      this.currentTypeId = item.settingsChargeTypeId
-      this.scrollItemId = 'item' + item.settingsChargeTypeId
-    },
     //选中和取消
     onCheckBoxChange(value, item) {
       item.checked = value
     },
-    //右侧列表滚动
-    onItemListScroll(event) {
-      const scrollTop = event.detail.scrollTop
-      this.classifyList.forEach((item, index) => {
-        if (
-          scrollTop >= item.heightArea[0] &&
-          scrollTop <= item.heightArea[1]
-        ) {
-          this.scrollTypeId = 'type' + item.settingsChargeTypeId
-          this.currentTypeId = item.settingsChargeTypeId
-        }
-      })
-    },
-    //获取一级目录所有内容的高度
-    getChargeItemHeight() {
-      const query = uni.createSelectorQuery().in(this)
-      uni.getSystemInfo({
-        success: (res) => {
-          query
-            .selectAll('.right-scroll .scroll-view-item')
-            .boundingClientRect((data) => {
-              let allItemArr = []
-              data.reduce((pre, next) => {
-                let itemArr = [pre, pre + next.height - 1]
-                allItemArr.push(itemArr)
-                return pre + next.height
-              }, 0)
-              allItemArr.forEach((item, index) => {
-                this.classifyList[index].heightArea = item
-              })
-            })
-            .exec()
-        },
-      })
-    },
     //合并数据
     mergeChargeList() {
+      let maxIndex = 0
+      if (this.searchChargeList.length > 0) {
+        this.originDataList.forEach((type, index) => {
+          this.searchChargeList.forEach((item) => {
+            if (type.settingsChargeTypeId === item.settingsChargeTypeId) {
+              if (index >= maxIndex) {
+                maxIndex = index
+              }
+            }
+          })
+        })
+      }
+      let newPage = 1
+      if (maxIndex > this.currentListLength - 1) {
+        newPage = Math.floor(maxIndex / this.pageSize) + 1
+      }
+      const endIndex =
+        this.currentListLength + (newPage - this.currentPage) * this.pageSize
+      const addList = this.handleClassifyList(
+        this.originDataList.slice(this.currentListLength, endIndex),
+      )
+      this.classifyList = this.classifyList.concat(addList)
+
       this.classifyList.forEach((item) => {
         item?.chargeItemList?.length > 0 &&
           item.chargeItemList.forEach((charge) => {
