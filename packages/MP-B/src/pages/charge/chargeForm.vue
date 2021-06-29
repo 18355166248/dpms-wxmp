@@ -62,7 +62,7 @@ export default {
     }
   },
   onLoad(params) {
-    checkQwInstitution(params)
+    checkQwInstitution()
 
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
