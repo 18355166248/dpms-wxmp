@@ -17,11 +17,9 @@ export default {
     }
   },
   onLoad() {
-    console.log('企业微信登录')
     wx.qy.login({
       success: (res) => {
         if (res.code) {
-          console.log(res)
           this.doLogin(res.code)
         } else {
           this.$dpmsUtils.show('登录失败！' + res.errMsg)
@@ -33,7 +31,6 @@ export default {
     async doLogin(code) {
       const fullPath = getStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH)
       const query = qs.parse(fullPath.split('?')[1])
-      console.log('hc:!!!!!!!', query)
 
       const corpId = query?.corpId
       const agentId = query?.agentId
