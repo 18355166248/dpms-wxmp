@@ -55,7 +55,7 @@ export default {
     this.init()
   },
   onLoad(params) {
-    checkQwInstitution(params)
+    checkQwInstitution()
     this.patientId = params.patientId
   },
   onReady() {

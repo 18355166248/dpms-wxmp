@@ -138,7 +138,7 @@ export default {
     }
   },
   onLoad(params) {
-    checkQwInstitution(params)
+    checkQwInstitution()
 
     this.patientId = params.patientId
     this.customerId = params.customerId
