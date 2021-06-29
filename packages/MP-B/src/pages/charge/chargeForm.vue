@@ -35,6 +35,7 @@ import charged from './charged'
 import payment from './payment'
 import institutionAPI from 'APIS/institution/institution.api'
 import { mapMutations } from 'vuex'
+import { checkQwInstitution } from '@/utils/utils'
 
 export default {
   components: {
@@ -61,6 +62,8 @@ export default {
     }
   },
   onLoad(params) {
+    checkQwInstitution()
+
     this.patientId = Number(params.patientId)
     this.customerId = Number(params.customerId)
     this.memberId = Number(params.memberId)

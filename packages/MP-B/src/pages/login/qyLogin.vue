@@ -7,7 +7,7 @@
 <script>
 import systemAPI from '@/APIS/system.api'
 import authAPI from '@/APIS/auth/auth.api'
-import { setStorage, STORAGE_KEY } from '@/utils/storage'
+import { setStorage, getStorage, STORAGE_KEY } from '@/utils/storage'
 import qs from 'qs'
 
 export default {
@@ -17,11 +17,9 @@ export default {
     }
   },
   onLoad() {
-    console.log('企业微信登录')
     wx.qy.login({
       success: (res) => {
         if (res.code) {
-          console.log(res)
           this.doLogin(res.code)
         } else {
           this.$dpmsUtils.show('登录失败！' + res.errMsg)
@@ -31,16 +29,15 @@ export default {
   },
   methods: {
     async doLogin(code) {
-      const option = uni.getLaunchOptionsSync()
-      const { query, path } = option
-      // const corpId = query?.corpId || 'wwc436a6d7c6c66d49'
-      // const agentId = query?.agentId || 1000039
+      const fullPath = getStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH)
+      const query = qs.parse(fullPath.split('?')[1])
+
       const corpId = query?.corpId
       const agentId = query?.agentId
       if (!corpId || !agentId) {
         this.$dpmsUtils.show('corpId或agentId为空，将跳转至登录页面')
         this.$dpmsUtils.reLaunch({
-          url: "/pages/login/login",
+          url: '/pages/login/login',
         })
         return
       }
@@ -56,10 +53,7 @@ export default {
       await this.getLoginInfo(staffId, medicalInstitutionId, token)
       await this.initData()
 
-      const newPath = path.startsWith('/') ? path : `/${path}`
-      this.$dpmsUtils.reLaunch({
-        url: `${newPath}?${qs.stringify(query)}`,
-      })
+      this.$dpmsUtils.reLaunch({ url: fullPath })
     },
     async getLoginInfo(_uid, _mtId, _token) {
       const res = await systemAPI.getLoginInfo({

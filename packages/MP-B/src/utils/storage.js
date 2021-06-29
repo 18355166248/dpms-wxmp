@@ -14,6 +14,9 @@ const STORAGE_KEY = {
   APPTSETTING: 'apptSetting',
   //scrm菜单
   MENU: 'menu',
+  ENV: 'env',
+  // 企微侧边栏进入的第一个页面
+  QW_ENTRY_FULL_PATH: 'qwEntryFullPath',
 }
 
 export { STORAGE_KEY }
