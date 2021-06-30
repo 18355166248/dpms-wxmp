@@ -4,7 +4,7 @@
       <view class="drag-tip">长按拖动可调整位置与顺序</view>
       <movable-area class="common-functions-list movable-area">
         <movable-view
-          v-for="item in selectedList"
+          v-for="(item,index) in selectedList"
           :key="item.id"
           class="movable-view"
           :x="item.x"
@@ -20,7 +20,7 @@
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
               :showCloseIcon="true"
-              @close="onMenuDelete(item)"
+              @close="onMenuDelete(item,index)"
             >
             </menuIcon>
             <view class="menu-text">{{ menuDic[item.type].text }}</view>
@@ -56,7 +56,7 @@
               :menu-style="menuDic[item.type].menuStyle"
             ></menuIcon>
             <view class="infos">
-              <view class="menu-name">物品一览</view>
+              <view class="menu-name">{{ menuDic[item.type].text }}</view>
               <view class="menu-des"
                 >患者全视图，患者全视图患者全视图患者全视图。患者全</view
               >
@@ -64,7 +64,7 @@
           </view>
           <view>
             <view class="btn added" v-if="item.added">已添加</view>
-            <view class="btn tobe-add" v-else>添加</view>
+            <view class="btn tobe-add" v-else @click="handleAddClick(item)">添加</view>
           </view>
         </view>
       </view>
@@ -149,23 +149,104 @@ export default {
           id: 'visiting',
           added: true,
         },
+        {
+          type: 'appoint',
+          id: 'appoint',
+          added: true,
+        },
+        {
+          type: 'patient',
+          id: 'patient',
+          added: true,
+        },
+        {
+          type: 'preview',
+          id: 'preview',
+          added: true,
+        },
+        {
+          type: 'purchase',
+          id: 'purchase',
+          added: true,
+        },
+        {
+          type: 'receive',
+          id: 'receive',
+          added: true,
+        },
+        {
+          type: 'inventory',
+          id: 'inventory',
+          added: true,
+        },
+        {
+          type: 'archive',
+          id: 'archive',
+          added: true,
+        },
       ],
     }
   },
   computed: {},
   created() {
     let list = this.menuList.filter((item, index) => index < 7)
-    this.selectedList = this.initMenuPosition(list)
+    this.selectedList = this.initMenuPosition(list);
+    this.updateDataListStatus();
   },
   mounted() {},
   methods: {
     //可拖动列表menu删除
-    onMenuDelete(item) {
+    async onMenuDelete(item,index) {
       this.selectedList = this.selectedList.filter(
-        (menu) => menu.id !== item.id,
+        (menu,ind) => index !== ind,
       )
-      this.initMenuPosition(this.selectedList)
+      await this.initMenuPosition(this.selectedList);
+      await this.updateMenuList(index);
     },
+
+    /*
+     * 点击删除操作按钮把下面的 item 拿出来一个放进去
+     * */
+    async updateMenuList(index){
+      if(this.waitList.length){
+        var item = this.waitList.shift();
+        this.selectedList.push(item);
+        await this.initMenuPosition(this.selectedList);
+      }
+      this.updateDataListStatus();
+    },
+
+    /*
+     * 点击删除/新增按钮的时候下面列表的状态变化
+     * */
+    updateDataListStatus(){
+       this.toAddList = this.toAddList.map(ele => {
+          return {
+             ...ele,
+             added:false
+          }
+       });
+       var seleted = this.selectedList.map(ele => ele.id);
+       for(var i = 0; i < this.toAddList.length; i++){
+         if(seleted.includes(this.toAddList[i].id)){
+           this.toAddList[i].added = true;
+         }
+       }
+    },
+
+    /*
+     * 点击下面的添加按钮操作
+     * */
+    handleAddClick(item){
+      if(this.selectedList.length < 7){
+        this.selectedList.push(item);
+      }else{
+        this.waitList.push(item);
+      }
+      this.initMenuPosition(this.selectedList);
+      this.updateDataListStatus();
+    },
+
     //等待添加到常用功能的列表里的menu被删除
     onWaitMenuDelete(item) {
       this.waitList = this.waitList.filter((menu) => menu.id !== item.id)
@@ -337,6 +418,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 50rpx;
     .menu-info-wrap {
       display: flex;
       align-items: center;
