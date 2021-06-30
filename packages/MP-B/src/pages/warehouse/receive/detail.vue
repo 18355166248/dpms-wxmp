@@ -2,7 +2,7 @@
   <view class="receive">
     <view class="receive-head">
       <view class="receive-head-status"
-        >领用状态：{{ detail.receiveStatus }}</view
+        >领用状态：{{ receiveStatusMap[detail.receiveStatus] || '' }}</view
       >
     </view>
     <view class="receive-main">
@@ -22,9 +22,10 @@
               <view
                 ><text class="label">领用数量：</text
                 ><text class="value">{{
-                  `${item.receiveNum}${item.inventoryUnitStr}`
-                }}</text></view
-              >
+                  item.receiveNum | thousandFormatter(0, '')
+                }}</text>
+                <text>{{ item.inventoryUnitStr }}</text>
+              </view>
             </view>
           </view>
         </view>
@@ -40,7 +41,9 @@
           <view class="receive-main-info-item">
             <view class="label">领用单位</view>
             <view class="value">{{
-              `(${detail.receiveDeptType})${detail.receiveDeptName}`
+              `(${receiveDeptTypeMap[detail.receiveDeptType]})${
+                detail.receiveDeptName
+              }`
             }}</view>
           </view>
           <view class="receive-main-info-item">
@@ -49,28 +52,39 @@
           </view>
           <view class="receive-main-info-item">
             <view class="label">物品种类</view>
-            <view class="value">合计80件</view>
+            <view class="value">
+              <text class="mr20">{{
+                detail.merchandiseTotal | thousandFormatter(0, '')
+              }}</text>
+              <text
+                >(合计{{
+                  detail.merchandiseItemTotal | thousandFormatter(0, '')
+                }}件)</text
+              >
+            </view>
           </view>
           <view class="receive-main-info-item">
             <view class="label">领用说明</view>
-            <view class="value"
-              >多久啊看见的拉开讲道理卡德加拉克的多久啊逻辑的辣三丁对进垃圾堆上课啦</view
-            >
+            <view class="value">{{ detail.description }}</view>
           </view>
         </view>
       </scroll-view>
-      <view class="receive-main-action">
-        <view class="edit_btn">修改</view>
+      <!-- 当领用状态为 待提交时 显示 -->
+      <view class="receive-main-action" v-if="detail.receiveStatus == 4">
+        <view class="edit_btn" @click="handleEdit">修改</view>
         <view class="submit_btn">提交申请</view>
       </view>
     </view>
   </view>
 </template>
 <script>
+import { receiveStatusMap, receiveDeptTypeMap } from '../enum'
 import receiveAPI from '@/APIS/warehouse/receive.api.js'
 export default {
   data() {
     return {
+      receiveStatusMap,
+      receiveDeptTypeMap,
       merchandiseReceiveOrderId: null,
       detail: {},
     }
@@ -85,6 +99,11 @@ export default {
         merchandiseReceiveOrderId,
       })
       this.detail = res.data
+    },
+    handleEdit() {
+      this.$dpmsUtils.replace({
+        url: `/pages/warehouse/receive/apply?merchandiseReceiveOrderId=${this.detail.merchandiseReceiveOrderId}`,
+      })
     },
   },
 }
@@ -127,6 +146,7 @@ export default {
     flex-direction: column;
     .scroll-area {
       flex: 1;
+      overflow: hidden;
     }
     &-action {
       box-sizing: border-box;
@@ -216,6 +236,9 @@ export default {
     }
     .value {
       color: #191919;
+    }
+    .mr20 {
+      margin-right: 20rpx;
     }
   }
 }

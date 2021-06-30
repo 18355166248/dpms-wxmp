@@ -4,18 +4,35 @@
       <view class="apply-head-unit">
         <view class="label">领用单位</view>
         <view>
-          <text>请选择</text>
-          <text class="value">员工</text>
+          <picker
+            mode="selector"
+            :value="deptTypeIndex"
+            range-key="name"
+            :range="receiveDeptTypeArray"
+            @change="changeDeptType"
+          >
+            <text>{{ receiveDeptTypeArray[deptTypeIndex].name }}</text>
+          </picker>
         </view>
         <view>
           <text class="iconfont icon-arrow-right"></text>
         </view>
       </view>
       <view class="apply-head-person">
-        <view class="label">领用员工</view>
+        <view class="label"
+          >领用{{ receiveDeptTypeArray[deptTypeIndex].name }}</view
+        >
+        <!-- 员工 诊室 科室-->
         <view>
-          <text>请选择</text>
-          <text class="value">员工</text>
+          <picker
+            mode="selector"
+            :value="deptIndex"
+            range-key="receiveDeptName"
+            :range="deptList"
+            @change="changeDeptData"
+          >
+            <text>{{ deptList[deptIndex].receiveDeptName }}</text>
+          </picker>
         </view>
         <view>
           <text class="iconfont icon-arrow-right"></text>
@@ -23,7 +40,9 @@
       </view>
       <view class="apply-head-desc">
         <view class="label">领用说明</view>
-        <view class="value">电动机案件达的骄傲的骄傲晋控电力</view>
+        <view class="apply-head-desc-input">
+          <input v-model="description" placeholder="请输入领用说明" />
+        </view>
       </view>
     </view>
     <view class="apply-add">
@@ -31,7 +50,9 @@
         <text class="iconfont icon-codesandbox"></text>
         <text>领用物品</text>
       </view>
-      <view><text class="iconfont icon-plus-circle"></text></view>
+      <view
+        ><text class="iconfont icon-plus-circle" @click="chooseGood"></text
+      ></view>
     </view>
     <view class="apply-goods">
       <scroll-view scroll-y="true" style="height: 100%;">
@@ -47,7 +68,7 @@
               <view>
                 <inputNumber
                   :min="1"
-                  v-model="item.applyNum"
+                  v-model="item.receiveNum"
                   @on-change="changeApplyNumber(item)"
                 />
               </view>
@@ -62,26 +83,37 @@
         <view>合计4件</view>
       </view>
       <view class="apply-action-btn">
-        <view>保存</view>
-        <view>提交申请</view>
+        <view @click="handleSubmit(4)">保存</view>
+        <view @click="handleSubmit(1)">提交申请</view>
       </view>
     </view>
   </view>
 </template>
 <script>
+import { receiveDeptTypeArray } from '../enum'
 import { mapMutations, mapState } from 'vuex'
 import checkBox from '@/components/checkbox/checkbox.vue'
 import applyGood from './components/apply-good.vue'
 import inputNumber from '@/components/input-number/input-number.vue'
+import receiveAPI from '@/APIS/warehouse/receive.api.js'
+
 export default {
   components: { checkBox, applyGood, inputNumber },
   computed: {
     ...mapState('warehouse', ['applyGoods']),
+    ...mapState('workbenchStore', ['medicalInstitution']),
   },
   data() {
     return {
+      receiveDeptTypeArray: receiveDeptTypeArray(),
+      deptTypeIndex: 0,
+      deptIndex: 0,
       isShow: false,
-      goodsList: [],
+      goodsList: [], // 已选物品
+      deptList: [],
+      description: '',
+      merchandiseReceiveOrderId: null, // 领用id 存在 表示 修改  否则 新增
+      addOrUpdate: false, // true 修改  false 新增
     }
   },
   watch: {
@@ -89,11 +121,50 @@ export default {
       this.goodsList = val
     },
   },
+  async onLoad({ merchandiseReceiveOrderId }) {
+    console.log('执行onLoad')
+    this.merchandiseReceiveOrderId = merchandiseReceiveOrderId
+    this.addOrUpdate = !!merchandiseReceiveOrderId
+    if (merchandiseReceiveOrderId) {
+      const res = await this.getReceiveDetail(merchandiseReceiveOrderId)
+      await this.getReceiveDeptTypeList(res.receiveDeptType)
+      this.setApplyGoods(res.receiveOrderItemVOList)
+      this.description = res.description
+      // 匹配对应的领用单位
+      this.deptTypeIndex = this.receiveDeptTypeArray.findIndex(
+        (e) => e.value === res.receiveDeptType,
+      )
+      // 匹配对应的领用单位的下拉数据
+      console.log('onLoad下获取的deptList数据是', this.deptList)
+      this.deptIndex = this.deptList.findIndex(
+        (e) => e.receiveDeptId === res.receiveDeptId,
+      )
+    } else {
+      this.getReceiveDeptTypeList()
+    }
+  },
   created() {
+    console.log('执行created')
     this.goodsList = this.applyGoods
+    // 默认先获取员工对应的下拉数据
   },
   methods: {
-    ...mapMutations('warehouse', ['updateGood', 'selectGood', 'deleteGood']),
+    ...mapMutations('warehouse', [
+      'updateGood',
+      'selectGood',
+      'deleteGood',
+      'setApplyGoods',
+    ]),
+    async getReceiveDeptTypeList(receiveDeptType = 1) {
+      const res = await receiveAPI.getReceiveDeptTypeList({ receiveDeptType })
+      this.deptList = res.data
+    },
+    async getReceiveDetail(merchandiseReceiveOrderId) {
+      const res = await receiveAPI.getReceiveDetail({
+        merchandiseReceiveOrderId,
+      })
+      return res.data
+    },
     changeApplyNumber(item) {
       console.log('领用数量变化后', item)
       this.updateGood(item)
@@ -101,6 +172,59 @@ export default {
     // 删除已选项
     handleDelete(item) {
       this.deleteGood(item)
+    },
+    // 跳转物品选择页面
+    chooseGood() {
+      this.$dpmsUtils.push({ url: '/pages/warehouse/goods/index?mode=select' })
+    },
+    // 切换领用单位
+    changeDeptType(event) {
+      // 切换后 重置
+      this.deptIndex = 0
+      this.deptTypeIndex = +event.detail.value
+      let receiveDeptType = this.receiveDeptTypeArray[this.deptTypeIndex].value
+      this.getReceiveDeptTypeList(receiveDeptType)
+    },
+    // 切换领用员工, 诊室, 科室下拉数据
+    changeDeptData(event) {
+      this.deptIndex = +event.detail.value
+    },
+    // 提交数据
+    async handleSubmit(receiveStatus) {
+      let { receiveDeptId, receiveDeptName } = this.deptList[this.deptIndex]
+      let { medicalInstitutionId } = this.medicalInstitution
+      let data = {
+        medicalInstitutionId,
+        receiveStatus,
+        description: this.description,
+        receiveDeptId,
+        receiveDeptName,
+        receiveDeptType: this.receiveDeptTypeArray[
+          this.deptTypeIndex
+        ].value.toString(),
+        receiveOrderItemVOList: this.goodsList,
+      }
+      let res
+      if (this.addOrUpdate) {
+        res = await receiveAPI.updateReceiveApply({
+          ...data,
+          merchandiseReceiveOrderId: this.merchandiseReceiveOrderId,
+        })
+        res.data = this.merchandiseReceiveOrderId
+      } else {
+        res = await receiveAPI.addReceiveApply(data)
+      }
+      if (res.code == 0) {
+        // 提交数据后,清空已选物品
+        this.setApplyGoods([])
+        uni.showToast({
+          icon: 'none',
+          title: receiveStatus == 1 ? '已提交' : '已保存',
+        })
+        this.$dpmsUtils.replace({
+          url: `/pages/warehouse/receive/detail?merchandiseReceiveOrderId=${res.data}`,
+        })
+      }
     },
   },
 }
@@ -146,6 +270,16 @@ export default {
       view:last-child {
         flex: 1;
         text-align: right;
+        padding-left: 32rpx;
+        input {
+          width: 100%;
+          height: 100%;
+          color: rgba(25, 25, 25, 0.9);
+          padding-right: 16rpx;
+        }
+        input::placeholder {
+          color: #bfbfbf;
+        }
       }
     }
   }

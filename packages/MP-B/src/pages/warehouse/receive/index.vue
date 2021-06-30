@@ -5,7 +5,12 @@
         ><text class="iconfont icon-search"></text
         ><text class="ml-20">领用物品</text></view
       >
-      <view><text class="iconfont icon-plus-circle ml-20"></text></view>
+      <view
+        ><text
+          class="iconfont icon-plus-circle ml-20"
+          @click="creatReceiveOrder"
+        ></text
+      ></view>
     </view>
     <view class="receive-status">
       <scroll-view scroll-x="true" style="width: 100%; height: 100%;">
@@ -44,6 +49,7 @@
           class="receive-list-item"
           v-for="(item, index) in pagination.records"
           :key="index"
+          @click="goToDetail(item.merchandiseReceiveOrderId)"
         >
           <receive-info :detail="item" />
         </view>
@@ -54,43 +60,18 @@
   </view>
 </template>
 <script>
+import { receiveStatusArray } from '../enum'
 import receiveInfo from '../components/receive-info.vue'
 import receiveAPI from '@/APIS/warehouse/receive.api.js'
 import loadMore from '@/components/load-more/load-more.vue'
 import empty from '@/components/empty/empty.vue'
 import moment from 'moment'
-const statusMap = [
-  {
-    name: '全部',
-    value: 0,
-  },
-  {
-    name: '待提交',
-    value: 1,
-  },
-  {
-    name: '确认中',
-    value: 2,
-  },
-  {
-    name: '执行中',
-    value: 3,
-  },
-  {
-    name: '已完成',
-    value: 4,
-  },
-  {
-    name: '已拒绝',
-    value: 5,
-  },
-]
-Object.freeze(statusMap)
+
 export default {
   components: { receiveInfo, loadMore, empty },
   data() {
     return {
-      statusMap,
+      statusMap: [{ name: '全部', value: 0 }, ...receiveStatusArray()],
       date: moment().format('YYYY-MM'),
       startDate: '',
       endDate: moment().format('YYYY-MM'),
@@ -124,12 +105,27 @@ export default {
   },
   methods: {
     // 切换状态
-    changeStatus(val) {
+    async changeStatus(val) {
       this.currentStatus = val
+      let params = { receiveStatus: val || null }
+      const res = await this.getReceiveList(params)
+      this.pagination = res
     },
     // 切换日期选择
-    changeDate(event) {
+    async changeDate(event) {
       this.date = event.target.value
+      let beginTime = Date.parse(this.date + '-01')
+      // 所选月份的最后一天
+      let endTime = Date.parse(
+        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+      )
+      let params = {
+        beginTime,
+        endTime,
+        receiveStatus: this.currentStatus || null,
+      }
+      const res = await this.getReceiveList(params)
+      this.pagination = res
     },
     async getReceiveList(params) {
       this.loading = true
@@ -148,11 +144,22 @@ export default {
       let _current = (this.pagination.current += 1)
       let params = {
         current: _current,
+        receiveStatus: this.currentStatus || null,
       }
       const res = await this.getReceiveList(params)
       let newRecords = this.pagination.records.concat(res.records)
       let { total, current, pages } = res
       this.pagination = { records: newRecords, total, current, pages }
+    },
+    // 跳转领用申请
+    creatReceiveOrder() {
+      this.$dpmsUtils.push({ url: '/pages/warehouse/receive/apply' })
+    },
+    // 跳转领用详情
+    goToDetail(merchandiseReceiveOrderId) {
+      this.$dpmsUtils.push({
+        url: `/pages/warehouse/receive/detail?merchandiseReceiveOrderId=${merchandiseReceiveOrderId}`,
+      })
     },
   },
 }

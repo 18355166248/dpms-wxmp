@@ -1,6 +1,6 @@
 <template>
   <view class="checkbox" @click="handleClick">
-    <view class="checkbox-icon">
+    <view class="checkbox-icon" v-if="mode == 'select'">
       <text
         v-if="checked"
         :class="{ disable_color: disabled }"
@@ -28,6 +28,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    mode: {
+      type: String,
+      default: '',
     },
   },
   data() {

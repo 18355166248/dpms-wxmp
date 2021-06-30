@@ -3,8 +3,8 @@
     <view class="receive-info-head">
       <view>{{ detail.merchandiseReceiveOrderNo }}</view>
       <view
-        ><text>{{
-          receiveStatusMap[detail.receiveStatus] || detail.receiveStatus
+        ><text :style="{ color: receiveStatusColor[detail.receiveStatus] }">{{
+          receiveStatusMap[detail.receiveStatus]
         }}</text></view
       >
     </view>
@@ -17,8 +17,8 @@
     </view>
     <view class="receive-info-goods">
       <text class="value"
-        >共{{ detail.merchandiseTotal }}种物品，合计{{
-          detail.merchandiseItemTotal
+        >共{{ detail.merchandiseTotal || 0 }}种物品，合计{{
+          detail.merchandiseItemTotal || 0
         }}件</text
       >
     </view>
@@ -33,19 +33,11 @@
   </view>
 </template>
 <script>
-const receiveDeptTypeMap = {
-  1: '员工',
-  2: '诊室',
-  3: '科室',
-}
-
-const receiveStatusMap = {
-  1: '确认中',
-  2: '进行中',
-  3: '已完成',
-}
-
-Object.freeze(receiveDeptTypeMap)
+import {
+  receiveStatusMap,
+  receiveDeptTypeMap,
+  receiveStatusColor,
+} from '../enum'
 export default {
   props: {
     detail: {
@@ -57,6 +49,7 @@ export default {
     return {
       receiveDeptTypeMap,
       receiveStatusMap,
+      receiveStatusColor,
     }
   },
 }

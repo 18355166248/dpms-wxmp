@@ -12,8 +12,11 @@
       </view>
       <view class="mt16">
         <text class="label">可用库存：</text>
-        <!-- inventoryUnitStr -->
-        <text>{{ `${info.availableNum || 0}${info.inventoryUnitStr}` }}</text>
+        <!-- | thousandFormatter(0, '') -->
+        <text>{{
+          info.availableNum || info.inventoryNum || 0 | thousandFormatter(0, '')
+        }}</text>
+        <text>{{ info.inventoryUnitStr }}</text>
       </view>
       <view class="mt16">
         <slot />

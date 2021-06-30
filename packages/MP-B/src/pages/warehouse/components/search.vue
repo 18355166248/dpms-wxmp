@@ -73,6 +73,7 @@
               v-model="item.checked"
               :disabled="!item.isEnable"
               @on-change="handleSelect(item)"
+              :mode="mode"
             >
               <goodsInfo
                 :type="type"
@@ -88,7 +89,7 @@
       </view>
       <empty v-else disabled />
     </view>
-    <view class="select_action">
+    <view class="select_action" v-if="mode == 'select'">
       <view class="select_action_text"
         >已选择{{ applyGoods.length }}种物品</view
       >
@@ -161,7 +162,7 @@ export default {
     },
     mode: {
       type: String,
-      default: 'select',
+      default: '',
     },
   },
   data() {
@@ -362,22 +363,7 @@ export default {
       this.showHistory = true
     },
     handleSelect(item) {
-      let {
-        merchandiseId,
-        commonName,
-        brandName,
-        specificationsStr,
-        availableNum,
-        inventoryUnitStr,
-      } = item
-      this.selectGood({
-        merchandiseId,
-        commonName,
-        brandName,
-        specificationsStr,
-        availableNum,
-        inventoryUnitStr,
-      })
+      this.selectGood(item)
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
@@ -389,9 +375,10 @@ export default {
     },
     // 跳转领用申请
     goToReceiveApply() {
-      this.$dpmsUtils.push({
-        url: '/pages/warehouse/receive/apply',
-      })
+      this.$dpmsUtils.back(2)
+      // this.$dpmsUtils.push({
+      //   url: '/pages/warehouse/receive/apply',
+      // })
     },
   },
 }

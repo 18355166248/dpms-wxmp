@@ -3,6 +3,9 @@ const state = {
 }
 
 const mutations = {
+  setApplyGoods(state, data) {
+    state.applyGoods = data
+  },
   /**
    *
    * @param {*} state
@@ -14,7 +17,7 @@ const mutations = {
       (e) => e.merchandiseId == data.merchandiseId,
     )
     if (index < 0) {
-      _arr.push({ ...data, applyNum: 1 })
+      _arr.push({ ...data, receiveNum: 1 })
     } else {
       _arr.splice(index, 1)
     }
