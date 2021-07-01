@@ -634,6 +634,13 @@
           }
         },
         {
+          "path": "receive/search",
+          "style": {
+            "navigationBarTitleText": "领用搜索",
+            "disableScroll": true
+          }
+        },
+        {
           "path": "receive/detail",
           "style": {
             "navigationBarTitleText": "领用详情",

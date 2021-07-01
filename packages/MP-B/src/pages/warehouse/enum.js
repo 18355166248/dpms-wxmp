@@ -35,13 +35,5 @@ export const receiveStatusColor = {
   2: '#0B7B8F',
   3: '#5CBB89',
   4: '#0BD0DA',
-  5: '#0B7B8F',
+  5: '#F2647C',
 }
-
-//  default {
-//   receiveStatusMap,
-//   receiveStatusArray,
-//   receiveDeptTypeMap,
-//   receiveDeptTypeArray,
-//   receiveStatusColor
-// }
