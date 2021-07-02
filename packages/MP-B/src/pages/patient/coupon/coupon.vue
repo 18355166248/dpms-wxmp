@@ -96,6 +96,7 @@ import couponSearch from './couponSearch'
 import empty from '@/components/empty/empty.vue'
 import loadMore from '@/components/load-more/load-more.vue'
 import moment from 'moment'
+import { checkQwInstitution } from '@/utils/utils'
 
 export default {
   components: {
@@ -137,6 +138,8 @@ export default {
     }
   },
   onLoad(params) {
+    checkQwInstitution()
+
     this.patientId = params.patientId
     this.customerId = params.customerId
     this.isqywx = params.isqywx

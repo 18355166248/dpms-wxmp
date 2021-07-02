@@ -1,4 +1,4 @@
-import { getStorage, STORAGE_KEY } from './storage'
+import { getStorage, setStorage, STORAGE_KEY } from './storage'
 import uma from 'umtrack-wx'
 import moment from 'moment'
 const Big = require('big.js')
@@ -134,5 +134,24 @@ export function getWeek(date) {
       return '周六'
     case 0:
       return '周日'
+  }
+}
+
+/**
+ * 查看从企微启动的机构id和当前是否一致
+ * @param {*} params 页面的onLoad参数
+ */
+export function checkQwInstitution() {
+  const pages = getCurrentPages()
+  const currentPage = pages[pages.length - 1]
+
+  const { isqywx, qwMedicalInstitutionId } = currentPage.options
+  if (isqywx && qwMedicalInstitutionId) {
+    const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+    const mId = Number(qwMedicalInstitutionId)
+    if (mId !== medicalInstitution?.medicalInstitutionId) {
+      setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, currentPage.$page.fullPath)
+      uni.redirectTo({ url: '/pages/login/qyLogin' })
+    }
   }
 }
