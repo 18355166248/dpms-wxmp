@@ -81,7 +81,7 @@
       <!--常用功能-->
       <view class="common-functions-List-wrap pb-32">
         <view class="menu-area-header ph-32 pb-32">常用功能</view>
-        <commonUseFunctionsList></commonUseFunctionsList>
+        <commonUseFunctionsList :menuList="commonFuns"></commonUseFunctionsList>
       </view>
       <!--统计报表-->
       <view
@@ -175,6 +175,10 @@ import { setCustomOpenId } from '@/utils/utils'
 import billReport from '@/pages/home/billReport'
 import billAPI from '../../APIS/bill/bill.api'
 
+import systemAPI from '@/APIS/system.api.js'
+
+const commonParams = { modelId: 2, key: 'commonMenuFuns' }
+
 export default {
   components: {
     navBar,
@@ -224,6 +228,7 @@ export default {
         isReportShow: false,
       },
       showActionSheet: false,
+      commonFuns: [],
     }
   },
   onShareAppMessage() {
@@ -240,6 +245,37 @@ export default {
       this.init()
     })
     this.getAmountDisplay()
+  },
+  async onShow() {
+    console.log('onShow执行啦')
+    const data = await this.getCommonFunsList()
+    const res = await this.getCommonFunsConfig()
+    const arr = data.menus.map((e) => {
+      return {
+        ...e,
+        type: e.enumValue.replaceAll('-', ''),
+        status:
+          res.indexOf(e.enumValue) > -1 ||
+          data.defaultMenus.indexOf(e.enumValue) > -1,
+      }
+    })
+    // this.commonFuns = arr
+    //   .filter(
+    //     (e) =>
+    //       res.indexOf(e.enumValue) > -1 ||
+    //       data.defaultMenus.indexOf(e.enumValue) > -1,
+    //   )
+    //   .slice(0, 7)
+    let selectArr = res.length ? res : data.defaultMenus
+    // this.selectedList = this.toAddList.filter((e) => e.status)
+    this.commonFuns = selectArr
+      .map((e) => {
+        let _index = arr.findIndex((k) => k.enumValue == e)
+        return {
+          ...arr[_index],
+        }
+      })
+      .slice(0, 7)
   },
   onUnload() {
     uni.$off(globalEventKeys.newPatient)
@@ -336,6 +372,15 @@ export default {
     },
   },
   methods: {
+    async getCommonFunsList() {
+      const res = await systemAPI.getCommonFunsList()
+      return res.data
+    },
+    // 获取常用功能配置
+    async getCommonFunsConfig() {
+      const res = await systemAPI.getCommonFunsConfig(commonParams)
+      return res.data || []
+    },
     getDropDownList() {
       let list = [
         {

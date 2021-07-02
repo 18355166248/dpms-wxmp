@@ -69,11 +69,18 @@
           @scrolltolower="loadMore"
         >
           <view v-for="(item, index) in pagination.records" :key="index">
-            <goodsInfo
-              :type="type"
-              :detail="item"
-              @on-click="goToDetail(item.merchandiseId)"
-            />
+            <checkBox
+              v-model="item.checked"
+              :disabled="!item.isEnable || !item.availableNum"
+              @on-change="handleSelect(item)"
+              :mode="mode"
+            >
+              <goodsInfo
+                :type="type"
+                :detail="item"
+                @on-click="goToDetail(item.merchandiseId)"
+              />
+            </checkBox>
           </view>
           <view class="loadMore">
             <loadMore :status="statusText" />
@@ -81,6 +88,12 @@
         </scroll-view>
       </view>
       <empty v-else disabled />
+    </view>
+    <view class="select_action" v-if="mode == 'select'">
+      <view class="select_action_text"
+        >已选择{{ applyGoods.length }}种物品</view
+      >
+      <view class="select_action_btn" @click="goToReceiveApply">确认</view>
     </view>
     <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="302">
       <view class="drawer-title">
@@ -105,6 +118,7 @@
   </view>
 </template>
 <script>
+import { mapMutations, mapState } from 'vuex'
 import tabs from '@/components/tabs/tabs.vue'
 import History from '@/utils/history.util.js'
 import goodAPI from '@/APIS/warehouse/good.api.js'
@@ -114,6 +128,7 @@ import expandFilter from './expand-filter.vue'
 import searchHistory from './search-history.vue'
 import loadMore from '@/components/load-more/load-more.vue'
 import empty from '@/components/empty/empty.vue'
+import checkBox from '@/components/checkbox/checkbox.vue'
 const all = [
   {
     merchandiseCategoryId: 0,
@@ -131,6 +146,7 @@ export default {
     loadMore,
     empty,
     tabs,
+    checkBox,
   },
   props: {
     type: {
@@ -143,6 +159,10 @@ export default {
     storgeKey: {
       type: String,
       required: true,
+    },
+    mode: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -169,6 +189,14 @@ export default {
     }
   },
   computed: {
+    ...mapState('warehouse', ['applyGoods']),
+    goodIds() {
+      if (this.applyGoods.length) {
+        return this.applyGoods.map((e) => e.merchandiseId)
+      } else {
+        return []
+      }
+    },
     statusText() {
       if (!this.loading) {
         if (this.pagination.current === this.pagination.pages) {
@@ -186,12 +214,7 @@ export default {
   },
   mounted() {},
   methods: {
-    // 获取物品分类
-    // async getCategoryList() {
-    //   const res = await goodAPI.getCategoryList()
-    //   let arr = all.concat(res.data)
-    //   this.oneCategoryList.push(...arr)
-    // },
+    ...mapMutations('warehouse', ['selectGood']),
     // 查询物品
     async getGoodsList(params) {
       this.loading = true
@@ -201,7 +224,12 @@ export default {
       this.oneCategoryList = []
       let arr = all.concat(categoryList)
       this.oneCategoryList.push(...arr)
-      return { records, total, current, pages }
+      let list = records.length
+        ? records.map((e) => {
+            return { ...e, checked: this.goodIds.indexOf(e.merchandiseId) >= 0 }
+          })
+        : []
+      return { records: list, total, current, pages }
     },
     // 加载更多
     async loadMore() {
@@ -334,11 +362,23 @@ export default {
       this.historyList = this.history.getHistory()
       this.showHistory = true
     },
+    handleSelect(item) {
+      this.selectGood(item)
+    },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$dpmsUtils.push({
-        url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
-      })
+      if (this.mode !== 'select') {
+        this.$dpmsUtils.push({
+          url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
+        })
+      }
+    },
+    // 跳转领用申请
+    goToReceiveApply() {
+      this.$dpmsUtils.back(2)
+      // this.$dpmsUtils.push({
+      //   url: '/pages/warehouse/receive/apply',
+      // })
     },
   },
 }
@@ -454,6 +494,29 @@ export default {
           background-color: #f5f5f5;
         }
       }
+    }
+  }
+  .select_action {
+    box-sizing: border-box;
+    width: 100%;
+    height: 160rpx;
+    padding: 32rpx;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    // align-items: center;
+    font-size: 28rpx;
+    .select_action_text {
+      color: #191919;
+    }
+    .select_action_btn {
+      width: 120rpx;
+      height: 56rpx;
+      text-align: center;
+      line-height: 56rpx;
+      color: #ffffff;
+      background: #5cbb89;
+      border-radius: 28rpx;
     }
   }
   .drawer-title {
