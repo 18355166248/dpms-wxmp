@@ -113,7 +113,7 @@ export default {
   components: { checkBox, applyGood, inputNumber, empty },
   computed: {
     ...mapState('warehouse', ['applyGoods']),
-    ...mapState('workbenchStore', ['medicalInstitution']),
+    ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
     // 所选物品种类
     goodType() {
       let num = this.goodsList.length
@@ -153,7 +153,6 @@ export default {
     },
   },
   async onLoad({ merchandiseReceiveOrderId }) {
-    console.log('执行onLoad')
     this.merchandiseReceiveOrderId = merchandiseReceiveOrderId
     this.addOrUpdate = !!merchandiseReceiveOrderId
     if (merchandiseReceiveOrderId) {
@@ -166,16 +165,18 @@ export default {
         (e) => e.value === res.receiveDeptType,
       )
       // 匹配对应的领用单位的下拉数据
-      console.log('onLoad下获取的deptList数据是', this.deptList)
       this.deptIndex = this.deptList.findIndex(
         (e) => e.receiveDeptId === res.receiveDeptId,
       )
     } else {
-      this.getReceiveDeptTypeList()
+      await this.getReceiveDeptTypeList()
+      // 新增时, 员工默认为当前登录者
+      this.deptIndex = this.deptList.findIndex(
+        (e) => e.receiveDeptId === this.staff.staffId,
+      )
     }
   },
   created() {
-    console.log('执行created')
     this.goodsList = this.applyGoods
     // 默认先获取员工对应的下拉数据
   },
