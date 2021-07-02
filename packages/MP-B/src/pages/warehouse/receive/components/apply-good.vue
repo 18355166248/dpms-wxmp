@@ -1,7 +1,11 @@
 <template>
   <view class="apply">
     <view class="apply-good">
-      <view class="title">{{ info.commonName }}</view>
+      <view class="title">
+        <text>{{ info.commonName }}</text>
+        <text v-if="info.merchandiseName">/{{ info.merchandiseName }}</text>
+        <text v-if="info.aliasName">/{{ info.aliasName }}</text>
+      </view>
       <view class="mt16">
         <text class="label">品牌：</text>
         <text>{{ info.brandName || '-' }}</text>

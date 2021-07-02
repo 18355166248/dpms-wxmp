@@ -14,7 +14,13 @@
               v-for="(item, index) in detail.receiveOrderItemVOList"
               :key="index"
             >
-              <view>{{ item.commonName }}</view>
+              <view>
+                <text>{{ item.commonName }}</text>
+                <text v-if="item.merchandiseName"
+                  >/{{ item.merchandiseName }}</text
+                >
+                <text v-if="item.aliasName">/{{ item.aliasName }}</text>
+              </view>
               <view
                 ><text class="label">规格信息：</text
                 ><text class="value">{{ item.specificationsStr }}</text></view
@@ -40,11 +46,12 @@
           </view>
           <view class="receive-main-info-item">
             <view class="label">领用单位</view>
-            <view class="value">{{
-              `(${receiveDeptTypeMap[detail.receiveDeptType]})${
-                detail.receiveDeptName
-              }`
-            }}</view>
+            <view class="value">
+              <text class="mr20"
+                >({{ receiveDeptTypeMap[detail.receiveDeptType] }})</text
+              >
+              <text>{{ detail.receiveDeptName }}</text>
+            </view>
           </view>
           <view class="receive-main-info-item">
             <view class="label">开单人</view>
