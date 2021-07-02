@@ -90,46 +90,46 @@ export default {
       menuKey: 1,
       showCloseIcon: false,
       toAddList: [
-        {
-          description: '门诊挂号',
-          displayName: '今日就诊',
-          enumvalue: 'visiting',
-        },
-        {
-          description: '患者全视图',
-          displayName: '患者',
-          enumvalue: 'patient-list',
-        },
-        {
-          description: '浏览预约记录、快速预约',
-          displayName: '预约',
-          enumvalue: 'appointment',
-        },
-        {
-          description: '进销存物品基础信息一览',
-          displayName: '物品一览',
-          enumvalue: 'item-management',
-        },
-        {
-          description: '查看采购订单详情',
-          displayName: '采购',
-          enumvalue: 'purchase-management',
-        },
-        {
-          description: '查看领用申请单详情',
-          displayName: '领用',
-          enumvalue: 'use-application',
-        },
-        {
-          description: '实时查看物品库存详情',
-          displayName: '库存',
-          enumvalue: 'warehouse-management',
-        },
-        {
-          description: '实时处理审批单、查看审批进度',
-          displayName: '审批',
-          enumvalue: 'approval-management',
-        },
+        // {
+        //   description: '门诊挂号',
+        //   displayName: '今日就诊',
+        //   enumvalue: 'visiting',
+        // },
+        // {
+        //   description: '患者全视图',
+        //   displayName: '患者',
+        //   enumvalue: 'patient-list',
+        // },
+        // {
+        //   description: '浏览预约记录、快速预约',
+        //   displayName: '预约',
+        //   enumvalue: 'appointment',
+        // },
+        // {
+        //   description: '进销存物品基础信息一览',
+        //   displayName: '物品一览',
+        //   enumvalue: 'item-management',
+        // },
+        // {
+        //   description: '查看采购订单详情',
+        //   displayName: '采购',
+        //   enumvalue: 'purchase-management',
+        // },
+        // {
+        //   description: '查看领用申请单详情',
+        //   displayName: '领用',
+        //   enumvalue: 'use-application',
+        // },
+        // {
+        //   description: '实时查看物品库存详情',
+        //   displayName: '库存',
+        //   enumvalue: 'warehouse-management',
+        // },
+        // {
+        //   description: '实时处理审批单、查看审批进度',
+        //   displayName: '审批',
+        //   enumvalue: 'approval-management',
+        // },
       ], // 所有常用功能数据
     }
   },
@@ -145,7 +145,14 @@ export default {
           data.defaultMenus.indexOf(e.enumValue) > -1,
       }
     })
-    this.selectedList = this.toAddList.filter((e) => e.status)
+    let selectArr = res.length ? res : data.defaultMenus
+    // this.selectedList = this.toAddList.filter((e) => e.status)
+    this.selectedList = selectArr.map((e) => {
+      let _index = this.toAddList.findIndex((k) => k.enumValue == e)
+      return {
+        ...this.toAddList[_index],
+      }
+    })
   },
   mounted() {},
   methods: {
@@ -168,6 +175,9 @@ export default {
       let _index = this.selectedList.findIndex((e) => item.type == e.type)
       let index = this.toAddList.findIndex((e) => item.type == e.type)
       this.selectedList.splice(_index, 1)
+      if (!this.selectedList.length) {
+        this.showCloseIcon = false
+      }
       this.$set(this.toAddList[index], 'status', false)
       let arr = this.selectedList.map((e) => e.enumValue)
       let data = { ...commonParams, value: arr }

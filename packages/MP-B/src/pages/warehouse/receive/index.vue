@@ -37,7 +37,12 @@
     </view>
     <view class="receive-main" v-else>
       <view class="receive-main-status">
-        <scroll-view scroll-x="true" style="width: 100%; height: 100%;">
+        <scroll-view
+          scroll-x="true"
+          style="width: 100%; height: 100%;"
+          :lower-threshold="100"
+          :scroll-top="scrollTop"
+        >
           <template v-for="item in statusMap">
             <view
               :class="{ underline: currentStatus === item.value }"
@@ -150,6 +155,7 @@ export default {
   methods: {
     // 切换状态
     async changeStatus(val) {
+      this.scrollTop = 50
       this.currentStatus = val
       let beginTime = Date.parse(this.date + '-01')
       // 所选月份的最后一天
@@ -159,6 +165,9 @@ export default {
       let params = { receiveStatus: val || null, beginTime, endTime }
       const res = await this.getReceiveList(params)
       this.pagination = res
+      this.$nextTick(() => {
+        this.scrollTop = 0
+      })
     },
     // 切换日期选择
     async changeDate(event) {
@@ -185,7 +194,17 @@ export default {
       // 查询过后 就不再是第一次进入
       this.isFirstShow = false
       this.history.add(this.receiveOrderNo)
-      let params = { receiveOrderNo: this.receiveOrderNo || null }
+      let beginTime = Date.parse(this.date + '-01')
+      // 所选月份的最后一天
+      let endTime = Date.parse(
+        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+      )
+      let params = {
+        receiveOrderNo: this.receiveOrderNo || null,
+        receiveStatus: this.currentStatus || null,
+        beginTime,
+        endTime,
+      }
       const res = await this.getReceiveList(params)
       this.pagination = res
     },

@@ -259,12 +259,22 @@ export default {
           data.defaultMenus.indexOf(e.enumValue) > -1,
       }
     })
-    this.commonFuns = arr
-      .filter(
-        (e) =>
-          res.indexOf(e.enumValue) > -1 ||
-          data.defaultMenus.indexOf(e.enumValue) > -1,
-      )
+    // this.commonFuns = arr
+    //   .filter(
+    //     (e) =>
+    //       res.indexOf(e.enumValue) > -1 ||
+    //       data.defaultMenus.indexOf(e.enumValue) > -1,
+    //   )
+    //   .slice(0, 7)
+    let selectArr = res.length ? res : data.defaultMenus
+    // this.selectedList = this.toAddList.filter((e) => e.status)
+    this.commonFuns = selectArr
+      .map((e) => {
+        let _index = arr.findIndex((k) => k.enumValue == e)
+        return {
+          ...arr[_index],
+        }
+      })
       .slice(0, 7)
   },
   onUnload() {

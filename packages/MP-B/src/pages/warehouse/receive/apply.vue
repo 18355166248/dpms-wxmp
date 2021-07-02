@@ -2,7 +2,10 @@
   <view class="apply">
     <view class="apply-head">
       <view class="apply-head-unit">
-        <view class="label">领用单位</view>
+        <view class="flex_align_items_center">
+          <text class="label">领用单位</text>
+          <text class="redColor">*</text>
+        </view>
         <view>
           <picker
             mode="selector"
@@ -19,9 +22,12 @@
         </view>
       </view>
       <view class="apply-head-person">
-        <view class="label"
-          >领用{{ receiveDeptTypeArray[deptTypeIndex].name }}</view
-        >
+        <view class="flex_align_items_center">
+          <text class="label"
+            >领用{{ receiveDeptTypeArray[deptTypeIndex].name }}</text
+          >
+          <text class="redColor">*</text>
+        </view>
         <!-- 员工 诊室 科室-->
         <view>
           <picker
@@ -55,7 +61,11 @@
       ></view>
     </view>
     <view class="apply-goods">
-      <scroll-view scroll-y="true" style="height: 100%;">
+      <scroll-view
+        scroll-y="true"
+        style="height: 100%;"
+        v-if="goodsList.length"
+      >
         <view class="apply-goods-item">
           <applyGood
             v-for="(item, index) in goodsList"
@@ -76,6 +86,7 @@
           </applyGood>
         </view>
       </scroll-view>
+      <empty v-else disabled text="尚未添加物品" textColor="#000000" />
     </view>
     <view class="apply-action">
       <view class="apply-action-info">
@@ -96,9 +107,10 @@ import checkBox from '@/components/checkbox/checkbox.vue'
 import applyGood from './components/apply-good.vue'
 import inputNumber from '@/components/input-number/input-number.vue'
 import receiveAPI from '@/APIS/warehouse/receive.api.js'
+import empty from '@/components/empty/empty.vue'
 
 export default {
-  components: { checkBox, applyGood, inputNumber },
+  components: { checkBox, applyGood, inputNumber, empty },
   computed: {
     ...mapState('warehouse', ['applyGoods']),
     ...mapState('workbenchStore', ['medicalInstitution']),
@@ -380,6 +392,14 @@ export default {
   }
   .value {
     color: #191919;
+  }
+  .flex_align_items_center {
+    display: inline-flex;
+    align-items: center;
+  }
+  .redColor {
+    margin-left: 10rpx;
+    color: #ff4d4f;
   }
 }
 </style>
