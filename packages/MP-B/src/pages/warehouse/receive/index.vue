@@ -38,14 +38,16 @@
     <view class="receive-main" v-else>
       <view class="receive-main-status">
         <scroll-view scroll-x="true" style="width: 100%; height: 100%;">
-          <view
-            :class="{ underline: currentStatus === item.value }"
-            class="receive-main-status-item"
-            v-for="item in statusMap"
-            :key="item.value"
-            @click="changeStatus(item.value)"
-            >{{ item.name }}</view
-          >
+          <template v-for="item in statusMap">
+            <view
+              :class="{ underline: currentStatus === item.value }"
+              class="receive-main-status-item"
+              v-if="item.value != 4"
+              :key="item.value"
+              @click="changeStatus(item.value)"
+              >{{ item.name }}</view
+            >
+          </template>
         </scroll-view>
       </view>
       <view class="receive-main-date">
@@ -142,16 +144,19 @@ export default {
     if (this.mode) {
       this.historyList = this.history.getHistory()
     } else {
-      // 是 列表页 才默认查询所有数据
-      const res = await this.getReceiveList()
-      this.pagination = res
+      this.changeStatus(0)
     }
   },
   methods: {
     // 切换状态
     async changeStatus(val) {
       this.currentStatus = val
-      let params = { receiveStatus: val || null }
+      let beginTime = Date.parse(this.date + '-01')
+      // 所选月份的最后一天
+      let endTime = Date.parse(
+        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+      )
+      let params = { receiveStatus: val || null, beginTime, endTime }
       const res = await this.getReceiveList(params)
       this.pagination = res
     },
@@ -223,10 +228,17 @@ export default {
         return false
       }
       let _current = (this.pagination.current += 1)
+      let beginTime = Date.parse(this.date + '-01')
+      // 所选月份的最后一天
+      let endTime = Date.parse(
+        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+      )
       let params = {
         current: _current,
         receiveOrderNo: this.receiveOrderNo || null,
         receiveStatus: this.currentStatus || null,
+        beginTime,
+        endTime,
       }
       const res = await this.getReceiveList(params)
       let newRecords = this.pagination.records.concat(res.records)

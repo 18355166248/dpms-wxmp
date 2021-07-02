@@ -58,6 +58,19 @@ const receiveAPI = {
       },
     })
   },
+  /**
+   * @description 直接修改领用单状态
+   * @param {Number} data.merchandiseReceiveOrderId  领用单id
+   * @param {Number} data.receiveStatus              状态值
+   * @returns
+   */
+  editReceiveApplyStatus(data) {
+    return httper.post('/physical/merchandise/receive/submitApply', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
 }
 
 export default receiveAPI

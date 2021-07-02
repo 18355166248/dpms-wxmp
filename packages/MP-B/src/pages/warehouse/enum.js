@@ -2,8 +2,9 @@ export const receiveStatusMap = {
   1: '确认中',
   2: '执行中',
   3: '已完成',
-  4: '待提交',
-  5: '已拒绝',
+  4: '未完成',
+  5: '待提交',
+  6: '已拒绝',
 }
 
 export const receiveStatusArray = () => {
@@ -34,6 +35,7 @@ export const receiveStatusColor = {
   1: '#FA8C16',
   2: '#0B7B8F',
   3: '#5CBB89',
-  4: '#0BD0DA',
-  5: '#F2647C',
+  4: 'none',
+  5: '#0BD0DA',
+  6: '#F2647C',
 }

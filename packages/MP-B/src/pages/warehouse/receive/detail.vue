@@ -70,9 +70,9 @@
         </view>
       </scroll-view>
       <!-- 当领用状态为 待提交时 显示 -->
-      <view class="receive-main-action" v-if="detail.receiveStatus == 4">
+      <view class="receive-main-action" v-if="detail.receiveStatus == 5">
         <view class="edit_btn" @click="handleEdit">修改</view>
-        <view class="submit_btn">提交申请</view>
+        <view class="submit_btn" @click="editReceiveApplyStatus">提交申请</view>
       </view>
     </view>
   </view>
@@ -104,6 +104,21 @@ export default {
       this.$dpmsUtils.replace({
         url: `/pages/warehouse/receive/apply?merchandiseReceiveOrderId=${this.detail.merchandiseReceiveOrderId}`,
       })
+    },
+    // 待提交状态直接提交申请, 修改状态为确认中
+    async editReceiveApplyStatus() {
+      let data = {
+        merchandiseReceiveOrderId: this.merchandiseReceiveOrderId,
+        receiveStatus: 1,
+      }
+      const res = await receiveAPI.editReceiveApplyStatus(data)
+      if (res.code == 0) {
+        uni.showToast({
+          icon: 'none',
+          title: '已提交',
+        })
+        this.getReceiveDetail(this.merchandiseReceiveOrderId)
+      }
     },
   },
 }

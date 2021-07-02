@@ -79,11 +79,11 @@
     </view>
     <view class="apply-action">
       <view class="apply-action-info">
-        <view>已选择2件物品</view>
-        <view>合计4件</view>
+        <view>已选择{{ goodType | thousandFormatter(0, '') }}件物品</view>
+        <view>合计{{ goodTotal | thousandFormatter(0, '') }}件</view>
       </view>
       <view class="apply-action-btn">
-        <view @click="handleSubmit(4)">保存</view>
+        <view @click="handleSubmit(5)">保存</view>
         <view @click="handleSubmit(1)">提交申请</view>
       </view>
     </view>
@@ -102,6 +102,25 @@ export default {
   computed: {
     ...mapState('warehouse', ['applyGoods']),
     ...mapState('workbenchStore', ['medicalInstitution']),
+    // 所选物品种类
+    goodType() {
+      let num = this.goodsList.length
+      return num
+    },
+    // 所选物品件数
+    goodTotal() {
+      if (!this.applyGoods.length) {
+        return 0
+      } else {
+        let num = 0
+        this.applyGoods.forEach((element) => {
+          num += element.receiveNum
+        })
+        // let num = this.applyGoods.reduce((a, b) => Number(a.receiveNum) + Number(b.receiveNum))
+        // console.log(this.applyGoods)
+        return num
+      }
+    },
   },
   data() {
     return {
