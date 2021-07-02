@@ -162,7 +162,12 @@ export default {
       let endTime = Date.parse(
         moment(beginTime).endOf('month').format('YYYY-MM-DD'),
       )
-      let params = { receiveStatus: val || null, beginTime, endTime }
+      let params = {
+        receiveStatus: val || null,
+        beginTime,
+        endTime,
+        receiveOrderNo: this.receiveOrderNo || null,
+      }
       const res = await this.getReceiveList(params)
       this.pagination = res
       this.$nextTick(() => {
@@ -181,6 +186,7 @@ export default {
         beginTime,
         endTime,
         receiveStatus: this.currentStatus || null,
+        receiveOrderNo: this.receiveOrderNo || null,
       }
       const res = await this.getReceiveList(params)
       this.pagination = res
@@ -199,6 +205,7 @@ export default {
       let endTime = Date.parse(
         moment(beginTime).endOf('month').format('YYYY-MM-DD'),
       )
+      this.currentStatus = 0
       let params = {
         receiveOrderNo: this.receiveOrderNo || null,
         receiveStatus: this.currentStatus || null,
