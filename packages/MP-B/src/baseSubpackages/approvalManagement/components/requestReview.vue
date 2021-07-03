@@ -36,7 +36,7 @@
           >
         </view>
         <view class="buttonControl pr-24">
-          <u-button type="success" @click="showDetail(item)">查看</u-button>
+          <!--          <u-button type="success" @click="showDetail(item)">查看</u-button>-->
           <u-button
             type="success"
             :custom-style="failedBtn"
@@ -125,9 +125,19 @@ export default {
       })
     },
     showDetail(item) {
-      this.medicalRecordId = item.businessId
+      let url = {
+        病例: `/pages/patient/medicalRecord/detail/?medicalRecordId=${item.businessId}&checkMedRecord=false`,
+        收费: '/pages/charge/checkstand',
+        退费: 'url',
+        借调: 'url',
+        领用: `/pages/warehouse/receive/detail?merchandiseReceiveOrderId=${item.businessId}`,
+        退整单: 'url',
+        退步骤: '',
+        退金额: '',
+        退项目: '',
+      }
       wx.navigateTo({
-        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${this.medicalRecordId}&checkMedRecord=false`,
+        url: url[item.approveTypeName],
       })
     },
 

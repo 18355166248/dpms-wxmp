@@ -60,18 +60,58 @@ export default {
       currentTab: 0,
       defaultVal: '全部',
       type: 'select',
-      // 先写死 1 代表全部 2代表病例
-      currentApprovalId: 1,
+      currentApprovalId: '',
+      //approvalId为后端需要的字段
       actionSheetList: [
         {
-          value: '1',
+          value: 0,
           text: '全部',
+          approvalId: '',
+        },
+        {
+          value: 1,
+          text: '病历',
           approvalId: 1,
         },
         {
           value: 2,
-          text: '病例',
+          text: '收费',
           approvalId: 2,
+        },
+        {
+          value: 3,
+          text: '退费',
+          approvalId: 3,
+        },
+        {
+          value: 4,
+          text: '借调',
+          approvalId: 4,
+        },
+        {
+          value: 5,
+          text: '领用',
+          approvalId: 5,
+        },
+        {
+          value: 7,
+          text: '退整单',
+          approvalId: 7,
+        },
+        {
+          value: 8,
+          text: '退步骤',
+          approvalId: 8,
+        },
+        {
+          value: 9,
+          text: '退金额',
+          approvalId: 9,
+        },
+        {
+          value: 10,
+          text: '退项目',
+          approvalId: 10,
         },
       ],
       //分页
