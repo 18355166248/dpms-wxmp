@@ -169,7 +169,7 @@ httper.interceptors.request.use((request) => {
 
 httper.interceptors.response.use(
   function (response) {
-    if (response?.data?.code === 0) {
+    if ([1000373, 1000377, 0].includes(response?.data?.code)) {
       return response.data
     }
 
