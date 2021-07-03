@@ -366,7 +366,7 @@ import { numberUtils } from '@/utils/utils'
 
 export default {
   onReachBottom() {
-    console.log('onReachBottom')
+    // console.log('onReachBottom')
     // if (this.contents.length < this.total) {
     //   this.current += 1
     //   this.getNurses()
@@ -475,6 +475,7 @@ export default {
             ) || numberUtils.thousandFormatter(total)
         })
         let header = this.headers[index]
+        // 添加总计的时候需要在data中定义computedCol
         let result = this.computedCol.includes(header.key)
           ? bottomComputed[header.key]
           : index === 0
