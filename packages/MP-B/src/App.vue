@@ -72,6 +72,18 @@ button::after {
 .icon-plus::before {
   content: '\e8fe';
 }
+.icon-minus-circle::before {
+  content: '\e780';
+}
+.icon-plus-fill::before {
+  content: '\e84a';
+}
+.icon-codesandbox::before {
+  content: '\e87e';
+}
+.icon-inverted-triangle::before {
+  content: '\e8ec';
+}
 /*今日就诊*/
 .icon-medicine-chest::before {
   content: '\e863';
