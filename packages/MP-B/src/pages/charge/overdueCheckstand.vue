@@ -149,6 +149,11 @@
     <!--提示-->
     <u-toast ref="uToast" />
     <payResult ref="payResultRef" @confirm="payResultConfirm"></payResult>
+    <!-- 审批弹框-->
+    <approveModal
+      @confirm="approveConfirm"
+      ref="approveModalRef"
+    ></approveModal>
   </view>
 </template>
 <script>
@@ -159,6 +164,7 @@ import moment from 'moment'
 import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal } from '@/utils/utils'
 import payResult from './common/payResult'
+import approveModal from './common/approveModal'
 
 export default {
   name: 'checkstand',
@@ -196,6 +202,7 @@ export default {
   components: {
     ChargestandTitle,
     payResult,
+    approveModal,
   },
   computed: {
     ...mapState('workbenchStore', ['menu']),
@@ -398,7 +405,9 @@ export default {
                 ]
               }
             })
-            this.payTypes = res.data
+            this.payTypes = res.data.filter((item) => {
+              return item.payStyle !== 13
+            })
           }
         })
         .catch((err) => {
@@ -455,12 +464,38 @@ export default {
         .then((res) => {
           if (res.code === 0 && res.data) {
             this.$refs.payResultRef.open(res.data)
+          } else if ([1000373, 1000377].includes(code)) {
+            try {
+              const errData = JSON.parse(message)
+              // 发起审核
+              let approveData = Object.assign(errData, params)
+
+              if (code === 1000373) {
+                //  打开审批弹框
+                this.$refs.approveModalRef.open(approveData)
+              } else {
+                // 发起失败  给出错误提示
+                this.$refs.uToast.show({
+                  title: approveData?.approveReason || '审批发起失败',
+                  type: 'error',
+                })
+              }
+            } catch (err) {
+              console.log(123, err)
+            }
           }
         })
         .catch((err) => {
           console.log(err.message)
         })
     },
+
+    approveConfirm() {
+      uni.reLaunch({
+        url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
+      })
+    },
+
     //点击我知道
     payResultConfirm() {
       this.submitLock = false
