@@ -1,70 +1,70 @@
 <template>
   <view class="common-use-functions" :key="menuKey">
     <view class="common-functions-list-wrap">
-      <view class="drag-tip">长按拖动可调整位置与顺序</view>
-      <movable-area class="common-functions-list movable-area">
-        <movable-view
-          v-for="item in selectedList"
-          :key="item.id"
-          class="movable-view"
-          :x="item.x"
-          :y="item.y"
-          direction="all"
-          inertia="true"
-          damping="80"
-          @change="viewMoveChange($event, item)"
-          @touchend="touchend"
-        >
-          <view class="menu-item">
+      <!-- <view class="drag-tip">长按拖动可调整位置与顺序</view> -->
+      <view class="common-functions-list" @click="showCloseIcon = false">
+        <template v-for="(item, index) in selectedList">
+          <view class="menu-item" :key="index" v-if="index < 7">
             <menuIcon
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
-              :showCloseIcon="true"
+              :showCloseIcon="showCloseIcon"
               @close="onMenuDelete(item)"
+              @longpress="handleLongPress"
             >
             </menuIcon>
-            <view class="menu-text">{{ menuDic[item.type].text }}</view>
+            <view class="menu-text">{{ item.displayName }}</view>
           </view>
-        </movable-view>
-      </movable-area>
+        </template>
+      </view>
     </view>
     <!--等待添加列表-->
-    <view class="wait-list-wrap" v-if="waitList.length > 0">
+    <view class="wait-list-wrap" v-if="selectedList.length > 7">
       <view class="wait-list-tip">
         <view class="tip">以上功能展示在首页</view>
       </view>
-      <view class="wait-list">
-        <view class="menu-item" v-for="item in waitList" :key="item.id">
-          <menuIcon
-            :icon="menuDic[item.type].iconName"
-            :menu-style="menuDic[item.type].menuStyle"
-            :showCloseIcon="true"
-            @close="onWaitMenuDelete(item)"
-          >
-          </menuIcon>
-          <view class="menu-text">{{ menuDic[item.type].text }}</view>
-        </view>
+      <view class="wait-list" @click="showCloseIcon = false">
+        <template v-for="(item, index) in selectedList">
+          <view class="menu-item" :key="index" v-if="index > 6">
+            <menuIcon
+              :icon="menuDic[item.type].iconName"
+              :menu-style="menuDic[item.type].menuStyle"
+              :showCloseIcon="showCloseIcon"
+              @close="onMenuDelete(item)"
+              @longpress="handleLongPress"
+            >
+            </menuIcon>
+            <view class="menu-text">{{ item.displayName }}</view>
+          </view>
+        </template>
       </view>
     </view>
     <!--待添加列表-->
     <view class="to-add-list-wrap">
       <view class="to-add-list">
-        <view class="to-add-item" v-for="item in toAddList" :key="item.id">
+        <view
+          class="to-add-item"
+          v-for="(item, index) in toAddList"
+          :key="index"
+        >
           <view class="menu-info-wrap">
             <menuIcon
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
             ></menuIcon>
             <view class="infos">
-              <view class="menu-name">物品一览</view>
-              <view class="menu-des"
-                >患者全视图，患者全视图患者全视图患者全视图。患者全</view
-              >
+              <view class="menu-name">{{ item.displayName }}</view>
+              <view class="menu-des">{{ item.description }}</view>
             </view>
           </view>
           <view>
-            <view class="btn added" v-if="item.added">已添加</view>
-            <view class="btn tobe-add" v-else>添加</view>
+            <view class="btn added" v-if="item.status">已添加</view>
+            <view
+              class="btn tobe-add"
+              v-else
+              @click="handleAddClick(item, index)"
+              >添加</view
+            >
           </view>
         </view>
       </view>
@@ -73,169 +73,134 @@
 </template>
 <script>
 import menuIcon from 'businessComponents/menuIcon'
-import { menuDic } from 'businessComponents/commonUseFunctionsList/menu'
+import { menuDic } from 'businessComponents/commonUseFunctionsList/menu.js'
+import systemAPI from '@/APIS/system.api.js'
+
+const commonParams = { modelId: 2, key: 'commonMenuFuns' }
+
 export default {
   name: 'commonFunctionsList',
+  components: { menuIcon },
   data() {
     return {
       menuDic: menuDic,
-      menuList: [
-        {
-          type: 'visiting',
-          id: 'visiting',
-        },
-        {
-          type: 'appoint',
-          id: 'appoint',
-        },
-        {
-          type: 'patient',
-          id: 'patient',
-        },
-        {
-          type: 'preview',
-          id: 'preview',
-        },
-        {
-          type: 'purchase',
-          id: 'purchase',
-        },
-        {
-          type: 'receive',
-          id: 'receive',
-        },
-        {
-          type: 'inventory',
-          id: 'inventory',
-        },
-        {
-          type: 'archive',
-          id: 'archive',
-        },
-      ],
-      selectedList: [],
+      selectedList: [], // 已添加数据
       targetMoveInfo: undefined,
       targetMenu: null,
       menuKey: 1,
-      waitList: [
-        {
-          type: 'archive',
-          id: 'archive',
-        },
-        {
-          type: 'visiting',
-          id: 'visiting',
-        },
-        {
-          type: 'appoint',
-          id: 'appoint',
-        },
-        {
-          type: 'patient',
-          id: 'patient',
-        },
-        {
-          type: 'preview',
-          id: 'preview',
-        },
-        {
-          type: 'purchase',
-          id: 'purchase',
-        },
-      ],
+      showCloseIcon: false,
       toAddList: [
-        {
-          type: 'visiting',
-          id: 'visiting',
-          added: true,
-        },
-      ],
+        // {
+        //   description: '门诊挂号',
+        //   displayName: '今日就诊',
+        //   enumvalue: 'visiting',
+        // },
+        // {
+        //   description: '患者全视图',
+        //   displayName: '患者',
+        //   enumvalue: 'patient-list',
+        // },
+        // {
+        //   description: '浏览预约记录、快速预约',
+        //   displayName: '预约',
+        //   enumvalue: 'appointment',
+        // },
+        // {
+        //   description: '进销存物品基础信息一览',
+        //   displayName: '物品一览',
+        //   enumvalue: 'item-management',
+        // },
+        // {
+        //   description: '查看采购订单详情',
+        //   displayName: '采购',
+        //   enumvalue: 'purchase-management',
+        // },
+        // {
+        //   description: '查看领用申请单详情',
+        //   displayName: '领用',
+        //   enumvalue: 'use-application',
+        // },
+        // {
+        //   description: '实时查看物品库存详情',
+        //   displayName: '库存',
+        //   enumvalue: 'warehouse-management',
+        // },
+        // {
+        //   description: '实时处理审批单、查看审批进度',
+        //   displayName: '审批',
+        //   enumvalue: 'approval-management',
+        // },
+      ], // 所有常用功能数据
     }
   },
-  computed: {},
-  created() {
-    let list = this.menuList.filter((item, index) => index < 7)
-    this.selectedList = this.initMenuPosition(list)
+  async created() {
+    const data = await this.getCommonFunsList()
+    const res = await this.getCommonFunsConfig()
+    this.toAddList = data.menus.map((e) => {
+      return {
+        ...e,
+        type: e.enumValue.replaceAll('-', ''),
+        status:
+          res.indexOf(e.enumValue) > -1 ||
+          data.defaultMenus.indexOf(e.enumValue) > -1,
+      }
+    })
+    let selectArr = res.length ? res : data.defaultMenus
+    // this.selectedList = this.toAddList.filter((e) => e.status)
+    this.selectedList = selectArr.map((e) => {
+      let _index = this.toAddList.findIndex((k) => k.enumValue == e)
+      return {
+        ...this.toAddList[_index],
+      }
+    })
   },
   mounted() {},
   methods: {
+    async getCommonFunsList() {
+      const res = await systemAPI.getCommonFunsList()
+      return res.data
+    },
+    // 获取常用功能配置
+    async getCommonFunsConfig() {
+      const res = await systemAPI.getCommonFunsConfig(commonParams)
+      return res.data || []
+    },
+    // 更新常用功能配置
+    async updateSelectMenus(data) {
+      const res = await systemAPI.updateSelectMenus(data)
+      console.log(res)
+    },
     //可拖动列表menu删除
-    onMenuDelete(item) {
-      this.selectedList = this.selectedList.filter(
-        (menu) => menu.id !== item.id,
-      )
-      this.initMenuPosition(this.selectedList)
-    },
-    //等待添加到常用功能的列表里的menu被删除
-    onWaitMenuDelete(item) {
-      this.waitList = this.waitList.filter((menu) => menu.id !== item.id)
-    },
-    initMenuPosition(list) {
-      list.forEach((item, index) => {
-        let x = 32 + (index % 4) * 192
-        let y = Math.floor(index / 4) * 220
-        item.x = uni.upx2px(x)
-        item.y = uni.upx2px(y)
-        item.area = [
-          [item.x, uni.upx2px(x + 112)],
-          [item.y, uni.upx2px(y + 188)],
-        ]
-        item.index = index
-      })
-      return list
-    },
-    viewMoveChange(event, item) {
-      this.targetMenu = item
-      this.targetMoveInfo = event.detail
-    },
-    touchend() {
-      if (this.targetMoveInfo === undefined) {
-        return
+    async onMenuDelete(item) {
+      let _index = this.selectedList.findIndex((e) => item.type == e.type)
+      let index = this.toAddList.findIndex((e) => item.type == e.type)
+      this.selectedList.splice(_index, 1)
+      if (!this.selectedList.length) {
+        this.showCloseIcon = false
       }
-      let x = this.targetMoveInfo?.x + uni.upx2px(112) * 0.5
-      let y = this.targetMoveInfo?.y + uni.upx2px(188) * 0.5
-      let targetIndex = this.targetMenu.index
-      let changeIndex = -1
-      this.selectedList.forEach((item, index) => {
-        if (
-          x >= item.area[0][0] &&
-          x <= item.area[0][1] &&
-          y >= item.area[1][0] &&
-          y <= item.area[1][1]
-        ) {
-          changeIndex = index
-        }
-      })
-      if (changeIndex >= 0) {
-        this.selectedList.splice(
-          changeIndex,
-          1,
-          ...this.selectedList.splice(
-            targetIndex,
-            1,
-            this.selectedList[changeIndex],
-          ),
-        )
-      } else {
-        this.selectedList[targetIndex].x = this.targetMoveInfo.x
-        this.selectedList[targetIndex].y = this.targetMoveInfo.y
+      this.$set(this.toAddList[index], 'status', false)
+      let arr = this.selectedList.map((e) => e.enumValue)
+      let data = { ...commonParams, value: arr }
+      this.updateSelectMenus(data)
+    },
+    /*
+     * 点击下面的添加按钮操作
+     * */
+    handleAddClick(item, index) {
+      this.$set(this.toAddList[index], 'status', true)
+      let _index = this.selectedList.findIndex((e) => item.type == e.type)
+      if (_index < 0) {
+        this.selectedList.push(item)
+        let arr = this.selectedList.map((e) => e.enumValue)
+        let data = { ...commonParams, value: arr }
+        this.updateSelectMenus(data)
       }
-      //menuKey 这个通过key和this.$forceUpdate 来强制刷新组件
-      this.menuKey += 2
-      this.$nextTick(() => {
-        this.initMenuPosition(this.selectedList)
-        this.$forceUpdate()
-      })
+    },
+    // 处理长按图标
+    handleLongPress() {
+      this.showCloseIcon = true
     },
   },
-  watch: {
-    watchData: {
-      handler(newVal, oldVal) {},
-      deep: true,
-      immediate: true,
-    },
-  },
-  components: { menuIcon },
 }
 </script>
 <style lang="scss" scoped>
@@ -243,6 +208,7 @@ export default {
   width: 100%;
   height: 100%;
   .common-functions-list-wrap {
+    padding-top: 32rpx;
     background: #fff;
     .drag-tip {
       padding: 32rpx;
@@ -252,16 +218,17 @@ export default {
     }
     .common-functions-list {
       width: 100%;
-      height: 408rpx;
+      max-height: 408rpx;
       display: flex;
       flex-wrap: wrap;
       padding-left: 32rpx;
       box-sizing: border-box;
-      .movable-view {
-        width: 112rpx;
-        height: auto;
-      }
+      color: #000000;
       .menu-item {
+        width: 112rpx;
+        margin-right: 80rpx;
+        margin-bottom: 32rpx;
+        height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -283,7 +250,7 @@ export default {
     align-items: center;
     justify-content: center;
     font-size: 24rpx;
-    color: #7f7f7f;
+    color: #000000;
     padding: 32rpx 0 0 32rpx;
     .tip {
       position: relative;
@@ -314,6 +281,9 @@ export default {
       flex-wrap: wrap;
       padding-top: 32rpx;
       .menu-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         margin-right: 80rpx;
         margin-bottom: 32rpx;
       }
@@ -337,6 +307,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin-bottom: 50rpx;
     .menu-info-wrap {
       display: flex;
       align-items: center;

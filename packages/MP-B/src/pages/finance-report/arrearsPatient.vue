@@ -20,6 +20,8 @@
       firstColBgColor="#ffffff"
       :dataSourceStatus="dataSourceStatus"
       :bottom-computed-fixed="true"
+      :computed-col="computedCol"
+      :summary="summary"
     />
     <view class="content" v-if="contents.length === 0">
       <empty :disabled="true" img="../../static/empty.png" text="暂无数据" />
@@ -29,7 +31,6 @@
 
 <script>
 import { mapMutations, mapState } from 'vuex'
-import moment from 'moment'
 import billAPI from 'APIS/bill/bill.api'
 
 export default {
@@ -84,6 +85,8 @@ export default {
       current: 0,
       size: 10,
       isFilter: false,
+      computedCol: ['totalArrears', 'totalReceivable', 'totalReceived'],
+      summary: {},
       dataSourceStatus: 'loading',
     }
   },
@@ -124,7 +127,7 @@ export default {
         search: this.patientInfo,
       }
       let {
-        data: { total, records },
+        data: { total, records, summary },
       } = await billAPI.getArrearsList({
         current: this.current,
         size: this.size,
@@ -132,12 +135,7 @@ export default {
       })
 
       records = records.map((item) => {
-        const utilPriceList = [
-          'totalArrears',
-          'totalReceivable',
-          'totalReceived',
-        ]
-        utilPriceList.forEach((it) => {
+        this.computedCol.forEach((it) => {
           item[it] = this.$dpmsUtils.formatPrice(item[it])
         })
         return item
@@ -153,6 +151,7 @@ export default {
       } else {
         this.dataSourceStatus = 'more'
       }
+      this.summary = summary || {}
       uni.hideLoading()
     },
     onFilterClick() {

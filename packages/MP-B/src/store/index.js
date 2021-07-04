@@ -16,6 +16,8 @@ import checkstand from './modules/checkstand'
 import finaceReport from '@/store/modules/finaceReport'
 
 import medicalRecord from './modules/medicalRecord'
+
+import warehouse from './modules/warehouse'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -29,5 +31,6 @@ export default new Vuex.Store({
     checkstand,
     finaceReport,
     medicalRecord,
+    warehouse,
   },
 })
