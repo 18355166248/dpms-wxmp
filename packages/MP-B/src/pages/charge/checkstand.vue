@@ -494,7 +494,7 @@ export default {
               let approveData = Object.assign(errData, params)
 
               if (code === 1000373) {
-                console.log(493, 'open')
+                console.log(493, approveData)
                 //  打开审批弹框
                 this.$refs.approveModalRef.open(approveData)
               } else {

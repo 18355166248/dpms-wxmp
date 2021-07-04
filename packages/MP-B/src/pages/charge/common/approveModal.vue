@@ -1,11 +1,15 @@
 <template>
   <u-modal
     v-model="show"
-    :show-title="false"
+    confirm-color="#5CBB89"
     @confirm="onConfirm"
     @cancel="cancel"
+    title="收费审批确认"
   >
-    <view class="slot-content" v-if="payResult.length > 0"> </view>
+    <view class="slot-content" v-if="approveData">
+      <view>{{ approveData.approveReason || '' }}</view>
+      <view>确认要审批吗？</view>
+    </view>
   </u-modal>
 </template>
 <script>
