@@ -223,6 +223,13 @@ const billAPI = {
       data,
     )
   },
+  commitApprove(data) {
+    return httper.post('billing/bill/order/commitApprove', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
 }
 
 export default billAPI
