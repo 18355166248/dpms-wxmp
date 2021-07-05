@@ -468,15 +468,13 @@ export default {
             try {
               const errData = JSON.parse(message)
               // 发起审核
-              let approveData = Object.assign(errData, params)
-
               if (code === 1000373) {
                 //  打开审批弹框
-                this.$refs.approveModalRef.open(approveData)
+                this.$refs.approveModalRef.open(errData, params)
               } else {
-                // 发起失败  给出错误提示
+                //发起失败  给出错误提示
                 this.$refs.uToast.show({
-                  title: approveData?.approveReason || '审批发起失败',
+                  title: errData?.approveReason || '审批发起失败',
                   type: 'error',
                 })
               }
@@ -492,7 +490,7 @@ export default {
 
     approveConfirm() {
       uni.reLaunch({
-        url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
+        url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
       })
     },
 

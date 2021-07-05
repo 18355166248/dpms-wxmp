@@ -116,6 +116,14 @@ export default {
           url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
         })
       }
+
+      // if ([6,7,8,9].includes(record.billStatus)){
+      //   this.setBillType(record.billType)
+      //   this.setReceivableAmount(record.receivableAmount)
+      //   uni.navigateTo({
+      //     url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}`,
+      //   })
+      // }
     },
     async getPendingOrder() {
       uni.showLoading({
@@ -190,6 +198,7 @@ export default {
       display: flex;
       align-items: center;
       margin-bottom: 1rpx;
+      justify-content: space-between;
     }
     .datetime {
       display: flex;
@@ -203,13 +212,13 @@ export default {
       margin-right: 14rpx;
     }
     .btn {
-      width: 116rpx;
       height: 40rpx;
       border-radius: 6rpx;
       text-align: center;
       line-height: 40rpx;
       font-size: 28rpx;
-      margin-left: 202rpx;
+      padding: 0 10rpx;
+      margin-right: 28rpx;
     }
     .pending {
       background: #fff7e6;
