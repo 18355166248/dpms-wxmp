@@ -26,7 +26,7 @@
           >
           <view class="lh"
             >审核人：<span class="NormalText">{{
-              item.operateApproveAuditor.staffName
+              item.candidateApproveAuditorNames
             }}</span></view
           >
           <span class="mv-32 lh NormalText">{{ item.triggerCondition }}</span>

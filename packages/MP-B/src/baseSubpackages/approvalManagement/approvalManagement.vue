@@ -176,6 +176,10 @@ export default {
   onPullDownRefresh() {
     this.getApprovalDetail()
   },
+  onHide() {
+    this.initData()
+    this.getApprovalDetail()
+  },
 }
 </script>
 
