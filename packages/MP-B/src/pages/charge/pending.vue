@@ -11,16 +11,7 @@
           ><view class="iconfont icon-time-circle"></view>
           {{ order.consultTimeDate }}</view
         >
-        <view class="btn pending" v-if="order.billStatus === 0">待收费</view>
-        <view class="btn refund" v-if="order.billStatus === 1">待退费</view>
-        <view class="btn approvaling" v-if="order.billStatus === 6"
-          >审核中</view
-        >
-        <view class="btn approvaled" v-if="order.billStatus === 7">已通过</view>
-        <view class="btn refused" v-if="order.billStatus === 8">未通过</view>
-        <view class="btn refused" v-if="order.billStatus === 9"
-          >退费审核中</view
-        >
+        <view class="btn pending" :class="billStatusDic[order.billStatus].className" >{{billStatusDic[order.billStatus].text}}</view>
       </view>
       <view class="lineHr"></view>
       <view>
@@ -84,6 +75,54 @@ export default {
         status: 'loading',
         request: 'loading',
       },
+      billStatusDic:{
+        0:{
+          text:'待收费',
+          className:'pending'
+        },
+        1:{
+          text:'待退费',
+          className:'pending'
+        },
+        // 2:{
+        //   text:'已收费'
+        // },
+        // 3:{
+        //   text:'已退费'
+        // },
+        4:{
+          text:'部分退费',
+          className:'pending'
+        },
+        6:{
+          text:'审核中',
+          className:'approvaling',
+        },
+        7:{
+          text:'已通过',
+          className:'approvaled',
+        },
+        8:{
+          text:'未通过',
+          className:'refused',
+        },
+        9:{
+          text:'退费审核中',
+          className:'approvaling',
+        },
+        10:{
+          text:'退费已通过',
+          className:'approvaled',
+        },
+        11:{
+          text:'退费未通过',
+          className:'refused',
+        },
+        12:{
+          text:'退费待退费',
+          className:'pending'
+        },
+      }
     }
   },
   destroyed() {
@@ -117,13 +156,13 @@ export default {
         })
       }
 
-      // if ([6,7,8,9].includes(record.billStatus)){
-      //   this.setBillType(record.billType)
-      //   this.setReceivableAmount(record.receivableAmount)
-      //   uni.navigateTo({
-      //     url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}`,
-      //   })
-      // }
+      if ([6,7,8].includes(record.billStatus)){
+        this.setBillType(record.billType)
+        this.setReceivableAmount(record.receivableAmount)
+        uni.navigateTo({
+          url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}&billSerialNo=${record?.billSerialNo}`,
+        })
+      }
     },
     async getPendingOrder() {
       uni.showLoading({
