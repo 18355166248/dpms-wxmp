@@ -246,28 +246,8 @@ export default {
     })
     this.getAmountDisplay()
   },
-  async onShow() {
-    const data = await this.getCommonFunsList()
-    const res = await this.getCommonFunsConfig()
-    // res 为 空字符串 表示 初始化, 尚未对常用功能进行修改, 已选数据为默认数据, 修改过后的已选数据 以配置接口返回的数据为准
-    let selectArr = res === '' ? data.defaultMenus : res
-    const arr = data.menus.map((e) => {
-      return {
-        ...e,
-        type: e.enumValue.replaceAll('-', ''),
-
-        status: selectArr.indexOf(e.enumValue) > -1,
-      }
-    })
-
-    this.commonFuns = selectArr
-      .map((e) => {
-        let _index = arr.findIndex((k) => k.enumValue == e)
-        return {
-          ...arr[_index],
-        }
-      })
-      .slice(0, 7)
+  onShow() {
+    this.setMenusList()
   },
   onUnload() {
     uni.$off(globalEventKeys.newPatient)
@@ -372,6 +352,33 @@ export default {
     async getCommonFunsConfig() {
       const res = await systemAPI.getCommonFunsConfig(commonParams)
       return res.data
+    },
+    async setMenusList() {
+      const data = await this.getCommonFunsList()
+      const res = await this.getCommonFunsConfig()
+      const menuIds = data.menus.map((e) => e.enumValue)
+      // res 为 空字符串 表示 初始化, 尚未对常用功能进行修改, 已选数据为默认数据, 修改过后的已选数据 以配置接口返回的数据为准
+      let selectArr =
+        res === ''
+          ? data.defaultMenus
+          : res.filter((e) => menuIds.indexOf(e) > -1)
+      const arr = data.menus.map((e) => {
+        return {
+          ...e,
+          type: e.enumValue.replaceAll('-', ''),
+
+          status: selectArr.indexOf(e.enumValue) > -1,
+        }
+      })
+
+      this.commonFuns = selectArr
+        .map((e) => {
+          let _index = arr.findIndex((k) => k.enumValue == e)
+          return {
+            ...arr[_index],
+          }
+        })
+        .slice(0, 7)
     },
     getDropDownList() {
       let list = [
@@ -492,6 +499,7 @@ export default {
         )
         this.getApptSetting()
         this.init()
+        this.setMenusList()
       }
     },
     // 获取预约视图设置
