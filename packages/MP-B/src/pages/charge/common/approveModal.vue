@@ -2,12 +2,13 @@
   <u-modal
     v-model="show"
     confirm-color="#5CBB89"
+    show-cancel-button="true"
     @confirm="onConfirm"
     @cancel="cancel"
     title="收费审批确认"
   >
-    <view class="slot-content" v-if="approveData">
-      <view>{{ approveData.approveReason || '' }}</view>
+    <view class="slot-content" v-if="errData">
+      <view>{{ errData.approveReason || '' }}</view>
       <view>确认要审批吗？</view>
     </view>
   </u-modal>
@@ -20,17 +21,19 @@ export default {
   data() {
     return {
       show: false,
-      approveData: {},
+      errData: {},
+      params: {},
     }
   },
   methods: {
-    open(approveData) {
+    open(errData, params) {
       this.show = true
-      this.approveData = approveData
+      this.errData = errData
+      this.params = params
     },
 
     onConfirm() {
-      billAPI.commitApprove(approveData).then((res) => {
+      billAPI.commitApprove(this.params).then((res) => {
         if (res?.code === 0) {
           this.$emit('confirm')
         }

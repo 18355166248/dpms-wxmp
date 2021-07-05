@@ -269,6 +269,10 @@ export default {
       nurseRequire: false,
       //咨询师是否为必填项
       consultedRequire: false,
+      // 账单状态
+      billStatus: -1,
+      //能否撤回
+      canRevoke: false,
     }
   },
   components: {
@@ -349,6 +353,8 @@ export default {
     this.loadListData(query).then(() => {
       if (query) this.backData(query)
     })
+    this.billStatus = query?.billStatus
+    this.canRevoke = query?.canRevoke
   },
   onShow() {
     this.btnPremisstion()
@@ -418,6 +424,12 @@ export default {
       if (!this.checkRequire(form)) {
         return
       }
+      let orderPayItemList = this.disposeList
+
+      orderPayItemList.forEach((item) => {
+        item.singleDiscount = 100
+      })
+      console.log(426, this.disposeList)
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,
@@ -428,7 +440,7 @@ export default {
         mainOrderDiscount: this.realMainOrderDiscount,
         mainOrderDiscountIsmember: false,
         memo: form.memo,
-        orderPayItemList: this.disposeList, //列表
+        orderPayItemList: orderPayItemList, //列表
         patientId: patientDetail.patientId,
         payChannelList: form.payChannelList, //列表
         receivableAmount: receivableAmount,
@@ -482,25 +494,19 @@ export default {
       } else if (type === 'charge') {
         billAPI.orderPayOne(params).then((res) => {
           const { code, data, message } = res
-          console.log(482, code)
           if (code === 0 && data) {
             this.$refs.payResultRef.open(data)
           } else if ([1000373, 1000377].includes(code)) {
-            console.log(1234)
             try {
               const errData = JSON.parse(message)
-              console.log(488, errData)
               // 发起审核
-              let approveData = Object.assign(errData, params)
-
               if (code === 1000373) {
-                console.log(493, approveData)
                 //  打开审批弹框
-                this.$refs.approveModalRef.open(approveData)
+                this.$refs.approveModalRef.open(errData, params)
               } else {
                 //发起失败  给出错误提示
                 this.$refs.uToast.show({
-                  title: approveData?.approveReason || '审批发起失败',
+                  title: errData?.approveReason || '审批发起失败',
                   type: 'error',
                 })
               }
@@ -518,7 +524,7 @@ export default {
     },
     approveConfirm() {
       uni.reLaunch({
-        url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
+        url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
       })
     },
     backData(query) {
