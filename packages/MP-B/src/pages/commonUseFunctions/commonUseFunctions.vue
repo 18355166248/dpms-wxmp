@@ -136,16 +136,16 @@ export default {
   async created() {
     const data = await this.getCommonFunsList()
     const res = await this.getCommonFunsConfig()
+    let selectArr = res === '' ? data.defaultMenus : res
+    console.log(selectArr)
     this.toAddList = data.menus.map((e) => {
       return {
         ...e,
         type: e.enumValue.replaceAll('-', ''),
-        status:
-          res.indexOf(e.enumValue) > -1 ||
-          data.defaultMenus.indexOf(e.enumValue) > -1,
+        status: selectArr.indexOf(e.enumValue) > -1,
       }
     })
-    let selectArr = res.length ? res : data.defaultMenus
+
     // this.selectedList = this.toAddList.filter((e) => e.status)
     this.selectedList = selectArr.map((e) => {
       let _index = this.toAddList.findIndex((k) => k.enumValue == e)
@@ -163,7 +163,7 @@ export default {
     // 获取常用功能配置
     async getCommonFunsConfig() {
       const res = await systemAPI.getCommonFunsConfig(commonParams)
-      return res.data || []
+      return res.data
     },
     // 更新常用功能配置
     async updateSelectMenus(data) {

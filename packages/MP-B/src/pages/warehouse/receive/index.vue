@@ -12,7 +12,7 @@
           @confirm="confirm"
           placeholder="领用单号"
         />
-        <text v-else class="ml-20" @click="goToSearch">领用物品</text>
+        <text v-else class="ml-20" @click="goToSearch">领用单号</text>
       </view>
       <view class="receive-search-action">
         <text
@@ -157,10 +157,12 @@ export default {
     async changeStatus(val) {
       this.scrollTop = 50
       this.currentStatus = val
-      let beginTime = Date.parse(this.date + '-01')
+      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
       // 所选月份的最后一天
       let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+          ' ' +
+          '23:59:59',
       )
       let params = {
         receiveStatus: val || null,
@@ -177,10 +179,12 @@ export default {
     // 切换日期选择
     async changeDate(event) {
       this.date = event.target.value
-      let beginTime = Date.parse(this.date + '-01')
+      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
       // 所选月份的最后一天
       let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+          ' ' +
+          '23:59:59',
       )
       let params = {
         beginTime,
@@ -200,10 +204,12 @@ export default {
       // 查询过后 就不再是第一次进入
       this.isFirstShow = false
       this.history.add(this.receiveOrderNo)
-      let beginTime = Date.parse(this.date + '-01')
+      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
       // 所选月份的最后一天
       let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+          ' ' +
+          '23:59:59',
       )
       this.currentStatus = 0
       let params = {
@@ -254,10 +260,12 @@ export default {
         return false
       }
       let _current = (this.pagination.current += 1)
-      let beginTime = Date.parse(this.date + '-01')
+      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
       // 所选月份的最后一天
       let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD'),
+        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+          ' ' +
+          '23:59:59',
       )
       let params = {
         current: _current,
