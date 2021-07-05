@@ -166,6 +166,7 @@
             </view>
           </div>
         </div>
+        <!--  收费和保存 -->
         <div class="btn-wrapper flexBt" v-if="canOperation">
           <button
             v-if="showSaveBtn"
@@ -180,6 +181,12 @@
             class="charge-btn"
           >
             收费
+          </button>
+        </div>
+
+        <div class="btn-wrapper flexBt" v-if="revokeOperation">
+          <button class="charge-btn" @click="revokeApprove">
+            撤回
           </button>
         </div>
       </div>
@@ -273,6 +280,7 @@ export default {
       billStatus: -1,
       //能否撤回
       canRevoke: false,
+      billSerialNo: '',
     }
   },
   components: {
@@ -344,8 +352,16 @@ export default {
         (institutionChainType === 2 && topParentId === 0)
       ) {
         return false
+      } else {
+        if (this.billStatus === 6 && this.canRevoke) {
+          return false
+        }
       }
       return true
+    },
+    // 是否能撤回
+    revokeOperation() {
+      return this.billStatus === 6 && this.canRevoke
     },
   },
   onLoad(query) {
@@ -353,8 +369,9 @@ export default {
     this.loadListData(query).then(() => {
       if (query) this.backData(query)
     })
-    this.billStatus = query?.billStatus
+    this.billStatus = Number(query?.billStatus)
     this.canRevoke = query?.canRevoke
+    this.billSerialNo = query?.billSerialNo
   },
   onShow() {
     this.btnPremisstion()
@@ -368,6 +385,23 @@ export default {
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
     ]),
+    // 收费撤回
+    revokeApprove() {
+      if (!this.billSerialNo) {
+        return
+      }
+      billAPI
+        .revokeApprove({
+          billSerialNo: this.billSerialNo,
+        })
+        .then((res) => {
+          if (res?.code === 0) {
+            uni.reLaunch({
+              url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
+            })
+          }
+        })
+    },
     getRequireConfig() {
       billAPI
         .getChargeRequiredConfig()
@@ -427,9 +461,8 @@ export default {
       let orderPayItemList = this.disposeList
 
       orderPayItemList.forEach((item) => {
-        item.singleDiscount = 100
+        item.singleDiscount = item?.singleDiscount >= 0 || 100
       })
-      console.log(426, this.disposeList)
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,

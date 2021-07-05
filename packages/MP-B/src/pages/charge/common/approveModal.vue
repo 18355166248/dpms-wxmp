@@ -4,7 +4,6 @@
     confirm-color="#5CBB89"
     show-cancel-button="true"
     @confirm="onConfirm"
-    @cancel="cancel"
     title="收费审批确认"
   >
     <view class="slot-content" v-if="errData">
