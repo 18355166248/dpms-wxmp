@@ -77,7 +77,10 @@
         </view>
       </scroll-view>
       <!-- 当领用状态为 待提交时 显示 -->
-      <view class="receive-main-action" v-if="detail.receiveStatus == 5">
+      <view
+        class="receive-main-action"
+        v-if="detail.receiveStatus == 5 || detail.receiveStatus == 6"
+      >
         <view class="edit_btn" @click="handleEdit">修改</view>
         <view class="submit_btn" @click="editReceiveApplyStatus">提交申请</view>
       </view>

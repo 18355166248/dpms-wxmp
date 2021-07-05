@@ -78,6 +78,7 @@
               <view>
                 <inputNumber
                   :min="1"
+                  :max="item.availableNum || item.inventoryNum"
                   v-model="item.receiveNum"
                   @on-change="changeApplyNumber(item)"
                 />
@@ -169,6 +170,7 @@ export default {
         (e) => e.receiveDeptId === res.receiveDeptId,
       )
     } else {
+      this.setApplyGoods([])
       await this.getReceiveDeptTypeList()
       // 新增时, 员工默认为当前登录者
       this.deptIndex = this.deptList.findIndex(

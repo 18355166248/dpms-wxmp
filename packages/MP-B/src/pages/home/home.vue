@@ -247,27 +247,19 @@ export default {
     this.getAmountDisplay()
   },
   async onShow() {
-    console.log('onShow执行啦')
     const data = await this.getCommonFunsList()
     const res = await this.getCommonFunsConfig()
+    // res 为 空字符串 表示 初始化, 尚未对常用功能进行修改, 已选数据为默认数据, 修改过后的已选数据 以配置接口返回的数据为准
+    let selectArr = res === '' ? data.defaultMenus : res
     const arr = data.menus.map((e) => {
       return {
         ...e,
         type: e.enumValue.replaceAll('-', ''),
-        status:
-          res.indexOf(e.enumValue) > -1 ||
-          data.defaultMenus.indexOf(e.enumValue) > -1,
+
+        status: selectArr.indexOf(e.enumValue) > -1,
       }
     })
-    // this.commonFuns = arr
-    //   .filter(
-    //     (e) =>
-    //       res.indexOf(e.enumValue) > -1 ||
-    //       data.defaultMenus.indexOf(e.enumValue) > -1,
-    //   )
-    //   .slice(0, 7)
-    let selectArr = res.length ? res : data.defaultMenus
-    // this.selectedList = this.toAddList.filter((e) => e.status)
+
     this.commonFuns = selectArr
       .map((e) => {
         let _index = arr.findIndex((k) => k.enumValue == e)
@@ -379,7 +371,7 @@ export default {
     // 获取常用功能配置
     async getCommonFunsConfig() {
       const res = await systemAPI.getCommonFunsConfig(commonParams)
-      return res.data || []
+      return res.data
     },
     getDropDownList() {
       let list = [
