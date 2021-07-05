@@ -49,6 +49,7 @@
                 <goodsInfo
                   :detail="item"
                   :type="type"
+                  :mode="mode"
                   @on-click="goToDetail(item.merchandiseId)"
                 />
               </checkBox>

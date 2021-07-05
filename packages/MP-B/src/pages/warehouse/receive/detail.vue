@@ -246,6 +246,9 @@ export default {
         justify-content: space-between;
         align-items: center;
         border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+        white-space: pre-wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         view:first-child {
           flex-shrink: 0;
         }
@@ -253,6 +256,13 @@ export default {
           flex: 1;
           padding-left: 24rpx;
           text-align: right;
+          line-height: 52rpx;
+          overflow: hidden;
+          max-height: 104rpx;
+          text-overflow: ellipsis;
+          -webkit-line-clamp: 2;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
         }
       }
     }
