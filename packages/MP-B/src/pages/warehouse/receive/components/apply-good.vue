@@ -60,6 +60,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-size: 28rpx;
   &-icon {
     color: rgba(0, 0, 0, 0.5);
   }

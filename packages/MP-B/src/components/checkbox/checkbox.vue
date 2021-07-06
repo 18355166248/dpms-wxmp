@@ -58,11 +58,11 @@ export default {
 <style lang="scss" scoped>
 .icon-check-circle-no {
   color: #d9d9d9;
-  font-size: 32rpx;
+  font-size: 40rpx;
 }
 .icon-checked-circle {
   color: $common-color;
-  font-size: 32rpx;
+  font-size: 40rpx;
 }
 .disable_color {
   color: #f5f5f5;
@@ -71,8 +71,8 @@ export default {
   box-sizing: border-box;
   display: inline-block;
   padding: 1rpx;
-  width: 30rpx;
-  height: 30rpx;
+  width: 38rpx;
+  height: 38rpx;
   background: #f5f5f5;
   border: 1rpx solid #d9d9d9;
   border-radius: 50%;
@@ -83,10 +83,10 @@ export default {
 .checkbox-icon {
   box-sizing: border-box;
   position: absolute;
-  width: 35rpx;
-  height: 35rpx;
+  width: 40rpx;
+  height: 40rpx;
   text-align: center;
-  line-height: 35rpx;
+  line-height: 40rpx;
   top: 50%;
   right: 34rpx;
   transform: translateY(-50%);
