@@ -225,6 +225,13 @@ export default {
     },
     // 提交数据
     async handleSubmit(receiveStatus) {
+      if (!this.goodsList.length) {
+        uni.showToast({
+          icon: 'error',
+          title: '请选择领用物品',
+        })
+        return
+      }
       let { receiveDeptId, receiveDeptName } = this.deptList[this.deptIndex]
       let { medicalInstitutionId } = this.medicalInstitution
       let data = {

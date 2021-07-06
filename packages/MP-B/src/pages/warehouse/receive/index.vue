@@ -153,6 +153,9 @@ export default {
     }
   },
   methods: {
+    setDate(date) {
+      this.date = date
+    },
     // 切换状态
     async changeStatus(val) {
       this.scrollTop = 50
@@ -196,7 +199,9 @@ export default {
       this.pagination = res
     },
     goToSearch() {
-      this.$dpmsUtils.push({ url: '/pages/warehouse/receive/search' })
+      this.$dpmsUtils.push({
+        url: `/pages/warehouse/receive/search?date=${this.date}`,
+      })
     },
     // 搜索
     async confirm() {
