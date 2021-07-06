@@ -8,7 +8,7 @@
             <menuIcon
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
-              :showCloseIcon="showCloseIcon"
+              showCloseIcon
               @close="onMenuDelete(item)"
               @longpress="handleLongPress"
             >
@@ -23,13 +23,13 @@
       <view class="wait-list-tip">
         <view class="tip">以上功能展示在首页</view>
       </view>
-      <view class="wait-list" @click="showCloseIcon = false">
+      <view class="wait-list">
         <template v-for="(item, index) in selectedList">
           <view class="menu-item" :key="index" v-if="index > 6">
             <menuIcon
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
-              :showCloseIcon="showCloseIcon"
+              showCloseIcon
               @close="onMenuDelete(item)"
               @longpress="handleLongPress"
             >
