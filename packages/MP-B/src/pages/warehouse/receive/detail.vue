@@ -70,7 +70,7 @@
               >
             </view>
           </view>
-          <view class="receive-main-info-item">
+          <view class="description">
             <view class="label">领用说明</view>
             <view class="value">{{ detail.description }}</view>
           </view>
@@ -259,6 +259,33 @@ export default {
           line-height: 52rpx;
           overflow: hidden;
           max-height: 104rpx;
+          text-overflow: ellipsis;
+          -webkit-line-clamp: 2;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+        }
+      }
+      .description {
+        box-sizing: inherit;
+        width: 100%;
+        height: 144rpx;
+        padding-right: 24rpx;
+        padding-top: 32rpx;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+        white-space: pre-wrap;
+        overflow: hidden;
+        view:first-child {
+          flex-shrink: 0;
+        }
+        view:last-child {
+          flex: 1;
+          padding-left: 24rpx;
+          text-align: right;
+          overflow: hidden;
+          max-height: 80rpx;
+          word-break: break-all;
           text-overflow: ellipsis;
           -webkit-line-clamp: 2;
           display: -webkit-box;

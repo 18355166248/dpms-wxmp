@@ -74,7 +74,7 @@
             @on-clear="handleDelete(item)"
           >
             <view class="apply-goods-item-number">
-              <view>领用数量：</view>
+              <view class="label">领用数量：</view>
               <view>
                 <inputNumber
                   :min="1"
