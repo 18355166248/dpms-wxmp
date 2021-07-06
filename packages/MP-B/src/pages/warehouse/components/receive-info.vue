@@ -17,8 +17,10 @@
     </view>
     <view class="receive-info-goods">
       <text class="value"
-        >共{{ detail.merchandiseTotal || 0 }}种物品，合计{{
-          detail.merchandiseItemTotal || 0
+        >共{{
+          detail.merchandiseTotal || 0 | thousandFormatter(0, '')
+        }}种物品，合计{{
+          detail.merchandiseItemTotal || 0 | thousandFormatter(0, '')
         }}件</text
       >
     </view>

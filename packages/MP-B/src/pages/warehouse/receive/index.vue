@@ -8,7 +8,7 @@
           focus
           confirm-type="search"
           @focus="handleFocus"
-          v-model="receiveOrderNo"
+          v-model="appReceiveOrderNo"
           @confirm="confirm"
           placeholder="领用单号"
         />
@@ -128,7 +128,7 @@ export default {
       showHistory: true,
       historyList: [],
       history: new History('receive', [], 10),
-      receiveOrderNo: '', // 搜索关键字
+      appReceiveOrderNo: '', // 搜索关键字
     }
   },
   computed: {
@@ -168,7 +168,7 @@ export default {
         receiveStatus: val || null,
         beginTime,
         endTime,
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
       }
       const res = await this.getReceiveList(params)
       this.pagination = res
@@ -190,7 +190,7 @@ export default {
         beginTime,
         endTime,
         receiveStatus: this.currentStatus || null,
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
       }
       const res = await this.getReceiveList(params)
       this.pagination = res
@@ -203,7 +203,7 @@ export default {
       this.showHistory = false
       // 查询过后 就不再是第一次进入
       this.isFirstShow = false
-      this.history.add(this.receiveOrderNo)
+      this.history.add(this.appReceiveOrderNo)
       let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
       // 所选月份的最后一天
       let endTime = Date.parse(
@@ -213,7 +213,7 @@ export default {
       )
       this.currentStatus = 0
       let params = {
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
         receiveStatus: this.currentStatus || null,
         beginTime,
         endTime,
@@ -233,7 +233,7 @@ export default {
     },
     // 点击历史记录
     selectHistory(value) {
-      this.receiveOrderNo = value
+      this.appReceiveOrderNo = value
       this.confirm()
     },
     // 清除历史记录
@@ -269,7 +269,7 @@ export default {
       )
       let params = {
         current: _current,
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
         receiveStatus: this.currentStatus || null,
         beginTime,
         endTime,
