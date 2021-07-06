@@ -1,9 +1,14 @@
 <template>
   <view class="bodyDetails mh-24">
-    <scroll-view scroll-y class="content" @scrolltolower="onScrollToLower">
+    <scroll-view
+      :scroll-y="true"
+      class="content"
+      lower-threshold="100"
+      @scrolltolower="onScrollToLower"
+    >
       <view
         class="singleContainer"
-        v-for="(item, index) in approvalList.records"
+        v-for="(item, index) in approvalList"
         :key="index"
       >
         <view class="firstLevel pt-32 ph-24 pb-16">
@@ -64,8 +69,13 @@ import approvalApi from '@/APIS/approval/approval.api'
 export default {
   name: 'requestReview',
   props: {
-    approvalList: {
-      type: Object,
+    currentTab: {
+      type: Number,
+      default: 0,
+    },
+    approveTypeId: {
+      type: String,
+      default: '',
       require: true,
     },
   },
@@ -77,6 +87,7 @@ export default {
       show: false,
       activeTab: 0,
       medicalRecordId: null,
+      approvalList: [],
       approvalType: {
         0: {
           text: '审核中',
@@ -109,20 +120,44 @@ export default {
         border: '2rpx solid #5cbb89',
         borderRadius: '30rpx',
       },
+      //是否正在加载数据
+      isLoadingData: false,
+      //是否没有数据了
+      noMoreData: false,
     }
   },
   methods: {
+    //下拉刷新重置参数
+    reset() {
+      this.approvalList = []
+      this.current = 1
+      this.total = 0
+      this.getApprovalDetail()
+    },
     onScrollToLower() {
-      if (this.approvalList.length < this.total) {
-        this.getApprovalDetail()
-        this.current += 1
+      if (this.isLoadingData || this.approvalList.length >= this.total) {
+        return
       }
+      this.current += 1
+      this.getApprovalDetail()
     },
     getApprovalDetail() {
-      approvalApi.getApprovalDetail({
-        current: this.current,
-        size: this.size,
-      })
+      approvalApi
+        .getApprovalDetail({
+          approveTypeId: this.approveTypeId,
+          current: this.current,
+          size: this.size,
+          tabType: this.currentTab + 1,
+        })
+        .then((res) => {
+          if (res?.data?.records?.length > 0) {
+            this.total = res.data.total
+            this.approvalList = this.approvalList.concat(res.data.records)
+          }
+        })
+        .finally(() => {
+          this.isLoadingData = false
+        })
     },
     showDetail(item) {
       let url = {
@@ -140,7 +175,6 @@ export default {
         url: url[item.approveTypeName],
       })
     },
-
     onFailHandler(item) {
       wx.navigateTo({
         url: `/baseSubpackages/approvalManagement/components/applicationApprovalNote?data=${JSON.stringify(
@@ -148,13 +182,28 @@ export default {
         )}&applicationStatus=2`,
       })
     },
-
     onPassHandler(item) {
       wx.navigateTo({
         url: `/baseSubpackages/approvalManagement/components/applicationApprovalNote?data=${JSON.stringify(
           item,
         )}&applicationStatus=1`,
       })
+    },
+  },
+  watch: {
+    currentTab: {
+      handler(val) {
+        if (val === 0) {
+          this.getApprovalDetail()
+        }
+      },
+      immediate: true,
+    },
+    approveTypeId: {
+      handler(val) {
+        this.getApprovalDetail({ approveTypeId: val })
+      },
+      immediate: true,
     },
   },
 }
