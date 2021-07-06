@@ -9,7 +9,7 @@
             v-for="(item, index) in list"
             :key="index"
             @click="handleSelect(item)"
-            >{{ item[fieldName] }}</text
+            >{{ item[fieldName] | filterText(5) }}</text
           >
         </view>
       </scroll-view>
