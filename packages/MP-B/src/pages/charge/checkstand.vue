@@ -459,10 +459,10 @@ export default {
         return
       }
       let orderPayItemList = this.disposeList
-
-      orderPayItemList.forEach((item) => {
-        item.singleDiscount = item?.singleDiscount >= 0 || 100
-      })
+      //
+      // orderPayItemList.forEach((item) => {
+      //   item.singleDiscount = item?.singleDiscount >= 0 || 100
+      // })
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,
