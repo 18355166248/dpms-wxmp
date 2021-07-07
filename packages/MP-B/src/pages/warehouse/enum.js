@@ -25,7 +25,7 @@ export const receiveDeptTypeMap = {
 export const receiveDeptTypeArray = () => {
   let arr = []
   for (let key in receiveDeptTypeMap) {
-    let obj = { name: receiveDeptTypeMap[key], value: key }
+    let obj = { name: receiveDeptTypeMap[key], value: +key }
     arr.push(obj)
   }
   return arr
