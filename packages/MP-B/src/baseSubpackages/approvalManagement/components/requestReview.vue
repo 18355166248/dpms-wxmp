@@ -138,10 +138,17 @@ export default {
       if (this.isLoadingData || this.approvalList.length >= this.total) {
         return
       }
+      uni.showLoading({
+        title: '数据加载中',
+      })
       this.current += 1
       this.getApprovalDetail()
+      setTimeout(() => {
+        uni.hideLoading()
+      }, 1000)
     },
     getApprovalDetail() {
+      this.isLoadingData = true
       approvalApi
         .getApprovalDetail({
           approveTypeId: this.approveTypeId,
