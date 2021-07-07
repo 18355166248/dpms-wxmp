@@ -108,6 +108,7 @@ export default {
           if (res?.data?.records?.length > 0) {
             this.total = res.data.total
             this.approvalList = this.approvalList.concat(res.data.records)
+            console.log(111, this.approvalList)
           }
         })
         .finally(() => {
@@ -149,6 +150,7 @@ export default {
     },
     approveTypeId: {
       handler(val) {
+        this.approvalList = []
         this.getApprovalDetail({ approveTypeId: val })
       },
       immediate: true,
