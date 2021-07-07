@@ -1,7 +1,14 @@
 <template>
   <view class="inputNum">
     <view class="inputNum-min">
-      <text class="iconfont icon-minus-circle" @click="handleMinus"></text>
+      <text
+        :class="{
+          disabledColor: inputNumber == min,
+          activeColor: inputNumber != min,
+        }"
+        class="iconfont icon-minus-fill"
+        @click="handleMinus"
+      ></text>
     </view>
     <view class="inputNum-input">
       <input
@@ -17,7 +24,14 @@
       }}</text>
     </view>
     <view class="inputNum-max">
-      <text class="iconfont icon-plus-fill" @click="handleAdd"></text>
+      <text
+        :class="{
+          disabledColor: inputNumber == max,
+          activeColor: inputNumber != max,
+        }"
+        class="iconfont icon-plus-fill"
+        @click="handleAdd"
+      ></text>
     </view>
   </view>
 </template>
@@ -123,8 +137,15 @@ export default {
       line-height: 48rpx;
     }
   }
-  &-max {
+  &-max,
+  .icon-minus-fill {
     color: $common-color;
+  }
+  .activeColor {
+    color: $common-color;
+  }
+  .disabledColor {
+    color: rgba(0, 0, 0, 0.3);
   }
 }
 </style>

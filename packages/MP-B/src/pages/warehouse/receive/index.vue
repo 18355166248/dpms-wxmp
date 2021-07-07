@@ -8,7 +8,7 @@
           focus
           confirm-type="search"
           @focus="handleFocus"
-          v-model="receiveOrderNo"
+          v-model="appReceiveOrderNo"
           @confirm="confirm"
           placeholder="领用单号"
         />
@@ -45,10 +45,10 @@
         >
           <template v-for="item in statusMap">
             <view
-              :class="{ underline: currentStatus === item.value }"
+              :class="{ underline: currentStatus == item.value }"
               class="receive-main-status-item"
-              v-if="item.value != 4"
               :key="item.value"
+              v-if="item.value != 4"
               @click="changeStatus(item.value)"
               >{{ item.name }}</view
             >
@@ -111,7 +111,7 @@ export default {
   },
   data() {
     return {
-      statusMap: [{ name: '全部', value: 0 }, ...receiveStatusArray()],
+      statusMap: [{ name: '全部', value: 0 }, ...receiveStatusArray],
       date: moment().format('YYYY-MM'),
       startDate: '',
       endDate: moment().format('YYYY-MM'),
@@ -128,7 +128,7 @@ export default {
       showHistory: true,
       historyList: [],
       history: new History('receive', [], 10),
-      receiveOrderNo: '', // 搜索关键字
+      appReceiveOrderNo: '', // 搜索关键字
     }
   },
   computed: {
@@ -153,22 +153,28 @@ export default {
     }
   },
   methods: {
+    setDate(date) {
+      this.date = date
+    },
     // 切换状态
     async changeStatus(val) {
       this.scrollTop = 50
       this.currentStatus = val
-      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
+
+      let beginTime = moment(this.date + '-01' + ' ' + '00:00:00').valueOf()
       // 所选月份的最后一天
-      let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+      let endTime = moment(
+        moment(this.date + '-01')
+          .endOf('month')
+          .format('YYYY-MM-DD') +
           ' ' +
           '23:59:59',
-      )
+      ).valueOf()
       let params = {
         receiveStatus: val || null,
         beginTime,
         endTime,
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
       }
       const res = await this.getReceiveList(params)
       this.pagination = res
@@ -179,41 +185,47 @@ export default {
     // 切换日期选择
     async changeDate(event) {
       this.date = event.target.value
-      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
+      let beginTime = moment(this.date + '-01' + ' ' + '00:00:00').valueOf()
       // 所选月份的最后一天
-      let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+      let endTime = moment(
+        moment(this.date + '-01')
+          .endOf('month')
+          .format('YYYY-MM-DD') +
           ' ' +
           '23:59:59',
-      )
+      ).valueOf()
       let params = {
         beginTime,
         endTime,
         receiveStatus: this.currentStatus || null,
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
       }
       const res = await this.getReceiveList(params)
       this.pagination = res
     },
     goToSearch() {
-      this.$dpmsUtils.push({ url: '/pages/warehouse/receive/search' })
+      this.$dpmsUtils.push({
+        url: `/pages/warehouse/receive/search?date=${this.date}`,
+      })
     },
     // 搜索
     async confirm() {
       this.showHistory = false
       // 查询过后 就不再是第一次进入
       this.isFirstShow = false
-      this.history.add(this.receiveOrderNo)
-      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
+      this.history.add(this.appReceiveOrderNo)
+      let beginTime = moment(this.date + '-01' + ' ' + '00:00:00').valueOf()
       // 所选月份的最后一天
-      let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+      let endTime = moment(
+        moment(this.date + '-01')
+          .endOf('month')
+          .format('YYYY-MM-DD') +
           ' ' +
           '23:59:59',
-      )
+      ).valueOf()
       this.currentStatus = 0
       let params = {
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
         receiveStatus: this.currentStatus || null,
         beginTime,
         endTime,
@@ -233,7 +245,7 @@ export default {
     },
     // 点击历史记录
     selectHistory(value) {
-      this.receiveOrderNo = value
+      this.appReceiveOrderNo = value
       this.confirm()
     },
     // 清除历史记录
@@ -260,16 +272,18 @@ export default {
         return false
       }
       let _current = (this.pagination.current += 1)
-      let beginTime = Date.parse(this.date + '-01' + ' ' + '00:00:00')
+      let beginTime = moment(this.date + '-01' + ' ' + '00:00:00').valueOf()
       // 所选月份的最后一天
-      let endTime = Date.parse(
-        moment(beginTime).endOf('month').format('YYYY-MM-DD') +
+      let endTime = moment(
+        moment(this.date + '-01')
+          .endOf('month')
+          .format('YYYY-MM-DD') +
           ' ' +
           '23:59:59',
-      )
+      ).valueOf()
       let params = {
         current: _current,
-        receiveOrderNo: this.receiveOrderNo || null,
+        appReceiveOrderNo: this.appReceiveOrderNo || null,
         receiveStatus: this.currentStatus || null,
         beginTime,
         endTime,
@@ -385,11 +399,15 @@ export default {
     }
     &-list {
       flex: 1;
+      padding-bottom: 32rpx;
       overflow: hidden;
       background-color: #f2f2f2;
       &-item {
         padding: 0 24rpx;
         margin-bottom: 32rpx;
+      }
+      &-item:last-child {
+        margin-bottom: 0;
       }
     }
   }

@@ -2,11 +2,15 @@
   <view class="receive-info">
     <view class="receive-info-head">
       <view>{{ detail.merchandiseReceiveOrderNo }}</view>
-      <view
-        ><text :style="{ color: receiveStatusColor[detail.receiveStatus] }">{{
-          receiveStatusMap[detail.receiveStatus]
-        }}</text></view
-      >
+      <view class="receive-info-head-status">
+        <text
+          class="round"
+          :style="{ background: receiveStatusColor[detail.receiveStatus] }"
+        ></text>
+        <text :style="{ color: receiveStatusColor[detail.receiveStatus] }"
+          >{{ receiveStatusMap[detail.receiveStatus] }}
+        </text>
+      </view>
     </view>
     <view class="receive-info-date value">
       <text>{{ detail.lastUpdateTime | filterTime('YYYY-MM-DD') }}</text>
@@ -17,8 +21,10 @@
     </view>
     <view class="receive-info-goods">
       <text class="value"
-        >共{{ detail.merchandiseTotal || 0 }}种物品，合计{{
-          detail.merchandiseItemTotal || 0
+        >共{{
+          detail.merchandiseTotal || 0 | thousandFormatter(0, '')
+        }}种物品，合计{{
+          detail.merchandiseItemTotal || 0 | thousandFormatter(0, '')
         }}件</text
       >
     </view>
@@ -77,6 +83,16 @@ export default {
     text:last-child {
       color: #fa8c16;
       font-size: 28rpx;
+    }
+    &-status {
+      position: relative;
+      .round {
+        margin-right: 12rpx;
+        display: inline-block;
+        width: 16rpx;
+        height: 16rpx;
+        border-radius: 50%;
+      }
     }
   }
   &-person {

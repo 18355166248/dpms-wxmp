@@ -22,7 +22,7 @@
         <text style="line-height: 76rpx;">审批类型：</text>
         <view>
           <u-input
-            v-model="defaultVal"
+            v-model="ListValue"
             :type="type"
             @click="show = true"
             border
@@ -37,11 +37,15 @@
       </view>
       <requestApplied
         v-if="currentTab === 0"
-        :approvalList="approvalList"
+        :currentTab="currentTab"
+        :approveTypeId="approveTypeId"
+        ref="requestAppliedRef"
       ></requestApplied>
       <requestReview
         v-if="currentTab === 1"
-        :approvalList="approvalList"
+        :currentTab="currentTab"
+        :approveTypeId="approveTypeId"
+        ref="requestReviewRef"
       ></requestReview>
     </view>
   </view>
@@ -58,66 +62,10 @@ export default {
     return {
       show: false,
       currentTab: 0,
-      defaultVal: '全部',
       type: 'select',
-      currentApprovalId: '',
-      //approvalId为后端需要的字段
-      actionSheetList: [
-        {
-          value: 0,
-          text: '全部',
-          approvalId: '',
-        },
-        {
-          value: 1,
-          text: '病历',
-          approvalId: 1,
-        },
-        {
-          value: 2,
-          text: '收费',
-          approvalId: 2,
-        },
-        {
-          value: 3,
-          text: '退费',
-          approvalId: 3,
-        },
-        {
-          value: 4,
-          text: '借调',
-          approvalId: 4,
-        },
-        {
-          value: 5,
-          text: '领用',
-          approvalId: 5,
-        },
-        {
-          value: 7,
-          text: '退整单',
-          approvalId: 7,
-        },
-        {
-          value: 8,
-          text: '退步骤',
-          approvalId: 8,
-        },
-        {
-          value: 9,
-          text: '退金额',
-          approvalId: 9,
-        },
-        {
-          value: 10,
-          text: '退项目',
-          approvalId: 10,
-        },
-      ],
-      //分页
-      current: 1,
-      size: 10,
-      approvalList: {},
+      approveTypeId: '', //approveTypeId为后端需要的字段
+      actionSheetList: [],
+      ListValue: '全部', //点击下拉框的值回显
     }
   },
   components: {
@@ -128,54 +76,37 @@ export default {
   methods: {
     // 点击actionSheet回调
     actionSheetCallback(index) {
-      console.log((this.value = this.actionSheetList[index].text))
-      this.defaultVal = this.actionSheetList[index].text
-      this.currentApprovalId = this.actionSheetList[index].approvalId
-      this.resetParams()
-      this.getApprovalDetail()
+      this.approveTypeId = this.actionSheetList[index].id
+      this.ListValue = this.actionSheetList[index].text
     },
     changeTab(index) {
       this.currentTab = index
-      this.resetParams()
-      this.getApprovalDetail()
-    },
-    resetParams() {
-      this.current = 1
-    },
-    //获取我发起的审批列表
-    getApprovalDetail() {
-      approvalApi
-        .getApprovalDetail({
-          approveTypeId: this.currentApprovalId,
-          current: this.current,
-          size: this.size,
-          tabType: this.currentTab + 1,
-        })
-        .then((res) => {
-          if (res.code === 0) {
-            this.current += 1
-            this.approvalList = res.data
-          }
-        })
-    },
-    initData() {
-      this.current = 1
-      this.approvalList = []
     },
   },
-  onLoad(options) {
-    this.getApprovalDetail()
-    if (options.currentTab) {
-      this.currentTab = Number(options.currentTab)
-    }
+  onLoad() {
+    approvalApi.getApprovalList().then((res) => {
+      this.actionSheetList = res.data.map((item) => {
+        return {
+          text: item.approveTypeName,
+          id: item.approveTypeId,
+        }
+      })
+      this.actionSheetList.unshift({ text: '全部', id: '' })
+    })
   },
   onShow() {
-    this.initData()
-    this.getApprovalDetail()
+    if (this.currentTab === 1) {
+      this.$refs?.requestReviewRef?.reset()
+    }
   },
   onPullDownRefresh() {
-    this.getApprovalDetail()
+    if (this.currentTab === 0) {
+      this.$refs?.requestAppliedRef?.reset()
+    } else {
+      this.$refs?.requestReviewRef?.reset()
+    }
   },
+  onHide() {},
 }
 </script>
 

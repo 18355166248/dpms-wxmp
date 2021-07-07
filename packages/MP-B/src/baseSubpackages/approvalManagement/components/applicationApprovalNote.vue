@@ -69,17 +69,13 @@ export default {
           approveTypeId: this.records.approveTypeId,
         })
         .then(
-          wx.navigateBack({
-            url:
-              '/baseSubpackages/approvalManagement/approvalManagement?currentTab=1',
-          }),
+          setTimeout(() => {
+            wx.navigateBack()
+          }, 300),
         )
     },
     cancelSubmit() {
-      wx.navigateBack({
-        url:
-          '/baseSubpackages/approvalManagement/approvalManagement?currentTab=1',
-      })
+      wx.navigateBack()
     },
   },
   onHide() {
