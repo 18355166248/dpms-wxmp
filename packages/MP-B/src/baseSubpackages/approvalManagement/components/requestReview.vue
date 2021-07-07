@@ -201,6 +201,7 @@ export default {
     },
     approveTypeId: {
       handler(val) {
+        this.approvalList = []
         this.getApprovalDetail({ approveTypeId: val })
       },
       immediate: true,
