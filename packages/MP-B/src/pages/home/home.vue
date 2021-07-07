@@ -174,6 +174,7 @@ import { mapState } from 'vuex'
 import { setCustomOpenId } from '@/utils/utils'
 import billReport from '@/pages/home/billReport'
 import billAPI from '../../APIS/bill/bill.api'
+import { checkQwInstitution } from '@/utils/utils'
 
 export default {
   components: {
@@ -233,6 +234,7 @@ export default {
     }
   },
   onLoad() {
+    checkQwInstitution()
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.init()
     setCustomOpenId()
