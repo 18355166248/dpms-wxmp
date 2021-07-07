@@ -28,11 +28,11 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* Project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_6wryl6ll6n.woff2?t=1624366527331')
+  src: url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.woff2?t=1625644235400')
       format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_6wryl6ll6n.woff?t=1624366527331')
+    url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.woff?t=1625644235400')
       format('woff'),
-    url('//at.alicdn.com/t/font_1965288_6wryl6ll6n.ttf?t=1624366527331')
+    url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.ttf?t=1625644235400')
       format('truetype');
 }
 /*********在线字体代码end*********/
@@ -75,6 +75,9 @@ button::after {
 .icon-minus-circle::before {
   content: '\e780';
 }
+.icon-minus-fill::before {
+  content: '\e847';
+}
 .icon-plus-fill::before {
   content: '\e84a';
 }
@@ -83,6 +86,9 @@ button::after {
 }
 .icon-inverted-triangle::before {
   content: '\e8ec';
+}
+.icon-home-close::before {
+  content: '\e66f';
 }
 /*今日就诊*/
 .icon-medicine-chest::before {

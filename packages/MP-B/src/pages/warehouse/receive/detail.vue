@@ -284,6 +284,7 @@ export default {
           padding-left: 24rpx;
           text-align: right;
           overflow: hidden;
+          line-height: 42rpx;
           max-height: 80rpx;
           word-break: break-all;
           text-overflow: ellipsis;

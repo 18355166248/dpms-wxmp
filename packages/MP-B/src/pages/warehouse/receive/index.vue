@@ -48,6 +48,7 @@
               :class="{ underline: currentStatus == item.value }"
               class="receive-main-status-item"
               :key="item.value"
+              v-if="item.value != 4"
               @click="changeStatus(item.value)"
               >{{ item.name }}</view
             >
@@ -398,11 +399,15 @@ export default {
     }
     &-list {
       flex: 1;
+      padding-bottom: 32rpx;
       overflow: hidden;
       background-color: #f2f2f2;
       &-item {
         padding: 0 24rpx;
         margin-bottom: 32rpx;
+      }
+      &-item:last-child {
+        margin-bottom: 0;
       }
     }
   }
