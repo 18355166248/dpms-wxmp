@@ -105,10 +105,19 @@ export default {
           tabType: this.currentTab + 1,
         })
         .then((res) => {
-          if (res?.data?.records?.length > 0) {
-            this.total = res.data.total
-            this.approvalList = this.approvalList.concat(res.data.records)
-            console.log(111, this.approvalList)
+          if (res.code === 0) {
+            if (res?.data?.records?.length > 0) {
+              this.total = res.data.total
+              this.approvalList = this.approvalList.concat(res.data.records)
+              console.log(111, this.approvalList)
+            }
+          } else {
+            wx.showToast({
+              title: '数据加载失败',
+              icon: 'error',
+              duration: 1000,
+              mask: true,
+            })
           }
         })
         .finally(() => {
@@ -126,7 +135,7 @@ export default {
       this.getApprovalDetail()
       setTimeout(() => {
         uni.hideLoading()
-      }, 1000)
+      }, 500)
     },
     showDetail(item) {
       let url = {
