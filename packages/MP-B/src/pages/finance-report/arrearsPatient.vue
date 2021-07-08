@@ -85,7 +85,7 @@ export default {
       current: 0,
       size: 10,
       isFilter: false,
-      computedCol: ['totalArrears', 'totalReceivable', 'totalReceived'],
+      computedCol: ['totalArrears', 'totalReceived'],
       summary: {},
       dataSourceStatus: 'loading',
     }
