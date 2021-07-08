@@ -6,7 +6,7 @@
         <text v-if="detail.merchandiseName">/{{ detail.merchandiseName }}</text>
         <text v-if="detail.aliasName">/{{ detail.aliasName }}</text>
       </view>
-      <view class="mt16"
+      <view class="mt16" v-if="!mode"
         ><text class="text-label">物品编号：</text
         ><text class="text-value">{{ detail.merchandiseNo }}</text></view
       >
@@ -14,7 +14,7 @@
         ><text class="text-label">品牌：</text
         ><text class="text-value">{{ detail.brandName }}</text></view
       >
-      <view class="mt16" v-if="type === 'good'"
+      <view class="mt16" v-if="!mode && type === 'good'"
         ><text class="text-label">物品类型：</text
         ><text class="text-value">{{ detail.merchandiseTypeStr }}</text></view
       >
@@ -24,11 +24,8 @@
         ><text class="text-value">{{ detail.specificationsStr }}</text></view
       >
       <!-- 库存展示 -->
-      <view class="mt16" v-if="type === 'inventory'"
+      <view class="mt16" v-if="type === 'inventory' || mode"
         ><text class="text-label">可用库存：</text>
-        <!-- <text class="text-value available">{{
-          `${detail.inventoryNum || 0} ${detail.inventoryUnitStr || ''}`
-        }}</text> -->
         <text class="text-value available">{{
           detail.inventoryNum | thousandFormatter(0, '')
         }}</text>
@@ -55,6 +52,10 @@ export default {
     type: {
       type: String,
       default: 'good', // good 物品  inventory 库存
+    },
+    mode: {
+      type: String,
+      default: '',
     },
   },
   methods: {
@@ -99,6 +100,12 @@ export default {
     right: 0;
     width: 80rpx;
     height: 112rpx;
+  }
+  .select_mode {
+    position: absolute;
+    top: 50%;
+    right: 34rpx;
+    transform: translateY(-50%);
   }
   .available {
     color: #fa8c16;

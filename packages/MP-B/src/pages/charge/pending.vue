@@ -11,8 +11,7 @@
           ><view class="iconfont icon-time-circle"></view>
           {{ order.consultTimeDate }}</view
         >
-        <view class="pending" v-if="order.billStatus === 0">待收费</view>
-        <view class="refund" v-if="order.billStatus === 1">待退费</view>
+        <view class="btn pending" :class="billStatusDic[order.billStatus].className" >{{billStatusDic[order.billStatus].text}}</view>
       </view>
       <view class="lineHr"></view>
       <view>
@@ -76,6 +75,54 @@ export default {
         status: 'loading',
         request: 'loading',
       },
+      billStatusDic:{
+        0:{
+          text:'待收费',
+          className:'pending'
+        },
+        1:{
+          text:'待退费',
+          className:'pending'
+        },
+        // 2:{
+        //   text:'已收费'
+        // },
+        // 3:{
+        //   text:'已退费'
+        // },
+        4:{
+          text:'部分退费',
+          className:'pending'
+        },
+        6:{
+          text:'审核中',
+          className:'approvaling',
+        },
+        7:{
+          text:'已通过',
+          className:'approvaled',
+        },
+        8:{
+          text:'未通过',
+          className:'refused',
+        },
+        9:{
+          text:'退费审核中',
+          className:'approvaling',
+        },
+        10:{
+          text:'退费已通过',
+          className:'approvaled',
+        },
+        11:{
+          text:'退费未通过',
+          className:'refused',
+        },
+        12:{
+          text:'退费待退费',
+          className:'pending'
+        },
+      }
     }
   },
   destroyed() {
@@ -100,11 +147,20 @@ export default {
       this.getPendingOrder()
     },
     onPendingList(record) {
+      console.log(106, record)
       if (record.billStatus === 0 && this.btnPremisstion('pending_editing')) {
         this.setBillType(record.billType)
         this.setReceivableAmount(record.receivableAmount)
         uni.navigateTo({
           url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
+        })
+      }
+
+      if ([6,7,8].includes(record.billStatus)){
+        this.setBillType(record.billType)
+        this.setReceivableAmount(record.receivableAmount)
+        uni.navigateTo({
+          url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}&billSerialNo=${record?.billSerialNo}`,
         })
       }
     },
@@ -181,6 +237,7 @@ export default {
       display: flex;
       align-items: center;
       margin-bottom: 1rpx;
+      justify-content: space-between;
     }
     .datetime {
       display: flex;
@@ -193,30 +250,41 @@ export default {
       margin-left: 28rpx;
       margin-right: 14rpx;
     }
-    .pending {
-      width: 116rpx;
+    .btn {
       height: 40rpx;
+      border-radius: 6rpx;
+      text-align: center;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      padding: 0 10rpx;
+      margin-right: 28rpx;
+    }
+    .pending {
       background: #fff7e6;
       border: 2rpx solid #fa8c16;
-      border-radius: 6rpx;
-      text-align: center;
       color: #fa8c16;
-      line-height: 40rpx;
-      font-size: 28rpx;
-      margin-left: 202rpx;
     }
     .refund {
-      width: 116rpx;
-      height: 40rpx;
       background: #f6ffed;
       border: 2rpx solid #52c41a;
-      border-radius: 6rpx;
-      text-align: center;
       color: #52c41a;
-      line-height: 40rpx;
-      font-size: 28rpx;
-      margin-left: 202rpx;
     }
+    .approvaling {
+      //background: #0bd0da;
+      border: 2rpx solid #0bd0da;
+      color: #0bd0da;
+    }
+    .approvaled {
+      //background: #5cbb89;
+      border: 2rpx solid #5cbb89;
+      color: #5cbb89;
+    }
+    .refused {
+      //background: #f2647c;
+      border: 2rpx solid #f2647c;
+      color: #f2647c;
+    }
+
     .listLine {
       margin-top: 18rpx;
       display: flex;

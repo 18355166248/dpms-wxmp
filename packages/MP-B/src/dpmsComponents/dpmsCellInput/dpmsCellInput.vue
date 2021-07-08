@@ -4,6 +4,7 @@
     :required="required"
     :isLink="isLink"
     :hideBorderBottom="hideBorderBottom"
+    :disabled="disabledProps"
   >
     <input
       :type="type"

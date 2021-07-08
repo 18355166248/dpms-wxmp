@@ -2,6 +2,7 @@
   <!-- 物品搜索 -->
   <view class="container">
     <search
+      :mode="mode"
       type="good"
       storgeKey="goods"
       detailPath="/pages/warehouse/goods/goodDetail"
@@ -12,6 +13,14 @@
 import search from '../components/search.vue'
 export default {
   components: { search },
+  data() {
+    return {
+      mode: '',
+    }
+  },
+  onLoad({ mode }) {
+    this.mode = mode
+  },
 }
 </script>
 <style lang="scss" scoped>

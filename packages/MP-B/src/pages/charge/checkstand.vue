@@ -19,14 +19,18 @@
           </div>
         </div>
       </chargestand-title>
-      <dpmsCellInput
-        v-for="(item, index) in form.payChannelList"
-        :key="item.transactionChannelId"
-        type="digit"
-        :title="item.transactionChannelName"
-        v-model="item.paymentAmount"
-        @blur="changePayChannel($event, item)"
-      />
+
+      <div v-if="form.payChannelList.length > 0 && payTypes.length > 0">
+        <dpmsCellInput
+          v-for="(item, index) in form.payChannelList"
+          :key="item.transactionChannelId"
+          type="digit"
+          :title="item.transactionChannelName"
+          v-model="item.paymentAmount"
+          @blur="changePayChannel($event, item)"
+          :disabledProps="item.payStyle === 13"
+        />
+      </div>
       <div v-if="changeAmount > 0" class="validateCount">
         支付总金额不能大于应收金额
       </div>
@@ -162,6 +166,7 @@
             </view>
           </div>
         </div>
+        <!--  收费和保存 -->
         <div class="btn-wrapper flexBt" v-if="canOperation">
           <button
             v-if="showSaveBtn"
@@ -176,6 +181,12 @@
             class="charge-btn"
           >
             收费
+          </button>
+        </div>
+
+        <div class="btn-wrapper flexBt" v-if="revokeOperation">
+          <button class="charge-btn" @click="revokeApprove">
+            撤回
           </button>
         </div>
       </div>
@@ -197,7 +208,7 @@
           >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
-          :disabled="checkDisableFn(item.checked)"
+          :disabled="checkDisableFn(item)"
           shape="square"
           :value="item.checked"
           @input="payTypeChange($event, item)"
@@ -206,7 +217,13 @@
       </view>
     </actionSheet>
     <u-toast ref="uToast" />
+    <!--  支付结果  -->
     <payResult @confirm="payResultConfirm" ref="payResultRef"></payResult>
+    <!-- 审批弹框-->
+    <approveModal
+      @confirm="approveConfirm"
+      ref="approveModalRef"
+    ></approveModal>
   </view>
 </template>
 <script>
@@ -218,6 +235,7 @@ import moment from 'moment'
 import { mapMutations, mapState } from 'vuex'
 import { BigCalculate, changeTwoDecimal, numberUtils } from '@/utils/utils'
 import payResult from './common/payResult'
+import approveModal from './common/approveModal'
 
 const STAFF_ENUMS = new Map([
   ['doctor', 2],
@@ -258,12 +276,17 @@ export default {
       nurseRequire: false,
       //咨询师是否为必填项
       consultedRequire: false,
-      // 账单类型
+      // 账单状态
+      billStatus: -1,
+      //能否撤回
+      canRevoke: false,
+      billSerialNo: '',
     }
   },
   components: {
     ChargestandTitle,
     payResult,
+    approveModal,
   },
   computed: {
     ...mapState('workbenchStore', ['menu', 'medicalInstitution']),
@@ -275,6 +298,10 @@ export default {
       'realDiscountPromotionAmount',
     ]),
     ...mapState('checkstand', ['billType', 'chargeType']),
+    test(item) {
+      console.log(288, item)
+      return false
+    },
     showSaveBtn() {
       return !(this.billType === 4 || this.billType === 3)
     },
@@ -325,8 +352,16 @@ export default {
         (institutionChainType === 2 && topParentId === 0)
       ) {
         return false
+      } else {
+        if (this.billStatus === 6 && this.canRevoke) {
+          return false
+        }
       }
       return true
+    },
+    // 是否能撤回
+    revokeOperation() {
+      return this.billStatus === 6 && this.canRevoke
     },
   },
   onLoad(query) {
@@ -334,6 +369,9 @@ export default {
     this.loadListData(query).then(() => {
       if (query) this.backData(query)
     })
+    this.billStatus = Number(query?.billStatus)
+    this.canRevoke = query?.canRevoke
+    this.billSerialNo = query?.billSerialNo
   },
   onShow() {
     this.btnPremisstion()
@@ -347,6 +385,23 @@ export default {
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
     ]),
+    // 收费撤回
+    revokeApprove() {
+      if (!this.billSerialNo) {
+        return
+      }
+      billAPI
+        .revokeApprove({
+          billSerialNo: this.billSerialNo,
+        })
+        .then((res) => {
+          if (res?.code === 0) {
+            uni.reLaunch({
+              url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
+            })
+          }
+        })
+    },
     getRequireConfig() {
       billAPI
         .getChargeRequiredConfig()
@@ -403,6 +458,11 @@ export default {
       if (!this.checkRequire(form)) {
         return
       }
+      let orderPayItemList = this.disposeList
+      //
+      // orderPayItemList.forEach((item) => {
+      //   item.singleDiscount = item?.singleDiscount >= 0 || 100
+      // })
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,
@@ -413,7 +473,7 @@ export default {
         mainOrderDiscount: this.realMainOrderDiscount,
         mainOrderDiscountIsmember: false,
         memo: form.memo,
-        orderPayItemList: this.disposeList, //列表
+        orderPayItemList: orderPayItemList, //列表
         patientId: patientDetail.patientId,
         payChannelList: form.payChannelList, //列表
         receivableAmount: receivableAmount,
@@ -458,7 +518,6 @@ export default {
         return item
       })
 
-      // console.log(params);
       if (type === 'save') {
         billAPI.saveOrderBill(params).then((res) => {
           uni.reLaunch({
@@ -467,8 +526,26 @@ export default {
         })
       } else if (type === 'charge') {
         billAPI.orderPayOne(params).then((res) => {
-          if (res.code === 0 && res?.data) {
-            this.$refs.payResultRef.open(res.data)
+          const { code, data, message } = res
+          if (code === 0 && data) {
+            this.$refs.payResultRef.open(data)
+          } else if ([1000373, 1000377].includes(code)) {
+            try {
+              const errData = JSON.parse(message)
+              // 发起审核
+              if (code === 1000373) {
+                //  打开审批弹框
+                this.$refs.approveModalRef.open(errData, params)
+              } else {
+                //发起失败  给出错误提示
+                this.$refs.uToast.show({
+                  title: errData?.approveReason || '审批发起失败',
+                  type: 'error',
+                })
+              }
+            } catch (err) {
+              console.log(123, err)
+            }
           }
         })
       }
@@ -476,6 +553,11 @@ export default {
     payResultConfirm() {
       uni.reLaunch({
         url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
+      })
+    },
+    approveConfirm() {
+      uni.reLaunch({
+        url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
       })
     },
     backData(query) {
@@ -497,6 +579,7 @@ export default {
               consultId,
               realMainOrderDiscount,
             } = res.data
+            console.log(525, payChannelList)
             // 设置应收金额
             this.setReceivableAmount(changeTwoDecimal(receivableAmount))
             this.setDisposeList(
@@ -607,8 +690,12 @@ export default {
         item.itemNum
       )
     },
-    checkDisableFn(checked) {
+    checkDisableFn(item) {
+      const checked = item.checked
       const hasCheck = this.payTypes.filter((item) => item.checked)
+      if (item.payStyle === 13) {
+        return true
+      }
       return (
         (hasCheck.length === 1 && checked) ||
         (hasCheck.length === 3 && !checked)
@@ -666,6 +753,7 @@ export default {
         .getPayTransactionChannel({
           memberId: this.patientDetail.memberId,
           enabled: true,
+          customerId: this.patientDetail.customerId,
         })
         .then((res) => {
           if (res?.data.length > 0) {
@@ -689,6 +777,7 @@ export default {
                 ]
               }
             })
+
             this.payTypes = res.data
           }
         })
@@ -725,13 +814,6 @@ export default {
     },
     onRegisterTime(v, record) {
       this.backVisitTimeDate(record)
-    },
-  },
-  watch: {
-    watchData: {
-      handler(newVal, oldVal) {},
-      deep: true,
-      immediate: true,
     },
   },
 }

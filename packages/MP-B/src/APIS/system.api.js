@@ -44,6 +44,22 @@ const systemAPI = {
   getOssUrl(params) {
     return httper.get('institution/oss/url', params)
   },
+
+  // 获取常用功能列表
+  getCommonFunsList(params) {
+    return scrmHttper.get('/scrm/system/mina-menus', params)
+  },
+  // /api/common/staff/configs
+  getCommonFunsConfig(params) {
+    return scrmHttper.get('/common/staff/configs', params)
+  },
+  updateSelectMenus(data) {
+    return scrmHttper.put('/common/staff/configs', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
 }
 
 export default systemAPI
