@@ -146,12 +146,17 @@ export function checkQwInstitution() {
   const currentPage = pages[pages.length - 1]
 
   const { isqywx, qwMedicalInstitutionId } = currentPage.options
-  if (isqywx && qwMedicalInstitutionId) {
-    const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
-    const mId = Number(qwMedicalInstitutionId)
-    if (mId !== medicalInstitution?.medicalInstitutionId) {
-      setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, currentPage.$page.fullPath)
-      uni.redirectTo({ url: '/pages/login/qyLogin' })
+  const systemInfo = uni.getSystemInfoSync()
+  const isWxWork = systemInfo?.environment === 'wxwork'
+  if (isqywx || isWxWork) {
+    setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, currentPage.$page.fullPath)
+    if (qwMedicalInstitutionId) {
+      const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+      const mId = Number(qwMedicalInstitutionId)
+      if (mId !== medicalInstitution?.medicalInstitutionId) {
+        setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, currentPage.$page.fullPath)
+        uni.redirectTo({ url: '/pages/login/qyLogin' })
+      }
     }
   }
 }
