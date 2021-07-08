@@ -155,17 +155,20 @@ export default {
     },
   },
   watch: {
-    currentTab: {
-      handler(val) {
-        if (val === 0) {
-          this.getApprovalDetail()
-        }
-      },
-      immediate: true,
-    },
+    // currentTab: {
+    //   handler(val) {
+    //     console.log('发起的',val)
+    //     if (val === 0) {
+    //       // this.getApprovalDetail()
+    //     }
+    //   },
+    //   immediate: true,
+    // },
     approveTypeId: {
       handler(val) {
         this.approvalList = []
+        this.current = 1
+        this.total = 0
         this.getApprovalDetail({ approveTypeId: val })
       },
       immediate: true,
