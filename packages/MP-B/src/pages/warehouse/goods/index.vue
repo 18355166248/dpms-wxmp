@@ -2,6 +2,7 @@
   <!-- 物品列表 -->
   <view class="container">
     <goodList
+      :mode="mode"
       type="good"
       searchPath="/pages/warehouse/goods/searchGood"
       detailPath="/pages/warehouse/goods/goodDetail"
@@ -12,6 +13,15 @@
 import goodList from '../components/good-list.vue'
 export default {
   components: { goodList },
+  data() {
+    return {
+      mode: '',
+    }
+  },
+  onLoad({ mode }) {
+    console.log('物品列表获取的参数是', mode)
+    this.mode = mode
+  },
 }
 </script>
 <style lang="scss" scoped>

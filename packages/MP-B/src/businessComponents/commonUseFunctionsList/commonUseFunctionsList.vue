@@ -2,7 +2,7 @@
   <view class="common-functions-List">
     <view
       class="menu-item"
-      v-for="(item, index) in filterMenuList"
+      v-for="(item, index) in menuList"
       :key="index"
       @click="viewPage(menuDic[item.type])"
     >
@@ -11,76 +11,61 @@
         :menu-style="menuDic[item.type].menuStyle"
       >
       </menuIcon>
-      <view class="menu-text">{{ menuDic[item.type].text }}</view>
+      <view class="menu-text">{{ item.displayName }}</view>
     </view>
-    <!--    <view class="menu-item" @click="viewAll(menuDic.all.url)">-->
-    <!--      <menuIcon-->
-    <!--        :icon="menuDic.all.iconName"-->
-    <!--        :fontSize="menuDic.all.fontSize"-->
-    <!--        :menu-style="menuDic.all.menuStyle"-->
-    <!--      >-->
-    <!--      </menuIcon>-->
-    <!--      <view class="menu-text">全部</view>-->
-    <!--    </view>-->
+    <view class="menu-item" @click="viewAll(menuDic.all.url)">
+      <menuIcon
+        :icon="menuDic.all.iconName"
+        :fontSize="menuDic.all.fontSize"
+        :menu-style="menuDic.all.menuStyle"
+      >
+      </menuIcon>
+      <view class="menu-text">全部</view>
+    </view>
   </view>
 </template>
 <script>
 import menuIcon from '../menuIcon'
 import { menuDic } from './menu'
+// import systemAPI from '@/APIS/system.api.js'
+
+// const commonParams = { modelId: 2, key: 'commonMenuFuns' }
 export default {
   name: 'commonFunctionsList',
+  components: { menuIcon },
+  props: {
+    menuList: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       menuDic: menuDic,
-      menuList: [
-        {
-          type: 'visiting',
-          key: ['any'],
-        },
-        {
-          type: 'appoint',
-          key: ['any'],
-        },
-        {
-          type: 'patient',
-          key: ['any'],
-        },
-
-        // {
-        //   type: 'approval',
-        //   key:['supply-chain-management','approval']
-        // },
-        {
-          type: 'preview',
-          key: ['supply-chain-management', 'basic-setting', 'item-management'],
-        },
-        {
-          type: 'inventory',
-          key: [
-            'supply-chain-management',
-            'warehousing',
-            'warehouse-management',
-          ],
-        },
-        // {
-        //   type: 'receive',
-        //   key:['supply-chain-management','receive']
-        // },
-        // {
-        //   type: 'archive',
-        // },
-      ],
     }
   },
-  computed: {
-    filterMenuList() {
-      return this.menuList
-        .filter((item) => this.menuPermission(item.key))
-        .filter((item, index) => index < 7)
-    },
+  async created() {
+    // const data = await this.getCommonFunsList()
+    // const res = await this.getCommonFunsConfig()
+    // const arr = data.menus.map(e => {
+    //   return {
+    //     ...e,
+    //     type: e.enumValue.replaceAll('-', ''),
+    //     status: res.indexOf(e.enumValue) > -1 || data.defaultMenus.indexOf(e.enumValue) > -1
+    //   }
+    // })
+    // this.menuList = arr.filter(e => res.indexOf(e.enumValue) > -1 || data.defaultMenus.indexOf(e.enumValue) > -1).slice(0, 7)
   },
-  created() {},
   methods: {
+    // async getCommonFunsList() {
+    //   const res = await systemAPI.getCommonFunsList()
+    //   return res.data
+    // },
+    // // 获取常用功能配置
+    // async getCommonFunsConfig() {
+    //   const res = await systemAPI.getCommonFunsConfig(commonParams)
+    //   return res.data || []
+    // },
     //全部
     viewAll(url) {
       this.$dpmsUtils.push({
@@ -96,14 +81,6 @@ export default {
       }
     },
   },
-  watch: {
-    watchData: {
-      handler(newVal, oldVal) {},
-      deep: true,
-      immediate: true,
-    },
-  },
-  components: { menuIcon },
 }
 </script>
 <style lang="scss" scoped>

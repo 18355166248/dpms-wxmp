@@ -40,11 +40,19 @@
             :scroll-top="scrollTop"
           >
             <view v-for="(item, index) in pagination.records" :key="index">
-              <goodsInfo
-                :detail="item"
-                :type="type"
-                @on-click="goToDetail(item.merchandiseId)"
-              />
+              <checkBox
+                v-model="item.checked"
+                :disabled="!item.isEnable || !item.availableNum"
+                @on-change="handleSelect(item)"
+                :mode="mode"
+              >
+                <goodsInfo
+                  :detail="item"
+                  :type="type"
+                  :mode="mode"
+                  @on-click="goToDetail(item.merchandiseId)"
+                />
+              </checkBox>
             </view>
             <view class="loadMore">
               <loadMore :status="statusText" />
@@ -54,13 +62,19 @@
         </view>
       </view>
     </view>
+    <view class="select_action" v-if="mode == 'select'">
+      <view class="select_action_text"
+        >已选择{{ applyGoods.length }}种物品</view
+      >
+      <view class="select_action_btn" @click="goToReceiveApply">确认</view>
+    </view>
     <uni-drawer ref="showRight" mode="right" :mask-click="true" :width="302">
       <view class="drawer-title">
         <text>筛选</text>
       </view>
       <view class="drawer-main">
         <view class="drawer-main-oneCategoryname">
-          <text>{{ oneCategoryName }}</text>
+          <text>{{ oneCategoryName | filterText(14) }}</text>
         </view>
         <scroll-view style="height: 100%;" scroll-y="true">
           <expandFilter
@@ -77,6 +91,7 @@
   </view>
 </template>
 <script>
+import { mapMutations, mapState } from 'vuex'
 import sideScroll from './sideScroll.vue'
 import tabScroll from './tabsScroll.vue'
 import expandFilter from './expand-filter.vue'
@@ -84,6 +99,7 @@ import goodsInfo from './goods-info.vue'
 import goodAPI from '@/APIS/warehouse/good.api.js'
 import loadMore from '@/components/load-more/load-more.vue'
 import empty from '@/components/empty/empty.vue'
+import checkBox from '@/components/checkbox/checkbox.vue'
 const all = [
   {
     merchandiseCategoryId: 0,
@@ -100,6 +116,7 @@ export default {
     goodsInfo,
     loadMore,
     empty,
+    checkBox,
   },
   props: {
     type: {
@@ -111,6 +128,10 @@ export default {
     // 点击物品信息跳转的路径path
     detailPath: {
       type: String,
+    },
+    mode: {
+      type: String,
+      default: '',
     },
   },
   data() {
@@ -134,6 +155,14 @@ export default {
     }
   },
   computed: {
+    ...mapState('warehouse', ['applyGoods']),
+    goodIds() {
+      if (this.applyGoods.length) {
+        return this.applyGoods.map((e) => e.merchandiseId)
+      } else {
+        return []
+      }
+    },
     statusText() {
       if (!this.loading) {
         if (this.pagination.current === this.pagination.pages) {
@@ -146,12 +175,24 @@ export default {
       }
     },
   },
+  watch: {
+    goodIds() {
+      this.$nextTick(() => {
+        this.pagination.records.forEach((e) => {
+          let flag = this.goodIds.indexOf(e.merchandiseId) >= 0
+          this.$set(e, 'checked', flag)
+        })
+      })
+    },
+  },
   async created() {
+    console.log('goodList获取的mode是', this.mode)
     this.getCategoryList()
     const res = await this.getGoodsList()
     this.pagination = res
   },
   methods: {
+    ...mapMutations('warehouse', ['selectGood']),
     // 获取物品分类
     async getCategoryList() {
       const res = await goodAPI.getCategoryList()
@@ -164,7 +205,12 @@ export default {
       const res = await goodAPI.getGoodsList(params)
       this.loading = false
       let { records, total, current, pages } = res.data
-      return { records, total, current, pages }
+      let arr = records.length
+        ? records.map((e) => {
+            return { ...e, checked: this.goodIds.indexOf(e.merchandiseId) >= 0 }
+          })
+        : []
+      return { records: arr, total, current, pages }
     },
     // 加载更多
     async loadMore() {
@@ -256,13 +302,26 @@ export default {
     },
     // 前往搜索页面
     goToSearch() {
-      this.$dpmsUtils.push({ url: this.searchPath })
+      this.$dpmsUtils.push({ url: `${this.searchPath}?mode=${this.mode}` })
+    },
+    // 选择物品
+    handleSelect(item) {
+      this.selectGood(item)
     },
     // 跳转详情页
     goToDetail(merchandiseId) {
-      this.$dpmsUtils.push({
-        url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
-      })
+      if (this.mode !== 'select') {
+        this.$dpmsUtils.push({
+          url: `${this.detailPath}?merchandiseId=${merchandiseId}`,
+        })
+      }
+    },
+    // 跳转领用申请
+    goToReceiveApply() {
+      this.$dpmsUtils.back(1)
+      // this.$dpmsUtils.push({
+      //   url: '/pages/warehouse/receive/apply',
+      // })
     },
     openDrawer() {
       this.$refs.showRight.open()
@@ -274,6 +333,9 @@ export default {
 .container {
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   &-top {
     width: 100%;
     height: 140rpx;
@@ -297,9 +359,10 @@ export default {
     }
   }
   .goods {
-    width: 100%;
-    // height: 100%;
-    height: calc(100% - 142rpx);
+    // width: 100%;
+    // height: calc(100% - 142rpx);
+    flex: 1;
+    overflow: hidden;
     display: flex;
     color: #4c4c4c;
     &-left {
@@ -326,6 +389,29 @@ export default {
         //   background-color: #f5f5f5;
         // }
       }
+    }
+  }
+  .select_action {
+    box-sizing: border-box;
+    width: 100%;
+    height: 160rpx;
+    padding: 32rpx;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    // align-items: center;
+    font-size: 28rpx;
+    .select_action_text {
+      color: #191919;
+    }
+    .select_action_btn {
+      width: 120rpx;
+      height: 56rpx;
+      text-align: center;
+      line-height: 56rpx;
+      color: #ffffff;
+      background: #5cbb89;
+      border-radius: 28rpx;
     }
   }
   .drawer-title {

@@ -223,6 +223,23 @@ const billAPI = {
       data,
     )
   },
+  commitApprove(data) {
+    return httper.post('/billing/bill/order/commitApprove', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
+  // 收费撤回
+  revokeApprove(data) {
+    return httper.post('/billing/bill/order/revokeApprove', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
+
+
 }
 
 export default billAPI
