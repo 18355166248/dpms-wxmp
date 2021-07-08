@@ -578,6 +578,7 @@ export default {
               consultTime,
               consultId,
               realMainOrderDiscount,
+              promotionVOList,
             } = res.data
             console.log(525, payChannelList)
             // 设置应收金额
@@ -614,16 +615,19 @@ export default {
             // 回显setRealMainOrderDiscount
             this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
             // 计算折扣金额
-            let _realDiscountPromotionAmount = orderPayItemList
+            let _singleDiscountAfterAmountTotal = orderPayItemList
               .filter((item) => item.allBillDiscount)
               .reduce((pre, item) => {
-                const itemPromotiono = BigCalculate(
-                  item.totalAmount,
-                  '-',
-                  item.receivableAmount,
-                )
-                return BigCalculate(pre, '+', itemPromotiono)
+                return BigCalculate(pre, '+', item.singleDiscountAfterAmount)
               }, 0)
+            let _promotionListTotal = promotionVOList
+            .filter(item => item.promotionType === 9)
+            .reduce((pre, item) => {
+              return BigCalculate(pre, '+', item.promotionAmount)
+            }, 0)
+            let _realDiscountPromotionAmount = BigCalculate(_singleDiscountAfterAmountTotal, '-', receivableAmount)
+            _realDiscountPromotionAmount = BigCalculate(_realDiscountPromotionAmount, '-', _promotionListTotal)
+
             this.setRealDiscountPromotionAmount(_realDiscountPromotionAmount)
           })
       }
@@ -631,7 +635,6 @@ export default {
     setPayChannelList(backChannelList) {
       // 处理储值卡，优惠卷收费的模式，此时没有backChannelList
       if (!backChannelList) {
-        console.log('this.form.payChannelList', this.form.payChannelList)
         this.form.payChannelList = this.form.payChannelList.map((item) => {
           item.paymentAmount = this.receivableAmount
           return item
