@@ -85,13 +85,22 @@ export default {
   },
   onLoad() {
     approvalApi.getApprovalList().then((res) => {
-      this.actionSheetList = res.data.map((item) => {
-        return {
-          text: item.approveTypeName,
-          id: item.approveTypeId,
-        }
-      })
-      this.actionSheetList.unshift({ text: '全部', id: '' })
+      if (res.code === 0) {
+        this.actionSheetList = res.data.map((item) => {
+          return {
+            text: item.approveTypeName,
+            id: item.approveTypeId,
+          }
+        })
+        this.actionSheetList.unshift({ text: '全部', id: '' })
+      } else {
+        wx.showToast({
+          title: '数据加载失败',
+          icon: 'error',
+          duration: 1000,
+          mask: true,
+        })
+      }
     })
   },
   onShow() {
@@ -106,7 +115,6 @@ export default {
       this.$refs?.requestReviewRef?.reset()
     }
   },
-  onHide() {},
 }
 </script>
 
