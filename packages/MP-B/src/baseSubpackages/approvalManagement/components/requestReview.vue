@@ -146,6 +146,7 @@ export default {
       setTimeout(() => {
         uni.hideLoading()
       }, 1000)
+      console.log(149, this.current)
     },
     getApprovalDetail() {
       this.isLoadingData = true
@@ -157,9 +158,18 @@ export default {
           tabType: this.currentTab + 1,
         })
         .then((res) => {
-          if (res?.data?.records?.length > 0) {
-            this.total = res.data.total
-            this.approvalList = this.approvalList.concat(res.data.records)
+          if (res.code === 0) {
+            if (res?.data?.records?.length > 0) {
+              this.total = res.data.total
+              this.approvalList = this.approvalList.concat(res.data.records)
+            }
+          } else {
+            wx.showToast({
+              title: '数据加载失败',
+              icon: 'error',
+              duration: 1000,
+              mask: true,
+            })
           }
         })
         .finally(() => {
@@ -198,17 +208,20 @@ export default {
     },
   },
   watch: {
-    currentTab: {
-      handler(val) {
-        if (val === 0) {
-          this.getApprovalDetail()
-        }
-      },
-      immediate: true,
-    },
+    // currentTab: {
+    //   handler(val) {
+    //     console.log('审批的',val)
+    //     if (val === 1) {
+    //       this.getApprovalDetail()
+    //     }
+    //   },
+    //   immediate: true,
+    // },
     approveTypeId: {
       handler(val) {
         this.approvalList = []
+        this.current = 1
+        this.total = 0
         this.getApprovalDetail({ approveTypeId: val })
       },
       immediate: true,
