@@ -620,7 +620,7 @@ export default {
               .reduce((pre, item) => {
                 return BigCalculate(pre, '+', item.singleDiscountAfterAmount)
               }, 0)
-            let _promotionListTotal = promotionVOList
+            let _promotionListTotal = (promotionVOList || [])
             .filter(item => item.promotionType === 9)
             .reduce((pre, item) => {
               return BigCalculate(pre, '+', item.promotionAmount)
