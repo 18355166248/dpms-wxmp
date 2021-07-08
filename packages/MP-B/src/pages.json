@@ -625,6 +625,34 @@
           "style": {
             "navigationBarTitleText": "库存详情"
           }
+        },
+        {
+          "path": "receive/index",
+          "style": {
+            "navigationBarTitleText": "领用列表",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "receive/search",
+          "style": {
+            "navigationBarTitleText": "领用搜索",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "receive/detail",
+          "style": {
+            "navigationBarTitleText": "领用详情",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "receive/apply",
+          "style": {
+            "navigationBarTitleText": "领用申请",
+            "disableScroll": true
+          }
         }
       ]
     }

@@ -1,5 +1,5 @@
 export const menuDic = {
-  visiting: {
+  todayworkregistered: {
     iconName: 'icon-medicine-chest',
     menuStyle: {
       background: 'linear-gradient(323deg,#5bda99 10%, #34c57a 89%)',
@@ -8,7 +8,7 @@ export const menuDic = {
     url: '/baseSubpackages/todayWork/todayWork',
     text: '今日就诊',
   },
-  appoint: {
+  appointment: {
     iconName: 'icon-clock',
     menuStyle: {
       background: 'linear-gradient(139deg,#fb8d51 12%, #feb277 90%)',
@@ -17,7 +17,7 @@ export const menuDic = {
     url: '/baseSubpackages/apptView/apptView',
     text: '预约',
   },
-  patient: {
+  patientlist: {
     iconName: 'icon-patient',
     iconColor: '#fff',
     menuStyle: {
@@ -27,7 +27,7 @@ export const menuDic = {
     url: '/pages/patient/searchPatient/searchPatient',
     text: '患者',
   },
-  preview: {
+  itemmanagement: {
     iconName: 'icon-goods-preview-fill',
     menuStyle: {
       background: 'linear-gradient(139deg,#722ed1 12%, #b37feb 90%)',
@@ -36,7 +36,7 @@ export const menuDic = {
     url: '/pages/warehouse/goods/index',
     text: '物品一览',
   },
-  purchase: {
+  purchasemanagement: {
     iconName: 'icon-purchase-fill',
     iconColor: '#fff',
     menuStyle: {
@@ -45,16 +45,17 @@ export const menuDic = {
     },
     text: '采购',
   },
-  receive: {
+  useapplication: {
     iconName: 'icon-receive-fill',
     iconColor: '#fff',
     menuStyle: {
       background: 'linear-gradient(139deg,#eb2f96 12%, #ff85c0 90%)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #eb2f96',
     },
+    url: '/pages/warehouse/receive/index',
     text: '领用',
   },
-  inventory: {
+  warehousemanagement: {
     iconName: 'icon-inventory-fill',
     iconColor: '#fff',
     menuStyle: {
@@ -73,7 +74,7 @@ export const menuDic = {
     },
     text: '患者归档',
   },
-  approval: {
+  approvalmanagement: {
     iconName: 'icon-shenpi',
     iconColor: '#fff',
     menuStyle: {

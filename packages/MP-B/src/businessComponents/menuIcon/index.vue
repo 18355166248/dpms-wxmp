@@ -2,7 +2,8 @@
   <view :style="[mergeMenuStyle]" class="menu-icon">
     <dpmsIcons :color="iconColor" :type="icon" :size="fontSize" />
     <view class="close-wrap" v-if="showCloseIcon" @touchstart.stop="close">
-      <dpmsIcons color="#e64040" type="icon-close" size="42" />
+      <!-- <dpmsIcons color="#e64040" type="icon-close" size="48" /> -->
+      <image src="../../static/home-close.png" class="home-close" />
     </view>
   </view>
 </template>
@@ -74,11 +75,16 @@ export default {
   top: -16rpx;
   width: 48rpx;
   height: 48rpx;
-  opacity: 1;
-  background: #ffffff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  // overflow: hidden;
+  // opacity: 1;
+  // background: #ffffff;
+  // border-radius: 50%;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
+  .home-close {
+    width: 48rpx;
+    height: 48rpx;
+  }
 }
 </style>
