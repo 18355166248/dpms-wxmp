@@ -146,6 +146,7 @@ export default {
       setTimeout(() => {
         uni.hideLoading()
       }, 1000)
+      console.log(149, this.current)
     },
     getApprovalDetail() {
       this.isLoadingData = true
@@ -207,17 +208,20 @@ export default {
     },
   },
   watch: {
-    currentTab: {
-      handler(val) {
-        if (val === 0) {
-          this.getApprovalDetail()
-        }
-      },
-      immediate: true,
-    },
+    // currentTab: {
+    //   handler(val) {
+    //     console.log('审批的',val)
+    //     if (val === 1) {
+    //       this.getApprovalDetail()
+    //     }
+    //   },
+    //   immediate: true,
+    // },
     approveTypeId: {
       handler(val) {
         this.approvalList = []
+        this.current = 1
+        this.total = 0
         this.getApprovalDetail({ approveTypeId: val })
       },
       immediate: true,
