@@ -371,6 +371,7 @@ scroll-view ::-webkit-scrollbar {
       width: 100%;
       height: 96rpx;
       white-space: nowrap;
+      background-color: #ffffff;
       &-item {
         display: inline-block;
         padding: 0 24rpx;
