@@ -5,7 +5,7 @@
         cols="10"
         rows="11"
         maxlength="200"
-        placeholder="请输入200字以内审批通过信息"
+        placeholder="请输入200字以内审批信息"
         class="pl-32 pr-50 pt-32"
         v-model="val"
       >
