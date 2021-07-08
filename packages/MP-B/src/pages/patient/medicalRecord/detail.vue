@@ -155,10 +155,6 @@
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
-      <div v-if="detail.approveStatus === 2">
-        <button @click="noPassing(detail)">不 通 过</button>
-        <button @click="passing(detail)">通 过</button>
-      </div>
       <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
         <button @click="againEdit(detail)">重 新 修 改</button>
       </div>
