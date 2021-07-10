@@ -1,6 +1,9 @@
 import { getStorage, setStorage, STORAGE_KEY } from './storage'
 import uma from 'umtrack-wx'
 import moment from 'moment'
+import statisticsAPI from '../APIS/statistics.api'
+import qs from 'qs'
+
 const Big = require('big.js')
 
 /**
@@ -154,7 +157,14 @@ export function checkQwInstitution() {
       const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
       const mId = Number(qwMedicalInstitutionId)
       if (mId !== medicalInstitution?.medicalInstitutionId) {
-        setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, currentPage.$page.fullPath)
+        statisticsAPI.log({
+          route: currentPage.route,
+          options: currentPage.options,
+        })
+        const fullPath = `/${currentPage.route}?${qs.stringify(
+          currentPage.options,
+        )}`
+        setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, fullPath)
         uni.redirectTo({ url: '/pages/login/qyLogin' })
       }
     }
