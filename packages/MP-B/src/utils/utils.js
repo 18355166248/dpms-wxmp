@@ -152,19 +152,18 @@ export function checkQwInstitution() {
   const systemInfo = uni.getSystemInfoSync()
   const isWxWork = systemInfo?.environment === 'wxwork'
   if (isqywx || isWxWork) {
-    setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, currentPage.$page.fullPath)
+    statisticsAPI.log({
+      route: currentPage.route,
+      options: currentPage.options,
+    })
+    const fullPath = `/${currentPage.route}?${qs.stringify(
+      currentPage.options,
+    )}`
+    setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, fullPath)
     if (qwMedicalInstitutionId) {
       const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
       const mId = Number(qwMedicalInstitutionId)
       if (mId !== medicalInstitution?.medicalInstitutionId) {
-        statisticsAPI.log({
-          route: currentPage.route,
-          options: currentPage.options,
-        })
-        const fullPath = `/${currentPage.route}?${qs.stringify(
-          currentPage.options,
-        )}`
-        setStorage(STORAGE_KEY.QW_ENTRY_FULL_PATH, fullPath)
         uni.redirectTo({ url: '/pages/login/qyLogin' })
       }
     }
