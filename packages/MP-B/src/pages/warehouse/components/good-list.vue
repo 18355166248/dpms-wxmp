@@ -49,6 +49,7 @@
                 <goodsInfo
                   :detail="item"
                   :type="type"
+                  :mode="mode"
                   @on-click="goToDetail(item.merchandiseId)"
                 />
               </checkBox>
@@ -73,7 +74,7 @@
       </view>
       <view class="drawer-main">
         <view class="drawer-main-oneCategoryname">
-          <text>{{ oneCategoryName }}</text>
+          <text>{{ oneCategoryName | filterText(14) }}</text>
         </view>
         <scroll-view style="height: 100%;" scroll-y="true">
           <expandFilter

@@ -174,6 +174,7 @@ import { mapState } from 'vuex'
 import { setCustomOpenId } from '@/utils/utils'
 import billReport from '@/pages/home/billReport'
 import billAPI from '../../APIS/bill/bill.api'
+import { checkQwInstitution } from '@/utils/utils'
 
 import systemAPI from '@/APIS/system.api.js'
 
@@ -238,6 +239,7 @@ export default {
     }
   },
   onLoad() {
+    checkQwInstitution()
     // 小程序请求数据，一般写在健壮的onLoad， 因为onShow会导致返回页面也加载
     this.init()
     setCustomOpenId()
@@ -246,36 +248,8 @@ export default {
     })
     this.getAmountDisplay()
   },
-  async onShow() {
-    console.log('onShow执行啦')
-    const data = await this.getCommonFunsList()
-    const res = await this.getCommonFunsConfig()
-    const arr = data.menus.map((e) => {
-      return {
-        ...e,
-        type: e.enumValue.replaceAll('-', ''),
-        status:
-          res.indexOf(e.enumValue) > -1 ||
-          data.defaultMenus.indexOf(e.enumValue) > -1,
-      }
-    })
-    // this.commonFuns = arr
-    //   .filter(
-    //     (e) =>
-    //       res.indexOf(e.enumValue) > -1 ||
-    //       data.defaultMenus.indexOf(e.enumValue) > -1,
-    //   )
-    //   .slice(0, 7)
-    let selectArr = res.length ? res : data.defaultMenus
-    // this.selectedList = this.toAddList.filter((e) => e.status)
-    this.commonFuns = selectArr
-      .map((e) => {
-        let _index = arr.findIndex((k) => k.enumValue == e)
-        return {
-          ...arr[_index],
-        }
-      })
-      .slice(0, 7)
+  onShow() {
+    this.setMenusList()
   },
   onUnload() {
     uni.$off(globalEventKeys.newPatient)
@@ -379,7 +353,34 @@ export default {
     // 获取常用功能配置
     async getCommonFunsConfig() {
       const res = await systemAPI.getCommonFunsConfig(commonParams)
-      return res.data || []
+      return res.data
+    },
+    async setMenusList() {
+      const data = await this.getCommonFunsList()
+      const res = await this.getCommonFunsConfig()
+      const menuIds = data.menus.map((e) => e.enumValue)
+      // res 为 空字符串 表示 初始化, 尚未对常用功能进行修改, 已选数据为默认数据, 修改过后的已选数据 以配置接口返回的数据为准
+      let selectArr =
+        res === ''
+          ? data.defaultMenus
+          : res.filter((e) => menuIds.indexOf(e) > -1)
+      const arr = data.menus.map((e) => {
+        return {
+          ...e,
+          type: e.enumValue.replaceAll('-', ''),
+
+          status: selectArr.indexOf(e.enumValue) > -1,
+        }
+      })
+
+      this.commonFuns = selectArr
+        .map((e) => {
+          let _index = arr.findIndex((k) => k.enumValue == e)
+          return {
+            ...arr[_index],
+          }
+        })
+        .slice(0, 7)
     },
     getDropDownList() {
       let list = [
@@ -500,6 +501,7 @@ export default {
         )
         this.getApptSetting()
         this.init()
+        this.setMenusList()
       }
     },
     // 获取预约视图设置

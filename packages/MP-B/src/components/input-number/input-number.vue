@@ -1,19 +1,37 @@
 <template>
   <view class="inputNum">
     <view class="inputNum-min">
-      <text class="iconfont icon-minus-circle" @click="handleMinus"></text>
+      <text
+        :class="{
+          disabledColor: inputNumber == min,
+          activeColor: inputNumber != min,
+        }"
+        class="iconfont icon-minus-fill"
+        @click="handleMinus"
+      ></text>
     </view>
     <view class="inputNum-input">
       <input
+        v-if="isFocus"
         v-model="inputNumber"
         @change="_input"
         type="number"
         @focus="_focus"
         @blur="_blur"
       />
+      <text @click="isFocus = true" v-else>{{
+        inputNumber | thousandFormatter(0, '')
+      }}</text>
     </view>
     <view class="inputNum-max">
-      <text class="iconfont icon-plus-fill" @click="handleAdd"></text>
+      <text
+        :class="{
+          disabledColor: inputNumber == max,
+          activeColor: inputNumber != max,
+        }"
+        class="iconfont icon-plus-fill"
+        @click="handleAdd"
+      ></text>
     </view>
   </view>
 </template>
@@ -43,6 +61,7 @@ export default {
   },
   data() {
     return {
+      isFocus: false,
       inputNumber: this.value || this.min,
     }
   },
@@ -53,12 +72,18 @@ export default {
   },
   methods: {
     _input(event) {
-      this.inputNumber = Number(event.target.value) || this.min
+      if (Number(event.target.value) > this.max) {
+        this.inputNumber = this.max
+      } else {
+        this.inputNumber = Number(event.target.value) || this.min
+      }
       this.$emit('input', this.inputNumber)
       this.$emit('on-change', this.inputNumber)
     },
     _focus() {},
-    _blur() {},
+    _blur() {
+      this.isFocus = false
+    },
     handleAdd() {
       if (this.max && this.inputNumber == this.max) return
       this.inputNumber = this.inputNumber += this.step
@@ -104,9 +129,23 @@ export default {
       font-size: 28rpx;
       text-align: center;
     }
+    text {
+      display: inline-block;
+      width: 100%;
+      height: 48rpx;
+      text-align: center;
+      line-height: 48rpx;
+    }
   }
-  &-max {
+  &-max,
+  .icon-minus-fill {
     color: $common-color;
+  }
+  .activeColor {
+    color: $common-color;
+  }
+  .disabledColor {
+    color: rgba(0, 0, 0, 0.3);
   }
 }
 </style>

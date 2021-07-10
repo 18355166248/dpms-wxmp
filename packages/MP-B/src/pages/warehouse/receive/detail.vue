@@ -15,22 +15,24 @@
               :key="index"
             >
               <view>
-                <text>{{ item.commonName }}</text>
+                <text>{{ item.commonName || '' }}</text>
                 <text v-if="item.merchandiseName"
-                  >/{{ item.merchandiseName }}</text
+                  >/{{ item.merchandiseName || '' }}</text
                 >
-                <text v-if="item.aliasName">/{{ item.aliasName }}</text>
+                <text v-if="item.aliasName">/{{ item.aliasName || '' }}</text>
               </view>
               <view
                 ><text class="label">规格信息：</text
-                ><text class="value">{{ item.specificationsStr }}</text></view
+                ><text class="value">{{
+                  item.specificationsStr || ''
+                }}</text></view
               >
               <view
                 ><text class="label">领用数量：</text
                 ><text class="value">{{
-                  item.receiveNum | thousandFormatter(0, '')
+                  item.receiveNum || 0 | thousandFormatter(0, '')
                 }}</text>
-                <text>{{ item.inventoryUnitStr }}</text>
+                <text>{{ item.inventoryUnitStr || '' }}</text>
               </view>
             </view>
           </view>
@@ -38,46 +40,53 @@
         <view class="receive-main-info">
           <view class="receive-main-info-item">
             <view class="label">领用单号</view>
-            <view class="value">{{ detail.merchandiseReceiveOrderNo }}</view>
+            <view class="value">{{
+              detail.merchandiseReceiveOrderNo || ''
+            }}</view>
           </view>
           <view class="receive-main-info-item">
             <view class="label">开单时间</view>
-            <view class="value">{{ detail.lastUpdateTime | filterTime }}</view>
+            <view class="value">{{
+              detail.lastUpdateTime || '' | filterTime
+            }}</view>
           </view>
           <view class="receive-main-info-item">
             <view class="label">领用单位</view>
             <view class="value">
               <text class="mr20"
-                >({{ receiveDeptTypeMap[detail.receiveDeptType] }})</text
+                >({{ receiveDeptTypeMap[detail.receiveDeptType] || '' }})</text
               >
-              <text>{{ detail.receiveDeptName }}</text>
+              <text>{{ detail.receiveDeptName || '' }}</text>
             </view>
           </view>
           <view class="receive-main-info-item">
             <view class="label">开单人</view>
-            <view class="value">{{ detail.createStaffName }}</view>
+            <view class="value">{{ detail.createStaffName || '' }}</view>
           </view>
           <view class="receive-main-info-item">
             <view class="label">物品种类</view>
             <view class="value">
               <text class="mr20">{{
-                detail.merchandiseTotal | thousandFormatter(0, '')
+                detail.merchandiseTotal || 0 | thousandFormatter(0, '')
               }}</text>
               <text
                 >(合计{{
-                  detail.merchandiseItemTotal | thousandFormatter(0, '')
+                  detail.merchandiseItemTotal || 0 | thousandFormatter(0, '')
                 }}件)</text
               >
             </view>
           </view>
-          <view class="receive-main-info-item">
+          <view class="description">
             <view class="label">领用说明</view>
-            <view class="value">{{ detail.description }}</view>
+            <view class="value">{{ detail.description || '' }}</view>
           </view>
         </view>
       </scroll-view>
       <!-- 当领用状态为 待提交时 显示 -->
-      <view class="receive-main-action" v-if="detail.receiveStatus == 5">
+      <view
+        class="receive-main-action"
+        v-if="detail.receiveStatus == 5 || detail.receiveStatus == 6"
+      >
         <view class="edit_btn" @click="handleEdit">修改</view>
         <view class="submit_btn" @click="editReceiveApplyStatus">提交申请</view>
       </view>
@@ -131,6 +140,26 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.warp {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200rpx;
+  height: 180rpx;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 8rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .receive {
   box-sizing: border-box;
   width: 100%;
@@ -154,7 +183,7 @@ export default {
       line-height: 56rpx;
       background-color: #fefcec;
       color: #f86e21;
-      font-size: 24rpx;
+      font-size: 30rpx;
     }
   }
   &-main {
@@ -213,7 +242,7 @@ export default {
         &-item {
           padding: 24rpx 0;
           border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
-          font-size: 28rpx;
+          font-size: 30rpx;
           view:nth-child(1) {
             font-weight: 500;
             color: #191919;
@@ -234,6 +263,7 @@ export default {
       background-color: #ffffff;
       padding-left: 24rpx;
       margin-top: 32rpx;
+      font-size: 30rpx;
       &-item {
         box-sizing: inherit;
         width: 100%;
@@ -243,6 +273,9 @@ export default {
         justify-content: space-between;
         align-items: center;
         border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+        white-space: pre-wrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
         view:first-child {
           flex-shrink: 0;
         }
@@ -250,6 +283,41 @@ export default {
           flex: 1;
           padding-left: 24rpx;
           text-align: right;
+          line-height: 52rpx;
+          overflow: hidden;
+          max-height: 104rpx;
+          text-overflow: ellipsis;
+          -webkit-line-clamp: 2;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+        }
+      }
+      .description {
+        box-sizing: inherit;
+        width: 100%;
+        height: 144rpx;
+        padding-right: 24rpx;
+        padding-top: 32rpx;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1rpx solid rgba(0, 0, 0, 0.15);
+        white-space: pre-wrap;
+        overflow: hidden;
+        view:first-child {
+          flex-shrink: 0;
+        }
+        view:last-child {
+          flex: 1;
+          padding-left: 24rpx;
+          text-align: right;
+          overflow: hidden;
+          line-height: 42rpx;
+          max-height: 80rpx;
+          word-break: break-all;
+          text-overflow: ellipsis;
+          -webkit-line-clamp: 2;
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
         }
       }
     }

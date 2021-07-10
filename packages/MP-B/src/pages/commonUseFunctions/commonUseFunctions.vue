@@ -8,7 +8,7 @@
             <menuIcon
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
-              :showCloseIcon="showCloseIcon"
+              showCloseIcon
               @close="onMenuDelete(item)"
               @longpress="handleLongPress"
             >
@@ -23,13 +23,13 @@
       <view class="wait-list-tip">
         <view class="tip">以上功能展示在首页</view>
       </view>
-      <view class="wait-list" @click="showCloseIcon = false">
+      <view class="wait-list">
         <template v-for="(item, index) in selectedList">
           <view class="menu-item" :key="index" v-if="index > 6">
             <menuIcon
               :icon="menuDic[item.type].iconName"
               :menu-style="menuDic[item.type].menuStyle"
-              :showCloseIcon="showCloseIcon"
+              showCloseIcon
               @close="onMenuDelete(item)"
               @longpress="handleLongPress"
             >
@@ -136,16 +136,19 @@ export default {
   async created() {
     const data = await this.getCommonFunsList()
     const res = await this.getCommonFunsConfig()
+    const menuIds = data.menus.map((e) => e.enumValue)
+    let selectArr =
+      res === ''
+        ? data.defaultMenus
+        : res.filter((e) => menuIds.indexOf(e) > -1)
     this.toAddList = data.menus.map((e) => {
       return {
         ...e,
         type: e.enumValue.replaceAll('-', ''),
-        status:
-          res.indexOf(e.enumValue) > -1 ||
-          data.defaultMenus.indexOf(e.enumValue) > -1,
+        status: selectArr.indexOf(e.enumValue) > -1,
       }
     })
-    let selectArr = res.length ? res : data.defaultMenus
+
     // this.selectedList = this.toAddList.filter((e) => e.status)
     this.selectedList = selectArr.map((e) => {
       let _index = this.toAddList.findIndex((k) => k.enumValue == e)
@@ -163,7 +166,7 @@ export default {
     // 获取常用功能配置
     async getCommonFunsConfig() {
       const res = await systemAPI.getCommonFunsConfig(commonParams)
-      return res.data || []
+      return res.data
     },
     // 更新常用功能配置
     async updateSelectMenus(data) {
@@ -218,6 +221,7 @@ export default {
     }
     .common-functions-list {
       width: 100%;
+      min-height: 198rpx;
       max-height: 408rpx;
       display: flex;
       flex-wrap: wrap;

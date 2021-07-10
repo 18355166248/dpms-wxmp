@@ -3,7 +3,7 @@
     <scroll-view scroll-y class="content" @scrolltolower="onScrollToLower">
       <view
         class="singleContainer"
-        v-for="(item, index) in approvalList.records"
+        v-for="(item, index) in approvalList"
         :key="index"
       >
         <view class="firstLevel pt-32 ph-24 pb-16">
@@ -19,7 +19,7 @@
           >
           <view class="lh"
             >审核人：<span class="NormalText">{{
-              item.operateApproveAuditor.staffName
+              item.candidateApproveAuditorNames
             }}</span></view
           >
           <span class="mv-32 lh NormalText">{{ item.triggerCondition }}</span>
@@ -28,7 +28,10 @@
           >
         </view>
         <view class="buttonControl pr-24">
-          <u-button type="success" @click="showDetail(item)">查看</u-button>
+          <!--          <u-button -->
+          <!--            type="success" -->
+          <!--            @click="showDetail(item)"-->
+          <!--          >查看</u-button>-->
         </view>
       </view>
     </scroll-view>
@@ -40,18 +43,22 @@ import approvalApi from '@/APIS/approval/approval.api'
 export default {
   name: 'requestApplied',
   props: {
-    approvalList: {
-      type: Object,
+    currentTab: {
+      type: Number,
+      default: 0,
+    },
+    approveTypeId: {
+      type: String,
+      default: '',
       require: true,
     },
   },
   data() {
     return {
-      value: '全部',
-      type: 'select',
       show: false,
       activeTab: 0,
       medicalRecordId: null,
+      approvalList: [],
       approvalType: {
         0: {
           text: '审核中',
@@ -70,69 +77,102 @@ export default {
           className: 'reverted',
         },
       },
-      actionSheetList: [
-        {
-          value: '1',
-          text: '全部',
-        },
-        {
-          value: '2',
-          text: '收费',
-        },
-        {
-          value: '3',
-          text: '退费',
-        },
-        {
-          value: '4',
-          text: '领用',
-        },
-        {
-          value: '5',
-          text: '借调',
-        },
-        {
-          value: '6',
-          text: '病例',
-        },
-      ],
-      current: 1, //默认展示第一页数据
+      current: 0, //默认展示第一页数据
       size: 10, //默认展示10条数据
-      total: 1, //默认总条目
+      total: 0, //默认总条目
+      //是否正在加载数据
+      isLoadingData: false,
+      //是否没有数据了
+      noMoreData: false,
     }
   },
   methods: {
-    // 点击actionSheet回调
-    actionSheetCallback(index) {
-      console.log((this.value = this.actionSheetList[index].value))
-      this.value = this.actionSheetList[index].text
+    //下拉刷新重置参数
+    reset() {
+      this.approvalList = []
+      this.current = 1
+      this.total = 0
+      this.getApprovalDetail()
+    },
+
+    getApprovalDetail() {
+      this.isLoadingData = true
+      approvalApi
+        .getApprovalDetail({
+          approveTypeId: this.approveTypeId,
+          current: this.current,
+          size: this.size,
+          tabType: this.currentTab + 1,
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            if (res?.data?.records?.length > 0) {
+              this.total = res.data.total
+              this.approvalList = this.approvalList.concat(res.data.records)
+              console.log(111, this.approvalList)
+            }
+          } else {
+            wx.showToast({
+              title: '数据加载失败',
+              icon: 'error',
+              duration: 1000,
+              mask: true,
+            })
+          }
+        })
+        .finally(() => {
+          this.isLoadingData = false
+        })
     },
     onScrollToLower() {
-      if (this.approvalList.length < this.total) {
-        this.getApprovalDetail()
-        this.current += 1
+      if (this.isLoadingData || this.approvalList.length >= this.total) {
+        return
       }
+      uni.showLoading({
+        title: '数据加载中',
+      })
+      this.current += 1
+      this.getApprovalDetail()
+      setTimeout(() => {
+        uni.hideLoading()
+      }, 500)
     },
     showDetail(item) {
-      this.medicalRecordId = item.businessId
+      let url = {
+        病例: `/pages/patient/medicalRecord/detail/?medicalRecordId=${item.businessId}&checkMedRecord=false`,
+        收费: '/pages/charge/checkstand',
+        退费: 'url',
+        借调: 'url',
+        领用: `/pages/warehouse/receive/detail?merchandiseReceiveOrderId=${item.businessId}`,
+        退整单: 'url',
+        退步骤: '',
+        退金额: '',
+        退项目: '',
+      }
       wx.navigateTo({
-        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${this.medicalRecordId}&checkMedRecord=false`,
+        url: url[item.approveTypeName],
       })
-    },
-    getApprovalDetail() {
-      approvalApi.getApprovalDetail({
-        current: this.current,
-        size: this.size,
-      })
-    },
-    initData() {
-      this.current = 1
-      this.approvalList = []
     },
   },
-  onReachBottom() {},
-  onPullDownRefresh() {
-    this.initData()
+  watch: {
+    // currentTab: {
+    //   handler(val) {
+    //     console.log('发起的',val)
+    //     if (val === 0) {
+    //       // this.getApprovalDetail()
+    //     }
+    //   },
+    //   immediate: true,
+    // },
+    approveTypeId: {
+      handler(val) {
+        this.approvalList = []
+        this.current = 1
+        this.total = 0
+        this.getApprovalDetail({ approveTypeId: val })
+      },
+      immediate: true,
+    },
   },
 }
 </script>

@@ -2,7 +2,7 @@
   <view class="expand">
     <view class="expand-item" v-for="item in list" :key="item[fieldKey]">
       <view class="expand-item-head" @click="handleExpand(item[fieldKey])">
-        <text>{{ item[fieldName] }}</text>
+        <text>{{ item[fieldName] | filterText(12) }}</text>
         <text
           v-if="currentParentId == item[fieldKey]"
           class="iconfont icondown1"
@@ -20,7 +20,7 @@
             :class="{ activeColor: currentId == e[fieldKey] }"
             class="expand-item-content-tag"
             @click="selectTag(e[fieldKey], item[fieldKey])"
-            >{{ e[fieldName] }}</text
+            >{{ e[fieldName] | filterText(12) }}</text
           >
         </view>
       </template>

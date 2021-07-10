@@ -13,6 +13,14 @@ const filters = {
     return value !== '-' ? moment(value).format(format) : '-'
   },
   filterWeek: getWeek,
+  // 字符串截取一定长度,...拼接
+  filterText(value, length = 0) {
+    if (!length || value.length <= length) {
+      return value
+    } else {
+      return value.slice(0, length) + '...'
+    }
+  },
 }
 Object.keys(filters).forEach((k) => {
   Vue.filter(k, filters[k])

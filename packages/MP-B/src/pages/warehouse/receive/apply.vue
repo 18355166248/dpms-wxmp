@@ -74,10 +74,11 @@
             @on-clear="handleDelete(item)"
           >
             <view class="apply-goods-item-number">
-              <view>领用数量：</view>
+              <view class="label">领用数量：</view>
               <view>
                 <inputNumber
                   :min="1"
+                  :max="item.availableNum || item.inventoryNum"
                   v-model="item.receiveNum"
                   @on-change="changeApplyNumber(item)"
                 />
@@ -169,6 +170,7 @@ export default {
         (e) => e.receiveDeptId === res.receiveDeptId,
       )
     } else {
+      this.setApplyGoods([])
       await this.getReceiveDeptTypeList()
       // 新增时, 员工默认为当前登录者
       this.deptIndex = this.deptList.findIndex(
@@ -223,6 +225,13 @@ export default {
     },
     // 提交数据
     async handleSubmit(receiveStatus) {
+      if (!this.goodsList.length) {
+        uni.showToast({
+          icon: 'error',
+          title: '请选择领用物品',
+        })
+        return
+      }
       let { receiveDeptId, receiveDeptName } = this.deptList[this.deptIndex]
       let { medicalInstitutionId } = this.medicalInstitution
       let data = {

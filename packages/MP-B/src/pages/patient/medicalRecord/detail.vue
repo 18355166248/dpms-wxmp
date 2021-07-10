@@ -151,26 +151,23 @@
       </div>
     </div>
     <div class="bottom" v-if="currentStaffApproveType === 0">
-      <div
-        v-if="
-          (detail.approveStatus === 3 || !detail.approveStatus) &&
-          checkMedRecord
-        "
-      >
-        <button @click="deleteMedicalRecord">删 除</button>
-        <button @click="toEdit">编 辑</button>
-      </div>
-    </div>
-    <div class="bottom" v-if="currentStaffApproveType === 1">
-      <div v-if="detail.approveStatus === 2">
-        <button @click="noPassing(detail)">不 通 过</button>
-        <button @click="passing(detail)">通 过</button>
-      </div>
       <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
-      <div v-if="detail.approveStatus === 3 && checkMedRecord"></div>
+      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
+        <button @click="againEdit(detail)">重 新 修 改</button>
+      </div>
+    </div>
+    <div class="bottom" v-if="currentStaffApproveType === 1">
+      <!--      <div v-if="detail.approveStatus === 2">-->
+      <!--        <button @click="noPassing(detail)">不 通 过</button>-->
+      <!--        <button @click="passing(detail)">通 过</button>-->
+      <!--      </div>-->
+      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
+        <button @click="deleteMedicalRecord">删 除</button>
+        <button @click="toEdit">编 辑</button>
+      </div>
     </div>
     <div class="bottom" v-if="currentStaffApproveType === 2">
       <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
@@ -183,7 +180,6 @@
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
-      <div v-if="detail.approveStatus === 3 && checkMedRecord"></div>
     </div>
     <div class="bottom" v-if="currentStaffApproveType === 3">
       <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
@@ -198,7 +194,6 @@
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
-      <div v-if="detail.approveStatus === 3 && checkMedRecord"></div>
     </div>
   </div>
 </template>
@@ -215,7 +210,6 @@ export default {
     return {
       currentStaffApproveType: 0,
       detail: {},
-      checkMedRecord: true, //审批管理跳转过来参数
       approveRemark: '',
       visTypeMap: this.$dpmsUtils.getEnums('VisType').properties,
       TreatmentTypes: [], // 就诊类型
@@ -334,14 +328,10 @@ export default {
       this.approveRemark = ev.target.value
     },
   },
-  onLoad({ medicalRecordId, patientId, checkMedRecord }) {
+  onLoad({ medicalRecordId, patientId }) {
     this.medicalRecordId = medicalRecordId
     this.patientId = patientId
-    this.checkMedRecord = checkMedRecord
     this.initTreatmentTypes()
-    if (checkMedRecord === 'false') {
-      this.checkMedRecord = false
-    }
   },
   onShow() {
     this.getRole()

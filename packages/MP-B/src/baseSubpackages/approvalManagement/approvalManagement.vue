@@ -22,7 +22,7 @@
         <text style="line-height: 76rpx;">审批类型：</text>
         <view>
           <u-input
-            v-model="defaultVal"
+            v-model="ListValue"
             :type="type"
             @click="show = true"
             border
@@ -37,11 +37,15 @@
       </view>
       <requestApplied
         v-if="currentTab === 0"
-        :approvalList="approvalList"
+        :currentTab="currentTab"
+        :approveTypeId="approveTypeId"
+        ref="requestAppliedRef"
       ></requestApplied>
       <requestReview
         v-if="currentTab === 1"
-        :approvalList="approvalList"
+        :currentTab="currentTab"
+        :approveTypeId="approveTypeId"
+        ref="requestReviewRef"
       ></requestReview>
     </view>
   </view>
@@ -58,26 +62,10 @@ export default {
     return {
       show: false,
       currentTab: 0,
-      defaultVal: '全部',
       type: 'select',
-      // 先写死 1 代表全部 2代表病例
-      currentApprovalId: 1,
-      actionSheetList: [
-        {
-          value: '1',
-          text: '全部',
-          approvalId: 1,
-        },
-        {
-          value: 2,
-          text: '病例',
-          approvalId: 2,
-        },
-      ],
-      //分页
-      current: 1,
-      size: 10,
-      approvalList: {},
+      approveTypeId: '', //approveTypeId为后端需要的字段
+      actionSheetList: [],
+      ListValue: '全部', //点击下拉框的值回显
     }
   },
   components: {
@@ -88,53 +76,44 @@ export default {
   methods: {
     // 点击actionSheet回调
     actionSheetCallback(index) {
-      console.log((this.value = this.actionSheetList[index].text))
-      this.defaultVal = this.actionSheetList[index].text
-      this.currentApprovalId = this.actionSheetList[index].approvalId
-      this.resetParams()
-      this.getApprovalDetail()
+      this.approveTypeId = this.actionSheetList[index].id
+      this.ListValue = this.actionSheetList[index].text
     },
     changeTab(index) {
       this.currentTab = index
-      this.resetParams()
-      this.getApprovalDetail()
     },
-    resetParams() {
-      this.current = 1
-    },
-    //获取我发起的审批列表
-    getApprovalDetail() {
-      approvalApi
-        .getApprovalDetail({
-          approveTypeId: this.currentApprovalId,
-          current: this.current,
-          size: this.size,
-          tabType: this.currentTab + 1,
-        })
-        .then((res) => {
-          if (res.code === 0) {
-            this.current += 1
-            this.approvalList = res.data
+  },
+  onLoad() {
+    approvalApi.getApprovalList().then((res) => {
+      if (res.code === 0) {
+        this.actionSheetList = res.data.map((item) => {
+          return {
+            text: item.approveTypeName,
+            id: item.approveTypeId,
           }
         })
-    },
-    initData() {
-      this.current = 1
-      this.approvalList = []
-    },
-  },
-  onLoad(options) {
-    this.getApprovalDetail()
-    if (options.currentTab) {
-      this.currentTab = Number(options.currentTab)
-    }
+        this.actionSheetList.unshift({ text: '全部', id: '' })
+      } else {
+        wx.showToast({
+          title: '数据加载失败',
+          icon: 'error',
+          duration: 1000,
+          mask: true,
+        })
+      }
+    })
   },
   onShow() {
-    this.initData()
-    this.getApprovalDetail()
+    if (this.currentTab === 1) {
+      this.$refs?.requestReviewRef?.reset()
+    }
   },
   onPullDownRefresh() {
-    this.getApprovalDetail()
+    if (this.currentTab === 0) {
+      this.$refs?.requestAppliedRef?.reset()
+    } else {
+      this.$refs?.requestReviewRef?.reset()
+    }
   },
 }
 </script>
