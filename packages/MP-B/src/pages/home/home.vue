@@ -86,7 +86,7 @@
       <!--统计报表-->
       <view
         class="menu-area pb-48 ph-32"
-        v-if="iconShow.isStatisticsShow || iconShow.isReportShow"
+        v-if="isShowReportIcon"
       >
         <view class="menu-area-header">
           统计报表
@@ -227,6 +227,9 @@ export default {
       iconShow: {
         isStatisticsShow: false,
         isReportShow: false,
+        isFinanceShow: false,   // 这两个字段是为了兼容原来的写法，其实已经没有必要了，按钮有单独的权限函数做控制
+        isPerformanceShow: false // 下次如果再加字段，这里统一改造
+
       },
       showActionSheet: false,
       commonFuns: [],
@@ -281,10 +284,22 @@ export default {
         menuList.find((v) => {
           return v.enumValue === 'report-center'
         })
+
+
       this.iconShow.isReportShow =
         findObj &&
         findObj.children.findIndex((v) => {
           return v.enumValue === 'marketing-report'
+        }) > -1
+      this.iconShow.isFinanceShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'finance-reconclie'
+        }) > -1
+      this.iconShow.isPerformanceShow =
+        findObj &&
+        findObj.children.findIndex((v) => {
+          return v.enumValue === 'performance'
         }) > -1
     },
     institutionChainTypeKey() {
@@ -344,6 +359,9 @@ export default {
     viewHeight() {
       return this.$systemInfo.windowHeight - this.navHeight + 'px'
     },
+    isShowReportIcon() {
+      return this.iconShow.isFinanceShow || this.iconShow.isPerformanceShow || this.iconShow.isReportShow || this.iconShow.isStatisticsShow
+    }
   },
   methods: {
     async getCommonFunsList() {
