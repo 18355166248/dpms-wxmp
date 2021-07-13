@@ -221,6 +221,7 @@ export default {
     }
     .common-functions-list {
       width: 100%;
+      min-height: 198rpx;
       max-height: 408rpx;
       display: flex;
       flex-wrap: wrap;
