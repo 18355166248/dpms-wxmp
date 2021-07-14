@@ -281,6 +281,7 @@ export default {
       //能否撤回
       canRevoke: false,
       billSerialNo: '',
+      cashCode: '',
     }
   },
   components: {
@@ -459,10 +460,7 @@ export default {
         return
       }
       let orderPayItemList = this.disposeList
-      //
-      // orderPayItemList.forEach((item) => {
-      //   item.singleDiscount = item?.singleDiscount >= 0 || 100
-      // })
+
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,
@@ -580,7 +578,16 @@ export default {
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
-            console.log(525, payChannelList)
+
+            let index = payChannelList.findIndex((item) => {
+              return item.payStyle === 13
+            })
+            if (index < 0) {
+              this.payTypes = this.payTypes.filter((item) => {
+                return item.payStyle !== 13
+              })
+            }
+
             // 设置应收金额
             this.setReceivableAmount(changeTwoDecimal(receivableAmount))
             this.setDisposeList(
@@ -620,13 +627,21 @@ export default {
               .reduce((pre, item) => {
                 return BigCalculate(pre, '+', item.singleDiscountAfterAmount)
               }, 0)
-            let _promotionListTotal = promotionVOList
-            .filter(item => item.promotionType === 9)
-            .reduce((pre, item) => {
-              return BigCalculate(pre, '+', item.promotionAmount)
-            }, 0)
-            let _realDiscountPromotionAmount = BigCalculate(_singleDiscountAfterAmountTotal, '-', receivableAmount)
-            _realDiscountPromotionAmount = BigCalculate(_realDiscountPromotionAmount, '-', _promotionListTotal)
+            let _promotionListTotal = (promotionVOList || [])
+              .filter((item) => item.promotionType === 9)
+              .reduce((pre, item) => {
+                return BigCalculate(pre, '+', item.promotionAmount)
+              }, 0)
+            let _realDiscountPromotionAmount = BigCalculate(
+              _singleDiscountAfterAmountTotal,
+              '-',
+              receivableAmount,
+            )
+            _realDiscountPromotionAmount = BigCalculate(
+              _realDiscountPromotionAmount,
+              '-',
+              _promotionListTotal,
+            )
 
             this.setRealDiscountPromotionAmount(_realDiscountPromotionAmount)
           })
@@ -663,7 +678,9 @@ export default {
           paymentAmount: item.paymentAmount,
           transactionChannelId: item.transactionChannelId,
           transactionChannelName: item.transactionChannelName,
+          payStyle: item.payStyle,
           balance,
+          transactionCode: item.transactionCode,
         }
       })
     },
@@ -731,6 +748,7 @@ export default {
             payChannelAcount.get(item.settingsPayTransactionChannelId) || 0,
           transactionChannelId: item.settingsPayTransactionChannelId,
           transactionChannelName: item.settingsPayTransactionChannelName,
+          payStyle: item.payStyle,
           balance: item.balance,
         }))
       this.showActionSheet = false
@@ -776,12 +794,15 @@ export default {
                     transactionChannelName:
                       item.settingsPayTransactionChannelName,
                     balance: item.balance,
+                    payStyle: item.payStyle,
                   },
                 ]
               }
             })
 
-            this.payTypes = res.data
+            this.payTypes = res.data.filter((item) => {
+              return item.payStyle !== 13 || (item.payStyle === 13 && flag)
+            })
           }
         })
     },

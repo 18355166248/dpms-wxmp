@@ -88,7 +88,9 @@ export default {
           console.log(res)
           if (res.data) {
             if (checkAllStatus(res.data)) {
-              this.getResult(paySerialNos, list)
+              setTimeout(() => {
+                this.getResult(paySerialNos, list)
+              }, 1000)
             } else {
               list.forEach((item, index) => {
                 item.payStatus = res.data[index].payStatus
