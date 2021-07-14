@@ -179,6 +179,19 @@ const patientAPI = {
       data,
     )
   },
+
+  //获取会员详情
+  getMemberDetail(data) {
+    return httper.get('/member/member/select/user-member-details', data)
+  },
+  // 会员被共享人共享权限查询
+  getUserShare(data) {
+    return scrmHttper.get('/scrm/member-share/user-share', data)
+  },
+  // 修改会员积分
+  updatePoints(data) {
+    return scrmHttper.post('/scrm/member-account/change-point', data)
+  },
 }
 
 export default patientAPI

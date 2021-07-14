@@ -225,15 +225,21 @@ button::after {
 .icon-detail:before {
   content: '\e793';
 }
-
+/*消费预览*/
 .iconconsumption-profile:before {
   content: '\e60d';
 }
+/*诊疗项目*/
 .icondiagnosis-treatment:before {
   content: '\e60c';
 }
+/*储值卡余额*/
 .iconconsumption-profile:before {
   content: '\e60d';
+}
+/*卡券积分*/
+.icon-card-integral:before {
+  content: '\e646';
 }
 .iconsearch:before {
   content: '\e8ef';
