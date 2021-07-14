@@ -2,6 +2,7 @@
   <view class="page-wrap">
     <view class="charge-wrap">
       <view class="list-wrap">
+        <!---->
         <view class="item-wrap">
           <view class="item0">
             <itemType :iconData="icon0" />
@@ -18,9 +19,10 @@
             </view>
           </view>
         </view>
+        <!---->
         <view class="item-wrap">
           <view class="item1">
-            <view>
+            <view class="box">
               <itemType :iconData="icon1" />
               <chargeItem
                 class="charge-item dashed"
@@ -37,6 +39,18 @@
               />
               <chargeItem class="charge-item" :amountData="giftBalanceData" />
             </view>
+          </view>
+        </view>
+        <!---->
+        <view class="item-wrap card-integral-wrap">
+          <view class="item">
+            <itemType :iconData="icon3" />
+            <chargeItem class="charge-item" :amountData="integralData">
+              <div
+                class="iconfont icon-edit edit-icon-style"
+                @click="editIntegral"
+              />
+            </chargeItem>
           </view>
         </view>
       </view>
@@ -73,6 +87,33 @@
         {{ item.text }}
       </view>
     </actionSheet>
+    <!--编辑积分弹框-->
+    <u-modal
+      width="620"
+      title="调整积分"
+      v-model="showEditIntegral"
+      confirm-color="#5cbb89"
+      show-cancel-button
+      @confirm="confirm"
+      async-close="true"
+      ref="uModal"
+    >
+      <view class="slot-content">
+        <div>当前积分：{{ integralData.amount }}</div>
+        <div class="input-wrap">
+          <div>调整为：</div>
+          <input
+            type="number"
+            placeholder-style="font-size: 30rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+            placeholder="请输入积分"
+            @blur="onEditIntegralBlur"
+            :value="inputIntegral"
+          />
+        </div>
+      </view>
+    </u-modal>
+    <!--提示-->
+    <u-toast ref="uToast" />
   </view>
   <!--  <view >-->
   <!--    <empty :disabled="true" text="暂无数据"></empty>-->
@@ -85,7 +126,7 @@ import bottomWrap from './common/bottomWrap'
 import chargeButton from './common/chargeButton'
 import { mapMutations, mapState } from 'vuex'
 import billAPI from '@/APIS/bill/bill.api'
-
+import patientAPI from '@/APIS/patient/patient.api'
 export default {
   name: 'charge',
   data() {
@@ -105,11 +146,11 @@ export default {
         typeName: '储值卡余额',
         color: '#fa5151',
       },
-      amountData: {
-        amount: 62586,
-        des: '开单应收',
+      icon3: {
+        iconClass: `icon-card-integral`,
+        typeName: '卡券积分',
+        color: '#fa8c16',
       },
-
       list: [
         {
           text: '简易收费',
@@ -128,34 +169,49 @@ export default {
       receivableData: {
         name: '开单应收',
         amount: 0,
+        format: true,
       },
       receiptData: {
         name: '消费总额',
         amount: 0,
+        format: true,
       },
       arrearageData: {
         name: '总欠费',
         amount: 0,
+        format: true,
       },
       advancePaymentsData: {
         name: '预收款',
         amount: 0,
+        format: true,
       },
       capitalBalanceData: {
         name: '本金余额',
         amount: 0,
+        format: true,
       },
       giftBalanceData: {
         name: '赠金余额',
         amount: 0,
+        format: true,
+      },
+      integralData: {
+        amount: 0,
+        name: '积分',
+        format: false,
       },
       //是否获取到接口数据
       isGetResult: false,
+      showEditIntegral: false,
+      // 是否是共享会员
+      isShareMember: false,
+      inputIntegral: undefined,
     }
   },
   computed: {
     ...mapState('searchProjectStore', ['searchProjectList']),
-    ...mapState('patient', ['patientDetail']),
+    ...mapState('patient', ['patientDetail', 'memberDetail']),
     ...mapState('workbenchStore', ['medicalInstitution']),
     isOverdue() {
       return (
@@ -179,6 +235,10 @@ export default {
       }
       return true
     },
+    //是否能够修改积分
+    canChangeMemberIntegral() {
+      return !!(this.isShareMember || this.patientDetail?.memberCardNo)
+    },
   },
   mounted() {
     this.initData()
@@ -190,12 +250,12 @@ export default {
       'setSelectedDisposeList',
       'setReceivableAmount',
     ]),
+    ...mapMutations('patient', ['setMemberDetail']),
     initData() {
       //获取消费预览和诊疗项目数据
-      // Promise.all()
       let promise1 = billAPI
         .getStatistical({
-          patientId: this.patientDetail.patientId,
+          patientId: this.patientDetail?.patientId,
         })
         .then((res) => {
           if (res.data) {
@@ -208,9 +268,9 @@ export default {
       //获取储值卡余额数据
       let promise2 = billAPI
         .getSoredCardDetail({
-          memberId: this.patientDetail.memberId,
-          customerId: this.patientDetail.customerId,
-          patientId: this.patientDetail.patientId,
+          memberId: this.patientDetail?.memberId,
+          customerId: this.patientDetail?.customerId,
+          patientId: this.patientDetail?.patientId,
         })
         .then((res) => {
           if (res.data) {
@@ -225,6 +285,109 @@ export default {
         })
         .catch((err) => {
           this.isGetResult = true
+        })
+
+      if (this.patientDetail?.customerId) {
+        this.getMemberDetail()
+      }
+      this.getUserShare()
+    },
+    getUserShare() {
+      patientAPI
+        .getUserShare({
+          customerId: this.patientDetail?.customerId || 0,
+        })
+        .then((res) => {
+          if (res.code === 0 && res?.data) {
+            this.isShareMember = res.data.shareIntegration
+          }
+        })
+    },
+    //获取会员详情
+    getMemberDetail() {
+      patientAPI
+        .getMemberDetail({
+          memberId: this.patientDetail?.memberId,
+          customerId: this.patientDetail?.customerId,
+        })
+        .then((res) => {
+          if (res.code === 0 && res?.data) {
+            this.setMemberDetail(res.data)
+            this.integralData.amount =
+              this.memberDetail?.memberDetailResponse?.currentPoints || 0
+          }
+        })
+    },
+    //编辑积分
+    editIntegral() {
+      if (!this.canChangeMemberIntegral) {
+        this.$refs.uToast.show({
+          title: `当前客户不是会员，不支持修改积分`,
+          type: 'warning',
+        })
+
+        return
+      }
+
+      this.inputIntegral = null
+      this.showEditIntegral = true
+    },
+
+    onEditIntegralBlur(e) {
+      this.inputIntegral = Number(e.detail.value.trim())
+    },
+    // 确认修改积分
+    confirm() {
+      let value = this.inputIntegral
+      if (value === '' || value === undefined) {
+        this.$refs.uToast.show({
+          title: `请输入积分`,
+          type: 'warning',
+        })
+        this.$refs.uModal.clearLoading()
+        return
+      }
+      if (value > 99999999 || value < 0) {
+        this.$refs.uToast.show({
+          title: `请输入0-99999999以内的整数`,
+          type: 'warning',
+        })
+        this.$refs.uModal.clearLoading()
+        return
+      }
+      if (value === this.integralData.amount) {
+        this.$refs.uToast.show({
+          title: `您输入的积分与当前积分一样`,
+          type: 'warning',
+        })
+        this.$refs.uModal.clearLoading()
+        return
+      }
+      this.updatePoints()
+    },
+    updatePoints() {
+      patientAPI
+        .updatePoints({
+          memberId: this.patientDetail?.memberId,
+          customerId: this.patientDetail?.customerId,
+          point: Number(this.inputIntegral),
+          prePoint: Number(
+            this.memberDetail?.memberDetailResponse?.currentPoints || 0,
+          ),
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            this.$refs.uToast.show({
+              title: `积分修改成功`,
+              type: 'success',
+            })
+            this.showEditIntegral = false
+            this.getMemberDetail()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.showEditIntegral = false
         })
     },
     //新建订单
@@ -316,7 +479,9 @@ export default {
     width: 33.33%;
     position: relative;
     display: flex;
-
+    .box {
+      width: 100%;
+    }
     .charge-item {
       width: 100%;
       position: relative;
@@ -340,6 +505,19 @@ export default {
       width: 50%;
       position: relative;
     }
+  }
+}
+.card-integral-wrap {
+  width: 240rpx;
+  box-sizing: border-box;
+  .item {
+    width: 100%;
+  }
+  .edit-icon-style {
+    color: #5cbb89;
+    font-size: 36rpx;
+    flex: 0 0 36rpx;
+    margin-left: 20rpx;
   }
 }
 
@@ -367,5 +545,16 @@ export default {
 .action-item:first-child {
   border-top: none;
   border-radius: 24rpx 24rpx 0 0;
+}
+.slot-content {
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    padding-top: 48rpx;
+  }
 }
 </style>
