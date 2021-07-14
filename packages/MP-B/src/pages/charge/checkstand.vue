@@ -567,6 +567,16 @@ export default {
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
+
+            let index = payChannelList.findIndex((item) => {
+              return item.payStyle === 13
+            })
+            if (index < 0) {
+              this.payTypes = this.payTypes.filter((item) => {
+                return item.payStyle !== 13
+              })
+            }
+
             // 设置应收金额
             this.setReceivableAmount(changeTwoDecimal(receivableAmount))
             this.setDisposeList(
@@ -660,7 +670,9 @@ export default {
           paymentAmount: item.paymentAmount,
           transactionChannelId: item.transactionChannelId,
           transactionChannelName: item.transactionChannelName,
+          payStyle: item.payStyle,
           balance,
+          transactionCode: item.transactionCode,
         }
       })
     },
@@ -727,6 +739,7 @@ export default {
             payChannelAcount.get(item.settingsPayTransactionChannelId) || 0,
           transactionChannelId: item.settingsPayTransactionChannelId,
           transactionChannelName: item.settingsPayTransactionChannelName,
+          payStyle: item.payStyle,
           balance: item.balance,
         }))
       this.showActionSheet = false
@@ -772,12 +785,15 @@ export default {
                     transactionChannelName:
                       item.settingsPayTransactionChannelName,
                     balance: item.balance,
+                    payStyle: item.payStyle,
                   },
                 ]
               }
             })
 
-            this.payTypes = res.data
+            this.payTypes = res.data.filter((item) => {
+              return item.payStyle !== 13 || (item.payStyle === 13 && flag)
+            })
           }
         })
     },
