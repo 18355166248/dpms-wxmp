@@ -22,7 +22,7 @@
 
       <div v-if="form.payChannelList.length > 0 && payTypes.length > 0">
         <dpmsCellInput
-          v-for="(item, index) in form.payChannelList"
+          v-for="item in form.payChannelList"
           :key="item.transactionChannelId"
           type="digit"
           :title="item.transactionChannelName"
@@ -103,13 +103,21 @@
           defaultType="staffId"
           v-model="form.salesManStaffId"
         />
-        <dpmsCellPicker
-          title="其他人员"
-          placeholder="请选择其他人员"
-          :list="otherList"
+        <dpmsCell
+          title="医生助理"
+          placeholder="请选择医生助理"
+          :value="assistantNames"
+          isLink
+          @cellclick="openAssistantList"
+        />
+        <multipleSelect
+          title="医生助理"
+          :list="assistantList"
+          :value="form.assistantStaffIds"
+          :visible="showAssistant"
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          defaultType="staffId"
-          v-model="form.otherStaffId"
+          @close="showAssistant = false"
+          @confirm="handleSelectAssistant"
         />
         <dpmsCell title="备注" hideBorderBottom />
         <view class="memo">
@@ -228,6 +236,7 @@
 </template>
 <script>
 import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
+import multipleSelect from '@/components/multipleSelect/multipleSelect'
 import patientAPI from '@/APIS/patient/patient.api'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
@@ -242,7 +251,7 @@ const STAFF_ENUMS = new Map([
   ['nurse', 6],
   ['consultant', 4],
   ['salesMan', 16],
-  ['other', 0],
+  ['assistant', 5],
 ])
 
 export default {
@@ -256,13 +265,13 @@ export default {
         nurseStaffId: '',
         consultedStaffId: '',
         salesManStaffId: '',
-        otherStaffId: '',
+        assistantStaffIds: [],
         memo: '',
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
       },
       toggleInfomation: false,
-      otherList: [],
+      allStaffList: [],
       visitTimeList: [],
       //支付方式
       payTypes: [],
@@ -281,12 +290,16 @@ export default {
       //能否撤回
       canRevoke: false,
       billSerialNo: '',
+      // 医生助理
+      showAssistant: false,
+      assistantNames: '',
     }
   },
   components: {
     ChargestandTitle,
     payResult,
     approveModal,
+    multipleSelect,
   },
   computed: {
     ...mapState('workbenchStore', ['menu', 'medicalInstitution']),
@@ -321,24 +334,29 @@ export default {
         : 0
     },
     doctorList() {
-      return this.otherList.filter(
+      return this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('doctor'),
       )
     },
     nurseList() {
-      return this.otherList.filter(
+      return this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('nurse'),
       )
     },
     consultantList() {
-      return this.otherList.filter(
+      return this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('consultant'),
       )
     },
     salesManList() {
-      return this.otherList.filter(
+      return this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('salesMan'),
       )
+    },
+    assistantList() {
+      return this.allStaffList
+        .filter((item) => item.position === STAFF_ENUMS.get('assistant'))
+        .map((item) => Object.assign(item, { checked: false }))
     },
     canOperation() {
       const { institutionChainType, topParentId } = this.medicalInstitution
@@ -376,6 +394,12 @@ export default {
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
     ]),
+    handleSelectAssistant(checkedList) {
+      console.log(checkedList, 'checkedList')
+    },
+    openAssistantList() {
+      this.showAssistant = true
+    },
     // 收费撤回
     revokeApprove() {
       if (!this.billSerialNo) {
@@ -490,11 +514,23 @@ export default {
           salesType: STAFF_ENUMS.get('salesMan'),
         })
       }
-      if (form.otherStaffId) {
-        params.salesList.push({
-          salesId: form.otherStaffId,
-          salesType: STAFF_ENUMS.get('other'),
+      if (form.assistantStaffIds) {
+        // 此处是个list，需要循环遍历下
+        const temp = []
+        this.assistantList.forEach((val) => {
+          if (form.assistantStaffIds.includes(val.value)) {
+            const tempItem = {
+              salesId: val.value,
+              salesName: val.name,
+              salesType: STAFF_ENUMS.get('assistant'),
+            }
+
+            temp.push(tempItem)
+          }
         })
+        this.assistantNames =
+          temp.length > 0 ? temp.map((val) => val.salesName).join(',') : ''
+        params.salesList = [...params.salesList, ...temp]
       }
       if (this.billSerialNo) {
         params.billSerialNo = this.billSerialNo
@@ -587,8 +623,8 @@ export default {
                 this.form.consultedStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('salesMan')) {
                 this.form.salesManStaffId = item.salesId
-              } else if (item.salesType === STAFF_ENUMS.get('other')) {
-                this.form.otherStaffId = item.salesId
+              } else if (item.salesType === STAFF_ENUMS.get('assistant')) {
+                this.form.assistantStaffIds = item.salesId
               }
             })
             // 回显备注
@@ -734,7 +770,7 @@ export default {
     loadListData(query) {
       const flag = query.billSerialNo //判断是否回显应收金额
       patientAPI.getStaffList().then((res) => {
-        this.otherList = res.data
+        this.allStaffList = res.data
       })
 
       billAPI
@@ -801,9 +837,9 @@ export default {
       if (!form.doctorStaffId && data.doctorStaffId) {
         updateObj.doctorStaffId = data.doctorStaffId
       }
-      // 回显其他
-      if (!form.otherStaffId && data.otherStaffId) {
-        updateObj.otherStaffId = data.otherStaffId
+      // 回显医生助理（多选）
+      if (!form.assistantStaffIds && data.assistantStaffIds) {
+        updateObj.assistantStaffIds = data.assistantStaffIds
       }
       // 回显咨询师
       if (!form.consultedStaffId && data.consultedStaffId) {
