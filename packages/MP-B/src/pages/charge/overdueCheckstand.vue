@@ -134,8 +134,13 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance >= 0"
-          >&nbsp;&nbsp;(余额{{ item.balance | thousandFormatter }})
+        <!-- 积分-->
+        <template v-if="item.payStyle === 12 && integralToAmount >= 0"
+          >&nbsp; &nbsp;(可抵现{{ integralToAmount | thousandFormatter }})
+        </template>
+        <!-- 储值卡和馈赠金相关 -->
+        <template v-if="item.balance >= 0 && item.payStyle !== 12"
+          >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
         <dpmsCheckbox
           :disabled="checkDisableFn(item.checked)"
@@ -207,8 +212,16 @@ export default {
   computed: {
     ...mapState('workbenchStore', ['menu']),
     ...mapState('overdue', ['overdueList', 'overdueAmount']),
-    ...mapState('patient', ['patientDetail']),
+    ...mapState('patient', ['patientDetail', 'memberDetail']),
     ...mapState('checkstand', ['billType']),
+    //积分转金额
+    integralToAmount() {
+      const currentPoints =
+        this.memberDetail?.memberDetailResponse?.currentPoints || 0
+      const perForCash = this.memberDetail?.perForCash || 1
+
+      return BigCalculate(currentPoints, '/', perForCash)
+    },
   },
   onLoad() {
     this.staffData = uni.getStorageSync('staff')
@@ -260,6 +273,7 @@ export default {
           transactionChannelId: item.settingsPayTransactionChannelId,
           transactionChannelName: item.settingsPayTransactionChannelName,
           balance: item.balance,
+          payStyle: item.payStyle,
         }))
       this.form.payChannelList[0].paymentAmount = this.form.receivableAmount
       this.showActionSheet = false
@@ -280,6 +294,16 @@ export default {
           })
         }
       }
+      if (record.payStyle === 12) {
+        if (value > this.integralToAmount) {
+          value = this.integralToAmount
+          this.$refs.uToast.show({
+            title: `不能超过当前积分可抵现金额`,
+            type: 'warning',
+          })
+        }
+      }
+
       record.paymentAmount = Number(value)
       this.errTipText = ''
       this.checkPaidAmount()
@@ -311,8 +335,6 @@ export default {
     },
 
     checkInputValue(value) {
-      // let vStr = `${value}`
-      // vStr = vStr.replace(/\b(0+)/gi, '')
       value = Number(value)
       if (isNaN(value)) {
         this.$refs.uToast.show({
@@ -380,8 +402,9 @@ export default {
     loadListData() {
       billAPI
         .getPayTransactionChannel({
-          memberId: this.patientDetail.memberId,
+          memberId: this.patientDetail?.memberId,
           enabled: true,
+          customerId: this.patientDetail?.customerId,
         })
         .then((res) => {
           if (res?.data.length > 0) {
@@ -405,8 +428,9 @@ export default {
                 ]
               }
             })
-            this.payTypes = res.data.filter((item) => {
-              return item.payStyle !== 13
+
+            this.payTypes = res.data.filter((payItem) => {
+              return payItem.isShow && payItem.payStyle !== 13
             })
           }
         })
@@ -425,6 +449,7 @@ export default {
               transactionChannelId: item.settingsPayTransactionChannelId,
               transactionChannelName: item.settingsPayTransactionChannelName,
               balance: item.balance,
+              payStyle: item.payStyle,
             },
           ]
         }
