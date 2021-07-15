@@ -204,9 +204,15 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance >= 0"
+        <!-- 积分-->
+        <template v-if="item.payStyle === 12 && integralToAmount >= 0"
+          >&nbsp; &nbsp;(可抵现{{ integralToAmount | thousandFormatter }})
+        </template>
+        <!-- 储值卡和馈赠金相关 -->
+        <template v-if="item.balance >= 0 && item.payStyle !== 12"
           >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
+
         <dpmsCheckbox
           :disabled="checkDisableFn(item)"
           shape="square"
@@ -290,7 +296,7 @@ export default {
   },
   computed: {
     ...mapState('workbenchStore', ['menu', 'medicalInstitution']),
-    ...mapState('patient', ['patientDetail']),
+    ...mapState('patient', ['patientDetail', 'memberDetail']),
     ...mapState('dispose', [
       'disposeList',
       'receivableAmount',
@@ -353,6 +359,14 @@ export default {
     // 是否能撤回
     revokeOperation() {
       return this.billStatus === 6 && this.canRevoke
+    },
+    //积分转金额
+    integralToAmount() {
+      const currentPoints =
+        this.memberDetail?.memberDetailResponse?.currentPoints || 0
+      const perForCash = this.memberDetail?.perForCash || 1
+
+      return BigCalculate(currentPoints, '/', perForCash)
     },
   },
   onLoad(query) {
@@ -542,6 +556,7 @@ export default {
         url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
       })
     },
+    // 确认审批
     approveConfirm() {
       uni.reLaunch({
         url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
@@ -567,6 +582,11 @@ export default {
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
+
+            this.payTypes = this.payTypes.filter((payItem) => {
+              return payItem.isShow && payItem.payStyle !== 13
+            })
+
             // 设置应收金额
             this.setReceivableAmount(changeTwoDecimal(receivableAmount))
             this.setDisposeList(
@@ -660,10 +680,13 @@ export default {
           paymentAmount: item.paymentAmount,
           transactionChannelId: item.transactionChannelId,
           transactionChannelName: item.transactionChannelName,
+          payStyle: item.payStyle,
           balance,
+          transactionCode: item.transactionCode,
         }
       })
     },
+    //支付金额变动
     changePayChannel(value, record) {
       if (!value) {
         value = 0
@@ -679,6 +702,18 @@ export default {
           })
         }
       }
+      //积分
+      if (record.payStyle === 12) {
+        if (value > this.integralToAmount) {
+          value = this.integralToAmount
+          this.$refs.uToast.show({
+            title: `不能超过当前积分可抵现金额`,
+            type: 'warning',
+          })
+        }
+      }
+      console.log(705, record)
+
       record.paymentAmount = Number(value)
     },
     formatDisposeItem(item) {
@@ -727,6 +762,7 @@ export default {
             payChannelAcount.get(item.settingsPayTransactionChannelId) || 0,
           transactionChannelId: item.settingsPayTransactionChannelId,
           transactionChannelName: item.settingsPayTransactionChannelName,
+          payStyle: item.payStyle,
           balance: item.balance,
         }))
       this.showActionSheet = false
@@ -750,9 +786,9 @@ export default {
         })
       return billAPI
         .getPayTransactionChannel({
-          memberId: this.patientDetail.memberId,
+          memberId: this.patientDetail?.memberId,
           enabled: true,
-          customerId: this.patientDetail.customerId,
+          customerId: this.patientDetail?.customerId,
         })
         .then((res) => {
           if (res?.data.length > 0) {
@@ -772,12 +808,18 @@ export default {
                     transactionChannelName:
                       item.settingsPayTransactionChannelName,
                     balance: item.balance,
+                    payStyle: item.payStyle,
                   },
                 ]
               }
             })
 
-            this.payTypes = res.data
+            this.payTypes = res.data.filter((item) => {
+              return (
+                item.isShow &&
+                (item.payStyle !== 13 || (item.payStyle === 13 && flag))
+              )
+            })
           }
         })
     },
