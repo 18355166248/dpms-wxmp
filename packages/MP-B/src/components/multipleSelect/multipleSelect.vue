@@ -3,11 +3,11 @@
     :safe-area-inset-bottom="true"
     class="select-popup"
     mode="bottom"
-    v-model="visible"
+    v-model="show"
     @close="close"
   >
     <view class="select-popup-header border-after">
-      <view @click="close">取消</view>
+      <view @click="close" class="close">取消</view>
       <view v-if="title" class="title">{{ title }}</view>
       <view @click="confirm" class="confirm">确定</view>
     </view>
@@ -16,7 +16,10 @@
         <dpmsCheckboxGroup v-model="checkedList" v-if="list && list.length">
           <div class="appt-collapse">
             <div v-for="(item, index) in list" :key="index" class="select-item">
-              <dpmsCheckbox shape="square">
+              <dpmsCheckbox
+                shape="square"
+                :label="item.value || item[defaultProps.value]"
+              >
                 {{ item.label || item[defaultProps.label] }}
               </dpmsCheckbox>
             </div>
@@ -32,8 +35,19 @@
 export default {
   name: 'multipleSelect',
   props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     // 列表数据
     list: {
+      type: Array,
+      default: () => {
+        return []
+      },
+    },
+    // 已选数据
+    value: {
       type: Array,
       default: () => {
         return []
@@ -54,11 +68,26 @@ export default {
   },
   data() {
     return {
-      visible: false,
+      show: false,
       checkedList: [],
     }
   },
-  watch: {},
+  watch: {
+    visible(newVal) {
+      if (newVal) {
+        this.show = true
+      }
+    },
+    value: {
+      handler(newVal, oldVal) {
+        if (newVal.length > 0) {
+          this.checkedList = newVal
+        }
+      },
+      immediate: true, // 值为true或false，默认false
+      deep: false, // 值为true或false，默认false
+    },
+  },
   computed: {},
   created() {},
   onLoad() {},
@@ -67,12 +96,12 @@ export default {
   methods: {
     // 取消
     close() {
+      this.show = false
       this.$emit('close')
     },
 
     // 确定
     confirm() {
-      console.log(this.checkedList, 'checkedList')
       this.close()
       this.$emit('confirm', this.checkedList)
     },
@@ -115,6 +144,10 @@ export default {
 
     .title {
       font-size: 34rpx;
+    }
+
+    .close {
+      color: rgba(0, 0, 0, 0.45);
     }
 
     .confirm {
