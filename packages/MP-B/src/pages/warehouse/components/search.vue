@@ -165,6 +165,14 @@ export default {
       type: String,
       default: '',
     },
+    scopeSupplyList: {
+      type: String,
+      default: null,
+    },
+    isShow: {
+      type: Number,
+      default: 1,
+    },
   },
   data() {
     return {
@@ -219,7 +227,12 @@ export default {
     // 查询物品
     async getGoodsList(params) {
       this.loading = true
-      const res = await goodAPI.getGoodsList({ ...params, getCategory: true })
+      const res = await goodAPI.getGoodsList({
+        ...params,
+        getCategory: true,
+        isShow: this.isShow,
+        scopeSupplyList: this.scopeSupplyList || null,
+      })
       this.loading = false
       let { records, total, current, pages, categoryList } = res.data
       this.oneCategoryList = []
