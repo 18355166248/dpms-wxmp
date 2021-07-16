@@ -26,9 +26,6 @@ export default {
     this.mode = mode
     this.isShow = isShow
     this.scopeSupplyList = scopeSupplyList
-      .split('')
-      .toString()
-      .replaceAll(',', ';')
   },
 }
 </script>

@@ -8,7 +8,7 @@
           focus
           confirm-type="search"
           @focus="handleFocus"
-          v-model="appReceiveOrderNo"
+          v-model="form.orderNo"
           @confirm="confirm"
           placeholder="采购单号"
         />
@@ -207,7 +207,6 @@ export default {
       showHistory: true,
       historyList: [],
       history: new History('purchase', [], 10),
-      appReceiveOrderNo: '', // 搜索关键字
       supplierList: [], // 供应商列表
     }
   },
@@ -296,7 +295,7 @@ export default {
       this.showHistory = false
       // 查询过后 就不再是第一次进入
       this.isFirstShow = false
-      this.history.add(this.appReceiveOrderNo)
+      this.history.add(this.form.orderNo)
       let beginTimeMillis = moment(
         this.date + '-01' + ' ' + '00:00:00',
       ).valueOf()
@@ -326,7 +325,7 @@ export default {
     },
     // 点击历史记录
     selectHistory(value) {
-      this.appReceiveOrderNo = value
+      this.form.orderNo = value
       this.confirm()
     },
     // 清除历史记录

@@ -79,7 +79,11 @@
                 v-model="item.purchaseNum"
                 :min="1"
                 @on-change="changePurchaseNum($event, index)"
-              />
+              >
+                <text class="ml-12" slot="suffix">{{
+                  item.inventoryUnitStr
+                }}</text>
+              </inputNumber>
             </view>
           </view>
           <view class="apply-goods-item-tips">

@@ -46,23 +46,22 @@
                   item.purchaseTotalAmount || 0 | thousandFormatter(2)
                 }}</text>
               </view>
-              <view
+              <!-- <view
                 ><text class="label">备注：</text
                 ><text class="value">{{ item.description || '' }}</text>
-              </view>
+              </view> -->
             </view>
           </view>
         </view>
         <view class="purchase-main-info">
           <view class="purchase-main-info-item">
             <view class="label">物品总金额</view>
-            <view class="value"
-              >￥{{
-                detail.purchaseTotalAmount -
+            <view class="value">{{
+              (detail.purchaseTotalAmount -
                 detail.freightAmount +
-                detail.discountAmount
-              }}</view
-            >
+                detail.discountAmount)
+                | thousandFormatter(2)
+            }}</view>
           </view>
           <view class="purchase-main-info-item">
             <view class="label">整单折扣金额</view>
@@ -85,14 +84,8 @@
           <view class="purchase-main-info-item">
             <view class="label">物品种类</view>
             <view class="value">
-              <text class="mr20">{{
-                detail.merchandiseTotal || 0 | thousandFormatter(0, '')
-              }}</text>
-              <text
-                >(合计{{
-                  detail.merchandiseItemTotal || 0 | thousandFormatter(0, '')
-                }}件)</text
-              >
+              <text class="mr20">{{ merchandiseTotal }}</text>
+              <text>(合计{{ merchandiseItemTotal }}件)</text>
             </view>
           </view>
           <view class="purchase-main-info-item">
@@ -101,7 +94,7 @@
           </view>
           <view class="purchase-main-info-item">
             <view class="label">采购负责人</view>
-            <view class="value">{{ detail.confirmStaffName }}</view>
+            <view class="value">{{ detail.createStaffName }}</view>
           </view>
           <view class="purchase-main-info-item">
             <view class="label">开单时间</view>
@@ -133,6 +126,22 @@ export default {
       merchandisePurchaseOrderId: null,
       detail: {},
     }
+  },
+  computed: {
+    merchandiseTotal() {
+      return this.detail.merchandisePurchaseOrderItemList.length || 0
+    },
+    merchandiseItemTotal() {
+      if (!this.detail.merchandisePurchaseOrderItemList.length) {
+        return 0
+      } else {
+        // purchaseNum
+        let num = this.detail.merchandisePurchaseOrderItemList.reduce(
+          (a, b) => a.purchaseNum + b.purchaseNum,
+        )
+        return num
+      }
+    },
   },
   onLoad({ merchandisePurchaseOrderId }) {
     this.merchandisePurchaseOrderId = merchandisePurchaseOrderId
