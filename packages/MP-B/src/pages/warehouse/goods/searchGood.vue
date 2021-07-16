@@ -3,7 +3,9 @@
   <view class="container">
     <search
       :mode="mode"
+      :scopeSupplyList="scopeSupplyList"
       type="good"
+      :isShow="isShow"
       storgeKey="goods"
       detailPath="/pages/warehouse/goods/goodDetail"
     />
@@ -16,10 +18,17 @@ export default {
   data() {
     return {
       mode: '',
+      isShow: 1,
+      scopeSupplyList: '',
     }
   },
-  onLoad({ mode }) {
+  onLoad({ mode, isShow, scopeSupplyList }) {
     this.mode = mode
+    this.isShow = isShow
+    this.scopeSupplyList = scopeSupplyList
+      .split('')
+      .toString()
+      .replaceAll(',', ';')
   },
 }
 </script>

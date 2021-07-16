@@ -11,7 +11,11 @@
           ><view class="iconfont icon-time-circle"></view>
           {{ order.consultTimeDate }}</view
         >
-        <view class="btn pending" :class="billStatusDic[order.billStatus].className" >{{billStatusDic[order.billStatus].text}}</view>
+        <view
+          class="btn pending"
+          :class="billStatusDic[order.billStatus].className"
+          >{{ billStatusDic[order.billStatus].text }}</view
+        >
       </view>
       <view class="lineHr"></view>
       <view>
@@ -75,14 +79,14 @@ export default {
         status: 'loading',
         request: 'loading',
       },
-      billStatusDic:{
-        0:{
-          text:'待收费',
-          className:'pending'
+      billStatusDic: {
+        0: {
+          text: '待收费',
+          className: 'pending',
         },
-        1:{
-          text:'待退费',
-          className:'pending'
+        1: {
+          text: '待退费',
+          className: 'pending',
         },
         // 2:{
         //   text:'已收费'
@@ -90,39 +94,39 @@ export default {
         // 3:{
         //   text:'已退费'
         // },
-        4:{
-          text:'部分退费',
-          className:'pending'
+        4: {
+          text: '部分退费',
+          className: 'pending',
         },
-        6:{
-          text:'审核中',
-          className:'approvaling',
+        6: {
+          text: '审核中',
+          className: 'approvaling',
         },
-        7:{
-          text:'已通过',
-          className:'approvaled',
+        7: {
+          text: '已通过',
+          className: 'approvaled',
         },
-        8:{
-          text:'未通过',
-          className:'refused',
+        8: {
+          text: '未通过',
+          className: 'refused',
         },
-        9:{
-          text:'退费审核中',
-          className:'approvaling',
+        9: {
+          text: '退费审核中',
+          className: 'approvaling',
         },
-        10:{
-          text:'退费已通过',
-          className:'approvaled',
+        10: {
+          text: '退费已通过',
+          className: 'approvaled',
         },
-        11:{
-          text:'退费未通过',
-          className:'refused',
+        11: {
+          text: '退费未通过',
+          className: 'refused',
         },
-        12:{
-          text:'退费待退费',
-          className:'pending'
+        12: {
+          text: '退费待退费',
+          className: 'pending',
         },
-      }
+      },
     }
   },
   destroyed() {
@@ -147,20 +151,15 @@ export default {
       this.getPendingOrder()
     },
     onPendingList(record) {
-      console.log(106, record)
-      if (record.billStatus === 0 && this.btnPremisstion('pending_editing')) {
+      if (
+        ([0, 7, 8].includes(record.billStatus) &&
+          this.btnPremisstion('pending_editing')) ||
+        [6].includes(record.billStatus)
+      ) {
         this.setBillType(record.billType)
         this.setReceivableAmount(record.receivableAmount)
         uni.navigateTo({
-          url: `/pages/charge/checkstand?billSerialNo=${record.billSerialNo}`,
-        })
-      }
-
-      if ([6,7,8].includes(record.billStatus)){
-        this.setBillType(record.billType)
-        this.setReceivableAmount(record.receivableAmount)
-        uni.navigateTo({
-          url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}&billSerialNo=${record?.billSerialNo}`,
+          url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}`,
         })
       }
     },

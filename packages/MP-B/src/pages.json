@@ -653,6 +653,34 @@
             "navigationBarTitleText": "领用申请",
             "disableScroll": true
           }
+        },
+        {
+          "path": "purchase/index",
+          "style": {
+            "navigationBarTitleText": "采购列表",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "purchase/search",
+          "style": {
+            "navigationBarTitleText": "采购搜索",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "purchase/apply",
+          "style": {
+            "navigationBarTitleText": "采购申请",
+            "disableScroll": true
+          }
+        },
+        {
+          "path": "purchase/detail",
+          "style": {
+            "navigationBarTitleText": "采购详情",
+            "disableScroll": true
+          }
         }
       ]
     }

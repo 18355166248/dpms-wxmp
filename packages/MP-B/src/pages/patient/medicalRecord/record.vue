@@ -48,7 +48,7 @@
       </div>
     </scroll-view>
     <empty :disabled="true" text="无病历记录" v-else />
-    <fixed-footer bgColor="#F5F5F5">
+    <fixed-footer bgColor="#F5F5F5" v-if="btnPremisstion('new-medical-record')">
       <div class="bottom">
         <button
           @click="
@@ -103,9 +103,16 @@ export default {
         })),
       ]
     },
-    toDetail({ medicalRecordId, approveStatus }) {
+    toDetail({
+      medicalRecordId,
+      canEdit = '',
+      revoke = '',
+      canApprove = '',
+      reEditable = '',
+    }) {
+      console.log(medicalRecordId)
       this.$dpmsUtils.push({
-        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}`,
+        url: `/pages/patient/medicalRecord/detail?medicalRecordId=${medicalRecordId}&patientId=${this.patientId}&canEdit=${canEdit}&revoke=${revoke}&canApprove=${canApprove}&reEditable=${reEditable}`,
       })
     },
     onUpdate() {
