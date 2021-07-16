@@ -356,7 +356,12 @@ export default {
     assistantList() {
       return this.allStaffList
         .filter((item) => item.position === STAFF_ENUMS.get('assistant'))
-        .map((item) => Object.assign(item, { checked: false }))
+        .map((item) => {
+          return {
+            ...item,
+            checked: false,
+          }
+        })
     },
     canOperation() {
       const { institutionChainType, topParentId } = this.medicalInstitution
@@ -395,7 +400,14 @@ export default {
       'setRealDiscountPromotionAmount',
     ]),
     handleSelectAssistant(checkedList) {
-      console.log(checkedList, 'checkedList')
+      this.form.assistantStaffIds = checkedList
+      this.assistantNames =
+        checkedList.length > 0
+          ? this.assistantList
+              .filter((val) => checkedList.includes(val.staffId))
+              .map((val) => val.staffName)
+              .join(',')
+          : ''
     },
     openAssistantList() {
       this.showAssistant = true
@@ -518,10 +530,10 @@ export default {
         // 此处是个list，需要循环遍历下
         const temp = []
         this.assistantList.forEach((val) => {
-          if (form.assistantStaffIds.includes(val.value)) {
+          if (form.assistantStaffIds.includes(val.staffId)) {
             const tempItem = {
-              salesId: val.value,
-              salesName: val.name,
+              salesId: val.staffId,
+              salesName: val.staffName,
               salesType: STAFF_ENUMS.get('assistant'),
             }
 
@@ -529,7 +541,7 @@ export default {
           }
         })
         this.assistantNames =
-          temp.length > 0 ? temp.map((val) => val.salesName).join(',') : ''
+          temp.length > 0 ? temp.map((val) => val.staffName).join(',') : ''
         params.salesList = [...params.salesList, ...temp]
       }
       if (this.billSerialNo) {
@@ -623,10 +635,16 @@ export default {
                 this.form.consultedStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('salesMan')) {
                 this.form.salesManStaffId = item.salesId
-              } else if (item.salesType === STAFF_ENUMS.get('assistant')) {
-                this.form.assistantStaffIds = item.salesId
               }
             })
+            // 医生助理多选
+            this.form.assistantStaffIds = salesList
+              .filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              .map((val) => val.salesId)
+            this.assistantNames = salesList
+              .filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              .map((val) => val.salesName)
+              .join(',')
             // 回显备注
             this.form.memo = memo
             // 回显就诊时间就诊Id
