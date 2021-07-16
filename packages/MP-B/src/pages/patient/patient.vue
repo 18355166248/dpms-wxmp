@@ -254,9 +254,6 @@ export default {
           let { data } = res
           this.patient = data
           this.setPatientDetail(data)
-          // if (this.patient.tagList.length > 3) {
-          //   this.patient.tagList.splice(3, this.patient.tagList.length, {name: '...'})
-          // }
           this.customerId = data.customerId
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
