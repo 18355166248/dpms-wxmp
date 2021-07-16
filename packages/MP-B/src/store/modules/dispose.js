@@ -6,6 +6,10 @@ const state = {
   receivableAmount: 0,
   realMainOrderDiscount: 100,
   realDiscountPromotionAmount: 0,
+  // 员工下拉列表
+  staffList: [],
+  //收银台员工列表
+  checkStandStaffList: {},
 }
 
 const mutations = {
@@ -23,6 +27,12 @@ const mutations = {
   },
   setRealDiscountPromotionAmount(state, value) {
     state.realDiscountPromotionAmount = value
+  },
+  setStaffList(state, value) {
+    state.staffList = value || []
+  },
+  setCheckStandStaffList(state, value) {
+    state.checkStandStaffList = value || {}
   },
 }
 
