@@ -298,10 +298,7 @@ export default {
       'realDiscountPromotionAmount',
     ]),
     ...mapState('checkstand', ['billType', 'chargeType']),
-    test(item) {
-      console.log(288, item)
-      return false
-    },
+
     showSaveBtn() {
       return !(this.billType === 4 || this.billType === 3)
     },
@@ -347,17 +344,11 @@ export default {
       const { institutionChainType, topParentId } = this.medicalInstitution
       // 1，单店，2，直营(如果topParentId===0则为总部，总部也是直营)，3，大区，4，加盟
       // 注意：web端与小程序的判断不一样！！！
-      if (
+      return !(
         institutionChainType === 3 ||
-        (institutionChainType === 2 && topParentId === 0)
-      ) {
-        return false
-      } else {
-        if (this.billStatus === 6 && this.canRevoke) {
-          return false
-        }
-      }
-      return true
+        (institutionChainType === 2 && topParentId === 0) ||
+        this.billStatus === 6
+      )
     },
     // 是否能撤回
     revokeOperation() {
@@ -370,7 +361,7 @@ export default {
       if (query) this.backData(query)
     })
     this.billStatus = Number(query?.billStatus)
-    this.canRevoke = query?.canRevoke
+    this.canRevoke = query?.canRevoke === 'true'
     this.billSerialNo = query?.billSerialNo
   },
   onShow() {
@@ -406,7 +397,6 @@ export default {
       billAPI
         .getChargeRequiredConfig()
         .then((res) => {
-          console.log(res.data)
           if (res.data) {
             this.setChargeRequiredConfig(res.data)
           }
@@ -459,10 +449,7 @@ export default {
         return
       }
       let orderPayItemList = this.disposeList
-      //
-      // orderPayItemList.forEach((item) => {
-      //   item.singleDiscount = item?.singleDiscount >= 0 || 100
-      // })
+
       let params = {
         billType: this.billType,
         cashierStaffId: staff.staffId,
@@ -580,7 +567,16 @@ export default {
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
-            console.log(525, payChannelList)
+
+            let index = payChannelList.findIndex((item) => {
+              return item.payStyle === 13
+            })
+            if (index < 0) {
+              this.payTypes = this.payTypes.filter((item) => {
+                return item.payStyle !== 13
+              })
+            }
+
             // 设置应收金额
             this.setReceivableAmount(changeTwoDecimal(receivableAmount))
             this.setDisposeList(
@@ -621,12 +617,20 @@ export default {
                 return BigCalculate(pre, '+', item.singleDiscountAfterAmount)
               }, 0)
             let _promotionListTotal = (promotionVOList || [])
-            .filter(item => item.promotionType === 9)
-            .reduce((pre, item) => {
-              return BigCalculate(pre, '+', item.promotionAmount)
-            }, 0)
-            let _realDiscountPromotionAmount = BigCalculate(_singleDiscountAfterAmountTotal, '-', receivableAmount)
-            _realDiscountPromotionAmount = BigCalculate(_realDiscountPromotionAmount, '-', _promotionListTotal)
+              .filter((item) => item.promotionType === 9)
+              .reduce((pre, item) => {
+                return BigCalculate(pre, '+', item.promotionAmount)
+              }, 0)
+            let _realDiscountPromotionAmount = BigCalculate(
+              _singleDiscountAfterAmountTotal,
+              '-',
+              receivableAmount,
+            )
+            _realDiscountPromotionAmount = BigCalculate(
+              _realDiscountPromotionAmount,
+              '-',
+              _promotionListTotal,
+            )
 
             this.setRealDiscountPromotionAmount(_realDiscountPromotionAmount)
           })
@@ -647,7 +651,7 @@ export default {
         (item) => item.transactionChannelId,
       )
       this.payTypes = this.payTypes.map((item) => {
-        if (item.balance) {
+        if (item?.balance >= 0) {
           balanceMap.set(item.settingsPayTransactionChannelId, item.balance)
         }
         item.checked = selectedList.includes(
@@ -657,13 +661,18 @@ export default {
       })
       // 生成新的payChannelList数据结构
       this.form.payChannelList = backChannelList.map((item) => {
-        let balance = balanceMap.get(item.transactionChannelId) || 0
+        let balance =
+          balanceMap.get(item.transactionChannelId) >= 0
+            ? balanceMap.get(item.transactionChannelId)
+            : undefined
 
         return {
           paymentAmount: item.paymentAmount,
           transactionChannelId: item.transactionChannelId,
           transactionChannelName: item.transactionChannelName,
+          payStyle: item.payStyle,
           balance,
+          transactionCode: item.transactionCode,
         }
       })
     },
@@ -675,7 +684,6 @@ export default {
       }
       if (record.balance >= 0) {
         if (value > record.balance) {
-          console.log(record)
           value = record.balance
           this.$refs.uToast.show({
             title: `不能超过${record.transactionChannelName}余额`,
@@ -731,6 +739,7 @@ export default {
             payChannelAcount.get(item.settingsPayTransactionChannelId) || 0,
           transactionChannelId: item.settingsPayTransactionChannelId,
           transactionChannelName: item.settingsPayTransactionChannelName,
+          payStyle: item.payStyle,
           balance: item.balance,
         }))
       this.showActionSheet = false
@@ -776,12 +785,15 @@ export default {
                     transactionChannelName:
                       item.settingsPayTransactionChannelName,
                     balance: item.balance,
+                    payStyle: item.payStyle,
                   },
                 ]
               }
             })
 
-            this.payTypes = res.data
+            this.payTypes = res.data.filter((item) => {
+              return item.payStyle !== 13 || (item.payStyle === 13 && flag)
+            })
           }
         })
     },
