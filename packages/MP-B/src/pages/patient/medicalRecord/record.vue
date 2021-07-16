@@ -48,7 +48,7 @@
       </div>
     </scroll-view>
     <empty :disabled="true" text="无病历记录" v-else />
-    <fixed-footer bgColor="#F5F5F5">
+    <fixed-footer bgColor="#F5F5F5" v-if="btnPremisstion('new-medical-record')">
       <div class="bottom">
         <button
           @click="
