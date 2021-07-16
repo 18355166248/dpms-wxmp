@@ -68,24 +68,54 @@
           v-model="form.registerTime"
           @input="onRegisterTime"
         />
-        <dpmsCellPicker
-          title="医生"
-          placeholder="请选择医生"
-          :list="doctorList"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          defaultType="staffId"
-          v-model="form.doctorStaffId"
-          :required="doctorRequire"
-        />
-        <dpmsCellPicker
-          title="护士"
-          placeholder="请选择护士"
-          :list="nurseList"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          defaultType="staffId"
-          v-model="form.nurseStaffId"
-          :required="nurseRequire"
-        />
+        <view
+          @click.self="
+            toUrl(
+              `/pages/charge/chooseChargerItemStaff?type=doctor&required=${doctorRequire}`,
+            )
+          "
+        >
+          <!--          <dpmsCellPicker-->
+          <!--            title="医生"-->
+          <!--            placeholder="请选择医生"-->
+          <!--            :list="doctorList"-->
+          <!--            :defaultProps="{ label: 'staffName', value: 'staffId' }"-->
+          <!--            defaultType="staffId"-->
+          <!--            v-model="form.doctorStaffId"-->
+          <!--            :required="doctorRequire"-->
+          <!--          />-->
+          <dpmsCell
+            title="医生"
+            placeholder="请选择医生"
+            isLink="true"
+            :value="form.doctorStaffName"
+            :required="doctorRequire"
+          />
+        </view>
+        <view
+          @click.self="
+            toUrl(
+              `/pages/charge/chooseChargerItemStaff?type=nurse&required=${nurseRequire}`,
+            )
+          "
+        >
+          <!--          <dpmsCellPicker-->
+          <!--            title="护士"-->
+          <!--            placeholder="请选择护士"-->
+          <!--            :list="nurseList"-->
+          <!--            :defaultProps="{ label: 'staffName', value: 'staffId' }"-->
+          <!--            defaultType="staffId"-->
+          <!--            v-model="form.nurseStaffId"-->
+          <!--            :required="nurseRequire"-->
+          <!--          />-->
+          <dpmsCell
+            title="护士"
+            placeholder="请选择护士"
+            isLink="true"
+            :value="form.nurseStaffName"
+            :required="nurseRequire"
+          />
+        </view>
         <dpmsCellPicker
           title="咨询师"
           placeholder="请选择咨询师"
@@ -262,7 +292,9 @@ export default {
       form: {
         payChannelList: [],
         doctorStaffId: '',
+        doctorStaffName: '',
         nurseStaffId: '',
+        nurseStaffName: '',
         consultedStaffId: '',
         salesManStaffId: '',
         assistantStaffIds: [],
@@ -309,6 +341,7 @@ export default {
       'receivableAmount',
       'realMainOrderDiscount',
       'realDiscountPromotionAmount',
+      'checkStandStaffList',
     ]),
     ...mapState('checkstand', ['billType', 'chargeType']),
 
@@ -378,7 +411,28 @@ export default {
       return this.billStatus === 6 && this.canRevoke
     },
   },
+  watch: {
+    'form.doctorStaffId': {
+      handler() {
+        this.doctorList.forEach((item) => {
+          if (item.staffId === this.form.doctorStaffId) {
+            this.form.doctorStaffName = item.staffName
+          }
+        })
+      },
+    },
+    'form.nurseStaffId': {
+      handler() {
+        this.otherList.forEach((item) => {
+          if (item.staffId === this.form.nurseStaffId) {
+            this.form.nurseStaffName = item.staffName
+          }
+        })
+      },
+    },
+  },
   onLoad(query) {
+    this.setCheckStandStaffList({})
     this.staff = uni.getStorageSync('staff')
     this.loadListData(query).then(() => {
       if (query) this.backData(query)
@@ -390,6 +444,8 @@ export default {
   onShow() {
     this.btnPremisstion()
     this.getRequireConfig()
+    this.form.doctorStaffId = this.checkStandStaffList?.doctorStaffId
+    this.form.nurseStaffId = this.checkStandStaffList?.nurseStaffId
   },
   onUnload() {},
   methods: {
@@ -398,6 +454,8 @@ export default {
       'setReceivableAmount',
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
+      'setStaffList',
+      'setCheckStandStaffList',
     ]),
     handleSelectAssistant(checkedList) {
       this.form.assistantStaffIds = checkedList
@@ -548,10 +606,10 @@ export default {
         params.billSerialNo = this.billSerialNo
       }
 
-      params.orderPayItemList = params.orderPayItemList.map((item) => {
-        item.salesList = params.salesList
-        return item
-      })
+      // params.orderPayItemList = params.orderPayItemList.map((item) => {
+      //   item.salesList = params.salesList
+      //   return item
+      // })
 
       if (type === 'save') {
         billAPI.saveOrderBill(params).then((res) => {
@@ -629,13 +687,16 @@ export default {
             salesList?.forEach((item) => {
               if (item.salesType === STAFF_ENUMS.get('doctor')) {
                 this.form.doctorStaffId = item.salesId
+                this.checkStandStaffList.doctorStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('nurse')) {
                 this.form.nurseStaffId = item.salesId
+                this.checkStandStaffList.nurseStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('consultant')) {
                 this.form.consultedStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('salesMan')) {
                 this.form.salesManStaffId = item.salesId
               }
+              this.setCheckStandStaffList(this.checkStandStaffList)
             })
             // 医生助理多选
             this.form.assistantStaffIds = salesList
@@ -754,6 +815,11 @@ export default {
         (hasCheck.length === 3 && !checked)
       )
     },
+    toUrl(url) {
+      this.$dpmsUtils.push({
+        url,
+      })
+    },
     hideActionSheet() {
       // 重制payChannelList
       const selectKeys = this.form.payChannelList.map(
@@ -789,6 +855,7 @@ export default {
       const flag = query.billSerialNo //判断是否回显应收金额
       patientAPI.getStaffList().then((res) => {
         this.allStaffList = res.data
+        this.setStaffList(res.data)
       })
 
       billAPI
