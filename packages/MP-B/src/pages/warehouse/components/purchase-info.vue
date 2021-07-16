@@ -29,10 +29,10 @@
     </view>
     <view class="label">
       <text>(整单折扣：</text>
-      <text>{{ 0 | thousandFormatter(2) }}</text>
+      <text>{{ detail.discountAmount | thousandFormatter(2) }}</text>
       <text>，</text>
       <text>整单运费：</text>
-      <text>{{ 0 | thousandFormatter(2) }}</text>
+      <text>{{ detail.freightAmount | thousandFormatter(2) }}</text>
       <text>)</text>
     </view>
     <view class="purchase-info-desc">

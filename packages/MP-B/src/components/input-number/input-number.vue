@@ -33,6 +33,9 @@
         @click="handleAdd"
       ></text>
     </view>
+    <view>
+      <slot name="suffix" />
+    </view>
   </view>
 </template>
 <script>
