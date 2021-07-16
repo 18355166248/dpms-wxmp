@@ -75,15 +75,6 @@
             )
           "
         >
-          <!--          <dpmsCellPicker-->
-          <!--            title="医生"-->
-          <!--            placeholder="请选择医生"-->
-          <!--            :list="doctorList"-->
-          <!--            :defaultProps="{ label: 'staffName', value: 'staffId' }"-->
-          <!--            defaultType="staffId"-->
-          <!--            v-model="form.doctorStaffId"-->
-          <!--            :required="doctorRequire"-->
-          <!--          />-->
           <dpmsCell
             title="医生"
             placeholder="请选择医生"
@@ -99,15 +90,6 @@
             )
           "
         >
-          <!--          <dpmsCellPicker-->
-          <!--            title="护士"-->
-          <!--            placeholder="请选择护士"-->
-          <!--            :list="nurseList"-->
-          <!--            :defaultProps="{ label: 'staffName', value: 'staffId' }"-->
-          <!--            defaultType="staffId"-->
-          <!--            v-model="form.nurseStaffId"-->
-          <!--            :required="nurseRequire"-->
-          <!--          />-->
           <dpmsCell
             title="护士"
             placeholder="请选择护士"

@@ -452,6 +452,12 @@
           }
         },
         {
+          "path": "chooseChargerItemStaff",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
           "path": "overdueCheckstand",
           "style": {
             "navigationBarTitleText": "收欠费"
