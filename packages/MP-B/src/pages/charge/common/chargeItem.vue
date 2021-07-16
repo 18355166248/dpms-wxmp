@@ -1,8 +1,12 @@
 <template>
   <view class="charge-amount">
-    <view class="amount">{{
-      amountData.amount | thousandFormatter(2, '￥')
-    }}</view>
+    <view class="flex">
+      <view v-if="amountData.format" class="amount">{{
+        amountData.amount | thousandFormatter(2, '￥')
+      }}</view>
+      <view v-else class="amount">{{ amountData.amount }}</view>
+      <slot></slot>
+    </view>
     <view class="des">{{ amountData.name }}</view>
   </view>
 </template>
@@ -47,6 +51,7 @@ export default {
   justify-content: space-around;
   position: relative;
   width: 100%;
+
   .amount {
     font-size: 28rpx;
     color: #191919;

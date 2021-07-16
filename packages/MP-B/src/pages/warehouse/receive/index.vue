@@ -144,12 +144,16 @@ export default {
       }
     },
   },
+  onShow() {
+    if (!this.mode) {
+      this.date = moment().format('YYYY-MM')
+      this.changeStatus(0)
+    }
+  },
   async created() {
     // 搜索页 进行 搜索历史数据初始化
     if (this.mode) {
       this.historyList = this.history.getHistory()
-    } else {
-      this.changeStatus(0)
     }
   },
   methods: {
@@ -307,6 +311,11 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+scroll-view ::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  background-color: transparent;
+}
 .receive {
   box-sizing: border-box;
   width: 100%;
@@ -362,6 +371,7 @@ export default {
       width: 100%;
       height: 96rpx;
       white-space: nowrap;
+      background-color: #ffffff;
       &-item {
         display: inline-block;
         padding: 0 24rpx;

@@ -20,7 +20,7 @@
             :class="{ activeColor: currentId == e[fieldKey] }"
             class="expand-item-content-tag"
             @click="selectTag(e[fieldKey], item[fieldKey])"
-            >{{ e[fieldName] }}</text
+            >{{ e[fieldName] | filterText(12) }}</text
           >
         </view>
       </template>
