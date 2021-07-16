@@ -395,22 +395,24 @@ export default {
   },
   watch: {
     'form.doctorStaffId': {
-      handler() {
+      handler(newVal) {
         this.doctorList.forEach((item) => {
-          if (item.staffId === this.form.doctorStaffId) {
+          if (item.staffId === newVal) {
             this.form.doctorStaffName = item.staffName
           }
         })
       },
+      immediate: true,
     },
     'form.nurseStaffId': {
-      handler() {
-        this.otherList.forEach((item) => {
-          if (item.staffId === this.form.nurseStaffId) {
+      handler(newVal) {
+        this.nurseList.forEach((item) => {
+          if (item.staffId === newVal) {
             this.form.nurseStaffName = item.staffName
           }
         })
       },
+      immediate: true,
     },
   },
   onLoad(query) {
