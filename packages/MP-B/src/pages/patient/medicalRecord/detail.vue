@@ -150,51 +150,60 @@
         <div v-else>{{ detail.approveRemark }}</div>
       </div>
     </div>
-    <div class="bottom" v-if="currentStaffApproveType === 0">
-      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
+    <fixed-footer
+      v-if="
+        detail.approveStatus && (canApprove || canEdit || reEditable || revoke)
+      "
+    >
+      <!-- 审批流中的按钮  -->
+      <div class="bottom">
+        <button
+          @click="deleteMedicalRecord"
+          v-if="canEdit && detail.approveStatus === 3"
+        >
+          删除
+        </button>
+        <button @click="toEdit" v-if="canEdit && detail.approveStatus === 3">
+          编辑
+        </button>
+        <button
+          @click="passing(detail)"
+          v-if="detail.approveStatus === 2 && canApprove"
+        >
+          通过
+        </button>
+        <button
+          @click="noPassing(detail)"
+          v-if="detail.approveStatus === 2 && canApprove"
+        >
+          不通过
+        </button>
+        <button
+          @click="withdraw(detail)"
+          v-if="detail.approveStatus === 2 && revoke"
+        >
+          撤回
+        </button>
+        <button
+          @click="againEdit(detail)"
+          v-if="
+            canEdit &&
+            (detail.approveStatus === 4 || detail.approveStatus === 1) &&
+            reEditable
+          "
+        >
+          重新修改
+        </button>
+      </div>
+    </fixed-footer>
+
+    <!--  未进入审批流   -->
+    <fixed-footer v-if="!detail.approveStatus">
+      <div class="bottom">
         <button @click="deleteMedicalRecord">删 除</button>
         <button @click="toEdit">编 辑</button>
       </div>
-      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
-        <button @click="againEdit(detail)">重 新 修 改</button>
-      </div>
-    </div>
-    <div class="bottom" v-if="currentStaffApproveType === 1">
-      <!--      <div v-if="detail.approveStatus === 2">-->
-      <!--        <button @click="noPassing(detail)">不 通 过</button>-->
-      <!--        <button @click="passing(detail)">通 过</button>-->
-      <!--      </div>-->
-      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
-        <button @click="deleteMedicalRecord">删 除</button>
-        <button @click="toEdit">编 辑</button>
-      </div>
-    </div>
-    <div class="bottom" v-if="currentStaffApproveType === 2">
-      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
-        <button @click="againEdit(detail)">重 新 修 改</button>
-      </div>
-      <div v-if="detail.approveStatus === 2">
-        <button @click="withdraw(detail)">撤 回</button>
-      </div>
-      <div v-if="detail.approveStatus === 3 || !detail.approveStatus">
-        <button @click="deleteMedicalRecord">删 除</button>
-        <button @click="toEdit">编 辑</button>
-      </div>
-    </div>
-    <div class="bottom" v-if="currentStaffApproveType === 3">
-      <div v-if="detail.approveStatus === 1 || detail.approveStatus === 4">
-        <button @click="againEdit(detail)">重 新 修 改</button>
-      </div>
-      <div v-if="detail.approveStatus === 2">
-        <button @click="withdraw(detail)">撤 回</button>
-        <button @click="noPassing(detail)">不 通 过</button>
-        <button @click="passing(detail)">通 过</button>
-      </div>
-      <div v-if="detail.approveStatus === 3">
-        <button @click="deleteMedicalRecord">删 除</button>
-        <button @click="toEdit">编 辑</button>
-      </div>
-    </div>
+    </fixed-footer>
   </div>
 </template>
 
@@ -203,16 +212,21 @@ import TeethSelect from '@/businessComponents/TeethSelect/TeethSelect.vue'
 import diagnosisAPI from '@/APIS/diagnosis/diagnosis.api.js'
 import moment from 'moment'
 import { mapMutations } from 'vuex'
+import FixedFooter from '@/components/fixed-footer/fixed-footer'
 
 export default {
-  components: { TeethSelect },
+  components: { FixedFooter, TeethSelect },
   data() {
     return {
-      currentStaffApproveType: 0,
+      // currentStaffApproveType: 0,
       detail: {},
       approveRemark: '',
       visTypeMap: this.$dpmsUtils.getEnums('VisType').properties,
       TreatmentTypes: [], // 就诊类型
+      canEdit: false,
+      reEditable: false,
+      canApprove: false,
+      revoke: false,
     }
   },
   methods: {
@@ -233,10 +247,10 @@ export default {
         return ''
       }
     },
-    async getRole() {
-      const res = await diagnosisAPI.getRole({})
-      this.currentStaffApproveType = res?.data?.currentStaffApproveType
-    },
+    // async getRole() {
+    //   const res = await diagnosisAPI.getRole({})
+    //   this.currentStaffApproveType = res?.data?.currentStaffApproveType
+    // },
     async getMedicalRecordDetail() {
       this.$dpmsUtils.showLoading('加载中...')
       const res = await diagnosisAPI.getMedicalRecordDetail({
@@ -328,13 +342,25 @@ export default {
       this.approveRemark = ev.target.value
     },
   },
-  onLoad({ medicalRecordId, patientId }) {
+  onLoad({
+    medicalRecordId,
+    patientId,
+    canEdit,
+    revoke,
+    canApprove,
+    reEditable,
+  }) {
+    console.log(canEdit, revoke, canApprove, reEditable)
     this.medicalRecordId = medicalRecordId
     this.patientId = patientId
+    this.canEdit = canEdit
+    this.revoke = revoke
+    this.canApprove = canApprove
+    this.reEditable = reEditable
     this.initTreatmentTypes()
   },
   onShow() {
-    this.getRole()
+    // this.getRole()
     this.getMedicalRecordDetail()
   },
 }
@@ -404,30 +430,31 @@ export default {
 
 .bottom {
   height: 90rpx;
-
-  > div {
-    background: #fff;
-    box-sizing: border-box;
-    border-top: #5cbb89 solid 1rpx;
-    display: flex;
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 90rpx;
-  }
+  background: #fff;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  height: 90rpx;
 
   button {
-    width: 50%;
     height: 100%;
     background: #5cbb89;
     color: #ffffff;
     font-size: 36rpx;
     border-radius: 0;
+    flex: 1;
+    border-top: 1rpx solid #5cbb89;
+    border-bottom: 1rpx solid #5cbb89;
+    border-right: 1rpx solid #fff;
+    box-sizing: border-box;
 
     &:first-child {
       background: #ffffff;
       color: #5cbb89;
+    }
+
+    &:last-child {
+      border-right: none;
     }
   }
 }
