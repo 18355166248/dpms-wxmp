@@ -33,15 +33,13 @@
           />
         </view>
       </view>
-      <view class="foot">
-        <u-button
-          :custom-style="btn"
-          type="success"
-          class="pr-32 ml-14"
-          @click="onSubmit"
-          >确定</u-button
-        >
-      </view>
+      <div class="footer-wrapper flex-center">
+        <div class="btns">
+          <button @click="onSubmit" class="submit-btn flex-center">
+            确定
+          </button>
+        </div>
+      </div>
     </view>
   </view>
 </template>
@@ -174,10 +172,23 @@ export default {
   justify-content: space-between;
   width: 750rpx;
   height: 100vh;
-  .foot {
-    background: #ffffff;
+  .footer-wrapper {
+    width: 750rpx;
     padding-bottom: constant(safe-area-inset-bottom);
     padding-bottom: env(safe-area-inset-bottom);
+    background: #fff;
+    .btns {
+      display: flex;
+      justify-content: space-between;
+      padding: 16rpx 32rpx;
+    }
+    .submit-btn {
+      width: 686rpx;
+      border-radius: 40rpx;
+      height: 80rpx;
+      color: #fff;
+      background: #5cbb89;
+    }
   }
 }
 </style>
