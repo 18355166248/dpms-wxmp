@@ -47,8 +47,6 @@
 <script>
 import { mapMutations, mapState } from 'vuex'
 import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
-import payResult from './common/payResult'
-import approveModal from './common/approveModal'
 
 const STAFF_ENUMS = new Map([
   ['doctor', 2],
@@ -93,14 +91,11 @@ export default {
         title: '选择护士',
       })
     }
-    const staffId = JSON.parse(
-      JSON.stringify(this.checkStandStaffList[this.itemStaffId]),
-    )
 
-    this.staffId = staffId
-    this.disposeList.forEach((item) => {
+    this.staffId = this.checkStandStaffList[this.itemStaffId]
+    this.disposeList?.forEach((item) => {
       let id = ''
-      item.salesList.forEach((item2) => {
+      item.salesList?.forEach((item2) => {
         if (item2.salesType && item2.salesType === STAFF_ENUMS.get(this.type)) {
           id = item2.salesId
           return
@@ -113,7 +108,7 @@ export default {
   computed: {
     ...mapState('dispose', ['staffList', 'disposeList', 'checkStandStaffList']),
     List() {
-      return this.staffList.filter(
+      return this.staffList?.filter(
         (item) => item.position === STAFF_ENUMS.get(this.type),
       )
     },
