@@ -69,7 +69,7 @@
           @input="onRegisterTime"
         />
         <view
-          @click.self="
+          @click="
             toUrl(
               `/pages/charge/chooseChargerItemStaff?type=doctor&required=${doctorRequire}`,
             )
@@ -84,7 +84,7 @@
           />
         </view>
         <view
-          @click.self="
+          @click="
             toUrl(
               `/pages/charge/chooseChargerItemStaff?type=nurse&required=${nurseRequire}`,
             )
@@ -694,10 +694,10 @@ export default {
             })
             // 医生助理多选
             this.form.assistantStaffIds = salesList
-              .filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              ?.filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
               .map((val) => val.salesId)
             this.assistantNames = salesList
-              .filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              ?.filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
               .map((val) => val.salesName)
               .join(',')
             // 回显备注
