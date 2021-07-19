@@ -24,7 +24,6 @@
           <view class="listLineBottom">
             <view>医生：{{ item.doctorNameStr }}</view>
             <view>护士：{{ item.nurseNameStr }}</view>
-            <view>其他：{{ item.otherNameStr }}</view>
           </view>
           <!--牙位图组件-->
           <div class="teeth-select" v-if="data.billType === 6">
@@ -38,7 +37,7 @@
               <span class="label2">处置说明：</span>
               <div class="memo">
                 <textarea
-                  v-model="item.toothPositionDesc || '-'"
+                  v-model="item.toothPositionDesc"
                   auto-height
                   placeholder-style="font-size: 34rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
                   :maxlength="500"
@@ -218,7 +217,7 @@ export default {
         color: #7f7f7f;
         margin: 18rpx 32rpx 32rpx;
         view {
-          width: 33.33%;
+          width: 50%;
           overflow-x: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;

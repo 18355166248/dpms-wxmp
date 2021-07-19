@@ -33,6 +33,9 @@
         @click="handleAdd"
       ></text>
     </view>
+    <view>
+      <slot name="suffix" />
+    </view>
   </view>
 </template>
 <script>
@@ -72,7 +75,7 @@ export default {
   },
   methods: {
     _input(event) {
-      if (Number(event.target.value) > this.max) {
+      if (this.max && Number(event.target.value) > this.max) {
         this.inputNumber = this.max
       } else {
         this.inputNumber = Number(event.target.value) || this.min
