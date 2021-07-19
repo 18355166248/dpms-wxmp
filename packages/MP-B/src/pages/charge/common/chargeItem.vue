@@ -1,6 +1,6 @@
 <template>
   <view class="charge-amount">
-    <view class="flex">
+    <view class="flex flex-v-center">
       <view v-if="amountData.format" class="amount">{{
         amountData.amount | thousandFormatter(2, '￥')
       }}</view>
