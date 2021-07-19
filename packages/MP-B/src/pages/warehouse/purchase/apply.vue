@@ -338,6 +338,13 @@ export default {
     },
     // 提交采购
     async handleSubmit() {
+      if (!this.purchaseGoods.length) {
+        uni.showToast({
+          icon: 'error',
+          title: '请选择采购物品',
+        })
+        return
+      }
       let { medicalInstitutionId } = this.medicalInstitution
       let data = {
         medicalInstitutionId,

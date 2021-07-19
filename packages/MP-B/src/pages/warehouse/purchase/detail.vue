@@ -124,7 +124,9 @@ export default {
       purchaseStatus,
       receiveDeptTypeMap,
       merchandisePurchaseOrderId: null,
-      detail: {},
+      detail: {
+        merchandisePurchaseOrderItemList: [],
+      },
     }
   },
   computed: {
@@ -136,9 +138,10 @@ export default {
         return 0
       } else {
         // purchaseNum
-        let num = this.detail.merchandisePurchaseOrderItemList.reduce(
-          (a, b) => a.purchaseNum + b.purchaseNum,
-        )
+        let num = 0
+        this.detail.merchandisePurchaseOrderItemList.forEach((item) => {
+          num += item.purchaseNum
+        })
         return num
       }
     },
