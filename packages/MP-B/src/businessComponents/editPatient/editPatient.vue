@@ -586,6 +586,7 @@ export default {
         ],
         sourceValue: [
           {
+            required: false,
             message: '请输入介绍人',
           },
         ],
@@ -596,6 +597,7 @@ export default {
         ],
         introducer: [
           {
+            required: false,
             message: '请输入介绍人',
           },
           {
@@ -729,6 +731,7 @@ export default {
       this.form.sourceValue = ''
       this.form.introducer = ''
       this.sourceName = settingsPatientSourceName
+      this.changeRules()
     },
     async getScrmStaffList() {
       const res = await patientAPI.getScrmStaffList()
