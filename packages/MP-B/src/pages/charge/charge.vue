@@ -91,11 +91,18 @@
     <u-modal
       width="620"
       title="调整积分"
+      :title-style="{ fontWeight: 'bold' }"
       v-model="showEditIntegral"
       confirm-color="#5cbb89"
       show-cancel-button
       @confirm="confirm"
       async-close="true"
+      negative-top="300"
+      :cancel-style="{ borderTop: '2rpx solid rgba(0,0,0,0.10)' }"
+      :confirm-style="{
+        borderTop: '2rpx solid rgba(0,0,0,0.10)',
+        borderLeft: '2rpx solid rgba(0,0,0,0.10)',
+      }"
       ref="uModal"
     >
       <view class="slot-content">
@@ -517,9 +524,9 @@ export default {
   }
   .edit-icon-style {
     color: #5cbb89;
-    font-size: 36rpx;
+    font-size: 40rpx;
     flex: 0 0 36rpx;
-    margin-left: 20rpx;
+    margin-left: 8rpx;
   }
 }
 
@@ -558,5 +565,9 @@ export default {
     align-items: center;
     padding-top: 48rpx;
   }
+}
+//background: rgba(0,0,0,0.10);
+.u-model__footer {
+  border: 10px solid #000;
 }
 </style>
