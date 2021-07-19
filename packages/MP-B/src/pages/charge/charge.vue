@@ -102,13 +102,15 @@
         <div>当前积分：{{ integralData.amount }}</div>
         <div class="input-wrap">
           <div>调整为：</div>
-          <input
-            type="number"
-            placeholder-style="font-size: 30rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
-            placeholder="请输入积分"
-            @blur="onEditIntegralBlur"
-            :value="inputIntegral"
-          />
+          <label>
+            <input
+              type="number"
+              placeholder-style="font-size: 30rpx; font-weight: 400; color: rgba(0, 0, 0, 0.25);"
+              placeholder="请输入积分"
+              @input="onEditIntegralChange"
+              :value="inputIntegral"
+            />
+          </label>
         </div>
       </view>
     </u-modal>
@@ -332,10 +334,10 @@ export default {
       this.inputIntegral = null
       this.showEditIntegral = true
     },
-
-    onEditIntegralBlur(e) {
+    onEditIntegralChange(e) {
       this.inputIntegral = Number(e.detail.value.trim())
     },
+
     // 确认修改积分
     confirm() {
       let value = this.inputIntegral
