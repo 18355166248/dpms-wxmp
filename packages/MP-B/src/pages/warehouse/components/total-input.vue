@@ -11,7 +11,7 @@
       />
     </view>
     <view v-else class="total-input-text" @click="isFocus = true">
-      <text>{{ this.inputNumber | thousandFormatter(2) }}</text>
+      <text>{{ inputNumber | inventoryToThousand }}</text>
     </view>
   </view>
 </template>
@@ -68,7 +68,8 @@ export default {
     }
   }
   &-text {
-    width: 180rpx;
+    min-width: 180rpx;
+    padding: 0 12rpx;
     height: 48rpx;
     background-color: #f5f5f5;
     border-radius: 8rpx;

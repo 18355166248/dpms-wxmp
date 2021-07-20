@@ -69,7 +69,7 @@
           @input="onRegisterTime"
         />
         <view
-          @click.self="
+          @click="
             toUrl(
               `/pages/charge/chooseChargerItemStaff?type=doctor&required=${doctorRequire}`,
             )
@@ -84,7 +84,7 @@
           />
         </view>
         <view
-          @click.self="
+          @click="
             toUrl(
               `/pages/charge/chooseChargerItemStaff?type=nurse&required=${nurseRequire}`,
             )
@@ -290,7 +290,7 @@ export default {
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
       },
-      toggleInfomation: false,
+      toggleInfomation: true,
       allStaffList: [],
       visitTimeList: [],
       //支付方式
@@ -596,8 +596,8 @@ export default {
             temp.push(tempItem)
           }
         })
-        this.assistantNames =
-          temp.length > 0 ? temp.map((val) => val.staffName).join(',') : ''
+        // this.assistantNames =
+        //   temp.length > 0 ? temp.map((val) => val.staffName).join(',') : ''
         params.salesList = [...params.salesList, ...temp]
       }
       if (this.billSerialNo) {
@@ -704,10 +704,10 @@ export default {
             })
             // 医生助理多选
             this.form.assistantStaffIds = salesList
-              .filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              ?.filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
               .map((val) => val.salesId)
             this.assistantNames = salesList
-              .filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              ?.filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
               .map((val) => val.salesName)
               .join(',')
             // 回显备注

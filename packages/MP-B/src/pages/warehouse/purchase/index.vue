@@ -8,7 +8,7 @@
           focus
           confirm-type="search"
           @focus="handleFocus"
-          v-model="form.orderNo"
+          v-model="form.merchandisePurchaseOrderNo"
           @confirm="confirm"
           placeholder="采购单号"
         />
@@ -49,7 +49,7 @@
                 :class="{ underline: form.purchaseStatus == item.value }"
                 class="purchase-main-status-item"
                 :key="item.value"
-                v-if="item.value != 4"
+                v-if="item.value != 7"
                 @click="changeStatus(item.value)"
                 >{{ item.name }}</view
               >
@@ -128,20 +128,24 @@
               >
             </view>
             <view class="drawer-main-title">供应商</view>
-            <view class="drawer-main-list">
-              <text
-                class="tag"
-                :class="{
-                  activeTag:
-                    form.merchandiseSupplierId == item.merchandiseSupplierId,
-                }"
+            <view class="drawer-main-sus">
+              <view
+                class="drawer-main-sus-item"
                 v-for="item in supplierList"
                 :key="item.merchandiseSupplierId"
-                @click="
-                  changeTypeStatus('supplier', item.merchandiseSupplierId)
-                "
-                >{{ item.merchandiseSupplierName }}</text
               >
+                <text
+                  @click="
+                    changeTypeStatus('supplier', item.merchandiseSupplierId)
+                  "
+                  :class="{
+                    activeTag:
+                      form.merchandiseSupplierId == item.merchandiseSupplierId,
+                  }"
+                >
+                  {{ item.merchandiseSupplierName }}
+                </text>
+              </view>
             </view>
           </scroll-view>
         </view>
@@ -186,7 +190,7 @@ export default {
       startDate: '',
       endDate: moment().format('YYYY-MM'),
       form: {
-        orderNo: null,
+        merchandisePurchaseOrderNo: null,
         beginTimeMillis: null,
         endTimeMillis: null,
         purchaseStatus: 0, // 采购状态
@@ -224,8 +228,8 @@ export default {
     },
   },
   onShow() {
-    if (!this.mode) {
-      this.date = moment().format('YYYY-MM')
+    // 判断是否是搜索页, 并且 所选时间是否是当前月, 是当前月刷新数据
+    if (!this.mode && moment().format('YYYY-MM') == this.date) {
       this.changeStatus(0)
     }
   },
@@ -295,7 +299,7 @@ export default {
       this.showHistory = false
       // 查询过后 就不再是第一次进入
       this.isFirstShow = false
-      this.history.add(this.form.orderNo)
+      this.history.add(this.form.merchandisePurchaseOrderNo)
       let beginTimeMillis = moment(
         this.date + '-01' + ' ' + '00:00:00',
       ).valueOf()
@@ -325,7 +329,7 @@ export default {
     },
     // 点击历史记录
     selectHistory(value) {
-      this.form.orderNo = value
+      this.form.merchandisePurchaseOrderNo = value
       this.confirm()
     },
     // 清除历史记录
@@ -602,9 +606,34 @@ scroll-view ::-webkit-scrollbar {
         color: #595959;
         margin: 0 16rpx 16rpx 0;
       }
+
       .activeTag {
         background-color: $common-color;
         color: #ffffff;
+      }
+    }
+    &-sus {
+      // display: inline-flex;
+      // flex-direction: column;
+      padding-right: 32rpx;
+      &-item {
+        margin: 0 0 16rpx 0;
+        text {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          max-width: 400rpx;
+          display: inline-block;
+          padding: 16rpx;
+          background: rgba(0, 0, 0, 0.06);
+          border-radius: 8rpx;
+          font-size: 24rpx;
+          color: #595959;
+        }
+        .activeTag {
+          background-color: $common-color;
+          color: #ffffff;
+        }
       }
     }
   }

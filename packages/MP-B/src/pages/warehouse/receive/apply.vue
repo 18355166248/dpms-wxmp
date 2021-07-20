@@ -209,7 +209,7 @@ export default {
     // 跳转物品选择页面
     chooseGood() {
       this.$dpmsUtils.push({
-        url: '/pages/warehouse/goods/index?mode=select&isShow=2',
+        url: '/pages/warehouse/goods/index?mode=select&isShow=1',
       })
     },
     // 切换领用单位

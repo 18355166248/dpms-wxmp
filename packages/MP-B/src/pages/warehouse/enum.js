@@ -8,11 +8,11 @@ export const receiveStatusMap = {
 }
 
 export const receiveStatusArray = [
+  { name: '待提交', value: 5 },
   { name: '确认中', value: 1 },
   { name: '进行中', value: 2 },
   { name: '已完成', value: 3 },
   { name: '未完成', value: 4 },
-  { name: '待提交', value: 5 },
   { name: '已拒绝', value: 6 },
 ]
 

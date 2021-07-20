@@ -9,16 +9,15 @@
         <view>
           <picker
             mode="selector"
-            :value="supplierIndex"
+            :value="supplierIndex == -1 ? 0 : supplierIndex"
             range-key="merchandiseSupplierName"
             :range="supplierList"
             @change="changeSupplier"
           >
-            <text>{{
-              supplierIndex == -1
-                ? ''
-                : supplierList[supplierIndex].merchandiseSupplierName
+            <text v-if="supplierIndex >= 0">{{
+              supplierList[supplierIndex].merchandiseSupplierName
             }}</text>
+            <text v-else>请选择</text>
           </picker>
         </view>
         <view>
@@ -78,6 +77,7 @@
               <inputNumber
                 v-model="item.purchaseNum"
                 :min="1"
+                :max="99999999"
                 @on-change="changePurchaseNum($event, index)"
               >
                 <text class="ml-12" slot="suffix">{{
@@ -88,7 +88,10 @@
           </view>
           <view class="apply-goods-item-tips">
             <text>拆零：</text>
-            <text>{{ item.purchaseNum * item.unitSystem }}</text>
+            <text>{{
+              (item.purchaseNum * item.unitSystem)
+                | inventoryToThousand(true, '')
+            }}</text>
             <text>{{ item.inventoryUnitStr }}</text>
           </view>
           <view class="apply-goods-item-unit">
@@ -100,7 +103,7 @@
           </view>
           <view class="apply-goods-item-tips">
             <text>入库单价：</text>
-            <text>{{ item.inputUnitAmount }}</text>
+            <text>{{ item.inputUnitAmount | inventoryToThousand }}</text>
           </view>
           <view class="apply-goods-item-unit">
             <view class="label">采购金额</view>
@@ -116,23 +119,25 @@
     <view class="apply-action">
       <view>
         <text>整单折扣：</text>
-        <text>{{ discountAmount | thousandFormatter(2) }}</text>
+        <text>{{ discountAmount | inventoryToThousand }}</text>
         <text class="ml-16">整单运费：</text>
-        <text>{{ freightAmount | thousandFormatter(2) }}</text>
+        <text>{{ freightAmount | inventoryToThousand }}</text>
         <text class="iconfont icon-edit ml-16" @click="openPopup"></text>
       </view>
       <view class="apply-action-bottom">
         <view class="apply-action-bottom-desc">
           <view>
             <text>采购总金额：</text>
-            <text>{{ purchaseTotal }}</text>
+            <text>{{ purchaseTotal | inventoryToThousand }}</text>
           </view>
           <view>
             <text>已选共</text>
-            <text>{{ purchaseGoods.length }}</text>
+            <text>{{
+              purchaseGoods.length | inventoryToThousand(true, '')
+            }}</text>
             <text>种物品，</text>
             <text>合计</text>
-            <text>{{ goodTotal }}</text>
+            <text>{{ goodTotal | inventoryToThousand(true, '') }}</text>
             <text>件</text>
           </view>
         </view>
@@ -176,7 +181,7 @@ export default {
   data() {
     return {
       supplierList: [],
-      supplierIndex: 0,
+      supplierIndex: -1,
       memo: '',
       purchaseGoods: [],
       discountAmount: 0,
@@ -199,7 +204,7 @@ export default {
       } else {
         let num = 0
         this.purchaseGoods.forEach((element) => {
-          num += element.purchaseNum
+          num += element.purchaseNum * element.unitSystem
         })
         return num
       }
@@ -286,7 +291,7 @@ export default {
         let { scopeSupplyList } = this.supplierList[this.supplierIndex]
 
         this.$dpmsUtils.push({
-          url: `/pages/warehouse/goods/index?mode=select&scopeSupplyList=${scopeSupplyList.replaceAll(
+          url: `/pages/warehouse/goods/index?mode=select&isShow=2&scopeSupplyList=${scopeSupplyList.replaceAll(
             ';',
             '',
           )}`,
@@ -338,6 +343,13 @@ export default {
     },
     // 提交采购
     async handleSubmit() {
+      if (!this.purchaseGoods.length) {
+        uni.showToast({
+          icon: 'error',
+          title: '请选择采购物品',
+        })
+        return
+      }
       let { medicalInstitutionId } = this.medicalInstitution
       let data = {
         medicalInstitutionId,
@@ -346,8 +358,9 @@ export default {
         merchandisePurchaseOrderItemList: this.purchaseGoods,
         purchaseTotalAmount: this.purchaseTotal,
         memo: this.memo,
+        merchandiseSupplierId: this.supplierList[this.supplierIndex]
+          .merchandiseSupplierId,
       }
-      console.log('采购数据', data)
       let res
       if (this.addOrUpdate) {
         res = await purchaseAPI.updatePurchase({
@@ -374,7 +387,7 @@ export default {
     ok() {
       if (this.fromPopup.discountAmount > this.purchaseTotal) {
         uni.showToast({
-          icon: 'error',
+          icon: 'none',
           title: '折扣金额不能大于采购总金额',
         })
       } else {
