@@ -15,24 +15,24 @@
     <view class="purchase-info-goods">
       <text class="value"
         >共{{
-          detail.merchandiseTotal || 0 | thousandFormatter(0, '')
+          detail.merchandiseTotal || 0 | inventoryToThousand(true, '')
         }}种物品，合计{{
-          detail.merchandiseItemTotal || 0 | thousandFormatter(0, '')
+          detail.merchandiseItemTotal || 0 | inventoryToThousand(true, '')
         }}件</text
       >
     </view>
     <view class="purchase-info-total">
       <text class="label">采购总金额：</text>
       <text class="value">{{
-        detail.purchaseTotalAmount || 0 | thousandFormatter(2)
+        detail.purchaseTotalAmount || 0 | inventoryToThousand
       }}</text>
     </view>
     <view class="label">
       <text>(整单折扣：</text>
-      <text>{{ detail.discountAmount | thousandFormatter(2) }}</text>
+      <text>{{ detail.discountAmount | inventoryToThousand }}</text>
       <text>，</text>
       <text>整单运费：</text>
-      <text>{{ detail.freightAmount | thousandFormatter(2) }}</text>
+      <text>{{ detail.freightAmount | inventoryToThousand }}</text>
       <text>)</text>
     </view>
     <view class="purchase-info-desc">

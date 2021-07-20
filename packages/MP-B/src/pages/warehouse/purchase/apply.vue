@@ -9,16 +9,15 @@
         <view>
           <picker
             mode="selector"
-            :value="supplierIndex"
+            :value="supplierIndex == -1 ? 0 : supplierIndex"
             range-key="merchandiseSupplierName"
             :range="supplierList"
             @change="changeSupplier"
           >
-            <text>{{
-              supplierIndex == -1
-                ? ''
-                : supplierList[supplierIndex].merchandiseSupplierName
+            <text v-if="supplierIndex >= 0">{{
+              supplierList[supplierIndex].merchandiseSupplierName
             }}</text>
+            <text v-else>请选择</text>
           </picker>
         </view>
         <view>
@@ -78,6 +77,7 @@
               <inputNumber
                 v-model="item.purchaseNum"
                 :min="1"
+                :max="99999999"
                 @on-change="changePurchaseNum($event, index)"
               >
                 <text class="ml-12" slot="suffix">{{
@@ -176,7 +176,7 @@ export default {
   data() {
     return {
       supplierList: [],
-      supplierIndex: 0,
+      supplierIndex: -1,
       memo: '',
       purchaseGoods: [],
       discountAmount: 0,
@@ -199,7 +199,7 @@ export default {
       } else {
         let num = 0
         this.purchaseGoods.forEach((element) => {
-          num += element.purchaseNum
+          num += element.purchaseNum * element.unitSystem
         })
         return num
       }
@@ -353,8 +353,9 @@ export default {
         merchandisePurchaseOrderItemList: this.purchaseGoods,
         purchaseTotalAmount: this.purchaseTotal,
         memo: this.memo,
+        merchandiseSupplierId: this.supplierList[this.supplierIndex]
+          .merchandiseSupplierId,
       }
-      console.log('采购数据', data)
       let res
       if (this.addOrUpdate) {
         res = await purchaseAPI.updatePurchase({
@@ -381,7 +382,7 @@ export default {
     ok() {
       if (this.fromPopup.discountAmount > this.purchaseTotal) {
         uni.showToast({
-          icon: 'error',
+          icon: 'none',
           title: '折扣金额不能大于采购总金额',
         })
       } else {
