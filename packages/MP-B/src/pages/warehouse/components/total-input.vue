@@ -69,6 +69,7 @@ export default {
   }
   &-text {
     min-width: 180rpx;
+    padding: 0 12rpx;
     height: 48rpx;
     background-color: #f5f5f5;
     border-radius: 8rpx;

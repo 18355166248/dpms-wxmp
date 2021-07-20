@@ -19,7 +19,7 @@ export default {
     return {
       mode: '',
       scopeSupplyList: '',
-      isShow: 1,
+      isShow: 2,
     }
   },
   onLoad({ mode, scopeSupplyList, isShow }) {
