@@ -1,14 +1,11 @@
 <template>
   <view class="purchase">
     <view class="purchase-head">
-      <view class="purchase-head-status"
-        >采购状态：{{
-          purchaseStatus[
-            detail.purchaseStatus == 3
-              ? detail.purchaseReturnStatus
-              : detail.purchaseStatus
-          ] || ''
-        }}</view
+      <view class="purchase-head-status" v-if="detail.purchaseReturnStatus"
+        >状态：{{ purchaseStatus[detail.purchaseReturnStatus] }}</view
+      >
+      <view class="purchase-head-status" v-else
+        >状态：{{ purchaseStatus[detail.purchaseStatus] }}</view
       >
     </view>
     <view class="purchase-main">
@@ -36,7 +33,7 @@
               <view
                 ><text class="label">采购数量：</text
                 ><text class="value">{{
-                  item.purchaseNum || 0 | inventoryToThousand(true)
+                  item.purchaseNum || 0 | inventoryToThousand(true, '')
                 }}</text>
                 <text>{{ item.purchaseUnitIdStr || '' }}</text>
               </view>
@@ -90,8 +87,14 @@
           <view class="purchase-main-info-item">
             <view class="label">物品种类</view>
             <view class="value">
-              <text class="mr20">{{ merchandiseTotal }}</text>
-              <text>(合计{{ merchandiseItemTotal }}件)</text>
+              <text class="mr20">{{
+                merchandiseTotal | inventoryToThousand(true, '')
+              }}</text>
+              <text
+                >(合计{{
+                  merchandiseItemTotal | inventoryToThousand(true, '')
+                }}件)</text
+              >
             </view>
           </view>
           <view class="purchase-main-info-item">
@@ -146,7 +149,7 @@ export default {
         // purchaseNum
         let num = 0
         this.detail.merchandisePurchaseOrderItemList.forEach((item) => {
-          num += item.purchaseNum
+          num += item.purchaseNum * item.unitSystem
         })
         return num
       }

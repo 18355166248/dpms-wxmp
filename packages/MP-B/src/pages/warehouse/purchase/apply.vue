@@ -88,7 +88,10 @@
           </view>
           <view class="apply-goods-item-tips">
             <text>拆零：</text>
-            <text>{{ item.purchaseNum * item.unitSystem }}</text>
+            <text>{{
+              (item.purchaseNum * item.unitSystem)
+                | inventoryToThousand(true, '')
+            }}</text>
             <text>{{ item.inventoryUnitStr }}</text>
           </view>
           <view class="apply-goods-item-unit">
@@ -100,7 +103,7 @@
           </view>
           <view class="apply-goods-item-tips">
             <text>入库单价：</text>
-            <text>{{ item.inputUnitAmount }}</text>
+            <text>{{ item.inputUnitAmount | inventoryToThousand }}</text>
           </view>
           <view class="apply-goods-item-unit">
             <view class="label">采购金额</view>
@@ -116,23 +119,25 @@
     <view class="apply-action">
       <view>
         <text>整单折扣：</text>
-        <text>{{ discountAmount | thousandFormatter(2) }}</text>
+        <text>{{ discountAmount | inventoryToThousand }}</text>
         <text class="ml-16">整单运费：</text>
-        <text>{{ freightAmount | thousandFormatter(2) }}</text>
+        <text>{{ freightAmount | inventoryToThousand }}</text>
         <text class="iconfont icon-edit ml-16" @click="openPopup"></text>
       </view>
       <view class="apply-action-bottom">
         <view class="apply-action-bottom-desc">
           <view>
             <text>采购总金额：</text>
-            <text>{{ purchaseTotal }}</text>
+            <text>{{ purchaseTotal | inventoryToThousand }}</text>
           </view>
           <view>
             <text>已选共</text>
-            <text>{{ purchaseGoods.length }}</text>
+            <text>{{
+              purchaseGoods.length | inventoryToThousand(true, '')
+            }}</text>
             <text>种物品，</text>
             <text>合计</text>
-            <text>{{ goodTotal }}</text>
+            <text>{{ goodTotal | inventoryToThousand(true, '') }}</text>
             <text>件</text>
           </view>
         </view>
@@ -286,7 +291,7 @@ export default {
         let { scopeSupplyList } = this.supplierList[this.supplierIndex]
 
         this.$dpmsUtils.push({
-          url: `/pages/warehouse/goods/index?mode=select&scopeSupplyList=${scopeSupplyList.replaceAll(
+          url: `/pages/warehouse/goods/index?mode=select&isShow=2&scopeSupplyList=${scopeSupplyList.replaceAll(
             ';',
             '',
           )}`,

@@ -42,7 +42,9 @@
             <view v-for="(item, index) in pagination.records" :key="index">
               <checkBox
                 v-model="item.checked"
-                :disabled="!item.isEnable || !item.availableNum"
+                :disabled="
+                  isShow == 2 ? false : !item.isEnable || !item.availableNum
+                "
                 @on-change="handleSelect(item)"
                 :mode="mode"
               >
