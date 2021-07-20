@@ -2,7 +2,13 @@
   <view class="purchase">
     <view class="purchase-head">
       <view class="purchase-head-status"
-        >采购状态：{{ purchaseStatus[detail.purchaseStatus] || '' }}</view
+        >采购状态：{{
+          purchaseStatus[
+            detail.purchaseStatus == 3
+              ? detail.purchaseReturnStatus
+              : detail.purchaseStatus
+          ] || ''
+        }}</view
       >
     </view>
     <view class="purchase-main">
@@ -30,20 +36,20 @@
               <view
                 ><text class="label">采购数量：</text
                 ><text class="value">{{
-                  item.purchaseNum || 0 | thousandFormatter(0, '')
+                  item.purchaseNum || 0 | inventoryToThousand(true)
                 }}</text>
                 <text>{{ item.purchaseUnitIdStr || '' }}</text>
               </view>
               <view
                 ><text class="label">采购单价：</text
                 ><text class="value">{{
-                  item.purchaseUnitAmount || 0 | thousandFormatter(2)
+                  item.purchaseUnitAmount || 0 | inventoryToThousand
                 }}</text>
               </view>
               <view
                 ><text class="label">采购金额：</text
                 ><text class="value">{{
-                  item.purchaseTotalAmount || 0 | thousandFormatter(2)
+                  item.purchaseTotalAmount || 0 | inventoryToThousand
                 }}</text>
               </view>
               <!-- <view
@@ -60,25 +66,25 @@
               (detail.purchaseTotalAmount -
                 detail.freightAmount +
                 detail.discountAmount)
-                | thousandFormatter(2)
+                | inventoryToThousand
             }}</view>
           </view>
           <view class="purchase-main-info-item">
             <view class="label">整单折扣金额</view>
             <view class="value">{{
-              detail.discountAmount | thousandFormatter(2)
+              detail.discountAmount | inventoryToThousand
             }}</view>
           </view>
           <view class="purchase-main-info-item">
             <view class="label">整单运费</view>
             <view class="value">
-              <text>{{ detail.freightAmount | thousandFormatter(2) }}</text>
+              <text>{{ detail.freightAmount | inventoryToThousand }}</text>
             </view>
           </view>
           <view class="purchase-main-info-item">
             <view class="label">采购总金额</view>
             <view class="value">{{
-              detail.purchaseTotalAmount | thousandFormatter(2)
+              detail.purchaseTotalAmount | inventoryToThousand
             }}</view>
           </view>
           <view class="purchase-main-info-item">
@@ -108,8 +114,8 @@
           </view>
         </view>
       </scroll-view>
-      <!-- 当领用状态为 待提交时 显示 -->
-      <view class="purchase-main-action">
+      <!-- 当领用状态为采购待确认时 显示 -->
+      <view class="purchase-main-action" v-if="detail.purchaseStatus == 1">
         <view class="edit_btn" @click="handleEdit">修改</view>
       </view>
     </view>
