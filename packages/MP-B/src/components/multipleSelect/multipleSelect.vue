@@ -133,22 +133,6 @@ export default {
     height: 100%;
     overflow: hidden;
   }
-  .border-after::after {
-    position: absolute;
-    box-sizing: border-box;
-    transform-origin: center;
-    content: ' ';
-    pointer-events: none;
-    top: auto;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    border-bottom: 1px solid #e5e5e5;
-    transform: scaleY(0.5);
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: rgb(229, 229, 229);
-  }
 
   .select-popup-header {
     padding: 32rpx 32rpx;
@@ -175,9 +159,8 @@ export default {
   }
 
   .select-popup-content {
-    margin-bottom: 16rpx;
     .select-popup-scroll {
-      height: 531rpx;
+      max-height: 531rpx;
       overflow: auto;
       display: flex;
       align-items: center;
