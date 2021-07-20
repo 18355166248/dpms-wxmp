@@ -98,11 +98,11 @@
       @confirm="confirm"
       async-close="true"
       negative-top="300"
-      :cancel-style="{ borderTop: '2rpx solid rgba(0,0,0,0.10)' }"
       :confirm-style="{
-        borderTop: '2rpx solid rgba(0,0,0,0.10)',
         borderLeft: '2rpx solid rgba(0,0,0,0.10)',
+        borderRadius:0
       }"
+      :content-style="{borderBottom: '2rpx solid rgba(0,0,0,0.10)'}"
       ref="uModal"
     >
       <view class="slot-content">
