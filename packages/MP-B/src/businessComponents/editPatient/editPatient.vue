@@ -440,6 +440,7 @@ export default {
         ],
         nickName: [
           {
+            required: false,
             message: '请输入个性称呼',
           },
           {
@@ -449,6 +450,7 @@ export default {
         ],
         medicalInsuranceCardNo: [
           {
+            required: false,
             message: '请输入医保卡号',
           },
           {
@@ -469,11 +471,13 @@ export default {
         ],
         birthday: [
           {
+            required: false,
             message: '请选择出生日期',
           },
         ],
         age: [
           {
+            required: false,
             message: '请输入年龄',
           },
           {
@@ -483,6 +487,7 @@ export default {
         ],
         certificatesNo: [
           {
+            required: false,
             message: '请输入身份证号',
           },
           {
@@ -492,21 +497,25 @@ export default {
         ],
         contactLabel: [
           {
+            required: false,
             type: 'any',
           },
         ],
         gender: [
           {
+            required: false,
             message: '请选择性别',
           },
         ],
         nationality: [
           {
+            required: false,
             message: '请选择国籍',
           },
         ],
         mobile: [
           {
+            required: false,
             message: '请输入联系电话',
           },
           {
@@ -517,6 +526,7 @@ export default {
         ],
         fixedTelephone: [
           {
+            required: false,
             message: '请输入固定电话',
           },
           {
@@ -526,24 +536,28 @@ export default {
         ],
         alternateMobile: [
           {
+            required: false,
             pattern: /^\d{11}$/,
             message: '备用号码格式不正确',
           },
         ],
         weChatId: [
           {
+            required: false,
             pattern: /^[^*]{0,20}$/g,
             message: '请输入正确的微信号',
           },
         ],
         qqNum: [
           {
+            required: false,
             pattern: /^[^*]\d{1,20}$/g,
             message: '请输入正确的QQ格式',
           },
         ],
         region: [
           {
+            required: false,
             message: '请选择地区',
             // region的初始值是[undefined, undefined, undefined]
             validator: (rule, value, callback) => {
@@ -557,6 +571,7 @@ export default {
         ],
         tagIds: [
           {
+            required: false,
             message: '请选择患者标签',
             // tagIds的初始值是[]
             validator: (rule, value, callback) => {
@@ -570,32 +585,38 @@ export default {
         ],
         address: [
           {
+            required: false,
             pattern: /^[^*]{0,100}$/g,
             message: '请填写详细地址',
           },
         ],
         settingsPatientSourceId: [
           {
+            required: false,
             message: '请选择患者来源',
           },
         ],
         sourceName: [
           {
+            required: false,
             type: 'any',
           },
         ],
         sourceValue: [
           {
+            required: false,
             message: '请输入介绍人',
           },
         ],
         memo: [
           {
+            required: false,
             message: '请输入备注',
           },
         ],
         introducer: [
           {
+            required: false,
             message: '请输入介绍人',
           },
           {
@@ -605,6 +626,7 @@ export default {
         ],
         systemInner: [
           {
+            required: false,
             type: 'any',
           },
         ], //不写validator的rules会变成undefiend，会报错
@@ -704,18 +726,25 @@ export default {
           if (keyA === keyB) {
             // 判断介绍人item，有两种情况，"sourceValue"以及"introducer"
             if (keyA === 'sourceValue') {
-              this.sourceName === '员工介绍'
-                ? (this.rules['sourceValue'][0].required = this.requiredObj[
-                    keyA
-                  ].enableMust)
-                : (this.rules['introducer'][0].required = this.requiredObj[
-                    keyA
-                  ].enableMust)
+              this.handleSourceAndIntroducer()
             } else {
               this.rules[keyB][0].required = this.requiredObj[keyA].enableMust
             }
           }
         }
+      }
+    },
+    handleSourceAndIntroducer() {
+      if (this.sourceName === '员工介绍') {
+        this.rules['sourceValue'][0].required = this.requiredObj[
+          'sourceValue'
+        ].enableMust
+        this.rules['introducer'][0].required = false
+      } else {
+        this.rules['sourceValue'][0].required = false
+        this.rules['introducer'][0].required = this.requiredObj[
+          'sourceValue'
+        ].enableMust
       }
     },
     setPatientSource({
@@ -729,6 +758,7 @@ export default {
       this.form.sourceValue = ''
       this.form.introducer = ''
       this.sourceName = settingsPatientSourceName
+      this.handleSourceAndIntroducer()
     },
     async getScrmStaffList() {
       const res = await patientAPI.getScrmStaffList()
