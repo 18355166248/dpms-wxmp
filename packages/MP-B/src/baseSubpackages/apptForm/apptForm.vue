@@ -442,14 +442,7 @@ export default {
     },
     'form.appointmentBeginTimeStamp': function () {
       this.refreshMedicalInstitutionList()
-    },
-    'form.duration': function () {
-      this.form.appointmentEndTimeStamp = moment(
-        this.form.appointmentBeginTimeStamp,
-      )
-        .add(this.form.duration, 'minutes')
-        .subtract(1, 'milliseconds')
-        .valueOf()
+      this.adjustAppointmentTime()
     },
   },
   beforeDestroy() {
@@ -546,23 +539,35 @@ export default {
       }
       this.refreshInstitutionRelatedOptions()
     },
-    onDurationInputBlur(value) {
-      // TODO apptSetting和机构相关，从该数据从预约视图带过来，若直接进入此界面会获取不到数据
-      const stepInMinutes = this.apptSetting?.appointmentDuration || 30
-      const startMoment = moment(this.form.appointmentBeginTimeStamp)
-      const endMoment = moment(this.form.appointmentBeginTimeStamp)
-        .startOf('day')
-        .add(1, 'days')
+    onDurationInputBlur() {
+      this.adjustAppointmentTime()
+    },
+    adjustAppointmentTime() {
+      console.log('hc: duration', this.form.duration)
+      // 1. 修正持续时间
+      if (!this.form.duration) {
+        this.form.duration = this.apptSetting?.appointmentDuration || 30
+      } else {
+        const stepInMinutes = this.apptSetting?.appointmentDuration || 30
+        const startMoment = moment(this.form.appointmentBeginTimeStamp)
+        const endMoment = moment(this.form.appointmentBeginTimeStamp)
+          .startOf('day')
+          .add(1, 'days')
 
-      const maxStep = Math.floor(
-        endMoment.diff(startMoment, 'minutes') / stepInMinutes,
+        const maxStep = Math.floor(
+          endMoment.diff(startMoment, 'minutes') / stepInMinutes,
+        )
+        const currentStep = Math.ceil(this.form.duration / stepInMinutes)
+        this.form.duration = Math.min(maxStep, currentStep) * stepInMinutes
+      }
+
+      // 2. 调整结束时间
+      this.form.appointmentEndTimeStamp = moment(
+        this.form.appointmentBeginTimeStamp,
       )
-      const currentStep = Math.ceil(value / stepInMinutes)
-      this.$set(
-        this.form,
-        'duration',
-        Math.min(maxStep, currentStep) * stepInMinutes,
-      )
+        .add(this.form.duration, 'minutes')
+        .subtract(1, 'milliseconds')
+        .valueOf()
     },
     // 跳转选择员工页面
     onSelectStaff(title, optionKey, formKey) {
@@ -598,7 +603,10 @@ export default {
         return
       }
 
-      //  患者校验
+      // 再次修正预约时间
+      this.adjustAppointmentTime()
+
+      // 患者校验
       if (!this.form.patient) {
         this.$dpmsUtils.show('暂无患者信息，请先选择患者信息')
         return
