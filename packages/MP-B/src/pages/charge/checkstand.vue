@@ -290,7 +290,7 @@ export default {
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
       },
-      toggleInfomation: false,
+      toggleInfomation: true,
       allStaffList: [],
       visitTimeList: [],
       //支付方式
