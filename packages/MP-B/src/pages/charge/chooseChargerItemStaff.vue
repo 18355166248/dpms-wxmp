@@ -18,7 +18,7 @@
               class="iconfont icon-user"
               style="font-size: 36rpx; margin-right: 11rpx;"
             />
-            <div class="ellipsis" style="width: 550rpx;">项目明细</div>
+            <div class="ellipsis" style="width: 550rpx;">项目{{ title }}</div>
           </div>
         </chargestand-title>
         <view v-for="item in disposeList" :key="item.itemCode">
