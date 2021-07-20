@@ -1,34 +1,47 @@
 <template>
-  <u-popup
-    :safe-area-inset-bottom="true"
+  <actionSheet
     class="select-popup"
-    mode="bottom"
-    v-model="show"
     @close="close"
+    @sure="confirm"
+    sure-text="确定"
+    v-if="show"
   >
-    <view class="select-popup-header border-after">
-      <view @click="close" class="close">取消</view>
-      <view v-if="title" class="title">{{ title }}</view>
-      <view @click="confirm" class="confirm">确定</view>
-    </view>
-    <view class="select-popup-content">
-      <scroll-view scroll-y="true" class="select-popup-scroll">
-        <dpmsCheckboxGroup v-model="checkedList" v-if="list && list.length">
-          <div class="appt-collapse">
-            <div v-for="(item, index) in list" :key="index" class="select-item">
-              <dpmsCheckbox
-                shape="square"
-                :label="item.value || item[defaultProps.value]"
+    <view class="content">
+      <view class="select-popup-header">
+        <view @click="clear" class="confirm">清空</view>
+        <view v-if="title" class="title">选择{{ title }}</view>
+        <view
+          @click="close"
+          class="iconfont icon-ar-close"
+          style="font-size: 48rpx;"
+        ></view>
+      </view>
+      <view class="select-popup-content">
+        <scroll-view scroll-y="true" class="select-popup-scroll">
+          <dpmsCheckboxGroup
+            v-model="checkedList"
+            ref="checkboxGroupRef"
+            v-if="list && list.length"
+          >
+            <div class="appt-collapse">
+              <div
+                v-for="(item, index) in list"
+                :key="index"
+                class="select-item"
               >
                 {{ item.label || item[defaultProps.label] }}
-              </dpmsCheckbox>
+                <dpmsCheckbox
+                  shape="square"
+                  :label="item.value || item[defaultProps.value]"
+                ></dpmsCheckbox>
+              </div>
             </div>
-          </div>
-        </dpmsCheckboxGroup>
-        <empty :disabled="true" text="暂无数据" v-if="list.length === 0" />
-      </scroll-view>
+          </dpmsCheckboxGroup>
+          <empty :disabled="true" text="暂无数据" v-if="list.length === 0" />
+        </scroll-view>
+      </view>
     </view>
-  </u-popup>
+  </actionSheet>
 </template>
 
 <script>
@@ -105,12 +118,21 @@ export default {
       this.close()
       this.$emit('confirm', this.checkedList)
     },
+
+    //清除
+    clear() {
+      this.$refs.checkboxGroupRef.clearAll()
+    },
   },
 }
 </script>
 
 <style lang="scss" scoped>
 .select-popup {
+  .content {
+    height: 100%;
+    overflow: hidden;
+  }
   .border-after::after {
     position: absolute;
     box-sizing: border-box;
@@ -129,56 +151,45 @@ export default {
   }
 
   .select-popup-header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9;
-    background: #ffffff;
-    padding: 24rpx;
-    height: 80rpx;
+    padding: 32rpx 32rpx;
     display: flex;
+    border-bottom: 1px solid #e5e5e5;
     justify-content: space-between;
     align-items: center;
     box-sizing: border-box;
-
+    border-radius: 24rpx 24rpx 0 0;
+    background: #ffffff;
     .title {
+      color: #191919;
       font-size: 34rpx;
     }
 
     .close {
-      color: rgba(0, 0, 0, 0.45);
+      color: #595959;
     }
 
     .confirm {
       color: #5cbb89;
+      font-size: 30rpx;
     }
   }
 
   .select-popup-content {
-    margin-top: 80rpx;
-
+    margin-bottom: 16rpx;
     .select-popup-scroll {
-      max-height: 40vh;
+      height: 531rpx;
       overflow: auto;
       display: flex;
       align-items: center;
     }
     .appt-collapse {
-      padding-left: 32rpx;
-      .appt {
-        height: 112rpx;
-        line-height: 112rpx;
-        border-top: 1rpx solid rgba($color: #000000, $alpha: 0.15);
-        color: rgba($color: #000000, $alpha: 0.9);
-        font-size: 34rpx;
-        &.first {
-          border-top: none;
-        }
-      }
+      background: #ffffff;
       .select-item {
-        padding: 32rpx 0;
-        border-bottom: 1px solid rgb(229, 229, 229);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 36rpx 32rpx;
+        border-bottom: 1px solid #e5e5e5;
       }
     }
   }
