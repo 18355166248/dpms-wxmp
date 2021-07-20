@@ -582,8 +582,8 @@ export default {
             temp.push(tempItem)
           }
         })
-        this.assistantNames =
-          temp.length > 0 ? temp.map((val) => val.staffName).join(',') : ''
+        // this.assistantNames =
+        //   temp.length > 0 ? temp.map((val) => val.staffName).join(',') : ''
         params.salesList = [...params.salesList, ...temp]
       }
       if (this.billSerialNo) {
