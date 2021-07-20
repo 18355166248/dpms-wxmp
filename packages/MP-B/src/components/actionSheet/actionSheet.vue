@@ -1,7 +1,7 @@
 <template>
   <view class="action-sheet-wrap">
     <view class="mask" @click="hideActionSheet"></view>
-    <view class="action-sheet" :style="{ background }">
+    <view class="action-sheet" :style="{ background }" :class="{'safeBottom':!sureText}">
       <view class="container">
         <slot></slot>
       </view>
@@ -57,13 +57,15 @@ export default {
     height: 100%;
     background: rgba(0, 0, 0, 0.6);
   }
+  .safeBottom{
+    padding-bottom: constant(safe-area-inset-bottom);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
   .action-sheet {
     position: relative;
     width: 100%;
     background: #f2f2f2;
     border-radius: 24rpx 24rpx 0 0;
-    padding-bottom: constant(safe-area-inset-bottom);
-    padding-bottom: env(safe-area-inset-bottom);
     color: #191919;
     line-height: 1;
     font-size: 30rpx;
@@ -88,6 +90,8 @@ export default {
       font-size: 34rpx;
       background: #fff;
       flex-shrink: 0;
+      padding-bottom: constant(safe-area-inset-bottom);
+      padding-bottom: env(safe-area-inset-bottom);
     }
   }
 }
