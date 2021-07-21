@@ -160,7 +160,7 @@ export default {
 
   .select-popup-content {
     .select-popup-scroll {
-      max-height: 531rpx;
+      max-height: 425rpx;
       overflow: auto;
       display: flex;
       align-items: center;
