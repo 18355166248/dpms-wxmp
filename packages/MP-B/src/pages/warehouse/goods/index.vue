@@ -4,7 +4,7 @@
     <goodList
       :mode="mode"
       :scopeSupplyList="scopeSupplyList"
-      type="good"
+      :type="type"
       :isShow="isShow"
       searchPath="/pages/warehouse/goods/searchGood"
       detailPath="/pages/warehouse/goods/goodDetail"
@@ -20,11 +20,13 @@ export default {
       mode: '',
       scopeSupplyList: '',
       isShow: 2,
+      type: 'good',
     }
   },
-  onLoad({ mode, scopeSupplyList, isShow }) {
+  onLoad({ mode, scopeSupplyList, isShow, type }) {
     this.mode = mode
     this.isShow = isShow
+    this.type = type || 'good'
     this.scopeSupplyList = scopeSupplyList
       .split('')
       .toString()

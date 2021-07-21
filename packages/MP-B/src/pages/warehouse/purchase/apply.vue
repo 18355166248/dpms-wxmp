@@ -27,7 +27,7 @@
       <view class="apply-head-desc">
         <view class="label">备注</view>
         <view class="apply-head-desc-input">
-          <input v-model="memo" placeholder="请输入备注" />
+          <input v-model="memo" placeholder="请输入备注" maxlength="50" />
         </view>
       </view>
     </view>
@@ -75,7 +75,7 @@
             <view class="label">采购数量</view>
             <view>
               <inputNumber
-                v-model="item.purchaseNum"
+                :value="item.purchaseNum"
                 :min="1"
                 :max="99999999"
                 @on-change="changePurchaseNum($event, index)"
@@ -97,18 +97,21 @@
           <view class="apply-goods-item-unit">
             <view class="label">采购单价</view>
             <totalInput
-              v-model="item.purchaseUnitAmount"
+              :value="item.purchaseUnitAmount"
               @on-change="changePurchaseUnitAmount($event, index)"
             />
           </view>
           <view class="apply-goods-item-tips">
             <text>入库单价：</text>
-            <text>{{ item.inputUnitAmount | inventoryToThousand }}</text>
+            <text>{{
+              item.purchaseUnitAmount / item.unitSystem ||
+              0 | inventoryToThousand
+            }}</text>
           </view>
           <view class="apply-goods-item-unit">
             <view class="label">采购金额</view>
             <totalInput
-              v-model="item.purchaseTotalAmount"
+              :value="item.purchaseTotalAmount"
               @on-change="changePurchaseTotalAmount($event, index)"
             />
           </view>
@@ -148,15 +151,24 @@
       <view class="popup-content">
         <view class="popup-content-main">
           <view class="popup-content-main-discount">
-            <view class="label">整单折扣</view>
+            <view class="label">整单折扣金额</view>
             <view>
-              <totalInput v-model="fromPopup.discountAmount" />
+              <totalInput
+                :max="purchaseTotal"
+                :value="fromPopup.discountAmount"
+                @on-change="changeDiscountAmount"
+                errorText="整单折扣金额不能大于采购总金额"
+              />
             </view>
           </view>
           <view class="popup-content-main-freight">
             <view class="label">整单运费</view>
             <view>
-              <totalInput v-model="fromPopup.freightAmount" />
+              <totalInput
+                name="freightAmount"
+                :value="fromPopup.freightAmount"
+                @on-change="changeFreightAmount"
+              />
             </view>
           </view>
         </view>
@@ -174,12 +186,12 @@ import inputNumber from '@/components/input-number/input-number.vue'
 import totalInput from '../components/total-input.vue'
 import { mapMutations, mapState } from 'vuex'
 import empty from '@/components/empty/empty.vue'
-// import uniPopup from "@/components/uni-popup/uni-popup.vue"
-// uniPopup
+import Big from 'big.js'
 export default {
   components: { inputNumber, totalInput, empty },
   data() {
     return {
+      testAmount: 100,
       supplierList: [],
       supplierIndex: -1,
       memo: '',
@@ -195,7 +207,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('warehouse', ['applyGoods']),
+    ...mapState('warehouse', ['goodList']),
     ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
     // 所选物品件数
     goodTotal() {
@@ -215,25 +227,25 @@ export default {
       this.purchaseGoods.forEach((element) => {
         total += element.purchaseTotalAmount
       })
-      return total + this.freightAmount - this.discountAmount
+      return Big(total).plus(this.freightAmount).minus(this.discountAmount)
     },
   },
   watch: {
-    applyGoods(val) {
-      // purchaseNum 采购数量
-      // purchaseUnitAmount 采购单价
-      // purchaseTotalAmount 采购总金额
-      // unitSystem 单位进制
-      // inventoryUnitStr 库存单位
-      this.purchaseGoods = val.map((e) => {
-        return {
-          ...e,
-          purchaseNum: e.purchaseNum || 1,
-          purchaseUnitAmount: e.purchaseUnitAmount || 0,
-          purchaseTotalAmount: e.purchaseTotalAmount || 0,
-          inputUnitAmount: e.inputUnitAmount || 0,
-        }
-      })
+    goodList: {
+      // immediate: true,
+      deep: true,
+      handler: function (val) {
+        this.purchaseGoods = val.map((e) => {
+          return {
+            ...e,
+            purchaseNum: e.purchaseNum || 1,
+            purchaseUnitAmount: e.purchaseUnitAmount || 0,
+            purchaseTotalAmount: e.purchaseTotalAmount || 0,
+            inputUnitAmount: e.inputUnitAmount || 0,
+          }
+        })
+        console.log(238, this.purchaseGoods)
+      },
     },
   },
   async onLoad({ merchandisePurchaseOrderId }) {
@@ -241,29 +253,35 @@ export default {
     this.merchandisePurchaseOrderId = merchandisePurchaseOrderId
     this.addOrUpdate = !!merchandisePurchaseOrderId
     if (this.addOrUpdate) {
-      this.getPurchaseDetail(merchandisePurchaseOrderId).then((res) => {
-        let {
-          memo,
-          merchandiseSupplierId,
-          merchandisePurchaseOrderItemList,
-          discountAmount,
-          freightAmount,
-        } = res.data
-        this.setApplyGoods(merchandisePurchaseOrderItemList)
-        this.memo = memo
-        this.discountAmount = discountAmount
-        this.freightAmount = freightAmount
-        this.supplierIndex = this.supplierList.findIndex(
-          (e) => e.merchandiseSupplierId == merchandiseSupplierId,
-        )
-      })
+      const res = await this.getPurchaseDetail(merchandisePurchaseOrderId)
+      let {
+        memo,
+        merchandiseSupplierId,
+        merchandisePurchaseOrderItemList,
+        discountAmount,
+        freightAmount,
+      } = res.data
+      this.setGoodList(merchandisePurchaseOrderItemList)
+      this.setApplyGoods(merchandisePurchaseOrderItemList)
+      this.memo = memo
+      this.discountAmount = discountAmount
+      this.freightAmount = freightAmount
+      this.supplierIndex = this.supplierList.findIndex(
+        (e) => e.merchandiseSupplierId == merchandiseSupplierId,
+      )
     } else {
+      this.setGoodList([])
       this.setApplyGoods([])
     }
   },
   created() {},
   methods: {
-    ...mapMutations('warehouse', ['updateGood', 'deleteGood', 'setApplyGoods']),
+    ...mapMutations('warehouse', [
+      'updateGood',
+      'deleteGood',
+      'setGoodList',
+      'setApplyGoods',
+    ]),
     // 获取采购详情
     async getPurchaseDetail(merchandisePurchaseOrderId) {
       const res = await purchaseAPI.getPurchaseDetail({
@@ -279,6 +297,9 @@ export default {
     // 选择供应商
     changeSupplier(event) {
       this.supplierIndex = +event.detail.value
+      this.$nextTick(() => {
+        this.setGoodList([])
+      })
     },
     // 前往物品选择列表
     selectGoods() {
@@ -291,7 +312,7 @@ export default {
         let { scopeSupplyList } = this.supplierList[this.supplierIndex]
 
         this.$dpmsUtils.push({
-          url: `/pages/warehouse/goods/index?mode=select&isShow=2&scopeSupplyList=${scopeSupplyList.replaceAll(
+          url: `/pages/warehouse/goods/index?mode=select&isShow=2&type=purchase&scopeSupplyList=${scopeSupplyList.replaceAll(
             ';',
             '',
           )}`,
@@ -305,38 +326,35 @@ export default {
     },
     // 采购数量变化
     changePurchaseNum(value, index) {
-      let unitAmount = this.purchaseGoods[index].purchaseUnitAmount
-      this.$set(
-        this.purchaseGoods[index],
-        'purchaseTotalAmount',
-        unitAmount * value,
-      )
+      this.purchaseGoods[index].purchaseNum = value
+      let purchaseUnitAmount = this.purchaseGoods[index].purchaseUnitAmount
+      this.purchaseGoods[index].purchaseTotalAmount = Big(
+        purchaseUnitAmount,
+      ).times(value)
       this.updateGood(this.purchaseGoods[index])
     },
     // 采购单价变化
     changePurchaseUnitAmount(value, index) {
+      this.purchaseGoods[index].purchaseUnitAmount = value
       let purchaseNum = this.purchaseGoods[index].purchaseNum
-      let unitSystem = this.purchaseGoods[index].unitSystem
-      let inputUnitAmount = value ? Number((value / unitSystem).toFixed(4)) : 0
-      this.$set(
-        this.purchaseGoods[index],
-        'purchaseTotalAmount',
-        purchaseNum * value,
+      this.purchaseGoods[index].purchaseTotalAmount = Big(value).times(
+        purchaseNum,
       )
-      this.$set(this.purchaseGoods[index], 'inputUnitAmount', inputUnitAmount)
       this.updateGood(this.purchaseGoods[index])
     },
     // 采购总金额
     changePurchaseTotalAmount(value, index) {
+      this.purchaseGoods[index].purchaseTotalAmount = value
       let purchaseNum = this.purchaseGoods[index].purchaseNum
-      let unitSystem = this.purchaseGoods[index].unitSystem
-      let unitAmount = value ? Number((value / purchaseNum).toFixed(4)) : 0
-      let inputUnitAmount = unitAmount
-        ? (unitAmount / unitSystem).toFixed(4)
-        : 0
-      this.$set(this.purchaseGoods[index], 'purchaseUnitAmount', unitAmount)
-      this.$set(this.purchaseGoods[index], 'inputUnitAmount', inputUnitAmount)
+      this.purchaseGoods[index].purchaseUnitAmount = Big(value).div(purchaseNum)
       this.updateGood(this.purchaseGoods[index])
+    },
+    // 整单折扣金额
+    changeDiscountAmount(value) {
+      this.fromPopup.discountAmount = value
+    },
+    changeFreightAmount(value) {
+      this.fromPopup.freightAmount = value
     },
     handleDelete(item) {
       this.deleteGood(item)
@@ -372,7 +390,7 @@ export default {
         res = await purchaseAPI.createPurchase(data)
       }
       // 提交数据后,清空已选物品
-      this.setApplyGoods([])
+      this.setGoodList([])
       uni.showToast({
         icon: 'none',
         title: '提交成功',

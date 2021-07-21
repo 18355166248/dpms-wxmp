@@ -1,18 +1,17 @@
 <template>
-  <view class="total-input">
-    <view v-if="isFocus" class="total-input-main">
-      <input
-        :focus="isFocus"
-        v-model="inputNumber"
-        type="digit"
-        @blur="_blur"
-        placeholder="请输入"
-        @input="_input"
-      />
-    </view>
-    <view v-else class="total-input-text" @click="isFocus = true">
-      <text>{{ inputNumber | inventoryToThousand }}</text>
-    </view>
+  <view class="amount">
+    <input
+      v-if="focused"
+      :cursor-spacing="180"
+      focus
+      type="digit"
+      @blur="focused = false"
+      :value="currentValue"
+      @input="change"
+    />
+    <view v-else @click="focused = true" class="amount-text">{{
+      currentValue | inventoryToThousand
+    }}</view>
   </view>
 </template>
 <script>
@@ -26,57 +25,88 @@ export default {
       type: Number,
       default: 0,
     },
+    max: {
+      type: Number,
+      default: 99999999,
+    },
+    errorText: {
+      type: String,
+      default: '金额不能超过99999999',
+    },
     value: {
       type: Number,
-      default: null,
+    },
+    precision: {
+      type: Number,
+      default: 2,
     },
   },
   data() {
     return {
-      isFocus: false,
-      inputNumber: this.value || this.min,
+      focused: false,
+      currentValue: this.value,
     }
   },
+  computed: {},
   watch: {
-    value(val) {
-      this.inputNumber = +val || this.min
+    value: {
+      // immediate: true,
+      handler: 'updateValue',
     },
   },
   methods: {
-    _input(event) {
-      this.inputNumber = Number(event.target.value) || this.min
-      this.$emit('input', this.inputNumber)
-      this.$emit('on-change', this.inputNumber)
+    updateValue(val) {
+      this.currentValue = val
+      this.$emit('input', this.currentValue)
+      this.$emit('on-change', this.currentValue)
     },
-    _blur() {
-      this.isFocus = false
+    change(event) {
+      let reg = /^\d+\.?\d{0,4}$/
+      let val = event.target.value.trim()
+      if (!val) {
+        this.updateValue(0)
+        return ''
+      }
+      if (Number(val) > this.max) {
+        uni.showToast({
+          icon: 'none',
+          title: this.errorText,
+        })
+        this.updateValue(this.max)
+        return this.max
+      }
+      if (reg.test(val)) {
+        this.updateValue(Number(val))
+      } else {
+        return this.currentValue
+      }
     },
   },
 }
 </script>
 <style lang="scss" scoped>
-.total-input {
+.amount {
   width: 100%;
   height: 100%;
-  &-main {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    input {
-      text-align: right;
-      font-size: 28rpx;
-    }
+  padding-left: 32rpx;
+  box-sizing: border-box;
+  font-size: 30rpx;
+  > view {
+    box-sizing: inherit;
+  }
+  input {
+    width: 100%;
+    text-align: right;
   }
   &-text {
+    width: 100%;
     min-width: 180rpx;
-    padding: 0 12rpx;
     height: 48rpx;
-    background-color: #f5f5f5;
+    padding: 0 12rpx;
+    text-align: center;
+    line-height: 48rpx;
     border-radius: 8rpx;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 28rpx;
+    background-color: #f5f5f5;
   }
 }
 </style>

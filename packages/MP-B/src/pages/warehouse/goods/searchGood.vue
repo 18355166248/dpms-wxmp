@@ -4,7 +4,7 @@
     <search
       :mode="mode"
       :scopeSupplyList="scopeSupplyList"
-      type="good"
+      :type="type"
       :isShow="isShow"
       storgeKey="goods"
       detailPath="/pages/warehouse/goods/goodDetail"
@@ -19,12 +19,14 @@ export default {
     return {
       mode: '',
       isShow: 1,
+      type: 'good',
       scopeSupplyList: '',
     }
   },
-  onLoad({ mode, isShow, scopeSupplyList }) {
+  onLoad({ mode, isShow, scopeSupplyList, type }) {
     this.mode = mode
     this.isShow = isShow
+    this.type = type || 'good'
     this.scopeSupplyList = scopeSupplyList
   },
 }
