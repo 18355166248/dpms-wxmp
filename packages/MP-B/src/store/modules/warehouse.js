@@ -1,8 +1,12 @@
 const state = {
   applyGoods: [],
+  goodList: [],
 }
 
 const mutations = {
+  setGoodList(state, data = []) {
+    state.goodList = JSON.parse(JSON.stringify(data))
+  },
   setApplyGoods(state, data) {
     state.applyGoods = data
   },
@@ -24,20 +28,20 @@ const mutations = {
     state.applyGoods = _arr
   },
   updateGood(state, data) {
-    let _arr = JSON.parse(JSON.stringify(state.applyGoods))
-    let index = state.applyGoods.findIndex(
+    let _arr = JSON.parse(JSON.stringify(state.goodList))
+    let index = state.goodList.findIndex(
       (e) => e.merchandiseId == data.merchandiseId,
     )
     _arr.splice(index, 1, data)
-    state.applyGoods = _arr
+    state.goodList = _arr
   },
   deleteGood(state, data) {
-    let _arr = JSON.parse(JSON.stringify(state.applyGoods))
-    let index = state.applyGoods.findIndex(
+    let _arr = JSON.parse(JSON.stringify(state.goodList))
+    let index = state.goodList.findIndex(
       (e) => e.merchandiseId == data.merchandiseId,
     )
     _arr.splice(index, 1)
-    state.applyGoods = _arr
+    state.goodList = _arr
   },
 }
 

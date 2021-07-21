@@ -201,7 +201,11 @@ export default {
     this.pagination = res
   },
   methods: {
-    ...mapMutations('warehouse', ['selectGood']),
+    ...mapMutations('warehouse', [
+      'selectGood',
+      'setGoodList',
+      'setApplyGoods',
+    ]),
     // 获取物品分类
     async getCategoryList() {
       const res = await goodAPI.getCategoryList()
@@ -333,10 +337,10 @@ export default {
     },
     // 跳转领用申请
     goToReceiveApply() {
+      this.setGoodList(this.applyGoods)
+      // 确认后将已选的物品情况
+      this.setApplyGoods([])
       this.$dpmsUtils.back(1)
-      // this.$dpmsUtils.push({
-      //   url: '/pages/warehouse/receive/apply',
-      // })
     },
     openDrawer() {
       this.$refs.showRight.open()

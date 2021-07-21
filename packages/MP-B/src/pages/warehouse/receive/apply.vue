@@ -61,14 +61,10 @@
       ></view>
     </view>
     <view class="apply-goods">
-      <scroll-view
-        scroll-y="true"
-        style="height: 100%;"
-        v-if="goodsList.length"
-      >
+      <scroll-view scroll-y="true" style="height: 100%;" v-if="goods.length">
         <view class="apply-goods-item">
           <applyGood
-            v-for="(item, index) in goodsList"
+            v-for="(item, index) in goods"
             :key="index"
             :info="item"
             @on-clear="handleDelete(item)"
@@ -113,24 +109,22 @@ import empty from '@/components/empty/empty.vue'
 export default {
   components: { checkBox, applyGood, inputNumber, empty },
   computed: {
-    ...mapState('warehouse', ['applyGoods']),
+    ...mapState('warehouse', ['goodList']),
     ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
     // 所选物品种类
     goodType() {
-      let num = this.goodsList.length
+      let num = this.goods.length
       return num
     },
     // 所选物品件数
     goodTotal() {
-      if (!this.applyGoods.length) {
+      if (!this.goodList.length) {
         return 0
       } else {
         let num = 0
-        this.applyGoods.forEach((element) => {
+        this.goodList.forEach((element) => {
           num += element.receiveNum
         })
-        // let num = this.applyGoods.reduce((a, b) => Number(a.receiveNum) + Number(b.receiveNum))
-        // console.log(this.applyGoods)
         return num
       }
     },
@@ -141,7 +135,7 @@ export default {
       deptTypeIndex: 0,
       deptIndex: 0,
       isShow: false,
-      goodsList: [], // 已选物品
+      goods: [], // 已选物品
       deptList: [],
       description: '',
       merchandiseReceiveOrderId: null, // 领用id 存在 表示 修改  否则 新增
@@ -149,8 +143,8 @@ export default {
     }
   },
   watch: {
-    applyGoods(val) {
-      this.goodsList = val
+    goodList(val) {
+      this.goods = val
     },
   },
   async onLoad({ merchandiseReceiveOrderId }) {
@@ -159,6 +153,7 @@ export default {
     if (merchandiseReceiveOrderId) {
       const res = await this.getReceiveDetail(merchandiseReceiveOrderId)
       await this.getReceiveDeptTypeList(res.receiveDeptType)
+      this.setGoodList(res.receiveOrderItemVOList)
       this.setApplyGoods(res.receiveOrderItemVOList)
       this.description = res.description
       // 匹配对应的领用单位
@@ -170,6 +165,7 @@ export default {
         (e) => e.receiveDeptId === res.receiveDeptId,
       )
     } else {
+      this.setGoodList([])
       this.setApplyGoods([])
       await this.getReceiveDeptTypeList()
       // 新增时, 员工默认为当前登录者
@@ -179,14 +175,14 @@ export default {
     }
   },
   created() {
-    this.goodsList = this.applyGoods
+    this.goods = this.goodList
     // 默认先获取员工对应的下拉数据
   },
   methods: {
     ...mapMutations('warehouse', [
       'updateGood',
-      'selectGood',
       'deleteGood',
+      'setGoodList',
       'setApplyGoods',
     ]),
     async getReceiveDeptTypeList(receiveDeptType = 1) {
@@ -226,7 +222,7 @@ export default {
     },
     // 提交数据
     async handleSubmit(receiveStatus) {
-      if (!this.goodsList.length) {
+      if (!this.goods.length) {
         uni.showToast({
           icon: 'error',
           title: '请选择领用物品',
@@ -244,7 +240,7 @@ export default {
         receiveDeptType: this.receiveDeptTypeArray[
           this.deptTypeIndex
         ].value.toString(),
-        receiveOrderItemVOList: this.goodsList,
+        receiveOrderItemVOList: this.goods,
       }
       let res
       if (this.addOrUpdate) {
@@ -258,7 +254,7 @@ export default {
       }
       if (res.code == 0) {
         // 提交数据后,清空已选物品
-        this.setApplyGoods([])
+        this.setGoodList([])
         uni.showToast({
           icon: 'none',
           title: receiveStatus == 1 ? '已提交' : '已保存',
