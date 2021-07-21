@@ -33,7 +33,7 @@
         @click="handleAdd"
       ></text>
     </view>
-    <view>
+    <view class="suffix">
       <slot name="suffix" />
     </view>
   </view>
@@ -105,7 +105,7 @@ export default {
 <style lang="scss" scoped>
 .inputNum {
   box-sizing: border-box;
-  width: 208rpx;
+  width: 300rpx;
   display: flex;
   align-items: center;
   > view {
@@ -139,6 +139,9 @@ export default {
       text-align: center;
       line-height: 48rpx;
     }
+  }
+  .suffix {
+    flex-shrink: 0;
   }
   &-max,
   .icon-minus-fill {

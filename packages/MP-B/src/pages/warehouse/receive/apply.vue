@@ -204,6 +204,7 @@ export default {
     },
     // 跳转物品选择页面
     chooseGood() {
+      this.setApplyGoods(this.goods)
       this.$dpmsUtils.push({
         url: '/pages/warehouse/goods/index?mode=select&isShow=1&type=inventory',
       })

@@ -17,7 +17,7 @@
             <text v-if="supplierIndex >= 0">{{
               supplierList[supplierIndex].merchandiseSupplierName
             }}</text>
-            <text v-else>请选择</text>
+            <text v-else class="bf_color">请选择</text>
           </picker>
         </view>
         <view>
@@ -27,7 +27,12 @@
       <view class="apply-head-desc">
         <view class="label">备注</view>
         <view class="apply-head-desc-input">
-          <input v-model="memo" placeholder="请输入备注" maxlength="50" />
+          <input
+            v-model="memo"
+            placeholder="请输入备注"
+            maxlength="50"
+            placeholder-style="color:#bfbfbf;"
+          />
         </view>
       </view>
     </view>
@@ -147,7 +152,7 @@
         <view class="apply-action-bottom-btn" @click="handleSubmit">提交</view>
       </view>
     </view>
-    <uni-popup ref="popup">
+    <uni-popup ref="popup" :mask-click="false">
       <view class="popup-content">
         <view class="popup-content-main">
           <view class="popup-content-main-discount">
@@ -207,7 +212,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('warehouse', ['goodList']),
+    ...mapState('warehouse', ['goodList', 'applyGoods']),
     ...mapState('workbenchStore', ['medicalInstitution', 'staff']),
     // 所选物品件数
     goodTotal() {
@@ -225,9 +230,16 @@ export default {
     purchaseTotal() {
       let total = 0
       this.purchaseGoods.forEach((element) => {
-        total += element.purchaseTotalAmount
+        total = Number(
+          Big(total).plus(Number(element.purchaseTotalAmount)).valueOf(),
+        )
       })
-      return Big(total).plus(this.freightAmount).minus(this.discountAmount)
+      return Number(
+        Big(total)
+          .plus(this.freightAmount)
+          .minus(this.discountAmount)
+          .valueOf(),
+      )
     },
   },
   watch: {
@@ -307,8 +319,8 @@ export default {
           title: '请选择供应商',
         })
       } else {
+        this.setApplyGoods(this.purchaseGoods)
         let { scopeSupplyList } = this.supplierList[this.supplierIndex]
-
         this.$dpmsUtils.push({
           url: `/pages/warehouse/goods/index?mode=select&isShow=2&type=purchase&scopeSupplyList=${scopeSupplyList.replaceAll(
             ';',
@@ -326,23 +338,23 @@ export default {
     changePurchaseNum(value, index) {
       this.purchaseGoods[index].purchaseNum = value
       let purchaseUnitAmount = this.purchaseGoods[index].purchaseUnitAmount
-      this.purchaseGoods[index].purchaseTotalAmount = Big(
-        purchaseUnitAmount,
-      ).times(value)
+      this.purchaseGoods[index].purchaseTotalAmount = Number(
+        Big(purchaseUnitAmount).times(value).valueOf(),
+      )
       this.updateGood(this.purchaseGoods[index])
     },
     // 采购单价变化
     changePurchaseUnitAmount(value, index) {
       this.purchaseGoods[index].purchaseUnitAmount = value
       let purchaseNum = this.purchaseGoods[index].purchaseNum
-      this.purchaseGoods[index].purchaseTotalAmount = Big(value).times(
-        purchaseNum,
+      this.purchaseGoods[index].purchaseTotalAmount = Number(
+        Big(value).times(purchaseNum).valueOf(),
       )
       this.updateGood(this.purchaseGoods[index])
     },
-    // 采购总金额
+    // 采购金额
     changePurchaseTotalAmount(value, index) {
-      this.purchaseGoods[index].purchaseTotalAmount = value
+      this.purchaseGoods[index].purchaseTotalAmount = Number(value)
       let purchaseNum = this.purchaseGoods[index].purchaseNum
       this.purchaseGoods[index].purchaseUnitAmount = Number(
         Big(Big(value).div(purchaseNum)).toFixed(4, 3),
@@ -443,6 +455,9 @@ export default {
         text-align: right;
         padding-right: 17rpx;
       }
+      .bf_color {
+        color: #bfbfbf;
+      }
     }
     &-desc {
       height: 104rpx;
@@ -463,9 +478,9 @@ export default {
           color: rgba(25, 25, 25, 0.9);
           padding-right: 16rpx;
         }
-        input::placeholder {
-          color: #bfbfbf;
-        }
+        // input:placeholder {
+        //   color: #bfbfbf;
+        // }
       }
     }
   }
@@ -594,6 +609,9 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        view:first-child {
+          flex-shrink: 0;
+        }
         view:last-child {
           text-align: right;
         }

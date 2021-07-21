@@ -500,6 +500,9 @@ scroll-view ::-webkit-scrollbar {
         text-align: center;
         line-height: 96rpx;
         color: $common-color;
+        .icon-filter {
+          font-size: 42rpx;
+        }
       }
       &-item {
         display: inline-block;
