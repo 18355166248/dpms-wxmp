@@ -200,7 +200,6 @@ export default {
       return res.data
     },
     changeApplyNumber(item) {
-      console.log('领用数量变化后', item)
       this.updateGood(item)
     },
     // 删除已选项
@@ -209,7 +208,9 @@ export default {
     },
     // 跳转物品选择页面
     chooseGood() {
-      this.$dpmsUtils.push({ url: '/pages/warehouse/goods/index?mode=select' })
+      this.$dpmsUtils.push({
+        url: '/pages/warehouse/goods/index?mode=select&isShow=1',
+      })
     },
     // 切换领用单位
     changeDeptType(event) {

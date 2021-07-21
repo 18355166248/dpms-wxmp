@@ -24,7 +24,7 @@
         ><text class="text-value">{{ detail.specificationsStr }}</text></view
       >
       <!-- 库存展示 -->
-      <view class="mt16" v-if="type === 'inventory' || mode"
+      <view class="mt16" v-if="type === 'inventory'"
         ><text class="text-label">可用库存：</text>
         <text class="text-value available">{{
           detail.inventoryNum | thousandFormatter(0, '')

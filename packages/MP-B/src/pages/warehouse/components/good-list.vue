@@ -42,7 +42,9 @@
             <view v-for="(item, index) in pagination.records" :key="index">
               <checkBox
                 v-model="item.checked"
-                :disabled="!item.isEnable || !item.availableNum"
+                :disabled="
+                  isShow == 2 ? false : !item.isEnable || !item.availableNum
+                "
                 @on-change="handleSelect(item)"
                 :mode="mode"
               >
@@ -133,6 +135,14 @@ export default {
       type: String,
       default: '',
     },
+    scopeSupplyList: {
+      type: String,
+      default: null,
+    },
+    isShow: {
+      type: Number,
+      default: 1,
+    },
   },
   data() {
     return {
@@ -185,8 +195,7 @@ export default {
       })
     },
   },
-  async created() {
-    console.log('goodList获取的mode是', this.mode)
+  async mounted() {
     this.getCategoryList()
     const res = await this.getGoodsList()
     this.pagination = res
@@ -202,7 +211,11 @@ export default {
     // 查询物品
     async getGoodsList(params) {
       this.loading = true
-      const res = await goodAPI.getGoodsList(params)
+      const res = await goodAPI.getGoodsList({
+        ...params,
+        scopeSupplyList: this.scopeSupplyList || null,
+        isShow: this.isShow,
+      })
       this.loading = false
       let { records, total, current, pages } = res.data
       let arr = records.length
@@ -302,7 +315,9 @@ export default {
     },
     // 前往搜索页面
     goToSearch() {
-      this.$dpmsUtils.push({ url: `${this.searchPath}?mode=${this.mode}` })
+      this.$dpmsUtils.push({
+        url: `${this.searchPath}?mode=${this.mode}&isShow=${this.isShow}&scopeSupplyList=${this.scopeSupplyList}`,
+      })
     },
     // 选择物品
     handleSelect(item) {

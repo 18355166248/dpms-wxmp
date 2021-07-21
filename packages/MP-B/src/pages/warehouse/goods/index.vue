@@ -3,7 +3,9 @@
   <view class="container">
     <goodList
       :mode="mode"
+      :scopeSupplyList="scopeSupplyList"
       type="good"
+      :isShow="isShow"
       searchPath="/pages/warehouse/goods/searchGood"
       detailPath="/pages/warehouse/goods/goodDetail"
     />
@@ -16,11 +18,17 @@ export default {
   data() {
     return {
       mode: '',
+      scopeSupplyList: '',
+      isShow: 2,
     }
   },
-  onLoad({ mode }) {
-    console.log('物品列表获取的参数是', mode)
+  onLoad({ mode, scopeSupplyList, isShow }) {
     this.mode = mode
+    this.isShow = isShow
+    this.scopeSupplyList = scopeSupplyList
+      .split('')
+      .toString()
+      .replaceAll(',', ';')
   },
 }
 </script>

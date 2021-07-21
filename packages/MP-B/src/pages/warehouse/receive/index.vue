@@ -145,8 +145,7 @@ export default {
     },
   },
   onShow() {
-    if (!this.mode) {
-      this.date = moment().format('YYYY-MM')
+    if (!this.mode && this.date == moment().format('YYYY-MM')) {
       this.changeStatus(0)
     }
   },

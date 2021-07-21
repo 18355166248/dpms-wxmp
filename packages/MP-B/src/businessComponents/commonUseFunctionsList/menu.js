@@ -43,6 +43,7 @@ export const menuDic = {
       background: 'linear-gradient(139deg,#faad14 12%, #ffca61 90%)',
       boxShadow: '0rpx 20rpx 20rpx -20rpx #faad14',
     },
+    url: '/pages/warehouse/purchase/index',
     text: '采购',
   },
   useapplication: {
