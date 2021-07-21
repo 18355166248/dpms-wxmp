@@ -568,7 +568,7 @@ export default {
               promotionVOList,
             } = res.data
 
-            let index = payChannelList.findIndex((item) => {
+            let index = payChannelList?.findIndex((item) => {
               return item.payStyle === 13
             })
             if (index < 0) {

@@ -238,6 +238,13 @@ const billAPI = {
       },
     })
   },
+  // 校验待处理账单权限
+  checkPromotion(data) {
+    return httper.post(
+      '/billing/bill/order/check-promotion',
+      data)
+  },
+
 
 
 }
