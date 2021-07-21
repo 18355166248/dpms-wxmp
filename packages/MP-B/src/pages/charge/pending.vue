@@ -3,7 +3,7 @@
     <view
       class="list"
       v-for="order in pendingList"
-      @click="onPendingList(order)"
+      @click="checkPromotion(order)"
       :key="order.billOrderId"
     >
       <view class="listTitle">
@@ -50,6 +50,7 @@
       </view>
     </view>
     <load-more :status="dataSourceStatus.status" />
+    <u-toast ref="uToast" />
   </view>
   <view v-else>
     <empty :disabled="true" text="暂无数据"></empty>
@@ -151,6 +152,7 @@ export default {
       this.getPendingOrder()
     },
     onPendingList(record) {
+      console.log(155,record);
       if (
         ([0, 7, 8].includes(record.billStatus) &&
           this.btnPremisstion('pending_editing')) ||
@@ -162,6 +164,33 @@ export default {
           url: `/pages/charge/checkstand?billSerialNo=${record?.billSerialNo}&billStatus=${record?.billStatus}&canRevoke=${record?.canRevoke}`,
         })
       }
+    },
+    checkPromotion(record){
+      billAPI.checkPromotion({
+        billSerialNo:record?.billSerialNo
+      }).then((res)=>{
+        console.log(res);
+        const {code,data}=res
+        if (code !== 0)return
+        // 卡券交易
+        if (data.isCardVoucherCharge===1){
+          this.$refs.uToast.show({
+            title: '小程序暂不支持卡券收费，请在电脑端进行收费!',
+            type: 'warning',
+          })
+        }else{
+          //未付款的现金券和使用了优惠券
+          if (data.isPay === 2 || data.usePromotion === 1){
+            this.$refs.uToast.show({
+              title: '本单由于使用优惠折扣，暂不支持小程序端收费，请去电脑端进行收费!',
+              type: 'warning',
+            })
+          }else{
+            this.onPendingList(record)
+          }
+        }
+
+      })
     },
     async getPendingOrder() {
       uni.showLoading({
