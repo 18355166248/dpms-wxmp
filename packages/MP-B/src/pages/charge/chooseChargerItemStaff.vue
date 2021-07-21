@@ -13,10 +13,10 @@
           :required="isRequired"
         />
         <chargestand-title>
-          <div slot="content" class="flex">
+          <div slot="content" class="flexCenter">
             <div
               class="iconfont icon-user"
-              style="font-size: 36rpx; margin-right: 11rpx;"
+              style="font-size: 40rpx; margin-right: 11rpx;"
             />
             <div class="ellipsis" style="width: 550rpx;">项目{{ title }}</div>
           </div>
