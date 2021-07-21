@@ -27,7 +27,7 @@
       <view class="apply-head-desc">
         <view class="label">备注</view>
         <view class="apply-head-desc-input">
-          <input v-model="memo" placeholder="请输入备注" />
+          <input v-model="memo" placeholder="请输入备注" maxlength="50" />
         </view>
       </view>
     </view>
@@ -88,10 +88,8 @@
           </view>
           <view class="apply-goods-item-tips">
             <text>拆零：</text>
-            <text>{{
-              (item.purchaseNum * item.unitSystem)
-                | inventoryToThousand(true, '')
-            }}</text>
+            <text>{{ item.purchaseNum * item.unitSystem }}</text>
+            <text>{{ 34 | inventoryToThousand(true, '') }}</text>
             <text>{{ item.inventoryUnitStr }}</text>
           </view>
           <view class="apply-goods-item-unit">
@@ -103,7 +101,8 @@
           </view>
           <view class="apply-goods-item-tips">
             <text>入库单价：</text>
-            <text>{{ item.inputUnitAmount | inventoryToThousand }}</text>
+            <text>{{ item.inputUnitAmount || 0 }}</text>
+            <text>{{ 500.091 | inventoryToThousand }}</text>
           </view>
           <view class="apply-goods-item-unit">
             <view class="label">采购金额</view>
@@ -150,13 +149,19 @@
           <view class="popup-content-main-discount">
             <view class="label">整单折扣</view>
             <view>
-              <totalInput v-model="fromPopup.discountAmount" />
+              <totalInput
+                name="discountAmount"
+                v-model="fromPopup.discountAmount"
+              />
             </view>
           </view>
           <view class="popup-content-main-freight">
             <view class="label">整单运费</view>
             <view>
-              <totalInput v-model="fromPopup.freightAmount" />
+              <totalInput
+                name="freightAmount"
+                v-model="fromPopup.freightAmount"
+              />
             </view>
           </view>
         </view>
@@ -180,6 +185,7 @@ export default {
   components: { inputNumber, totalInput, empty },
   data() {
     return {
+      testAmount: 100,
       supplierList: [],
       supplierIndex: -1,
       memo: '',
@@ -219,21 +225,21 @@ export default {
     },
   },
   watch: {
-    applyGoods(val) {
-      // purchaseNum 采购数量
-      // purchaseUnitAmount 采购单价
-      // purchaseTotalAmount 采购总金额
-      // unitSystem 单位进制
-      // inventoryUnitStr 库存单位
-      this.purchaseGoods = val.map((e) => {
-        return {
-          ...e,
-          purchaseNum: e.purchaseNum || 1,
-          purchaseUnitAmount: e.purchaseUnitAmount || 0,
-          purchaseTotalAmount: e.purchaseTotalAmount || 0,
-          inputUnitAmount: e.inputUnitAmount || 0,
-        }
-      })
+    applyGoods: {
+      // immediate: true,
+      deep: true,
+      handler: function (val) {
+        this.purchaseGoods = val.map((e) => {
+          return {
+            ...e,
+            purchaseNum: e.purchaseNum || 1,
+            purchaseUnitAmount: e.purchaseUnitAmount || 0,
+            purchaseTotalAmount: e.purchaseTotalAmount || 0,
+            inputUnitAmount: e.inputUnitAmount || 0,
+          }
+        })
+        console.log(238, this.purchaseGoods)
+      },
     },
   },
   async onLoad({ merchandisePurchaseOrderId }) {
@@ -241,22 +247,21 @@ export default {
     this.merchandisePurchaseOrderId = merchandisePurchaseOrderId
     this.addOrUpdate = !!merchandisePurchaseOrderId
     if (this.addOrUpdate) {
-      this.getPurchaseDetail(merchandisePurchaseOrderId).then((res) => {
-        let {
-          memo,
-          merchandiseSupplierId,
-          merchandisePurchaseOrderItemList,
-          discountAmount,
-          freightAmount,
-        } = res.data
-        this.setApplyGoods(merchandisePurchaseOrderItemList)
-        this.memo = memo
-        this.discountAmount = discountAmount
-        this.freightAmount = freightAmount
-        this.supplierIndex = this.supplierList.findIndex(
-          (e) => e.merchandiseSupplierId == merchandiseSupplierId,
-        )
-      })
+      const res = await this.getPurchaseDetail(merchandisePurchaseOrderId)
+      let {
+        memo,
+        merchandiseSupplierId,
+        merchandisePurchaseOrderItemList,
+        discountAmount,
+        freightAmount,
+      } = res.data
+      this.setApplyGoods(merchandisePurchaseOrderItemList)
+      this.memo = memo
+      this.discountAmount = discountAmount
+      this.freightAmount = freightAmount
+      this.supplierIndex = this.supplierList.findIndex(
+        (e) => e.merchandiseSupplierId == merchandiseSupplierId,
+      )
     } else {
       this.setApplyGoods([])
     }
@@ -279,6 +284,9 @@ export default {
     // 选择供应商
     changeSupplier(event) {
       this.supplierIndex = +event.detail.value
+      this.$nextTick(() => {
+        this.setApplyGoods([])
+      })
     },
     // 前往物品选择列表
     selectGoods() {
