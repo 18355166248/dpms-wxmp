@@ -241,10 +241,8 @@ export default {
             purchaseNum: e.purchaseNum || 1,
             purchaseUnitAmount: e.purchaseUnitAmount || 0,
             purchaseTotalAmount: e.purchaseTotalAmount || 0,
-            inputUnitAmount: e.inputUnitAmount || 0,
           }
         })
-        console.log(238, this.purchaseGoods)
       },
     },
   },
@@ -346,7 +344,9 @@ export default {
     changePurchaseTotalAmount(value, index) {
       this.purchaseGoods[index].purchaseTotalAmount = value
       let purchaseNum = this.purchaseGoods[index].purchaseNum
-      this.purchaseGoods[index].purchaseUnitAmount = Big(value).div(purchaseNum)
+      this.purchaseGoods[index].purchaseUnitAmount = Number(
+        Big(Big(value).div(purchaseNum)).toFixed(4, 3),
+      )
       this.updateGood(this.purchaseGoods[index])
     },
     // 整单折扣金额

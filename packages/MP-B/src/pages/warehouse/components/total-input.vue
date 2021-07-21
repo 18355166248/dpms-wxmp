@@ -57,8 +57,10 @@ export default {
   methods: {
     updateValue(val) {
       this.currentValue = val
-      this.$emit('input', this.currentValue)
-      this.$emit('on-change', this.currentValue)
+      if (this.focused) {
+        this.$emit('input', this.currentValue)
+        this.$emit('on-change', this.currentValue)
+      }
     },
     change(event) {
       let reg = /^\d+\.?\d{0,4}$/
