@@ -13,6 +13,7 @@
 </template>
 <script>
 import goodList from '../components/good-list.vue'
+import { mapMutations } from 'vuex'
 export default {
   components: { goodList },
   data() {
@@ -23,6 +24,9 @@ export default {
       type: 'good',
     }
   },
+  onUnload() {
+    this.setApplyGoods([])
+  },
   onLoad({ mode, scopeSupplyList, isShow, type }) {
     this.mode = mode
     this.isShow = isShow
@@ -31,6 +35,9 @@ export default {
       .split('')
       .toString()
       .replaceAll(',', ';')
+  },
+  methods: {
+    ...mapMutations('warehouse', ['setGoodList', 'setApplyGoods']),
   },
 }
 </script>
