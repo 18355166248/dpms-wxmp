@@ -312,7 +312,7 @@ export default {
         let { scopeSupplyList } = this.supplierList[this.supplierIndex]
 
         this.$dpmsUtils.push({
-          url: `/pages/warehouse/goods/index?mode=select&isShow=2&scopeSupplyList=${scopeSupplyList.replaceAll(
+          url: `/pages/warehouse/goods/index?mode=select&isShow=2&type=purchase&scopeSupplyList=${scopeSupplyList.replaceAll(
             ';',
             '',
           )}`,
