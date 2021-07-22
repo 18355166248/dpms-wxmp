@@ -60,10 +60,7 @@
           <view class="purchase-main-info-item">
             <view class="label">物品总金额</view>
             <view class="value">{{
-              (detail.purchaseTotalAmount -
-                detail.freightAmount +
-                detail.discountAmount)
-                | inventoryToThousand
+              goodTotalAmount | inventoryToThousand
             }}</view>
           </view>
           <view class="purchase-main-info-item">
@@ -127,6 +124,7 @@
 <script>
 import { purchaseStatus, receiveDeptTypeMap } from '../enum'
 import purchaseAPI from '@/APIS/warehouse/purchase.api.js'
+import Big from 'big.js'
 export default {
   data() {
     return {
@@ -153,6 +151,15 @@ export default {
         })
         return num
       }
+    },
+    goodTotalAmount() {
+      let total = 0
+      this.detail.merchandisePurchaseOrderItemList.forEach((element) => {
+        total = Number(
+          Big(total).plus(Number(element.purchaseTotalAmount)).valueOf(),
+        )
+      })
+      return total
     },
   },
   onLoad({ merchandisePurchaseOrderId }) {
