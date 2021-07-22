@@ -159,11 +159,24 @@
       <div class="bottom">
         <button
           @click="deleteMedicalRecord"
-          v-if="canEdit && detail.approveStatus === 3"
+          v-if="
+            canEdit &&
+            detail.approveStatus === 3 &&
+            btnPremisstion('deletion-medical-record') &&
+            checkChainPermission('患者/患者资料/病历、新建、编辑、删除')
+          "
         >
           删除
         </button>
-        <button @click="toEdit" v-if="canEdit && detail.approveStatus === 3">
+        <button
+          @click="toEdit"
+          v-if="
+            canEdit &&
+            detail.approveStatus === 3 &&
+            btnPremisstion('modify-medical-record') &&
+            checkChainPermission('患者/患者资料/病历、新建、编辑、删除')
+          "
+        >
           编辑
         </button>
         <button
@@ -189,7 +202,8 @@
           v-if="
             canEdit &&
             (detail.approveStatus === 4 || detail.approveStatus === 1) &&
-            reEditable
+            reEditable &&
+            btnPremisstion('Revision-medical-record')
           "
         >
           重新修改
@@ -200,8 +214,24 @@
     <!--  未进入审批流   -->
     <fixed-footer v-if="!detail.approveStatus">
       <div class="bottom">
-        <button @click="deleteMedicalRecord">删 除</button>
-        <button @click="toEdit">编 辑</button>
+        <button
+          @click="deleteMedicalRecord"
+          v-if="
+            btnPremisstion('deletion-medical-record') &&
+            checkChainPermission('患者/患者资料/病历、新建、编辑、删除')
+          "
+        >
+          删 除
+        </button>
+        <button
+          @click="toEdit"
+          v-if="
+            btnPremisstion('modify-medical-record') &&
+            checkChainPermission('患者/患者资料/病历、新建、编辑、删除')
+          "
+        >
+          编 辑
+        </button>
       </div>
     </fixed-footer>
   </div>

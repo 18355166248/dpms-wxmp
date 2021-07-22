@@ -48,7 +48,13 @@
       </div>
     </scroll-view>
     <empty :disabled="true" text="无病历记录" v-else />
-    <fixed-footer bgColor="#F5F5F5">
+    <fixed-footer
+      bgColor="#F5F5F5"
+      v-if="
+        btnPremisstion('new-medical-record') &&
+        checkChainPermission('患者/患者资料/病历、新建、编辑、删除')
+      "
+    >
       <div class="bottom">
         <button
           @click="

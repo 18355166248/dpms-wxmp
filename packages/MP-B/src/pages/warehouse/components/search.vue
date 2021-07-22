@@ -71,7 +71,9 @@
           <view v-for="(item, index) in pagination.records" :key="index">
             <checkBox
               v-model="item.checked"
-              :disabled="!item.isEnable || !item.availableNum"
+              :disabled="
+                isShow == 2 ? false : !item.isEnable || !item.availableNum
+              "
               @on-change="handleSelect(item)"
               :mode="mode"
             >
@@ -165,6 +167,14 @@ export default {
       type: String,
       default: '',
     },
+    scopeSupplyList: {
+      type: String,
+      default: null,
+    },
+    isShow: {
+      type: Number,
+      default: 1,
+    },
   },
   data() {
     return {
@@ -215,11 +225,20 @@ export default {
   },
   mounted() {},
   methods: {
-    ...mapMutations('warehouse', ['selectGood']),
+    ...mapMutations('warehouse', [
+      'selectGood',
+      'setGoodList',
+      'setApplyGoods',
+    ]),
     // 查询物品
     async getGoodsList(params) {
       this.loading = true
-      const res = await goodAPI.getGoodsList({ ...params, getCategory: true })
+      const res = await goodAPI.getGoodsList({
+        ...params,
+        getCategory: true,
+        isShow: this.isShow,
+        scopeSupplyList: this.scopeSupplyList || null,
+      })
       this.loading = false
       let { records, total, current, pages, categoryList } = res.data
       this.oneCategoryList = []
@@ -376,10 +395,10 @@ export default {
     },
     // 跳转领用申请
     goToReceiveApply() {
+      this.setGoodList(this.applyGoods)
+      // 确认后将已选的物品情况
+      this.setApplyGoods([])
       this.$dpmsUtils.back(2)
-      // this.$dpmsUtils.push({
-      //   url: '/pages/warehouse/receive/apply',
-      // })
     },
   },
 }

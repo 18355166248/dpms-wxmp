@@ -22,7 +22,7 @@
 
       <div v-if="form.payChannelList.length > 0 && payTypes.length > 0">
         <dpmsCellInput
-          v-for="(item, index) in form.payChannelList"
+          v-for="item in form.payChannelList"
           :key="item.transactionChannelId"
           type="digit"
           :title="item.transactionChannelName"
@@ -68,24 +68,36 @@
           v-model="form.registerTime"
           @input="onRegisterTime"
         />
-        <dpmsCellPicker
-          title="医生"
-          placeholder="请选择医生"
-          :list="doctorList"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          defaultType="staffId"
-          v-model="form.doctorStaffId"
-          :required="doctorRequire"
-        />
-        <dpmsCellPicker
-          title="护士"
-          placeholder="请选择护士"
-          :list="nurseList"
-          :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          defaultType="staffId"
-          v-model="form.nurseStaffId"
-          :required="nurseRequire"
-        />
+        <view
+          @click="
+            toUrl(
+              `/pages/charge/chooseChargerItemStaff?type=doctor&required=${doctorRequire}`,
+            )
+          "
+        >
+          <dpmsCell
+            title="医生"
+            placeholder="请选择医生"
+            isLink="true"
+            :value="form.doctorStaffName"
+            :required="doctorRequire"
+          />
+        </view>
+        <view
+          @click="
+            toUrl(
+              `/pages/charge/chooseChargerItemStaff?type=nurse&required=${nurseRequire}`,
+            )
+          "
+        >
+          <dpmsCell
+            title="护士"
+            placeholder="请选择护士"
+            isLink="true"
+            :value="form.nurseStaffName"
+            :required="nurseRequire"
+          />
+        </view>
         <dpmsCellPicker
           title="咨询师"
           placeholder="请选择咨询师"
@@ -93,6 +105,7 @@
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
           v-model="form.consultedStaffId"
+          @input="cellPickerChange($event, 'consultedStaffId')"
           :required="consultedRequire"
         />
         <dpmsCellPicker
@@ -101,15 +114,24 @@
           :list="salesManList"
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
+          @input="cellPickerChange($event, 'salesManStaffId')"
           v-model="form.salesManStaffId"
         />
-        <dpmsCellPicker
-          title="其他人员"
-          placeholder="请选择其他人员"
-          :list="otherList"
+        <dpmsCell
+          title="医生助理"
+          placeholder="请选择医生助理"
+          :value="assistantNames"
+          isLink
+          @cellclick="openAssistantList"
+        />
+        <multipleSelect
+          title="医生助理"
+          :list="assistantList"
+          :value="form.assistantStaffIds"
+          :visible="showAssistant"
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
-          defaultType="staffId"
-          v-model="form.otherStaffId"
+          @close="showAssistant = false"
+          @confirm="handleSelectAssistant"
         />
         <dpmsCell title="备注" hideBorderBottom />
         <view class="memo">
@@ -204,9 +226,15 @@
         :key="item.settingsPayTransactionChannelId"
       >
         {{ item.settingsPayTransactionChannelName }}
-        <template v-if="item.balance >= 0"
+        <!-- 积分-->
+        <template v-if="item.payStyle === 12 && integralToAmount >= 0"
+          >&nbsp; &nbsp;(可抵现{{ integralToAmount | thousandFormatter }})
+        </template>
+        <!-- 储值卡和馈赠金相关 -->
+        <template v-if="item.balance >= 0 && item.payStyle !== 12"
           >&nbsp; &nbsp;(余额{{ item.balance | thousandFormatter }})
         </template>
+
         <dpmsCheckbox
           :disabled="checkDisableFn(item)"
           shape="square"
@@ -228,6 +256,7 @@
 </template>
 <script>
 import ChargestandTitle from '@/pages/charge/common/checkstandstandTitle'
+import multipleSelect from '@/components/multipleSelect/multipleSelect'
 import patientAPI from '@/APIS/patient/patient.api'
 import inputMixins from 'mpcommon/mixins/inputMixins'
 import billAPI from '@/APIS/bill/bill.api'
@@ -242,7 +271,7 @@ const STAFF_ENUMS = new Map([
   ['nurse', 6],
   ['consultant', 4],
   ['salesMan', 16],
-  ['other', 0],
+  ['assistant', 5],
 ])
 
 export default {
@@ -253,16 +282,18 @@ export default {
       form: {
         payChannelList: [],
         doctorStaffId: '',
+        doctorStaffName: '',
         nurseStaffId: '',
+        nurseStaffName: '',
         consultedStaffId: '',
         salesManStaffId: '',
-        otherStaffId: '',
+        assistantStaffIds: [],
         memo: '',
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
       },
-      toggleInfomation: false,
-      otherList: [],
+      toggleInfomation: true,
+      allStaffList: [],
       visitTimeList: [],
       //支付方式
       payTypes: [],
@@ -281,21 +312,26 @@ export default {
       //能否撤回
       canRevoke: false,
       billSerialNo: '',
+      // 医生助理
+      showAssistant: false,
+      assistantNames: '',
     }
   },
   components: {
     ChargestandTitle,
     payResult,
     approveModal,
+    multipleSelect,
   },
   computed: {
     ...mapState('workbenchStore', ['menu', 'medicalInstitution']),
-    ...mapState('patient', ['patientDetail']),
+    ...mapState('patient', ['patientDetail', 'memberDetail']),
     ...mapState('dispose', [
       'disposeList',
       'receivableAmount',
       'realMainOrderDiscount',
       'realDiscountPromotionAmount',
+      'checkStandStaffList',
     ]),
     ...mapState('checkstand', ['billType', 'chargeType']),
 
@@ -321,24 +357,44 @@ export default {
         : 0
     },
     doctorList() {
-      return this.otherList.filter(
+      return this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('doctor'),
       )
     },
     nurseList() {
-      return this.otherList.filter(
+      return this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('nurse'),
       )
     },
     consultantList() {
-      return this.otherList.filter(
+      const list = this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('consultant'),
       )
+      list.unshift({
+        staffId: 1,
+        staffName: '不选择咨询师',
+      })
+      return list
     },
     salesManList() {
-      return this.otherList.filter(
+      const list = this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('salesMan'),
       )
+      list.unshift({
+        staffId: 1,
+        staffName: '不选择销售人员',
+      })
+      return list
+    },
+    assistantList() {
+      return this.allStaffList
+        .filter((item) => item.position === STAFF_ENUMS.get('assistant'))
+        .map((item) => {
+          return {
+            ...item,
+            checked: false,
+          }
+        })
     },
     canOperation() {
       const { institutionChainType, topParentId } = this.medicalInstitution
@@ -354,8 +410,47 @@ export default {
     revokeOperation() {
       return this.billStatus === 6 && this.canRevoke
     },
+    //积分转金额
+    integralToAmount() {
+      const currentPoints =
+        this.memberDetail?.memberDetailResponse?.currentPoints || 0
+      const perForCash = this.memberDetail?.perForCash || 1
+
+      return BigCalculate(currentPoints, '/', perForCash)
+    },
+  },
+  watch: {
+    'form.doctorStaffId': {
+      handler(newVal) {
+        if (newVal === '') {
+          this.form.doctorStaffName = ''
+          return
+        }
+        this.doctorList.forEach((item) => {
+          if (item.staffId === newVal) {
+            this.form.doctorStaffName = item.staffName
+          }
+        })
+      },
+      immediate: true,
+    },
+    'form.nurseStaffId': {
+      handler(newVal) {
+        if (newVal === '') {
+          this.form.nurseStaffName = ''
+          return
+        }
+        this.nurseList.forEach((item) => {
+          if (item.staffId === newVal) {
+            this.form.nurseStaffName = item.staffName
+          }
+        })
+      },
+      immediate: true,
+    },
   },
   onLoad(query) {
+    this.setCheckStandStaffList({})
     this.staff = uni.getStorageSync('staff')
     this.loadListData(query).then(() => {
       if (query) this.backData(query)
@@ -367,6 +462,8 @@ export default {
   onShow() {
     this.btnPremisstion()
     this.getRequireConfig()
+    this.form.doctorStaffId = this.checkStandStaffList?.doctorStaffId
+    this.form.nurseStaffId = this.checkStandStaffList?.nurseStaffId
   },
   onUnload() {},
   methods: {
@@ -375,7 +472,27 @@ export default {
       'setReceivableAmount',
       'setRealMainOrderDiscount',
       'setRealDiscountPromotionAmount',
+      'setStaffList',
+      'setCheckStandStaffList',
     ]),
+    cellPickerChange(value, id) {
+      if (value === 1) {
+        this.form[id] = ''
+      }
+    },
+    handleSelectAssistant(checkedList) {
+      this.form.assistantStaffIds = checkedList
+      this.assistantNames =
+        checkedList.length > 0
+          ? this.assistantList
+              .filter((val) => checkedList.includes(val.staffId))
+              .map((val) => val.staffName)
+              .join(',')
+          : ''
+    },
+    openAssistantList() {
+      this.showAssistant = true
+    },
     // 收费撤回
     revokeApprove() {
       if (!this.billSerialNo) {
@@ -490,20 +607,32 @@ export default {
           salesType: STAFF_ENUMS.get('salesMan'),
         })
       }
-      if (form.otherStaffId) {
-        params.salesList.push({
-          salesId: form.otherStaffId,
-          salesType: STAFF_ENUMS.get('other'),
+      if (form.assistantStaffIds) {
+        // 此处是个list，需要循环遍历下
+        const temp = []
+        this.assistantList.forEach((val) => {
+          if (form.assistantStaffIds.includes(val.staffId)) {
+            const tempItem = {
+              salesId: val.staffId,
+              salesName: val.staffName,
+              salesType: STAFF_ENUMS.get('assistant'),
+            }
+
+            temp.push(tempItem)
+          }
         })
+        // this.assistantNames =
+        //   temp.length > 0 ? temp.map((val) => val.staffName).join(',') : ''
+        params.salesList = [...params.salesList, ...temp]
       }
       if (this.billSerialNo) {
         params.billSerialNo = this.billSerialNo
       }
 
-      params.orderPayItemList = params.orderPayItemList.map((item) => {
-        item.salesList = params.salesList
-        return item
-      })
+      // params.orderPayItemList = params.orderPayItemList.map((item) => {
+      //   item.salesList = params.salesList
+      //   return item
+      // })
 
       if (type === 'save') {
         billAPI.saveOrderBill(params).then((res) => {
@@ -542,6 +671,7 @@ export default {
         url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
       })
     },
+    // 确认审批
     approveConfirm() {
       uni.reLaunch({
         url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
@@ -568,14 +698,9 @@ export default {
               promotionVOList,
             } = res.data
 
-            let index = payChannelList.findIndex((item) => {
-              return item.payStyle === 13
+            this.payTypes = this.payTypes.filter((payItem) => {
+              return payItem.isShow && payItem.payStyle !== 13
             })
-            if (index < 0) {
-              this.payTypes = this.payTypes.filter((item) => {
-                return item.payStyle !== 13
-              })
-            }
 
             // 设置应收金额
             this.setReceivableAmount(changeTwoDecimal(receivableAmount))
@@ -591,16 +716,25 @@ export default {
             salesList?.forEach((item) => {
               if (item.salesType === STAFF_ENUMS.get('doctor')) {
                 this.form.doctorStaffId = item.salesId
+                this.checkStandStaffList.doctorStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('nurse')) {
                 this.form.nurseStaffId = item.salesId
+                this.checkStandStaffList.nurseStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('consultant')) {
                 this.form.consultedStaffId = item.salesId
               } else if (item.salesType === STAFF_ENUMS.get('salesMan')) {
                 this.form.salesManStaffId = item.salesId
-              } else if (item.salesType === STAFF_ENUMS.get('other')) {
-                this.form.otherStaffId = item.salesId
               }
+              this.setCheckStandStaffList(this.checkStandStaffList)
             })
+            // 医生助理多选
+            this.form.assistantStaffIds = salesList
+              ?.filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              .map((val) => val.salesId)
+            this.assistantNames = salesList
+              ?.filter((val) => val.salesType === STAFF_ENUMS.get('assistant'))
+              .map((val) => val.salesName)
+              .join(',')
             // 回显备注
             this.form.memo = memo
             // 回显就诊时间就诊Id
@@ -676,6 +810,7 @@ export default {
         }
       })
     },
+    //支付金额变动
     changePayChannel(value, record) {
       if (!value) {
         value = 0
@@ -691,6 +826,18 @@ export default {
           })
         }
       }
+      //积分
+      if (record.payStyle === 12) {
+        if (value > this.integralToAmount) {
+          value = this.integralToAmount
+          this.$refs.uToast.show({
+            title: `不能超过当前积分可抵现金额`,
+            type: 'warning',
+          })
+        }
+      }
+      console.log(705, record)
+
       record.paymentAmount = Number(value)
     },
     formatDisposeItem(item) {
@@ -711,6 +858,11 @@ export default {
         (hasCheck.length === 1 && checked) ||
         (hasCheck.length === 3 && !checked)
       )
+    },
+    toUrl(url) {
+      this.$dpmsUtils.push({
+        url,
+      })
     },
     hideActionSheet() {
       // 重制payChannelList
@@ -747,7 +899,8 @@ export default {
     loadListData(query) {
       const flag = query.billSerialNo //判断是否回显应收金额
       patientAPI.getStaffList().then((res) => {
-        this.otherList = res.data
+        this.allStaffList = res.data
+        this.setStaffList(res.data)
       })
 
       billAPI
@@ -763,9 +916,9 @@ export default {
         })
       return billAPI
         .getPayTransactionChannel({
-          memberId: this.patientDetail.memberId,
+          memberId: this.patientDetail?.memberId,
           enabled: true,
-          customerId: this.patientDetail.customerId,
+          customerId: this.patientDetail?.customerId,
         })
         .then((res) => {
           if (res?.data.length > 0) {
@@ -792,7 +945,10 @@ export default {
             })
 
             this.payTypes = res.data.filter((item) => {
-              return item.payStyle !== 13 || (item.payStyle === 13 && flag)
+              return (
+                item.isShow &&
+                (item.payStyle !== 13 || (item.payStyle === 13 && flag))
+              )
             })
           }
         })
@@ -817,9 +973,9 @@ export default {
       if (!form.doctorStaffId && data.doctorStaffId) {
         updateObj.doctorStaffId = data.doctorStaffId
       }
-      // 回显其他
-      if (!form.otherStaffId && data.otherStaffId) {
-        updateObj.otherStaffId = data.otherStaffId
+      // 回显医生助理（多选）
+      if (!form.assistantStaffIds && data.assistantStaffIds) {
+        updateObj.assistantStaffIds = data.assistantStaffIds
       }
       // 回显咨询师
       if (!form.consultedStaffId && data.consultedStaffId) {

@@ -3,7 +3,9 @@
   <view class="container">
     <goodList
       :mode="mode"
-      type="good"
+      :scopeSupplyList="scopeSupplyList"
+      :type="type"
+      :isShow="isShow"
       searchPath="/pages/warehouse/goods/searchGood"
       detailPath="/pages/warehouse/goods/goodDetail"
     />
@@ -11,16 +13,31 @@
 </template>
 <script>
 import goodList from '../components/good-list.vue'
+import { mapMutations } from 'vuex'
 export default {
   components: { goodList },
   data() {
     return {
       mode: '',
+      scopeSupplyList: '',
+      isShow: 2,
+      type: 'good',
     }
   },
-  onLoad({ mode }) {
-    console.log('物品列表获取的参数是', mode)
+  onUnload() {
+    this.setApplyGoods([])
+  },
+  onLoad({ mode, scopeSupplyList, isShow, type }) {
     this.mode = mode
+    this.isShow = isShow
+    this.type = type || 'good'
+    this.scopeSupplyList = scopeSupplyList
+      .split('')
+      .toString()
+      .replaceAll(',', ';')
+  },
+  methods: {
+    ...mapMutations('warehouse', ['setGoodList', 'setApplyGoods']),
   },
 }
 </script>
