@@ -111,20 +111,16 @@ export default {
   > view {
     box-sizing: inherit;
   }
-  &-min,
-  &-max {
-    font-size: 35rpx;
-  }
   &-min {
-    color: rgba(0, 0, 0, 0.45);
+    color: #cccccc;
   }
   &-input {
     flex: 1;
-    height: 48rpx;
+    height: 52rpx;
     margin: 0 11rpx;
     background: #f5f5f5;
     border-radius: 8rpx;
-    line-height: 48rpx;
+    line-height: 52rpx;
     padding: 4rpx;
     input {
       width: 100%;
@@ -135,9 +131,9 @@ export default {
     text {
       display: inline-block;
       width: 100%;
-      height: 48rpx;
+      height: 52rpx;
       text-align: center;
-      line-height: 48rpx;
+      line-height: 52rpx;
     }
   }
   .suffix {
@@ -151,7 +147,11 @@ export default {
     color: $common-color;
   }
   .disabledColor {
-    color: rgba(0, 0, 0, 0.3);
+    color: #cccccc;
+  }
+  .icon-minus-fill,
+  .icon-plus-fill {
+    font-size: 36rpx;
   }
 }
 </style>
