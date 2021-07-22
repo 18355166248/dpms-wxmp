@@ -108,9 +108,14 @@ export default {
   computed: {
     ...mapState('dispose', ['staffList', 'disposeList', 'checkStandStaffList']),
     List() {
-      return this.staffList?.filter(
+      const newList = this.staffList?.filter(
         (item) => item.position === STAFF_ENUMS.get(this.type),
       )
+      newList.unshift({
+        staffId: 1,
+        staffName: `不选择${this.title}`,
+      })
+      return newList
     },
   },
   methods: {
@@ -146,11 +151,19 @@ export default {
       this.$dpmsUtils.back()
     },
     onChange(val) {
+      if (val === 1) {
+        this.staffId = ''
+        return
+      }
       this.disposeList.forEach((item) => {
         item[this.itemStaffId] = val
       })
     },
     onChangeItem(val, item) {
+      if (val === 1) {
+        item[this.itemStaffId] = ''
+        return
+      }
       this.disposeList.forEach((item2) => {
         if (item2.itemCode === item.itemCode) item[this.itemStaffId] = val
         this.$forceUpdate()

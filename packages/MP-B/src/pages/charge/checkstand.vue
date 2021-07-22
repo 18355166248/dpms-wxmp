@@ -105,6 +105,7 @@
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
           v-model="form.consultedStaffId"
+          @input="cellPickerChange($event, 'consultedStaffId')"
           :required="consultedRequire"
         />
         <dpmsCellPicker
@@ -113,6 +114,7 @@
           :list="salesManList"
           :defaultProps="{ label: 'staffName', value: 'staffId' }"
           defaultType="staffId"
+          @input="cellPickerChange($event, 'salesManStaffId')"
           v-model="form.salesManStaffId"
         />
         <dpmsCell
@@ -359,14 +361,24 @@ export default {
       )
     },
     consultantList() {
-      return this.allStaffList.filter(
+      const list = this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('consultant'),
       )
+      list.unshift({
+        staffId: 1,
+        staffName: '不选择咨询师',
+      })
+      return list
     },
     salesManList() {
-      return this.allStaffList.filter(
+      const list = this.allStaffList.filter(
         (item) => item.position === STAFF_ENUMS.get('salesMan'),
       )
+      list.unshift({
+        staffId: 1,
+        staffName: '不选择销售人员',
+      })
+      return list
     },
     assistantList() {
       return this.allStaffList
@@ -441,6 +453,11 @@ export default {
       'setStaffList',
       'setCheckStandStaffList',
     ]),
+    cellPickerChange(value, id) {
+      if (value === 1) {
+        this.form[id] = ''
+      }
+    },
     handleSelectAssistant(checkedList) {
       this.form.assistantStaffIds = checkedList
       this.assistantNames =
