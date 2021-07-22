@@ -159,5 +159,21 @@
     "chain-package_other-role_work-in-other_in-region": true,
     "chain-package_other-role_work-in-other_in-direct": true,
     "chain-package_other-role_work-in-other_in-franchise": false
+  },
+  "患者/患者资料/病历、新建、编辑、删除": {
+    "single-package_superadmin-role": true,
+    "single-package_other-role": true,
+    "chain-package_superadmin-role_in-hq": false,
+    "chain-package_superadmin-role_in-region": false,
+    "chain-package_superadmin-role_in-direct": true,
+    "chain-package_superadmin-role_in-franchise": true,
+    "chain-package_other-role_work-in-own_in-hq": false,
+    "chain-package_other-role_work-in-own_in-region": false,
+    "chain-package_other-role_work-in-own_in-direct": true,
+    "chain-package_other-role_work-in-own_in-franchise": true,
+    "chain-package_other-role_work-in-other_in-hq": false,
+    "chain-package_other-role_work-in-other_in-region": false,
+    "chain-package_other-role_work-in-other_in-direct": true,
+    "chain-package_other-role_work-in-other_in-franchise": true
   }
 }

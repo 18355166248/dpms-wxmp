@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { mapState } from 'vuex'
+import { frontAuthUtil } from './frontAuth.util'
 
 const golbalMixin = {
   computed: {
@@ -27,6 +28,10 @@ const golbalMixin = {
         return findObj
       }
       return !!checkPermission(menuList)
+    },
+    // 根据连锁身份权限判断,总部,大区,直营,加盟
+    checkChainPermission(name) {
+      return frontAuthUtil.check(name)
     },
   },
 }

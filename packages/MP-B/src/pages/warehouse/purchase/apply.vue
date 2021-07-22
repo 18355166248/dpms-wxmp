@@ -159,10 +159,10 @@
             <view class="label">整单折扣金额</view>
             <view>
               <totalInput
-                :max="purchaseTotal"
+                :max="goodTotalAmount"
                 :value="fromPopup.discountAmount"
                 @on-change="changeDiscountAmount"
-                errorText="整单折扣金额不能大于采购总金额"
+                errorText="整单折扣金额不能大于物品金额总和"
               />
             </view>
           </view>
@@ -226,16 +226,20 @@ export default {
         return num
       }
     },
-    // 采购总金额
-    purchaseTotal() {
+    // 物品总金额
+    goodTotalAmount() {
       let total = 0
       this.purchaseGoods.forEach((element) => {
         total = Number(
           Big(total).plus(Number(element.purchaseTotalAmount)).valueOf(),
         )
       })
+      return total
+    },
+    // 采购总金额
+    purchaseTotal() {
       return Number(
-        Big(total)
+        Big(this.goodTotalAmount)
           .plus(this.freightAmount)
           .minus(this.discountAmount)
           .valueOf(),
@@ -415,16 +419,9 @@ export default {
       this.$refs.popup.close()
     },
     ok() {
-      if (this.fromPopup.discountAmount > this.purchaseTotal) {
-        uni.showToast({
-          icon: 'none',
-          title: '折扣金额不能大于采购总金额',
-        })
-      } else {
-        this.discountAmount = this.fromPopup.discountAmount
-        this.freightAmount = this.fromPopup.freightAmount
-        this.$refs.popup.close()
-      }
+      this.discountAmount = this.fromPopup.discountAmount
+      this.freightAmount = this.fromPopup.freightAmount
+      this.$refs.popup.close()
     },
   },
 }
