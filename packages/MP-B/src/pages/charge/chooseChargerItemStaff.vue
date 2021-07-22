@@ -153,7 +153,7 @@ export default {
     onChange(val) {
       if (val === 1) {
         this.staffId = ''
-        return
+        val = ''
       }
       this.disposeList.forEach((item) => {
         item[this.itemStaffId] = val
