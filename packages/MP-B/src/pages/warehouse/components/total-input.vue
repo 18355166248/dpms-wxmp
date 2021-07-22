@@ -2,7 +2,7 @@
   <view class="amount">
     <input
       v-if="focused"
-      :cursor-spacing="180"
+      :cursor-spacing="cursorSpacing"
       focus
       type="digit"
       @blur="focused = false"
@@ -39,6 +39,10 @@ export default {
     precision: {
       type: Number,
       default: 2,
+    },
+    cursorSpacing: {
+      type: Number,
+      default: 10,
     },
   },
   data() {
@@ -103,10 +107,10 @@ export default {
   &-text {
     width: 100%;
     min-width: 180rpx;
-    height: 48rpx;
+    height: 52rpx;
     padding: 0 12rpx;
     text-align: center;
-    line-height: 48rpx;
+    line-height: 52rpx;
     border-radius: 8rpx;
     background-color: #f5f5f5;
   }
