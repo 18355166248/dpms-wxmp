@@ -93,6 +93,7 @@ export default {
     }
 
     this.staffId = this.checkStandStaffList[this.itemStaffId]
+
     this.disposeList?.forEach((item) => {
       let id = ''
       item.salesList?.forEach((item2) => {
@@ -101,8 +102,21 @@ export default {
           return
         }
       })
+
+      // 默认选第一个
+      if(!item.salesList) {
+        id = this.List[1].staffId
+      }
+
       this.$set(item, this.itemStaffId, id)
     })
+
+
+    // 默认选第一个
+    if(!this.staffId) {
+      this.staffId = this.List[1].staffId
+    }
+
   },
   onShow() {
     if (typeof this.staffId == 'undefined') {
