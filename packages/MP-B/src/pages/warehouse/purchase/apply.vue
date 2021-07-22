@@ -159,6 +159,7 @@
             <view class="label">整单折扣金额</view>
             <view>
               <totalInput
+                :cursorSpacing="180"
                 :max="goodTotalAmount"
                 :value="fromPopup.discountAmount"
                 @on-change="changeDiscountAmount"
@@ -170,6 +171,7 @@
             <view class="label">整单运费</view>
             <view>
               <totalInput
+                :cursorSpacing="180"
                 name="freightAmount"
                 :value="fromPopup.freightAmount"
                 @on-change="changeFreightAmount"
