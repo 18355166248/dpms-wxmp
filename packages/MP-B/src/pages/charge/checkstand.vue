@@ -408,6 +408,10 @@ export default {
   watch: {
     'form.doctorStaffId': {
       handler(newVal) {
+        if (newVal === '') {
+          this.form.doctorStaffName = ''
+          return
+        }
         this.doctorList.forEach((item) => {
           if (item.staffId === newVal) {
             this.form.doctorStaffName = item.staffName
@@ -418,6 +422,10 @@ export default {
     },
     'form.nurseStaffId': {
       handler(newVal) {
+        if (newVal === '') {
+          this.form.nurseStaffName = ''
+          return
+        }
         this.nurseList.forEach((item) => {
           if (item.staffId === newVal) {
             this.form.nurseStaffName = item.staffName
