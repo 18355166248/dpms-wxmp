@@ -103,20 +103,8 @@ export default {
         }
       })
 
-      // 默认选第一个
-      // if(!item.salesList && this.type === 'doctor') {
-      //   id = this.List[1].staffId
-      // }
-
       this.$set(item, this.itemStaffId, id)
     })
-
-
-    // 默认选第一个
-    if(!this.staffId && this.type === 'doctor') {
-      this.staffId = this.List[1].staffId
-    }
-
   },
   onShow() {
     if (typeof this.staffId == 'undefined') {
