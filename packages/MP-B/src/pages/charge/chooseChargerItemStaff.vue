@@ -135,12 +135,16 @@ export default {
             item.salesList = []
           }
           let stop = true
-          item.salesList.forEach((item2) => {
+          item.salesList.forEach((item2, index) => {
             if (
               item2.salesType &&
               item2.salesType === STAFF_ENUMS.get(this.type)
             ) {
-              item2.salesId = item[this.itemStaffId]
+              if (item[this.itemStaffId] == '') {
+                item.salesList.splice(index, 1)
+              } else {
+                item2.salesId = item[this.itemStaffId]
+              }
               stop = false
               return
             }
