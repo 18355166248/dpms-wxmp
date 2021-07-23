@@ -107,11 +107,11 @@ export default {
     })
   },
   onShow() {
-    if (typeof this.staffId == 'undefined') {
-      this.disposeList.forEach((item) => {
-        item[this.itemStaffId] = ''
-      })
-    }
+    // if (typeof this.staffId == 'undefined') {
+    //   this.disposeList.forEach((item) => {
+    //     item[this.itemStaffId] = ''
+    //   })
+    // }
   },
   computed: {
     ...mapState('dispose', ['staffList', 'disposeList', 'checkStandStaffList']),
