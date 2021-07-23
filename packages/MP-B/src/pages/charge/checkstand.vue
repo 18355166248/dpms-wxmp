@@ -638,38 +638,48 @@ export default {
       // })
       this.isLock = true
       if (type === 'save') {
-        billAPI.saveOrderBill(params).then((res) => {
-          this.isLock = false
-          uni.reLaunch({
-            url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
+        billAPI
+          .saveOrderBill(params)
+          .then((res) => {
+            if (res.code === 0) {
+              this.isLock = false
+              uni.reLaunch({
+                url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
+              })
+            }
           })
-        })
+          .catch(() => {
+            this.isLock = false
+          })
       } else if (type === 'charge') {
-        billAPI.orderPayOne(params).then((res) => {
-          const { code, data, message } = res
-          if (code === 0 && data) {
-            this.$refs.payResultRef.open(data)
-          } else if ([1000373, 1000377].includes(code)) {
-            try {
-              const errData = JSON.parse(message)
-              // 发起审核
-              if (code === 1000373) {
-                //  打开审批弹框
-                this.$refs.approveModalRef.open(errData, params)
-              } else {
-                //发起失败  给出错误提示
-                this.$refs.uToast.show({
-                  title: errData?.approveReason || '审批发起失败',
-                  type: 'error',
-                })
+        billAPI
+          .orderPayOne(params)
+          .then((res) => {
+            const { code, data, message } = res
+            if (code === 0 && data) {
+              this.$refs.payResultRef.open(data)
+            } else if ([1000373, 1000377].includes(code)) {
+              try {
+                const errData = JSON.parse(message)
+                // 发起审核
+                if (code === 1000373) {
+                  //  打开审批弹框
+                  this.$refs.approveModalRef.open(errData, params)
+                } else {
+                  //发起失败  给出错误提示
+                  this.$refs.uToast.show({
+                    title: errData?.approveReason || '审批发起失败',
+                    type: 'error',
+                  })
+                }
+              } catch (err) {
                 this.isLock = false
               }
-            } catch (err) {
-              this.isLock = false
-              console.log(123, err)
             }
-          }
-        })
+          })
+          .catch(() => {
+            this.isLock = false
+          })
       }
     },
     payResultConfirm() {
