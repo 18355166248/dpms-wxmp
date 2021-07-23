@@ -558,6 +558,9 @@ export default {
       return true
     },
     onSubmitBill(type) {
+      if (this.isLock) {
+        return
+      }
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
       if (this.changeAmount > 0) {
         return
@@ -633,9 +636,10 @@ export default {
       //   item.salesList = params.salesList
       //   return item
       // })
-
+      this.isLock = true
       if (type === 'save') {
         billAPI.saveOrderBill(params).then((res) => {
+          this.isLock = false
           uni.reLaunch({
             url: `/pages/charge/chargeForm?tab=1&patientId=${patientDetail.patientId}`,
           })
@@ -658,8 +662,10 @@ export default {
                   title: errData?.approveReason || '审批发起失败',
                   type: 'error',
                 })
+                this.isLock = false
               }
             } catch (err) {
+              this.isLock = false
               console.log(123, err)
             }
           }
@@ -667,12 +673,14 @@ export default {
       }
     },
     payResultConfirm() {
+      this.isLock = false
       uni.reLaunch({
         url: `/pages/charge/chargeForm?tab=2&patientId=${this.patientDetail.patientId}`,
       })
     },
     // 确认审批
     approveConfirm() {
+      this.isLock = false
       uni.reLaunch({
         url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
       })
@@ -738,9 +746,10 @@ export default {
             // 回显备注
             this.form.memo = memo
             // 回显就诊时间就诊Id
-            this.form.registerTime = moment(consultTime).format(
-              'YYYY-MM-DD HH:mm',
-            )
+            // this.form.registerTime = moment(consultTime).format(
+            //   'YYYY-MM-DD HH:mm',
+            // )
+            this.form.registerTime = consultTime
             this.form.registerId = consultId
             // 回显setRealMainOrderDiscount
             this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
@@ -909,10 +918,10 @@ export default {
         })
         .then((res) => {
           this.visitTimeList = this.formatRegister(res.data)
-          if (this.visitTimeList.length) {
-            // 如果有值第一次做回显
-            this.backVisitTimeDate(this.visitTimeList[0])
-          }
+          // if (this.visitTimeList.length) {
+          //   // 如果有值第一次做回显
+          //   this.backVisitTimeDate(this.visitTimeList[0])
+          // }
         })
       return billAPI
         .getPayTransactionChannel({
