@@ -21,7 +21,7 @@
             <div class="ellipsis" style="width: 550rpx;">项目{{ title }}</div>
           </div>
         </chargestand-title>
-        <view v-for="item in disposeList" :key="item.itemCode">
+        <view v-for="(item, index) in disposeList" :key="index">
           <dpmsCellPicker
             :title="item.itemName"
             :placeholder="`请选择${title}`"
@@ -29,7 +29,7 @@
             :defaultProps="{ label: 'staffName', value: 'staffId' }"
             defaultType="staffId"
             v-model="item[itemStaffId]"
-            @input="onChangeItem($event, item)"
+            @input="onChangeItem($event, item, index)"
           />
         </view>
       </view>
@@ -171,15 +171,17 @@ export default {
         item[this.itemStaffId] = val
       })
     },
-    onChangeItem(val, item) {
+    onChangeItem(val, item, index) {
       if (val === 1) {
         item[this.itemStaffId] = ''
         return
       }
-      this.disposeList.forEach((item2) => {
-        if (item2.itemCode === item.itemCode) item[this.itemStaffId] = val
-        this.$forceUpdate()
-      })
+      console.log(this.disposeList[index], '567', val, index)
+      this.disposeList[index][this.itemStaffId] = val
+      // this.$forceUpdate()
+      // this.disposeList.forEach((item2) => {
+      //   if (item2.itemCode === item.itemCode) item2[this.itemStaffId] = val
+      // })
     },
   },
 }
