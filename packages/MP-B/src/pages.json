@@ -219,6 +219,19 @@
       ]
     },
     {
+      "root": "pages/followup",
+      "name": "followup",
+      "pages": [
+        {
+          "path": "home",
+          "style": {
+            "navigationBarTitleText": "随访日程",
+            "disableScroll": true
+          }
+        }
+      ]
+    },
+    {
       "root": "baseSubpackages/apptForm",
       "name": "apptForm",
       "pages": [

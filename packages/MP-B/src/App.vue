@@ -28,11 +28,11 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* Project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.woff2?t=1625644235400')
+  src: url('//at.alicdn.com/t/font_1965288_6a9sfayo5aj.woff2?t=1627280247219')
       format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.woff?t=1625644235400')
+    url('//at.alicdn.com/t/font_1965288_6a9sfayo5aj.woff?t=1627280247219')
       format('woff'),
-    url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.ttf?t=1625644235400')
+    url('//at.alicdn.com/t/font_1965288_6a9sfayo5aj.ttf?t=1627280247219')
       format('truetype');
 }
 /*********在线字体代码end*********/
@@ -89,6 +89,19 @@ button::after {
 }
 .icon-home-close::before {
   content: '\e66f';
+}
+/* 随访 */
+.icon-phone:before {
+  content: '\e690';
+}
+.icon-shengri:before {
+  content: '\e68f';
+}
+.icon-nv:before {
+  content: '\e68c';
+}
+.icon-nan:before {
+  content: '\e68d';
 }
 /*今日就诊*/
 .icon-medicine-chest::before {
@@ -283,6 +296,8 @@ button::after {
 .icon-wechat-fill:before {
   content: '\e68b';
 }
+iconwechat-fill
+
 /*全部*/
 .icon-all-fill:before {
   content: '\e70b';
