@@ -228,6 +228,13 @@
             "navigationBarTitleText": "随访日程",
             "disableScroll": true
           }
+        },
+        {
+          "path": "search",
+          "style": {
+            "navigationBarTitleText": "搜索随访人",
+            "disableScroll": true
+          }
         }
       ]
     },

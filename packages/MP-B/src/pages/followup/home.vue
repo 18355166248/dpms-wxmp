@@ -1,5 +1,5 @@
 <template>
-  <view class="followup-home">
+  <view class="followup-home" @click="hideDropDownBox">
     <calendar
       :value="calendarDate"
       @change="dateChange"
@@ -7,7 +7,7 @@
       ref="Calendar"
     />
     <view class="toolbar-wrap">
-      <view class="icon-whole iconfont"></view>
+      <view class="icon-whole iconfont" @click="showFilterModal"></view>
       <text class="date">6月30日 星期三</text>
       <text class="return" @click="goBackToday">返回今天</text>
     </view>
@@ -23,11 +23,11 @@
         <view class="detail">
           <view class="basic">
             <text>王一博</text>
-            <view class="icon-nan iconfont male"> </view>
-            <view class="icon-phone iconfont"></view>
-            <text>17600020002</text>
+            <view class="icon-nan iconfont male"></view>
+            <view class="iconfont iconphone"></view>
+            <text class="phone">17600020002</text>
             <view class="icon-shengri iconfont"></view>
-            <text>22岁</text>
+            <text class="age">22岁</text>
           </view>
           <view class="line-info-wrap">
             <view class="left">计划节点时间：</view>
@@ -46,12 +46,15 @@
             <view class="right">北吉熊连锁合肥分店</view>
           </view>
           <view class="operate">
-            <view class="more"
-              >更多
-              <view></view>
+            <view class="more" @click.stop="showDropDownBox">
+              更多
+              <view class="drop-down" v-if="dropDownBoxVisible">
+                <view class="stop">终止</view>
+                <view class="delete">删除</view>
+              </view>
             </view>
-            <view class="carry mid">执行</view>
-            <view class="inspect">查看</view>
+            <view class="carry mid" @click="handleCarry">执行</view>
+            <view class="inspect" @click="handleInspect">查看</view>
           </view>
         </view>
       </view>
@@ -59,32 +62,75 @@
 
     <view class="pop-mask" v-if="filterModal">
       <view class="filter-box-wrap">
-        <view class="header">
-          <text class="clear">清空</text>
-          <text>筛选</text>
-          <view class="icon-close iconfont"></view>
-        </view>
-        <view class="status-wrap filter-type">
-          <text>按随访状态查看</text>
-          <view class="list">
+        <view class="inner">
+          <view class="header">
+            <text class="clear" @click="handleReset">清空</text>
+            <text>筛选</text>
             <view
-              class="status-item"
-              v-for="(item, index) in statusList"
-              :key="index"
-            >
-              {{ item }}
+              class="icon-ar-close iconfont"
+              @click="hideFilterModal"
+            ></view>
+          </view>
+          <view class="status-wrap filter-type">
+            <text>按随访状态查看</text>
+            <view class="list">
+              <view
+                :class="[
+                  'status-item',
+                  statusIndex === index ? 'selected' : '',
+                  index % 3 === 1 && index === statusList.length - 1
+                    ? 'fix'
+                    : '',
+                ]"
+                v-for="(item, index) in statusList"
+                :key="index"
+                @click="handleStatusSelect(index)"
+              >
+                {{ item }}
+              </view>
             </view>
           </view>
+          <view class="institution-wrap filter-type" v-if="!isSingle">
+            <text>按随访机构查看</text>
+            <view class="list">
+              <view class="status-item">{{
+                institutionList[0].medicalInstitutionSimpleCode
+              }}</view>
+            </view>
+            <text>大区</text>
+            <view class="list">
+              <view
+                class="status-item"
+                v-for="(item, key) in regionList"
+                :key="key"
+              >
+                {{ item.medicalInstitutionSimpleCode }}
+              </view>
+            </view>
+            <text>连锁直营</text>
+            <view class="list">
+              <view
+                class="status-item"
+                v-for="(item, key) in directList"
+                :key="key"
+              >
+                {{ item.medicalInstitutionSimpleCode }}
+              </view>
+            </view>
+          </view>
+          <view class="customer-wrap filter-type">
+            <text>按随访人查看</text>
+            <input
+              class="search"
+              placeholder="搜索随访人"
+              placeholder-style="color: #bfbfbf; font-size: 28rpx;"
+              @focus="goSearch"
+            />
+          </view>
+          <view class="pop-bottom"
+            ><view class="ensure" @click="handleEnsure">确认</view></view
+          >
         </view>
-        <view class="customer-wrap filter-type">
-          <text>按随访人查看</text>
-          <input
-            class="search"
-            placeholder="搜索随访人"
-            placeholder-style="color: #bfbfbf; font-size: 28rpx;"
-          />
-        </view>
-        <view class="ensure" @click="handleEnsure">确认</view>
       </view>
     </view>
   </view>
@@ -95,6 +141,8 @@ import moment from 'moment'
 import _ from 'lodash'
 import calendar from '@/businessComponents/calendar/calendar'
 import followConfigData from './Data.js'
+import systemAPI from '@/APIS/system.api.js'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 export default {
   components: {
     calendar,
@@ -104,11 +152,41 @@ export default {
       // 日历组件日期
       calendarDate: moment().format('YYYY-MM-DD'),
       statusList: followConfigData.status,
-      filterModal: true,
+      filterModal: false,
+      dropDownBoxVisible: false,
+      isSingle: false,
+      institutionList: [],
+      regionList: [],
+      directList: [],
+      statusIndex: 0,
     }
   },
   created() {
-    console.log('followConfigData', followConfigData)
+    this.loginForm = getStorage(STORAGE_KEY.LOGIN_INFO)
+    this.medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+
+    // 如果是单店，不用显示随访状态筛选
+    if (this.medicalInstitution.institutionChainType === 1) {
+      this.isSingle = true
+    } else {
+      console.log(this.loginForm, this.medicalInstitution)
+
+      systemAPI
+        .getInstitutionListScrm({
+          memberName: this.loginForm.memberCode,
+          username: this.loginForm.username,
+        })
+        .then((res) => {
+          this.institutionList = res.data
+          console.log('res', res.data)
+          this.regionList = res.data[0].children.filter(
+            (i) => i.medicalInstitutionType === 3,
+          )
+          this.directList = res.data[0].children.filter(
+            (i) => i.medicalInstitutionType !== 3,
+          )
+        })
+    }
   },
   methods: {
     dateChange({ fulldate }) {
@@ -129,6 +207,32 @@ export default {
       this.calendarDate = moment().format('YYYY-MM-DD')
       this.$refs.Calendar.doc_list_update()
       this.$refs.Calendar.update_month()
+    },
+    handleCarry() {},
+    handleInspect() {},
+    showDropDownBox() {
+      this.dropDownBoxVisible = true
+    },
+    hideDropDownBox(e) {
+      this.dropDownBoxVisible = false
+    },
+    showFilterModal() {
+      this.filterModal = true
+    },
+    handleStatusSelect(index) {
+      this.statusIndex = index
+    },
+    hideFilterModal() {
+      this.filterModal = false
+    },
+    handleReset() {
+      this.statusIndex = 0
+    },
+    goSearch() {
+      console.log(333)
+      wx.navigateTo({
+        url: '/pages/followup/search',
+      })
     },
   },
 }
@@ -227,6 +331,12 @@ page {
         > view {
           color: #7f7f7f;
         }
+        .phone {
+          margin: 0 28rpx 0 15rpx;
+        }
+        .age {
+          margin-left: 12rpx;
+        }
       }
       .line-info-wrap {
         display: flex;
@@ -252,6 +362,30 @@ page {
           font-size: 28rpx;
           font-family: PingFangSC, PingFangSC-Regular;
           color: #4c4c4c;
+          position: relative;
+          .drop-down {
+            position: absolute;
+            width: 152rpx;
+            height: 204rpx;
+            opacity: 1;
+            background: #ffffff;
+            box-shadow: 0rpx 4rpx 16rpx 6rpx rgba(0, 0, 0, 0.08);
+            left: 50%;
+            transform: translateX(-50%);
+            top: 56rpx;
+            > view {
+              font-size: 28rpx;
+              font-family: PingFangSC, PingFangSC-Regular;
+              color: #4c4c4c;
+              width: 152rpx;
+              height: 96rpx;
+              line-height: 96rpx;
+              text-align: center;
+            }
+            .stop {
+              border-bottom: 1px solid #e5e5e5;
+            }
+          }
         }
         .carry,
         .inspect {
@@ -287,17 +421,32 @@ page {
     left: 0;
     bottom: 0;
     width: 750rpx;
-    height: 70%;
+    overflow-y: scroll;
+    height: 80%;
     opacity: 1;
     background: #ffffff;
     border-radius: 24rpx 24rpx 0rpx 0rpx;
+    .inner {
+      position: relative;
+      width: 750rpx;
+      opacity: 1;
+      background: #ffffff;
+      border-radius: 24rpx 24rpx 0rpx 0rpx;
+      padding-bottom: 296rpx;
+      padding-top: 111rpx;
+    }
     .header {
+      z-index: 10;
+      position: fixed;
+      left: 0;
+      top: 20%;
       display: flex;
       width: 100%;
       height: 111rpx;
       padding: 0 32rpx;
       align-items: center;
       justify-content: space-between;
+      background: #fff;
       border-bottom: 1px solid #e5e5e5;
       .clear {
         font-size: 28rpx;
@@ -313,11 +462,13 @@ page {
         font-size: 34rpx;
         font-family: PingFangSC, PingFangSC-Regular;
         color: #191919;
+        display: block;
       }
       .list {
         margin-top: 16rpx;
         display: flex;
         flex-wrap: wrap;
+        justify-content: space-between;
       }
       .status-item {
         width: 218rpx;
@@ -326,13 +477,24 @@ page {
         background: #ffffff;
         border: 1rpx solid rgba(0, 0, 0, 0.15);
         border-radius: 8rpx;
-        margin-right: auto;
         margin-bottom: 16rpx;
         font-size: 28rpx;
         font-family: PingFangSC, PingFangSC-Regular;
         color: #595959;
         text-align: center;
         line-height: 68rpx;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        padding: 0 24rpx;
+        &.selected {
+          background: #eef8f3;
+          border: 1rpx solid #5cbb89;
+          color: #5cbb89;
+        }
+      }
+      .fix {
+        transform: translateX(-234rpx);
       }
     }
     .customer-wrap {
@@ -346,20 +508,24 @@ page {
         border-radius: 8rpx;
       }
     }
-    .ensure {
-      position: absolute;
-      bottom: 84rpx;
-      left: 32rpx;
-      width: 686rpx;
-      height: 80rpx;
-      opacity: 1;
-      background: #5cbb89;
-      border-radius: 40rpx;
-      font-size: 36rpx;
-      font-family: PingFangSC, PingFangSC-Regular;
-      line-height: 80rpx;
-      color: #ffffff;
-      text-align: center;
+    .pop-bottom {
+      position: sticky;
+      left: 0;
+      bottom: 0;
+      background: #fff;
+      .ensure {
+        width: 686rpx;
+        height: 80rpx;
+        opacity: 1;
+        background: #5cbb89;
+        border-radius: 40rpx;
+        font-size: 36rpx;
+        font-family: PingFangSC, PingFangSC-Regular;
+        line-height: 80rpx;
+        color: #ffffff;
+        text-align: center;
+        z-index: 100;
+      }
     }
   }
 }

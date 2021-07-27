@@ -28,11 +28,11 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* Project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_6a9sfayo5aj.woff2?t=1627280247219')
+  src: url('//at.alicdn.com/t/font_1965288_8ob8kme4ba5.woff2?t=1627353910479')
       format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_6a9sfayo5aj.woff?t=1627280247219')
+    url('//at.alicdn.com/t/font_1965288_8ob8kme4ba5.woff?t=1627353910479')
       format('woff'),
-    url('//at.alicdn.com/t/font_1965288_6a9sfayo5aj.ttf?t=1627280247219')
+    url('//at.alicdn.com/t/font_1965288_8ob8kme4ba5.ttf?t=1627353910479')
       format('truetype');
 }
 /*********在线字体代码end*********/
@@ -91,7 +91,16 @@ button::after {
   content: '\e66f';
 }
 /* 随访 */
+.iconclose:before {
+  content: '\e633';
+}
+.icon-follow-up:before {
+  content: '\e604';
+}
 .icon-phone:before {
+  content: '\e690';
+}
+.iconphone:before {
   content: '\e690';
 }
 .icon-shengri:before {
@@ -296,7 +305,6 @@ button::after {
 .icon-wechat-fill:before {
   content: '\e68b';
 }
-iconwechat-fill
 
 /*全部*/
 .icon-all-fill:before {
