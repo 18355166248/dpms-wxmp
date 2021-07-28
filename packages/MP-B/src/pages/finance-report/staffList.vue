@@ -71,7 +71,8 @@ export default {
     if (name === 'payTradeType') {
       this.list = Object.values(
         this.$dpmsUtils.getEnums('PayTradeType').properties,
-      )
+      )?.filter((item) => item.value !== 1)
+      //与PC端同步不显示未知类型
       if (this.payTradeTypeArr.payTradeTypeIds !== '') {
         this.checked = this.payTradeTypeArr.payTradeTypeIds
           .split(',')
@@ -83,7 +84,8 @@ export default {
     if (name === 'payOrderStatus') {
       this.list = Object.values(
         this.$dpmsUtils.getEnums('PayOrderStatus').properties,
-      )
+      )?.filter((item) => [1, 3].includes(item.value))
+      //其中[1,3]是PC端交易状态只显示正常和已作废
       if (this.payOrderStatusArr.payOrderStatusIds !== '') {
         this.checked = this.payOrderStatusArr.payOrderStatusIds
           .split(',')
@@ -207,7 +209,7 @@ export default {
 
   .apptCollapse {
     padding-left: 32rpx;
-
+    padding-bottom: 55rpx;
     .appt {
       height: 112rpx;
       line-height: 112rpx;
