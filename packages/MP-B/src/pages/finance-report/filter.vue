@@ -23,6 +23,14 @@
       placeholder="请选择项目"
     />
     <dpmsCell
+      title="收款人"
+      v-if="showItem('cashierStaffIds')"
+      :value="cashierStaff.cashierStaffNames"
+      isLink
+      @click.native="onStaffClick('cashierStaff')"
+      placeholder="请选择收款人"
+    />
+    <dpmsCell
       title="医生"
       v-if="showItem('doctorIds')"
       :value="doctor.doctorNames"
@@ -37,6 +45,38 @@
       isLink
       @click.native="onStaffClick('consultant')"
       placeholder="请选择咨询师"
+    />
+    <dpmsCell
+      title="交易状态"
+      v-if="showItem('payOrderStatusArr')"
+      :value="payOrderStatusArr.payOrderStatusNames"
+      isLink
+      @click.native="onStaffClick('payOrderStatus')"
+      placeholder="请选择交易状态"
+    />
+    <dpmsCell
+      title="交易类型"
+      v-if="showItem('payTradeTypeArr')"
+      :value="payTradeTypeArr.payTradeTypeNames"
+      isLink
+      @click.native="onStaffClick('payTradeType')"
+      placeholder="请选择交易类型"
+    />
+    <dpmsCell
+      title="账单类型"
+      v-if="showItem('billTypeArr')"
+      :value="billTypeArr.billTypeNames"
+      isLink
+      @click.native="onStaffClick('billType')"
+      placeholder="请选择账单类型"
+    />
+    <dpmsCell
+      title="状态"
+      v-if="showItem('billSettlementArr')"
+      :value="billSettlementArr.billSettlementNames"
+      isLink
+      @click.native="onStaffClick('billSettlement')"
+      placeholder="请选择状态"
     />
     <button class="ensurebutton" @click="onSave">
       查询
@@ -69,6 +109,11 @@ export default {
       'consultant',
       'patientInfo',
       'billOrderNo',
+      'billTypeArr',
+      'billSettlementArr',
+      'cashierStaff',
+      'payTradeTypeArr',
+      'payOrderStatusArr',
     ]),
   },
   methods: {
