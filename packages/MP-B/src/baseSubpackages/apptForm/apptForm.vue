@@ -583,12 +583,13 @@ export default {
     },
     // 选择预约项目
     onSelectApptItem() {
+      const emptyApptItemList =
+        !this.options.apptItemList || this.options.apptItemList.length === 0
       this.$dpmsUtils.push({
         url:
           '/baseSubpackages/apptForm/apptItemList?checked=' +
           this.form.appointmentItems.join(',') +
-          '&isAppt=' +
-          this.isAppt,
+          `&isAppt=${this.isAppt}&isEmpty=${emptyApptItemList}`,
       })
     },
     onSelectMainComplaintList() {
