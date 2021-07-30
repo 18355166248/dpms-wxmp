@@ -13,7 +13,7 @@
         >返回今天</text
       >
     </view>
-    <view class="follow-node-list">
+    <view class="follow-node-list" v-if="followupList.length > 0">
       <view
         class="follow-node-item"
         v-for="(item, index) in followupList"
@@ -22,21 +22,34 @@
         <view class="name-status">
           <text class="name">{{ item.followUpTypeName }}</text>
           <view class="status-wrap">
-            <view class="dot"></view>
-            <text>{{ mapStatusValue[item.nodeFollowUpStatus] }}</text>
+            <view :class="['dot', `style-${item.nodeFollowUpStatus}`]"></view>
+            <text :class="[`style-${item.nodeFollowUpStatus}`]">{{
+              mapStatusValue[item.nodeFollowUpStatus]
+            }}</text>
           </view>
         </view>
         <view class="detail">
           <view class="basic">
-            <text>{{ customerName }}</text>
+            <text>{{ item.customerName }}</text>
             <view class="icon-nan iconfont male"></view>
             <view class="iconfont iconphone"></view>
             <text class="phone">{{ item.realMobile }}</text>
             <!-- <view class="icon-shengri iconfont"></view>
             <text class="age">22岁</text> -->
           </view>
-          <view class="line-info-wrap">
+          <view
+            class="line-info-wrap"
+            v-if="
+              item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
+            "
+          >
             <view class="left">计划节点时间：</view>
+            <view class="right">{{
+              formatStamp(item.planFollowUpDate, item.planFollowUpTime)
+            }}</view>
+          </view>
+          <view class="line-info-wrap" v-else>
+            <view class="left">实际随访时间：</view>
             <view class="right">{{
               formatStamp(item.planFollowUpDate, item.planFollowUpTime)
             }}</view>
@@ -45,11 +58,20 @@
             <view class="left">随访方式：</view>
             <view class="right">{{ followUpWay[item.followUpWay] }}</view>
           </view>
-          <view class="line-info-wrap">
+          <view
+            class="line-info-wrap"
+            v-if="
+              item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
+            "
+          >
             <view class="left">计划随访人：</view>
-            <view class="right">陈医生</view>
+            <view class="right">{{ item.planFollowUpUserName }}</view>
           </view>
-          <view class="line-info-wrap">
+          <view class="line-info-wrap" v-else>
+            <view class="left">实际随访人：</view>
+            <view class="right">{{ item.planFollowUpUserName }}</view>
+          </view>
+          <view class="line-info-wrap" v-if="institutionChainType !== 1">
             <view class="left">随访机构：</view>
             <view class="right">{{ item.institutionName }}</view>
           </view>
@@ -75,7 +97,7 @@
               >执行</view
             >
             <view
-              class="carry mid"
+              class="carry mid retry"
               @click="followupAgain(item)"
               v-if="item.nodeFollowUpStatus === 31"
               >重新随访</view
@@ -85,6 +107,8 @@
         </view>
       </view>
     </view>
+
+    <empty :disabled="true" v-else text="暂无数据" />
 
     <view class="pop-mask" v-if="filterModal">
       <view class="filter-box-wrap">
@@ -112,7 +136,7 @@
                 :key="index"
                 @click="handleStatusSelect(index)"
               >
-                {{ item }}
+                {{ item.value }}
               </view>
             </view>
           </view>
@@ -153,7 +177,7 @@
               <view
                 :class="[
                   'status-item',
-                  sfaffIndex === index ? 'selected' : '',
+                  staffIndex === index ? 'selected' : '',
                   index % 3 === 1 && index === staffs.length - 1 ? 'fix' : '',
                 ]"
                 v-for="(item, index) in staffs"
@@ -189,6 +213,7 @@ import followConfigData from './Data.js'
 import systemAPI from '@/APIS/system.api.js'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import followupAPI from '@/APIS/followup/followup.api.js'
+import Empty from '@/components/empty/empty.vue'
 
 const {
   BACKFILTERMODAL,
@@ -204,6 +229,7 @@ export default {
   data() {
     return {
       // 日历组件日期
+      institutionChainType: 1,
       followUpWay: followUpWay,
       mapStatusValue: mapStatusValue,
       calendarDate: moment().format('YYYY-MM-DD'),
@@ -216,12 +242,13 @@ export default {
       regionList: [],
       directList: [],
       statusIndex: 0,
-      sfaffIndex: 0,
-      current: 2,
+      staffIndex: 0,
+      current: 1,
       followupList: [],
       startTimeStamp: moment().startOf('day').format('x'),
       endTimeStamp: moment().endOf('day').format('x'),
       planFollowUpUserId: '',
+      nodeFollowUpStatus: '',
     }
   },
   created() {
@@ -230,12 +257,12 @@ export default {
     this.medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
     this.staffs[1].staffId = getStorage(STORAGE_KEY.STAFF).staffId
 
+    this.institutionChainType = this.medicalInstitution.institutionChainType
+
     // 如果是单店，不用显示随访状态筛选
     if (this.medicalInstitution.institutionChainType === 1) {
       this.isSingle = true
     } else {
-      console.log(this.loginForm, this.medicalInstitution)
-
       systemAPI
         .getInstitutionListScrm({
           memberName: this.loginForm.memberCode,
@@ -243,7 +270,6 @@ export default {
         })
         .then((res) => {
           this.institutionList = res.data
-          console.log('res', res.data)
           this.regionList = res.data[0].children.filter(
             (i) => i.medicalInstitutionType === 3,
           )
@@ -259,10 +285,16 @@ export default {
   },
   onLoad(options) {
     console.log('options', options)
-    const { staffName } = options
+    const { staffName, staffId } = options
     if (staffName) {
       this.filterModal = true
-      this.staffs = [...this.staffs, staffName]
+      this.staffs = [
+        ...this.staffs,
+        {
+          staffId: staffId,
+          value: staffName,
+        },
+      ]
     }
   },
   methods: {
@@ -291,7 +323,7 @@ export default {
     getFollowupList(params) {
       followupAPI
         .getFollowupNodeList({
-          size: 20,
+          size: 1000,
           current: this.current,
           followUpPlanNodeBeginTimeLeft: this.startTimeStamp,
           followUpPlanNodeBeginTimeRight: this.endTimeStamp,
@@ -300,30 +332,32 @@ export default {
         })
         .then((res) => {
           const result = res.data.records || []
-          this.followupList = [...this.followupList, ...result]
-          console.log('res', res)
+          // this.followupList = [...this.followupList, ...result]
+          this.followupList = result
         })
     },
     dateChange({ fulldate }) {
       this.calendarDate = moment(String(fulldate))
-      console.log('3', this.calendarDate)
-      this.getFollowupList({
-        followUpPlanNodeBeginTimeLeft: this.calendarDate
-          .startOf('day')
-          .format('x'),
-        followUpPlanNodeBeginTimeRight: this.calendarDate
-          .endOf('day')
-          .format('x'),
-      })
+      // this.getFollowupList({
+      //   followUpPlanNodeBeginTimeLeft: this.calendarDate
+      //     .startOf('day')
+      //     .format('x'),
+      //   followUpPlanNodeBeginTimeRight: this.calendarDate
+      //     .endOf('day')
+      //     .format('x'),
+      // })
     },
-    collapseChange(status) {
-      console.log('status', status)
-    },
+    collapseChange(status) {},
     handleEnsure() {
       this.filterModal = false
+      this.nodeFollowUpStatus = this.statusList[this.statusIndex].key
+      this.planFollowUpUserId = this.staffs[this.staffIndex].staffId
+      this.getFollowupList({
+        nodeFollowUpStatus: this.nodeFollowUpStatus,
+        planFollowUpUserId: this.planFollowUpUserId,
+      })
     },
     goBackToday() {
-      console.log(111, moment().format('YYYY-MM-DD'))
       // this.calendarDate = moment().format('YYYY-MM-DD')
       // this.$refs.Calendar.update_month()
       // this.$refs.Calendar.get_date(moment().format('YYYY-MM-DD'))
@@ -331,7 +365,11 @@ export default {
       this.$refs.Calendar.doc_list_update()
       this.$refs.Calendar.update_month()
     },
-    handleCarry() {},
+    handleCarry({ followUpNodeId, followUpPlanId }) {
+      uni.navigateTo({
+        url: `/pages/followup/execute?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
+      })
+    },
     handleInspect({ followUpNodeId, followUpPlanId }) {
       uni.navigateTo({
         url: `/pages/followup/detail?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
@@ -343,7 +381,6 @@ export default {
       })
     },
     showDropDownBox(index) {
-      console.log('index', index, Number(index))
       this.dropDownBoxVisibleIndex = index + 1
     },
     hideDropDownBox(e) {
@@ -360,7 +397,7 @@ export default {
     },
     handleReset() {
       this.statusIndex = 0
-      this.sfaffIndex = 0
+      this.staffIndex = 0
     },
     goSearch() {
       wx.navigateTo({
@@ -368,11 +405,24 @@ export default {
       })
     },
     handleStaffSelect({ staffId }, index) {
-      this.sfaffIndex = index
+      this.staffIndex = index
       this.planFollowUpUserId = staffId
     },
     deleteNode({ followUpNodeId, followUpPlanId }) {},
-    terminaNode({ followUpNodeId, followUpPlanId }) {},
+    terminaNode({ followUpNodeId, followUpPlanId }) {
+      uni.navigateTo({
+        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
+      })
+    },
+  },
+  watch: {
+    calendarDate(newVal, oldVal) {
+      newVal = newVal instanceof moment ? newVal : moment(String(newVal))
+      this.getFollowupList({
+        followUpPlanNodeBeginTimeLeft: newVal.startOf('day').format('x'),
+        followUpPlanNodeBeginTimeRight: newVal.endOf('day').format('x'),
+      })
+    },
   },
 }
 </script>
@@ -425,7 +475,6 @@ page {
   .follow-node-item {
     box-sizing: border-box;
     width: 100%;
-    height: 440rpx;
     opacity: 1;
     background: #feffff;
     border-radius: 8rpx;
@@ -447,6 +496,7 @@ page {
       .status-wrap {
         display: flex;
         align-items: center;
+
         .dot {
           width: 16rpx;
           height: 16rpx;
@@ -454,6 +504,24 @@ page {
           background: #5cbb89;
           border-radius: 50%;
           margin-right: 8rpx;
+          &.style-10 {
+            background: #faad14;
+          }
+          &.style-31 {
+            background: #e64040;
+          }
+          &.style-35 {
+            background: #5cbb89;
+          }
+        }
+        .style-10 {
+          color: #faad14;
+        }
+        .style-31 {
+          color: #e64040;
+        }
+        .style-35 {
+          background: #5cbb89;
         }
       }
     }
@@ -502,6 +570,7 @@ page {
         display: flex;
         justify-content: flex-end;
         align-items: center;
+        margin-top: 24rpx;
         .more {
           font-size: 28rpx;
           font-family: PingFangSC, PingFangSC-Regular;
@@ -544,6 +613,9 @@ page {
           font-size: 28rpx;
           font-family: PingFangSC, PingFangSC-Regular;
           color: #5cbb89;
+        }
+        .retry {
+          width: 176rpx;
         }
         .mid {
           margin: 0 16rpx 0 32rpx;

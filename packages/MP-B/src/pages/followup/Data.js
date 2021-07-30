@@ -1,5 +1,26 @@
 const followConfigData = {
-  status: ['全部状态', '待随访', '已随访', '终止随访', '随访失败'],
+  status: [
+    {
+      key: '',
+      value: '全部状态',
+    },
+    {
+      key: 10,
+      value: '待随访',
+    },
+    {
+      key: 35,
+      value: '已随访',
+    },
+    {
+      key: 40,
+      value: '终止随访',
+    },
+    {
+      key: 31,
+      value: '随访失败',
+    },
+  ],
 
   staffs: [
     {
