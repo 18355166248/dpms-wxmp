@@ -6,26 +6,38 @@
       <text @click="handleCancel">取消</text>
     </view>
     <view class="result-list">
-      <view class="item" v-for="(item, index) in result" :key="index">{{
-        item.staffName
-      }}</view>
+      <view
+        class="item"
+        v-for="(item, index) in result"
+        :key="index"
+        @click="handleSetStaff(item)"
+        >{{ item.staffName }}</view
+      >
     </view>
   </view>
 </template>
 <script>
 import followupAPI from '@/APIS/followup/followup.api.js'
+import followConfigData from './Data.js'
+
+const { BACKFILTERMODAL } = followConfigData
 export default {
   data() {
     return {
       keyword: '',
       result: [],
+      staffName: '',
     }
   },
   created() {
     followupAPI.getFollowupNodeList()
   },
   methods: {
-    handleCancel() {},
+    handleCancel() {
+      uni.redirectTo({
+        url: `/pages/followup/home?staffName=${this.staffName}`,
+      })
+    },
     handleChange(e) {
       clearTimeout(this.timer)
       this.timer = setTimeout(() => {
@@ -35,9 +47,15 @@ export default {
             keyword: this.keyword,
           })
           .then((res) => {
-            this.result = res.data || []
+            this.result = res.data.slice(0, 3) || []
           })
       }, 500)
+    },
+    handleSetStaff(item) {
+      this.staffName = item.staffName
+      uni.redirectTo({
+        url: `/pages/followup/home?staffName=${item.staffName}`,
+      })
     },
   },
 }
@@ -55,9 +73,10 @@ view {
   width: 100%;
   height: 100vh;
   background: #fff;
-  padding: 32rpx;
+  padding: 32rpx 0;
 
   .row {
+    padding: 0 32rpx;
     position: relative;
     width: 100%;
     display: flex;
@@ -66,7 +85,7 @@ view {
     .iconfont {
       position: absolute;
       color: #b2b2b2;
-      left: 31rpx;
+      left: 63rpx;
     }
     input {
       padding-left: 80rpx;
@@ -89,7 +108,16 @@ view {
   }
 
   .result-list {
+    margin-top: 32rpx;
     .item {
+      padding: 0 56rpx;
+      border-bottom: 1px solid #e5e5e5;
+      width: 750rpx;
+      height: 96rpx;
+      line-height: 96rpx;
+      font-size: 28rpx;
+      font-family: PingFangSC, PingFangSC-Regular;
+      color: #191919;
     }
   }
 }

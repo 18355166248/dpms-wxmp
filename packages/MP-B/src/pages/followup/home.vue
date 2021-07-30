@@ -8,34 +8,42 @@
     />
     <view class="toolbar-wrap">
       <view class="icon-whole iconfont" @click="showFilterModal"></view>
-      <text class="date">6月30日 星期三</text>
-      <text class="return" @click="goBackToday">返回今天</text>
+      <text class="date">{{ showDate() }}</text>
+      <text class="return" @click="goBackToday" v-if="!isToday()"
+        >返回今天</text
+      >
     </view>
     <view class="follow-node-list">
-      <view class="follow-node-item">
+      <view
+        class="follow-node-item"
+        v-for="(item, index) in followupList"
+        :key="index"
+      >
         <view class="name-status">
-          <text class="name">普通术后随访</text>
+          <text class="name">{{ item.followUpTypeName }}</text>
           <view class="status-wrap">
             <view class="dot"></view>
-            <text>已随访</text>
+            <text>{{ mapStatusValue[item.nodeFollowUpStatus] }}</text>
           </view>
         </view>
         <view class="detail">
           <view class="basic">
-            <text>王一博</text>
+            <text>{{ customerName }}</text>
             <view class="icon-nan iconfont male"></view>
             <view class="iconfont iconphone"></view>
-            <text class="phone">17600020002</text>
-            <view class="icon-shengri iconfont"></view>
-            <text class="age">22岁</text>
+            <text class="phone">{{ item.realMobile }}</text>
+            <!-- <view class="icon-shengri iconfont"></view>
+            <text class="age">22岁</text> -->
           </view>
           <view class="line-info-wrap">
             <view class="left">计划节点时间：</view>
-            <view class="right">2021-06-30 8:00</view>
+            <view class="right">{{
+              formatStamp(item.planFollowUpDate, item.planFollowUpTime)
+            }}</view>
           </view>
           <view class="line-info-wrap">
             <view class="left">随访方式：</view>
-            <view class="right">人工随访</view>
+            <view class="right">{{ followUpWay[item.followUpWay] }}</view>
           </view>
           <view class="line-info-wrap">
             <view class="left">计划随访人：</view>
@@ -43,18 +51,36 @@
           </view>
           <view class="line-info-wrap">
             <view class="left">随访机构：</view>
-            <view class="right">北吉熊连锁合肥分店</view>
+            <view class="right">{{ item.institutionName }}</view>
           </view>
           <view class="operate">
-            <view class="more" @click.stop="showDropDownBox">
+            <view
+              class="more"
+              @click.stop="showDropDownBox(index)"
+              v-if="item.nodeFollowUpStatus === 10"
+            >
               更多
-              <view class="drop-down" v-if="dropDownBoxVisible">
-                <view class="stop">终止</view>
-                <view class="delete">删除</view>
+              <view
+                class="drop-down"
+                v-if="dropDownBoxVisibleIndex === index + 1"
+              >
+                <view class="stop" @click="terminaNode(item)">终止</view>
+                <view class="delete" @click="deleteNode(item)">删除</view>
               </view>
             </view>
-            <view class="carry mid" @click="handleCarry">执行</view>
-            <view class="inspect" @click="handleInspect">查看</view>
+            <view
+              class="carry mid"
+              @click="handleCarry"
+              v-if="item.nodeFollowUpStatus === 10"
+              >执行</view
+            >
+            <view
+              class="carry mid"
+              @click="followupAgain(item)"
+              v-if="item.nodeFollowUpStatus === 31"
+              >重新随访</view
+            >
+            <view class="inspect" @click="handleInspect(item)">查看</view>
           </view>
         </view>
       </view>
@@ -91,7 +117,10 @@
             </view>
           </view>
           <view class="institution-wrap filter-type" v-if="!isSingle">
-            <text>按随访机构查看</text>
+            <view class="callapse">
+              <text>按随访机构查看</text>
+              <view class=""></view>
+            </view>
             <view class="list">
               <view class="status-item">{{
                 institutionList[0].medicalInstitutionSimpleCode
@@ -120,12 +149,28 @@
           </view>
           <view class="customer-wrap filter-type">
             <text>按随访人查看</text>
-            <input
-              class="search"
-              placeholder="搜索随访人"
-              placeholder-style="color: #bfbfbf; font-size: 28rpx;"
-              @focus="goSearch"
-            />
+            <view class="list">
+              <view
+                :class="[
+                  'status-item',
+                  sfaffIndex === index ? 'selected' : '',
+                  index % 3 === 1 && index === staffs.length - 1 ? 'fix' : '',
+                ]"
+                v-for="(item, index) in staffs"
+                :key="index"
+                @click="handleStaffSelect(item, index)"
+              >
+                {{ item.value }}
+              </view>
+            </view>
+            <view class="row" @click="goSearch">
+              <view class="iconfont icon-search"></view>
+              <input
+                class="search"
+                placeholder="搜索随访人"
+                placeholder-style="color: #bfbfbf; font-size: 28rpx;"
+              />
+            </view>
           </view>
           <view class="pop-bottom"
             ><view class="ensure" @click="handleEnsure">确认</view></view
@@ -143,6 +188,15 @@ import calendar from '@/businessComponents/calendar/calendar'
 import followConfigData from './Data.js'
 import systemAPI from '@/APIS/system.api.js'
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
+import followupAPI from '@/APIS/followup/followup.api.js'
+
+const {
+  BACKFILTERMODAL,
+  staffs,
+  mapStatusValue,
+  followUpWay,
+  getWeekdays,
+} = followConfigData
 export default {
   components: {
     calendar,
@@ -150,20 +204,31 @@ export default {
   data() {
     return {
       // 日历组件日期
+      followUpWay: followUpWay,
+      mapStatusValue: mapStatusValue,
       calendarDate: moment().format('YYYY-MM-DD'),
       statusList: followConfigData.status,
+      staffs: staffs,
       filterModal: false,
-      dropDownBoxVisible: false,
+      dropDownBoxVisibleIndex: false,
       isSingle: false,
       institutionList: [],
       regionList: [],
       directList: [],
       statusIndex: 0,
+      sfaffIndex: 0,
+      current: 2,
+      followupList: [],
+      startTimeStamp: moment().startOf('day').format('x'),
+      endTimeStamp: moment().endOf('day').format('x'),
+      planFollowUpUserId: '',
     }
   },
   created() {
+    const that = this
     this.loginForm = getStorage(STORAGE_KEY.LOGIN_INFO)
     this.medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+    this.staffs[1].staffId = getStorage(STORAGE_KEY.STAFF).staffId
 
     // 如果是单店，不用显示随访状态筛选
     if (this.medicalInstitution.institutionChainType === 1) {
@@ -187,11 +252,69 @@ export default {
           )
         })
     }
+
+    this.getFollowupList()
+
+    this.calendarDate
+  },
+  onLoad(options) {
+    console.log('options', options)
+    const { staffName } = options
+    if (staffName) {
+      this.filterModal = true
+      this.staffs = [...this.staffs, staffName]
+    }
   },
   methods: {
+    isToday() {
+      return (
+        moment().format('YYYYMMDD') ===
+        moment(this.calendarDate).format('YYYYMMDD')
+      )
+    },
+    // 显示选中的时间
+    showDate() {
+      return (
+        moment(this.calendarDate).format('MM') +
+        '月' +
+        moment(this.calendarDate).format('DD') +
+        '日' +
+        ' ' +
+        getWeekdays(moment(this.calendarDate).day())
+      )
+    },
+    formatStamp(stamp, timer) {
+      return (
+        moment(stamp).format('YYYY-MM-DD') + ' ' + moment(timer).format('HH:mm')
+      )
+    },
+    getFollowupList(params) {
+      followupAPI
+        .getFollowupNodeList({
+          size: 20,
+          current: this.current,
+          followUpPlanNodeBeginTimeLeft: this.startTimeStamp,
+          followUpPlanNodeBeginTimeRight: this.endTimeStamp,
+          planFollowUpUserId: this.planFollowUpUserId,
+          ...params,
+        })
+        .then((res) => {
+          const result = res.data.records || []
+          this.followupList = [...this.followupList, ...result]
+          console.log('res', res)
+        })
+    },
     dateChange({ fulldate }) {
-      console.log(this.$refs.Calendar)
       this.calendarDate = moment(String(fulldate))
+      console.log('3', this.calendarDate)
+      this.getFollowupList({
+        followUpPlanNodeBeginTimeLeft: this.calendarDate
+          .startOf('day')
+          .format('x'),
+        followUpPlanNodeBeginTimeRight: this.calendarDate
+          .endOf('day')
+          .format('x'),
+      })
     },
     collapseChange(status) {
       console.log('status', status)
@@ -209,12 +332,22 @@ export default {
       this.$refs.Calendar.update_month()
     },
     handleCarry() {},
-    handleInspect() {},
-    showDropDownBox() {
-      this.dropDownBoxVisible = true
+    handleInspect({ followUpNodeId, followUpPlanId }) {
+      uni.navigateTo({
+        url: `/pages/followup/detail?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
+      })
+    },
+    followupAgain({ followUpNodeId, followUpPlanId }) {
+      uni.navigateTo({
+        url: `/pages/followup/execute?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
+      })
+    },
+    showDropDownBox(index) {
+      console.log('index', index, Number(index))
+      this.dropDownBoxVisibleIndex = index + 1
     },
     hideDropDownBox(e) {
-      this.dropDownBoxVisible = false
+      this.dropDownBoxVisibleIndex = false
     },
     showFilterModal() {
       this.filterModal = true
@@ -227,13 +360,19 @@ export default {
     },
     handleReset() {
       this.statusIndex = 0
+      this.sfaffIndex = 0
     },
     goSearch() {
-      console.log(333)
       wx.navigateTo({
         url: '/pages/followup/search',
       })
     },
+    handleStaffSelect({ staffId }, index) {
+      this.sfaffIndex = index
+      this.planFollowUpUserId = staffId
+    },
+    deleteNode({ followUpNodeId, followUpPlanId }) {},
+    terminaNode({ followUpNodeId, followUpPlanId }) {},
   },
 }
 </script>
@@ -247,6 +386,8 @@ page {
 }
 .followup-home {
   width: 100%;
+  height: 100%;
+  overflow-y: scroll;
   position: relative;
 }
 .toolbar-wrap {
@@ -259,7 +400,7 @@ page {
   display: flex;
   align-items: center;
   padding: 0 32rpx 0 45rpx;
-  justify-content: space-between;
+  // justify-content: space-between;
   > view {
     color: #6cc194;
     font-size: 36rpx;
@@ -268,11 +409,13 @@ page {
     font-size: 28rpx;
     font-family: PingFangSC, PingFangSC-Regular;
     color: rgba(0, 0, 0, 0.9);
+    margin-left: 193rpx;
   }
   .return {
     font-size: 28rpx;
     font-family: PingFangSC, PingFangSC-Regular;
     color: #5cbb89;
+    margin-left: auto;
   }
 }
 .follow-node-list {
@@ -288,6 +431,7 @@ page {
     border-radius: 8rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     padding: 24rpx;
+    margin-bottom: 24rpx;
 
     .name-status {
       display: flex;
@@ -432,7 +576,6 @@ page {
       opacity: 1;
       background: #ffffff;
       border-radius: 24rpx 24rpx 0rpx 0rpx;
-      padding-bottom: 296rpx;
       padding-top: 111rpx;
     }
     .header {
@@ -498,7 +641,22 @@ page {
       }
     }
     .customer-wrap {
+      .row {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .iconfont {
+          position: absolute;
+          color: #b2b2b2;
+          left: 31rpx;
+          top: 50%;
+          transform: translateY(-20%);
+        }
+      }
       .search {
+        padding-left: 80rpx;
         margin-top: 22rpx;
         width: 686rpx;
         height: 72rpx;
@@ -510,9 +668,14 @@ page {
     }
     .pop-bottom {
       position: sticky;
+      height: 196rpx;
       left: 0;
       bottom: 0;
       background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
       .ensure {
         width: 686rpx;
         height: 80rpx;
