@@ -450,10 +450,29 @@ export default {
       this.staffIndex = index
       this.planFollowUpUserId = staffId
     },
-    deleteNode({ followUpNodeId, followUpPlanId }) {},
-    terminaNode({ followUpNodeId, followUpPlanId }) {
+    deleteNode({ followUpNodeId, followUpPlanId }) {
+      uni.showModal({
+        title: '确认删除该条数据吗？',
+        success: async ({ confirm }) => {
+          if (confirm) {
+            this.$dpmsUtils.showLoading('请稍后...')
+            const res = await followupAPI.deleteChildrenCurrentItem({
+              followUpNodeId: followUpNodeId,
+              followUpPlanId: followUpPlanId,
+            })
+            this.$dpmsUtils.clearLoading()
+            this.$dpmsUtils.show('删除成功', { icon: 'success' })
+            this.getFollowupList()
+          }
+        },
+      })
+    },
+    terminaNode(item) {
+      const { followUpNodeId, followUpPlanId } = item
       uni.navigateTo({
-        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
+        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}&staffDetail=${JSON.stringify(
+          item,
+        )}`,
       })
     },
     hanldeSelectInstitution(item, index) {
