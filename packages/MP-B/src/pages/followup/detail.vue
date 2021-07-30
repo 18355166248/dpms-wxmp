@@ -1,0 +1,371 @@
+<template>
+  <view class="detailPage">
+    <scroll-view scroll-y class="h100">
+      <view class="bg" />
+      <view class="patientInfo tc">
+        <view class="patientCard">
+          <view class="patientDetail">
+            <view>
+              <patientAvatar :patient="customer" />
+            </view>
+            <view class="patientCenter">
+              <view class="patientTop text-ellipsis">
+                {{ customer.name }}
+              </view>
+              <view class="patientC mt-8 mb-16">
+                <span class="gender mr-8">{{
+                  customer.gender | getGenderText
+                }}</span>
+                <span class="age">{{ customer.age }}</span>
+              </view>
+              <view class="patientBottom">
+                <span>联系方式:</span>
+                <span class="ml-10">{{ customer.mobile }}</span>
+              </view>
+            </view>
+            <view class="patientRight">
+              <span
+                :class="['circular', `followState_${followDetail.status}`]"
+              ></span>
+              <span :class="[`state_${followDetail.status}`]">
+                {{ followDetail.status | getFollowStateText }}
+              </span>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view style="height: 208rpx;"></view>
+      <view class="follow-info">
+        <view class="detail-info">
+          <span>就诊信息:</span>
+          <span>{{ followDetail.diagnosisTime }}</span>
+        </view>
+        <view class="detail-info">
+          <span>随访类型:</span>
+          <span>{{ followDetail.followUpTypeName }}</span>
+        </view>
+        <view class="detail-info">
+          <span>计划随访人:</span>
+          <span>{{ followDetail.createUserName }}</span>
+        </view>
+        <view class="detail-info">
+          <span>节点计划时间:</span>
+          <span>{{ planBeginTime }}~{{ planEndTime }}</span>
+        </view>
+        <view class="detail-info">
+          <span>随访方式:</span>
+          <span>{{ followDetail.followUpWay | getFollowUpWayText }}</span>
+        </view>
+        <view v-if="followDetail.followUpWay == 4" class="detail-info">
+          <span>日程提醒:</span>
+          <span>{{ followDetail.weWorkSendBefore }}</span>
+        </view>
+        <view v-if="followDetail.followUpWay == 4" class="detail-info">
+          <span>日程提醒人:</span>
+          <span>{{ followDetail.tipPerson }}</span>
+        </view>
+      </view>
+      <!-- <grand :content="text" /> -->
+      <!-- <textShrink /> -->
+      <view class="followUpNode">
+        <view class="nodeTitle">
+          <span class="icon_plane iconfont icon-calendar-check"></span>
+          <span class="plane_text"
+            >随访计划 (完成{{ finishTime }}/{{ totalTime }})</span
+          >
+        </view>
+        <followNode
+          :nodeList="nodeList"
+          :followUpNodeId="followUpNodeId"
+          :followUpPlanId="followUpPlanId"
+          :customer="customer"
+        />
+      </view>
+    </scroll-view>
+  </view>
+</template>
+
+<script>
+import patientAvatar from '../../businessComponents/patientAvatar/patientAvatar.vue'
+import { commonUtil } from 'mpcommon'
+import moment from 'moment'
+import followupAPI from '@/APIS/followup/followup.api.js'
+// import textShrink from '@/components/textShrink/textShrink.vue'
+// import grand from '@/components/textShrink/sunui-grand.vue'
+import { globalEventKeys } from '@/config/global.eventKeys.js'
+import followNode from './common/followNode'
+
+const GENDER_ENUM = commonUtil.getEnums('Gender')
+
+export default {
+  components: {
+    patientAvatar,
+    followNode,
+    // grand,
+    // textShrink,
+  },
+  data() {
+    return {
+      followDetail: {},
+      nodeList: [],
+      customer: {},
+      planBeginTime: '',
+      planEndTime: '',
+      totalTime: 0,
+      finishTime: 0,
+      followUpNodeId: null,
+      followUpPlanId: null,
+      text: `《诗经》，是中国古代诗歌开端，最早的一部诗歌总集，收集了西周初年至春秋中叶（前11世纪至前6世纪）的诗歌，共311篇，其中6篇为笙诗，即只有标题，没有内容，称为笙诗六篇（《南陔》《白华》《华黍》《由庚》《崇丘》《由仪》），反映了周初至周晚期约五百年间的社会面貌。 [1-2] 
+《诗经》的作者佚名，绝大部分已经无法考证，传为尹吉甫采集、孔子编订。《诗经》在先秦时期称为《诗》，或取其整数称《诗三百》。西汉时被尊为儒家经典，始称《诗经》，并沿用至今。诗经在内容上分为《风》《雅》《颂》三个部分。《风》是周代各地的歌谣；《雅》是周人的正声雅乐，又分《小雅》和《大雅》；《颂》是周王庭和贵族宗庙祭祀的乐歌，又分为《周颂》《鲁颂》和《商颂》。
+孔子曾概括《诗经》宗旨为“无邪”，并教育弟子读《诗经》以作为立言、立行的标准。先秦诸子中，引用《诗经》者颇多，如孟子、荀子、墨子、庄子、韩非子等人在说理论证时，多引述《诗经》中的句子以增强说服力。至汉武帝时，《诗经》被儒家奉为经典，成为《六经》及《五经》之一。`,
+    }
+  },
+  filters: {
+    getGenderText(gender) {
+      if (GENDER_ENUM && GENDER_ENUM.properties && gender) {
+        return GENDER_ENUM.properties[gender].text.zh_CN
+      }
+      return '未知'
+    },
+    getFollowStateText(state) {
+      if (state == 10) {
+        return '待随访'
+      } else if (state == 20) {
+        return '随访中'
+      } else if (state == 30) {
+        return '随访完成'
+      } else if (state == 40) {
+        return '终止随访'
+      }
+    },
+    getFollowUpWayText(way) {
+      if (way == 1) {
+        return '人工随访'
+      } else if (way == 2) {
+        return '个人微信'
+      } else if (way == 3) {
+        return '公众号'
+      } else if (way == 4) {
+        return '企业微信'
+      }
+    },
+  },
+  onLoad(params) {
+    this.followUpNodeId = params.followUpNodeId
+    this.followUpPlanId = params.followUpPlanId
+    console.log('1', this.followUpNodeId, '2', this.followUpPlanId)
+    uni.$on(globalEventKeys.terminationFollowUp, (res) => {
+      console.log('event 监听', res)
+    })
+    uni.$on('followUpListUpdate', () => {
+      console.log('followUpListUpdate 监听')
+      this.getFollowUpList()
+    })
+    this.getFollowUpList()
+  },
+  onShow() {},
+  onUnload() {
+    uni.$off(globalEventKeys.terminationFollowUp)
+  },
+  computed: {},
+  methods: {
+    getFollowUpList() {
+      let that = this
+      followupAPI.getDetailService({ id: this.followUpPlanId }).then((res) => {
+        if (res.code == 0) {
+          const { nodeList, customer } = res.data
+          console.log('----------', nodeList, '--', res.data)
+          that.followDetail = {
+            ...res.data,
+            diagnosisTime: res.data?.diagnosisTime
+              ? moment(res.data.diagnosisTime).format('YYYY-MM-DD HH:mm')
+              : '无',
+            createUserName: res.data?.createUserName
+              ? res.data.createUserName
+              : '',
+          }
+          that.nodeList = nodeList
+          that.totalTime = nodeList.length
+          const finish = nodeList.filter((v) => v?.nodeFollowUpStatus != 10)
+          that.finishTime = finish.length
+          ;(that.planBeginTime = nodeList[0]?.planFollowUpDate
+            ? moment(nodeList[0].planFollowUpDate).format('YYYY-MM-DD')
+            : ''),
+            (that.planEndTime = nodeList[nodeList.length - 1]?.planFollowUpDate
+              ? moment(nodeList[nodeList.length - 1].planFollowUpDate).format(
+                  'YYYY-MM-DD',
+                )
+              : ''),
+            (that.customer = {
+              ...customer,
+              name: customer.name || '',
+              gender: customer.gender || 3,
+              age: customer.age || customer.medicalRecordNo || '',
+              mobile: customer.mobile || '',
+            })
+          console.log('customer', that.customer)
+        }
+      })
+    },
+  },
+}
+</script>
+
+<style lang="scss" scoped>
+.detailPage {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  scroll-view {
+    height: 100%;
+    position: relative;
+    .bg {
+      position: absolute;
+      width: 2500rpx;
+      height: 2440rpx;
+      border-radius: 1250rpx;
+      top: -2300rpx;
+      left: -875rpx;
+      background-color: $common-color;
+    }
+  }
+  .patientInfo {
+    box-sizing: border-box;
+    .patientCard {
+      display: inline-block;
+      width: 702rpx;
+      height: 208rpx;
+      position: absolute;
+      top: 0rpx;
+      left: 50%;
+      margin-left: -351rpx;
+      background-color: #fff;
+      padding: 32rpx 24rpx;
+      box-sizing: border-box;
+      border-radius: 8rpx;
+      box-shadow: 0rpx 4rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
+      > .patientDetail {
+        display: flex;
+        justify-content: space-between;
+        align-items: stretch;
+        .patientCenter {
+          padding-left: 32rpx;
+          flex: 1;
+          text-align: left;
+          overflow: hidden;
+          .patientTop {
+            width: 100%;
+            font-size: 34rpx;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0.9);
+            overflow: hidden;
+          }
+          .patientC {
+            font-size: 26rpx;
+            .age,
+            .gender {
+              vertical-align: middle;
+              display: inline-block;
+              background: #fff2e8;
+              color: #fa541c;
+              border-radius: 2rpx;
+              height: 40rpx;
+              line-height: 40rpx;
+              text-align: center;
+              padding: 2rpx 16rpx;
+            }
+          }
+          .patientBottom {
+            color: rgba($color: #000000, $alpha: 0.5);
+            font-size: 28rpx;
+          }
+        }
+        .patientRight {
+          font-size: 28rpx;
+          .circular {
+            display: inline-block;
+            width: 16rpx;
+            height: 16rpx;
+            border-radius: 50%;
+            margin-right: 12rpx;
+          }
+        }
+      }
+    }
+  }
+  .follow-info {
+    padding: 32rpx 48rpx;
+    .detail-info {
+      display: flex;
+      margin-bottom: 24rpx;
+      span:nth-child(1) {
+        flex: 30%;
+        text-align: left;
+        font-size: 28rpx;
+        color: #4c4c4c;
+      }
+      span:nth-child(2) {
+        flex: 70%;
+        font-size: 28rpx;
+        font-weight: 400;
+        color: #191919;
+      }
+    }
+    view.detail-info:last-child {
+      margin-bottom: 0rpx;
+    }
+  }
+  .followUpNode {
+    width: 100%;
+    .nodeTitle {
+      padding: 0rpx 32rpx;
+      width: 100%;
+      height: 64rpx;
+      line-height: 64rpx;
+      color: $common-color;
+      background-color: #eef8f3;
+      .icon_plane {
+        display: inline-block;
+        width: 36rpx;
+        height: 28rpx;
+        margin-right: 10rpx;
+      }
+      .plane_text {
+        font-size: 30rpx;
+      }
+    }
+  }
+  // 待随访
+  .followState_10 {
+    background-color: #faad14;
+  }
+  // 随访中
+  .followState_20 {
+    background-color: #722ed1;
+  }
+  // 随访完成
+  .followState_30 {
+    background-color: #089eba;
+  }
+  // 终止随访
+  .followState_40 {
+    background-color: #7f7f7f;
+  }
+  // 待随访
+  .state_10 {
+    color: #faad14;
+  }
+  // 随访中
+  .state_20 {
+    color: #722ed1;
+  }
+  // 随访完成
+  .state_30 {
+    color: #089eba;
+  }
+  // 终止随访
+  .state_40 {
+    color: #7f7f7f;
+  }
+}
+</style>
