@@ -5,7 +5,7 @@
       <input placeholder="搜索随访人" @input="handleChange" />
       <text @click="handleCancel">取消</text>
     </view>
-    <view class="result-list">
+    <view class="result-list" v-if="result.length > 0">
       <view
         class="item"
         v-for="(item, index) in result"
@@ -14,11 +14,13 @@
         >{{ item.staffName }}</view
       >
     </view>
+    <empty :disabled="true" v-else text="暂无数据" />
   </view>
 </template>
 <script>
 import followupAPI from '@/APIS/followup/followup.api.js'
 import followConfigData from './Data.js'
+import empty from '@/components/empty/empty.vue'
 
 const { BACKFILTERMODAL } = followConfigData
 export default {
@@ -49,12 +51,12 @@ export default {
           .then((res) => {
             this.result = res.data.slice(0, 3) || []
           })
-      }, 500)
+      }, 200)
     },
     handleSetStaff(item) {
       this.staffName = item.staffName
       uni.redirectTo({
-        url: `/pages/followup/home?staffName=${item.staffName}`,
+        url: `/pages/followup/home?staffName=${item.staffName}&staffId=${item.staffId}`,
       })
     },
   },
