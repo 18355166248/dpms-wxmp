@@ -92,7 +92,7 @@
             </view>
             <view
               class="carry mid"
-              @click="handleCarry"
+              @click="handleCarry(item)"
               v-if="item.nodeFollowUpStatus === 10"
               >执行</view
             >
@@ -590,7 +590,7 @@ page {
           color: #e64040;
         }
         .style-35 {
-          background: #5cbb89;
+          color: #5cbb89;
         }
       }
     }
