@@ -198,7 +198,7 @@ export default {
         activatedToothNumber: null,
       }
       console.log(Object.keys(value.teeth))
-      if (item.unit && item.unit === '颗') {
+      if (item.unit === '颗') {
         item.itemNum = Object.keys(value.teeth).length
       }
       Object.keys(value.teeth).forEach((x) => {
