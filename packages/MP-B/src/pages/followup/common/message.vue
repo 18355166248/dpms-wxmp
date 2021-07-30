@@ -1,17 +1,8 @@
 <template>
-  <!-- v-if="disabled" -->
   <view class="messageNode">
-    <view class="textWrap" v-if="message.contentType === 1">
-      <view ref="textBox" class="text-box">
-        <view class="textBtn">
-          详情<span class="iconfont icon-down"></span>
-        </view>
-        <span>【文字】</span>{{ message.text }}
-      </view>
-    </view>
     <view
       class="image"
-      v-else-if="message.contentType === 2 || message.contentType === 13"
+      v-if="message.contentType === 2 || message.contentType === 13"
     >
       <view class="image-box">
         <image
@@ -59,18 +50,7 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    this.$nextTick(() => {
-      let lineHeight = 22
-      console.log('offsetHeight', this.$refs.textBox.offsetHeight)
-      // if (this.$refs.textBox.offsetHeight > lineHeight * 3) {
-      //     this.expande = false
-      //     this.needShowExpande = true
-      // } else {
-      //     this.expande = true
-      // }
-    })
-  },
+  mounted() {},
   data() {
     return {}
   },
@@ -99,7 +79,6 @@ export default {
     overflow: hidden;
   }
   .text-box {
-    word-break: normal;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: justify;
@@ -107,6 +86,8 @@ export default {
     line-height: 1.5;
     max-height: 4.5em;
     transition: 0.3s max-height;
+    word-wrap: break-word;
+    word-break: normal;
     .textBtn {
       position: relative;
       float: right;

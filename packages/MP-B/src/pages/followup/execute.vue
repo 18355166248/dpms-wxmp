@@ -37,8 +37,8 @@
         <textarea
           class="txt"
           placeholder-style="font-size: 34rpx;font-weight: 400;color: rgba(0, 0, 0, 0.25);"
-          placeholder="请输入随访结果 (300字以内)"
-          maxlength="300"
+          placeholder="请输入随访结果 (200字以内)"
+          maxlength="200"
           v-model="form.followUpResult"
         />
       </div>
@@ -135,9 +135,7 @@ export default {
       // 计划详情
       let that = this
       const staff = getStorage(STORAGE_KEY.STAFF)
-      console.log('info', staff)
       followupAPI.getDetailService({ id: this.planId }).then((res) => {
-        console.log('---------plan', res)
         if (res.code == 0) {
           const { data } = res
           const currentNode = data.nodeList.find((v) => v.id == this.nodeId)
@@ -153,17 +151,14 @@ export default {
             followUpResult: '',
             realFollowUpUserId: staff.staffId,
           }
-          console.log('form', this.form)
         }
       })
       // 所有结果模板列表
       followupAPI.getAllResultsService().then((res) => {
-        console.log('data', res)
         if (res.code == 0) {
           this.templateList = []
           this.templateLabel = res.data?.followUpResultTemplateVOList[0].title
           res.data?.followUpResultTemplateVOList.map((v) => {
-            console.log('------title', v)
             this.templateList.push({
               label: v.title,
               value: v.content,
@@ -231,7 +226,6 @@ export default {
       }
     },
     onChange(e) {
-      console.log('e', e)
       this.templateIndex = e.detail.value
       const content = this.templateList[this.templateIndex].value
       this.form = {
@@ -241,7 +235,6 @@ export default {
     },
     // 点击确定
     submit() {
-      console.log('------------', this.form)
       this.$dpmsUtils.formValidate(
         this.rules,
         this.form,
@@ -260,22 +253,18 @@ export default {
             realFollowUpTime: moment(this.form.currentTime).valueOf(),
           }
           var pages = getCurrentPages()
-          console.log(
-            '--------form',
-            pages,
-            pages[pages.length - 2]?.route == 'pages/followup/detail',
-          )
           followupAPI.executeNode(params).then((res) => {
-            console.log('-----执行', res)
+            this.disabledSaveBtn = false
             if (pages[pages.length - 2]?.route == 'pages/followup/detail') {
-              console.log('repalce')
               this.$dpmsUtils.replace({
                 url:
                   '/pages/followup/detail?' +
                   `&followUpPlanId=${this.planId}` +
                   `&followUpNodeId=${this.nodeId}`,
               })
+              return
             }
+            this.$dpmsUtils.replace({ url: '/pages/followup/home' })
           })
         },
       )

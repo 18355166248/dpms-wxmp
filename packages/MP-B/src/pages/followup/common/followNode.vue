@@ -32,7 +32,16 @@
         <view class="box">
           <view class="title">随访内容</view>
           <view v-for="(msg, idx) in item.messageContentList" :key="msg.id">
-            <message :disabled="idx < 3" :message="msg" />
+            <textShrink
+              v-if="msg.contentType === 1 && idx < 3"
+              title="【文字】"
+              :content="msg.text"
+              :enterWidth="622"
+              bgColor="#fff"
+              :mb="16"
+              :p="16"
+            />
+            <message v-if="msg.contentType !== 1 && idx < 3" :message="msg" />
           </view>
           <view v-if="item.messageContentList.length > 3" class="tip">
             更多内容或详情登录PC端查看
@@ -44,7 +53,9 @@
             </view>
             <view class="row">
               <span class="left">随访项目：</span>
-              <span class="right">{{ item.showItem }}</span>
+              <span class="right">
+                <text-shrink :content="item.showItem" :enterWidth="458" />
+              </span>
             </view>
             <view class="row">
               <span class="left">{{
@@ -80,7 +91,9 @@
               "
             >
               <span class="left">随访结果：</span>
-              <span class="right">{{ item.followUpResult }}</span>
+              <span class="right">
+                <text-shrink :content="item.followUpResult" :enterWidth="458" />
+              </span>
             </view>
           </view>
           <view class="btnBox" v-if="item.nodeFollowUpStatus == 10">
@@ -101,11 +114,13 @@ import message from './message'
 import moment from 'moment'
 import _ from 'lodash'
 import followupAPI from '@/APIS/followup/followup.api.js'
+import textShrink from '@/components/textShrink/textShrink.vue'
 
 export default {
   name: '',
   components: {
     message,
+    textShrink,
   },
   props: {
     nodeList: {
@@ -144,7 +159,6 @@ export default {
     nodeList: {
       handler(newVal, oldVal) {
         if (this.followUpNodeId > 0 && newVal.length > 0) {
-          console.log('------', newVal)
           this.setShowData()
         }
       },
@@ -190,7 +204,6 @@ export default {
       } else {
         this.openIndex.push(index)
       }
-      console.log('openIndex', this.openIndex)
     },
     setShowData() {
       this.openIndex.push(
@@ -217,7 +230,9 @@ export default {
           v.followUpItems.map((item) => {
             if (item.appointmentItemId) {
               items = item.appointmentItemName
-                ? items + item.appointmentItemName
+                ? items == ''
+                  ? items + item.appointmentItemName
+                  : items + ',' + item.appointmentItemName
                 : items
             }
           })
@@ -226,7 +241,6 @@ export default {
         cloneData[index].showItem = items
       })
       this.nodeData = cloneData
-      console.log('this.nodeData', this.nodeData)
     },
     handleCarry(followUpNodeId) {
       this.$dpmsUtils.push({
@@ -237,7 +251,6 @@ export default {
       })
     },
     handleStop(followUpNodeId) {
-      console.log('custorm', this.customer)
       let customer = JSON.stringify(this.customer)
       this.$dpmsUtils.push({
         url:

@@ -69,8 +69,6 @@
           }}</span>
         </view>
       </view>
-      <!-- <grand :content="text" /> -->
-      <!-- <textShrink /> -->
       <view class="followUpNode">
         <view class="nodeTitle">
           <span class="icon_plane iconfont icon-calendar-check"></span>
@@ -94,8 +92,6 @@ import patientAvatar from '../../businessComponents/patientAvatar/patientAvatar.
 import { commonUtil } from 'mpcommon'
 import moment from 'moment'
 import followupAPI from '@/APIS/followup/followup.api.js'
-// import textShrink from '@/components/textShrink/textShrink.vue'
-// import grand from '@/components/textShrink/sunui-grand.vue'
 import { globalEventKeys } from '@/config/global.eventKeys.js'
 import followNode from './common/followNode'
 
@@ -105,8 +101,6 @@ export default {
   components: {
     patientAvatar,
     followNode,
-    // grand,
-    // textShrink,
   },
   data() {
     return {
@@ -119,9 +113,6 @@ export default {
       finishTime: 0,
       followUpNodeId: null,
       followUpPlanId: null,
-      //       text: `《诗经》，是中国古代诗歌开端，最早的一部诗歌总集，收集了西周初年至春秋中叶（前11世纪至前6世纪）的诗歌，共311篇，其中6篇为笙诗，即只有标题，没有内容，称为笙诗六篇（《南陔》《白华》《华黍》《由庚》《崇丘》《由仪》），反映了周初至周晚期约五百年间的社会面貌。 [1-2]
-      // 《诗经》的作者佚名，绝大部分已经无法考证，传为尹吉甫采集、孔子编订。《诗经》在先秦时期称为《诗》，或取其整数称《诗三百》。西汉时被尊为儒家经典，始称《诗经》，并沿用至今。诗经在内容上分为《风》《雅》《颂》三个部分。《风》是周代各地的歌谣；《雅》是周人的正声雅乐，又分《小雅》和《大雅》；《颂》是周王庭和贵族宗庙祭祀的乐歌，又分为《周颂》《鲁颂》和《商颂》。
-      // 孔子曾概括《诗经》宗旨为“无邪”，并教育弟子读《诗经》以作为立言、立行的标准。先秦诸子中，引用《诗经》者颇多，如孟子、荀子、墨子、庄子、韩非子等人在说理论证时，多引述《诗经》中的句子以增强说服力。至汉武帝时，《诗经》被儒家奉为经典，成为《六经》及《五经》之一。`,
     }
   },
   filters: {
