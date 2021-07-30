@@ -15,6 +15,8 @@ const globalEventKeys = {
   getDoctorListByPosition: 'getDoctorListByPosition',
   // 预约视图通知医生页面更新在职医生列表
   updateDoctorListByPosition: 'updateDoctorListByPosition',
+  // 终止随访
+  terminationFollowUp: 'terminationFollowUp',
 }
 
 export { globalEventKeys }

@@ -235,6 +235,24 @@
             "navigationBarTitleText": "搜索随访人",
             "disableScroll": true
           }
+        },
+        {
+          "path": "detail",
+          "style": {
+            "navigationBarTitleText": "查看随访计划"
+          }
+        },
+        {
+          "path": "terminationNode",
+          "style": {
+            "navigationBarTitleText": "终止随访"
+          }
+        },
+        {
+          "path": "execute",
+          "style": {
+            "navigationBarTitleText": "执行随访"
+          }
         }
       ]
     },

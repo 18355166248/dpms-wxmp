@@ -112,6 +112,22 @@ button::after {
 .icon-nan:before {
   content: '\e68d';
 }
+.icon-calendar-check:before {
+  content: '\e7d5';
+}
+.icon-up::before {
+  content: '\e68a';
+}
+.icon-down::before {
+  content: '\e684';
+}
+.icon-video::before {
+  content: '\e69e';
+}
+.icon-excel::before {
+  content: '\e69a';
+}
+
 /*今日就诊*/
 .icon-medicine-chest::before {
   content: '\e863';
