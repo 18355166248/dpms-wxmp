@@ -143,31 +143,61 @@
           <view class="institution-wrap filter-type" v-if="!isSingle">
             <view class="callapse">
               <text>按随访机构查看</text>
-              <view class=""></view>
+              <view
+                class="iconfont iconup1"
+                @click="showDetailIns"
+                v-if="institutionNodeVisible"
+              ></view>
+              <view
+                class="iconfont icondown1"
+                @click="showDetailIns"
+                v-if="!institutionNodeVisible"
+              ></view>
             </view>
-            <view class="list">
-              <view class="status-item">{{
-                institutionList[0].medicalInstitutionSimpleCode
-              }}</view>
-            </view>
-            <text>大区</text>
             <view class="list">
               <view
-                class="status-item"
-                v-for="(item, key) in regionList"
-                :key="key"
+                :class="[
+                  'status-item',
+                  institutionIndex.type === 0 ? 'selected' : '',
+                ]"
+                @click="hanldeSelectInstitution(institutionList[0])"
+                >{{ institutionList[0].medicalInstitutionSimpleCode }}</view
               >
-                {{ item.medicalInstitutionSimpleCode }}
+            </view>
+            <view v-if="institutionNodeVisible">
+              <text>大区</text>
+              <view class="list">
+                <view
+                  @click="hanldeSelectInstitution(item, key)"
+                  :class="[
+                    'status-item',
+                    institutionIndex.type === 3 &&
+                    institutionIndex.index === key
+                      ? 'selected'
+                      : '',
+                  ]"
+                  v-for="(item, key) in regionList"
+                  :key="key"
+                >
+                  {{ item.medicalInstitutionSimpleCode }}
+                </view>
               </view>
-            </view>
-            <text>连锁直营</text>
-            <view class="list">
-              <view
-                class="status-item"
-                v-for="(item, key) in directList"
-                :key="key"
-              >
-                {{ item.medicalInstitutionSimpleCode }}
+              <text>连锁直营</text>
+              <view class="list">
+                <view
+                  @click="hanldeSelectInstitution(item, key)"
+                  :class="[
+                    'status-item',
+                    institutionIndex.type !== 3 &&
+                    institutionIndex.index === key
+                      ? 'selected'
+                      : '',
+                  ]"
+                  v-for="(item, key) in directList"
+                  :key="key"
+                >
+                  {{ item.medicalInstitutionSimpleCode }}
+                </view>
               </view>
             </view>
           </view>
@@ -229,6 +259,7 @@ export default {
   data() {
     return {
       // 日历组件日期
+      institutionNodeVisible: true,
       institutionChainType: 1,
       followUpWay: followUpWay,
       mapStatusValue: mapStatusValue,
@@ -249,6 +280,10 @@ export default {
       endTimeStamp: moment().endOf('day').format('x'),
       planFollowUpUserId: '',
       nodeFollowUpStatus: '',
+      institutionIndex: {
+        index: 0,
+        type: 0,
+      },
     }
   },
   created() {
@@ -298,6 +333,9 @@ export default {
     }
   },
   methods: {
+    showDetailIns() {
+      this.institutionNodeVisible = !this.institutionNodeVisible
+    },
     isToday() {
       return (
         moment().format('YYYYMMDD') ===
@@ -398,6 +436,10 @@ export default {
     handleReset() {
       this.statusIndex = 0
       this.staffIndex = 0
+      this.institutionIndex = {
+        index: 0,
+        type: 0,
+      }
     },
     goSearch() {
       wx.navigateTo({
@@ -413,6 +455,14 @@ export default {
       uni.navigateTo({
         url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
       })
+    },
+    hanldeSelectInstitution(item, index) {
+      const { parentId, medicalInstitutionType, medicalInstitutionId } = item
+
+      this.institutionIndex = {
+        index: index,
+        type: parentId === 0 ? parentId : medicalInstitutionType,
+      }
     },
   },
   watch: {
@@ -673,6 +723,21 @@ page {
       width: 100%;
       padding: 32rpx;
       border-bottom: 1px solid #e5e5e5;
+      .callapse {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        > text {
+          font-size: 34rpx;
+          font-family: PingFangSC, PingFangSC-Regular;
+          color: #191919;
+          display: block;
+        }
+        .iconfont {
+          color: #4c4c4c;
+          font-size: 50rpx;
+        }
+      }
       > text {
         font-size: 34rpx;
         font-family: PingFangSC, PingFangSC-Regular;
