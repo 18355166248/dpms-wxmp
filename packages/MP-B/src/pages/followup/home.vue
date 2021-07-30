@@ -477,9 +477,15 @@ export default {
     },
     terminaNode(item) {
       const { followUpNodeId, followUpPlanId } = item
+      const customer = {
+        name: item.customerName,
+        gender: item.gender,
+        age: 0,
+        mobile: item.mobile,
+      }
       uni.navigateTo({
-        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}&staffDetail=${JSON.stringify(
-          item,
+        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}&customer=${JSON.stringify(
+          customer,
         )}`,
       })
     },

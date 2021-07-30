@@ -86,14 +86,12 @@ export default {
   },
   onLoad(params) {
     this.customer = JSON.parse(params.customer)
-    console.log('customer1', this.customer)
     this.followUpNodeId = params.followUpNodeId
     this.followUpPlanId = params.followUpPlanId
   },
   methods: {
     onSave() {
       var textValue = this.appointmentMemo.replace(/(^\s*)|(\s*$)/g, '')
-      console.log('onSave', textValue)
       if (!textValue || textValue == '') {
         this.$dpmsUtils.show('请输入终止原因')
         return
@@ -103,16 +101,13 @@ export default {
         followUpPlanId: this.followUpPlanId,
         terminationReason: this.appointmentMemo,
       }
-      console.log('---reason', params)
       let that = this
       followupAPI.abortFollowupNode(params).then((res) => {
         const pages = getCurrentPages()
-        console.log('res', res, '---', pages)
         // res.data返回followUpNodeId
         if (res.code == 0) {
           if (pages[pages.length - 2]?.route === 'pages/followup/detail') {
             uni.$emit(globalEventKeys.terminationFollowUp, res.data)
-            console.log('------------')
             that.$dpmsUtils.replace({
               url:
                 '/pages/followup/detail?' +
@@ -121,6 +116,7 @@ export default {
             })
             return
           }
+          this.$dpmsUtils.replace({ url: '/pages/followup/home' })
         }
       })
     },
