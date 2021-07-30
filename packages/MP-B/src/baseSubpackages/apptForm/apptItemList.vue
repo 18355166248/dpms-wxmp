@@ -28,6 +28,7 @@
                 <checkbox
                   :value="item.id"
                   :checked="checked.includes(item.id)"
+                  class="checkbox"
                 />
                 {{ item.name }}
               </label>
@@ -119,6 +120,21 @@ export default {
   height: 100%;
   background: #ffffff;
   overflow-x: hidden;
+
+  .checkbox {
+    /deep/ .wx-checkbox-input {
+      width: 32rpx;
+      height: 32rpx;
+      margin-bottom: 6rpx;
+      margin-right: 16rpx;
+    }
+
+    /deep/ .wx-checkbox-input.wx-checkbox-input-checked {
+      border: 1px solid #5cbb89;
+      background: #5cbb89;
+      color: #ffffff !important;
+    }
+  }
 
   .collapseItemTitle {
     background-color: rgba(0, 0, 0, 0.04);
