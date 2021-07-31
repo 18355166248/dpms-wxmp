@@ -85,9 +85,9 @@ export default {
     },
   },
   onLoad(params) {
-    this.customer = JSON.parse(params.customer)
     this.followUpNodeId = params.followUpNodeId
     this.followUpPlanId = params.followUpPlanId
+    this.getFollowUpList()
   },
   methods: {
     onSave() {
@@ -101,22 +101,27 @@ export default {
         followUpPlanId: this.followUpPlanId,
         terminationReason: this.appointmentMemo,
       }
-      let that = this
       followupAPI.abortFollowupNode(params).then((res) => {
         const pages = getCurrentPages()
         // res.data返回followUpNodeId
         if (res.code == 0) {
-          if (pages[pages.length - 2]?.route === 'pages/followup/detail') {
-            uni.$emit(globalEventKeys.terminationFollowUp, res.data)
-            that.$dpmsUtils.replace({
-              url:
-                '/pages/followup/detail?' +
-                `&followUpPlanId=${this.followUpPlanId}` +
-                `&followUpNodeId=${this.followUpNodeId}`,
-            })
-            return
+          uni.$emit('followUpListUpdate')
+          this.$dpmsUtils.back()
+        }
+      })
+    },
+    getFollowUpList() {
+      followupAPI.getDetailService({ id: this.followUpPlanId }).then((res) => {
+        console.log('detail', res)
+        if (res.code == 0) {
+          const { customer } = res.data
+          this.customer = {
+            ...customer,
+            name: customer.name || '',
+            gender: customer.gender || 3,
+            age: customer.medicalRecordNo || '',
+            mobile: customer.mobile || '',
           }
-          this.$dpmsUtils.replace({ url: '/pages/followup/home' })
         }
       })
     },

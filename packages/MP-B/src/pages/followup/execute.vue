@@ -147,7 +147,9 @@ export default {
               currentNode.nodeSendStatus,
             ),
             // 设置默认'沟通方式'
-            ...that.getInitialCommunicationType(data.followUpWay),
+            communicationTypeText: '手机',
+            communicationType: 1,
+            // ...that.getInitialCommunicationType(data.followUpWay),
             followUpResult: '',
             realFollowUpUserId: staff.staffId,
           }
@@ -230,7 +232,7 @@ export default {
       const content = this.templateList[this.templateIndex].value
       this.form = {
         ...this.form,
-        followUpResult: content,
+        followUpResult: this.form.followUpResult + content,
       }
     },
     // 点击确定
@@ -252,19 +254,12 @@ export default {
             followUpPlanId: this.planId,
             realFollowUpTime: moment(this.form.currentTime).valueOf(),
           }
-          var pages = getCurrentPages()
           followupAPI.executeNode(params).then((res) => {
             this.disabledSaveBtn = false
-            if (pages[pages.length - 2]?.route == 'pages/followup/detail') {
-              this.$dpmsUtils.replace({
-                url:
-                  '/pages/followup/detail?' +
-                  `&followUpPlanId=${this.planId}` +
-                  `&followUpNodeId=${this.nodeId}`,
-              })
-              return
+            if (res.code == 0) {
+              uni.$emit('followUpListUpdate')
+              this.$dpmsUtils.back()
             }
-            this.$dpmsUtils.replace({ url: '/pages/followup/home' })
           })
         },
       )

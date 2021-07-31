@@ -320,6 +320,10 @@ export default {
   },
   onLoad(options) {
     console.log('options', options)
+    uni.$on('followUpListUpdate', () => {
+      console.log('event: followup node already change')
+      this.getFollowupList()
+    })
     const { staffName, staffId } = options
     if (staffName) {
       this.filterModal = true
@@ -331,6 +335,9 @@ export default {
         },
       ]
     }
+  },
+  onUnload() {
+    uni.$off('followUpListUpdate')
   },
   methods: {
     showDetailIns() {
@@ -477,16 +484,8 @@ export default {
     },
     terminaNode(item) {
       const { followUpNodeId, followUpPlanId } = item
-      const customer = {
-        name: item.customerName,
-        gender: item.gender,
-        age: 0,
-        mobile: item.mobile,
-      }
       uni.navigateTo({
-        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}&customer=${JSON.stringify(
-          customer,
-        )}`,
+        url: `/pages/followup/terminationNode?followUpNodeId=${followUpNodeId}&followUpPlanId=${followUpPlanId}`,
       })
     },
     hanldeSelectInstitution(item, index) {
