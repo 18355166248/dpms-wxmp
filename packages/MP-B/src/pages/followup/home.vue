@@ -366,12 +366,20 @@ export default {
       )
     },
     getFollowupList(params) {
+      this.calendarDate =
+        this.calendarDate instanceof moment
+          ? this.calendarDate
+          : moment(String(this.calendarDate))
       followupAPI
         .getFollowupNodeList({
           size: 1000,
           current: this.current,
-          followUpPlanNodeBeginTimeLeft: this.startTimeStamp,
-          followUpPlanNodeBeginTimeRight: this.endTimeStamp,
+          followUpPlanNodeBeginTimeLeft: this.calendarDate
+            .startOf('day')
+            .format('x'),
+          followUpPlanNodeBeginTimeRight: this.calendarDate
+            .endOf('day')
+            .format('x'),
           planFollowUpUserId: this.planFollowUpUserId,
           ...params,
         })
