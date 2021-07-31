@@ -161,28 +161,24 @@ export default {
   onLoad(params) {
     this.followUpNodeId = params.followUpNodeId
     this.followUpPlanId = params.followUpPlanId
-    console.log('1', this.followUpNodeId, '2', this.followUpPlanId)
-    uni.$on(globalEventKeys.terminationFollowUp, (res) => {
-      console.log('event 监听', res)
-    })
     uni.$on('followUpListUpdate', () => {
-      console.log('followUpListUpdate 监听')
+      console.log('followUpListUpdate event')
       this.getFollowUpList()
     })
     this.getFollowUpList()
   },
   onShow() {},
   onUnload() {
-    uni.$off(globalEventKeys.terminationFollowUp)
+    uni.$off('followUpListUpdate')
   },
   computed: {},
   methods: {
     getFollowUpList() {
       let that = this
       followupAPI.getDetailService({ id: this.followUpPlanId }).then((res) => {
+        console.log('detail', res)
         if (res.code == 0) {
           const { nodeList, customer } = res.data
-          console.log('----------', nodeList, '--', res.data)
           that.followDetail = {
             ...res.data,
             diagnosisTime: res.data?.diagnosisTime
@@ -208,10 +204,9 @@ export default {
               ...customer,
               name: customer.name || '',
               gender: customer.gender || 3,
-              age: customer.age || customer.medicalRecordNo || '',
+              age: customer.medicalRecordNo || '',
               mobile: customer.mobile || '',
             })
-          console.log('customer', that.customer)
         }
       })
     },

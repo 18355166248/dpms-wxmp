@@ -1,5 +1,5 @@
 <template>
-  <view class="nodeDetail">
+  <view v-if="nodeList.length > 0" class="nodeDetail">
     <view v-for="(item, index) in nodeData" :key="index">
       <view class="nodeBox">
         <view class="left">
@@ -211,18 +211,16 @@ export default {
       )
       let cloneData = _.cloneDeep(this.nodeList)
       this.nodeList.map((v, index) => {
-        cloneData[index].nodeTime = moment(v.planFollowUpDate).format(
-          'YYYY-MM-DD HH:mm',
-        )
+        let date = moment(v.planFollowUpDate).format('YYYY-MM-DD')
+        let time = moment(v.planFollowUpTime).format('HH:mm')
+        cloneData[index].nodeTime = `${date} ${time}`
         if (v.nodeFollowUpStatus == 31 || v.nodeFollowUpStatus == 35) {
           cloneData[index].showTime = moment(v.realFollowUpTime).format(
             'YYYY-MM-DD HH:mm',
           )
           cloneData[index].showName = v.realFollowUpUserName
         } else {
-          cloneData[index].showTime = moment(v.planFollowUpDate).format(
-            'YYYY-MM-DD HH:mm',
-          )
+          cloneData[index].showTime = `${date} ${time}`
           cloneData[index].showName = v.planFollowUpUserName
         }
         let items = ''
@@ -243,7 +241,7 @@ export default {
       this.nodeData = cloneData
     },
     handleCarry(followUpNodeId) {
-      this.$dpmsUtils.push({
+      uni.navigateTo({
         url:
           '/pages/followup/execute?' +
           `&followUpPlanId=${this.followUpPlanId}` +
@@ -251,11 +249,9 @@ export default {
       })
     },
     handleStop(followUpNodeId) {
-      let customer = JSON.stringify(this.customer)
-      this.$dpmsUtils.push({
+      uni.navigateTo({
         url:
           '/pages/followup/terminationNode?' +
-          `&customer=${customer}` +
           `&followUpPlanId=${this.followUpPlanId}` +
           `&followUpNodeId=${followUpNodeId}`,
       })
