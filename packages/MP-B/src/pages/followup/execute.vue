@@ -257,7 +257,15 @@ export default {
           followupAPI.executeNode(params).then((res) => {
             this.disabledSaveBtn = false
             if (res.code == 0) {
-              uni.$emit('followUpListUpdate')
+              let pages = getCurrentPages() //获取页面栈
+              if (pages[pages.length - 2]?.route === 'pages/followup/detail') {
+                console.log('detail')
+                uni.$emit('followUpDetailUpdate')
+                uni.$emit('followUpHomeUpdate')
+              } else {
+                console.log('home')
+                uni.$emit('followUpHomeUpdate')
+              }
               this.$dpmsUtils.back()
             }
           })

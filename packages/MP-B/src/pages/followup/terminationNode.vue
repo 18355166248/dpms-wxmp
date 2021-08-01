@@ -102,10 +102,17 @@ export default {
         terminationReason: this.appointmentMemo,
       }
       followupAPI.abortFollowupNode(params).then((res) => {
-        const pages = getCurrentPages()
         // res.data返回followUpNodeId
         if (res.code == 0) {
-          uni.$emit('followUpListUpdate')
+          let pages = getCurrentPages() //获取页面栈
+          if (pages[pages.length - 2]?.route === 'pages/followup/detail') {
+            console.log('detail')
+            uni.$emit('followUpHomeUpdate')
+            uni.$emit('followUpDetailUpdate')
+          } else {
+            console.log('home')
+            uni.$emit('followUpHomeUpdate')
+          }
           this.$dpmsUtils.back()
         }
       })
