@@ -161,15 +161,15 @@ export default {
   onLoad(params) {
     this.followUpNodeId = params.followUpNodeId
     this.followUpPlanId = params.followUpPlanId
-    uni.$on('followUpListUpdate', () => {
-      console.log('followUpListUpdate event')
+    uni.$on('followUpDetailUpdate', () => {
+      console.log('detail followUpDetailUpdate event')
       this.getFollowUpList()
     })
     this.getFollowUpList()
   },
   onShow() {},
   onUnload() {
-    uni.$off('followUpListUpdate')
+    uni.$off('followUpDetailUpdate')
   },
   computed: {},
   methods: {

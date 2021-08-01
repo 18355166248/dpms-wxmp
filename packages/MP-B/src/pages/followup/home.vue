@@ -320,8 +320,8 @@ export default {
   },
   onLoad(options) {
     console.log('options', options)
-    uni.$on('followUpListUpdate', () => {
-      console.log('event: followup node already change')
+    uni.$on('followUpHomeUpdate', () => {
+      console.log('home event: followup node already change')
       this.getFollowupList()
     })
     const { staffName, staffId } = options
@@ -337,7 +337,7 @@ export default {
     }
   },
   onUnload() {
-    uni.$off('followUpListUpdate')
+    uni.$off('followUpHomeUpdate')
   },
   methods: {
     showDetailIns() {

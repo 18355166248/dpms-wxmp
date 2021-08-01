@@ -267,8 +267,11 @@ export default {
               followUpPlanId: this.followUpPlanId,
             })
             this.$dpmsUtils.clearLoading()
-            this.$dpmsUtils.show('删除成功', { icon: 'success' })
-            uni.$emit('followUpListUpdate')
+            if (res.code === 0) {
+              this.$dpmsUtils.show('删除成功', { icon: 'success' })
+              uni.$emit('followUpDetailUpdate')
+              uni.$emit('followUpHomeUpdate')
+            }
           }
         },
       })
