@@ -394,7 +394,7 @@ export default {
         moment(stamp).format('YYYY-MM-DD') + ' ' + moment(timer).format('HH:mm')
       )
     },
-    getFollowupList(params) {
+    getFollowupList(params, cb) {
       this.calendarDate =
         this.calendarDate instanceof moment
           ? this.calendarDate
@@ -422,6 +422,7 @@ export default {
           // this.followupList = [...this.followupList, ...result]
           this.followupList = result
           uni.hideLoading()
+          cb && cb()
         })
         .catch((err) => {
           uni.hideLoading()
@@ -520,7 +521,10 @@ export default {
             })
             this.$dpmsUtils.clearLoading()
             this.$dpmsUtils.show('删除成功', { icon: 'success' })
-            this.getFollowupList()
+            this.getFollowupList(
+              {},
+              () => (this.dropDownBoxVisibleIndex = false),
+            )
           }
         },
       })
