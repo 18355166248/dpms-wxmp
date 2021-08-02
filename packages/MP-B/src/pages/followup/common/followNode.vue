@@ -54,7 +54,11 @@
             <view class="row">
               <span class="left">随访项目：</span>
               <span class="right">
-                <text-shrink :content="item.showItem" :enterWidth="458" />
+                <text-shrink
+                  :content="item.showItem"
+                  :enterWidth="458"
+                  :changeColor="true"
+                />
               </span>
             </view>
             <view class="row">
@@ -92,7 +96,11 @@
             >
               <span class="left">随访结果：</span>
               <span class="right">
-                <text-shrink :content="item.followUpResult" :enterWidth="458" />
+                <text-shrink
+                  :content="item.followUpResult"
+                  :enterWidth="458"
+                  :changeColor="true"
+                />
               </span>
             </view>
           </view>

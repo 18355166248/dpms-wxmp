@@ -1,6 +1,6 @@
 <template>
-  <div class="editPatientForm">
-    <dpmsForm ref="editPatientForm" :model="form" :rules="rules">
+  <div class="executeForm">
+    <dpmsForm ref="executeForm" :model="form" :rules="rules">
       <dpmsCell title="实际随访时间" :value="form.currentTime" />
       <dpmsCell title="实际随访人" :value="form.followUpName" />
       <dpmsCellPicker
@@ -122,7 +122,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['isPhoneXCeil']),
+    ...mapState('systemStore', ['isPhoneXCeil']),
   },
   onLoad(params) {
     this.planId = params.followUpPlanId
@@ -283,7 +283,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.editPatientForm {
+.executeForm {
   margin-bottom: 80rpx;
   // 页面元素少的时候，整个页面没撑起来
   min-height: calc(100vh - 80rpx);
@@ -324,6 +324,10 @@ export default {
   position: fixed;
   bottom: 0;
   width: 750rpx;
+  z-index: 9;
+}
+.bt-68 {
+  bottom: 68rpx;
   z-index: 9;
 }
 
