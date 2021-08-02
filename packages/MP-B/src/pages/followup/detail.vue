@@ -1,6 +1,6 @@
 <template>
   <view class="detailPage">
-    <scroll-view scroll-y class="h100">
+    <scroll-view scroll-y class="h100 detail-sv">
       <view class="bg" />
       <view class="patientInfo tc">
         <view class="patientCard">
@@ -219,6 +219,7 @@ export default {
   width: 100%;
   height: 100%;
   background: #fff;
+  padding-bottom: 68rpx;
   scroll-view {
     height: 100%;
     position: relative;

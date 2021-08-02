@@ -18,13 +18,13 @@
       </label>
     </checkbox-group>
 
-    <div class="text">
+    <div class="text" :class="changeColor ? 'newText' : ''">
       <label class="btn" for="exp1" :style="{ background: bgColor }">
         <span v-if="unfold">详情<span class="iconfont icon-down"></span></span>
         <span v-if="!unfold">收起<span class="iconfont icon-up"></span></span>
       </label>
-      <span>{{ title }}</span
-      ><span>{{ content }}</span>
+      <span class="title">{{ title }}</span
+      >{{ content }}
     </div>
   </div>
 </template>
@@ -61,6 +61,10 @@ export default {
       type: Number,
       default: 0,
     },
+    changeColor: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   onLoad() {},
@@ -78,7 +82,7 @@ export default {
   overflow: hidden;
 }
 .text {
-  font-size: 26rpx;
+  font-size: 28rpx;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: justify;
@@ -87,7 +91,13 @@ export default {
   max-height: 4.5em;
   transition: 0.3s max-height;
   word-wrap: break-word;
-  word-break: normal;
+  word-break: break-all;
+  color: rgba(0, 0, 0, 0.65);
+  .title {
+    font-size: 28rpx;
+    color: rgba(0, 0, 0, 0.85);
+    font-weight: 500;
+  }
 }
 .text::before {
   content: '';
@@ -99,9 +109,13 @@ export default {
   width: 999vw;
   height: 999vw;
   position: absolute;
-  box-shadow: inset calc(100rpx - 999vw) calc(38rpx - 999vw) 0 0
-    rgba(255, 255, 255, 1);
   margin-left: -100rpx;
+}
+.text::after {
+  box-shadow: inset calc(100rpx - 999vw) calc(38rpx - 999vw) 0 0 #fff;
+}
+.newText::after {
+  box-shadow: inset calc(100rpx - 999vw) calc(38rpx - 999vw) 0 0 #f0f0f0;
 }
 .btn {
   position: relative;
