@@ -277,8 +277,13 @@ export default {
             this.$dpmsUtils.clearLoading()
             if (res.code === 0) {
               this.$dpmsUtils.show('删除成功', { icon: 'success' })
-              uni.$emit('followUpDetailUpdate')
-              uni.$emit('followUpHomeUpdate')
+              if (this.nodeList.length > 1) {
+                uni.$emit('followUpDetailUpdate')
+                uni.$emit('followUpHomeUpdate')
+              } else {
+                uni.$emit('followUpHomeUpdate')
+                this.$dpmsUtils.back()
+              }
             }
           }
         },
