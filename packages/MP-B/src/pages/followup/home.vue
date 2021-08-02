@@ -13,6 +13,14 @@
         >返回今天</text
       >
     </view>
+
+    <view class="selected-chara-list" v-if="selectedCharas.length > 0">
+      <view class="item" v-for="(item, index) in selectedCharas" :key="index">
+        <text>{{ item.value }}</text>
+        <view class="iconfont iconclose" @click="refreshView(item)"></view>
+      </view>
+    </view>
+
     <view class="follow-node-list" v-if="followupList.length > 0">
       <view
         class="follow-node-item"
@@ -284,6 +292,7 @@ export default {
         index: 0,
         type: 0,
       },
+      selectedCharas: [],
     }
   },
   created() {
@@ -319,7 +328,6 @@ export default {
     this.calendarDate
   },
   onLoad(options) {
-    console.log('options', options)
     uni.$on('followUpHomeUpdate', () => {
       console.log('home event: followup node already change')
       this.getFollowupList()
@@ -340,6 +348,27 @@ export default {
     uni.$off('followUpHomeUpdate')
   },
   methods: {
+    refreshView(item) {
+      let index
+      // 如果是状态
+      if (item.hasOwnProperty('key')) {
+        this.selectedCharas = this.selectedCharas.filter(
+          (i) => !i.hasOwnProperty('key'),
+        )
+        this.statusIndex = 0
+        this.nodeFollowUpStatus = ''
+        this.getFollowupList()
+      }
+
+      if (item.hasOwnProperty('staffId')) {
+        this.selectedCharas = this.selectedCharas.filter(
+          (i) => !i.hasOwnProperty('staffId'),
+        )
+        this.staffIndex = 0
+        this.planFollowUpUserId = ''
+        this.getFollowupList()
+      }
+    },
     showDetailIns() {
       this.institutionNodeVisible = !this.institutionNodeVisible
     },
@@ -370,6 +399,10 @@ export default {
         this.calendarDate instanceof moment
           ? this.calendarDate
           : moment(String(this.calendarDate))
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
       followupAPI
         .getFollowupNodeList({
           size: 1000,
@@ -381,12 +414,17 @@ export default {
             .endOf('day')
             .format('x'),
           planFollowUpUserId: this.planFollowUpUserId,
+          nodeFollowUpStatus: this.nodeFollowUpStatus,
           ...params,
         })
         .then((res) => {
           const result = res.data.records || []
           // this.followupList = [...this.followupList, ...result]
           this.followupList = result
+          uni.hideLoading()
+        })
+        .catch((err) => {
+          uni.hideLoading()
         })
     },
     dateChange({ fulldate }) {
@@ -409,6 +447,11 @@ export default {
         nodeFollowUpStatus: this.nodeFollowUpStatus,
         planFollowUpUserId: this.planFollowUpUserId,
       })
+
+      this.selectedCharas = [
+        this.statusIndex && this.statusList[this.statusIndex],
+        this.staffIndex && this.staffs[this.staffIndex],
+      ].filter((i) => !!i)
     },
     goBackToday() {
       // this.calendarDate = moment().format('YYYY-MM-DD')
@@ -500,6 +543,11 @@ export default {
   watch: {
     calendarDate(newVal, oldVal) {
       newVal = newVal instanceof moment ? newVal : moment(String(newVal))
+      this.selectedCharas = []
+      this.statusIndex = 0
+      this.staffIndex = 0
+      this.nodeFollowUpStatus = ''
+      this.planFollowUpUserId = ''
       this.getFollowupList({
         followUpPlanNodeBeginTimeLeft: newVal.startOf('day').format('x'),
         followUpPlanNodeBeginTimeRight: newVal.endOf('day').format('x'),
@@ -521,6 +569,34 @@ page {
   height: 100%;
   overflow-y: scroll;
   position: relative;
+  .selected-chara-list {
+    display: flex;
+    width: 100%;
+    padding: 0 24rpx;
+    margin-top: 24rpx;
+    .item {
+      height: 56rpx;
+      opacity: 1;
+      background: #eef8f3;
+      border: 1rpx solid #5cbb89;
+      border-radius: 4rpx;
+      padding: 0 22rpx 0 16rpx;
+      display: flex;
+      align-items: center;
+      margin-right: 16rpx;
+
+      > text {
+        font-size: 28rpx;
+        font-family: PingFangSC, PingFangSC-Regular;
+        color: #5cbb89;
+        margin-right: 14rpx;
+      }
+      .iconfont {
+        color: #6cc194;
+        font-size: 28rpx;
+      }
+    }
+  }
 }
 .toolbar-wrap {
   margin-top: 16rpx;
@@ -552,7 +628,7 @@ page {
 }
 .follow-node-list {
   width: 702rpx;
-  margin: 24px auto;
+  margin: 24rpx auto;
 
   .follow-node-item {
     box-sizing: border-box;
