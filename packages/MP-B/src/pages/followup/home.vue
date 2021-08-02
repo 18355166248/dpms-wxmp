@@ -1,6 +1,7 @@
 <template>
   <view class="followup-home" @click="hideDropDownBox">
     <calendar
+      v-if="calendarVisible"
       :value="calendarDate"
       @change="dateChange"
       @collapseChange="collapseChange"
@@ -9,9 +10,7 @@
     <view class="toolbar-wrap">
       <view class="icon-whole iconfont" @click="showFilterModal"></view>
       <text class="date">{{ showDate() }}</text>
-      <text class="return" @click="goBackToday" v-if="!isToday()"
-        >返回今天</text
-      >
+      <text class="return" @click="goBackToday">返回今天</text>
     </view>
 
     <view class="selected-chara-list" v-if="selectedCharas.length > 0">
@@ -20,101 +19,108 @@
         <view class="iconfont iconclose" @click="refreshView(item)"></view>
       </view>
     </view>
-
-    <view class="follow-node-list" v-if="followupList.length > 0">
-      <view
-        class="follow-node-item"
-        v-for="(item, index) in followupList"
-        :key="index"
-      >
-        <view class="name-status">
-          <text class="name">{{ item.followUpTypeName }}</text>
-          <view class="status-wrap">
-            <view :class="['dot', `style-${item.nodeFollowUpStatus}`]"></view>
-            <text :class="[`style-${item.nodeFollowUpStatus}`]">{{
-              mapStatusValue[item.nodeFollowUpStatus]
-            }}</text>
+    <scroll-view
+      v-if="followupList.length > 0"
+      class="content"
+      :scroll-y="true"
+      lower-threshold="100"
+      @scrolltolower="handleScrollBottom"
+    >
+      <view class="follow-node-list">
+        <view
+          class="follow-node-item"
+          v-for="(item, index) in followupList"
+          :key="index"
+        >
+          <view class="name-status">
+            <text class="name">{{ item.followUpTypeName }}</text>
+            <view class="status-wrap">
+              <view :class="['dot', `style-${item.nodeFollowUpStatus}`]"></view>
+              <text :class="[`style-${item.nodeFollowUpStatus}`]">{{
+                mapStatusValue[item.nodeFollowUpStatus]
+              }}</text>
+            </view>
           </view>
-        </view>
-        <view class="detail">
-          <view class="basic">
-            <text>{{ item.customerName }}</text>
-            <view class="icon-nan iconfont male"></view>
-            <view class="iconfont iconphone"></view>
-            <text class="phone">{{ item.realMobile }}</text>
-            <!-- <view class="icon-shengri iconfont"></view>
-            <text class="age">22岁</text> -->
-          </view>
-          <view
-            class="line-info-wrap"
-            v-if="
-              item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
-            "
-          >
-            <view class="left">计划节点时间：</view>
-            <view class="right">{{
-              formatStamp(item.planFollowUpDate, item.planFollowUpTime)
-            }}</view>
-          </view>
-          <view class="line-info-wrap" v-else>
-            <view class="left">实际随访时间：</view>
-            <view class="right">{{
-              formatStamp(item.planFollowUpDate, item.planFollowUpTime)
-            }}</view>
-          </view>
-          <view class="line-info-wrap">
-            <view class="left">随访方式：</view>
-            <view class="right">{{ followUpWay[item.followUpWay] }}</view>
-          </view>
-          <view
-            class="line-info-wrap"
-            v-if="
-              item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
-            "
-          >
-            <view class="left">计划随访人：</view>
-            <view class="right">{{ item.planFollowUpUserName }}</view>
-          </view>
-          <view class="line-info-wrap" v-else>
-            <view class="left">实际随访人：</view>
-            <view class="right">{{ item.planFollowUpUserName }}</view>
-          </view>
-          <view class="line-info-wrap" v-if="institutionChainType !== 1">
-            <view class="left">随访机构：</view>
-            <view class="right">{{ item.institutionName }}</view>
-          </view>
-          <view class="operate">
-            <view
-              class="more"
-              @click.stop="showDropDownBox(index)"
-              v-if="item.nodeFollowUpStatus === 10"
-            >
-              更多
-              <view
-                class="drop-down"
-                v-if="dropDownBoxVisibleIndex === index + 1"
-              >
-                <view class="stop" @click="terminaNode(item)">终止</view>
-                <view class="delete" @click="deleteNode(item)">删除</view>
-              </view>
+          <view class="detail">
+            <view class="basic">
+              <text>{{ item.customerName }}</text>
+              <view class="icon-nan iconfont male"></view>
+              <view class="iconfont iconphone"></view>
+              <text class="phone">{{ item.realMobile }}</text>
+              <!-- <view class="icon-shengri iconfont"></view>
+              <text class="age">22岁</text> -->
             </view>
             <view
-              class="carry mid"
-              @click="handleCarry(item)"
-              v-if="item.nodeFollowUpStatus === 10"
-              >执行</view
+              class="line-info-wrap"
+              v-if="
+                item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
+              "
             >
+              <view class="left">计划节点时间：</view>
+              <view class="right">{{
+                formatStamp(item.planFollowUpDate, item.planFollowUpTime)
+              }}</view>
+            </view>
+            <view class="line-info-wrap" v-else>
+              <view class="left">实际随访时间：</view>
+              <view class="right">{{
+                formatStamp(item.planFollowUpDate, item.realFollowUpTime)
+              }}</view>
+            </view>
+            <view class="line-info-wrap">
+              <view class="left">随访方式：</view>
+              <view class="right">{{ followUpWay[item.followUpWay] }}</view>
+            </view>
             <view
-              class="carry mid retry"
-              @click="followupAgain(item)"
-              v-if="item.nodeFollowUpStatus === 31"
-              >重新随访</view
+              class="line-info-wrap"
+              v-if="
+                item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
+              "
             >
-            <view class="inspect" @click="handleInspect(item)">查看</view>
+              <view class="left">计划随访人：</view>
+              <view class="right">{{ item.planFollowUpUserName }}</view>
+            </view>
+            <view class="line-info-wrap" v-else>
+              <view class="left">实际随访人：</view>
+              <view class="right">{{ item.realFollowUpUserName }}</view>
+            </view>
+            <view class="line-info-wrap" v-if="institutionChainType !== 1">
+              <view class="left">随访机构：</view>
+              <view class="right">{{ item.institutionName }}</view>
+            </view>
+            <view class="operate">
+              <view
+                class="more"
+                @click.stop="showDropDownBox(index)"
+                v-if="item.nodeFollowUpStatus === 10"
+              >
+                更多
+                <view
+                  class="drop-down"
+                  v-if="dropDownBoxVisibleIndex === index + 1"
+                >
+                  <view class="stop" @click="terminaNode(item)">终止</view>
+                  <view class="delete" @click="deleteNode(item)">删除</view>
+                </view>
+              </view>
+              <view
+                class="carry mid"
+                @click="handleCarry(item)"
+                v-if="item.nodeFollowUpStatus === 10"
+                >执行</view
+              >
+              <view
+                class="carry mid retry"
+                @click="followupAgain(item)"
+                v-if="item.nodeFollowUpStatus === 31"
+                >重新随访</view
+              >
+              <view class="inspect" @click="handleInspect(item)">查看</view>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
 
     <empty :disabled="true" v-else text="暂无数据" />
 
@@ -196,7 +202,8 @@
                   @click="hanldeSelectInstitution(item, key)"
                   :class="[
                     'status-item',
-                    institutionIndex.type !== 3 &&
+                    (institutionIndex.type === 2 ||
+                      institutionIndex.type === 4) &&
                     institutionIndex.index === key
                       ? 'selected'
                       : '',
@@ -266,7 +273,7 @@ export default {
   },
   data() {
     return {
-      // 日历组件日期
+      totalPage: 0,
       institutionNodeVisible: true,
       institutionChainType: 1,
       followUpWay: followUpWay,
@@ -293,6 +300,8 @@ export default {
         type: 0,
       },
       selectedCharas: [],
+      calendarVisible: true,
+      medicalInstitutionId: '',
     }
   },
   created() {
@@ -348,6 +357,17 @@ export default {
     uni.$off('followUpHomeUpdate')
   },
   methods: {
+    handleScrollBottom() {
+      if (this.current > this.totalPage) {
+        return
+      }
+      this.getFollowupList(
+        {
+          current: this.current++,
+        },
+        'page',
+      )
+    },
     refreshView(item) {
       let index
       // 如果是状态
@@ -394,7 +414,7 @@ export default {
         moment(stamp).format('YYYY-MM-DD') + ' ' + moment(timer).format('HH:mm')
       )
     },
-    getFollowupList(params, cb) {
+    getFollowupList(params, type) {
       this.calendarDate =
         this.calendarDate instanceof moment
           ? this.calendarDate
@@ -405,7 +425,7 @@ export default {
       })
       followupAPI
         .getFollowupNodeList({
-          size: 1000,
+          size: 20,
           current: this.current,
           followUpPlanNodeBeginTimeLeft: this.calendarDate
             .startOf('day')
@@ -415,14 +435,18 @@ export default {
             .format('x'),
           planFollowUpUserId: this.planFollowUpUserId,
           nodeFollowUpStatus: this.nodeFollowUpStatus,
+          medicalInstitutionId: this.medicalInstitutionId,
           ...params,
         })
         .then((res) => {
           const result = res.data.records || []
-          // this.followupList = [...this.followupList, ...result]
-          this.followupList = result
+          if (type === 'page') {
+            this.followupList = [...this.followupList, ...result]
+          } else {
+            this.followupList = result
+          }
+          this.totalPage = res.data.pages
           uni.hideLoading()
-          cb && cb()
         })
         .catch((err) => {
           uni.hideLoading()
@@ -444,6 +468,7 @@ export default {
       this.filterModal = false
       this.nodeFollowUpStatus = this.statusList[this.statusIndex].key
       this.planFollowUpUserId = this.staffs[this.staffIndex].staffId
+
       this.getFollowupList({
         nodeFollowUpStatus: this.nodeFollowUpStatus,
         planFollowUpUserId: this.planFollowUpUserId,
@@ -455,12 +480,11 @@ export default {
       ].filter((i) => !!i)
     },
     goBackToday() {
-      // this.calendarDate = moment().format('YYYY-MM-DD')
-      // this.$refs.Calendar.update_month()
-      // this.$refs.Calendar.get_date(moment().format('YYYY-MM-DD'))
       this.calendarDate = moment().format('YYYY-MM-DD')
-      this.$refs.Calendar.doc_list_update()
-      this.$refs.Calendar.update_month()
+      this.calendarVisible = false
+      this.$nextTick(() => {
+        this.calendarVisible = true
+      })
     },
     handleCarry({ followUpNodeId, followUpPlanId }) {
       uni.navigateTo({
@@ -521,10 +545,8 @@ export default {
             })
             this.$dpmsUtils.clearLoading()
             this.$dpmsUtils.show('删除成功', { icon: 'success' })
-            this.getFollowupList(
-              {},
-              () => (this.dropDownBoxVisibleIndex = false),
-            )
+            this.getFollowupList()
+            this.dropDownBoxVisibleIndex = false
           }
         },
       })
@@ -538,10 +560,13 @@ export default {
     hanldeSelectInstitution(item, index) {
       const { parentId, medicalInstitutionType, medicalInstitutionId } = item
 
+      this.medicalInstitutionId = medicalInstitutionId
+
       this.institutionIndex = {
         index: index,
         type: parentId === 0 ? parentId : medicalInstitutionType,
       }
+      // this.getFollowupList()
     },
   },
   watch: {
@@ -567,6 +592,10 @@ view {
 page {
   width: 100%;
   height: 100%;
+}
+.content {
+  height: calc(100vh - 308rpx);
+  margin-top: 24rpx;
 }
 .followup-home {
   width: 100%;
@@ -632,7 +661,7 @@ page {
 }
 .follow-node-list {
   width: 702rpx;
-  margin: 24rpx auto;
+  margin: 0 auto;
 
   .follow-node-item {
     box-sizing: border-box;
