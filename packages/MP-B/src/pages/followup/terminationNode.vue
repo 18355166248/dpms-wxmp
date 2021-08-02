@@ -58,7 +58,6 @@ import patientAvatar from 'businessComponents/patientAvatar/patientAvatar'
 import { commonUtil } from 'mpcommon'
 import followupAPI from '@/APIS/followup/followup.api.js'
 import saveButton from './common/saveButton'
-import { globalEventKeys } from '@/config/global.eventKeys.js'
 
 const GENDER_ENUM = commonUtil.getEnums('Gender')
 
