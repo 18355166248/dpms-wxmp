@@ -307,6 +307,7 @@ export default {
 
       records = records.map((item) => {
         // item._realAmount = this.$dpmsUtils.formatPrice(item.payAmount + item.payRefundAmount)
+        item.paymentAmount = this.$dpmsUtils.formatPrice(item.paymentAmount)
         for (let i = 0; i < channelList.length; i++) {
           item[`payStyleTotalAmountList${i + 1}`] = this.$dpmsUtils.formatPrice(
             item.payStyleTotalAmountList[i],
