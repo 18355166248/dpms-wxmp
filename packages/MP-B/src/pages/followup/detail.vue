@@ -71,8 +71,10 @@
       </view>
       <view class="followUpNode">
         <view class="nodeTitle">
-          <span class="icon_plane iconfont icon-calendar-check"></span>
-          随访计划 (完成{{ finishTime }}/{{ totalTime }})
+          <view class="text">
+            <span class="icon_plane iconfont icon-calendar-check"></span>
+            随访计划 (完成{{ finishTime }}/{{ totalTime }})
+          </view>
         </view>
         <followNode
           :nodeList="nodeList"
@@ -329,17 +331,22 @@ export default {
   .followUpNode {
     width: 100%;
     .nodeTitle {
-      padding: 0rpx 32rpx;
+      padding: 0rpx 32rpx 0rpx 72rpx;
       width: 100%;
       height: 64rpx;
       line-height: 64rpx;
       color: $common-color;
       background-color: #eef8f3;
       font-size: 30rpx;
-      .icon_plane {
-        font-size: 40rpx;
-        margin-right: 10rpx;
-        vertical-align: middle;
+      .text {
+        position: relative;
+        .icon_plane {
+          font-size: 40rpx;
+          position: absolute;
+          top: 50%;
+          margin-top: -29rpx;
+          left: -46rpx;
+        }
       }
     }
   }

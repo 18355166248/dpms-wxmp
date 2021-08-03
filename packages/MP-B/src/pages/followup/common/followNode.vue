@@ -360,7 +360,7 @@ export default {
       padding: 32rpx 48rpx;
       .title {
         font-size: 28rpx;
-        font-weight: 500;
+        font-weight: bold;
         color: #191919;
         margin-bottom: 16rpx;
       }
