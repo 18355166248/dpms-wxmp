@@ -34,6 +34,7 @@ export default {
   created() {
     followupAPI.getFollowupNodeList()
   },
+  onLoad(options) {},
   methods: {
     handleCancel() {
       uni.redirectTo({
