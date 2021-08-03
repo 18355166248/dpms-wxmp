@@ -201,7 +201,7 @@
                 <view
                   @click="hanldeSelectInstitution(item, key)"
                   :class="[
-                    'status-item',
+                    'status-item1',
                     (institutionIndex.type === 2 ||
                       institutionIndex.type === 4) &&
                     institutionIndex.index === key
@@ -339,6 +339,7 @@ export default {
   onLoad(options) {
     uni.$on('followUpHomeUpdate', () => {
       console.log('home event: followup node already change')
+      this.dropDownBoxVisibleIndex = false
       this.getFollowupList()
     })
     const { staffName, staffId } = options
@@ -358,18 +359,19 @@ export default {
   },
   methods: {
     handleScrollBottom() {
-      if (this.current > this.totalPage) {
+      if (this.current >= this.totalPage) {
         return
       }
       this.getFollowupList(
         {
-          current: this.current++,
+          current: ++this.current,
         },
         'page',
       )
     },
     refreshView(item) {
       let index
+
       // 如果是状态
       if (item.hasOwnProperty('key')) {
         this.selectedCharas = this.selectedCharas.filter(
@@ -377,7 +379,6 @@ export default {
         )
         this.statusIndex = 0
         this.nodeFollowUpStatus = ''
-        this.getFollowupList()
       }
 
       if (item.hasOwnProperty('staffId')) {
@@ -386,8 +387,17 @@ export default {
         )
         this.staffIndex = 0
         this.planFollowUpUserId = ''
-        this.getFollowupList()
       }
+
+      if (item.hasOwnProperty('medicalInstitutionId')) {
+        this.selectedCharas = this.selectedCharas.filter(
+          (i) => !i.hasOwnProperty('medicalInstitutionId'),
+        )
+        this.medicalInstitutionId = ''
+      }
+
+      this.current = 1
+      this.getFollowupList()
     },
     showDetailIns() {
       this.institutionNodeVisible = !this.institutionNodeVisible
@@ -468,6 +478,7 @@ export default {
       this.filterModal = false
       this.nodeFollowUpStatus = this.statusList[this.statusIndex].key
       this.planFollowUpUserId = this.staffs[this.staffIndex].staffId
+      this.current = 1
 
       this.getFollowupList({
         nodeFollowUpStatus: this.nodeFollowUpStatus,
@@ -477,6 +488,7 @@ export default {
       this.selectedCharas = [
         this.statusIndex && this.statusList[this.statusIndex],
         this.staffIndex && this.staffs[this.staffIndex],
+        this.institutionSelected,
       ].filter((i) => !!i)
     },
     goBackToday() {
@@ -545,6 +557,7 @@ export default {
             })
             this.$dpmsUtils.clearLoading()
             this.$dpmsUtils.show('删除成功', { icon: 'success' })
+            this.current = 1
             this.getFollowupList()
             this.dropDownBoxVisibleIndex = false
           }
@@ -558,7 +571,12 @@ export default {
       })
     },
     hanldeSelectInstitution(item, index) {
-      const { parentId, medicalInstitutionType, medicalInstitutionId } = item
+      const {
+        parentId,
+        medicalInstitutionType,
+        medicalInstitutionId,
+        medicalInstitutionSimpleCode,
+      } = item
 
       this.medicalInstitutionId = medicalInstitutionId
 
@@ -566,7 +584,15 @@ export default {
         index: index,
         type: parentId === 0 ? parentId : medicalInstitutionType,
       }
+      this.institutionSelected = {
+        value: medicalInstitutionSimpleCode,
+        medicalInstitutionId,
+      }
       // this.getFollowupList()
+    },
+
+    flatInstitutionTree(data) {
+      data = data[0]?.children || []
     },
   },
   watch: {
@@ -577,6 +603,8 @@ export default {
       this.staffIndex = 0
       this.nodeFollowUpStatus = ''
       this.planFollowUpUserId = ''
+      this.medicalInstitutionId = ''
+      this.current = 1
       this.getFollowupList({
         followUpPlanNodeBeginTimeLeft: newVal.startOf('day').format('x'),
         followUpPlanNodeBeginTimeRight: newVal.endOf('day').format('x'),
@@ -911,6 +939,19 @@ page {
         &.selected {
           background: #eef8f3;
           border: 1rpx solid #5cbb89;
+          color: #5cbb89;
+        }
+      }
+      .status-item1 {
+        width: 702rpx;
+        height: 84rpx;
+        opacity: 1;
+        border-radius: 8rpx;
+        display: flex;
+        align-items: center;
+        padding: 0 24rpx;
+        &.selected {
+          background: #eef8f3;
           color: #5cbb89;
         }
       }
