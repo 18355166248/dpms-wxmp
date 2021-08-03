@@ -224,11 +224,17 @@ export default {
       'consultant',
       'patientInfo',
       'billOrderNo',
+      'billTypeArr',
+      'billSettlementArr',
     ]),
   },
   methods: {
-    ...mapMutations('finaceReport', ['clearState']),
+    ...mapMutations('finaceReport', ['clearState', 'setBillSettlementArr']),
     init() {
+      this.setBillSettlementArr({
+        billSettlementIds: '0,1,2',
+        billSettlementNames: '结清,退费,欠费',
+      })
       this.current = 1
       this.loadData()
     },
@@ -242,6 +248,8 @@ export default {
         patientInfo: this.patientInfo,
         doctorStaffIds: this.doctor.doctorIds,
         consultantStaffIds: this.consultant.consultantIds,
+        billTypeArr: this.billTypeArr.billTypeIds,
+        billSettlementArr: this.billSettlementArr.billSettlementIds,
         beginTime: this.beginTimeMillis,
         endTime: this.endTimeMillis,
       }
@@ -340,6 +348,8 @@ export default {
         'billOrderNo',
         'doctorIds',
         'consultantIds',
+        'billTypeArr',
+        'billSettlementArr',
       ])
       this.$dpmsUtils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,

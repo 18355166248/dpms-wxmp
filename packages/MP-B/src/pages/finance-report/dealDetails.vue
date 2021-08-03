@@ -192,11 +192,19 @@ export default {
       'consultant',
       'patientInfo',
       'billOrderNo',
+      'cashierStaff',
+      'payOrderStatusArr',
+      'payTradeTypeArr',
+      'billTypeArr',
     ]),
   },
   methods: {
-    ...mapMutations('finaceReport', ['clearState']),
+    ...mapMutations('finaceReport', ['clearState', 'setPayOrderStatusArr']),
     init() {
+      this.setPayOrderStatusArr({
+        payOrderStatusIds: '1',
+        payOrderStatusNames: '正常',
+      })
       this.current = 1
       this.loadData()
     },
@@ -213,6 +221,10 @@ export default {
         consultantIds: this.consultant.consultantIds,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
+        cashierStaffIds: this.cashierStaff.cashierStaffIds,
+        payOrderStatusArr: this.payOrderStatusArr.payOrderStatusIds,
+        payTradeTypeArr: this.payTradeTypeArr.payTradeTypeIds,
+        billTypeArr: this.billTypeArr.billTypeIds,
       }
       let {
         data: {
@@ -295,6 +307,7 @@ export default {
 
       records = records.map((item) => {
         // item._realAmount = this.$dpmsUtils.formatPrice(item.payAmount + item.payRefundAmount)
+        item.paymentAmount = this.$dpmsUtils.formatPrice(item.paymentAmount)
         for (let i = 0; i < channelList.length; i++) {
           item[`payStyleTotalAmountList${i + 1}`] = this.$dpmsUtils.formatPrice(
             item.payStyleTotalAmountList[i],
@@ -336,6 +349,10 @@ export default {
         'billOrderNo',
         'doctorIds',
         'consultantIds',
+        'cashierStaffIds',
+        'payOrderStatusArr',
+        'payTradeTypeArr',
+        'billTypeArr',
       ])
       this.$dpmsUtils.push({
         url: `/pages/finance-report/filter?filter=${filter}`,
