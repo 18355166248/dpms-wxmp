@@ -10,7 +10,9 @@
     <view class="toolbar-wrap">
       <view class="icon-whole iconfont" @click="showFilterModal"></view>
       <text class="date">{{ showDate() }}</text>
-      <text class="return" @click="goBackToday">返回今天</text>
+      <text class="return" @click="goBackToday" v-if="!isToday()"
+        >返回今天</text
+      >
     </view>
 
     <view class="selected-chara-list" v-if="selectedCharas.length > 0">
@@ -521,11 +523,13 @@ export default {
     },
     showFilterModal() {
       this.filterModal = true
+      this.staffs = staffs
     },
     handleStatusSelect(index) {
       this.statusIndex = index
     },
     hideFilterModal() {
+      console.log('hideFilterModal')
       this.filterModal = false
     },
     handleReset() {
@@ -538,7 +542,7 @@ export default {
     },
     goSearch() {
       wx.navigateTo({
-        url: '/pages/followup/search',
+        url: `/pages/followup/search?workInstitutionId=${this.medicalInstitutionId}`,
       })
     },
     handleStaffSelect({ staffId }, index) {
@@ -635,6 +639,7 @@ page {
     width: 100%;
     padding: 0 24rpx;
     margin-top: 24rpx;
+    flex-wrap: wrap;
     .item {
       height: 56rpx;
       opacity: 1;
@@ -645,6 +650,7 @@ page {
       display: flex;
       align-items: center;
       margin-right: 16rpx;
+      margin-bottom: 16rpx;
 
       > text {
         font-size: 28rpx;
