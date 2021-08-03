@@ -38,15 +38,15 @@
       <view class="follow-info">
         <view class="detail-info">
           <span>就诊信息:</span>
-          <span>{{ followDetail.diagnosisTime }}</span>
+          <span>{{ followDetail.diagnosisTime | filterText }}</span>
         </view>
         <view class="detail-info">
           <span>随访类型:</span>
-          <span>{{ followDetail.followUpTypeName }}</span>
+          <span>{{ followDetail.followUpTypeName | filterText }}</span>
         </view>
         <view class="detail-info">
           <span>计划随访人:</span>
-          <span>{{ followDetail.createUserName }}</span>
+          <span>{{ followDetail.createUserName | filterText }}</span>
         </view>
         <view class="detail-info">
           <span>节点计划时间:</span>
@@ -65,16 +65,14 @@
           <span>{{
             followDetail.receiver.receiverNick
               ? followDetail.receiver.receiverNick
-              : ''
+              : '-'
           }}</span>
         </view>
       </view>
       <view class="followUpNode">
         <view class="nodeTitle">
           <span class="icon_plane iconfont icon-calendar-check"></span>
-          <span class="plane_text"
-            >随访计划 (完成{{ finishTime }}/{{ totalTime }})</span
-          >
+          随访计划 (完成{{ finishTime }}/{{ totalTime }})
         </view>
         <followNode
           :nodeList="nodeList"
@@ -92,7 +90,6 @@ import patientAvatar from '../../businessComponents/patientAvatar/patientAvatar.
 import { commonUtil } from 'mpcommon'
 import moment from 'moment'
 import followupAPI from '@/APIS/followup/followup.api.js'
-import { globalEventKeys } from '@/config/global.eventKeys.js'
 import followNode from './common/followNode'
 
 const GENDER_ENUM = commonUtil.getEnums('Gender')
@@ -121,6 +118,16 @@ export default {
         return GENDER_ENUM.properties[gender].text.zh_CN
       }
       return '未知'
+    },
+    filterText(text) {
+      if (!text) {
+        return '-'
+      }
+      var textValue = text.replace(/(^\s*)|(\s*$)/g, '')
+      if (!textValue || textValue == '') {
+        return '-'
+      }
+      return text
     },
     getFollowStateText(state) {
       if (state == 10) {
@@ -328,14 +335,11 @@ export default {
       line-height: 64rpx;
       color: $common-color;
       background-color: #eef8f3;
+      font-size: 30rpx;
       .icon_plane {
-        display: inline-block;
-        width: 36rpx;
-        height: 28rpx;
+        font-size: 40rpx;
         margin-right: 10rpx;
-      }
-      .plane_text {
-        font-size: 30rpx;
+        vertical-align: middle;
       }
     }
   }

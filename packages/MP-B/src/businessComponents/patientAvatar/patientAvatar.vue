@@ -45,6 +45,8 @@ export default {
 
       if (this.patient.avatarUrl) return this.patient.avatarUrl
 
+      if (this.patient.headImgUrl) return this.patient.headImgUrl
+
       return genderConfig[this.patient.gender || 0].path
     },
   },

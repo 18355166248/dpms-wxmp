@@ -145,7 +145,7 @@ export default {
 .btn::before {
   content: '...';
   position: absolute;
-  left: -3rpx;
+  left: 0rpx;
   color: #333;
   transform: translateX(-100%);
 }
