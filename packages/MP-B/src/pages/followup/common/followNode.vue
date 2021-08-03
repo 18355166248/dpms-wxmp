@@ -7,7 +7,7 @@
             :class="['circular', `followState_${item.nodeFollowUpStatus}`]"
           ></span>
           <span class="text">第{{ index + 1 }}次随访：</span>
-          <span>{{ item.nodeTime }}</span>
+          <span class="time">{{ item.nodeTime }}</span>
         </view>
         <view class="right">
           <span :class="['states', `state_${item.nodeFollowUpStatus}`]">{{
@@ -49,12 +49,18 @@
           <view>
             <view class="row">
               <span class="left">相关医生：</span>
-              <span class="right">{{ item.relatedDoctorName }}</span>
+              <span class="right">{{
+                item.relatedDoctorName | filterText
+              }}</span>
             </view>
             <view class="row">
               <span class="left">随访项目：</span>
               <span class="right">
+                <view v-if="item.showItem == ''">{{
+                  item.showItem | filterText
+                }}</view>
                 <text-shrink
+                  v-else
                   :content="item.showItem"
                   :enterWidth="458"
                   :changeColor="true"
@@ -75,7 +81,7 @@
                   ? '实际随访人：'
                   : '计划随访人：'
               }}</span>
-              <span class="right">{{ item.showName }}</span>
+              <span class="right">{{ item.showName | filterText }}</span>
             </view>
             <view
               class="row"
@@ -185,6 +191,16 @@ export default {
       } else if (state == 40) {
         return '终止随访'
       }
+    },
+    filterText(text) {
+      if (!text) {
+        return '-'
+      }
+      var textValue = text.replace(/(^\s*)|(\s*$)/g, '')
+      if (!textValue || textValue == '') {
+        return '-'
+      }
+      return text
     },
     // 获取沟通方式默认值
     getInitialCommunicationType(followUpWay) {
@@ -301,6 +317,7 @@ export default {
   .nodeBox {
     width: 662rpx;
     height: 96rpx;
+    line-height: 96rpx;
     background-color: #fff;
     margin-bottom: 2rpx;
     padding: 0 44rpx;
@@ -316,9 +333,12 @@ export default {
         margin-right: 20rpx;
       }
       .text {
-        font-size: 28rpx;
         color: #191919;
         margin-right: 12rpx;
+        font-size: 28rpx;
+      }
+      .time {
+        font-size: 28rpx;
       }
     }
     .right {
@@ -330,6 +350,7 @@ export default {
 
       .icon-arrow {
         font-size: 40rpx;
+        vertical-align: middle;
       }
     }
   }
