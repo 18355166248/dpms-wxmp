@@ -217,8 +217,9 @@ export default {
       const params = {
         patientInfo: this.patientInfo,
         billOrderNo: this.billOrderNo,
-        doctorIds: this.doctor.doctorIds,
-        consultantIds: this.consultant.consultantIds,
+        //交易筛选项医生和咨询师隐藏
+        // doctorIds: this.doctor.doctorIds,
+        // consultantIds: this.consultant.consultantIds,
         beginTimeMillis: this.beginTimeMillis,
         endTimeMillis: this.endTimeMillis,
         cashierStaffIds: this.cashierStaff.cashierStaffIds,
@@ -347,8 +348,8 @@ export default {
       const filter = JSON.stringify([
         'patientInfo',
         'billOrderNo',
-        'doctorIds',
-        'consultantIds',
+        // 'doctorIds',
+        // 'consultantIds',
         'cashierStaffIds',
         'payOrderStatusArr',
         'payTradeTypeArr',
