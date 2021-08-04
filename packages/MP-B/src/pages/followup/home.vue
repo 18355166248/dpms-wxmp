@@ -101,6 +101,7 @@
                   class="drop-down"
                   v-if="dropDownBoxVisibleIndex === index + 1"
                 >
+                  <view class="triangle-up"></view>
                   <view class="stop" @click="terminaNode(item)">终止</view>
                   <view class="delete" @click="deleteNode(item)">删除</view>
                 </view>
@@ -245,9 +246,8 @@
               />
             </view>
           </view>
-          <view class="pop-bottom"
-            ><view class="ensure" @click="handleEnsure">确认</view></view
-          >
+          <view class="pop-bottom"></view>
+          <view class="ensure" @click="handleEnsure">确认</view>
         </view>
       </view>
     </view>
@@ -652,18 +652,18 @@ page {
       padding: 0 16rpx 0 16rpx;
       display: flex;
       align-items: center;
-      margin-right: 8rpx;
+      margin-right: 16rpx;
       margin-bottom: 16rpx;
 
       > text {
         font-size: 28rpx;
         font-family: PingFangSC, PingFangSC-Regular;
         color: #5cbb89;
-        margin-right: 14rpx;
+        margin-right: 8rpx;
       }
       .iconfont {
         color: #6cc194;
-        font-size: 28rpx;
+        font-size: 32rpx;
       }
     }
   }
@@ -762,6 +762,9 @@ page {
       .basic {
         display: flex;
         align-items: center;
+        .iconfont {
+          font-size: 36rpx;
+        }
         .male {
           color: #1890ff;
           margin: 0 35rpx 0 12rpx;
@@ -817,6 +820,17 @@ page {
             left: 50%;
             transform: translateX(-50%);
             top: 56rpx;
+            .triangle-up {
+              position: absolute;
+              bottom: 100%;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 0;
+              height: 0;
+              border-left: 16rpx solid transparent;
+              border-right: 16rpx solid transparent;
+              border-bottom: 18rpx solid #ffffff;
+            }
             > view {
               font-size: 28rpx;
               font-family: PingFangSC, PingFangSC-Regular;
@@ -1006,7 +1020,7 @@ page {
     }
     .pop-bottom {
       position: sticky;
-      height: 196rpx;
+      height: 222rpx;
       left: 0;
       bottom: 0;
       background: #fff;
@@ -1014,20 +1028,24 @@ page {
       align-items: center;
       justify-content: center;
       z-index: 100;
-      .ensure {
-        width: 686rpx;
-        height: 80rpx;
-        opacity: 1;
-        background: #5cbb89;
-        border-radius: 40rpx;
-        font-size: 36rpx;
-        font-family: PingFangSC, PingFangSC-Regular;
-        line-height: 80rpx;
-        color: #ffffff;
-        text-align: center;
-        z-index: 100;
-      }
     }
+  }
+  .ensure {
+    position: fixed;
+    bottom: 84rpx;
+    width: 686rpx;
+    height: 80rpx;
+    opacity: 1;
+    background: #5cbb89;
+    border-radius: 40rpx;
+    font-size: 36rpx;
+    font-family: PingFangSC, PingFangSC-Regular;
+    line-height: 80rpx;
+    color: #ffffff;
+    text-align: center;
+    z-index: 100;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 </style>

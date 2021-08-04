@@ -101,7 +101,7 @@ view {
       box-sizing: border-box;
       font-size: 28rpx;
       font-family: PingFangSC, PingFangSC-Regular;
-      color: #bfbfbf;
+      // color: #bfbfbf;
     }
     > text {
       font-size: 28rpx;
