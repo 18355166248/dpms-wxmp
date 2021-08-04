@@ -119,6 +119,7 @@ export default {
       },
       templateLabel: '',
       templateIndex: 0,
+      maxLen: 200,
     }
   },
   computed: {
@@ -237,6 +238,12 @@ export default {
     },
     // 点击确定
     submit() {
+      if (this.form.followUpResult.length > this.maxLen) {
+        this.form.followUpResult = this.form.followUpResult.slice(
+          0,
+          this.maxLen,
+        )
+      }
       console.log('form', this.form.followUpResult)
       this.$dpmsUtils.formValidate(
         this.rules,
