@@ -153,7 +153,7 @@
                         已离开
                       </button>
                       <button
-                        :disabled="disabled"
+                        :disabled="disabled || item.medicareRegister"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -250,7 +250,7 @@
                         已离开
                       </button>
                       <button
-                        :disabled="disabled"
+                        :disabled="disabled || item.medicareRegister"
                         class="button inverted-button"
                         @click.stop="
                           consultationAction(
@@ -399,7 +399,7 @@
                           已离开
                         </button>
                         <button
-                          :disabled="disabled"
+                          :disabled="disabled || item.medicareRegister"
                           class="button inverted-button"
                           @click.stop="
                             consultationAction(
@@ -803,10 +803,6 @@ export default {
                         status: REGISTER_ENUM.REGISTER_TREATING?.value,
                         text: '已离开',
                       },
-                      {
-                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                        text: '回退',
-                      },
                     ]
                   } else {
                     statusTextArray[v.appointmentId] = [
@@ -814,11 +810,13 @@ export default {
                         status: REGISTER_ENUM.REGISTER_TREATING?.value,
                         text: '已离开',
                       },
-                      {
-                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                        text: '回退',
-                      },
                     ]
+                  }
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
+                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                      text: '回退',
+                    })
                   }
                   statusTextValue[v.appointmentId] = 0
                   break
@@ -839,11 +837,13 @@ export default {
                       status: REGISTER_ENUM.REGISTER_TREATING?.value,
                       text: '已离开',
                     },
-                    {
+                  ]
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
                       status: REGISTER_ENUM.REGISTER_TREATED?.value,
                       text: '回退',
-                    },
-                  ]
+                    })
+                  }
                   statusTextValue[v.appointmentId] = 0
                   break
                 //就诊状态为治疗中
@@ -855,23 +855,26 @@ export default {
                       status: REGISTER_ENUM.REGISTER_TREATING?.value,
                       text: '已离开',
                     },
-                    {
+                  ]
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
                       status: REGISTER_ENUM.REGISTER_TREATED?.value,
                       text: '回退',
-                    },
-                  ]
+                    })
+                  }
                   statusTextValue[v.appointmentId] = 0
                   break
                 //就诊状态为治疗完成
                 //强流程：默认按钮为已离开，下拉按钮为：回退
                 //弱流程：默认按钮为已离开，下拉按钮为：回退
                 case REGISTER_ENUM.REGISTER_TREATED?.value:
-                  statusTextArray[v.appointmentId] = [
-                    {
+                  statusTextArray[v.appointmentId] = []
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
                       status: REGISTER_ENUM.REGISTER_TREATED?.value,
                       text: '回退',
-                    },
-                  ]
+                    })
+                  }
                   statusTextValue[v.appointmentId] = 0
                   break
                 default:
