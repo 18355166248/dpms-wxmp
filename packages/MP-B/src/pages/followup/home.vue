@@ -194,6 +194,7 @@
                     institutionIndex.index === key
                       ? 'selected'
                       : '',
+                    key % 3 === 1 && key === regionList.length - 1 ? 'fix' : '',
                   ]"
                   v-for="(item, key) in regionList"
                   :key="key"
@@ -295,8 +296,6 @@ export default {
       staffIndex: 0,
       current: 1,
       followupList: [],
-      startTimeStamp: moment().startOf('day').format('x'),
-      endTimeStamp: moment().endOf('day').format('x'),
       planFollowUpUserId: '',
       nodeFollowUpStatus: '',
       institutionIndex: {
@@ -313,8 +312,17 @@ export default {
     this.loginForm = getStorage(STORAGE_KEY.LOGIN_INFO)
     this.medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
     this.staffs[1].staffId = getStorage(STORAGE_KEY.STAFF).staffId
-
     this.institutionChainType = this.medicalInstitution.institutionChainType
+
+    const {
+      topParentId,
+      institutionChainType,
+      medicalInstitutionId,
+    } = this.medicalInstitution
+    let insIndex = 0
+
+    this.medicalInstitutionId = medicalInstitutionId
+    this.loginInstitution = medicalInstitutionId
 
     // 如果是单店，不用显示随访状态筛选
     if (this.medicalInstitution.institutionChainType === 1) {
@@ -327,18 +335,27 @@ export default {
         })
         .then((res) => {
           this.institutionList = res.data
-          this.regionList = res.data[0].children.filter(
-            (i) => i.medicalInstitutionType === 3,
-          )
-          this.directList = res.data[0].children.filter(
-            (i) => i.medicalInstitutionType !== 3,
-          )
+          this.flatInstitutionTree(res.data[0].children)
+
+          if (institutionChainType === 3) {
+            insIndex = this.regionList.findIndex(
+              (i) => i.medicalInstitutionId === medicalInstitutionId,
+            )
+          } else {
+            insIndex = this.directList.findIndex(
+              (i) => i.medicalInstitutionId === medicalInstitutionId,
+            )
+          }
+
+          this.institutionIndex = {
+            index: insIndex,
+            type: topParentId === 0 ? 0 : institutionChainType,
+          }
+          this.loginInstitutionIndex = this.institutionIndex
         })
     }
 
     this.getFollowupList()
-
-    this.calendarDate
   },
   onLoad(options) {
     uni.$on('followUpHomeUpdate', () => {
@@ -347,7 +364,7 @@ export default {
       this.dropDownBoxVisibleIndex = false
       this.getFollowupList()
     })
-    const { staffName, staffId } = options
+    const { staffName, staffId, calendarDate } = options
     if (staffName) {
       this.filterModal = true
       this.staffs = [
@@ -357,6 +374,10 @@ export default {
           value: staffName,
         },
       ]
+      this.calendarDate = calendarDate
+      setTimeout(() => {
+        this.staffIndex = 2
+      })
     }
   },
   onUnload() {
@@ -398,7 +419,8 @@ export default {
         this.selectedCharas = this.selectedCharas.filter(
           (i) => !i.hasOwnProperty('medicalInstitutionId'),
         )
-        this.medicalInstitutionId = ''
+        this.medicalInstitutionId = this.loginInstitution
+        this.institutionIndex = this.loginInstitutionIndex
       }
 
       this.current = 1
@@ -526,13 +548,17 @@ export default {
     },
     showFilterModal() {
       this.filterModal = true
-      this.staffs = staffs
+      const flag = this.selectedCharas.filter((item) =>
+        item.hasOwnProperty('staffId'),
+      )
+      if (flag.length === 0) {
+        this.staffs = staffs
+      }
     },
     handleStatusSelect(index) {
       this.statusIndex = index
     },
     hideFilterModal() {
-      console.log('hideFilterModal')
       this.filterModal = false
     },
     handleReset() {
@@ -544,8 +570,8 @@ export default {
       }
     },
     goSearch() {
-      wx.navigateTo({
-        url: `/pages/followup/search?workInstitutionId=${this.medicalInstitutionId}`,
+      wx.redirectTo({
+        url: `/pages/followup/search?workInstitutionId=${this.medicalInstitutionId}&calendarDate=${this.calendarDate}`,
       })
     },
     handleStaffSelect({ staffId }, index) {
@@ -599,7 +625,14 @@ export default {
     },
 
     flatInstitutionTree(data) {
-      data = data[0]?.children || []
+      data.forEach((item, index) => {
+        if (item.medicalInstitutionType === 3) {
+          this.flatInstitutionTree(item.children)
+          this.regionList.push(item)
+        } else {
+          this.directList.push(item)
+        }
+      })
     },
   },
   watch: {
@@ -610,7 +643,6 @@ export default {
       this.staffIndex = 0
       this.nodeFollowUpStatus = ''
       this.planFollowUpUserId = ''
-      this.medicalInstitutionId = ''
       this.current = 1
       this.getFollowupList({
         followUpPlanNodeBeginTimeLeft: newVal.startOf('day').format('x'),
