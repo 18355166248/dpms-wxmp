@@ -72,6 +72,13 @@ export default {
       this.list = Object.values(
         this.$dpmsUtils.getEnums('PayTradeType').properties,
       )?.filter((item) => item.value !== 1)
+      //兼容PC端ID为7是修改枚举名字为卡券售卖
+      this.list?.forEach((item) => {
+        if (item.value === 7) {
+          item.zh_CN = '卡券售卖'
+        }
+      })
+      console.log(this.list, '9990')
       //与PC端同步不显示未知类型
       if (this.payTradeTypeArr.payTradeTypeIds !== '') {
         this.checked = this.payTradeTypeArr.payTradeTypeIds
