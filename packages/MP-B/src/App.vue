@@ -28,11 +28,11 @@ button::after {
 /*********在线字体代码start*********/
 @font-face {
   font-family: 'iconfont'; /* Project id 1965288 */
-  src: url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.woff2?t=1625644235400')
+  src: url('//at.alicdn.com/t/font_1965288_8ob8kme4ba5.woff2?t=1627353910479')
       format('woff2'),
-    url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.woff?t=1625644235400')
+    url('//at.alicdn.com/t/font_1965288_8ob8kme4ba5.woff?t=1627353910479')
       format('woff'),
-    url('//at.alicdn.com/t/font_1965288_wjy6sqo6nw8.ttf?t=1625644235400')
+    url('//at.alicdn.com/t/font_1965288_8ob8kme4ba5.ttf?t=1627353910479')
       format('truetype');
 }
 /*********在线字体代码end*********/
@@ -90,6 +90,44 @@ button::after {
 .icon-home-close::before {
   content: '\e66f';
 }
+/* 随访 */
+.iconclose:before {
+  content: '\e633';
+}
+.icon-follow-up:before {
+  content: '\e604';
+}
+.icon-phone:before {
+  content: '\e690';
+}
+.iconphone:before {
+  content: '\e690';
+}
+.icon-shengri:before {
+  content: '\e68f';
+}
+.icon-nv:before {
+  content: '\e68c';
+}
+.icon-nan:before {
+  content: '\e68d';
+}
+.icon-calendar-check:before {
+  content: '\e7d5';
+}
+.icon-up::before {
+  content: '\e68a';
+}
+.icon-down::before {
+  content: '\e684';
+}
+.icon-video::before {
+  content: '\e69e';
+}
+.icon-excel::before {
+  content: '\e69a';
+}
+
 /*今日就诊*/
 .icon-medicine-chest::before {
   content: '\e863';
@@ -283,6 +321,7 @@ button::after {
 .icon-wechat-fill:before {
   content: '\e68b';
 }
+
 /*全部*/
 .icon-all-fill:before {
   content: '\e70b';
