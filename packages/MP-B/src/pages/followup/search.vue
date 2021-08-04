@@ -34,7 +34,9 @@ export default {
   created() {
     followupAPI.getFollowupNodeList()
   },
-  onLoad(options) {},
+  onLoad(options) {
+    this.calendarDate = options.calendarDate
+  },
   methods: {
     handleCancel() {
       uni.redirectTo({
@@ -57,7 +59,7 @@ export default {
     handleSetStaff(item) {
       this.staffName = item.staffName
       uni.redirectTo({
-        url: `/pages/followup/home?staffName=${item.staffName}&staffId=${item.staffId}`,
+        url: `/pages/followup/home?staffName=${item.staffName}&staffId=${item.staffId}&calendarDate=${this.calendarDate}`,
       })
     },
   },
