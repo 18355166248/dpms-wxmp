@@ -112,8 +112,8 @@ export default {
             message: '请输入随访结果',
           },
           {
-            max: 300,
-            message: '随访结果不应该超过 300 字',
+            max: 200,
+            message: '随访结果不应该超过 200 字',
           },
         ],
       },
@@ -237,6 +237,7 @@ export default {
     },
     // 点击确定
     submit() {
+      console.log('form', this.form.followUpResult)
       this.$dpmsUtils.formValidate(
         this.rules,
         this.form,
