@@ -1,47 +1,53 @@
 <template>
-  <div class="apptDpmsList">
-    <dpmsCheckboxGroup v-model="checked" v-if="list && list.length">
-      <dpmsCollapse class="mb-56">
-        <dpmsCollapseItem
-          v-for="apptType in list"
-          :key="apptType.appointmentSettingsAppointmentItemTypeName"
-          :title="apptType.appointmentSettingsAppointmentItemTypeName"
-          showAnimation
-          open
-        >
-          <div class="apptCollapse">
-            <div
-              v-for="(appt, index) in apptType.list"
-              :key="appt.appointmentSettingsAppointmentItemId"
-              :class="['appt', index === 0 && 'first']"
-            >
-              <dpmsCheckbox
-                shape="square"
-                :key="appt.appointmentSettingsAppointmentItemId"
-                :label="appt.appointmentSettingsAppointmentItemId"
-                >{{ appt.appointmentSettingsAppointmentItemName }}</dpmsCheckbox
+  <view class="apptDpmsList">
+    <scroll-view
+      v-if="!isEmpty"
+      style="height: calc(100% - 90rpx);"
+      :scroll-x="false"
+      :scroll-y="true"
+    >
+      <checkbox-group @change="checkboxChange">
+        <uni-collapse :accordion="false">
+          <uni-collapse-item
+            v-for="apptType in groupTypeList"
+            :key="apptType.id"
+            :title="apptType.name"
+            :border="true"
+            title-border="show"
+            :open="true"
+          >
+            <template v-slot:title>
+              <view class="collapseItemTitle">{{ apptType.name }}</view>
+            </template>
+            <view class="collapseItemContainer">
+              <label
+                v-for="item in apptType.items"
+                :key="item.id"
+                class="apptItem"
               >
-            </div>
-          </div>
-        </dpmsCollapseItem>
-      </dpmsCollapse>
-    </dpmsCheckboxGroup>
+                <checkbox
+                  :value="item.id"
+                  :checked="checked.includes(item.id)"
+                  class="checkbox"
+                />
+                {{ item.name }}
+              </label>
+            </view>
+          </uni-collapse-item>
+        </uni-collapse>
+      </checkbox-group>
+    </scroll-view>
 
     <view v-else>
       <empty :disabled="true" v-if="isAppt" text="暂无预约项目" />
       <empty :disabled="true" v-else text="暂无就诊项目" />
     </view>
-    <div class="mt-56">
-      <dpmsButton @click="onSave" v-if="list && list.length" />
-      <!-- <button class="button" @click.stop="this.$dpmsUtils.back()" v-else>
-        取消
-      </button> -->
-    </div>
-  </div>
+
+    <view class="saveBtn" @click="onSave">保 存</view>
+  </view>
 </template>
 
 <script>
-import { colorNumberList } from './colorNumberList'
 import empty from '@/components/empty/empty.vue'
 
 export default {
@@ -50,78 +56,60 @@ export default {
   },
   data() {
     return {
-      list: this.formatList(uni.getStorageSync('apptItemList')),
       checked: [],
       isAppt: false,
+      isEmpty: false,
+      groupTypeList: [],
     }
   },
-  onLoad({ checked, isAppt }) {
+  onLoad({ checked, isAppt, isEmpty }) {
     this.isAppt = isAppt == 'true'
+    this.isEmpty = isEmpty == 'true'
     if (checked) {
-      this.checked = checked.split(',').map((v) => Number(v))
+      this.checked = checked.split(',').map((v) => Number(v)) || []
     }
+    this.groupTypeList = this.getGroupListByType()
   },
-  created() {},
   methods: {
+    checkboxChange(e) {
+      this.checked = e.detail.value.map((v) => Number(v)) || []
+    },
     onSave() {
       uni.$emit('updateApptItemCheckedList', this.checked)
       this.$dpmsUtils.back()
     },
-    // 格式化列表进行展示
-    formatList(list) {
-      if (!Array.isArray(list)) return
-
-      const listClone = JSON.parse(JSON.stringify(list))
-
-      // 预约项目没有 settingsAppointmentItemTypeId 的放进未分组
-      const apptItemList = {}
-      // 预约项目列表
-      let apptItemArr = []
-
-      listClone.forEach((apptItem) => {
-        apptItem.appointmentSettingsAppointmentItemName =
-          apptItem.appointmentSettingsAppointmentItemName.zh_CN
-
-        if (!apptItem.appointmentSettingsAppointmentItemTypeId) {
-          if (apptItemList.noGroup) {
-            apptItemList.noGroup.list.push(apptItem)
-          } else {
-            apptItemList.noGroup = {
-              appointmentSettingsAppointmentItemTypeName: '未分组',
-              list: [apptItem],
-            }
-          }
+    // 根据预约类型进行分组
+    getGroupListByType() {
+      const list = uni.getStorageSync('apptItemList')
+      if (!Array.isArray(list)) {
+        return []
+      }
+      const typeList = []
+      list.forEach((item) => {
+        const foundType = typeList.find(
+          (type) => type.id === item.appointmentSettingsAppointmentItemTypeId,
+        )
+        if (!foundType) {
+          typeList.push({
+            id: item.appointmentSettingsAppointmentItemTypeId,
+            name: item.appointmentSettingsAppointmentItemTypeName,
+            color: item.appointmentSettingsAppointmentItemTypeColorNo,
+            items: [
+              {
+                id: item.appointmentSettingsAppointmentItemId,
+                name: item.appointmentSettingsAppointmentItemName.zh_CN,
+              },
+            ],
+          })
         } else {
-          if (apptItemList[apptItem.appointmentSettingsAppointmentItemTypeId]) {
-            apptItemList[
-              apptItem.appointmentSettingsAppointmentItemTypeId
-            ].list.push(apptItem)
-          } else {
-            const colorNo = colorNumberList.find(
-              (colorItem) =>
-                colorItem.color ===
-                apptItem.appointmentSettingsAppointmentItemTypeColorNo,
-            )?.border
-
-            apptItemList[apptItem.appointmentSettingsAppointmentItemTypeId] = {
-              appointmentSettingsAppointmentItemTypeName:
-                apptItem.appointmentSettingsAppointmentItemTypeName,
-              appointmentSettingsAppointmentItemTypeColorNo: colorNo,
-              list: [apptItem],
-            }
-          }
+          foundType.items.push({
+            id: item.appointmentSettingsAppointmentItemId,
+            name: item.appointmentSettingsAppointmentItemName.zh_CN,
+          })
         }
       })
 
-      if (apptItemList.noGroup) {
-        apptItemArr.push(apptItemList.noGroup)
-
-        delete apptItemList.noGroup
-      }
-
-      apptItemArr = [...apptItemArr, ...Object.values(apptItemList)]
-
-      return apptItemArr
+      return typeList
     },
   },
 }
@@ -130,19 +118,61 @@ export default {
 <style lang="scss" scoped>
 .apptDpmsList {
   height: 100%;
-  .apptCollapse {
+  background: #ffffff;
+  overflow-x: hidden;
+
+  .checkbox {
+    /deep/ .wx-checkbox-input {
+      width: 32rpx;
+      height: 32rpx;
+      margin-bottom: 6rpx;
+      margin-right: 16rpx;
+    }
+
+    /deep/ .wx-checkbox-input.wx-checkbox-input-checked {
+      border: 1px solid #5cbb89;
+      background: #5cbb89;
+      color: #ffffff !important;
+    }
+  }
+
+  .collapseItemTitle {
+    background-color: rgba(0, 0, 0, 0.04);
+    font-size: 28rpx;
+    color: rgba(0, 0, 0, 0.5);
+    height: 80rpx;
+    line-height: 80rpx;
     padding-left: 32rpx;
-    .appt {
+    margin-right: -100rpx;
+  }
+
+  .collapseItemContainer {
+    padding-left: 32rpx;
+    .apptItem {
       height: 112rpx;
       line-height: 112rpx;
-      border-top: 1rpx solid rgba($color: #000000, $alpha: 0.15);
-      color: rgba($color: #000000, $alpha: 0.9);
+      color: #333333;
       font-size: 34rpx;
+      display: block;
+      border-top: 1rpx solid rgba(0, 0, 0, 0.15);
 
-      &.first {
+      &:first-child {
         border-top: none;
       }
     }
+  }
+
+  .saveBtn {
+    background: #5cbb89;
+    color: #ffffff;
+    height: 90rpx;
+    line-height: 90rpx;
+    text-align: center;
+    font-size: 36rpx;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
   }
 }
 </style>
