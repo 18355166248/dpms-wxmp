@@ -33,6 +33,7 @@
                 <dpmsCheckbox
                   shape="square"
                   :label="item.value || item[defaultProps.value]"
+                  :value="item.checked || item[defaultProps.checked]"
                 ></dpmsCheckbox>
               </div>
             </div>

@@ -2,17 +2,19 @@
   <view class="chargeContent">
     <view class="filterlistCharged">
       <view class="uni-list-cell">
-        <picker
-          @change="billSettlementChange"
-          :value="billSettlementIndex"
-          :range="billSettlementArray"
-          range-key="zh_CN"
-        >
-          <view class="uni-input"
-            >{{ billSettlementPickerText }}
-            <view class="iconfont icon-closed"></view
-          ></view>
-        </picker>
+        <view class="uni-input" @click="showSettlement = true">
+          状态
+          <view class="iconfont icon-closed"></view>
+        </view>
+        <multipleSelect
+          title="状态"
+          :list="billSettlementArray"
+          :value="billSettlementCheckedArray"
+          :visible="showSettlement"
+          :defaultProps="{ label: 'zh_CN', value: 'value' }"
+          @close="showSettlement = false"
+          @confirm="billSettlementChange"
+        />
       </view>
       <view class="uni-list-cell">
         <picker
@@ -73,7 +75,9 @@
           <view class="listLine">
             <view class="ml-32">{{ order.billTypeText }}</view>
             <view class="totalFee"
-              >应收金额：{{ $dpmsUtils.formatPrice(order.receivableAmount) }}</view
+              >应收金额：{{
+                $dpmsUtils.formatPrice(order.receivableAmount)
+              }}</view
             >
           </view>
           <view class="listLine">
@@ -121,11 +125,11 @@ export default {
   props: ['patientId', 'customerId'],
   data() {
     return {
-      billSettlementArray: this.initEnumArray(
-        this.$dpmsUtils.getEnums('BillSettlement'),
-        'BillSettlement',
+      showSettlement: false,
+      billSettlementArray: Object.values(
+        this.$dpmsUtils.getEnums('BillSettlement').properties,
       ),
-      billSettlementIndex: 0,
+      billSettlementCheckedArray: [0, 1, 2],
       billSupperTypeArray: this.initEnumArray(
         this.$dpmsUtils.getEnums('BillSupperType'),
         'BillSupperType',
@@ -145,13 +149,12 @@ export default {
         status: 'loading',
         request: 'loading',
       },
-      params: {},
+      params: {
+        billSettlementArr: '0,1,2',
+      },
     }
   },
   computed: {
-    billSettlementPickerText() {
-      return this.billSettlementArray[this.billSettlementIndex].zh_CN
-    },
     billTypePickerText() {
       return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
     },
@@ -169,19 +172,17 @@ export default {
     uni.$on('refreshCharged', () => {
       if (this.chargedList.length < this.total) {
         this.current += 1
-        this.getChargedOrder()
+        this.getChargedOrder(this.params)
       }
     })
   },
   methods: {
-    billSettlementChange: function (e) {
-      this.billSettlementIndex = e.detail.value
-      if (Number(this.billSettlementIndex) === 0) {
-        delete this.params.billSettlementStatus
+    billSettlementChange: function (checkedList) {
+      this.billSettlementCheckedArray = checkedList
+      if (checkedList.length > 0) {
+        this.params.billSettlementArr = checkedList.join(',')
       } else {
-        this.params.billSettlementStatus = this.billSettlementArray[
-          this.billSettlementIndex
-        ].value
+        delete this.params.billSettlementArr
       }
       this.current = 1
       this.getChargedOrder(this.params)
@@ -231,9 +232,6 @@ export default {
       this.getChargedOrder(this.params)
     },
     initEnumArray: function (obj, type) {
-      if (type === 'BillSettlement') {
-        type = '全部状态'
-      }
       if (type === 'BillSupperType') {
         type = '账单类型'
       }
@@ -251,7 +249,7 @@ export default {
     },
     init() {
       this.current = 1
-      this.getChargedOrder()
+      this.getChargedOrder(this.params)
     },
     async getChargedOrder(params = {}) {
       uni.showLoading({
