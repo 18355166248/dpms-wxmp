@@ -114,7 +114,7 @@ view {
     margin-top: 32rpx;
     .item {
       padding: 0 56rpx;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1rpx solid #e5e5e5;
       width: 750rpx;
       height: 96rpx;
       line-height: 96rpx;

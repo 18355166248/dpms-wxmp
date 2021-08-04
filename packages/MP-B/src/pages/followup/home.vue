@@ -38,7 +38,7 @@
             <text class="name">{{ item.followUpTypeName }}</text>
             <view class="status-wrap">
               <view :class="['dot', `style-${item.nodeFollowUpStatus}`]"></view>
-              <text :class="[`style-${item.nodeFollowUpStatus}`]">{{
+              <text :class="[`style-${item.nodeFollowUpStatus}`, 'cate']">{{
                 mapStatusValue[item.nodeFollowUpStatus]
               }}</text>
             </view>
@@ -48,7 +48,7 @@
               <text>{{ item.customerName }}</text>
               <view class="icon-nan iconfont male"></view>
               <view class="iconfont iconphone"></view>
-              <text class="phone">{{ item.realMobile }}</text>
+              <text class="phone">{{ item.mobile }}</text>
               <!-- <view class="icon-shengri iconfont"></view>
               <text class="age">22岁</text> -->
             </view>
@@ -117,7 +117,9 @@
                 v-if="item.nodeFollowUpStatus === 31"
                 >重新随访</view
               >
-              <view class="inspect" @click="handleInspect(item)">查看</view>
+              <view class="inspect inspect1" @click="handleInspect(item)"
+                >查看</view
+              >
             </view>
           </view>
         </view>
@@ -181,7 +183,7 @@
               >
             </view>
             <view v-if="institutionNodeVisible">
-              <text>大区</text>
+              <text class="region">大区</text>
               <view class="list">
                 <view
                   @click="hanldeSelectInstitution(item, key)"
@@ -198,7 +200,7 @@
                   {{ item.medicalInstitutionSimpleCode }}
                 </view>
               </view>
-              <text>连锁直营</text>
+              <text class="region">连锁直营</text>
               <view class="list">
                 <view
                   @click="hanldeSelectInstitution(item, key)"
@@ -341,6 +343,7 @@ export default {
   onLoad(options) {
     uni.$on('followUpHomeUpdate', () => {
       console.log('home event: followup node already change')
+      this.current = 1
       this.dropDownBoxVisibleIndex = false
       this.getFollowupList()
     })
@@ -646,10 +649,10 @@ page {
       background: #eef8f3;
       border: 1rpx solid #5cbb89;
       border-radius: 4rpx;
-      padding: 0 22rpx 0 16rpx;
+      padding: 0 16rpx 0 16rpx;
       display: flex;
       align-items: center;
-      margin-right: 16rpx;
+      margin-right: 8rpx;
       margin-bottom: 16rpx;
 
       > text {
@@ -678,7 +681,7 @@ page {
   // justify-content: space-between;
   > view {
     color: #6cc194;
-    font-size: 36rpx;
+    font-size: 48rpx;
   }
   .date {
     font-size: 28rpx;
@@ -721,6 +724,9 @@ page {
       .status-wrap {
         display: flex;
         align-items: center;
+        .cate {
+          font-size: 28rpx;
+        }
 
         .dot {
           width: 16rpx;
@@ -839,6 +845,10 @@ page {
           font-family: PingFangSC, PingFangSC-Regular;
           color: #5cbb89;
         }
+        .inspect1 {
+          background: #5cbb89;
+          color: #ffffff;
+        }
         .retry {
           width: 176rpx;
         }
@@ -897,7 +907,7 @@ page {
     .filter-type {
       width: 100%;
       padding: 32rpx;
-      border-bottom: 1px solid #e5e5e5;
+      border-bottom: 1rpx solid #e5e5e5;
       .callapse {
         display: flex;
         justify-content: space-between;
@@ -918,6 +928,9 @@ page {
         font-family: PingFangSC, PingFangSC-Regular;
         color: #191919;
         display: block;
+      }
+      .region {
+        margin-top: 16rpx;
       }
       .list {
         margin-top: 16rpx;
