@@ -2,7 +2,11 @@
   <view class="search-wrap">
     <view class="row">
       <view class="iconfont icon-search"></view>
-      <input placeholder="搜索随访人" @input="handleChange" />
+      <input
+        placeholder="搜索随访人"
+        @input="handleChange"
+        placeholder-style="color: #BFBFBF"
+      />
       <text @click="handleCancel">取消</text>
     </view>
     <view class="result-list" v-if="result.length > 0">
