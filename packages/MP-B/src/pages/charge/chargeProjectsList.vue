@@ -198,7 +198,7 @@ export default {
         activatedToothNumber: null,
       }
       console.log(Object.keys(value.teeth))
-      if (item.unit.replace(/(^\s+)|(\s+$)/g, '') === '颗') {
+      if (item.unit?.replace(/(^\s+)|(\s+$)/g, '') === '颗') {
         item.itemNum = Object.keys(value.teeth).length
         item.totalAmount = BigCalculate(item.itemNum, '*', item.unitAmount)
         item.singleDiscountAfterAmount = item.totalAmount
