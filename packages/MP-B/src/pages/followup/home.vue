@@ -96,7 +96,7 @@
                 @click.stop="showDropDownBox(index)"
                 v-if="
                   item.nodeFollowUpStatus === 10 &&
-                  item.institutionId === medicalInstitutionId
+                  item.institutionId === loginMedId
                 "
               >
                 更多
@@ -114,7 +114,7 @@
                 @click="handleCarry(item)"
                 v-if="
                   item.nodeFollowUpStatus === 10 &&
-                  item.institutionId === medicalInstitutionId
+                  item.institutionId === loginMedId
                 "
                 >执行</view
               >
@@ -123,7 +123,7 @@
                 @click="followupAgain(item)"
                 v-if="
                   item.nodeFollowUpStatus === 31 &&
-                  item.institutionId === medicalInstitutionId
+                  item.institutionId === loginMedId
                 "
                 >重新随访</view
               >
@@ -317,6 +317,7 @@ export default {
       selectedCharas: [],
       calendarVisible: true,
       medicalInstitutionId: '',
+      loginMedId: '',
     }
   },
   created() {
@@ -334,6 +335,7 @@ export default {
     let insIndex = 0
 
     this.medicalInstitutionId = medicalInstitutionId
+    this.loginMedId = medicalInstitutionId
     this.loginInstitution = medicalInstitutionId
 
     // 如果是单店，不用显示随访状态筛选
