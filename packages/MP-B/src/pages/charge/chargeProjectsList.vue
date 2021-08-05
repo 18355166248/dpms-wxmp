@@ -198,10 +198,12 @@ export default {
         activatedToothNumber: null,
       }
       console.log(Object.keys(value.teeth))
-      if (item.unit?.replace(/(^\s+)|(\s+$)/g, '') === '颗') {
+      const unit = item.unit?.replace(/(^\s+)|(\s+$)/g, '')
+      if (unit === '颗' || unit === '牙') {
         item.itemNum = Object.keys(value.teeth).length
         item.totalAmount = BigCalculate(item.itemNum, '*', item.unitAmount)
         item.singleDiscountAfterAmount = item.totalAmount
+        item.receivableAmount = item.totalAmount
         this.calculateAmount()
       }
       Object.keys(value.teeth).forEach((x) => {
@@ -252,18 +254,21 @@ export default {
     },
     calculateAmount() {
       let result = 0
+      console.log(this.disposeList, 'dis')
       this.disposeList.forEach((item) => {
         if (item.allBillDiscount) {
           const value = BigCalculate(item.unitAmount, '*', item.itemNum)
           const disCount = BigCalculate(this.mainOrderDiscount, '/', 100)
           const disCountValue = BigCalculate(value, '*', disCount)
           result = BigCalculate(result, '+', disCountValue)
+          console.log(result, 'result')
         } else {
           const value = BigCalculate(item.unitAmount, '*', item.itemNum)
           result = BigCalculate(result, '+', value)
         }
       })
       this.setReceivableAmount(changeTwoDecimal(result))
+      console.log(this.disposeList, 'dis')
     },
     calculateDiscount() {
       const { minPrice, discountMaxValue, receivableAmount } = this
