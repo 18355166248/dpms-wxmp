@@ -254,21 +254,18 @@ export default {
     },
     calculateAmount() {
       let result = 0
-      console.log(this.disposeList, 'dis')
       this.disposeList.forEach((item) => {
         if (item.allBillDiscount) {
           const value = BigCalculate(item.unitAmount, '*', item.itemNum)
           const disCount = BigCalculate(this.mainOrderDiscount, '/', 100)
           const disCountValue = BigCalculate(value, '*', disCount)
           result = BigCalculate(result, '+', disCountValue)
-          console.log(result, 'result')
         } else {
           const value = BigCalculate(item.unitAmount, '*', item.itemNum)
           result = BigCalculate(result, '+', value)
         }
       })
       this.setReceivableAmount(changeTwoDecimal(result))
-      console.log(this.disposeList, 'dis')
     },
     calculateDiscount() {
       const { minPrice, discountMaxValue, receivableAmount } = this
