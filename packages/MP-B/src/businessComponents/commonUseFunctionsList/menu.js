@@ -85,6 +85,16 @@ export const menuDic = {
     url: '/baseSubpackages/approvalManagement/approvalManagement',
     text: '审批',
   },
+  followupmanage: {
+    iconName: 'icon-follow-up',
+    iconColor: '#fff',
+    menuStyle: {
+      background: 'linear-gradient(139deg,#3abad0 12%, #6ecede 90%);',
+      boxShadow: '0rpx 20rpx 20rpx -20rpx #0ba8c2',
+    },
+    url: '/pages/followup/home',
+    text: '随访',
+  },
   all: {
     iconName: 'icon-all-fill',
     iconColor: '#fff',
