@@ -466,6 +466,9 @@ export default {
       )
     },
     formatStamp(stamp, timer) {
+      if (!timer) {
+        return moment(stamp).format('YYYY-MM-DD HH:mm')
+      }
       return (
         moment(stamp).format('YYYY-MM-DD') + ' ' + moment(timer).format('HH:mm')
       )
