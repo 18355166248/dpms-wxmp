@@ -4,6 +4,7 @@
     confirm-color="#5CBB89"
     show-cancel-button="true"
     @confirm="onConfirm"
+    @cancel="onCancel"
     title="收费审批确认"
   >
     <view class="slot-content" v-if="errData">
@@ -37,6 +38,10 @@ export default {
           this.$emit('confirm')
         }
       })
+    },
+
+    onCancel() {
+      this.$emit('cancel')
     },
   },
   components: {},
