@@ -200,6 +200,7 @@ export default {
       console.log(Object.keys(value.teeth))
       if (item.unit.replace(/(^\s+)|(\s+$)/g, '') === '颗') {
         item.itemNum = Object.keys(value.teeth).length
+        this.calculateAmount()
       }
       Object.keys(value.teeth).forEach((x) => {
         console.log(value.teeth[x])
