@@ -48,7 +48,7 @@
               <text>{{ item.customerName }}</text>
               <view class="icon-nan iconfont male"></view>
               <view class="iconfont iconphone"></view>
-              <text class="phone">{{ item.mobile }}</text>
+              <text class="phone">{{ item.mobile || '-' }}</text>
               <!-- <view class="icon-shengri iconfont"></view>
               <text class="age">22岁</text> -->
             </view>
@@ -66,7 +66,7 @@
             <view class="line-info-wrap" v-else>
               <view class="left">实际随访时间：</view>
               <view class="right">{{
-                formatStamp(item.planFollowUpDate, item.realFollowUpTime)
+                formatStamp(item.realFollowUpTime)
               }}</view>
             </view>
             <view class="line-info-wrap">
@@ -564,10 +564,7 @@ export default {
     handleReset() {
       this.statusIndex = 0
       this.staffIndex = 0
-      this.institutionIndex = {
-        index: 0,
-        type: 0,
-      }
+      this.institutionIndex = this.loginInstitutionIndex
     },
     goSearch() {
       wx.redirectTo({
@@ -810,7 +807,7 @@ page {
           color: #7f7f7f;
         }
         .phone {
-          margin: 0 28rpx 0 15rpx;
+          margin: 0 28rpx 0 8rpx;
         }
         .age {
           margin-left: 12rpx;
@@ -842,6 +839,7 @@ page {
           font-family: PingFangSC, PingFangSC-Regular;
           color: #4c4c4c;
           position: relative;
+          transform: translateY(1rpx);
           .drop-down {
             position: absolute;
             width: 152rpx;
@@ -1015,6 +1013,7 @@ page {
         display: flex;
         align-items: center;
         padding: 0 24rpx;
+        color: #b7b7b7;
         &.selected {
           background: #eef8f3;
           color: #5cbb89;
