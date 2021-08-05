@@ -58,7 +58,7 @@
                 item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
               "
             >
-              <view class="left">计划节点时间：</view>
+              <view class="left">计划随访时间：</view>
               <view class="right">{{
                 formatStamp(item.planFollowUpDate, item.planFollowUpTime)
               }}</view>
@@ -213,6 +213,7 @@
                     institutionIndex.index === key
                       ? 'selected'
                       : '',
+                    item.disabled ? 'disabled' : '',
                   ]"
                   v-for="(item, key) in directList"
                   :key="key"
@@ -347,6 +348,16 @@ export default {
             )
           }
 
+          if (this.staffs[2] && this.staffs[2].workInstitutionIds) {
+            const workInstitutionIds = this.staffs[2].workInstitutionIds
+            this.directList = this.directList.map((i) => {
+              return {
+                ...i,
+                disabled: !workInstitutionIds.includes(i.medicalInstitutionId),
+              }
+            })
+          }
+
           this.institutionIndex = {
             index: insIndex,
             type: topParentId === 0 ? 0 : institutionChainType,
@@ -364,14 +375,17 @@ export default {
       this.dropDownBoxVisibleIndex = false
       this.getFollowupList()
     })
-    const { staffName, staffId, calendarDate } = options
-    if (staffName) {
+    let { staffItem, calendarDate } = options
+    if (staffItem) {
+      staffItem = JSON.parse(staffItem)
+      const { staffName, staffId, workInstitutionIds } = staffItem
       this.filterModal = true
       this.staffs = [
         ...this.staffs,
         {
           staffId: staffId,
           value: staffName,
+          workInstitutionIds: workInstitutionIds,
         },
       ]
       this.calendarDate = calendarDate
@@ -560,6 +574,8 @@ export default {
     },
     hideFilterModal() {
       this.filterModal = false
+      this.statusIndex = 0
+      this.staffIndex = 0
     },
     handleReset() {
       this.statusIndex = 0
@@ -571,9 +587,22 @@ export default {
         url: `/pages/followup/search?workInstitutionId=${this.medicalInstitutionId}&calendarDate=${this.calendarDate}`,
       })
     },
-    handleStaffSelect({ staffId }, index) {
+    handleStaffSelect({ staffId, workInstitutionIds }, index) {
       this.staffIndex = index
       this.planFollowUpUserId = staffId
+      // if (index < 2) {
+      //   this.directList = this.directList.map(i => ({
+      //     ...i,
+      //     disabled: false,
+      //   }))
+      // } else {
+      //   this.directList = this.directList.map(i => {
+      //     return {
+      //       ...i,
+      //       disabled: !workInstitutionIds?.includes(i.medicalInstitutionId)
+      //     }
+      //   })
+      // }
     },
     deleteNode({ followUpNodeId, followUpPlanId }) {
       uni.showModal({
@@ -601,6 +630,7 @@ export default {
       })
     },
     hanldeSelectInstitution(item, index) {
+      if (item.disabled) return
       const {
         parentId,
         medicalInstitutionType,
@@ -645,6 +675,22 @@ export default {
         followUpPlanNodeBeginTimeLeft: newVal.startOf('day').format('x'),
         followUpPlanNodeBeginTimeRight: newVal.endOf('day').format('x'),
       })
+    },
+    staffIndex(newVal) {
+      if (newVal < 2) {
+        this.directList = this.directList.map((i) => ({
+          ...i,
+          disabled: false,
+        }))
+      } else {
+        const workInstitutionIds = this.staffs[newVal].workInstitutionIds || []
+        this.directList = this.directList.map((i) => {
+          return {
+            ...i,
+            disabled: !workInstitutionIds?.includes(i.medicalInstitutionId),
+          }
+        })
+      }
     },
   },
 }
@@ -1013,7 +1059,9 @@ page {
         display: flex;
         align-items: center;
         padding: 0 24rpx;
-        color: #b7b7b7;
+        &.disabled {
+          color: #b7b7b7;
+        }
         &.selected {
           background: #eef8f3;
           color: #5cbb89;
