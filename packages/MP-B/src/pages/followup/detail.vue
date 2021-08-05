@@ -76,6 +76,7 @@
         </view>
         <followNode
           :nodeList="nodeList"
+          :institutionId="institutionId"
           :followUpNodeId="followUpNodeId"
           :followUpPlanId="followUpPlanId"
           :customer="customer"
@@ -110,6 +111,7 @@ export default {
       finishTime: 0,
       followUpNodeId: null,
       followUpPlanId: null,
+      institutionId: null,
     }
   },
   filters: {
@@ -197,6 +199,7 @@ export default {
           }
           that.nodeList = nodeList
           that.totalTime = nodeList.length
+          that.institutionId = res.data.institutionId
           const finish = nodeList.filter((v) => v?.nodeFollowUpStatus != 10)
           that.finishTime = finish.length
           ;(that.planBeginTime = nodeList[0]?.planFollowUpDate

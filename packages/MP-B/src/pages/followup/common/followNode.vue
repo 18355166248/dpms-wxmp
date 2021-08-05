@@ -111,12 +111,32 @@
             </view>
           </view>
           <view class="btnBox" v-if="item.nodeFollowUpStatus == 10">
-            <view class="btn" @click="handleCarry(item.id)">执行</view>
-            <view class="btn" @click="handleStop(item.id)">终止</view>
-            <view class="btn" @click="handleDelete(item.id)">删除</view>
+            <view
+              class="btn"
+              v-if="id == institutionId"
+              @click="handleCarry(item.id)"
+              >执行</view
+            >
+            <view
+              class="btn"
+              v-if="id == institutionId"
+              @click="handleStop(item.id)"
+              >终止</view
+            >
+            <view
+              class="btn"
+              v-if="id == institutionId"
+              @click="handleDelete(item.id)"
+              >删除</view
+            >
           </view>
           <view class="btnBox" v-if="item.nodeFollowUpStatus == 31">
-            <view class="btn" @click="handleCarry(item.id)">重新随访</view>
+            <view
+              class="btn"
+              v-if="id == institutionId"
+              @click="handleCarry(item.id)"
+              >重新随访</view
+            >
           </view>
         </view>
       </view>
@@ -129,6 +149,7 @@ import moment from 'moment'
 import _ from 'lodash'
 import followupAPI from '@/APIS/followup/followup.api.js'
 import textShrink from '@/components/textShrink/textShrink.vue'
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 
 export default {
   name: '',
@@ -153,12 +174,20 @@ export default {
       type: Object,
       default: {},
     },
+    institutionId: {
+      type: Number,
+      default: null,
+    },
   },
   data() {
     return {
       openIndex: [],
       nodeData: [],
+      id: null,
     }
+  },
+  created() {
+    this.id = getStorage(STORAGE_KEY.MEDICALINSTITUTION)?.medicalInstitutionId
   },
   watch: {
     followUpNodeId: {
