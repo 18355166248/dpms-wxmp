@@ -52,18 +52,18 @@
               <!-- <view class="icon-shengri iconfont"></view>
               <text class="age">22岁</text> -->
             </view>
-            <view
-              class="line-info-wrap"
-              v-if="
-                item.nodeFollowUpStatus === 10 || item.nodeFollowUpStatus === 40
-              "
-            >
+            <view class="line-info-wrap">
               <view class="left">计划随访时间：</view>
               <view class="right">{{
                 formatStamp(item.planFollowUpDate, item.planFollowUpTime)
               }}</view>
             </view>
-            <view class="line-info-wrap" v-else>
+            <view
+              class="line-info-wrap"
+              v-if="
+                item.nodeFollowUpStatus === 35 || item.nodeFollowUpStatus === 31
+              "
+            >
               <view class="left">实际随访时间：</view>
               <view class="right">{{
                 formatStamp(item.realFollowUpTime)
