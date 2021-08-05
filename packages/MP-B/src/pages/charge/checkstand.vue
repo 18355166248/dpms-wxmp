@@ -250,6 +250,7 @@
     <!-- 审批弹框-->
     <approveModal
       @confirm="approveConfirm"
+      @cancel="this.isLock = false"
       ref="approveModalRef"
     ></approveModal>
   </view>
@@ -558,9 +559,11 @@ export default {
       return true
     },
     onSubmitBill(type) {
+      console.log('1111')
       if (this.isLock) {
         return
       }
+      console.log('2222')
       const { staff, nowDate, form, patientDetail, receivableAmount } = this
       if (this.changeAmount > 0) {
         return
