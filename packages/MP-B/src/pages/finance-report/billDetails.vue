@@ -312,10 +312,10 @@ export default {
           'BillStatus',
           item.billStatus,
         )
-        item.createTime = moment(item.createTime).format('YYYY-MM-DD hh:mm:ss')
-        item.visTime = moment(item.visTime).format('YYYY-MM-DD hh:mm:ss')
+        item.createTime = moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')
+        item.visTime = moment(item.visTime).format('YYYY-MM-DD HH:mm:ss')
         item.lastTransactionTime = moment(item.lastTransactionTime).format(
-          'YYYY-MM-DD hh:mm:ss',
+          'YYYY-MM-DD HH:mm:ss',
         )
         // console.log(this.$dpmsUtils.getEnumsText('BillType',4));
         // console.log(item.lastTransactionTime);
