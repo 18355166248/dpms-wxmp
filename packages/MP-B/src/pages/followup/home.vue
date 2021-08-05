@@ -94,7 +94,10 @@
               <view
                 class="more"
                 @click.stop="showDropDownBox(index)"
-                v-if="item.nodeFollowUpStatus === 10"
+                v-if="
+                  item.nodeFollowUpStatus === 10 &&
+                  item.institutionId === medicalInstitutionId
+                "
               >
                 更多
                 <view
@@ -109,13 +112,19 @@
               <view
                 class="carry mid"
                 @click="handleCarry(item)"
-                v-if="item.nodeFollowUpStatus === 10"
+                v-if="
+                  item.nodeFollowUpStatus === 10 &&
+                  item.institutionId === medicalInstitutionId
+                "
                 >执行</view
               >
               <view
                 class="carry mid retry"
                 @click="followupAgain(item)"
-                v-if="item.nodeFollowUpStatus === 31"
+                v-if="
+                  item.nodeFollowUpStatus === 31 &&
+                  item.institutionId === medicalInstitutionId
+                "
                 >重新随访</view
               >
               <view class="inspect inspect1" @click="handleInspect(item)"
