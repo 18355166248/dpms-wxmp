@@ -71,7 +71,8 @@
                         @click.stop=""
                         v-if="
                           item.registerStatus !==
-                          REGISTER_ENUM.REGISTER_LEAVE.value
+                            REGISTER_ENUM.REGISTER_LEAVE.value &&
+                          statusTextArray[item.appointmentId].length > 0
                         "
                       >
                         <picker
@@ -178,7 +179,8 @@
                         @click.stop=""
                         v-if="
                           item.registerStatus !==
-                          REGISTER_ENUM.REGISTER_LEAVE.value
+                            REGISTER_ENUM.REGISTER_LEAVE.value &&
+                          statusTextArray[item.appointmentId].length > 0
                         "
                       >
                         <picker
@@ -314,7 +316,8 @@
                           @click.stop=""
                           v-if="
                             item.registerStatus !==
-                            REGISTER_ENUM.REGISTER_LEAVE.value
+                              REGISTER_ENUM.REGISTER_LEAVE.value &&
+                            statusTextArray[item.appointmentId].length > 0
                           "
                         >
                           <picker
