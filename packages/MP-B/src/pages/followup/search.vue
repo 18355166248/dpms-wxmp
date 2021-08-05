@@ -63,7 +63,9 @@ export default {
     handleSetStaff(item) {
       this.staffName = item.staffName
       uni.redirectTo({
-        url: `/pages/followup/home?staffName=${item.staffName}&staffId=${item.staffId}&calendarDate=${this.calendarDate}`,
+        url: `/pages/followup/home?staffItem=${JSON.stringify(
+          item,
+        )}&calendarDate=${this.calendarDate}`,
       })
     },
   },
