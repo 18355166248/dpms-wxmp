@@ -44,10 +44,10 @@
           <span>随访类型:</span>
           <span>{{ followDetail.followUpTypeName | filterText }}</span>
         </view>
-        <view class="detail-info">
+        <!-- <view class="detail-info">
           <span>计划随访人:</span>
           <span>{{ followDetail.createUserName | filterText }}</span>
-        </view>
+        </view> -->
         <view class="detail-info">
           <span>节点计划时间:</span>
           <span>{{ planBeginTime }}~{{ planEndTime }}</span>
@@ -191,9 +191,9 @@ export default {
             diagnosisTime: res.data?.diagnosisTime
               ? moment(res.data.diagnosisTime).format('YYYY-MM-DD HH:mm')
               : '无',
-            createUserName: res.data?.createUserName
-              ? res.data.createUserName
-              : '',
+            // createUserName: res.data?.createUserName
+            //   ? res.data.createUserName
+            //   : '',
           }
           that.nodeList = nodeList
           that.totalTime = nodeList.length
