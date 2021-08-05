@@ -195,6 +195,7 @@
                       ? 'selected'
                       : '',
                     key % 3 === 1 && key === regionList.length - 1 ? 'fix' : '',
+                    item.status === 2 ? 'disabled' : '',
                   ]"
                   v-for="(item, key) in regionList"
                   :key="key"
@@ -213,7 +214,7 @@
                     institutionIndex.index === key
                       ? 'selected'
                       : '',
-                    item.disabled ? 'disabled' : '',
+                    item.disabled || item.status === 2 ? 'disabled' : '',
                   ]"
                   v-for="(item, key) in directList"
                   :key="key"
@@ -630,7 +631,7 @@ export default {
       })
     },
     hanldeSelectInstitution(item, index) {
-      if (item.disabled) return
+      if (item.disabled || item.status === 2) return
       const {
         parentId,
         medicalInstitutionType,
@@ -652,7 +653,7 @@ export default {
     },
 
     flatInstitutionTree(data) {
-      data.forEach((item, index) => {
+      data?.forEach((item, index) => {
         if (item.medicalInstitutionType === 3) {
           this.flatInstitutionTree(item.children)
           this.regionList.push(item)
@@ -1050,6 +1051,9 @@ page {
           border: 1rpx solid #5cbb89;
           color: #5cbb89;
         }
+        &.disabled {
+          color: rgba(0, 0, 0, 0.15);
+        }
       }
       .status-item1 {
         width: 702rpx;
@@ -1060,7 +1064,7 @@ page {
         align-items: center;
         padding: 0 24rpx;
         &.disabled {
-          color: #b7b7b7;
+          color: rgba(0, 0, 0, 0.15);
         }
         &.selected {
           background: #eef8f3;
