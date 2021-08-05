@@ -94,7 +94,10 @@
               <view
                 class="more"
                 @click.stop="showDropDownBox(index)"
-                v-if="item.nodeFollowUpStatus === 10"
+                v-if="
+                  item.nodeFollowUpStatus === 10 &&
+                  item.institutionId === medicalInstitutionId
+                "
               >
                 更多
                 <view
@@ -109,7 +112,10 @@
               <view
                 class="carry mid"
                 @click="handleCarry(item)"
-                v-if="item.nodeFollowUpStatus === 10"
+                v-if="
+                  item.nodeFollowUpStatus === 10 &&
+                  item.institutionId === medicalInstitutionId
+                "
                 >执行</view
               >
               <view
