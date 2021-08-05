@@ -319,7 +319,7 @@ export default {
         })
 
         item.cashierDate = moment(item.cashierDate).format(
-          'YYYY-MM-DD hh:mm:ss',
+          'YYYY-MM-DD HH:mm:ss',
         )
         return item
       })

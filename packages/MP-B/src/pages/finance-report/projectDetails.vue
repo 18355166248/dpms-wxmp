@@ -339,7 +339,7 @@ export default {
 
       records = records.map((item) => {
         item.lastDealTime = moment(item.lastDealTime).format(
-          'YYYY-MM-DD hh:mm:ss',
+          'YYYY-MM-DD HH:mm:ss',
         )
         item.totalAmount = this.$dpmsUtils.formatPrice(item.totalAmount)
         item.unitAmount = this.$dpmsUtils.formatPrice(item.unitAmount)
