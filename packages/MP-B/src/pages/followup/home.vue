@@ -121,7 +121,10 @@
               <view
                 class="carry mid retry"
                 @click="followupAgain(item)"
-                v-if="item.nodeFollowUpStatus === 31"
+                v-if="
+                  item.nodeFollowUpStatus === 31 &&
+                  item.institutionId === medicalInstitutionId
+                "
                 >重新随访</view
               >
               <view class="inspect inspect1" @click="handleInspect(item)"
