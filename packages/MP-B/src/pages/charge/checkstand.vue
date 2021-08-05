@@ -250,6 +250,7 @@
     <!-- 审批弹框-->
     <approveModal
       @confirm="approveConfirm"
+      @cancel="this.isLock = false"
       ref="approveModalRef"
     ></approveModal>
   </view>
