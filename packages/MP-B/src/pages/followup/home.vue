@@ -178,6 +178,7 @@
                 :class="[
                   'status-item',
                   institutionIndex.type === 0 ? 'selected' : '',
+                  institutionList[0].disabled ? 'disabled' : '',
                 ]"
                 @click="hanldeSelectInstitution(institutionList[0])"
                 >{{ institutionList[0].medicalInstitutionSimpleCode }}</view
@@ -357,6 +358,9 @@ export default {
                 disabled: !workInstitutionIds.includes(i.medicalInstitutionId),
               }
             })
+            this.institutionList[0].disabled = !workInstitutionIds.includes(
+              this.institutionList[0].medicalInstitutionId,
+            )
           }
 
           this.institutionIndex = {
@@ -575,8 +579,23 @@ export default {
     },
     hideFilterModal() {
       this.filterModal = false
-      this.statusIndex = 0
-      this.staffIndex = 0
+
+      let statusNeedReset = true
+      let staffNeedReset = true
+      this.selectedCharas?.forEach((item) => {
+        if (item.hasOwnProperty('key')) {
+          statusNeedReset = false
+        }
+        if (item.hasOwnProperty('staffId')) {
+          staffNeedReset = false
+        }
+      })
+      if (statusNeedReset) {
+        this.statusIndex = 0
+      }
+      if (staffNeedReset) {
+        this.staffIndex = 0
+      }
     },
     handleReset() {
       this.statusIndex = 0
@@ -658,7 +677,14 @@ export default {
           this.flatInstitutionTree(item.children)
           this.regionList.push(item)
         } else {
-          this.directList.push(item)
+          // 如果是加盟独立模式，不展示加盟机构
+          if (this.medicalInstitution.institutionChainSchema === 3) {
+            this.directList.push(item)
+          } else {
+            if (item.medicalInstitutionType !== 4) {
+              this.directList.push(item)
+            }
+          }
         }
       })
     },
@@ -683,6 +709,7 @@ export default {
           ...i,
           disabled: false,
         }))
+        this.institutionList[0].disabled = false
       } else {
         const workInstitutionIds = this.staffs[newVal].workInstitutionIds || []
         this.directList = this.directList.map((i) => {
@@ -691,6 +718,9 @@ export default {
             disabled: !workInstitutionIds?.includes(i.medicalInstitutionId),
           }
         })
+        this.institutionList[0].disabled = !workInstitutionIds.includes(
+          this.institutionList[0].medicalInstitutionId,
+        )
       }
     },
   },
