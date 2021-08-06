@@ -658,8 +658,10 @@ export default {
           .then((res) => {
             const { code, data, message } = res
             if (code === 0 && data) {
+              this.isLock = false
               this.$refs.payResultRef.open(data)
             } else if ([1000373, 1000377].includes(code)) {
+              this.isLock = false
               try {
                 const errData = JSON.parse(message)
                 // 发起审核
@@ -766,7 +768,7 @@ export default {
             this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
             // 计算折扣金额
             let _singleDiscountAfterAmountTotal = orderPayItemList
-              .filter((item) => item.allBillDiscount)
+              // .filter((item) => item.allBillDiscount)  //有整单折扣和不允许整单折扣的混合有bug
               .reduce((pre, item) => {
                 return BigCalculate(pre, '+', item.singleDiscountAfterAmount)
               }, 0)
