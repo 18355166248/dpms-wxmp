@@ -292,7 +292,7 @@ export default {
         memo: '',
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
-        source: 1, // 新增就诊记录上的字段，默认取1
+        source: 2, // 新增就诊记录上的字段，默认取2
       },
       toggleInfomation: true,
       allStaffList: [],
@@ -717,7 +717,7 @@ export default {
               memo,
               consultTime,
               consultId,
-              consultSource = 1,
+              consultSource = 2,
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
@@ -996,7 +996,7 @@ export default {
       const updateObj = {
         registerTime: data.registerTime,
         registerId: data.registerId,
-        source: data.source || 1,
+        source: data.source || 2,
       }
       // 如果已经有值则不联动
       // 回显医生
