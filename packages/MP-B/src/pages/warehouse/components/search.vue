@@ -8,7 +8,7 @@
             focus
             @focus="handleFocus"
             ref="merchandiseName"
-            placeholder="物品编码、物品名称、生产厂商"
+            placeholder="物品编码、名称、厂商、规格、品牌"
             confirm-type="search"
             v-model="merchandiseName"
             @confirm="confirm"
