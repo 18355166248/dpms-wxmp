@@ -151,6 +151,10 @@ const billAPI = {
   getRegisterList(data) {
     return httper.get('/diagnosis/register/list-pay', data)
   },
+  //获取就诊列表,新接口增加一个字段
+  getRegisterAllList(data) {
+    return httper.get('/diagnosis/register/list-all-pay', data)
+  },
   // 分诊业绩
   getTriageList(data) {
     return httper.get('diagnosis/stat-triage-statistics/stat/list', data)
