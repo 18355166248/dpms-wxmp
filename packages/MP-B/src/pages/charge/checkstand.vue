@@ -998,14 +998,29 @@ export default {
         registerId: data.registerId,
         source: data.source || 2,
       }
+
       // 如果已经有值则不联动
+      // 所有回显都没有考虑过数据被删除过，会出现没有选中情况
       // 回显医生
       if (!form.doctorStaffId && data.doctorStaffId) {
         updateObj.doctorStaffId = data.doctorStaffId
       }
-      // 回显医生助理（多选）
-      if (!form.assistantStaffIds && data.assistantStaffIds) {
-        updateObj.assistantStaffIds = data.assistantStaffIds
+      // 回显护士
+      if (!form.nurseStaffId && data.nurseStaffId) {
+        updateObj.nurseStaffId = data.nurseStaffId
+      }
+      // 回显医生助理（多选）以前就是错的XXX
+      if (
+        !form?.assistantStaffIds?.length &&
+        data.assistants &&
+        data.assistants.length > 0
+      ) {
+        updateObj.assistantStaffIds = data.assistants.map(
+          (item) => item.staffId,
+        )
+        this.assistantNames = data.assistants
+          .map((item) => item.staffName)
+          .join(',')
       }
       // 回显咨询师
       if (!form.consultedStaffId && data.consultedStaffId) {
