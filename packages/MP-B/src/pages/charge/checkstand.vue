@@ -292,6 +292,7 @@ export default {
         memo: '',
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
+        source: 2, // 新增就诊记录上的字段，默认取2
       },
       toggleInfomation: true,
       allStaffList: [],
@@ -576,6 +577,7 @@ export default {
         cashierStaffId: staff.staffId,
         cashierTime: new Date(nowDate.replace(/-/g, '/')).valueOf(),
         consultId: form.registerId,
+        consultSource: form.source,
         consultTime: form.registerTime,
         mainDiscountPromotionAmount: this.realDiscountPromotionAmount,
         mainOrderDiscount: this.realMainOrderDiscount,
@@ -715,6 +717,7 @@ export default {
               memo,
               consultTime,
               consultId,
+              consultSource = 2,
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
@@ -764,6 +767,7 @@ export default {
             // )
             this.form.registerTime = consultTime
             this.form.registerId = consultId
+            this.form.source = consultSource
             // 回显setRealMainOrderDiscount
             this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
             // 计算折扣金额
@@ -858,7 +862,6 @@ export default {
           })
         }
       }
-      console.log(705, record)
 
       record.paymentAmount = Number(value)
     },
@@ -926,7 +929,7 @@ export default {
       })
 
       billAPI
-        .getRegisterList({
+        .getRegisterAllList({
           patientId: this.patientDetail.patientId,
         })
         .then((res) => {
@@ -976,11 +979,15 @@ export default {
         })
     },
     formatRegister(list) {
+      let enums = this.$dpmsUtils.getEnums('Register').properties
+
       return list.map((item) => {
         item.labelStr =
           moment(item.registerTime).format('YYYY-MM-DD HH:mm') +
           ' ' +
-          item.medicalInstitutionSimpleCode
+          item.medicalInstitutionSimpleCode +
+          ' ' +
+          enums[item.status]?.zh_CN
         return item
       })
     },
@@ -989,6 +996,7 @@ export default {
       const updateObj = {
         registerTime: data.registerTime,
         registerId: data.registerId,
+        source: data.source || 2,
       }
       // 如果已经有值则不联动
       // 回显医生
