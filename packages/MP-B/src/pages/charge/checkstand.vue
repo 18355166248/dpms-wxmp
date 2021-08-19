@@ -634,11 +634,6 @@ export default {
       if (this.billSerialNo) {
         params.billSerialNo = this.billSerialNo
       }
-
-      // params.orderPayItemList = params.orderPayItemList.map((item) => {
-      //   item.salesList = params.salesList
-      //   return item
-      // })
       this.isLock = true
       if (type === 'save') {
         billAPI
@@ -1027,6 +1022,27 @@ export default {
         updateObj.consultedStaffId = data.consultedStaffId
       }
       this.form = Object.assign(this.form, updateObj)
+      //选中项目默认为主单医生
+      this.setDisposeList(
+        this.disposeList.map((item) => {
+          let list = []
+          if (form.doctorStaffId) {
+            list.push({
+              salesId: form.doctorStaffId,
+              salesType: STAFF_ENUMS.get('doctor'),
+            })
+          }
+          if (form.nurseStaffId) {
+            list.push({
+              salesId: form.nurseStaffId,
+              salesType: STAFF_ENUMS.get('nurse'),
+            })
+          }
+          item.salesList = list
+          return item
+        }),
+      )
+      this.setCheckStandStaffList(this.form)
     },
     onRegisterTime(v, record) {
       this.backVisitTimeDate(record)
