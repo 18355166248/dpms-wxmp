@@ -409,9 +409,9 @@ export default {
         },
         { name: '新建预约', value: 'newAppt', icon: 'icon-clock' },
       ]
-      if (this.isHeadquartersAndRegion) {
-        return list.slice(0, 1)
-      }
+      // if (this.isHeadquartersAndRegion) {
+      //   return list.slice(0, 1)
+      // }
       return list
     },
     dropMenuSelect(val) {

@@ -3,7 +3,7 @@
     <view class="container-top">
       <view class="container-top-input" @click="goToSearch">
         <text class="iconfont icon-search"></text>
-        <text class="input-placeholder">物品编码、物品名称、生产厂商</text>
+        <text class="input-placeholder">物品编码、名称、厂商、规格、品牌</text>
       </view>
     </view>
     <view class="goods">

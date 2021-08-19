@@ -292,6 +292,7 @@ export default {
         memo: '',
         registerTime: '', //提交时为consultTime
         registerId: '', // 提交时为consultId
+        source: 2, // 新增就诊记录上的字段，默认取2
       },
       toggleInfomation: true,
       allStaffList: [],
@@ -576,6 +577,7 @@ export default {
         cashierStaffId: staff.staffId,
         cashierTime: new Date(nowDate.replace(/-/g, '/')).valueOf(),
         consultId: form.registerId,
+        consultSource: form.source,
         consultTime: form.registerTime,
         mainDiscountPromotionAmount: this.realDiscountPromotionAmount,
         mainOrderDiscount: this.realMainOrderDiscount,
@@ -632,11 +634,6 @@ export default {
       if (this.billSerialNo) {
         params.billSerialNo = this.billSerialNo
       }
-
-      // params.orderPayItemList = params.orderPayItemList.map((item) => {
-      //   item.salesList = params.salesList
-      //   return item
-      // })
       this.isLock = true
       if (type === 'save') {
         billAPI
@@ -715,6 +712,7 @@ export default {
               memo,
               consultTime,
               consultId,
+              consultSource = 2,
               realMainOrderDiscount,
               promotionVOList,
             } = res.data
@@ -764,6 +762,7 @@ export default {
             // )
             this.form.registerTime = consultTime
             this.form.registerId = consultId
+            this.form.source = consultSource
             // 回显setRealMainOrderDiscount
             this.setRealMainOrderDiscount(Math.ceil(realMainOrderDiscount))
             // 计算折扣金额
@@ -858,7 +857,6 @@ export default {
           })
         }
       }
-      console.log(705, record)
 
       record.paymentAmount = Number(value)
     },
@@ -926,7 +924,7 @@ export default {
       })
 
       billAPI
-        .getRegisterList({
+        .getRegisterAllList({
           patientId: this.patientDetail.patientId,
         })
         .then((res) => {
@@ -976,11 +974,15 @@ export default {
         })
     },
     formatRegister(list) {
+      let enums = this.$dpmsUtils.getEnums('Register').properties
+
       return list.map((item) => {
         item.labelStr =
           moment(item.registerTime).format('YYYY-MM-DD HH:mm') +
           ' ' +
-          item.medicalInstitutionSimpleCode
+          item.medicalInstitutionSimpleCode +
+          ' ' +
+          enums[item.status]?.zh_CN
         return item
       })
     },
@@ -989,21 +991,58 @@ export default {
       const updateObj = {
         registerTime: data.registerTime,
         registerId: data.registerId,
+        source: data.source || 2,
       }
+
       // 如果已经有值则不联动
+      // 所有回显都没有考虑过数据被删除过，会出现没有选中情况
       // 回显医生
       if (!form.doctorStaffId && data.doctorStaffId) {
         updateObj.doctorStaffId = data.doctorStaffId
       }
-      // 回显医生助理（多选）
-      if (!form.assistantStaffIds && data.assistantStaffIds) {
-        updateObj.assistantStaffIds = data.assistantStaffIds
+      // 回显护士
+      if (!form.nurseStaffId && data.nurseStaffId) {
+        updateObj.nurseStaffId = data.nurseStaffId
+      }
+      // 回显医生助理（多选）以前就是错的XXX
+      if (
+        !form?.assistantStaffIds?.length &&
+        data.assistants &&
+        data.assistants.length > 0
+      ) {
+        updateObj.assistantStaffIds = data.assistants.map(
+          (item) => item.staffId,
+        )
+        this.assistantNames = data.assistants
+          .map((item) => item.staffName)
+          .join(',')
       }
       // 回显咨询师
       if (!form.consultedStaffId && data.consultedStaffId) {
         updateObj.consultedStaffId = data.consultedStaffId
       }
       this.form = Object.assign(this.form, updateObj)
+      //选中项目默认为主单医生
+      this.setDisposeList(
+        this.disposeList.map((item) => {
+          let list = []
+          if (form.doctorStaffId) {
+            list.push({
+              salesId: form.doctorStaffId,
+              salesType: STAFF_ENUMS.get('doctor'),
+            })
+          }
+          if (form.nurseStaffId) {
+            list.push({
+              salesId: form.nurseStaffId,
+              salesType: STAFF_ENUMS.get('nurse'),
+            })
+          }
+          item.salesList = list
+          return item
+        }),
+      )
+      this.setCheckStandStaffList(this.form)
     },
     onRegisterTime(v, record) {
       this.backVisitTimeDate(record)
