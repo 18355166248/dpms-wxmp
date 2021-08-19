@@ -102,16 +102,8 @@ export default {
           return
         }
       })
-
       this.$set(item, this.itemStaffId, id)
     })
-  },
-  onShow() {
-    // if (typeof this.staffId == 'undefined') {
-    //   this.disposeList.forEach((item) => {
-    //     item[this.itemStaffId] = ''
-    //   })
-    // }
   },
   computed: {
     ...mapState('dispose', ['staffList', 'disposeList', 'checkStandStaffList']),
@@ -176,12 +168,7 @@ export default {
         item[this.itemStaffId] = ''
         return
       }
-      console.log(this.disposeList[index], '567', val, index)
       this.disposeList[index][this.itemStaffId] = val
-      // this.$forceUpdate()
-      // this.disposeList.forEach((item2) => {
-      //   if (item2.itemCode === item.itemCode) item2[this.itemStaffId] = val
-      // })
     },
   },
 }
