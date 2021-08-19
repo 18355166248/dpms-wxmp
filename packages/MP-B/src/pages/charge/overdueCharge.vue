@@ -3,7 +3,7 @@
     <view class="list-wrap">
       <view
         class="item"
-        v-for="(item, index) in overdueChargeList"
+        v-for="item in overdueChargeList"
         :key="item.billOrderId"
       >
         <view class="overdue-infos">
@@ -11,7 +11,7 @@
             <view>{{ billTypeDic[item.billType] }}</view>
             <view>{{ item.medicalInstitutionName }}</view>
             <view
-            >{{ item.billFistPayTime | filterTime('YYYY-MM-DD HH:mm') }}
+              >{{ item.billFistPayTime | filterTime('YYYY-MM-DD HH:mm') }}
             </view>
           </view>
           <view class="info-right">
@@ -22,13 +22,13 @@
             </view>
             <view class="values">
               <view
-              >{{ item.receivableAmount | thousandFormatter(2, '￥') }}
+                >{{ item.receivableAmount | thousandFormatter(2, '￥') }}
               </view>
               <view class="red-color"
-              >{{ item.receiptAmount | thousandFormatter(2, '￥') }}
+                >{{ item.receiptAmount | thousandFormatter(2, '￥') }}
               </view>
               <view class="green-color"
-              >{{ item.debtAmount | thousandFormatter(2, '￥') }}
+                >{{ item.debtAmount | thousandFormatter(2, '￥') }}
               </view>
             </view>
           </view>
@@ -45,13 +45,13 @@
     <view class="bottom-wrap">
       <view class="btns">
         <view class="amount-wrap"
-        ><span class="des">总计金额：</span
-        ><span class="amount">{{
+          ><span class="des">总计金额：</span
+          ><span class="amount">{{
             totalAmount | thousandFormatter(2, '￥')
           }}</span></view
         >
         <chargeButton type="solid" :buttonStyle="buttonStyle" @click="nextStep"
-        >下一步
+          >下一步
         </chargeButton>
       </view>
     </view>
@@ -60,10 +60,10 @@
   </view>
 </template>
 <script>
-import chargeButton from './common/chargeButton';
-import billAPI from '@/APIS/bill/bill.api';
-import { BigCalculate } from '@/utils/utils';
-import { mapMutations, mapState } from 'vuex';
+import chargeButton from './common/chargeButton'
+import billAPI from '@/APIS/bill/bill.api'
+import { BigCalculate } from '@/utils/utils'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'overdueCharge',
@@ -81,14 +81,14 @@ export default {
       buttonStyle: { width: '332rpx' },
       check: true,
       totalAmount: 0,
-    };
+    }
   },
   computed: {
     ...mapState('patient', ['patientDetail']),
   },
   onLoad(params) {
-    let checkedId = params?.billOrderId || '';
-    this.getPayDebtList(checkedId);
+    let checkedId = params?.billOrderId || ''
+    this.getPayDebtList(checkedId)
   },
   onShow() {
     // this.getPayDebtList()
@@ -98,63 +98,63 @@ export default {
   methods: {
     ...mapMutations('overdue', ['setOverdueList', 'setOverdueAmount']),
     onCheckboxChange(value, record) {
-      record.checked = value;
-      this.calculate();
+      record.checked = value
+      this.calculate()
     },
     calculate() {
       this.totalAmount = this.overdueChargeList.reduce((pre, next) => {
-        const nextAmount = next.checked ? next.debtAmount : 0;
-        return BigCalculate(pre, '+', nextAmount);
-      }, 0);
+        const nextAmount = next.checked ? next.debtAmount : 0
+        return BigCalculate(pre, '+', nextAmount)
+      }, 0)
     },
     hideActionSheet() {
-      this.showActionSheet = false;
+      this.showActionSheet = false
     },
     //获取欠费列表
     getPayDebtList(checkedId) {
       billAPI
-      .getPayDebtList({
-        patientId: this.patientDetail.patientId,
-      })
-      .then((res) => {
-        if (res?.data) {
-          this.overdueChargeList = res.data.map((item) => {
-            if (checkedId) {
-              if (checkedId === String(item.billOrderId)) {
-                item.checked = true;
+        .getPayDebtList({
+          patientId: this.patientDetail.patientId,
+        })
+        .then((res) => {
+          if (res?.data) {
+            this.overdueChargeList = res.data.map((item) => {
+              if (checkedId) {
+                if (checkedId === String(item.billOrderId)) {
+                  item.checked = true
+                } else {
+                  item.checked = false
+                }
               } else {
-                item.checked = false;
+                item.checked = true
               }
-            } else {
-              item.checked = true;
-            }
-            return item;
-          });
-          this.calculate();
-        }
-      });
+              return item
+            })
+            this.calculate()
+          }
+        })
     },
     //
     nextStep() {
-      const list = this.overdueChargeList.filter((item) => item.checked);
+      const list = this.overdueChargeList.filter((item) => item.checked)
       if (list.length <= 0) {
         this.$refs.uToast.show({
           title: '请选择收欠费项目!',
           type: 'warning',
-        });
-        return;
+        })
+        return
       }
-      this.setOverdueList(list);
-      this.setOverdueAmount(this.totalAmount);
+      this.setOverdueList(list)
+      this.setOverdueAmount(this.totalAmount)
 
       uni.navigateTo({
         url: '/pages/charge/overdueCheckstand',
-      });
+      })
     },
   },
   watch: {},
   components: { chargeButton },
-};
+}
 </script>
 <style lang="scss" scoped>
 .overdue-charge-wrap {

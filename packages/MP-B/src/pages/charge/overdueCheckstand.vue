@@ -51,7 +51,7 @@
         </div>
       </chargestand-title>
       <dpmsCellInput
-        v-for="(item, index) in form.payChannelList"
+        v-for="item in form.payChannelList"
         :key="item.transactionChannelId"
         type="digit"
         :title="`${item.transactionChannelName}(￥)`"
@@ -476,6 +476,26 @@ export default {
       _data.receivableAmount = this.form.receivableAmount
       _data.payChannelList = this.form.payChannelList
       _data.salesVOList = []
+
+      // 用于PC端医生、护士反显
+      if (this.overdueList.length > 0) {
+        this.overdueList.forEach((val) => {
+          if (val.orderItemVOList && val.orderItemVOList.length > 0) {
+            val.orderItemVOList.forEach((valA) => {
+              if (valA.salesVOList && valA.salesVOList.length > 0) {
+                const temp = valA.salesVOList.map((valB) => {
+                  return {
+                    billOrderItemId: valB.billOrderItemId,
+                    salesId: valB.salesId,
+                    salesType: valB.salesType,
+                  }
+                })
+                _data.salesVOList = _data.salesVOList.concat(temp)
+              }
+            })
+          }
+        })
+      }
 
       if (type === 'free') {
         _data.debtDiscount = 0
