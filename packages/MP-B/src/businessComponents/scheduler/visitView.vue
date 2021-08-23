@@ -266,12 +266,12 @@ export default {
                   origin,
                   change: {
                     group: columnGroup[index],
-                    begin: moment()
+                    begin: moment(origin.begin)
                       .hours(sh)
                       .minutes(sm)
                       .second(0)
                       .millisecond(0),
-                    end: moment()
+                    end: moment(origin.end)
                       .hours(eh)
                       .minutes(em)
                       .second(0)
