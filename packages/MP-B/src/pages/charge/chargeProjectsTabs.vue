@@ -103,7 +103,6 @@ export default {
     },
     //整合和处理相关的数据给到下个页面
     handleData(list) {
-      console.log(this.billType)
       let targetList = []
       let index = 0
       list.forEach((project) => {
@@ -125,18 +124,28 @@ export default {
           project.merchandiseNo
         filterData.parentItemCode =
           project.parentItemCode || project.settingsChargeTypeId || 0
-        filterData.unitAmount = project.unitAmount || project.retailAmount
+        filterData.unitAmount = this.initUnitAmount(project)
         const amount = changeTwoDecimal(filterData.unitAmount)
         filterData.totalAmount = amount
         filterData.singleDiscountAfterAmount = amount
         filterData.receivableAmount = amount
         filterData.unit = project.unit || project.inventoryUnitStr || ''
         targetList.push(filterData)
-        console.log(filterData)
       })
       this.setSelectedDisposeList(targetList)
       this.setDisposeList(targetList)
       this.setReceivableAmount(0)
+    },
+    initUnitAmount(project) {
+      const { unitAmount, retailAmount } = project
+      if (!isNaN(unitAmount) && unitAmount !== '') {
+        return unitAmount
+      } else if (!isNaN(retailAmount) && retailAmount !== '') {
+        // 这个字段都没有，不知道为啥这么写，所以先保留
+        return retailAmount
+      } else {
+        return 0
+      }
     },
     search() {
       if (this.currentTab === 0) {

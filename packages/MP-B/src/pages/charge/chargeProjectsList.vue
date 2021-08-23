@@ -9,7 +9,7 @@
         <span style="font-size: 26rpx;">如需使用折扣，可手动调整金额</span>
       </div>
       <div
-        v-for="(item, index) in disposeList"
+        v-for="item in disposeList"
         :key="item.itemCode"
         @longtap="removeDisposeItem(item)"
         class="disposal-item flex-column"
@@ -132,7 +132,6 @@ export default {
     }
   },
   onShow() {
-    console.log(this.chargeType)
     if (!this.receivableAmount) {
       // 如果没有receivableAmount，需要计算
       this.calculateAmount()
@@ -192,12 +191,10 @@ export default {
     ]),
     //牙位图数据
     setTeethSelect(value, item) {
-      console.log(value.teeth)
       const toothTemp = {
         teeth: {},
         activatedToothNumber: null,
       }
-      console.log(Object.keys(value.teeth))
       const unit = item.unit?.replace(/(^\s+)|(\s+$)/g, '')
       if (unit === '颗' || unit === '牙') {
         item.itemNum = Object.keys(value.teeth).length
@@ -207,11 +204,9 @@ export default {
         this.calculateAmount()
       }
       Object.keys(value.teeth).forEach((x) => {
-        console.log(value.teeth[x])
         toothTemp.teeth[x] = value.teeth[x]
         toothTemp.activatedToothNumber = x
       })
-      console.log(toothTemp)
       item.toothPosition = toothTemp
       item.toothPositionStr = toothTemp
     },
