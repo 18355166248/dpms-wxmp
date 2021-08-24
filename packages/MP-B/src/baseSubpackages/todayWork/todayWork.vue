@@ -213,9 +213,9 @@
                             REGISTER_ENUM.REGISTER_REGISTERED.value,
                           )
                         "
-                        v-if="canReception(item)"
+                        v-if="canConsulting(item)"
                       >
-                        接诊
+                        开始咨询
                       </button>
                       <button
                         :disabled="disabled"
@@ -230,7 +230,24 @@
                             REGISTER_ENUM.REGISTER_CONSULTING.value,
                           )
                         "
-                        v-if="canFinish(item)"
+                        v-if="canConsultTreatment(item)"
+                      >
+                        接诊
+                      </button>
+                      <button
+                        :disabled="disabled"
+                        class="button inverted-button"
+                        @click.stop="
+                          consultationAction(
+                            {
+                              registerId: item.registerId,
+                              registerStatus: item.registerStatus,
+                              appointmentId: item.appointmentId,
+                            },
+                            REGISTER_ENUM.REGISTER_TREATING.value,
+                          )
+                        "
+                        v-if="canConsultFinish(item)"
                       >
                         治疗完成
                       </button>
@@ -244,7 +261,7 @@
                               registerStatus: item.registerStatus,
                               appointmentId: item.appointmentId,
                             },
-                            REGISTER_ENUM.REGISTER_TREATING.value,
+                            REGISTER_ENUM.REGISTER_TREATED.value,
                           )
                         "
                         v-if="canLeave(item)"
@@ -261,7 +278,7 @@
                               registerStatus: item.registerStatus,
                               appointmentId: item.appointmentId,
                             },
-                            REGISTER_ENUM.REGISTER_TREATED.value,
+                            REGISTER_ENUM.REGISTER_LEAVE.value,
                           )
                         "
                         v-if="canUndo(item)"
@@ -754,7 +771,6 @@ export default {
       switch (curRoleKey) {
         case 'RECEPTIONIST':
         case 'DOCTOR':
-        case 'CONSULTANT':
           records &&
             records.forEach((v) => {
               switch (v.registerStatus) {
@@ -824,14 +840,14 @@ export default {
                   statusTextValue[v.appointmentId] = 0
                   break
                 //就诊状态为咨询中
-                //强流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
+                //强流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
                 //弱流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
                 case REGISTER_ENUM.REGISTER_CONSULTING?.value:
                   statusTextArray[v.appointmentId] = [
-                    {
-                      status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
-                      text: '接诊',
-                    },
+                    // {
+                    //   status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
+                    //   text: '接诊',
+                    // },
                     {
                       status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
                       text: '治疗完成',
@@ -887,6 +903,105 @@ export default {
               }
             })
           break
+        case 'CONSULTANT':
+          records &&
+            records.forEach((v) => {
+              switch (v.registerStatus) {
+                //就诊状态为已挂号
+                //强流程：默认按钮为开始咨询，下拉按钮为：已离开、回退
+                //弱流程：默认按钮为开始咨询，下拉按钮为：接诊、治疗完成、已离开、回退
+                case REGISTER_ENUM.REGISTER_REGISTERED?.value:
+                  if (isWeakflow === 1) {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
+                        text: '接诊',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '治疗完成',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  } else {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  }
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
+                      status: REGISTER_ENUM.REGISTER_LEAVE?.value,
+                      text: '回退',
+                    })
+                  }
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为咨询中
+                //强流程：默认按钮为接诊，下拉按钮为：已离开、回退
+                //弱流程：默认按钮为接诊，下拉按钮为：治疗完成、已离开、回退
+                case REGISTER_ENUM.REGISTER_CONSULTING?.value:
+                  statusTextArray[v.appointmentId] = [
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                      text: '治疗完成',
+                    },
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                      text: '已离开',
+                    },
+                  ]
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
+                      status: REGISTER_ENUM.REGISTER_LEAVE?.value,
+                      text: '回退',
+                    })
+                  }
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为治疗中
+                //强流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
+                //弱流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
+                case REGISTER_ENUM.REGISTER_TREATING?.value:
+                  statusTextArray[v.appointmentId] = [
+                    {
+                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                      text: '已离开',
+                    },
+                  ]
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
+                      status: REGISTER_ENUM.REGISTER_LEAVE?.value,
+                      text: '回退',
+                    })
+                  }
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                //就诊状态为治疗完成
+                //强流程：默认按钮为已离开，下拉按钮为：回退
+                //弱流程：默认按钮为已离开，下拉按钮为：回退
+                case REGISTER_ENUM.REGISTER_TREATED?.value:
+                  statusTextArray[v.appointmentId] = []
+                  if (!v.medicareRegister) {
+                    statusTextArray[v.appointmentId].push({
+                      status: REGISTER_ENUM.REGISTER_LEAVE?.value,
+                      text: '回退',
+                    })
+                  }
+                  statusTextValue[v.appointmentId] = 0
+                  break
+                default:
+                  statusTextArray[v.appointmentId] = []
+                  statusTextValue[v.appointmentId] = 0
+                  break
+              }
+            })
+          break
         default:
           break
       }
@@ -919,15 +1034,33 @@ export default {
         record.registerStatus === this.REGISTER_ENUM.REGISTER_APPOINTED?.value
       )
     },
+    // 咨询师新增就诊流程"开始咨询"，对应就诊状态"已挂号"
+    canConsulting(record) {
+      return (
+        record.registerStatus === this.REGISTER_ENUM.REGISTER_REGISTERED?.value
+      )
+    },
+    // 咨询师的就诊流程"接诊"，对应就诊状态"咨询中"
+    canConsultTreatment(record) {
+      return (
+        record.registerStatus === this.REGISTER_ENUM.REGISTER_CONSULTING?.value
+      )
+    },
+    // 咨询师的就诊流程"治疗完成"，对应就诊状态"治疗中"
+    canConsultFinish(record) {
+      return (
+        record.registerStatus === this.REGISTER_ENUM.REGISTER_TREATING?.value
+      )
+    },
     canReception(record) {
       return (
+        record.registerStatus ===
+          this.REGISTER_ENUM.REGISTER_CONSULTING?.value ||
         record.registerStatus === this.REGISTER_ENUM.REGISTER_REGISTERED?.value
       )
     },
     canFinish(record) {
       return (
-        record.registerStatus ===
-          this.REGISTER_ENUM.REGISTER_CONSULTING?.value ||
         record.registerStatus === this.REGISTER_ENUM.REGISTER_TREATING?.value
       )
     },
@@ -966,6 +1099,8 @@ export default {
       })
       const value = this.statusTextArray[Number(id)][indexId].status
 
+      console.log('consultationChange status', value)
+
       this.consultationAction(record, value)
     },
     //今日工作流程 从pc端搬运而来
@@ -973,130 +1108,276 @@ export default {
       const { registerId, registerStatus, appointmentId } = record
       const { REGISTER_ENUM, TODAY_WORK_ROLE_TYPE_ENUM, curRoleKey } = this
       let todayWorkRoleType
+      let status
       if (curRoleKey === 'DOCTOR') {
         todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.DOCTOR?.value
       }
+
       if (this.curRoleKey === 'RECEPTIONIST') {
         todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.RECEPTIONIST?.value
       }
+
       if (this.curRoleKey === 'CONSULTANT') {
         todayWorkRoleType = TODAY_WORK_ROLE_TYPE_ENUM.CONSULTANT?.value
-      }
+        if (value === REGISTER_ENUM.REGISTER_REGISTERED.value) {
+          console.log('已挂号', value)
+          uni.showLoading()
+          this.disabled = true
+          status = REGISTER_ENUM.REGISTER_CONSULTING.value
+          console.log('next 咨询中', status)
 
-      if (value === REGISTER_ENUM.REGISTER_APPOINTED?.value) {
-        return toPage('/baseSubpackages/apptForm/apptForm', {
-          type: 'editRegister',
-          appointmentId: record.appointmentId,
-        })
-      }
-      if (value === REGISTER_ENUM.REGISTER_REGISTERED?.value) {
-        uni.showLoading()
-        this.disabled = true
-        const status = REGISTER_ENUM.REGISTER_TREATING.value
-        diagnosisApi
-          .updateRegisterStatusForward({
-            registerId,
-            appointmentId,
-            status,
-            todayWorkRoleType,
-          })
-          .then(() => {
-            this.$dpmsUtils.show('接诊成功', { icon: 'success' })
-            this.emitPullDownRefresh()
-            this.disabled = false
-            uni.hideLoading()
-          })
-          .catch(() => {
-            this.disabled = false
-            uni.hideLoading()
-          })
-        return
-      }
-      if (value === REGISTER_ENUM.REGISTER_CONSULTING?.value) {
-        uni.showLoading()
-        this.disabled = true
-        const status = REGISTER_ENUM.REGISTER_TREATED.value
-        diagnosisApi
-          .updateRegisterStatusForward({
-            registerId,
-            appointmentId,
-            status,
-            todayWorkRoleType,
-          })
-          .then(() => {
-            this.$dpmsUtils.show('治疗完成', { icon: 'success' })
-            this.emitPullDownRefresh()
-            this.disabled = false
-            uni.hideLoading()
-          })
-          .catch(() => {
-            this.disabled = false
-            uni.hideLoading()
-          })
-        return
-      }
-      if (value === REGISTER_ENUM.REGISTER_TREATING?.value) {
-        uni.showLoading()
-        this.disabled = true
-        const status = REGISTER_ENUM.REGISTER_LEAVE?.value
-        diagnosisApi
-          .updateRegisterStatusForward({
-            registerId,
-            status,
-            todayWorkRoleType,
-            appointmentId,
-          })
-          .then(() => {
-            this.$dpmsUtils.show('已离开', { icon: 'success' })
-            this.emitPullDownRefresh()
-            this.disabled = false
-            uni.hideLoading()
-          })
-          .catch((err) => {
-            this.disabled = false
-            uni.hideLoading()
-          })
-        return
-      }
-      if (value === REGISTER_ENUM.REGISTER_TREATED?.value) {
-        uni.showModal({
-          title: '确定要回退就诊流程?',
-          success: ({ confirm, cancel }) => {
-            if (confirm) {
-              const status = REGISTER_ENUM.REGISTER_REGISTERED?.value
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              appointmentId,
+              status,
+              todayWorkRoleType,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('开始咨询', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch(() => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_CONSULTING.value) {
+          console.log('咨询中', 3, value)
+          uni.showLoading()
+          this.disabled = true
+          status = REGISTER_ENUM.REGISTER_TREATING.value
+          console.log('next 治疗中', status)
 
-              if (registerStatus === status) {
-                appointmentAPI
-                  .appointmentUpdateStatus({
-                    appointmentId,
-                    appointmentStatus: 2,
-                  })
-                  .then(() => {
-                    this.$dpmsUtils.show('回退成功', { icon: 'success' })
-                    this.emitPullDownRefresh()
-                    this.disabled = false
-                  })
-                  .catch(() => {
-                    this.disabled = false
-                  })
-              } else {
-                diagnosisApi
-                  .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
-                  .then(() => {
-                    this.$dpmsUtils.show('回退成功', { icon: 'success' })
-                    this.emitPullDownRefresh()
-                    this.disabled = false
-                  })
-                  .catch(() => {
-                    this.disabled = false
-                  })
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              appointmentId,
+              status,
+              todayWorkRoleType,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('接诊成功', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch(() => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_TREATING?.value) {
+          console.log('治疗中', 4)
+          uni.showLoading()
+          this.disabled = true
+          status = REGISTER_ENUM.REGISTER_TREATED?.value
+          console.log('next 治疗完成5', status)
+
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              status,
+              todayWorkRoleType,
+              appointmentId,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('治疗完成', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch((err) => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_TREATED?.value) {
+          console.log('治疗完成5', value)
+          uni.showLoading()
+          this.disabled = true
+          const status = REGISTER_ENUM.REGISTER_LEAVE?.value
+          console.log('已离开', 8, status)
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              status,
+              todayWorkRoleType,
+              appointmentId,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('已离开', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch((err) => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_LEAVE?.value) {
+          uni.showModal({
+            title: '确定要回退就诊流程?',
+            success: ({ confirm, cancel }) => {
+              if (confirm) {
+                const status = REGISTER_ENUM.REGISTER_REGISTERED?.value
+
+                if (registerStatus === status) {
+                  appointmentAPI
+                    .appointmentUpdateStatus({
+                      appointmentId,
+                      appointmentStatus: 2,
+                    })
+                    .then(() => {
+                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
+                      this.emitPullDownRefresh()
+                      this.disabled = false
+                    })
+                    .catch(() => {
+                      this.disabled = false
+                    })
+                } else {
+                  diagnosisApi
+                    .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
+                    .then(() => {
+                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
+                      this.emitPullDownRefresh()
+                      this.disabled = false
+                    })
+                    .catch(() => {
+                      this.disabled = false
+                    })
+                }
               }
-            }
-            if (cancel) {
-              console.log(cancel)
-            }
-          },
-        })
+              if (cancel) {
+                console.log(cancel)
+              }
+            },
+          })
+        }
+      } else {
+        if (value === REGISTER_ENUM.REGISTER_APPOINTED?.value) {
+          return toPage('/baseSubpackages/apptForm/apptForm', {
+            type: 'editRegister',
+            appointmentId: record.appointmentId,
+          })
+        }
+        if (value === REGISTER_ENUM.REGISTER_REGISTERED?.value) {
+          uni.showLoading()
+          this.disabled = true
+          const status = REGISTER_ENUM.REGISTER_TREATING.value
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              appointmentId,
+              status,
+              todayWorkRoleType,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('接诊成功', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch(() => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_CONSULTING?.value) {
+          uni.showLoading()
+          this.disabled = true
+          const status = REGISTER_ENUM.REGISTER_TREATED.value
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              appointmentId,
+              status,
+              todayWorkRoleType,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('治疗完成', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch(() => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_TREATING?.value) {
+          uni.showLoading()
+          this.disabled = true
+          const status = REGISTER_ENUM.REGISTER_LEAVE?.value
+          diagnosisApi
+            .updateRegisterStatusForward({
+              registerId,
+              status,
+              todayWorkRoleType,
+              appointmentId,
+            })
+            .then(() => {
+              this.$dpmsUtils.show('已离开', { icon: 'success' })
+              this.emitPullDownRefresh()
+              this.disabled = false
+              uni.hideLoading()
+            })
+            .catch((err) => {
+              this.disabled = false
+              uni.hideLoading()
+            })
+          return
+        }
+        if (value === REGISTER_ENUM.REGISTER_TREATED?.value) {
+          uni.showModal({
+            title: '确定要回退就诊流程?',
+            success: ({ confirm, cancel }) => {
+              if (confirm) {
+                const status = REGISTER_ENUM.REGISTER_REGISTERED?.value
+
+                if (registerStatus === status) {
+                  appointmentAPI
+                    .appointmentUpdateStatus({
+                      appointmentId,
+                      appointmentStatus: 2,
+                    })
+                    .then(() => {
+                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
+                      this.emitPullDownRefresh()
+                      this.disabled = false
+                    })
+                    .catch(() => {
+                      this.disabled = false
+                    })
+                } else {
+                  diagnosisApi
+                    .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
+                    .then(() => {
+                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
+                      this.emitPullDownRefresh()
+                      this.disabled = false
+                    })
+                    .catch(() => {
+                      this.disabled = false
+                    })
+                }
+              }
+              if (cancel) {
+                console.log(cancel)
+              }
+            },
+          })
+        }
       }
     },
     emitPullDownRefresh() {
