@@ -28,6 +28,7 @@ const config = {
   enableNotReleaseCode: true,
   DPMSServerUrl: 'http://dev-tower.laoganma.fun/api/his/',
   SCRMServerUrl: 'http://dev-tower.laoganma.fun/api/',
+  ServerUrl: 'http://dev-tower.laoganma.fun/',
   useServerUrlRedirection: {
     open: false,
     pathMap: {

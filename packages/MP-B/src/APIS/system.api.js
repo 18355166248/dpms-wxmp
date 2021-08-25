@@ -35,6 +35,11 @@ const systemAPI = {
     return scrmHttper.post('scrm/auth/medical-Info', params)
   },
 
+  //微信一键登录
+  getLoginWxCode(params) {
+    return scrmHttper.get('/scrm/auth/login-wx-code', params)
+  },
+
   // 获取oss参数
   getOssParam(params) {
     return httper.get('institution/oss/param', params)
