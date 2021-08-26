@@ -22,7 +22,7 @@ export function omitUndefinedAndNullValue(object) {
       return
     }
 
-    const regEmoji = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/gi
+    const regEmoji = /(\ud83c[\udf00-\udfff])|(\ud83d[\udc00-\ude4f\ude80-\udeff])|[\u2600-\u2B55]/gi
 
     let regValue = value
 
@@ -39,7 +39,6 @@ export function omitUndefinedAndNullValue(object) {
 
   return definedMap
 }
-
 /**
  * 自定义28位长度openid，4个固定字符+（机构号+员工号）+不定数量字符
  */
