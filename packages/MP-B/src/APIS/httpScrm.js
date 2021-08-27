@@ -202,6 +202,7 @@ scrmHttper.interceptors.response.use(
       response.data.code === CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value
     ) {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+      removeStorage(STORAGE_KEY.LOGIN_TYPE)
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
 
