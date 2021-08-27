@@ -90,6 +90,7 @@ const diagnosisAPI = {
   },
   //回退预约
   registerUpdateStatus(data) {
+    console.log('data', data)
     return httper.post('diagnosis/register/update-status/back', data)
   },
   //更新今日工作状态
