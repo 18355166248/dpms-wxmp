@@ -1245,7 +1245,10 @@ export default {
                     })
                 } else {
                   diagnosisApi
-                    .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
+                    .registerUpdateStatus({
+                      registerId,
+                      todayWorkRoleType: todayWorkRoleType,
+                    })
                     .then(() => {
                       this.$dpmsUtils.show('回退成功', { icon: 'success' })
                       this.emitPullDownRefresh()
