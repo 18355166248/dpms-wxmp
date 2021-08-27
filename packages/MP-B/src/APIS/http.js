@@ -194,6 +194,7 @@ httper.interceptors.response.use(
 
     if (errCodes.includes(response.data.code)) {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+      removeStorage(STORAGE_KEY.LOGIN_TYPE)
       removeStorage(STORAGE_KEY.MEDICALINSTITUTION)
       removeStorage(STORAGE_KEY.STAFF)
 

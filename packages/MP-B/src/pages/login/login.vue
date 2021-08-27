@@ -11,13 +11,7 @@
       >
         微信一键登录
       </button>
-      <button
-        class="pasLogin"
-        type="default"
-        :loading="isLoading"
-        :disabled="isLoading"
-        @click="toPasLogin"
-      >
+      <button class="pasLogin" type="default" @click="toPasLogin">
         账号密码登录
       </button>
 
@@ -25,6 +19,7 @@
         ref="selectMedicalInstitution"
         :memberCode="loginForm.memberCode"
         :username="loginForm.username"
+        :loginType="1"
         @confirm="login"
         @onHide="hide"
       ></selectMedicalInstitution>
@@ -54,10 +49,10 @@ export default {
       loginForm: {
         memberCode: getStorage(STORAGE_KEY.LOGIN_INFO)
           ? getStorage(STORAGE_KEY.LOGIN_INFO).memberCode
-          : '张文文测试顶级机构',
+          : '',
         username: getStorage(STORAGE_KEY.LOGIN_INFO)
           ? getStorage(STORAGE_KEY.LOGIN_INFO).username
-          : '15072200010',
+          : '',
         password: '',
         mtId: '',
       },
@@ -97,18 +92,35 @@ export default {
       this.$set(this.loginFormFocusFlag, field, true)
     },
     login(val) {
-      authAPI
-        .login({
-          memberCode: this.loginForm.memberCode,
-          username: this.loginForm.username,
-          password: this.loginForm.password,
-          _mtId: val.id,
-          medicalInstitutionId: val.id,
-        })
-        .then((res) => {})
-        .catch((res) => {
-          this.isLoading = false
-        })
+      wx.login({
+        success: ({ code }) => {
+          systemAPI
+            .getLoginWxCode({
+              code,
+              institutionId: val.id,
+            })
+            .then((res) => {
+              const { _token, medicalInstitution, staff } = res.data
+              setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
+              // medicalInstitution.memberCode = this.loginForm.memberCode
+              this.$store.commit(
+                'workbenchStore/setMedicalInstitution',
+                medicalInstitution,
+              )
+              this.$store.commit('workbenchStore/setStaff', staff)
+              this.getLoginInfo(medicalInstitution, staff, _token)
+              this.getApptSetting()
+              this.getMenu(_token)
+              this.getEnums()
+            })
+            .catch((res) => {
+              this.isLoading = false
+            })
+        },
+        fail(...args) {
+          console.log(args)
+        },
+      })
     },
     //获得枚举
     getEnums() {
@@ -166,39 +178,37 @@ export default {
         })
     },
     toWxLogin() {
-      wx.login({
-        success: ({ code }) => {
-          // systemAPI
-          //   .getLoginWxCode({
-          //     code: 123,
-          //   })
-          //   .then((res) => {
-          //     console.log(res, 66666)
-          //     const { _token, medicalInstitution, staff } = res.data
-          //     setStorage(STORAGE_KEY.LOGIN_INFO, {
-          //       memberCode: this.loginForm.memberCode,
-          //       username: this.loginForm.username,
-          //     })
-          //     setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
-          //     medicalInstitution.memberCode = this.loginForm.memberCode
-          //     this.$store.commit(
-          //       'workbenchStore/setMedicalInstitution',
-          //       medicalInstitution,
-          //     )
-          //     this.$store.commit('workbenchStore/setStaff', staff)
-          //     this.getLoginInfo(medicalInstitution, staff, _token)
-          //     this.getApptSetting()
-          //     this.getMenu(_token)
-          //     this.getEnums()
-          //   })
-          wx.navigateTo({
-            url: '/pages/login/wxLogin',
+      // 获取用户信息
+      wx.getUserProfile({
+        desc: '用于完善用户资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+        success: (res) => {
+          this.getMedicalInstitution()
+        },
+        fail: (err) => {
+          uni.showToast({
+            icon: 'none',
+            title: '获取信息失败',
           })
         },
-        fail(...args) {
-          console.log(args)
-        },
       })
+    },
+    // 获取机构信息
+    getMedicalInstitution() {
+      this.isLoading = true
+      setStorage(STORAGE_KEY.LOGIN_TYPE, 1)
+      systemAPI
+        .getInstitutionListScrm()
+        .then((res) => {
+          const { medicalInstitutionType, medicalInstitutionId } = res.data[0]
+          if (medicalInstitutionType === 2) {
+            this.$refs.selectMedicalInstitution.show()
+          } else {
+            this.login({ id: medicalInstitutionId })
+          }
+        })
+        .catch((res) => {
+          this.isLoading = false
+        })
     },
     toPasLogin() {
       wx.navigateTo({

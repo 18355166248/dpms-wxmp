@@ -246,6 +246,8 @@ export default {
 
         // 判断是否单体
         this.isLoading = true
+        setStorage(STORAGE_KEY.LOGIN_TYPE, 2)
+        // removeStorage(STORAGE_KEY.LOGIN_TYPE)
         systemAPI
           .getInstitutionListScrm({
             memberName: this.loginForm.memberCode,

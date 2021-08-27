@@ -70,6 +70,7 @@ export default {
     },
     loginOut() {
       removeStorage(STORAGE_KEY.ACCESS_TOKEN)
+      removeStorage(STORAGE_KEY.LOGIN_TYPE)
       removeStorage(STORAGE_KEY.ENUMS)
       this.$store.commit('workbenchStore/delMedicalInstitution')
       this.$store.commit('workbenchStore/delStaff')

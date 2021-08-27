@@ -10,6 +10,8 @@ const STORAGE_KEY = {
   ENUMS: 'enums',
   // 登录时会员和用户名
   LOGIN_INFO: 'loginInfo',
+  // 登录类型  1 微信一键登录  2  账号密码登录   （默认为 账号密码登录）
+  LOGIN_TYPE: 'loginType',
   // 预约视图设置
   APPTSETTING: 'apptSetting',
   //scrm菜单
