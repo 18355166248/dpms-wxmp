@@ -200,7 +200,11 @@ export default {
         .getInstitutionListScrm()
         .then((res) => {
           const { medicalInstitutionType, medicalInstitutionId } = res.data[0]
-          if (medicalInstitutionType === 2) {
+          if (
+            medicalInstitutionType === 2 &&
+            (res.data.length > 1 ||
+              (res.data[0].children && res.data[0].children.length > 0))
+          ) {
             this.$refs.selectMedicalInstitution.show()
           } else {
             this.login({ id: medicalInstitutionId })
