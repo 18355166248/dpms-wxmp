@@ -42,11 +42,13 @@ const systemAPI = {
             wx.navigateTo({
               url: '/pages/login/wxLogin',
             })
+            return Promise.reject(res)
           } else {
             uni.showToast({
               icon: 'none',
               title: '无可登录机构',
             })
+            return Promise.reject(res)
           }
         })
     } else {
