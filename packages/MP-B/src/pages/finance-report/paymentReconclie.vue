@@ -9,6 +9,7 @@
       </view>
       <uni-calendar
         ref="calendar"
+        :clearDate="false"
         :insert="false"
         :range="true"
         @confirm="confirmCalendar"
