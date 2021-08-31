@@ -16,6 +16,7 @@
       </view>
       <uni-calendar
         ref="calendar"
+        :clearDate="false"
         :insert="false"
         :range="true"
         @confirm="confirmCalendar"
@@ -279,12 +280,18 @@ export default {
         )
         element.refundAmount = this.$dpmsUtils.formatPrice(element.refundAmount)
         element.cashAmount = this.$dpmsUtils.formatPrice(element.cashAmount)
-        element.virtualAmount = this.$dpmsUtils.formatPrice(element.virtualAmount)
+        element.virtualAmount = this.$dpmsUtils.formatPrice(
+          element.virtualAmount,
+        )
         element.deductionOfAdvanceAmount = this.$dpmsUtils.formatPrice(
           element.deductionOfAdvanceAmount,
         )
-        element.revenueAmount = this.$dpmsUtils.formatPrice(element.revenueAmount)
-        element.paymentAmount = this.$dpmsUtils.formatPrice(element.paymentAmount)
+        element.revenueAmount = this.$dpmsUtils.formatPrice(
+          element.revenueAmount,
+        )
+        element.paymentAmount = this.$dpmsUtils.formatPrice(
+          element.paymentAmount,
+        )
         element.plannedRevenueAmount = this.$dpmsUtils.formatPrice(
           element.plannedRevenueAmount,
         )
