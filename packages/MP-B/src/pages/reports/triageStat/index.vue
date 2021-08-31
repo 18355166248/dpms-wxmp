@@ -16,6 +16,7 @@
       </view>
       <uni-calendar
         ref="calendar"
+        :clearDate="false"
         :insert="false"
         :range="true"
         @confirm="confirmCalendar"
@@ -227,7 +228,8 @@ export default {
         workStatus:
           this.$dpmsUtils.getEnums('StaffStatus')?.STAFF_STATUS_AT_WORK_NAME
             ?.value || 1,
-        position: this.$dpmsUtils.getEnums('StaffPosition')?.CONSULTANT?.value || 4,
+        position:
+          this.$dpmsUtils.getEnums('StaffPosition')?.CONSULTANT?.value || 4,
       })
       uni.setStorageSync('triageConsultantList', data)
     },
