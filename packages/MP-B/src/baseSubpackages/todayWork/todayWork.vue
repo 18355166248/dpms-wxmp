@@ -840,23 +840,28 @@ export default {
                   statusTextValue[v.appointmentId] = 0
                   break
                 //就诊状态为咨询中
-                //强流程：默认按钮为治疗完成，下拉按钮为：已离开、回退
-                //弱流程：默认按钮为治疗完成，下拉按钮为：接诊、治疗完成、已离开、回退
+                //强流程：默认按钮为接诊，下拉按钮为：已离开、回退
+                //弱流程：默认按钮为接诊，下拉按钮为：治疗完成、已离开、回退
                 case REGISTER_ENUM.REGISTER_CONSULTING?.value:
-                  statusTextArray[v.appointmentId] = [
-                    // {
-                    //   status: REGISTER_ENUM.REGISTER_REGISTERED?.value,
-                    //   text: '接诊',
-                    // },
-                    {
-                      status: REGISTER_ENUM.REGISTER_CONSULTING?.value,
-                      text: '治疗完成',
-                    },
-                    {
-                      status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                      text: '已离开',
-                    },
-                  ]
+                  if (isWeakflow === 1) {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '治疗完成',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  } else {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  }
                   if (!v.medicareRegister) {
                     statusTextArray[v.appointmentId].push({
                       status: REGISTER_ENUM.REGISTER_TREATED?.value,
@@ -946,16 +951,26 @@ export default {
                 //强流程：默认按钮为接诊，下拉按钮为：已离开、回退
                 //弱流程：默认按钮为接诊，下拉按钮为：治疗完成、已离开、回退
                 case REGISTER_ENUM.REGISTER_CONSULTING?.value:
-                  statusTextArray[v.appointmentId] = [
-                    {
-                      status: REGISTER_ENUM.REGISTER_TREATING?.value,
-                      text: '治疗完成',
-                    },
-                    {
-                      status: REGISTER_ENUM.REGISTER_TREATED?.value,
-                      text: '已离开',
-                    },
-                  ]
+                  if (isWeakflow === 1) {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATING?.value,
+                        text: '治疗完成',
+                      },
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  } else {
+                    statusTextArray[v.appointmentId] = [
+                      {
+                        status: REGISTER_ENUM.REGISTER_TREATED?.value,
+                        text: '已离开',
+                      },
+                    ]
+                  }
+
                   if (!v.medicareRegister) {
                     statusTextArray[v.appointmentId].push({
                       status: REGISTER_ENUM.REGISTER_LEAVE?.value,
@@ -1198,7 +1213,7 @@ export default {
           return
         }
         if (value === REGISTER_ENUM.REGISTER_TREATED?.value) {
-          console.log('治疗完成5', value)
+          console.log('治疗完成', value)
           uni.showLoading()
           this.disabled = true
           const status = REGISTER_ENUM.REGISTER_LEAVE?.value
