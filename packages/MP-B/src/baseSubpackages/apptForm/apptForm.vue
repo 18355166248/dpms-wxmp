@@ -49,6 +49,14 @@
           title="预约时间"
           :value="formTimeRangeText"
         />
+        <dpmsCell
+          v-if="isAppt"
+          title="预约项目"
+          :value="selectedAppointmentItemsJoinedStr"
+          isLink
+          @click.native="onSelectApptItem"
+          placeholder="请选择预约项目"
+        />
         <dpmsCellInput
           required
           v-if="isAppt"
@@ -138,11 +146,12 @@
           placeholder="请选择诊室"
         />
         <dpmsCell
-          :title="isAppt ? '预约项目' : '就诊项目'"
-          :value="selectedAppointmentItemStr"
+          v-if="!isAppt"
+          title="就诊项目"
+          :value="selectedAppointmentItemsJoinedStr"
           isLink
           @click.native="onSelectApptItem"
-          :placeholder="isAppt ? '请选择预约项目' : '请选择就诊项目'"
+          placeholder="请选择就诊项目"
         />
         <dpmsCell
           title="主诉"
@@ -195,6 +204,7 @@ import {
   getFormValueFromResourceMap,
   formatRegisterData,
   checkIsHeaderOrLargeArea,
+  getDuration,
 } from './utils'
 
 const GENDER_ENUM = commonUtil.getEnums('Gender')
@@ -292,15 +302,19 @@ export default {
     selectedNurseJoinedStr() {
       return joinCheckedStaffName(this.form.nurse, this.options.nurseList)
     },
-    selectedAppointmentItemStr() {
-      return (this.options.apptItemList || [])
-        .filter((item) =>
-          this.form.appointmentItems.includes(
-            item.appointmentSettingsAppointmentItemId,
-          ),
-        )
+    // 当前选择的预约项目名称连接字符串，供回显用
+    selectedAppointmentItemsJoinedStr() {
+      return this.selectedAppointmentItems
         .map((item) => item.appointmentSettingsAppointmentItemName.zh_CN)
         .join(',')
+    },
+    // 当前选择的预约项目列表
+    selectedAppointmentItems() {
+      return (this.options.apptItemList || []).filter((item) =>
+        this.form.appointmentItems.includes(
+          item.appointmentSettingsAppointmentItemId,
+        ),
+      )
     },
     selectedMainComplaintStr() {
       return (this.options.mainComplaintList || [])
@@ -442,7 +456,7 @@ export default {
     },
     'form.appointmentBeginTimeStamp': function () {
       this.refreshMedicalInstitutionList()
-      this.adjustAppointmentTime()
+      this.adjustAppointmentDuration()
     },
   },
   beforeDestroy() {
@@ -501,6 +515,22 @@ export default {
 
       uni.$on('updateApptItemCheckedList', (checked) => {
         this.form.appointmentItems = checked
+
+        // 当更新了预约项目后，调整持续时间
+        if (
+          this.selectedAppointmentItems &&
+          this.selectedAppointmentItems.length > 0
+        ) {
+          const totalDuration = this.selectedAppointmentItems.reduce(
+            (total, item) => total + item.duration,
+            0,
+          )
+
+          this.form.duration = getDuration(
+            this.form.appointmentBeginTime,
+            totalDuration,
+          )
+        }
       })
 
       uni.$on('updateApptStaffCheckedList', ({ key, value }) => {
@@ -540,34 +570,13 @@ export default {
       this.refreshInstitutionRelatedOptions()
     },
     onDurationInputBlur() {
-      this.adjustAppointmentTime()
+      this.adjustAppointmentDuration()
     },
-    adjustAppointmentTime() {
-      console.log('hc: duration', this.form.duration)
-      // 1. 修正持续时间
-      if (!this.form.duration) {
-        this.form.duration = this.apptSetting?.appointmentDuration || 30
-      } else {
-        const stepInMinutes = this.apptSetting?.appointmentDuration || 30
-        const startMoment = moment(this.form.appointmentBeginTimeStamp)
-        const endMoment = moment(this.form.appointmentBeginTimeStamp)
-          .startOf('day')
-          .add(1, 'days')
-
-        const maxStep = Math.floor(
-          endMoment.diff(startMoment, 'minutes') / stepInMinutes,
-        )
-        const currentStep = Math.ceil(this.form.duration / stepInMinutes)
-        this.form.duration = Math.min(maxStep, currentStep) * stepInMinutes
-      }
-
-      // 2. 调整结束时间
-      this.form.appointmentEndTimeStamp = moment(
+    adjustAppointmentDuration() {
+      this.form.duration = getDuration(
         this.form.appointmentBeginTimeStamp,
+        this.form.duration,
       )
-        .add(this.form.duration, 'minutes')
-        .subtract(1, 'milliseconds')
-        .valueOf()
     },
     // 跳转选择员工页面
     onSelectStaff(title, optionKey, formKey) {
@@ -604,8 +613,14 @@ export default {
         return
       }
 
-      // 再次修正预约时间
-      this.adjustAppointmentTime()
+      // 根据预约开始时间和持续时间，计算预约结束时间传给后端
+      this.adjustAppointmentDuration()
+      this.form.appointmentEndTimeStamp = moment(
+        this.form.appointmentBeginTimeStamp,
+      )
+        .add(this.form.duration, 'minutes')
+        .subtract(1, 'milliseconds')
+        .valueOf()
 
       // 患者校验
       if (!this.form.patient) {
