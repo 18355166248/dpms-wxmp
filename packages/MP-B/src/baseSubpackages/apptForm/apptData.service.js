@@ -22,7 +22,29 @@ const apptDataService = {
           appointmentVerifyStaffResult,
           modifyAppointmentTime,
           appointmentBlockVerifyList,
+          onePatientAppointmentDoctor,
+          morePatientAppointmentDoctor,
         } = res.data
+
+        if (!onePatientAppointmentDoctor) {
+          return uni.showModal({
+            title: `所选时间段患者已预约此医生，无法重复预约`,
+            showCancel: false,
+            success: ({ confirm, cancel }) => {
+              _.isFunction(onCancelOk) && cancel && onCancelOk()
+            },
+          })
+        }
+
+        if (!morePatientAppointmentDoctor) {
+          return uni.showModal({
+            title: `该医生所选时间段已有预约，请预约其他时间段`,
+            showCancel: false,
+            success: ({ confirm, cancel }) => {
+              _.isFunction(onCancelOk) && cancel && onCancelOk()
+            },
+          })
+        }
 
         if (!!appointmentBlockVerifyList.length) {
           const businessNameSplit = appointmentBlockVerifyList

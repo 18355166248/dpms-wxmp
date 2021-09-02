@@ -14,6 +14,7 @@ const config = {
   },
   DPMSServerUrl: 'http://uat-tower.laoganma.fun/api/his/',
   SCRMServerUrl: 'http://uat-tower.laoganma.fun/api/',
+  ServerUrl: 'http://uat-tower.laoganma.fun/',
   iconfontUrl: '//at.alicdn.com/t/font_1965288_h9yn44x7c5t.js',
   microAppUrl: 'http://uat.scrm.laoganma.fun/scrm_vue/',
   scrmUrl: 'http://uat.scrm.laoganma.fun',
