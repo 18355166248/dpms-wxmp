@@ -271,3 +271,31 @@ export function formatRegisterData(form) {
     memo: form.appointmentMemo, // 备注
   }
 }
+
+/**
+ * 1. 预约开始时间和结束时间不能跨天
+ * 2. 持续时间为5的整数倍（之前为刻度的整数倍，废弃）
+ * @param {Moment} startTime 开始时间Moment对象
+ * @param {Number} desiredDuration 期望持续时间（分钟）
+ * @returns 调整后的预约持续时间
+ */
+const MIN_DURATION = 5
+export function getDuration(startTime, desiredDuration) {
+  if (desiredDuration <= MIN_DURATION) {
+    return MIN_DURATION
+  }
+
+  // 和开始时间同天的最大结束时间
+  const endTime = moment(startTime).startOf('day').add(1, 'days')
+
+  // 可以设置的相对于5的最大步数
+  const maxStep = Math.floor(endTime.diff(startTime, 'minutes') / MIN_DURATION)
+
+  // 如果步数为0，则直接返回时间差
+  if (maxStep === 0) {
+    return endTime.diff(startTime, 'minutes')
+  }
+
+  const currentStep = Math.ceil(desiredDuration / MIN_DURATION)
+  return Math.min(maxStep, currentStep) * MIN_DURATION
+}

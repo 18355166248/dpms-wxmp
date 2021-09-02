@@ -155,6 +155,9 @@ export default {
       font-size: 34rpx;
       display: block;
       border-top: 1rpx solid rgba(0, 0, 0, 0.15);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
 
       &:first-child {
         border-top: none;
