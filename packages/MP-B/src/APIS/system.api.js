@@ -1,6 +1,6 @@
 import httper from './http'
 import scrmHttper from './httpScrm'
-
+import { getStorage, STORAGE_KEY } from '@/utils/storage'
 const systemAPI = {
   // 获取全局枚举值
   getDataDict(params) {
@@ -14,7 +14,46 @@ const systemAPI = {
 
   // 登录时获取机构列表
   getInstitutionListScrm(params) {
-    return scrmHttper.get('scrm/institution/hierarchies', params)
+    const loginType = Number(getStorage(STORAGE_KEY.LOGIN_TYPE) || 2)
+    if (loginType === 1) {
+      return new Promise((resolve, reject) => {
+        wx.login({
+          success: ({ code }) => {
+            resolve(code)
+          },
+          fail(...args) {
+            uni.showToast({
+              icon: 'none',
+              title: '登录失败',
+            })
+            reject(args)
+          },
+        })
+      })
+        .then((code) => {
+          return scrmHttper.get('/scrm/auth/check-wx-code', { code })
+        })
+        .then((res) => {
+          if (res.data.checkStatus === 1) {
+            return Promise.resolve({
+              data: res.data.medicalInstitutionItems,
+            })
+          } else if (res.data.checkStatus === 2) {
+            wx.navigateTo({
+              url: '/pages/login/wxLogin',
+            })
+            return Promise.reject(res)
+          } else {
+            uni.showToast({
+              icon: 'none',
+              title: '无可登录机构',
+            })
+            return Promise.reject(res)
+          }
+        })
+    } else {
+      return scrmHttper.get('scrm/institution/hierarchies', params)
+    }
   },
 
   // 登录时获取机构列表
@@ -33,6 +72,16 @@ const systemAPI = {
   //获取登陆信息
   getLoginInfo(params) {
     return scrmHttper.post('scrm/auth/medical-Info', params)
+  },
+
+  //微信一键登录-获取机构
+  getCheckWxCode(params) {
+    return scrmHttper.get('/scrm/auth/check-wx-code', params)
+  },
+
+  //微信一键登录-登录
+  getLoginWxCode(params) {
+    return scrmHttper.get('/scrm/auth/login-wx-code', params)
   },
 
   // 获取oss参数

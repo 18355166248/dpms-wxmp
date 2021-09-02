@@ -167,6 +167,7 @@ export default {
         })
     },
     hide(option) {
+      console.log(option, 7777)
       this.showTree = false
       this.$emit('onHide', option)
     },

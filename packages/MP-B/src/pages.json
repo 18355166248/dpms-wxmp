@@ -23,6 +23,21 @@
       }
     },
     {
+      "path": "pages/login/pasLogin",
+      "style": {
+        "navigationBarTitleText": "账号密码登录",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/login/wxLogin",
+      "style": {
+        "navigationBarTitleText": "登录说明",
+        "navigationStyle": "custom",
+        "disableScroll": true
+      }
+    },
+    {
       "path": "pages/login/qyLogin",
       "style": {
         "navigationStyle": "custom",

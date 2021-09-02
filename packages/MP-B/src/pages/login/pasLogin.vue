@@ -2,24 +2,84 @@
   <view class="bg">
     <view class="status_bar"></view>
     <view class="content">
-      <button
-        class="submit"
-        type="default"
-        :loading="isLoading"
-        :disabled="isLoading"
-        @click="toWxLogin"
-      >
-        微信一键登录
-      </button>
-      <button class="pasLogin" type="default" @click="toPasLogin">
-        账号密码登录
-      </button>
+      <view class="login">
+        <label>
+          <text class="iconfont icon-institutions mr-20" />
+          <input
+            placeholder="请输入会员名"
+            placeholder-style="color:rgba(0,0,0,0.25)"
+            v-model="loginForm.memberCode"
+            @blur="handleBlur('memberCode')"
+            @focus="handleFocus('memberCode')"
+          />
+          <view
+            class="btn-clear"
+            v-if="
+              loginForm.memberCode.trim() !== '' &&
+              loginFormFocusFlag.memberCode
+            "
+            @touchstart="clearForLoginForm('memberCode')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
+        </label>
+        <label>
+          <text class="iconfont icon-user mr-20" />
+          <input
+            placeholder="请输入用户名"
+            placeholder-style="color:rgba(0,0,0,0.25)"
+            v-model="loginForm.username"
+            @blur="handleBlur('username')"
+            @focus="handleFocus('username')"
+          />
+          <view
+            class="btn-clear"
+            v-if="
+              loginForm.username.trim() !== '' && loginFormFocusFlag.username
+            "
+            @touchstart="clearForLoginForm('username')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
+        </label>
+        <label style="position: relative;">
+          <text class="iconfont icon-password mr-20" />
+          <!--  ios系统 置于passward input 前面的一个textinput框会有类型错误的bug（导致不能切换第三方输入法）
+           这个input不做实际用 ，仅仅隐藏起来作为一个占位-->
+          <input style="position: absolute; z-index: -1;" disabled />
+          <input
+            password
+            placeholder="请输入密码"
+            placeholder-style="color:rgba(0,0,0,0.25)"
+            v-model="loginForm.password"
+            @blur="handleBlur('password')"
+            @focus="handleFocus('password')"
+          />
+          <view
+            class="btn-clear"
+            v-if="
+              loginForm.password.trim() !== '' && loginFormFocusFlag.password
+            "
+            @touchstart="clearForLoginForm('password')"
+          >
+            <text class="iconfont icon-close"></text>
+          </view>
+        </label>
+        <button
+          class="submit"
+          type="default"
+          :loading="isLoading"
+          :disabled="isLoading"
+          @click="openSelect"
+        >
+          登 录
+        </button>
+      </view>
 
       <selectMedicalInstitution
         ref="selectMedicalInstitution"
         :memberCode="loginForm.memberCode"
         :username="loginForm.username"
-        :loginType="1"
         @confirm="login"
         @onHide="hide"
       ></selectMedicalInstitution>
@@ -92,35 +152,35 @@ export default {
       this.$set(this.loginFormFocusFlag, field, true)
     },
     login(val) {
-      wx.login({
-        success: ({ code }) => {
-          systemAPI
-            .getLoginWxCode({
-              code,
-              institutionId: val.id,
-            })
-            .then((res) => {
-              const { _token, medicalInstitution, staff } = res.data
-              setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
-              // medicalInstitution.memberCode = this.loginForm.memberCode
-              this.$store.commit(
-                'workbenchStore/setMedicalInstitution',
-                medicalInstitution,
-              )
-              this.$store.commit('workbenchStore/setStaff', staff)
-              this.getLoginInfo(medicalInstitution, staff, _token)
-              this.getApptSetting()
-              this.getMenu(_token)
-              this.getEnums()
-            })
-            .catch((res) => {
-              this.isLoading = false
-            })
-        },
-        fail(...args) {
-          console.log(args)
-        },
-      })
+      authAPI
+        .login({
+          memberCode: this.loginForm.memberCode,
+          username: this.loginForm.username,
+          password: this.loginForm.password,
+          _mtId: val.id,
+          medicalInstitutionId: val.id,
+        })
+        .then((res) => {
+          const { _token, medicalInstitution, staff } = res.data
+          setStorage(STORAGE_KEY.LOGIN_INFO, {
+            memberCode: this.loginForm.memberCode,
+            username: this.loginForm.username,
+          })
+          setStorage(STORAGE_KEY.ACCESS_TOKEN, _token)
+          medicalInstitution.memberCode = this.loginForm.memberCode
+          this.$store.commit(
+            'workbenchStore/setMedicalInstitution',
+            medicalInstitution,
+          )
+          this.$store.commit('workbenchStore/setStaff', staff)
+          this.getLoginInfo(medicalInstitution, staff, _token)
+          this.getApptSetting()
+          this.getMenu(_token)
+          this.getEnums()
+        })
+        .catch((res) => {
+          this.isLoading = false
+        })
     },
     //获得枚举
     getEnums() {
@@ -177,46 +237,33 @@ export default {
           this.isLoading = false
         })
     },
-    toWxLogin() {
-      // 获取用户信息
-      wx.getUserProfile({
-        desc: '用于完善用户资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-        success: (res) => {
-          this.getMedicalInstitution()
-        },
-        fail: (err) => {
-          uni.showToast({
-            icon: 'none',
-            title: '获取信息失败',
+    openSelect() {
+      this.validate((err, fileds) => {
+        if (err) {
+          this.$dpmsUtils.show(err[0].message)
+          return
+        }
+
+        // 判断是否单体
+        this.isLoading = true
+        setStorage(STORAGE_KEY.LOGIN_TYPE, 2)
+        // removeStorage(STORAGE_KEY.LOGIN_TYPE)
+        systemAPI
+          .getInstitutionListScrm({
+            memberName: this.loginForm.memberCode,
+            username: this.loginForm.username,
           })
-        },
-      })
-    },
-    // 获取机构信息
-    getMedicalInstitution() {
-      this.isLoading = true
-      setStorage(STORAGE_KEY.LOGIN_TYPE, 1)
-      systemAPI
-        .getInstitutionListScrm()
-        .then((res) => {
-          const { medicalInstitutionType, medicalInstitutionId } = res.data[0]
-          if (
-            medicalInstitutionType === 2 &&
-            (res.data.length > 1 ||
-              (res.data[0].children && res.data[0].children.length > 0))
-          ) {
-            this.$refs.selectMedicalInstitution.show()
-          } else {
-            this.login({ id: medicalInstitutionId })
-          }
-        })
-        .catch((res) => {
-          this.isLoading = false
-        })
-    },
-    toPasLogin() {
-      wx.navigateTo({
-        url: '/pages/login/pasLogin',
+          .then((res) => {
+            const { medicalInstitutionType, medicalInstitutionId } = res.data[0]
+            if (medicalInstitutionType === 2) {
+              this.$refs.selectMedicalInstitution.show()
+            } else {
+              this.login({ id: medicalInstitutionId })
+            }
+          })
+          .catch((res) => {
+            this.isLoading = false
+          })
       })
     },
     validate(callback) {
@@ -247,7 +294,7 @@ export default {
 }
 .content {
   height: 100%;
-  padding: 470rpx 56rpx 0;
+  padding: 470rpx 32rpx 0;
   background: #fff
     url('https://medcloud.oss-cn-shanghai.aliyuncs.com/dental/saas/mini-app/logo.png')
     no-repeat 0 0;
@@ -292,18 +339,10 @@ export default {
   }
 }
 .submit {
-  margin-top: 252rpx;
+  margin-top: 92rpx;
   height: 100rpx;
   background: #5cbb89;
   font-size: 40rpx;
   color: #fff;
-}
-.pasLogin {
-  margin-top: 64rpx;
-  height: 100rpx;
-  background: #fff;
-  font-size: 40rpx;
-  color: #5cbb89;
-  border: 2rpx solid #5cbb89;
 }
 </style>
