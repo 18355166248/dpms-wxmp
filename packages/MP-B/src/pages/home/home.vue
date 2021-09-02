@@ -70,7 +70,11 @@
             </view>
             <text class="statistics-item-body">今日就诊</text>
           </view>
-          <view class="statistics-item" @click="jumpStatistics">
+          <view
+            v-if="btnPremisstion('actual_amount')"
+            class="statistics-item"
+            @click="jumpStatistics"
+          >
             <view class="statistics-item-header">
               <toggle :text="price" :isVisible="visible"></toggle>
             </view>
