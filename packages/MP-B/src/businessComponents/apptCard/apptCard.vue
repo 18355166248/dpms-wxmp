@@ -32,7 +32,9 @@
       </view>
       <view class="subTitle mb-16">
         <text class="subTag mr-8">{{ getGender(appt.patient.gender) }}</text>
-        <text class="subTag" v-if="appt.patient.age">{{ appt.patient.age }}</text>
+        <text class="subTag" v-if="appt.patient.age">{{
+          appt.patient.age
+        }}</text>
       </view>
       <view class="apptDetail">
         <view v-if="appt.visType && isVisType">
@@ -41,7 +43,8 @@
         <view v-if="appt.patient.mobile"
           >联系电话：{{ appt.patient.mobile }}</view
         >
-        <view>预约时间：{{ getApptTime() }}</view>
+        <view>预约日期：{{ apptDate }}</view>
+        <view>预约时间：{{ apptTime }}</view>
         <view class="institution">
           <text class="institutionLabel">预约诊所：</text>
           <text class="text-ellipsis institutionName">{{
@@ -95,7 +98,20 @@ export default {
       [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
     }
   },
-  computed: {},
+  computed: {
+    apptDate() {
+      return moment(this.appt.appointmentBeginTimeStamp).format(
+        'YYYY-MM-DD/ddd',
+      )
+    },
+    apptTime() {
+      return (
+        moment(this.appt.appointmentBeginTimeStamp).format('HH:mm') +
+        ' ~ ' +
+        moment(this.appt.appointmentEndTimeStamp + 1).format('HH:mm')
+      )
+    },
+  },
   components: {
     patientAvatar,
   },
@@ -109,11 +125,6 @@ export default {
     },
     getGender(gender) {
       return this.GENDER_ENUM.properties[gender]?.text.zh_CN || '未知'
-    },
-    getApptTime() {
-      return `${moment(this.appt.appointmentBeginTimeStamp).format(
-        'YYYY-MM-DD HH:mm',
-      )} ~ ${moment(this.appt.appointmentEndTimeStamp + 1).format('HH:mm')}`
     },
   },
 }

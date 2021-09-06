@@ -54,6 +54,11 @@ export default {
       type: String,
       default: '',
     },
+    // 弹出层的日期是否展示周几
+    showDayOfWeek: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -245,9 +250,27 @@ export default {
         dayEndIndex = new Date(year, month, 0).getDate()
       }
       for (let day = dayStartIndex; day <= dayEndIndex; day++) {
+        let text = `${day}日`
+
+        if (this.showDayOfWeek) {
+          // 若显示[星期x]， 弹出层因为字符过长显示为 '...', picker弹出无法修改样式
+          // const weekDays = [ '星期日',  '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+          const weekDays = [
+            '周日',
+            '周一',
+            '周二',
+            '周三',
+            '周四',
+            '周五',
+            '周六',
+          ]
+          let date = new Date(year, month - 1, day)
+          text = text + ` ${weekDays[date.getDay()]}`
+        }
+
         let item = {
           number: day,
-          text: `${day}日`,
+          text: text,
         }
         days.push(item)
       }
