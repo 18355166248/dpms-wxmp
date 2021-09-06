@@ -23,11 +23,15 @@
         <text class="value">{{ detail.specificationsStr }}</text>
       </view>
     </view>
-
     <view class="detail-item">
-      <text>医（械）准字</text>
+      <text>批准文号</text>
       <text>{{ detail.medicalInstrumentNo }}</text>
     </view>
+    <view class="detail-item">
+      <text>注册证号</text>
+      <text>{{ detail.registrationNo }}</text>
+    </view>
+
     <view class="detail-item">
       <text>所属分类</text>
       <text>{{ detail.merchandiseCategoryThreeName }}</text>

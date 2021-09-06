@@ -7,6 +7,7 @@
           <view class="item0">
             <itemType :iconData="icon0" />
             <view class="flex">
+            
               <chargeItem
                 class="charge-item dashed"
                 :amountData="receivableData"
