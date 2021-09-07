@@ -646,7 +646,7 @@ export default {
     registNew({ dt }) {
       const registerId = -1
       const registerTime = moment(dt).valueOf()
-      const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
+      const registerLabel = moment(dt).format('YYYY-MM-DD/ddd HH:mm')
       const newRegisterIndex = this.registerList.findIndex(
         (l) => l.registerId === registerId,
       )
