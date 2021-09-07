@@ -105,7 +105,7 @@ export default {
       const res = await diagnosisAPI.getRegisterList(param)
       this.registerList = (res.data || []).map((d) => ({
         ...d,
-        registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm'),
+        registerLabel: moment(d.registerTime).format('YYYY-MM-DD/ddd HH:mm'),
       }))
       this.form.registerId = this.registerList[0]?.registerId
     },
