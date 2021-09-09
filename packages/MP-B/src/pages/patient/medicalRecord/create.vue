@@ -690,10 +690,8 @@ export default {
       if (item) {
         this.form.registerId = item.registerId
         this.form.visType = item.visType
-        console.log(item)
         if (item.nurse) {
-          this.form.nurse = item.nurse.nurseList.map((e) => e.name).join(',')
-          console.log(this.form)
+          this.form.nurse = item.nurse
         }
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
           this.form.doctorStaffId = item.doctorStaffId
@@ -776,7 +774,6 @@ export default {
     this.getDoctors()
     this.initTreatmentTypes()
     uni.$on('updateNurseList', (val) => {
-      console.log(val)
       this.form.nurse = val
     })
   },
