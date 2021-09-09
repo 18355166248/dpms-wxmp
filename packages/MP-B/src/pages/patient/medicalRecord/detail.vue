@@ -31,6 +31,10 @@
         {{ visTypeMap[detail.visType].zh_CN || getCustomType(detail.visType) }}
       </div>
       <div class="row">
+        <div class="label">护士：</div>
+        {{ getNurseStr(detail.nurse) }}
+      </div>
+      <div class="row">
         <div class="label">主诉：</div>
         {{ detail.mainComplaint || '' }}
       </div>
@@ -261,6 +265,11 @@ export default {
   },
   methods: {
     ...mapMutations('medicalRecord', ['setMedicalRecordObj']),
+    // 显示护士字段
+    getNurseStr(nurse) {
+      if (nurse) return nurse.nurseList.map((e) => e.name).join(',')
+      else return ''
+    },
     // 获取就诊类型列表
     initTreatmentTypes() {
       diagnosisAPI.getTreatmentTypes().then((res) => {

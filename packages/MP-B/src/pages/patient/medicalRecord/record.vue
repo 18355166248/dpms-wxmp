@@ -40,6 +40,9 @@
           就诊类型：<span class="content">{{ r.visText }}</span>
         </div>
         <div class="row">
+          护士：<span class="content">{{ getNurseStr(r.nurse) }}</span>
+        </div>
+        <div class="row">
           主诉：<span class="content">{{ r.mainComplaint }}</span>
         </div>
         <div class="row">
@@ -108,6 +111,11 @@ export default {
           visText: r.visTypeName,
         })),
       ]
+    },
+    // 显示护士字段
+    getNurseStr(nurse) {
+      if (nurse) return nurse.nurseList.map((e) => e.name).join(',')
+      else return ''
     },
     toDetail({
       medicalRecordId,

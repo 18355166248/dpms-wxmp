@@ -40,6 +40,12 @@
         title="就诊类型"
         placeholder="请选择就诊类型"
       />
+      <dpmsCell
+        placeholder="请选择护士"
+        title="护士"
+        :value="nurseStr"
+        @cellclick="onSelectNurse"
+      />
       <dpmsCell title="主诉" wrap>
         <div
           class="text"
@@ -404,6 +410,7 @@ import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSe
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import { mapMutations, mapState } from 'vuex'
+import { joinCheckedStaffName } from '@/baseSubpackages/apptForm/utils'
 
 export default {
   components: {
@@ -430,6 +437,7 @@ export default {
         medicalRecordRegisterVO: { visType: '' },
         medicalRecordImageList: '',
         visType: '',
+        nurse: '',
       },
       rules: {},
       teethSync: true,
@@ -455,8 +463,23 @@ export default {
         ''
       )
     },
+    nurseStr() {
+      return (
+        this.form.nurse?.nurseList?.map((e) => e.name).join(',') || '未指定护士'
+      )
+    },
   },
   methods: {
+    onSelectNurse() {
+      const checkedList = JSON.stringify(this.form.nurse?.nurseList)
+      this.$dpmsUtils.push({
+        url:
+          '/pages/patient/medicalRecord/nurseList?' +
+          `&checkedList=${checkedList}` +
+          `&title=请选择护士` +
+          `&key=nurse`,
+      })
+    },
     initTreatmentTypes() {
       diagnosisAPI.getTreatmentTypes().then((res) => {
         if (res?.data?.length > 0) {
@@ -667,6 +690,11 @@ export default {
       if (item) {
         this.form.registerId = item.registerId
         this.form.visType = item.visType
+        console.log(item)
+        if (item.nurse) {
+          this.form.nurse = item.nurse.nurseList.map((e) => e.name).join(',')
+          console.log(this.form)
+        }
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
           this.form.doctorStaffId = item.doctorStaffId
         }
@@ -747,6 +775,10 @@ export default {
     this.onEdit()
     this.getDoctors()
     this.initTreatmentTypes()
+    uni.$on('updateNurseList', (val) => {
+      console.log(val)
+      this.form.nurse = val
+    })
   },
   watch: {
     'form.doctorStaffId'(newVal) {
