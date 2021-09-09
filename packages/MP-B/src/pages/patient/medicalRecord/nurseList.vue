@@ -64,12 +64,12 @@ export default {
         workStatus: 1,
         medicalInstitutionId: this.medicalInstitution.medicalInstitutionId,
       })
-      if (code !== 0) return
-      else
+      if (code === 0) {
         this.nurseList = [
           { id: -1, name: '未指定护士' },
           ...data.map((e) => ({ id: e.staffId, name: e.staffName })),
         ]
+      }
     },
     onSave() {
       let params = ''

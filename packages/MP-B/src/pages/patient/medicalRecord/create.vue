@@ -464,9 +464,10 @@ export default {
       )
     },
     nurseStr() {
-      return (
-        this.form.nurse?.nurseList?.map((e) => e.name).join(',') || '未指定护士'
-      )
+      if (this.form?.nurse?.nurseList?.length) {
+        return this.form.nurse?.nurseList?.map((e) => e.name).join(',')
+      }
+      return '未指定护士'
     },
   },
   methods: {
