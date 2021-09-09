@@ -206,6 +206,7 @@
         </button>
       </view>
     </fixed-footer>
+    <register-pop :show="show" @click="onClose" />
   </view>
   <view v-else-if="requestStatus.status === 'error'">
     <request-error @click="loadData" :msg="requestStatus.msg"></request-error>
@@ -222,6 +223,7 @@ import { globalEventKeys } from '@/config/global.eventKeys'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { checkIsHeaderOrLargeArea } from './utils'
 import FixedFooter from '../../components/fixed-footer/fixed-footer.vue'
+import { registerPop } from '@/components/register-pop/register-pop.vue'
 
 export default {
   data() {
@@ -231,6 +233,7 @@ export default {
         status: 'loading',
         msg: '',
       },
+      show: true,
       registerId: null,
       appointmentId: null,
       dataSource: {},
@@ -243,6 +246,7 @@ export default {
   components: {
     card,
     requestError,
+    registerPop,
   },
   onLoad(option) {
     this.appointmentId = Number(option.appointmentId)
@@ -263,6 +267,9 @@ export default {
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   methods: {
+    onClose() {
+      this.show = false
+    },
     cancelConfirm() {
       appointmentAPI
         .confirmBackToAppointment({
@@ -281,23 +288,28 @@ export default {
     },
     cancleRegister() {
       if (this.dataSource.registerId) {
-        const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+        console.log('向后端请求是否有需要删除的数据')
+        let deleteInfo = true
+        if (deleteInfo) {
+        } else {
+          const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
 
-        diagnosisApi
-          .updateRegisterStatus({
-            registerId: this.dataSource.registerId,
-            status,
-          })
-          .then((res) => {
-            if (res.code === 0) {
-              uni.showToast({
-                icon: 'success',
-                title: '取消成功',
-              })
-              this.loadData()
-            }
-          })
-          .catch()
+          diagnosisApi
+            .updateRegisterStatus({
+              registerId: this.dataSource.registerId,
+              status,
+            })
+            .then((res) => {
+              if (res.code === 0) {
+                uni.showToast({
+                  icon: 'success',
+                  title: '取消成功',
+                })
+                this.loadData()
+              }
+            })
+            .catch()
+        }
       }
     },
     confirmAppointment() {
