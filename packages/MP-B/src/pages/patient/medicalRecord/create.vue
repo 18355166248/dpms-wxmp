@@ -690,8 +690,13 @@ export default {
       if (item) {
         this.form.registerId = item.registerId
         this.form.visType = item.visType
-        if (item.nurse) {
-          this.form.nurse = item.nurse
+        if (item.nurseStaffList) {
+          this.form.nurse = {
+            nurseList: item.nurseStaffList.map((e) => ({
+              id: e.staffId,
+              name: e.staffName,
+            })),
+          }
         }
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
           this.form.doctorStaffId = item.doctorStaffId
