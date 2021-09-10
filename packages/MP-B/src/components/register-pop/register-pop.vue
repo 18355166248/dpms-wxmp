@@ -1,6 +1,6 @@
 <template>
   <u-modal
-    v-model="show"
+    v-model="showRegister"
     class="registerModal"
     :show-title="false"
     confirm-text="关闭"
@@ -84,9 +84,16 @@ export default {
       type: Object,
     },
   },
+  watch: {
+    show(newVal, oldVal) {
+      if (newVal === oldVal) return
+      this.showRegister = newVal
+    },
+  },
   data() {
     return {
       registerTime: null,
+      showRegister: false,
     }
   },
   methods: {
