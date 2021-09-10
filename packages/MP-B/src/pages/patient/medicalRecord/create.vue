@@ -464,6 +464,7 @@ export default {
       )
     },
     nurseStr() {
+      console.log(this.form?.nurse?.nurseList, '----467')
       if (this.form?.nurse?.nurseList?.length) {
         return this.form.nurse?.nurseList?.map((e) => e.name).join(',')
       }
@@ -704,6 +705,10 @@ export default {
               id: e.staffId,
               name: e.staffName,
             })),
+          }
+        } else {
+          this.form.nurse = {
+            nurseList: null,
           }
         }
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
