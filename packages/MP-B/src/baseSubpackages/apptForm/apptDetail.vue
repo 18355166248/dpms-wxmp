@@ -206,7 +206,7 @@
         </button>
       </view>
     </fixed-footer>
-    <register-pop :show="show" @click="onClose" />
+    <register-pop :show="show" @click="onClose" :registerItem="registerItem" />
   </view>
   <view v-else-if="requestStatus.status === 'error'">
     <request-error @click="loadData" :msg="requestStatus.msg"></request-error>
@@ -233,7 +233,7 @@ export default {
         status: 'loading',
         msg: '',
       },
-      show: true,
+      show: false,
       registerId: null,
       appointmentId: null,
       dataSource: {},
@@ -241,6 +241,7 @@ export default {
       STAFF_POSITION_ENUM: this.$dpmsUtils.getEnums('StaffPosition'),
       REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
       isHeaderOrLargeArea: false,
+      registerItem: {},
     }
   },
   components: {
@@ -289,28 +290,47 @@ export default {
     cancleRegister() {
       if (this.dataSource.registerId) {
         console.log('向后端请求是否有需要删除的数据')
-        let deleteInfo = true
-        if (deleteInfo) {
-        } else {
-          const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+        appointmentAPI
+          .getRegisterBackTip({ registerId: this.dataSource.registerId })
+          .then((res) => {
+            console.log('res', res)
 
-          diagnosisApi
-            .updateRegisterStatus({
-              registerId: this.dataSource.registerId,
-              status,
-            })
-            .then((res) => {
-              if (res.code === 0) {
-                uni.showToast({
-                  icon: 'success',
-                  title: '取消成功',
-                })
-                this.loadData()
-              }
-            })
-            .catch()
-        }
+            if (res.code !== 0) {
+              return
+            }
+
+            if (res.data?.totalCount > 0) {
+              this.show = true
+              this.registerItem = res.data
+
+              return
+            }
+
+            this.showRegisterModal()
+          })
+          .catch((err) => {
+            throw err
+          })
       }
+    },
+    showRegisterModal() {
+      const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+
+      diagnosisApi
+        .updateRegisterStatus({
+          registerId: this.dataSource.registerId,
+          status,
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            uni.showToast({
+              icon: 'success',
+              title: '取消成功',
+            })
+            this.loadData()
+          }
+        })
+        .catch()
     },
     confirmAppointment() {
       appointmentAPI

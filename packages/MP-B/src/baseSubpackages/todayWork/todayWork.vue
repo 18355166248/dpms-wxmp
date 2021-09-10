@@ -472,7 +472,12 @@
           <request-error @click="emitPullDownRefresh"></request-error>
         </view>
       </view>
-      <register-pop :show="show" @click="onClose" />
+      <register-pop
+        :show="show"
+        @click="onClose"
+        :title="registerTitle"
+        :registerItem="registerItem"
+      />
     </view>
   </view>
 </template>
@@ -531,6 +536,8 @@ export default {
       statusTextValue: {},
       statusTextArray: {},
       disabled: false,
+      registerTitle: '回退',
+      registerItem: {},
     }
   },
   onLoad() {
@@ -578,25 +585,46 @@ export default {
     },
     // 取消挂号
     cancelRegister(record) {
-      uni.showModal({
-        title: '提示',
-        content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
-        success: (res) => {
-          if (res.confirm) {
-            diagnosisApi
-              .updateRegisterStatus({
-                registerId: record.registerId,
-                status: this.REGISTER_ENUM.REGISTER_CANCELED.value,
-              })
-              .then(() => {
-                this.$dpmsUtils.show('取消成功', { icon: 'success' })
-                this.emitPullDownRefresh()
-              })
-          } else if (res.cancel) {
-            console.log('用户点击取消')
+      appointmentAPI
+        .getRegisterBackTip({ registerId: record.registerId })
+        .then((res) => {
+          console.log('res', res)
+
+          if (res.code !== 0) {
+            return
           }
-        },
-      })
+
+          if (res.data?.totalCount > 0) {
+            this.show = true
+            this.registerItem = res.data
+            this.registerTitle = '取消挂号'
+
+            return
+          }
+
+          uni.showModal({
+            title: '提示',
+            content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
+            success: (res) => {
+              if (res.confirm) {
+                diagnosisApi
+                  .updateRegisterStatus({
+                    registerId: record.registerId,
+                    status: this.REGISTER_ENUM.REGISTER_CANCELED.value,
+                  })
+                  .then(() => {
+                    this.$dpmsUtils.show('取消成功', { icon: 'success' })
+                    this.emitPullDownRefresh()
+                  })
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
+            },
+          })
+        })
+        .catch((err) => {
+          throw err
+        })
     },
     // 清空搜索
     handleClear() {
@@ -1255,6 +1283,8 @@ export default {
 
                 if (res.data?.totalCount > 0) {
                   this.show = true
+                  this.registerItem = res.data
+                  this.registerTitle = '回退'
 
                   return
                 }
