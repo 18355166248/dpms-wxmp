@@ -1388,6 +1388,8 @@ export default {
 
                 if (res.data?.totalCount > 0) {
                   this.show = true
+                  this.registerItem = res.data
+                  this.registerTitle = '回退'
 
                   return
                 }

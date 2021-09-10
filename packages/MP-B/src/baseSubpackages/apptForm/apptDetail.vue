@@ -206,7 +206,11 @@
         </button>
       </view>
     </fixed-footer>
-    <register-pop :show="show" @click="onClose" :registerItem="registerItem" />
+    <register-pop
+      :show="showRegister"
+      @click="onClose"
+      :registerItem="registerItem"
+    />
   </view>
   <view v-else-if="requestStatus.status === 'error'">
     <request-error @click="loadData" :msg="requestStatus.msg"></request-error>
@@ -233,7 +237,7 @@ export default {
         status: 'loading',
         msg: '',
       },
-      show: false,
+      showRegister: false,
       registerId: null,
       appointmentId: null,
       dataSource: {},
@@ -269,7 +273,7 @@ export default {
   },
   methods: {
     onClose() {
-      this.show = false
+      this.showRegister = false
     },
     cancelConfirm() {
       appointmentAPI
@@ -300,7 +304,7 @@ export default {
             }
 
             if (res.data?.totalCount > 0) {
-              this.show = true
+              this.showRegister = true
               this.registerItem = res.data
 
               return
