@@ -511,6 +511,13 @@ export default {
           this.form.doctorStaffId = this.registerList[0].doctorStaffId
         }
         this.form.visType = this.registerList[0].visType
+        // 护士
+        this.form.nurse = {
+          nurseList: this.registerList[0]?.nurseStaffList.map((e) => ({
+            id: e.staffId,
+            name: e.staffName,
+          })),
+        }
         const { patientMainComplaintList } = this.registerList[0]
         if (
           Array.isArray(patientMainComplaintList) &&
