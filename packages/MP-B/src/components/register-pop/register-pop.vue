@@ -11,7 +11,9 @@
       <view class="title">
         <view class="iconfont icon-warning warn"></view>
         <view style="width: 24rpx;"></view>
-        <view class="titleTex">患者本次挂号已产生就诊数据，删除后才能回退</view>
+        <view class="titleTex"
+          >患者本次挂号已产生就诊数据，删除后才能{{ title }}</view
+        >
       </view>
       <view class="contentStyle">
         <view class="rowText">
@@ -74,21 +76,12 @@ export default {
     show: {
       type: Boolean,
     },
+    title: {
+      type: String,
+      default: '回退',
+    },
     registerItem: {
       type: Object,
-      default: () => {
-        return {
-          patientId: 18759,
-          patientName: '李玉',
-          registerTime: 1631072852000,
-          billingCount: 2,
-          electronicMedicalCount: 0,
-          prescriptionCount: 3,
-          imageCount: 0,
-          disposalRecordCount: 5,
-          technologyProcessingCount: 0,
-        }
-      },
     },
   },
   data() {
@@ -103,7 +96,7 @@ export default {
   },
   mounted() {
     this.registerTime = moment(this.registerItem?.registerTime).format(
-      'yyyy-MM-DD HH:mm',
+      'YYYY-MM-DD HH:mm',
     )
   },
 }
