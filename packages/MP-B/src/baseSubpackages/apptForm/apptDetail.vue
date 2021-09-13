@@ -210,6 +210,7 @@
       :show="showRegister"
       @click="onClose"
       :registerItem="registerItem"
+      :title="registerTitle"
     />
   </view>
   <view v-else-if="requestStatus.status === 'error'">
@@ -246,6 +247,7 @@ export default {
       REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
       isHeaderOrLargeArea: false,
       registerItem: {},
+      registerTitle: '取消挂号',
     }
   },
   components: {
