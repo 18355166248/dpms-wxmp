@@ -88,6 +88,9 @@ export default {
     show(newVal, oldVal) {
       if (newVal === oldVal) return
       this.showRegister = newVal
+      this.registerTime = moment(this.registerItem?.registerTime).format(
+        'YYYY-MM-DD HH:mm',
+      )
     },
   },
   data() {
@@ -100,11 +103,6 @@ export default {
     onConfirm() {
       this.$emit('click')
     },
-  },
-  mounted() {
-    this.registerTime = moment(this.registerItem?.registerTime).format(
-      'YYYY-MM-DD HH:mm',
-    )
   },
 }
 </script>
