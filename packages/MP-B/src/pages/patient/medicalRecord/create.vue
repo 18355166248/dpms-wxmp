@@ -490,7 +490,7 @@ export default {
       })
     },
     async getDoctors() {
-      const { code, data } = await institutionAPI.getDoctorList({tt
+      const { code, data } = await institutionAPI.getDoctorList({
         registerResourceType: 2,
       })
       if (code === 0) {
@@ -698,11 +698,10 @@ export default {
 
       this.form.registerId = registerId
       this.form.medicalRecordRegisterVO.registerTime = registerTime
+      this.reset()
     },
     registerChange({ detail }) {
       const item = this.registerList[detail.value]
-      // 这里为医生、就诊类型未根据选择的就诊时间联动
-      // 存在 doctorStaffId 为 -1 的情况, 这种老数据暂时未做处理
       if (item) {
         this.form.registerId = item.registerId
         this.form.visType = item.visType
@@ -721,6 +720,14 @@ export default {
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
           this.form.doctorStaffId = item.doctorStaffId
         }
+        if (item.registerId === -1) this.reset()
+      }
+    },
+    reset() {
+      this.form.visType = null
+      this.form.doctorStaffId = null
+      this.form.nurse = {
+        nurseList: null,
       }
     },
     historyMedicalChange(contents) {
