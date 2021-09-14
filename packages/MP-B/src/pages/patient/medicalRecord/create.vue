@@ -464,6 +464,7 @@ export default {
       )
     },
     nurseStr() {
+      console.log(this.form?.nurse?.nurseList, '----467')
       if (this.form?.nurse?.nurseList?.length) {
         return this.form.nurse?.nurseList?.map((e) => e.name).join(',')
       }
@@ -518,6 +519,13 @@ export default {
           this.form.doctorStaffId = this.registerList[0].doctorStaffId
         }
         this.form.visType = this.registerList[0].visType
+        // 护士
+        this.form.nurse = {
+          nurseList: this.registerList[0]?.nurseStaffList.map((e) => ({
+            id: e.staffId,
+            name: e.staffName,
+          })),
+        }
         const { patientMainComplaintList } = this.registerList[0]
         if (
           Array.isArray(patientMainComplaintList) &&
@@ -704,6 +712,10 @@ export default {
               id: e.staffId,
               name: e.staffName,
             })),
+          }
+        } else {
+          this.form.nurse = {
+            nurseList: null,
           }
         }
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
