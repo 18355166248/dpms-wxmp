@@ -490,7 +490,7 @@ export default {
       })
     },
     async getDoctors() {
-      const { code, data } = await institutionAPI.getDoctorList({
+      const { code, data } = await institutionAPI.getDoctorList({tt
         registerResourceType: 2,
       })
       if (code === 0) {
