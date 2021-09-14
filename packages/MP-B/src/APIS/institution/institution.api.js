@@ -47,6 +47,9 @@ const institutionAPI = {
   getDoctors(data) {
     return httper.get('/institution-customer-mgt/mini-app/doctor/doctor', data)
   },
+  getDoctorList(data) {
+    return httper.get('/diagnosis/register-resource/list', data)
+  },
   getStaffs(data) {
     return httper.get('/institution/staff/list/search', data)
   },

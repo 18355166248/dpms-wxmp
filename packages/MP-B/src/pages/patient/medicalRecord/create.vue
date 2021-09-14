@@ -489,8 +489,15 @@ export default {
       })
     },
     async getDoctors() {
-      const res = await institutionAPI.getDoctors()
-      this.doctors = res.data
+      const { code, data } = await institutionAPI.getDoctorList({
+        registerResourceType: 2,
+      })
+      if (code === 0) {
+        this.doctors = data.map((e) => ({
+          doctorId: e.staffId,
+          doctorName: e.staffName,
+        }))
+      }
     },
     async getRegisterList(param) {
       const res = await diagnosisAPI.getRegisterList(param)
