@@ -38,7 +38,7 @@ export default {
     }
     this.init()
     console.log(checkedList)
-    if (checkedList === 'undefined' || !checkedList) {
+    if (checkedList === 'undefined' || checkedList === 'null' || !checkedList) {
       this.checked = [-1]
     } else {
       this.checkedList = JSON.parse(checkedList)
