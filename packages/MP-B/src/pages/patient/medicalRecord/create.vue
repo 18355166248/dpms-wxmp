@@ -40,6 +40,12 @@
         title="就诊类型"
         placeholder="请选择就诊类型"
       />
+      <dpmsCell
+        placeholder="请选择护士"
+        title="护士"
+        :value="nurseStr"
+        @cellclick="onSelectNurse"
+      />
       <dpmsCell title="主诉" wrap>
         <div
           class="text"
@@ -404,6 +410,7 @@ import TemplateMedicalSelect from '@/businessComponents/MedicalSelect/TemplateSe
 import { getStorage, STORAGE_KEY } from '@/utils/storage'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import { mapMutations, mapState } from 'vuex'
+import { joinCheckedStaffName } from '@/baseSubpackages/apptForm/utils'
 
 export default {
   components: {
@@ -430,6 +437,7 @@ export default {
         medicalRecordRegisterVO: { visType: '' },
         medicalRecordImageList: '',
         visType: '',
+        nurse: '',
       },
       rules: {},
       teethSync: true,
@@ -455,8 +463,25 @@ export default {
         ''
       )
     },
+    nurseStr() {
+      console.log(this.form?.nurse?.nurseList, '----467')
+      if (this.form?.nurse?.nurseList?.length) {
+        return this.form.nurse?.nurseList?.map((e) => e.name).join(',')
+      }
+      return '未指定护士'
+    },
   },
   methods: {
+    onSelectNurse() {
+      const checkedList = JSON.stringify(this.form.nurse?.nurseList)
+      this.$dpmsUtils.push({
+        url:
+          '/pages/patient/medicalRecord/nurseList?' +
+          `&checkedList=${checkedList}` +
+          `&title=请选择护士` +
+          `&key=nurse`,
+      })
+    },
     initTreatmentTypes() {
       diagnosisAPI.getTreatmentTypes().then((res) => {
         if (res?.data?.length > 0) {
@@ -465,8 +490,15 @@ export default {
       })
     },
     async getDoctors() {
-      const res = await institutionAPI.getDoctors()
-      this.doctors = res.data
+      const { code, data } = await institutionAPI.getDoctorList({
+        registerResourceType: 2,
+      })
+      if (code === 0) {
+        this.doctors = data.map((e) => ({
+          doctorId: e.staffId,
+          doctorName: e.staffName,
+        }))
+      }
     },
     async getRegisterList(param) {
       const res = await diagnosisAPI.getRegisterList(param)
@@ -487,6 +519,13 @@ export default {
           this.form.doctorStaffId = this.registerList[0].doctorStaffId
         }
         this.form.visType = this.registerList[0].visType
+        // 护士
+        this.form.nurse = {
+          nurseList: this.registerList[0]?.nurseStaffList.map((e) => ({
+            id: e.staffId,
+            name: e.staffName,
+          })),
+        }
         const { patientMainComplaintList } = this.registerList[0]
         if (
           Array.isArray(patientMainComplaintList) &&
@@ -659,17 +698,36 @@ export default {
 
       this.form.registerId = registerId
       this.form.medicalRecordRegisterVO.registerTime = registerTime
+      this.reset()
     },
     registerChange({ detail }) {
       const item = this.registerList[detail.value]
-      // 这里为医生、就诊类型未根据选择的就诊时间联动
-      // 存在 doctorStaffId 为 -1 的情况, 这种老数据暂时未做处理
       if (item) {
         this.form.registerId = item.registerId
         this.form.visType = item.visType
+        if (item.nurseStaffList) {
+          this.form.nurse = {
+            nurseList: item.nurseStaffList.map((e) => ({
+              id: e.staffId,
+              name: e.staffName,
+            })),
+          }
+        } else {
+          this.form.nurse = {
+            nurseList: null,
+          }
+        }
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
           this.form.doctorStaffId = item.doctorStaffId
         }
+        if (item.registerId === -1) this.reset()
+      }
+    },
+    reset() {
+      this.form.visType = null
+      this.form.doctorStaffId = null
+      this.form.nurse = {
+        nurseList: null,
       }
     },
     historyMedicalChange(contents) {
@@ -747,6 +805,9 @@ export default {
     this.onEdit()
     this.getDoctors()
     this.initTreatmentTypes()
+    uni.$on('updateNurseList', (val) => {
+      this.form.nurse = val
+    })
   },
   watch: {
     'form.doctorStaffId'(newVal) {

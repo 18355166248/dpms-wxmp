@@ -94,6 +94,12 @@
           </div>
           <div class="rightText"></div>
         </div>
+        <div class="flexContent">
+          <div class="leftText">
+            <span class="colorFontF7">护士：{{ getNurseStr(item.nurse) }}</span>
+          </div>
+          <div class="rightText"></div>
+        </div>
         <div v-if="item.diagnosisDisposeType === 1" class="rowMain">
           <div class="label colorFontF7">主诉：</div>
           <div>{{ item.mainComplaint || '--' }}</div>
@@ -124,6 +130,11 @@ export default {
     this.getDiagnosisList(patientId)
   },
   methods: {
+    // 显示护士字段
+    getNurseStr(nurse) {
+      if (nurse) return nurse.nurseList.map((e) => e.name).join(',')
+      else return '--'
+    },
     getDiagnosisList(patientId) {
       uni.showLoading({
         title: '数据加载中',

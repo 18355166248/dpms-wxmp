@@ -195,6 +195,12 @@
           }
         },
         {
+          "path": "medicalRecord/nurseList",
+          "style": {
+            "navigationBarTitleText": ""
+          }
+        },
+        {
           "path": "medicalRecord/Textarea",
           "style": {
             "navigationBarTitleText": ""
