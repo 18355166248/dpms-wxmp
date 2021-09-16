@@ -206,6 +206,12 @@
         </button>
       </view>
     </fixed-footer>
+    <register-pop
+      :show="showRegister"
+      @click="onClose"
+      :registerItem="registerItem"
+      :title="registerTitle"
+    />
   </view>
   <view v-else-if="requestStatus.status === 'error'">
     <request-error @click="loadData" :msg="requestStatus.msg"></request-error>
@@ -222,6 +228,7 @@ import { globalEventKeys } from '@/config/global.eventKeys'
 import { frontAuthUtil } from '@/utils/frontAuth.util'
 import { checkIsHeaderOrLargeArea } from './utils'
 import FixedFooter from '../../components/fixed-footer/fixed-footer.vue'
+import { registerPop } from '@/components/register-pop/register-pop.vue'
 
 export default {
   data() {
@@ -231,6 +238,7 @@ export default {
         status: 'loading',
         msg: '',
       },
+      showRegister: false,
       registerId: null,
       appointmentId: null,
       dataSource: {},
@@ -238,11 +246,14 @@ export default {
       STAFF_POSITION_ENUM: this.$dpmsUtils.getEnums('StaffPosition'),
       REGISTER_ENUM: this.$dpmsUtils.getEnums('Register'),
       isHeaderOrLargeArea: false,
+      registerItem: {},
+      registerTitle: '取消挂号',
     }
   },
   components: {
     card,
     requestError,
+    registerPop,
   },
   onLoad(option) {
     this.appointmentId = Number(option.appointmentId)
@@ -263,6 +274,9 @@ export default {
     uni.$off(globalEventKeys.apptFormWithSaveSuccess)
   },
   methods: {
+    onClose() {
+      this.showRegister = false
+    },
     cancelConfirm() {
       appointmentAPI
         .confirmBackToAppointment({
@@ -281,24 +295,48 @@ export default {
     },
     cancleRegister() {
       if (this.dataSource.registerId) {
-        const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
-
-        diagnosisApi
-          .updateRegisterStatus({
-            registerId: this.dataSource.registerId,
-            status,
-          })
+        console.log('向后端请求是否有需要删除的数据')
+        appointmentAPI
+          .getRegisterBackTip({ registerId: this.dataSource.registerId })
           .then((res) => {
-            if (res.code === 0) {
-              uni.showToast({
-                icon: 'success',
-                title: '取消成功',
-              })
-              this.loadData()
+            console.log('res', res)
+
+            if (res.code !== 0) {
+              return
             }
+
+            if (res.data?.totalCount > 0) {
+              this.showRegister = true
+              this.registerItem = res.data
+
+              return
+            }
+
+            this.showRegisterModal()
           })
-          .catch()
+          .catch((err) => {
+            throw err
+          })
       }
+    },
+    showRegisterModal() {
+      const status = this.REGISTER_ENUM.REGISTER_CANCELED.value
+
+      diagnosisApi
+        .updateRegisterStatus({
+          registerId: this.dataSource.registerId,
+          status,
+        })
+        .then((res) => {
+          if (res.code === 0) {
+            uni.showToast({
+              icon: 'success',
+              title: '取消成功',
+            })
+            this.loadData()
+          }
+        })
+        .catch()
     },
     confirmAppointment() {
       appointmentAPI

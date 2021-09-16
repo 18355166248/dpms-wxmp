@@ -472,9 +472,12 @@
           <request-error @click="emitPullDownRefresh"></request-error>
         </view>
       </view>
-      <view v-else class="h100">
-        <empty :disabled="true"></empty>
-      </view>
+      <register-pop
+        :show="show"
+        @click="onClose"
+        :title="registerTitle"
+        :registerItem="registerItem"
+      />
     </view>
   </view>
 </template>
@@ -492,6 +495,7 @@ import qs from 'qs'
 import fixedFooter from '@/components/fixed-footer/fixed-footer.vue'
 import { globalEventKeys } from '@/config/global.eventKeys.js'
 import { mapState } from 'vuex'
+import { registerPop } from '@/components/register-pop/register-pop.vue'
 
 /**
  * 重大重构：调整了员工的权限
@@ -501,6 +505,7 @@ import { mapState } from 'vuex'
 export default {
   data() {
     return {
+      show: false,
       title: '今日就诊',
       roles: [],
       selectedRole: {},
@@ -531,6 +536,8 @@ export default {
       statusTextValue: {},
       statusTextArray: {},
       disabled: false,
+      registerTitle: '回退',
+      registerItem: {},
     }
   },
   onLoad() {
@@ -573,27 +580,51 @@ export default {
       const res = await diagnosisApi.getWeakFlow()
       this.isWeakflow = res.data?.isWeakflow
     },
+    onClose() {
+      this.show = false
+    },
     // 取消挂号
     cancelRegister(record) {
-      uni.showModal({
-        title: '提示',
-        content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
-        success: (res) => {
-          if (res.confirm) {
-            diagnosisApi
-              .updateRegisterStatus({
-                registerId: record.registerId,
-                status: this.REGISTER_ENUM.REGISTER_CANCELED.value,
-              })
-              .then(() => {
-                this.$dpmsUtils.show('取消成功', { icon: 'success' })
-                this.emitPullDownRefresh()
-              })
-          } else if (res.cancel) {
-            console.log('用户点击取消')
+      appointmentAPI
+        .getRegisterBackTip({ registerId: record.registerId })
+        .then((res) => {
+          console.log('res', res)
+
+          if (res.code !== 0) {
+            return
           }
-        },
-      })
+
+          if (res.data?.totalCount > 0) {
+            this.show = true
+            this.registerItem = res.data
+            this.registerTitle = '取消挂号'
+
+            return
+          }
+
+          uni.showModal({
+            title: '提示',
+            content: '即将执行取消挂号操作，取消后将无法恢复，是否继续操作？',
+            success: (res) => {
+              if (res.confirm) {
+                diagnosisApi
+                  .updateRegisterStatus({
+                    registerId: record.registerId,
+                    status: this.REGISTER_ENUM.REGISTER_CANCELED.value,
+                  })
+                  .then(() => {
+                    this.$dpmsUtils.show('取消成功', { icon: 'success' })
+                    this.emitPullDownRefresh()
+                  })
+              } else if (res.cancel) {
+                console.log('用户点击取消')
+              }
+            },
+          })
+        })
+        .catch((err) => {
+          throw err
+        })
     },
     // 清空搜索
     handleClear() {
@@ -1121,6 +1152,7 @@ export default {
     //今日工作流程 从pc端搬运而来
     consultationAction(record, value) {
       const { registerId, registerStatus, appointmentId } = record
+      console.log('registerStatus', registerStatus)
       const { REGISTER_ENUM, TODAY_WORK_ROLE_TYPE_ENUM, curRoleKey } = this
       let todayWorkRoleType
       let status
@@ -1238,47 +1270,33 @@ export default {
           return
         }
         if (value === REGISTER_ENUM.REGISTER_LEAVE?.value) {
-          uni.showModal({
-            title: '确定要回退就诊流程?',
-            success: ({ confirm, cancel }) => {
-              if (confirm) {
-                const status = REGISTER_ENUM.REGISTER_REGISTERED?.value
+          // 如果是已挂号状态，在回退之前向后端请求需要删除的数据
+          if (registerStatus === 2) {
+            appointmentAPI
+              .getRegisterBackTip({ registerId: registerId })
+              .then((res) => {
+                console.log('res', res)
 
-                if (registerStatus === status) {
-                  appointmentAPI
-                    .appointmentUpdateStatus({
-                      appointmentId,
-                      appointmentStatus: 2,
-                    })
-                    .then(() => {
-                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
-                      this.emitPullDownRefresh()
-                      this.disabled = false
-                    })
-                    .catch(() => {
-                      this.disabled = false
-                    })
-                } else {
-                  diagnosisApi
-                    .registerUpdateStatus({
-                      registerId,
-                      todayWorkRoleType: todayWorkRoleType,
-                    })
-                    .then(() => {
-                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
-                      this.emitPullDownRefresh()
-                      this.disabled = false
-                    })
-                    .catch(() => {
-                      this.disabled = false
-                    })
+                if (res.code !== 0) {
+                  return
                 }
-              }
-              if (cancel) {
-                console.log(cancel)
-              }
-            },
-          })
+
+                if (res.data?.totalCount > 0) {
+                  this.show = true
+                  this.registerItem = res.data
+                  this.registerTitle = '回退'
+
+                  return
+                }
+
+                this.showRegisterModal(record, todayWorkRoleType)
+              })
+              .catch((err) => {
+                throw err
+              })
+          } else {
+            this.showRegisterModal(record, todayWorkRoleType)
+          }
         }
       } else {
         if (value === REGISTER_ENUM.REGISTER_APPOINTED?.value) {
@@ -1357,49 +1375,83 @@ export default {
           return
         }
         if (value === REGISTER_ENUM.REGISTER_TREATED?.value) {
-          uni.showModal({
-            title: '确定要回退就诊流程?',
-            success: ({ confirm, cancel }) => {
-              if (confirm) {
-                const status = REGISTER_ENUM.REGISTER_REGISTERED?.value
+          // 如果是已挂号状态，在回退之前向后端请求需要删除的数据
+          if (registerStatus === 2) {
+            appointmentAPI
+              .getRegisterBackTip({ registerId: registerId })
+              .then((res) => {
+                console.log('res', res)
 
-                if (registerStatus === status) {
-                  appointmentAPI
-                    .appointmentUpdateStatus({
-                      appointmentId,
-                      appointmentStatus: 2,
-                    })
-                    .then(() => {
-                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
-                      this.emitPullDownRefresh()
-                      this.disabled = false
-                    })
-                    .catch(() => {
-                      this.disabled = false
-                    })
-                } else {
-                  diagnosisApi
-                    .registerUpdateStatus({ registerId, todayWorkRoleType: 1 })
-                    .then(() => {
-                      this.$dpmsUtils.show('回退成功', { icon: 'success' })
-                      this.emitPullDownRefresh()
-                      this.disabled = false
-                    })
-                    .catch(() => {
-                      this.disabled = false
-                    })
+                if (res.code !== 0) {
+                  return
                 }
-              }
-              if (cancel) {
-                console.log(cancel)
-              }
-            },
-          })
+
+                if (res.data?.totalCount > 0) {
+                  this.show = true
+                  this.registerItem = res.data
+                  this.registerTitle = '回退'
+
+                  return
+                }
+
+                this.showRegisterModal(record, todayWorkRoleType)
+              })
+              .catch((err) => {
+                throw err
+              })
+          } else {
+            this.showRegisterModal(record, todayWorkRoleType)
+          }
         }
       }
     },
     emitPullDownRefresh() {
       uni.startPullDownRefresh()
+    },
+    showRegisterModal(record, todayWorkRoleType) {
+      const { registerId, registerStatus, appointmentId } = record
+      const { REGISTER_ENUM } = this
+      uni.showModal({
+        title: '确定要回退就诊流程?',
+        success: ({ confirm, cancel }) => {
+          if (confirm) {
+            const status = REGISTER_ENUM.REGISTER_REGISTERED?.value
+
+            if (registerStatus === status) {
+              appointmentAPI
+                .appointmentUpdateStatus({
+                  appointmentId,
+                  appointmentStatus: 2,
+                })
+                .then(() => {
+                  this.$dpmsUtils.show('回退成功', { icon: 'success' })
+                  this.emitPullDownRefresh()
+                  this.disabled = false
+                })
+                .catch(() => {
+                  this.disabled = false
+                })
+            } else {
+              diagnosisApi
+                .registerUpdateStatus({
+                  registerId,
+                  todayWorkRoleType: todayWorkRoleType,
+                })
+                .then(() => {
+                  this.$dpmsUtils.show('回退成功', { icon: 'success' })
+                  this.emitPullDownRefresh()
+                  this.disabled = false
+                })
+                .catch(() => {
+                  this.disabled = false
+                })
+            }
+          }
+          if (cancel) {
+            console.log(cancel)
+          }
+        },
+      })
     },
   },
   components: {
@@ -1409,6 +1461,7 @@ export default {
     requestError,
     fixedFilter,
     fixedFooter,
+    registerPop,
   },
   computed: {
     ...mapState('workbenchStore', ['menu']),

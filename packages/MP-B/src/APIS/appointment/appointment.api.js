@@ -5,6 +5,13 @@ const appointmentAPI = {
   getAppointmentItemList(params) {
     return httper.get('appointment/settings/appointment-item/list', params)
   },
+  appointmentUpdateStatus(data) {
+    return httper.post('appointment/appointment/update/status', data)
+  },
+  // 查询就诊回退前置条件
+  getRegisterBackTip(data) {
+    return httper.get('register/register/preback', data)
+  },
   // 预约校验
   getAppointmentVerify(data) {
     return httper.post('appointment/appointment/mini-apps/verify', data)
