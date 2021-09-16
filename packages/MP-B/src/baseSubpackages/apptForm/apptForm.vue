@@ -42,6 +42,7 @@
           required
           title="预约开始时间"
           v-model="form.appointmentBeginTimeStamp"
+          showDayOfWeek
         />
         <!-- 编辑挂号显示预约时间 -->
         <dpmsCell

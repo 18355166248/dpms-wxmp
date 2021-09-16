@@ -7,6 +7,7 @@
       :fields="fields"
       :defaultValue="defaultValue"
       @change="onChange"
+      :showDayOfWeek="showDayOfWeek"
     >
       <dpmsCell
         :title="title"
@@ -43,10 +44,10 @@ export default {
     },
     title: String,
     value: [String, Number],
-    formatValue: {
-      type: String,
-      default: 'YYYY-MM-DD HH:mm',
-    }, // 格式化展示时间格式
+    showDayOfWeek: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {}
@@ -56,15 +57,16 @@ export default {
       let v = this.value
 
       if (this.value) {
-        v = moment(this.value).format(this.formatValue)
+        v = moment(this.value).format('YYYY-MM-DD HH:mm')
       }
 
       return v
     },
     pickerValue() {
-      return this.defaultValue
-        ? moment(this.defaultValue).format(this.formatValue)
-        : undefined
+      const formatStr = this.showDayOfWeek
+        ? 'YYYY-MM-DD/ddd HH:mm'
+        : 'YYYY-MM-DD HH:mm'
+      return this.value ? moment(this.value).format(formatStr) : ''
     },
   },
   methods: {

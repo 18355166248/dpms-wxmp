@@ -121,7 +121,7 @@ export default {
         .filter((d) => d.teethImageList)
         .map((d) => ({
           ...d,
-          registerLabel: moment(d.visTime).format('YYYY/MM/DD HH:mm'),
+          registerLabel: moment(d.visTime).format('YYYY-MM-DD/ddd HH:mm'),
         }))
     },
     async getImageEnums() {

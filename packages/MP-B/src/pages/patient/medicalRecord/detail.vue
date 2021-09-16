@@ -288,7 +288,9 @@ export default {
       })
       this.$dpmsUtils.clearLoading()
       this.detail = {
-        visTimeFormated: moment(res.data.visTime).format('YYYY-MM-DD HH:mm'),
+        visTimeFormated: moment(res.data.visTime).format(
+          'YYYY-MM-DD/ddd HH:mm',
+        ),
         createTimeFormated: moment(res.data.createTime).format(
           'YYYY-MM-DD HH:mm',
         ),

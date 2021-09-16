@@ -103,8 +103,10 @@ export default {
         ...this.records,
         ...res.data.records.map((r) => ({
           ...r,
-          visTimeFormated: moment(r.visTime).format('YYYY-MM-DD HH:mm'),
-          createTimeFormated: moment(r.createTime).format('YYYY-MM-DD HH:mm'),
+          visTimeFormated: moment(r.visTime).format('YYYY-MM-DD/ddd HH:mm'),
+          createTimeFormated: moment(r.createTime).format(
+            'YYYY-MM-DD/ddd HH:mm',
+          ),
           visText: r.visTypeName,
         })),
       ]

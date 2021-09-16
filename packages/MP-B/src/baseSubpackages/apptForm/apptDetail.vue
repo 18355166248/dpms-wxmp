@@ -511,7 +511,9 @@ export default {
           (appointmentEndTime - appointmentBeginTime) / (1000 * 60)
         return `待定-${minutes}分钟`
       } else {
-        return `${moment(appointmentBeginTime).format('YYYY-MM-DD HH:mm')}`
+        return `${moment(appointmentBeginTime).format(
+          'YYYY-MM-DD/ddd HH:mm',
+        )} ~ ${moment(appointmentEndTime).format('HH:mm')}`
       }
     },
     // 待定预约日期

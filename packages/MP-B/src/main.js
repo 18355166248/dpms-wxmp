@@ -7,9 +7,13 @@ import '@/styles/common.scss'
 import './utils/filter'
 import './utils/globalMixin'
 import './polyfill'
+import moment from 'moment'
+
 import statisticsAPI from './APIS/statistics.api'
 
 import uView from 'uview-ui'
+
+moment.locale('zh-cn')
 
 Vue.use(uView)
 

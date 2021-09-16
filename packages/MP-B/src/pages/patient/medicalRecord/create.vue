@@ -5,7 +5,7 @@
         <template #title>
           <div class="title">
             就诊信息
-            <dpmsDatetimePicker isCell @change="registNew">
+            <dpmsDatetimePicker isCell @change="registNew" showDayOfWeek>
               <span class="iconfont icon-plus-circle addRegist" />
             </dpmsDatetimePicker>
           </div>
@@ -472,7 +472,7 @@ export default {
       const res = await diagnosisAPI.getRegisterList(param)
       this.registerList = (res.data || []).map((d) => ({
         ...d,
-        registerLabel: moment(d.registerTime).format('YYYY/MM/DD HH:mm'),
+        registerLabel: moment(d.registerTime).format('YYYY-MM-DD/ddd HH:mm'),
       }))
       if (this.registerList.length > 0) {
         this.form.registerId = this.registerList[0].registerId
@@ -646,7 +646,7 @@ export default {
     registNew({ dt }) {
       const registerId = -1
       const registerTime = moment(dt).valueOf()
-      const registerLabel = moment(dt).format('YYYY/MM/DD HH:mm')
+      const registerLabel = moment(dt).format('YYYY-MM-DD/ddd HH:mm')
       const newRegisterIndex = this.registerList.findIndex(
         (l) => l.registerId === registerId,
       )
