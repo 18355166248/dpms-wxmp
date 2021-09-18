@@ -36,8 +36,9 @@ export default {
       _self.disabled = true
       patientAPI
         .addTag({
-          groupId: _self.groupId,
-          name: _self.name,
+          labelType: 2,
+          labelGroupId: _self.groupId,
+          labelName: _self.name,
         })
         .then(() => {
           _self.$dpmsUtils.back()
