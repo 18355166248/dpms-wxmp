@@ -5,7 +5,12 @@
         <template #title>
           <div class="title">
             就诊信息
-            <dpmsDatetimePicker isCell @change="registNew" showDayOfWeek>
+            <dpmsDatetimePicker
+              isCell
+              showDayOfWeek
+              :end="endTime"
+              @change="registNew"
+            >
               <span class="iconfont icon-plus-circle addRegist" />
             </dpmsDatetimePicker>
           </div>
@@ -470,6 +475,10 @@ export default {
       }
       return '未指定护士'
     },
+    // 自定义时间 不支持选择未来日期
+    endTime() {
+      return moment().endOf('day').format('YYYY-MM-DD HH:mm')
+    },
   },
   methods: {
     onSelectNurse() {
@@ -521,7 +530,7 @@ export default {
         this.form.visType = this.registerList[0].visType
         // 护士
         this.form.nurse = {
-          nurseList: this.registerList[0]?.nurseStaffList.map((e) => ({
+          nurseList: this.registerList[0]?.nurseStaffList?.map((e) => ({
             id: e.staffId,
             name: e.staffName,
           })),
