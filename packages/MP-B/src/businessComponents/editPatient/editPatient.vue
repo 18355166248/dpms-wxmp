@@ -802,7 +802,7 @@ export default {
       this.patientNationalityList = res.data || []
     },
     async getPatientTags() {
-      const res = await patientAPI.getPatientTags()
+      const res = await patientAPI.getPatientTags({ labelType: 2 })
       uni.setStorageSync(
         'patientTagsList',
         res.data.filter((v) => v.tagInfoDTOList?.length > 0),
@@ -857,7 +857,10 @@ export default {
       data.region = [data.province, data.city, data.area]
       if (data.tagList) {
         data.tagIds = data.tagList.map((v) => v.id)
-        this.patientTagsCheckedText = data.tagList.map((v) => v.name).join(',')
+        this.patientTagsCheckedText = data.tagList
+          .filter((val) => val.labelType === 2)
+          .map((v) => v.name)
+          .join(',')
       }
       return data
     },

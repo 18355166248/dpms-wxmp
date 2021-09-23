@@ -89,7 +89,7 @@ export default {
       })
     },
     async loadPatientTags() {
-      let res = await patientAPI.getPatientTags()
+      let res = await patientAPI.getPatientTags({ labelType: 2 })
       let patientTagsList = res.data.filter((v) => v.tagInfoDTOList?.length > 0)
       uni.setStorageSync('patientTagsList', patientTagsList)
       this.list = patientTagsList
