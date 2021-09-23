@@ -37,7 +37,7 @@
           <span class="mv-32 lh NormalText">{{ item.triggerCondition }}</span>
           <view class="note mb-40 lh" v-show="item.comment"
             ><span>备注：</span
-            ><span class="NormalText ellipsis">{{ item.comment }}</span></view
+            ><span class="NormalText">{{ item.comment }}</span></view
           >
         </view>
         <view class="buttonControl pr-24">
@@ -244,6 +244,8 @@ export default {
   color: #191919;
   line-height: 36rpx;
   font-size: 28rpx;
+  width: 100%;
+  white-space: pre-wrap;
 }
 .topBar {
   height: 96rpx;
@@ -261,7 +263,6 @@ export default {
   .singleContainer {
     border-radius: 8rpx;
     width: 100%;
-    height: 480rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     background: #feffff;
     margin-bottom: 32rpx;
@@ -361,6 +362,7 @@ export default {
     .buttonControl {
       display: flex;
       flex-direction: row-reverse;
+      padding-bottom: 32rpx;
     }
   }
 }
