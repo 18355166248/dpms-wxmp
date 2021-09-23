@@ -221,7 +221,6 @@ export default {
     border-radius: 8rpx;
     margin-bottom: 32rpx;
     width: 100%;
-    height: 436rpx;
     box-shadow: 0rpx 0rpx 20rpx 0rpx rgba(0, 0, 0, 0.1);
     background: #feffff;
     .firstLevel {
@@ -318,6 +317,8 @@ export default {
       color: #191919;
       line-height: 36rpx;
       font-size: 28rpx;
+      width: 100%;
+      white-space: pre-wrap;
     }
   }
 }
