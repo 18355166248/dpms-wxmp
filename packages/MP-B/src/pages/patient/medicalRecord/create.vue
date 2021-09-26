@@ -515,27 +515,32 @@ export default {
         ...d,
         registerLabel: moment(d.registerTime).format('YYYY-MM-DD/ddd HH:mm'),
       }))
-      if (this.registerList.length > 0) {
-        this.form.registerId = this.registerList[0].registerId
+      // 判断当日是否存在就诊信息，如有就选中
+      const today = moment().startOf('day')
+      const selectedRegister = this.registerList.find((e) =>
+        moment(e.registerTime).isSame(today, 'd'),
+      )
+      if (selectedRegister) {
+        this.form.registerId = selectedRegister.registerId
         // 如果有就诊记录，那就证明是复诊
         // this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
-        this.form.medicalRecordRegisterVO.visType = this.registerList[0].visType
+        this.form.medicalRecordRegisterVO.visType = selectedRegister.visType
         // 如果第一条有医生id，且医生id不为-1 ，即存在，就默认选中当前就诊记录上的医生
         if (
-          this.registerList[0].doctorStaffId &&
-          this.registerList[0].doctorStaffId !== -1
+          selectedRegister.doctorStaffId &&
+          selectedRegister.doctorStaffId !== -1
         ) {
-          this.form.doctorStaffId = this.registerList[0].doctorStaffId
+          this.form.doctorStaffId = selectedRegister.doctorStaffId
         }
-        this.form.visType = this.registerList[0].visType
+        this.form.visType = selectedRegister.visType
         // 护士
         this.form.nurse = {
-          nurseList: this.registerList[0]?.nurseStaffList?.map((e) => ({
+          nurseList: selectedRegister?.nurseStaffList?.map((e) => ({
             id: e.staffId,
             name: e.staffName,
           })),
         }
-        const { patientMainComplaintList } = this.registerList[0]
+        const { patientMainComplaintList } = selectedRegister
         if (
           Array.isArray(patientMainComplaintList) &&
           patientMainComplaintList.length > 0
