@@ -106,7 +106,7 @@
           class="button"
           @click="
             toPage('/baseSubpackages/apptForm/apptForm', {
-              type: 'editAppt',
+              type: 'againAppt',
               appointmentId: appointmentId,
             })
           "
