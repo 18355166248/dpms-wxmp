@@ -403,7 +403,10 @@ export default {
           } = res.data
           this.form.patientId = patientId
           this.form.patient = patient
-          this.form.appointmentBeginTimeStamp = appointmentBeginTime
+          this.form.appointmentBeginTimeStamp =
+            option.type === 'againAppt'
+              ? moment().valueOf()
+              : appointmentBeginTime
           this.form.appointmentEndTimeStamp = appointmentEndTime
           this.form.duration = moment(appointmentEndTime).diff(
             moment(appointmentBeginTime),
