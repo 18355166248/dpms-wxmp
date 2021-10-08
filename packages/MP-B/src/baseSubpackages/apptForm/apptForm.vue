@@ -675,7 +675,10 @@ export default {
     },
     verify() {
       const data = formatAppointmentData(this.form, this.options)
-      apptDataService.getApptVerify(data, () => this.submit())
+      console.log('data', data)
+      apptDataService.getApptVerify({ ...data, formType: this.formType }, () =>
+        this.submit(),
+      )
     },
     async submit() {
       this.submitting = true
