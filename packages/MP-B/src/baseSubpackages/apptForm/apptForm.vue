@@ -219,6 +219,7 @@ const titleMap = {
   editRegister: '编辑挂号',
   createAppt: '新建预约',
   editAppt: '编辑预约',
+  againAppt: '再次预约',
 }
 
 const rules = {
@@ -324,7 +325,11 @@ export default {
         .join(',')
     },
     isAppt() {
-      return this.formType === 'createAppt' || this.formType === 'editAppt'
+      return (
+        this.formType === 'createAppt' ||
+        this.formType === 'editAppt' ||
+        this.formType === 'againAppt'
+      )
     },
     isRegister() {
       return (
@@ -376,7 +381,11 @@ export default {
         defaultMedicalInstitution.medicalInstitutionId
 
       this.refreshMedicalInstitutionList()
-    } else if (option.type === 'editAppt' || option.type === 'editRegister') {
+    } else if (
+      option.type === 'editAppt' ||
+      option.type === 'editRegister' ||
+      option.type === 'againAppt'
+    ) {
       this.form.appointmentId = option.appointmentId
       appointmentAPI
         .getAppointmentDetail({ appointmentId: option.appointmentId })
@@ -394,7 +403,10 @@ export default {
           } = res.data
           this.form.patientId = patientId
           this.form.patient = patient
-          this.form.appointmentBeginTimeStamp = appointmentBeginTime
+          this.form.appointmentBeginTimeStamp =
+            option.type === 'againAppt'
+              ? moment().valueOf()
+              : appointmentBeginTime
           this.form.appointmentEndTimeStamp = appointmentEndTime
           this.form.duration = moment(appointmentEndTime).diff(
             moment(appointmentBeginTime),
@@ -663,13 +675,16 @@ export default {
     },
     verify() {
       const data = formatAppointmentData(this.form, this.options)
-      apptDataService.getApptVerify(data, () => this.submit())
+      console.log('data', data)
+      apptDataService.getApptVerify({ ...data, formType: this.formType }, () =>
+        this.submit(),
+      )
     },
     async submit() {
       this.submitting = true
       let res = {}
       const submitData = formatAppointmentData(this.form, this.options)
-      if (this.formType === 'createAppt') {
+      if (this.formType === 'createAppt' || this.formType === 'againAppt') {
         res = await appointmentAPI.createAppointment({
           appointmentJsonStr: JSON.stringify(submitData),
         })
