@@ -42,11 +42,18 @@
               >
                 <!--三级分类-->
                 <view
-                  class="header"
+                  class="header classify-third-header"
                   v-for="item3 in item2.children"
                   :key="item3.settingsChargePackageTypeId"
                 >
-                  {{ item3.settingsChargePackageTypeName }}
+                  <view
+                    v-if="item3.enableMedicare === 1"
+                    class="classify-third-label"
+                    >医保</view
+                  >
+                  <view class="classify-third-text">{{
+                    item3.settingsChargePackageTypeName
+                  }}</view>
                   <view class="checkBox">
                     <dpmsCheckbox
                       shape="square"
@@ -219,6 +226,23 @@ export default {
     .classify-second,
     .classify-third {
       margin-left: 32rpx;
+    }
+
+    .classify-third-header {
+      justify-content: flex-start;
+    }
+    .classify-third-label {
+      background: #5cbb89;
+      border-radius: 4rpx;
+      color: #ffffff;
+      font-size: 10px;
+      padding: 0 4rpx;
+      margin-right: 16rpx;
+    }
+    .classify-third-text {
+      flex: 1;
+      margin-right: 16rpx;
+      line-height: 40rpx;
     }
     .checkBox {
       margin-right: 28rpx;

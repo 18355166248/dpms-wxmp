@@ -126,7 +126,7 @@ export default {
           project.parentItemCode || project.settingsChargeTypeId || 0
         filterData.unitAmount = this.initUnitAmount(project)
         const amount = changeTwoDecimal(filterData.unitAmount)
-        filterData.totalAmount = amount
+        filterData.totalAmount = BigCalculate(amount, '*', filterData.itemNum)
         filterData.singleDiscountAfterAmount = amount
         filterData.receivableAmount = amount
         filterData.unit = project.unit || project.inventoryUnitStr || ''
