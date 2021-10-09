@@ -122,8 +122,8 @@ const apptDataService = {
         }
 
         // 当提示2、提示3同时存在 提示：“预约提示3”
-        // 这里表示没有提示3 所以判断是否显示提示2
-        if (modifyAppointmentTime) {
+        // 这里表示没有提示3 所以判断是否显示提示2  并且不为再次预约时才提示
+        if (modifyAppointmentTime && formatValue.formType !== 'againAppt') {
           uni.showModal({
             title: '您确认要修改预约吗？',
             success: ({ confirm, cancel }) => {
