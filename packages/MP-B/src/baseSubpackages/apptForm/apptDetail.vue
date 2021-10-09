@@ -101,6 +101,18 @@
     </fixed-footer>
     <fixed-footer v-else>
       <view class="button-group">
+        <button
+          v-if="statusEnumKey === 'EXPIRED'"
+          class="button"
+          @click="
+            toPage('/baseSubpackages/apptForm/apptForm', {
+              type: 'againAppt',
+              appointmentId: appointmentId,
+            })
+          "
+        >
+          再次预约
+        </button>
         <template v-if="statusEnumKey === 'APPOINTMENT'">
           <button class="button button-ghost" @click="confirmAppointment">
             确认
@@ -412,6 +424,10 @@ export default {
   },
   computed: {
     statusEnumKey() {
+      console.log(
+        'this.APPOINTMENT_STATUS_ENUM.properties',
+        this.APPOINTMENT_STATUS_ENUM.properties,
+      )
       if (this.dataSource.appointmentStatus) {
         return this.APPOINTMENT_STATUS_ENUM.properties[
           this.dataSource.appointmentStatus
@@ -464,6 +480,7 @@ export default {
         [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
         [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#f8d08a',
         [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
+        [this.APPOINTMENT_STATUS_ENUM.EXPIRED.value]: '#467ba1',
       }
 
       return {
