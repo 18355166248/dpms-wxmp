@@ -96,6 +96,7 @@ export default {
       [this.APPOINTMENT_STATUS_ENUM.TREATING.value]: '#facc14',
       [this.APPOINTMENT_STATUS_ENUM.UNDETERMINED.value]: '#727efc',
       [this.APPOINTMENT_STATUS_ENUM.CONFIRM.value]: '#55D24A',
+      [this.APPOINTMENT_STATUS_ENUM.EXPIRED.value]: '#467ba1;',
     }
   },
   computed: {
