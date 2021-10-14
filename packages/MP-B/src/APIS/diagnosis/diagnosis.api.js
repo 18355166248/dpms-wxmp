@@ -131,6 +131,9 @@ const diagnosisAPI = {
   getRegisterCount(params) {
     return httper.get('diagnosis/register/list-patient/count', params)
   },
+  getTreatmentList(params) {
+    return httper.get('diagnosis/treatment-record/treatment-list', params)
+  },
 }
 
 export default diagnosisAPI

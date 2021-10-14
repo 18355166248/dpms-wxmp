@@ -1,15 +1,35 @@
 <template>
   <div class="imageUploader">
     <dpmsForm ref="form" :model="form" :rules="rules">
-      <dpmsCellPicker
-        title="就诊信息"
-        placeholder="暂无就诊信息"
-        v-model="form.registerId"
-        :list="registerList"
-        defaultType="registerId"
-        :defaultProps="{ label: 'registerLabel', value: 'registerId' }"
-        :disabled="!registerList.length"
-      />
+      <dpmsCell title="就诊信息" :isLink="registerList">
+        <template #title>
+          <div class="treatmentInfo">
+            就诊信息
+            <dpmsDatetimePicker
+              isCell
+              showDayOfWeek
+              :end="endTime"
+              @change="registNew"
+            >
+              <span class="iconfont icon-plus-circle addTreatInfo" />
+            </dpmsDatetimePicker>
+          </div>
+        </template>
+        <picker
+          mode="selector"
+          :range="registerList"
+          range-key="registerLabel"
+          :disabled="!registerList.length"
+          :value="form.registerId"
+          @change="registerChange"
+        >
+          <div>
+            <div v-if="!registerList.length">暂无就诊信息</div>
+            <div v-if="registerText">{{ registerText }}</div>
+            <div v-else style="width: 100px; height: 10px;"></div>
+          </div>
+        </picker>
+      </dpmsCell>
       <dpmsCellPicker
         title="影像医嘱项目"
         placeholder="请选择影像医嘱项目"
@@ -65,11 +85,13 @@ export default {
     return {
       form: {
         registerId: '',
+        registerTime: null,
         imageType: '',
         imageUrlStr: '',
         diagnosisSettingsImageItemId: '',
         toothPositionStr: '',
         toothPosition: '',
+        appointmentId: -1,
       },
       rules: {
         imageType: [{ required: true, message: '请选择影像类型' }],
@@ -88,6 +110,19 @@ export default {
         label: t.text.zh_CN,
       }))
     },
+    registerText() {
+      return (
+        (this.registerList &&
+          this.registerList.find(
+            (l) => l.registerId === (this.form.registerId || 0 || -1),
+          )?.registerLabel) ||
+        ''
+      )
+    },
+    // 自定义时间 不支持选择未来日期
+    endTime() {
+      return moment().endOf('day').format('YYYY-MM-DD HH:mm')
+    },
   },
   watch: {
     toothPosition(newVal) {
@@ -101,13 +136,17 @@ export default {
       const res = await diagnosisAPI.getSettingsItem({ pageSize: 30 })
       this.settingsImageItems = res.data
     },
-    async getRegisterList(param) {
-      const res = await diagnosisAPI.getRegisterList(param)
+    async getTreatmentList(param) {
+      const res = await diagnosisAPI.getTreatmentList(param)
       this.registerList = (res.data || []).map((d) => ({
         ...d,
         registerLabel: moment(d.registerTime).format('YYYY-MM-DD/ddd HH:mm'),
       }))
       this.form.registerId = this.registerList[0]?.registerId
+      this.form.appointmentId =
+        this.registerList[0]?.appointmentId === undefined
+          ? -1
+          : this.registerList[0]?.appointmentId //没有值的情况下需要传-1给后端
     },
     async getImageEnums() {
       const res = await diagnosisAPI.getImageEnums()
@@ -124,6 +163,33 @@ export default {
       this.$nextTick(() => {
         this.pending = false
       })
+    },
+    registNew({ dt }) {
+      const registerId = -1 // 后端已做更改，不需要传-1
+      const registerTime = moment(dt).valueOf()
+      const registerLabel = moment(dt).format('YYYY-MM-DD/ddd HH:mm')
+      const newRegisterIndex = this.registerList.findIndex(
+        (l) => l.registerId === registerId,
+      )
+      if (newRegisterIndex !== -1) {
+        this.registerList[newRegisterIndex].registerTime = registerTime
+        this.registerList[newRegisterIndex].registerLabel = registerLabel
+      } else {
+        this.registerList.unshift({ registerId, registerTime, registerLabel })
+      }
+
+      // this.form.registerId = registerId
+      this.form.registerId = registerId === -1 ? null : registerId // 后端已做更改，自定义时间时不用传-1
+      this.form.registerTime = registerTime
+      this.form.appointmentId = -1
+    },
+    registerChange({ detail }) {
+      const item = this.registerList[detail.value]
+      if (item) {
+        this.form.registerId = item.registerId
+        this.form.appointmentId = item.appointmentId
+        this.form.visType = item.visType
+      }
     },
     submit() {
       if (this.pending) return
@@ -144,7 +210,7 @@ export default {
   },
   onLoad({ patientId }) {
     this.patientId = patientId
-    this.getRegisterList({ patientId })
+    this.getTreatmentList({ patientId })
     this.getImageEnums()
     this.getSettingsImageItems()
   },
@@ -153,9 +219,22 @@ export default {
 
 <style lang="scss" scoped>
 .imageUploader {
+  .treatmentInfo {
+    display: flex;
+    align-items: center;
+  }
+
   .upload-wrap {
     padding-top: 28rpx;
   }
+
+  .addTreatInfo {
+    color: #5cbb89;
+    padding: 10rpx;
+    display: block;
+    font-size: 40rpx;
+  }
+
   .textarea {
     padding: 18rpx 0 0;
     height: 160rpx;
