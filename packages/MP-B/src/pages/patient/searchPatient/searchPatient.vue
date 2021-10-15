@@ -126,6 +126,9 @@ export default {
     }
     this.init()
   },
+  onShow() {
+    this.init()
+  },
   onReachBottom() {
     if (this.patientList.length < this.total) {
       this.current += 1
