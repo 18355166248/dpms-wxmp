@@ -48,10 +48,12 @@
           :key="index"
         >
           <view class="menu-info-wrap">
-            <menuIcon
-              :icon="menuDic[item.type].iconName"
-              :menu-style="menuDic[item.type].menuStyle"
-            ></menuIcon>
+            <view @click="viewPage(menuDic[item.type])">
+              <menuIcon
+                :icon="menuDic[item.type].iconName"
+                :menu-style="menuDic[item.type].menuStyle"
+              ></menuIcon>
+            </view>
             <view class="infos">
               <view class="menu-name">{{ item.displayName }}</view>
               <view class="menu-des">{{ item.description }}</view>
@@ -202,6 +204,15 @@ export default {
     // 处理长按图标
     handleLongPress() {
       this.showCloseIcon = true
+    },
+    // 点击图标跳转
+    viewPage(item) {
+      if (item.url) {
+        const url = item.url
+        this.$dpmsUtils.push({
+          url,
+        })
+      }
     },
   },
 }
