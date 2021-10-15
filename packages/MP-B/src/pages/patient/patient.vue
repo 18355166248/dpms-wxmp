@@ -192,7 +192,7 @@
 
 <script>
 import patientAPI from '@/APIS/patient/patient.api'
-import card from '@/components/card/card.vue'
+import card from './headImage/card.vue'
 import { mapState, mapMutations } from 'vuex'
 
 export default {

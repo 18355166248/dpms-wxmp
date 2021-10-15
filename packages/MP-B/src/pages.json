@@ -116,6 +116,19 @@
           }
         },
         {
+          "path": "headImage/picture",
+          "style": {
+            "navigationBarTitleText": "头像"
+          }
+        },
+        {
+          "path": "avatarCropper/avatarCropper",
+          "style": {
+            "navigationBarTitleText": "头像剪裁",
+            "navigationBarBackgroundColor": "#000000"
+          }
+        },
+        {
           "path": "editPatient/editPatient",
           "style": {
             "navigationBarTitleText": "详细信息"
