@@ -16,18 +16,33 @@ export default {
   name: 'picture',
   data() {
     return {
-      avatar: '../../../static/avatar-female.png',
+      avatar: '',
       patientId: '',
+      gender: '',
       imgflag: false, // 判断第一次申请授权是否拒绝
     }
   },
   onLoad(option) {
     this.avatar = option.avatarUrl // 头像地址
-    this.patientId = option.patientId
+    this.patientId = option.patientId // 患者id
+    this.gender = option.gender // 患者性别
+    if (!this.avatar) {
+      switch (option.gender) {
+        case '1':
+          this.avatar = '../../../static/avatar-male.png'
+          break
+        case '2':
+          this.avatar = '../../../static/avatar-female.png'
+          break
+        case '3':
+          this.avatar = '../../../static/avatar-neutral.png'
+          break
+      }
+    }
   },
   created() {
     // 监听从裁剪页发布的事件，获得裁剪结果
-    uni.$once('avatarCropper', async (path) => {
+    uni.$on('avatarCropper', async (path) => {
       const ossParam = await this.getOssParam()
       await this.uploadOss(ossParam, path)
       // 通过传参key值去后台获取新头像的地址
@@ -44,9 +59,9 @@ export default {
         })
     })
   },
-  // beforeDestroy() {
-  //   uni.$once
-  // },
+  beforeDestroy() {
+    uni.$off('avatarCropper')
+  },
   methods: {
     /**
      * 1、当小程序已经获得摄像机权限时则直接进入拍摄/相册选择界面
@@ -84,9 +99,7 @@ export default {
           })
         },
         fail: (err) => {
-          uni.showModal({
-            content: '获取图片失败！',
-          })
+          console.log(err)
         },
       }
 
@@ -97,13 +110,13 @@ export default {
             // 当用户未授权给相机切没有拒绝授权时调用授权框
             uni.authorize({
               scope: 'scope.camera',
-              success() {
+              success(res) {
                 // 选择图片
                 uni.chooseImage(params)
               },
-              fail() {
+              fail(err) {
                 uni.showModal({
-                  content: '获取摄像机授权失败，请开放授权。',
+                  content: '获取摄像机授权失败，请再次点击去手动授权。',
                 })
                 // 拒绝授权后将flag值变换以便后续进行手动授权
                 self.imgflag = true
