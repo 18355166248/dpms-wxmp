@@ -359,6 +359,7 @@ export default {
         params: {
           avatarUrl: this.avatarUrl,
           patientId: this.patient.patientId,
+          gender: this.gender,
         },
       })
     },
