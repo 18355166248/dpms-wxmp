@@ -228,7 +228,10 @@ page {
 }
 
 .fix-footer {
-  height: 50px;
+  height: 56px;
+  padding-bottom: constant(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-sizing: content-box;
 }
 
 .cropper {
