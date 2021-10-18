@@ -200,11 +200,11 @@ export default {
     },
 
     /**
-     *取消之后返回头像展示界面
+     *取消之后返回上一页头像展示界面
      */
     cancel() {
-      this.$dpmsUtils.push({
-        url: '/pages/patient/headImage/picture',
+      uni.navigateBack({
+        delta: 1,
       })
     },
   },
