@@ -411,6 +411,7 @@ export default {
 
     .card-imgBox {
       position: relative;
+      padding-bottom: 14px;
 
       .text {
         position: absolute;
