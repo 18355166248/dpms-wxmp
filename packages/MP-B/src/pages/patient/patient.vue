@@ -247,7 +247,10 @@ export default {
   methods: {
     ...mapMutations('patient', ['setPatientDetail']),
     getPatient() {
-      this.$dpmsUtils.showLoading()
+      uni.showLoading({
+        title: '数据加载中',
+        mask: true,
+      })
       patientAPI
         .getPatientDetail({ patientId: this.patientId })
         .then((res) => {
