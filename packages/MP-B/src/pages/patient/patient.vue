@@ -249,7 +249,6 @@ export default {
     getPatient() {
       this.$dpmsUtils.showLoading('数据加载中')
       patientAPI.getPatientDetail({ patientId: this.patientId }).then((res) => {
-        console.log('进来了')
         let { data } = res
         this.patient = data
         this.setPatientDetail(data)
