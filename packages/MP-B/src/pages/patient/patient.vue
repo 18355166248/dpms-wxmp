@@ -247,25 +247,22 @@ export default {
   methods: {
     ...mapMutations('patient', ['setPatientDetail']),
     getPatient() {
-      uni.showLoading({
-        title: '数据加载中',
-        mask: true,
-      })
-      patientAPI
-        .getPatientDetail({ patientId: this.patientId })
-        .then((res) => {
-          let { data } = res
-          this.patient = data
-          this.setPatientDetail(data)
-          this.customerId = data.customerId
+      this.$dpmsUtils.showLoading('数据加载中')
+      patientAPI.getPatientDetail({ patientId: this.patientId }).then((res) => {
+        console.log('进来了')
+        let { data } = res
+        this.patient = data
+        this.setPatientDetail(data)
+        this.customerId = data.customerId
+        try {
           this.patient.tagListTxt = this.patient.tagList
             .map((v) => v.name)
             .join('，')
-          this.$dpmsUtils.clearLoading()
-        })
-        .catch(() => {
-          this.$dpmsUtils.clearLoading()
-        })
+        } catch (error) {
+          this.patient.tagListTxt = ''
+        }
+        this.$dpmsUtils.clearLoading()
+      })
     },
     toUrl(url) {
       this.$dpmsUtils.push({
