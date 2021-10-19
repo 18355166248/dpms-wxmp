@@ -139,10 +139,9 @@ export default {
     const data = await this.getCommonFunsList()
     const res = await this.getCommonFunsConfig()
     const menuIds = data.menus.map((e) => e.enumValue)
-    let selectArr =
-      res === ''
-        ? data.defaultMenus
-        : res.filter((e) => menuIds.indexOf(e) > -1)
+    let selectArr = !res
+      ? data.defaultMenus
+      : res.filter((e) => menuIds.indexOf(e) > -1)
     this.toAddList = data.menus.map((e) => {
       return {
         ...e,
