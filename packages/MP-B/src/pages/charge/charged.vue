@@ -294,22 +294,29 @@ export default {
       }
     },
     gotoChargeDetail(order) {
-      billAPI
-        .checkPayDebtStatus({
-          customerId: this.patientDetail?.customerId,
-          patientId: this.patientDetail?.patientId,
+      if (order.billType === 1) {
+        billAPI
+          .checkPayDebtStatus({
+            customerId: this.patientDetail?.customerId,
+            patientId: this.patientDetail?.patientId,
+          })
+          .then((res) => {
+            if (res?.code === 0) {
+              this.toPage('/pages/charge/chargeDetail', {
+                billSerialNo: order.billSerialNo,
+                createYouSelf: order.createYouSelf,
+              })
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      } else {
+        this.toPage('/pages/charge/chargeDetail', {
+          billSerialNo: order.billSerialNo,
+          createYouSelf: order.createYouSelf,
         })
-        .then((res) => {
-          if (res?.code === 0) {
-            toPage('/pages/charge/chargeDetail', {
-              billSerialNo: order.billSerialNo,
-              createYouSelf: order.createYouSelf,
-            })
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
+      }
     },
   },
 }
