@@ -82,7 +82,7 @@ export default {
       // 选择图片函数chooseImage()所需要的参数
       var params = {
         count: 1, // 默认9
-        sizeType: ['compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sizeType: ['original'], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
         success: (res) => {
           //  获取裁剪图片资源后，将图片传给剪裁组件。
@@ -98,7 +98,7 @@ export default {
               // 裁剪框宽度，高等于宽，单位px
               rectWidth: 250,
               // 输出的图片类型，如果'png'类型发现裁剪的图片太大，改成"jpg"即可
-              fileType: 'jpg',
+              fileType: 'png',
               // 给传给的剪裁页面的图片添加src属性及其值
               src: src,
             },
