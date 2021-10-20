@@ -158,15 +158,11 @@ const patientAPI = {
   },
   // 优惠券列表
   getCouponTemplateListByName(data) {
-    return httper.get('/member/coupon/select/page-filter', data)
+    return scrmHttper.get('/marketing-center/coupon/sendingCouponPages', data)
   },
   // 发券
   createPromotion(data) {
-    return httper.post('billing/promotion/create', data, {
-      headers: {
-        'content-type': 'application/json',
-      },
-    })
+    return scrmHttper.get('/marketing-center/coupon/gain', data)
   },
   // 获取处置记录列表
   getMustData(data) {
