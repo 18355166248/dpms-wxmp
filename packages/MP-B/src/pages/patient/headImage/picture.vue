@@ -55,7 +55,10 @@ export default {
           patientId: this.patientId,
         })
         .then((res) => {
-          console.log('更新成功！')
+          uni.showToast({
+            icon: 'none',
+            title: '更换成功',
+          })
         })
     })
   },
