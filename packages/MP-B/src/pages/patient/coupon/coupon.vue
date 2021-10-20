@@ -45,7 +45,7 @@
               class="list-wrap-item"
               v-for="item in list"
               :key="item.couponDefinitionId"
-              @click="onClickCoupon(item.couponDefinitionId)"
+              @click="onClickCoupon(item)"
             >
               <div class="item-header">
                 <div class="item-header-name coupon-name">
@@ -111,10 +111,10 @@ export default {
       selectList: [
         { label: '全部', value: null },
         { label: '折扣券', value: 1 },
-        { label: '套餐券（仅适用于创建机构）', value: 2 },
-        { label: '现金券', value: 3 },
+        // { label: '套餐券（仅适用于创建机构）', value: 2 },
+        { label: '代金券', value: 3 },
         { label: '满减券', value: 4 },
-        { label: '团购券', value: 5 },
+        // { label: '团购券', value: 5 },
       ],
       dateIndex: 0,
       patientId: '',
@@ -133,6 +133,7 @@ export default {
       isempty: false,
       disabled: false,
       couponDefinitionId: '',
+      grantManageId: '',
       env: '',
       isqywx: '',
     }
@@ -185,8 +186,9 @@ export default {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
           size: this.size,
+          channelName: 'PC收银台发券',
           couponName: this.couponName,
-          patientId: this.patientId,
+          customerId: this.customerId,
           couponType: this.couponType,
         })
         const { total = 0, records = [] } = res.data
@@ -210,7 +212,8 @@ export default {
       }
     },
     onClickCoupon(counpon) {
-      this.couponDefinitionId = counpon
+      this.couponDefinitionId = counpon.couponDefinitionId
+      this.grantManageId = counpon.grantManageId
     },
     async onSubmit() {
       if (!this.couponDefinitionId) {
@@ -227,10 +230,15 @@ export default {
       try {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
-          couponDefinitionId: this.couponDefinitionId,
-          patientId: this.patientId,
+          couponType: this.couponType,
+          channelName: 'PC收银台发券',
           customerId: this.customerId,
+          couponDefinitionId: this.couponDefinitionId,
+          receiveWay: 1,
           chargeWay: 1,
+          remark: '',
+          receiveType: 1,
+          grantManageId: this.grantManageId,
         })
 
         // uni.hideLoading()
@@ -299,7 +307,7 @@ export default {
     },
     filterType(type) {
       return (
-        ['-', '折扣券', '套餐券', '现金券', '满减券', '团购券'][type] || '-'
+        ['-', '折扣券', '套餐券', '代金券', '满减券', '团购券'][type] || '-'
       )
     },
   },

@@ -181,7 +181,7 @@ export default {
               type: 'warning',
             })
           } else {
-            //未付款的现金券和使用了优惠券
+            //未付款的代金券和使用了优惠券
             if (data.isPay === 2 || data.usePromotion === 1) {
               this.$refs.uToast.show({
                 title:
