@@ -28,6 +28,9 @@ export default {
     this.gender = option.gender // 患者性别
     if (!this.avatar) {
       switch (option.gender) {
+        case '0':
+          this.avatar = '../../../static/avatar-neutral.png'
+          break
         case '1':
           this.avatar = '../../../static/avatar-male.png'
           break
