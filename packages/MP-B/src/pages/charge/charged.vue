@@ -51,12 +51,7 @@
     <view v-if="chargedList.length > 0">
       <view
         class="listCharged"
-        @click="
-          toPage('/pages/charge/chargeDetail', {
-            billSerialNo: order.billSerialNo,
-            createYouSelf: order.createYouSelf,
-          })
-        "
+        @click="gotoChargeDetail(order)"
         v-for="order in chargedList"
         :key="order.billOrderId"
       >
@@ -120,6 +115,7 @@ import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import qs from 'qs'
 import loadMore from '@/components/load-more/load-more.vue'
+import { mapState } from 'vuex'
 
 export default {
   props: ['patientId', 'customerId'],
@@ -155,6 +151,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('patient', ['patientDetail', 'memberDetail']),
     billTypePickerText() {
       return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
     },
@@ -295,6 +292,24 @@ export default {
       } else {
         this.dataSourceStatus.status = 'more'
       }
+    },
+    gotoChargeDetail(order) {
+      billAPI
+        .checkPayDebtStatus({
+          customerId: this.patientDetail?.customerId,
+          patientId: this.patientDetail?.patientId,
+        })
+        .then((res) => {
+          if (res?.code === 0) {
+            toPage('/pages/charge/chargeDetail', {
+              billSerialNo: order.billSerialNo,
+              createYouSelf: order.createYouSelf,
+            })
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
     },
   },
 }
