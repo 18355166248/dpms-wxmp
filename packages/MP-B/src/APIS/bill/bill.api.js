@@ -175,6 +175,10 @@ const billAPI = {
       },
     })
   },
+  // 判断收欠费状态
+  checkPayDebtStatus(data) {
+    return httper.get('/billing/bill/order/pay-debt/check', data)
+  },
   //获取订单支付结果
   getPayChannelResult(data) {
     return httper.get('/billing/bill/pay/channel', data)

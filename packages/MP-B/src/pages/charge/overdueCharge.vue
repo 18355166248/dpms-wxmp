@@ -118,13 +118,10 @@ export default {
         })
         .then((res) => {
           if (res?.data) {
-            this.overdueChargeList = res.data.map((item) => {
+            const list = res.data.filter((item) => !item?.billDebtId)
+            this.overdueChargeList = list.map((item) => {
               if (checkedId) {
-                if (checkedId === String(item.billOrderId)) {
-                  item.checked = true
-                } else {
-                  item.checked = false
-                }
+                item.checked = checkedId === String(item.billOrderId)
               } else {
                 item.checked = true
               }
