@@ -434,7 +434,10 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err)
+          this.$refs.uToast.show({
+            title: err?.message,
+            type: 'error',
+          })
         })
     },
   },

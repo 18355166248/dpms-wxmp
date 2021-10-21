@@ -107,6 +107,8 @@
     <view v-else>
       <empty :disabled="true" text="暂无数据"></empty>
     </view>
+    <!--提示-->
+    <u-toast ref="uToast" />
   </view>
 </template>
 
@@ -309,7 +311,10 @@ export default {
             }
           })
           .catch((err) => {
-            console.log(err)
+            this.$refs.uToast.show({
+              title: err?.message,
+              type: 'error',
+            })
           })
       } else {
         this.toPage('/pages/charge/chargeDetail', {
