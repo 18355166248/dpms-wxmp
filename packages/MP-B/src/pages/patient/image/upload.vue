@@ -25,7 +25,7 @@
         >
           <div>
             <div v-if="!registerList.length">暂无就诊信息</div>
-            <div v-if="registerList.length">{{ registerText }}</div>
+            <div v-if="registerText">{{ registerText }}</div>
             <div v-else style="width: 100px; height: 10px;"></div>
           </div>
         </picker>
@@ -190,17 +190,18 @@ export default {
       })
     },
     registNew({ dt }) {
-      const registerId = -1 // 后端已做更改，不需要传-1
+      const uniqueId = -1 // 后端已做更改，不需要传-1
       const registerTime = moment(dt).valueOf()
       const registerLabel = moment(dt).format('YYYY-MM-DD/ddd HH:mm')
       const newRegisterIndex = this.registerList.findIndex(
-        (l) => l.registerId === registerId,
+        (l) => l.uniqueId === uniqueId,
       )
       if (newRegisterIndex !== -1) {
         this.registerList[newRegisterIndex].registerTime = registerTime
         this.registerList[newRegisterIndex].registerLabel = registerLabel
       } else {
-        this.registerList.unshift({ registerId, registerTime, registerLabel })
+        this.registerList.unshift({ uniqueId, registerTime, registerLabel })
+        this.registerInx = 0
       }
 
       // this.form.registerId = registerId
