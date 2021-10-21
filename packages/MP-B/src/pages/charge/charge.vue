@@ -7,7 +7,6 @@
           <view class="item0">
             <itemType :iconData="icon0" />
             <view class="flex">
-            
               <chargeItem
                 class="charge-item dashed"
                 :amountData="receivableData"
@@ -101,9 +100,9 @@
       negative-top="300"
       :confirm-style="{
         borderLeft: '2rpx solid rgba(0,0,0,0.10)',
-        borderRadius:0
+        borderRadius: 0,
       }"
-      :content-style="{borderBottom: '2rpx solid rgba(0,0,0,0.10)'}"
+      :content-style="{ borderBottom: '2rpx solid rgba(0,0,0,0.10)' }"
       ref="uModal"
     >
       <view class="slot-content">
@@ -422,9 +421,23 @@ export default {
     },
     //收欠费
     overdueCharge() {
-      uni.navigateTo({
-        url: '/pages/charge/overdueCharge',
-      })
+      billAPI
+        .checkPayDebtStatus({
+          customerId: this.patientDetail?.customerId,
+          patientId: this.patientDetail?.patientId,
+        })
+        .then((res) => {
+          if (res?.code === 0) {
+            uni.navigateTo({
+              url: '/pages/charge/overdueCharge',
+            })
+          }
+        })
+        .catch((err) => {
+          this.$refs.uToast.show({
+            title: err?.message,
+          })
+        })
     },
   },
   watch: {

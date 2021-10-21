@@ -37,6 +37,7 @@
           <dpmsCheckbox
             shape="square"
             :value="item.checked"
+            :disabled="item.billDebtId"
             @change="onCheckboxChange($event, item)"
           ></dpmsCheckbox>
         </view>
@@ -103,7 +104,8 @@ export default {
     },
     calculate() {
       this.totalAmount = this.overdueChargeList.reduce((pre, next) => {
-        const nextAmount = next.checked ? next.debtAmount : 0
+        const nextAmount =
+          next.checked && !next.billDebtId ? next.debtAmount : 0
         return BigCalculate(pre, '+', nextAmount)
       }, 0)
     },
@@ -118,13 +120,10 @@ export default {
         })
         .then((res) => {
           if (res?.data) {
+            // const list = res.data.filter((item) => !item?.billDebtId)
             this.overdueChargeList = res.data.map((item) => {
               if (checkedId) {
-                if (checkedId === String(item.billOrderId)) {
-                  item.checked = true
-                } else {
-                  item.checked = false
-                }
+                item.checked = checkedId === String(item.billOrderId)
               } else {
                 item.checked = true
               }
@@ -136,7 +135,9 @@ export default {
     },
     //
     nextStep() {
-      const list = this.overdueChargeList.filter((item) => item.checked)
+      const list = this.overdueChargeList.filter(
+        (item) => item.checked && !item.billDebtId,
+      )
       if (list.length <= 0) {
         this.$refs.uToast.show({
           title: '请选择收欠费项目!',
