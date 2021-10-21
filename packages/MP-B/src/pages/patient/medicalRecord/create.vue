@@ -19,13 +19,14 @@
           mode="selector"
           :range="registerList"
           range-key="registerLabel"
-          :disabled="!registerList"
+          :disabled="!registerList.length"
           :value="form.registerId"
           @change="registerChange"
         >
           <div>
-            <div v-if="!registerList">暂无就诊信息</div>
-            <div v-else>{{ registerText }}</div>
+            <div v-if="!registerList.length">暂无就诊信息</div>
+            <div v-if="registerText">{{ registerText }}</div>
+            <div v-else style="width: 100px; height: 10px;"></div>
           </div>
         </picker>
       </dpmsCell>
@@ -461,9 +462,7 @@ export default {
       return (
         (this.registerList &&
           this.registerList.find(
-            (l) =>
-              l.registerId ===
-              (this.form.registerId || this.medicalRecordObj.registerId),
+            (l) => l.registerId === (this.form.registerId || 0),
           )?.registerLabel) ||
         ''
       )
