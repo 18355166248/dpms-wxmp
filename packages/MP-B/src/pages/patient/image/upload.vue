@@ -178,10 +178,14 @@ export default {
       this.imageType = res.data.ImageType
     },
     async saveImageInfo() {
-      await diagnosisAPI.saveImageInfo({
+      const params = {
         ...this.form,
         patientId: this.patientId,
-      })
+        appointmentId: this.form.uniqueId === -1 ? -1 : this.form.appointmentId,
+        registerTime:
+          this.form.uniqueId === -1 ? this.form.registerTime : undefined,
+      }
+      await diagnosisAPI.saveImageInfo(params)
       this.$dpmsUtils.clearLoading()
       this.$dpmsUtils.show('上传成功', { icon: 'success' })
       this.$dpmsUtils.back()
@@ -200,12 +204,14 @@ export default {
         this.registerList[newRegisterIndex].registerTime = registerTime
         this.registerList[newRegisterIndex].registerLabel = registerLabel
       } else {
+        this.form.uniqueId = -1
         this.registerList.unshift({ uniqueId, registerTime, registerLabel })
         this.registerInx = 0
       }
 
       // this.form.registerId = registerId
-      this.form.registerId = registerId === -1 ? null : registerId // 后端已做更改，自定义时间时不用传-1
+      this.form.registerId =
+        this.form.uniqueId === -1 ? null : this.form.registerId // 后端已做更改，自定义时间时不用传-1
       this.form.registerTime = registerTime
       this.form.appointmentId = -1
     },
