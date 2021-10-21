@@ -49,7 +49,7 @@ export default {
       } else if (this.gender) {
         return genderAvatar[this.GENDER_ENUM.properties[this.gender].key]
       }
-      return genderAvatar.MALE
+      return genderAvatar.UNKNOWN
     },
   },
 }
