@@ -13,7 +13,7 @@
       :infos="[
         {
           label: '出生日期',
-          value: patient.age ? `${patient.birthday}（${patient.age}）` : '',
+          value: getBirthdayInfo(patient),
         },
         { label: '联系方式', value: patient.mobile },
         { label: '患者标签', value: patient.tagListTxt },
@@ -246,6 +246,13 @@ export default {
   },
   methods: {
     ...mapMutations('patient', ['setPatientDetail']),
+    getBirthdayInfo(patient) {
+      if (!patient?.birthday) {
+        return patient?.age ? `${patient.age}` : ''
+      }
+
+      return `${patient.birthday}（${patient.age}）`
+    },
     getPatient() {
       this.$dpmsUtils.showLoading()
       patientAPI
