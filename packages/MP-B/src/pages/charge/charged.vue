@@ -301,6 +301,7 @@ export default {
           .checkPayDebtStatus({
             customerId: this.patientDetail?.customerId,
             patientId: this.patientDetail?.patientId,
+            billSerialNo: order.billSerialNo,
           })
           .then((res) => {
             if (res?.code === 0) {
@@ -313,7 +314,6 @@ export default {
           .catch((err) => {
             this.$refs.uToast.show({
               title: err?.message,
-              type: 'error',
             })
           })
       } else {
