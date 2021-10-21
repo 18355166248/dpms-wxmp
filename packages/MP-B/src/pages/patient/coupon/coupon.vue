@@ -304,7 +304,7 @@ export default {
       )
     },
     filterStock(num) {
-      return num && num !== 0 ? num : '-'
+      return !num && num !== 0 ? '-' : num
     },
   },
 }
