@@ -168,3 +168,24 @@ export function checkQwInstitution() {
     }
   }
 }
+
+// 有效期 （根据 用券日期 不同做不用的处理）
+export function getValidity(record) {
+  let str = '-'
+  if (
+    record.effectiveDays &&
+    record.effectiveDays !== -1 &&
+    record.effectiveTimeType === 1
+  ) {
+    str = `领用当日起，${record.effectiveDays}天内可用`
+  } else if (
+    record.effectiveBeginTime &&
+    record.effectiveEndTime &&
+    record.effectiveTimeType === 3
+  ) {
+    const begin = moment(record.effectiveBeginTime).format('YYYY-MM-DD')
+    const end = moment(record.effectiveEndTime).format('YYYY-MM-DD')
+    str = `${begin}~${end}`
+  }
+  return str
+}
