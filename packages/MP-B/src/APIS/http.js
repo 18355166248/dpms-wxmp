@@ -172,12 +172,13 @@ httper.interceptors.response.use(
     if ([1000373, 1000377, 0].includes(response?.data?.code)) {
       return response.data
     }
-
-    uni.showToast({
-      icon: 'none',
-      title: response?.data?.msg || response?.data?.message || '数据请求失败',
-    })
-
+    // 这里针对收欠费拦截做特殊处理
+    if (![1001157, 1001158, 1001159, 1001160].includes(response?.data?.code)) {
+      uni.showToast({
+        icon: 'none',
+        title: response?.data?.msg || response?.data?.message || '数据请求失败',
+      })
+    }
     const errCodes = [
       CC_HTTP_ENUMS.CODE_STATUS_ENUM.TOKEN_EXPIRED.value,
       401,

@@ -49,6 +49,10 @@ const patientAPI = {
       data,
     )
   },
+  // 更新患者头像信息
+  updatePatientAvatar(data) {
+    return httper.post('/patient/patient/update-avatar', data)
+  },
   // 查询患者的预约记录
   getApptList(data) {
     return httper.get('appointment/appointment/list-patient', data)

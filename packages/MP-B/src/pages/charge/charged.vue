@@ -51,12 +51,7 @@
     <view v-if="chargedList.length > 0">
       <view
         class="listCharged"
-        @click="
-          toPage('/pages/charge/chargeDetail', {
-            billSerialNo: order.billSerialNo,
-            createYouSelf: order.createYouSelf,
-          })
-        "
+        @click="gotoChargeDetail(order)"
         v-for="order in chargedList"
         :key="order.billOrderId"
       >
@@ -112,6 +107,8 @@
     <view v-else>
       <empty :disabled="true" text="暂无数据"></empty>
     </view>
+    <!--提示-->
+    <u-toast ref="uToast" />
   </view>
 </template>
 
@@ -120,6 +117,7 @@ import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
 import qs from 'qs'
 import loadMore from '@/components/load-more/load-more.vue'
+import { mapState } from 'vuex'
 
 export default {
   props: ['patientId', 'customerId'],
@@ -155,6 +153,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('patient', ['patientDetail', 'memberDetail']),
     billTypePickerText() {
       return this.billSupperTypeArray[this.billSupperTypeTypeIndex].zh_CN
     },
@@ -294,6 +293,34 @@ export default {
         this.dataSourceStatus.status = 'noMore'
       } else {
         this.dataSourceStatus.status = 'more'
+      }
+    },
+    gotoChargeDetail(order) {
+      if (order.billType === 1) {
+        billAPI
+          .checkPayDebtStatus({
+            customerId: this.patientDetail?.customerId,
+            patientId: this.patientDetail?.patientId,
+            billSerialNo: order.billSerialNo,
+          })
+          .then((res) => {
+            if (res?.code === 0) {
+              this.toPage('/pages/charge/chargeDetail', {
+                billSerialNo: order.billSerialNo,
+                createYouSelf: order.createYouSelf,
+              })
+            }
+          })
+          .catch((err) => {
+            this.$refs.uToast.show({
+              title: err?.message,
+            })
+          })
+      } else {
+        this.toPage('/pages/charge/chargeDetail', {
+          billSerialNo: order.billSerialNo,
+          createYouSelf: order.createYouSelf,
+        })
       }
     },
   },

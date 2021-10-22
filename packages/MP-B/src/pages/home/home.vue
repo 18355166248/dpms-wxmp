@@ -382,10 +382,9 @@ export default {
       const res = await this.getCommonFunsConfig()
       const menuIds = data.menus.map((e) => e.enumValue)
       // res 为 空字符串 表示 初始化, 尚未对常用功能进行修改, 已选数据为默认数据, 修改过后的已选数据 以配置接口返回的数据为准
-      let selectArr =
-        res === ''
-          ? data.defaultMenus
-          : res.filter((e) => menuIds.indexOf(e) > -1)
+      let selectArr = !res
+        ? data.defaultMenus
+        : res.filter((e) => menuIds.indexOf(e) > -1)
       const arr = data.menus.map((e) => {
         return {
           ...e,
