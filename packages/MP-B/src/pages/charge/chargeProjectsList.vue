@@ -298,6 +298,8 @@ export default {
     },
     onChangeItem(v, record) {
       record.totalAmount = BigCalculate(v, '*', record.unitAmount)
+      record.singleDiscountAfterAmount = record.totalAmount
+
       if (v === 0) {
         uni.showModal({
           title: '确定删除该项目吗?',
