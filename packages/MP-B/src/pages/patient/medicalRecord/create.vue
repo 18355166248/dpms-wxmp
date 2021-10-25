@@ -25,7 +25,7 @@
         >
           <div>
             <div v-if="!registerList.length">暂无就诊信息</div>
-            <div v-if="registerText">{{ registerText }}</div>
+            <div v-else-if="registerText">{{ registerText }}</div>
             <div v-else style="width: 100px; height: 20px;"></div>
           </div>
         </picker>
@@ -456,6 +456,13 @@ export default {
       patientId: '',
       templateMedicalVisible: false,
       TreatmentTypes: [],
+      postisionKey: {
+        medicalRecordCheckNormalVOList: 'checkNormalToothPosition',
+        medicalRecordCheckRayVOList: 'checkRayToothPosition',
+        medicalRecordDiagnosisVOList: 'diagnosisPosition',
+        medicalRecordTreatmentProgramVOList: 'treatmentProgramPosition',
+        medicalRecordDisposeVOList: 'disposePosition',
+      },
     }
   },
   computed: {
@@ -600,6 +607,9 @@ export default {
         'visType',
         'nurse',
       ]
+      if (this.form.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
+        excludeKeys.push('presentIllnessHistory', 'pastIllnessHistory')
+      }
       const inputed = Object.keys(this.form).reduce((r, k) => {
         let result = false
         if (excludeKeys.includes(k)) {
@@ -608,7 +618,7 @@ export default {
           result = !!this.form[k]
         } else if (Array.isArray(this.form[k])) {
           result = this.form[k].reduce(
-            (_r, _v) => _r || !!Object.keys(_v).length,
+            (_r, _v) => _r[this.postisionKey[k]],
             false,
           )
         }
