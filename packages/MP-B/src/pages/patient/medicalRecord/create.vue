@@ -20,13 +20,13 @@
           :range="registerList"
           range-key="registerLabel"
           :disabled="!registerList.length"
-          :value="form.registerId"
+          :value="registerInx"
           @change="registerChange"
         >
           <div>
             <div v-if="!registerList.length">暂无就诊信息</div>
             <div v-if="registerText">{{ registerText }}</div>
-            <div v-else style="width: 100px; height: 10px;"></div>
+            <div v-else style="width: 100px; height: 20px;"></div>
           </div>
         </picker>
       </dpmsCell>
@@ -444,7 +444,9 @@ export default {
         medicalRecordImageList: '',
         visType: '',
         nurse: '',
+        uniqueId: '',
       },
+      registerInx: null, // 当前选中的第几条数据
       rules: {},
       teethSync: true,
       registerList: null,
@@ -461,9 +463,8 @@ export default {
     registerText() {
       return (
         (this.registerList &&
-          this.registerList.find(
-            (l) => l.registerId === (this.form.registerId || 0),
-          )?.registerLabel) ||
+          this.registerList.find((l, i) => i === this.registerInx)
+            ?.registerLabel) ||
         ''
       )
     },
@@ -508,18 +509,19 @@ export default {
         }))
       }
     },
-    async getRegisterList(param) {
-      const res = await diagnosisAPI.getRegisterList(param)
+    async getTreatmentList(param) {
+      const res = await diagnosisAPI.getTreatmentList(param)
       this.registerList = (res.data || []).map((d) => ({
         ...d,
         registerLabel: moment(d.registerTime).format('YYYY-MM-DD/ddd HH:mm'),
       }))
       // 判断当日是否存在就诊信息，如有就选中
       const today = moment().startOf('day')
-      const selectedRegister = this.registerList.find((e) =>
+      this.registerInx = this.registerList.findIndex((e) =>
         moment(e.registerTime).isSame(today, 'd'),
       )
-      if (selectedRegister) {
+      if (this.registerInx !== -1) {
+        const selectedRegister = this.registerList[this.registerInx]
         this.form.registerId = selectedRegister.registerId
         // 如果有就诊记录，那就证明是复诊
         // this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
@@ -538,15 +540,6 @@ export default {
             id: e.staffId,
             name: e.staffName,
           })),
-        }
-        const { patientMainComplaintList } = selectedRegister
-        if (
-          Array.isArray(patientMainComplaintList) &&
-          patientMainComplaintList.length > 0
-        ) {
-          this.form.mainComplaint = patientMainComplaintList
-            .map((ele) => ele.content)
-            .join('，')
         }
       } else {
         this.form.visType = this.VIS_TYPE_ENUM.FIRST_DIAGNOSIS.value
@@ -599,9 +592,17 @@ export default {
       list.splice(i, 1)
     },
     async save() {
+      // 不需要校验的字段
+      const excludeKeys = [
+        'registerId',
+        'doctorStaffId',
+        'doctorStaffName',
+        'visType',
+        'nurse',
+      ]
       const inputed = Object.keys(this.form).reduce((r, k) => {
         let result = false
-        if (k === 'registerId') {
+        if (excludeKeys.includes(k)) {
           result = false
         } else if (typeof this.form[k] === 'string') {
           result = !!this.form[k]
@@ -696,20 +697,20 @@ export default {
       this.teethSync = detail.value
     },
     registNew({ dt }) {
-      const registerId = -1
       const registerTime = moment(dt).valueOf()
       const registerLabel = moment(dt).format('YYYY-MM-DD/ddd HH:mm')
       const newRegisterIndex = this.registerList.findIndex(
-        (l) => l.registerId === registerId,
+        (l) => l.uniqueId === -1,
       )
       if (newRegisterIndex !== -1) {
         this.registerList[newRegisterIndex].registerTime = registerTime
         this.registerList[newRegisterIndex].registerLabel = registerLabel
       } else {
-        this.registerList.unshift({ registerId, registerTime, registerLabel })
+        this.registerList.unshift({ uniqueId: -1, registerTime, registerLabel })
       }
-
-      this.form.registerId = registerId
+      this.registerInx = 0
+      this.form.uniqueId = -1
+      this.form.registerTime = registerTime
       this.form.medicalRecordRegisterVO.registerTime = registerTime
       this.reset()
     },
@@ -718,6 +719,7 @@ export default {
       if (item) {
         this.form.registerId = item.registerId
         this.form.visType = item.visType
+        this.registerInx = Number(detail.value)
         if (item.nurseStaffList) {
           this.form.nurse = {
             nurseList: item.nurseStaffList.map((e) => ({
@@ -733,7 +735,7 @@ export default {
         if (item.doctorStaffId && item.doctorStaffId !== -1) {
           this.form.doctorStaffId = item.doctorStaffId
         }
-        if (item.registerId === -1) this.reset()
+        if (item.uniqueId === -1) this.reset()
       }
     },
     reset() {
@@ -809,7 +811,7 @@ export default {
     this.patientId = patientId || this.medicalRecordObj?.patientId
     this.medicalRecordId =
       medicalRecordId || this.medicalRecordObj?.medicalRecordId
-    this.getRegisterList(
+    this.getTreatmentList(
       patientId
         ? { patientId: patientId }
         : { patientId: this.medicalRecordObj?.patientId },
@@ -831,23 +833,6 @@ export default {
         this.form.medicalRecordRegisterVO.doctorStaffId = newVal
       }
     },
-    'form.registerId'(newVal) {
-      if (newVal) {
-        this.form.medicalRecordRegisterVO.createRegister = false
-        this.registerList.forEach((ele) => {
-          if (ele.registerId === Number(newVal)) {
-            const { patientMainComplaintList } = ele
-            if (patientMainComplaintList?.length > 0) {
-              this.form.mainComplaint = patientMainComplaintList
-                .map((ele) => ele.content)
-                .join('，')
-            }
-          }
-        })
-      } else {
-        this.form.medicalRecordRegisterVO.createRegister = true
-      }
-    },
   },
 }
 </script>
@@ -860,9 +845,9 @@ export default {
 
 .addRegist {
   color: #5cbb89;
-  padding: 10rpx;
+  padding-left: 10rpx;
   display: block;
-  font-size: 40rpx;
+  font-size: 38rpx;
 }
 
 .text {
