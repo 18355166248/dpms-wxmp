@@ -530,6 +530,7 @@ export default {
       if (this.registerInx !== -1) {
         const selectedRegister = this.registerList[this.registerInx]
         this.form.registerId = selectedRegister.registerId
+        this.form.uniqueId = selectedRegister.uniqueId
         // 如果有就诊记录，那就证明是复诊
         // this.form.medicalRecordRegisterVO.visType = this.VIS_TYPE_ENUM.REVISIT.value
         this.form.medicalRecordRegisterVO.visType = selectedRegister.visType
@@ -702,6 +703,9 @@ export default {
         r[k] = res.data[k]
         return r
       }, {})
+      this.registerInx =
+        this.registerList.findIndex((e) => e.uniqueId === res.data.uniqueId) ||
+        -1
     },
     teethSyncChange({ detail }) {
       this.teethSync = detail.value
@@ -727,6 +731,7 @@ export default {
     registerChange({ detail }) {
       const item = this.registerList[detail.value]
       if (item) {
+        this.form.uniqueId = item.uniqueId
         this.form.registerId = item.registerId
         this.form.visType = item.visType
         this.registerInx = Number(detail.value)
