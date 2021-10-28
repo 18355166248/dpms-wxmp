@@ -14,13 +14,13 @@
       </div>
       <div class="header-select">
         <picker
-          @change="datePickerChange"
-          :value="dateIndex"
+          mode="selector"
+          @change="typePickerChange"
           :range="selectList"
           range-key="label"
         >
           <div class="uni-input">
-            <div class="select-text">优惠券类型:{{ selectName }}</div>
+            <div class="select-text">优惠券类型：{{ selectName }}</div>
             <div class="iconfont icon-closed"></div>
           </div>
         </picker>
@@ -32,7 +32,7 @@
         style="height: 100%;"
         @scrolltolower="onScrollToLower"
       >
-        <div v-if="!isempty">
+        <div v-if="!isEmpty">
           <div class="list-tips">
             <span
               class="iconfont icon-warning-circle"
@@ -45,7 +45,7 @@
               class="list-wrap-item"
               v-for="item in list"
               :key="item.couponDefinitionId"
-              @click="onClickCoupon(item.couponDefinitionId)"
+              @click="onClickCoupon(item)"
             >
               <div class="item-header">
                 <div class="item-header-name coupon-name">
@@ -68,11 +68,13 @@
               <div class="item-footer">
                 <div class="item-footer-date">
                   <span class="item-label">有效期：</span>
-                  <span class="item-value">{{ item | filterDate }}</span>
+                  <span class="item-value">{{ getValidity(item) }}</span>
                 </div>
                 <div class="item-footer-num">
                   <span class="item-label">剩余总量：</span>
-                  <span class="item-value">{{ item.surplusTotal }}</span>
+                  <span class="item-value">{{
+                    item.surplusStock | filterStock
+                  }}</span>
                 </div>
               </div>
             </div>
@@ -95,8 +97,7 @@ import patientAPI from '@/APIS/patient/patient.api'
 import couponSearch from './couponSearch'
 import empty from '@/components/empty/empty.vue'
 import loadMore from '@/components/load-more/load-more.vue'
-import moment from 'moment'
-import { checkQwInstitution } from '@/utils/utils'
+import { checkQwInstitution, getValidity } from '@/utils/utils'
 
 export default {
   components: {
@@ -110,13 +111,12 @@ export default {
       couponName: '', //执行搜索的值
       selectList: [
         { label: '全部', value: null },
-        { label: '折扣券', value: 1 },
-        { label: '套餐券（仅适用于创建机构）', value: 2 },
-        { label: '现金券', value: 3 },
-        { label: '满减券', value: 4 },
-        { label: '团购券', value: 5 },
+        { label: '折扣券', value: '1' },
+        // { label: '套餐券（仅适用于创建机构）', value: '2' },
+        { label: '代金券', value: '3' },
+        { label: '满减券', value: '4' },
+        // { label: '团购券', value: '5' },
       ],
-      dateIndex: 0,
       patientId: '',
       selectName: '全部',
       list: [],
@@ -130,12 +130,20 @@ export default {
         status: 'loading',
         request: 'loading',
       },
-      isempty: false,
+      isEmpty: false,
       disabled: false,
       couponDefinitionId: '',
+      grantManageId: '',
       env: '',
       isqywx: '',
     }
+  },
+  computed: {
+    getValidity() {
+      return function (record) {
+        return getValidity(record)
+      }
+    },
   },
   onLoad(params) {
     checkQwInstitution()
@@ -169,30 +177,31 @@ export default {
       this.couponDefinitionId = ''
       this.getCouponList()
     },
-    datePickerChange(e) {
+    typePickerChange(e) {
       let { value = 0 } = e.detail
       value = parseInt(value)
-      this.dateIndex = value
-      this.couponType = value !== 0 ? value : null
-      this.selectName = value === 2 ? '套餐券' : this.selectList[value].label
+      this.couponType = this.selectList[value].value
+      this.selectName = this.selectList[value].label
       this.current = 1
       this.list = []
       this.couponDefinitionId = ''
       this.getCouponList()
     },
     async getCouponList() {
+      this.dataSourceStatus.status = 'loading'
       try {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
           size: this.size,
+          channelName: 'PC收银台发券',
           couponName: this.couponName,
-          patientId: this.patientId,
+          customerId: this.customerId,
           couponType: this.couponType,
         })
         const { total = 0, records = [] } = res.data
         this.list = this.current === 1 ? records : this.list.concat(records)
         this.total = total
-        this.isempty = total === 0
+        this.isEmpty = total === 0
         if (total === this.list.length) {
           this.dataSourceStatus.status = 'noMore'
         } else {
@@ -210,7 +219,8 @@ export default {
       }
     },
     onClickCoupon(counpon) {
-      this.couponDefinitionId = counpon
+      this.couponDefinitionId = counpon.couponDefinitionId
+      this.grantManageId = counpon.grantManageId
     },
     async onSubmit() {
       if (!this.couponDefinitionId) {
@@ -227,16 +237,21 @@ export default {
       try {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
-          couponDefinitionId: this.couponDefinitionId,
-          patientId: this.patientId,
+          couponType: this.couponType,
+          channelName: 'PC收银台发券',
           customerId: this.customerId,
+          couponDefinitionId: this.couponDefinitionId,
+          receiveWay: 1,
           chargeWay: 1,
+          remark: '',
+          receiveType: 1,
+          grantManageId: this.grantManageId,
         })
 
         // uni.hideLoading()
 
         if (resData.code === 0) {
-          this.list[index].surplusTotal--
+          this.list[index].surplusStock && this.list[index].surplusStock--
           uni.showToast({
             title: '优惠券发送成功',
             icon: 'none',
@@ -283,24 +298,13 @@ export default {
     },
   },
   filters: {
-    filterDate(val) {
-      const effectiveTimeType = val.effectiveTimeType
-      const effectiveBeginTime =
-        moment(val.effectiveBeginTime).format('YYYY-MM-DD') || null
-      const effectiveEndTime =
-        moment(val.effectiveEndTime).format('YYYY-MM-DD') || null
-      const effectiveRange = {
-        1: `领当日起，${val.effectiveDays}天内可用`,
-        2: `领次日起，${val.effectiveDays}天内可用`,
-        3: `${effectiveBeginTime}~${effectiveEndTime}`,
-      }[effectiveTimeType]
-
-      return effectiveRange || '-'
-    },
     filterType(type) {
       return (
-        ['-', '折扣券', '套餐券', '现金券', '满减券', '团购券'][type] || '-'
+        ['-', '折扣券', '套餐券', '代金券', '满减券', '团购券'][type] || '-'
       )
+    },
+    filterStock(num) {
+      return !num && num !== 0 ? '-' : num
     },
   },
 }
