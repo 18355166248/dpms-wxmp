@@ -703,9 +703,9 @@ export default {
         r[k] = res.data[k]
         return r
       }, {})
-      this.registerInx =
-        this.registerList.findIndex((e) => e.uniqueId === res.data.uniqueId) ||
-        -1
+      this.registerInx = this.registerList.findIndex(
+        (e) => e.uniqueId === res.data.uniqueId,
+      )
     },
     teethSyncChange({ detail }) {
       this.teethSync = detail.value
