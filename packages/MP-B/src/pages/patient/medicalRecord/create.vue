@@ -703,8 +703,6 @@ export default {
         r[k] = res.data[k]
         return r
       }, {})
-      console.log(this.registerList)
-      console.log(res.data.uniqueId)
       this.registerInx = this.registerList.findIndex(
         (e) => e.uniqueId === res.data.uniqueId,
       )
