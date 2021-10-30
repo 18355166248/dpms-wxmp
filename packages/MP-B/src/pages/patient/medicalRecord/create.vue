@@ -740,6 +740,7 @@ export default {
       }
       this.registerInx = 0
       this.form.uniqueId = -1
+      this.form.registerId = -1
       this.form.registerTime = registerTime
       this.form.medicalRecordRegisterVO.registerTime = registerTime
       this.reset()
