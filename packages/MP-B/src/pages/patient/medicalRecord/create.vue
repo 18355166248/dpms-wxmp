@@ -456,12 +456,27 @@ export default {
       patientId: '',
       templateMedicalVisible: false,
       TreatmentTypes: [],
-      postisionKey: {
-        medicalRecordCheckNormalVOList: 'checkNormalToothPosition',
-        medicalRecordCheckRayVOList: 'checkRayToothPosition',
-        medicalRecordDiagnosisVOList: 'diagnosisPosition',
-        medicalRecordTreatmentProgramVOList: 'treatmentProgramPosition',
-        medicalRecordDisposeVOList: 'disposePosition',
+      keyEnums: {
+        medicalRecordCheckNormalVOList: {
+          positionKey: 'checkNormalToothPosition',
+          textKey: 'checkNormalSymptoms',
+        },
+        medicalRecordCheckRayVOList: {
+          positionKey: 'checkRayToothPosition',
+          textKey: 'checkRaySymptoms',
+        },
+        medicalRecordDiagnosisVOList: {
+          positionKey: 'diagnosisPosition',
+          textKey: 'diagnosisDesc',
+        },
+        medicalRecordTreatmentProgramVOList: {
+          positionKey: 'treatmentProgramPosition',
+          textKey: 'treatmentProgramn',
+        },
+        medicalRecordDisposeVOList: {
+          positionKey: 'disposePosition',
+          textKey: 'dispose',
+        },
       },
     }
   },
@@ -607,6 +622,7 @@ export default {
         'doctorStaffName',
         'visType',
         'nurse',
+        'uniqueId',
       ]
       if (this.form.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
         excludeKeys.push('presentIllnessHistory', 'pastIllnessHistory')
@@ -618,9 +634,9 @@ export default {
         } else if (typeof this.form[k] === 'string') {
           result = !!this.form[k]
         } else if (Array.isArray(this.form[k])) {
-          result = this.form[k].reduce(
-            (_r, _v) => _r[this.postisionKey[k]],
-            false,
+          result = !!this.form[k]?.some(
+            (v) =>
+              v[this.keyEnums[k]?.textKey] || v[this.keyEnums[k]?.positionKey],
           )
         }
         return r || result
