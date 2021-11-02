@@ -489,7 +489,7 @@ export default {
       _data.receivableAmount = this.form.receivableAmount
       _data.payChannelList = this.form.payChannelList
       _data.salesVOList = []
-
+      _data.isDebtFreeOrder = type === 'free'
       // 用于PC端医生、护士反显
       if (this.overdueList.length > 0) {
         this.overdueList.forEach((val) => {
