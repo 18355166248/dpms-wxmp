@@ -80,7 +80,7 @@
             <span
               v-if="item.diagnosisDisposeType === 2"
               style="color: #5cbb89;"
-              >{{ billStatusFormat(item.billStatus) }}</span
+              >{{ billStatusFormat(item.disposeStatus) }}</span
             >
             <span v-if="item.diagnosisDisposeType === 1">{{
               item.visTypeName || '--'
@@ -163,19 +163,15 @@ export default {
       }
     },
     billStatusFormat(type) {
-      let billStatusStr = ''
-      if (type === 0) {
-        return (billStatusStr = '待收费')
-      } else if (type === 1) {
-        return (billStatusStr = '待退费')
+      let disposeStatus = ''
+      if (type === 1) {
+        return (disposeStatus = '待收费')
       } else if (type === 2) {
-        return (billStatusStr = '已收费')
+        return (disposeStatus = '已收费')
       } else if (type === 3) {
-        return (billStatusStr = '已退费')
+        return (disposeStatus = '已退费')
       } else if (type === 4) {
-        return (billStatusStr = '部分退费')
-      } else if (type === 5) {
-        return (billStatusStr = '已作废')
+        return (disposeStatus = '欠费')
       }
     },
     getBusinessTime(businessTime) {
