@@ -212,7 +212,11 @@ export default {
   computed: {
     ...mapState('workbenchStore', ['menu']),
     ...mapState('overdue', ['overdueList', 'overdueAmount']),
-    ...mapState('patient', ['patientDetail', 'memberDetail']),
+    ...mapState('patient', [
+      'patientDetail',
+      'memberDetail',
+      'mainDiscountLimit',
+    ]),
     ...mapState('checkstand', ['billType']),
     //积分转金额
     integralToAmount() {
@@ -457,6 +461,15 @@ export default {
     },
     //确认收费
     sureCharge(type) {
+      if (type !== 'free' && this.form.debtDiscount < this.mainDiscountLimit) {
+        this.$refs.uToast.show({
+          title: `您能设置的整单折扣不能低于${this.mainDiscountLimit}%`,
+          type: 'warning',
+        })
+        this.form.debtDiscount = this.mainDiscountLimit
+        this.onDebtDiscountChange(this.mainDiscountLimit)
+        return
+      }
       if (!this.checkPaidAmount()) {
         return false
       }

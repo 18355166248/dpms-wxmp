@@ -34,7 +34,7 @@ import pending from './pending'
 import charged from './charged'
 import payment from './payment'
 import institutionAPI from 'APIS/institution/institution.api'
-import { mapMutations } from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 import { checkQwInstitution } from '@/utils/utils'
 
 export default {
@@ -60,6 +60,9 @@ export default {
       customerId: 0,
       memberId: 0,
     }
+  },
+  onShow() {
+    this.getMainDiscountLimit()
   },
   onLoad(params) {
     checkQwInstitution()
@@ -100,6 +103,7 @@ export default {
   },
   methods: {
     ...mapMutations('patient', ['setPatientDetail']),
+    ...mapActions('patient', ['getMainDiscountLimit']),
     init() {
       institutionAPI
         .getStaffListByPositionFromAllInstitution({
