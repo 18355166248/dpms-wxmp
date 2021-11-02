@@ -218,6 +218,7 @@ export default {
           type: 'warning',
         })
         this.mainOrderDiscount = this.mainDiscountLimit
+        this.onMainOrderDiscount(this.mainDiscountLimit)
         return
       }
       // 保存vuex并跳转
