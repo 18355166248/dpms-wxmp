@@ -140,6 +140,7 @@ export default {
   computed: {
     ...mapState('dispose', ['disposeList', 'receivableAmount']),
     ...mapState('checkstand', ['chargeType']),
+    ...mapState('patient', ['mainDiscountLimit']),
     hasDiscountItem() {
       return this.disposeList.some((item) => item.allBillDiscount)
     },
@@ -211,6 +212,14 @@ export default {
       item.toothPositionStr = toothTemp
     },
     onNextStep() {
+      if (this.mainOrderDiscount < this.mainDiscountLimit) {
+        this.$refs.uToast.show({
+          title: `您能设置的整单折扣不能低于${this.mainDiscountLimit}%`,
+          type: 'warning',
+        })
+        this.mainOrderDiscount = this.mainDiscountLimit
+        return
+      }
       // 保存vuex并跳转
       if (this.disposeList.length === 0) {
         this.$refs.uToast.show({
