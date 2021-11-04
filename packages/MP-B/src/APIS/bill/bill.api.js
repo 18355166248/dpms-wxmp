@@ -250,6 +250,13 @@ const billAPI = {
   checkPromotion(data) {
     return httper.post('/billing/bill/order/check-promotion', data)
   },
+  // 获取当前账号整单折扣下限
+  getMainDiscountConfig(data) {
+    return httper.get(
+      '/billing/charge-config/staff-main-discount/current-staff-config',
+      data,
+    )
+  },
 }
 
 export default billAPI
