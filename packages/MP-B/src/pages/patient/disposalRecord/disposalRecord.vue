@@ -79,7 +79,7 @@
           <div class="rightText">
             <span
               v-if="item.diagnosisDisposeType === 2"
-              style="color: #5cbb89;"
+              :style="item.disposeStatus === 4 ? 'color:red' : 'color: #5cbb89'"
               >{{ billStatusFormat(item.disposeStatus) }}</span
             >
             <span v-if="item.diagnosisDisposeType === 1">{{
