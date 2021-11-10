@@ -122,10 +122,13 @@
           }
         },
         {
-          "path": "avatarCropper/avatarCropper",
+          "path": "avatarCropper/imageCropper",
           "style": {
             "navigationBarTitleText": "头像剪裁",
-            "navigationBarBackgroundColor": "#000000"
+            "navigationBarBackgroundColor": "#000000",
+            "usingComponents": {
+              "custom": "/wxcomponents/custom/image-cropper"
+            }
           }
         },
         {
