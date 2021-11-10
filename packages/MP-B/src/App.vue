@@ -10,6 +10,7 @@ export default {
   },
   onShow: function () {},
   onHide: function () {},
+  globalData: {},
 }
 </script>
 

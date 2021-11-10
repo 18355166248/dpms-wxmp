@@ -1,7 +1,7 @@
 <template>
   <view class="content">
     <view class="layout">
-      <image class="head-image" :src="avatar" />
+      <image class="head-image" :src="avatar" @load="onloadImg" />
       <button class="change-image" size="mini" @click="openImg">
         更换头像
       </button>
@@ -11,7 +11,13 @@
 <script>
 import systemAPI from '@/APIS/system.api'
 import patientAPI from '@/APIS/patient/patient.api'
-
+/**
+ * 1、当小程序已经获得摄像机权限时则直接进入拍摄/相册选择界面
+ * 2、当小程序未获得授权且第一次获取授权时弹出授权框
+ * 3、当未获得授权且拒绝授权弹框时则需要手动授权
+ *
+ * @property {Boolean} imgflag 判断是否拒绝授权
+ */
 export default {
   name: 'picture',
   data() {
@@ -20,6 +26,7 @@ export default {
       patientId: '',
       gender: '',
       imgflag: false, // 判断第一次申请授权是否拒绝
+      isLoading: false,
     }
   },
   onLoad(option) {
@@ -43,11 +50,20 @@ export default {
       }
     }
   },
+  onShow() {
+    if (this.isLoading) {
+      uni.showLoading({
+        title: '图片加载中',
+        mask: true,
+      })
+    }
+  },
   created() {
     // 监听从裁剪页发布的事件，获得裁剪结果
-    uni.$on('avatarCropper', async (path) => {
+    uni.$on('imageCropper', async (params) => {
+      this.isLoading = params.flag
       const ossParam = await this.getOssParam()
-      await this.uploadOss(ossParam, path)
+      await this.uploadOss(ossParam, params.path)
       // 通过传参key值去后台获取新头像的地址
       await systemAPI.getOssUrl({ key: ossParam.key }).then((res) => {
         this.avatar = res.data
@@ -66,42 +82,29 @@ export default {
     })
   },
   beforeDestroy() {
-    uni.$off('avatarCropper')
+    uni.$off('imageCropper')
   },
   methods: {
-    /**
-     * 1、当小程序已经获得摄像机权限时则直接进入拍摄/相册选择界面
-     * 2、当小程序未获得授权且第一次获取授权时弹出授权框
-     * 3、当未获得授权且拒绝授权弹框时则需要手动授权
-     *
-     * @property {Boolean} imgflag 判断是否拒绝授权
-     */
+    onloadImg(res) {
+      uni.hideLoading()
+      this.isLoading = false
+    },
     openImg() {
       var self = this
-
+      const app = getApp()
       // 选择图片函数chooseImage()所需要的参数
       var params = {
         count: 1, // 默认9
-        sizeType: ['original'], // 可以指定是原图还是压缩图，默认二者都有
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
         success: (res) => {
           //  获取裁剪图片资源后，将图片传给剪裁组件。
           var src = res.tempFilePaths[0]
+          app.globalData.imgSrc = src
           // uniApp的跳转传参必须保证格式与规范一致
           this.$u.route({
             // 剪裁页面的路径
-            url: '/pages/patient/avatarCropper/avatarCropper',
-            // 内部已设置以下默认参数值，可不传这些参数
-            params: {
-              // 输出图片宽度，高等于宽，单位px
-              destWidth: 250,
-              // 裁剪框宽度，高等于宽，单位px
-              rectWidth: 250,
-              // 输出的图片类型，如果'png'类型发现裁剪的图片太大，改成"jpg"即可
-              fileType: 'png',
-              // 给传给的剪裁页面的图片添加src属性及其值
-              src: src,
-            },
+            url: '/pages/patient/avatarCropper/imageCropper',
           })
         },
         fail: (err) => {
