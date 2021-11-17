@@ -1,5 +1,13 @@
 <template>
   <view class="overdue-charge-wrap">
+    <view class="top-toast">
+      <div class="toast-info flex-v-center">
+        <div class="iconfont icon-warning-circle-fill toast-icon" />
+        <div class="toast-text">
+          如遇欠费账单灰色且无法被选中，则表示该欠费账单已被划价，请在待处理账单中收费或删除后方可重新被勾选
+        </div>
+      </div>
+    </view>
     <view class="list-wrap">
       <view
         class="item"
@@ -171,6 +179,31 @@ export default {
   //padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
 
+  .top-toast {
+    .toast-info {
+      width: 100%;
+      background: #fff9e6;
+      color: #f86e21;
+      box-sizing: border-box;
+      padding: 12rpx 26rpx;
+      display: flex;
+      align-items: flex-start;
+
+      .toast-icon {
+        color: #faad14;
+        margin-right: 18rpx;
+        line-height: 32rpx;
+        font-size: 28rpx;
+        flex: 1;
+      }
+
+      .toast-text {
+        line-height: 32rpx;
+        font-size: 24rpx;
+      }
+    }
+  }
+
   .list-wrap {
     display: flex;
     flex-direction: column;
@@ -249,6 +282,9 @@ export default {
         padding-bottom: 18rpx;
         padding-top: 18rpx;
       }
+    }
+    .item:first-child {
+      margin-top: 16rpx;
     }
   }
 

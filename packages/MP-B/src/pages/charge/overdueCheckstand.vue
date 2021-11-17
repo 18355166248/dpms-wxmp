@@ -95,12 +95,6 @@
       <div class="bottom-content-wrap">
         <div class="left-wrap">
           <div class="amount-wrap">
-            <span class="black-big-font padding-r">实收:</span
-            ><span class="red-color">{{
-              paidAmount | thousandFormatter(2, '￥')
-            }}</span>
-          </div>
-          <div class="amount-wrap">
             <view class="margin-r">
               <span class="gray-font padding-r">欠费:</span>
               <span class="black-font">{{
@@ -114,10 +108,19 @@
               }}</span>
             </view>
           </div>
+          <div class="amount-wrap">
+            <span class="black-big-font padding-r">实收:</span
+            ><span class="red-color">{{
+              paidAmount | thousandFormatter(2, '￥')
+            }}</span>
+          </div>
         </div>
         <div class="btn-wrapper">
+          <button class="ghost-save-btn" @click="sureCharge('save')">
+            保存
+          </button>
           <button class="save-btn" @click="sureCharge('free')">欠费免单</button>
-          <button class="charge-btn" @click="sureCharge">确定</button>
+          <button class="charge-btn" @click="sureCharge('submit')">确定</button>
         </div>
       </div>
     </div>
@@ -227,12 +230,26 @@ export default {
       return BigCalculate(currentPoints, '/', perForCash)
     },
   },
-  onLoad() {
+  /**
+   * 通过判断option中是否含有billOrderId这个参数
+   * 来区分是从待处理页面跳转还是收欠费列表页面跳转过来的
+   * 待处理页面跳转则会携带billOrderId参数
+   */
+  onLoad(option) {
     this.staffData = uni.getStorageSync('staff')
     this.form.staffName = this.staffData.staffName
-    this.form.receivableAmount = this.overdueAmount
-    this.paidAmount = this.overdueAmount
-    this.loadListData()
+    if (option.billOrderId) {
+      // 待处理账单页面跳转携带的参数进行回显
+      this.pendingBill(option, () => {
+        this.form.receivableAmount = this.overdueAmount
+        this.paidAmount = this.overdueAmount
+        this.loadListData(option.billOrderId)
+      })
+    } else {
+      this.form.receivableAmount = this.overdueAmount
+      this.paidAmount = this.overdueAmount
+      this.loadListData()
+    }
   },
   onShow() {},
   onHide() {},
@@ -260,6 +277,22 @@ export default {
         return item
       })
       this.showActionSheet = false
+    },
+    /**
+     * 待处理页面数据获取并回显
+     */
+    pendingBill(option, callback) {
+      billAPI
+        .getPendingOverdueBills({
+          billDebtId: option.billOrderId,
+        })
+        .then((res) => {
+          this.setOverdueAmount(res.data?.billOrderVOList[0]?.debtAmount)
+          this.setOverdueList(res.data?.billOrderVOList)
+          this.form.payChannelList = res.data?.payChannelList
+          this.form.memo = res.data?.memo
+          callback && callback()
+        })
     },
 
     onSure() {
@@ -403,7 +436,7 @@ export default {
     },
     //-----------------------总计金额、折扣、应收
     //获取数据
-    loadListData() {
+    loadListData(option) {
       billAPI
         .getPayTransactionChannel({
           memberId: this.patientDetail?.memberId,
@@ -421,15 +454,18 @@ export default {
               item.checked = false
               if (index === 0) {
                 item.checked = true
-                this.form.payChannelList = [
-                  {
-                    paymentAmount: this.form.receivableAmount,
-                    transactionChannelId: item.settingsPayTransactionChannelId,
-                    transactionChannelName:
-                      item.settingsPayTransactionChannelName,
-                    balance: item.balance,
-                  },
-                ]
+                // 若是待处理页面跳转来则不用进行支付列表初始化
+                !option &&
+                  (this.form.payChannelList = [
+                    {
+                      paymentAmount: this.form.receivableAmount,
+                      transactionChannelId:
+                        item.settingsPayTransactionChannelId,
+                      transactionChannelName:
+                        item.settingsPayTransactionChannelName,
+                      balance: item.balance,
+                    },
+                  ])
               }
             })
 
@@ -517,33 +553,62 @@ export default {
           item.paymentAmount = 0
         })
       }
-      billAPI
-        .payDebt(_data)
-        .then((res) => {
-          if (res.code === 0 && res.data) {
-            this.$refs.payResultRef.open(res.data)
-          } else if ([1000373, 1000377].includes(code)) {
-            try {
-              const errData = JSON.parse(message)
-              // 发起审核
-              if (code === 1000373) {
-                //  打开审批弹框
-                this.$refs.approveModalRef.open(errData, params)
-              } else {
-                //发起失败  给出错误提示
-                this.$refs.uToast.show({
-                  title: errData?.approveReason || '审批发起失败',
-                  type: 'error',
-                })
+      if (type === 'submit') {
+        billAPI
+          .payDebt(_data)
+          .then((res) => {
+            if (res.code === 0 && res.data) {
+              this.$refs.payResultRef.open(res.data)
+            } else if ([1000373, 1000377].includes(code)) {
+              try {
+                const errData = JSON.parse(message)
+                // 发起审核
+                if (code === 1000373) {
+                  //  打开审批弹框
+                  this.$refs.approveModalRef.open(errData, params)
+                } else {
+                  //发起失败  给出错误提示
+                  this.$refs.uToast.show({
+                    title: errData?.approveReason || '审批发起失败',
+                    type: 'error',
+                  })
+                }
+              } catch (err) {
+                console.log(123, err)
               }
-            } catch (err) {
-              console.log(123, err)
             }
-          }
-        })
-        .catch((err) => {
-          console.log(err.message)
-        })
+          })
+          .catch((err) => {
+            console.log(err.message)
+          })
+      }
+      if (type === 'save') {
+        billAPI
+          .saveOrUpdateOverdue(_data)
+          .then((res) => {
+            if (res.code === 0) {
+              uni.reLaunch({
+                url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
+              })
+              uni.showToast({
+                icon: 'none',
+                title: '保存成功',
+              })
+            } else {
+              if (code === 1001190) {
+                this.form.debtDiscount = this.mainDiscountLimit
+                this.onDebtDiscountChange(this.mainDiscountLimit)
+              }
+              this.$refs.uToast.show({
+                title: res.message,
+                type: 'error',
+              })
+            }
+          })
+          .catch((err) => {
+            console.log(err.message)
+          })
+      }
     },
 
     approveConfirm() {
@@ -636,15 +701,20 @@ export default {
       padding: 0 32rpx;
       box-sizing: border-box;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      align-content: space-between;
       width: 100%;
     }
     .left-wrap {
-      padding: 10rpx 0;
+      padding: 22rpx 0;
+      display: flex;
+      justify-content: space-between;
 
       .margin-r {
-        margin-right: 32rpx;
+        margin-right: 24rpx;
+        height: 32rpx;
+        line-height: 32rpx;
+        font-size: 24rpx;
       }
 
       .padding-r {
@@ -654,9 +724,10 @@ export default {
       .amount-wrap {
         color: #191919;
         display: flex;
-        font-size: 22rpx;
 
         .black-big-font {
+          height: 36rpx;
+          line-height: 36rpx;
           font-size: 28rpx;
           color: #191919;
         }
@@ -671,6 +742,8 @@ export default {
 
         .red-color {
           color: #fa5151;
+          height: 36rpx;
+          line-height: 36rpx;
           font-size: 28rpx;
           font-weight: 500;
         }
@@ -680,7 +753,8 @@ export default {
     .btn-wrapper {
       box-sizing: border-box;
       display: flex;
-      padding: 16rpx 0;
+      justify-content: flex-end;
+      margin-bottom: 20rpx;
 
       button {
         width: 120rpx;
@@ -689,6 +763,13 @@ export default {
         font-size: 28rpx;
         border-radius: 30rpx;
         box-sizing: border-box;
+        margin: 0 0 0 16rpx;
+      }
+
+      .ghost-save-btn {
+        color: #4c4c4c;
+        background: #ffffff;
+        border: 2rpx solid #d9d9d9;
       }
 
       .save-btn {

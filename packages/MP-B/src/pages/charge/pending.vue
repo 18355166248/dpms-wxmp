@@ -3,7 +3,7 @@
     <view
       class="list"
       v-for="order in pendingList"
-      @click="checkPromotion(order)"
+      @click="toPage(order)"
       :key="order.billOrderId"
     >
       <view class="listTitle">
@@ -20,7 +20,13 @@
       <view class="lineHr"></view>
       <view>
         <view class="listLine">
-          <view class="ml-32">{{ order.billTypeText }}</view>
+          <view class="ml-32" v-if="order.billType !== 8">{{
+            order.billTypeText
+          }}</view>
+          <view class="ml-32 bill-type-overdue" v-if="order.billType === 8">
+            <view class="bill-type-overdue-text">普通收费</view>
+            <view class="bill-type-overdue-tag">收欠费</view>
+          </view>
           <view class="totalFee"
             >总计金额：{{ $dpmsUtils.formatPrice(order.totalAmount) }}
           </view>
@@ -60,6 +66,7 @@
 <script>
 import moment from 'moment'
 import billAPI from '@/APIS/bill/bill.api'
+import { BigCalculate } from '@/utils/utils'
 import loadMore from '@/components/load-more/load-more.vue'
 import { mapMutations } from 'vuex'
 
@@ -147,6 +154,7 @@ export default {
   methods: {
     ...mapMutations('checkstand', ['setBillType']),
     ...mapMutations('dispose', ['setReceivableAmount']),
+    ...mapMutations('overdue', ['setOverdueList', 'setOverdueAmount']),
     init() {
       this.current = 1
       this.getPendingOrder()
@@ -165,6 +173,17 @@ export default {
         })
       }
     },
+    /**
+     * 若billType为8则跳转收欠费页面
+     */
+    toPage(record) {
+      if (record.billType === 8) {
+        this.toOverdue(record)
+      } else {
+        this.checkPromotion(record)
+      }
+    },
+
     checkPromotion(record) {
       billAPI
         .checkPromotion({
@@ -193,6 +212,12 @@ export default {
             }
           }
         })
+    },
+    // 跳转收欠费
+    toOverdue(record) {
+      uni.navigateTo({
+        url: `/pages/charge/overdueCheckstand?billOrderId=${record.billOrderId}`,
+      })
     },
     async getPendingOrder() {
       uni.showLoading({
@@ -346,6 +371,11 @@ export default {
       width: 690rpx;
       overflow: hidden;
       color: #595959;
+      word-break: break-all;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
     .user {
       color: #595959;
@@ -355,6 +385,26 @@ export default {
     .date {
       color: #7f7f7f;
       width: 440rpx;
+    }
+    .bill-type-overdue {
+      display: flex;
+      justify-content: flex-start;
+
+      .bill-type-overdue-text {
+        margin-right: 8rpx;
+      }
+      .bill-type-overdue-tag {
+        background: #fa5151;
+        border-radius: 4rpx;
+        height: 40rpx;
+        font-size: 24rpx;
+        font-family: PingFangSC, PingFangSC-Medium;
+        font-weight: 500;
+        text-align: center;
+        color: #ffffff;
+        line-height: 40rpx;
+        padding: 0 8rpx;
+      }
     }
   }
 }

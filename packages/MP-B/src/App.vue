@@ -209,6 +209,9 @@ button::after {
 .icon-new-weet::before {
   content: '\e8f0';
 }
+.icon-warning-circle-fill:before {
+  content: '\e849';
+}
 /*预约*/
 .icon-time-circle::before {
   content: '\e784';

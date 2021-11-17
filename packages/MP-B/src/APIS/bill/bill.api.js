@@ -175,6 +175,18 @@ const billAPI = {
       },
     })
   },
+  // 保存收欠费
+  saveOrUpdateOverdue(data) {
+    return httper.post('/billing/bill/order/pay-debt/saveOrUpdate', data, {
+      headers: {
+        'content-type': 'application/json',
+      },
+    })
+  },
+  // 获取待收费的欠费账单
+  getPendingOverdueBills(params) {
+    return httper.get('/billing/bill/order/pay-debt/wait', params)
+  },
   // 判断收欠费状态
   checkPayDebtStatus(data) {
     return httper.get('/billing/bill/order/pay-debt/check', data)
