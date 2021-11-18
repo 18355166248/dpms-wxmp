@@ -471,7 +471,7 @@ export default {
         },
         medicalRecordTreatmentProgramVOList: {
           positionKey: 'treatmentProgramPosition',
-          textKey: 'treatmentProgramn',
+          textKey: 'treatmentProgram',
         },
         medicalRecordDisposeVOList: {
           positionKey: 'disposePosition',
