@@ -36,7 +36,8 @@ const frontAuthUtil = {
 
       isInHQ:
         medicalInstitution?.institutionChainType === 2 &&
-        medicalInstitution?.topParentId === 0,
+        medicalInstitution?.topParentId ===
+          medicalInstitution?.medicalInstitutionId,
       isInRegion: medicalInstitution?.institutionChainType === 3,
       isInDirect:
         medicalInstitution?.institutionChainType === 2 &&
@@ -126,10 +127,14 @@ const frontAuthUtil = {
 
   // 判断 总部和大区不能选择
   canSelect(clinicItem) {
-    const { institutionChainType, topParentId } = clinicItem
+    const {
+      institutionChainType,
+      topParentId,
+      medicalInstitutionId,
+    } = clinicItem
 
     return !(
-      (institutionChainType === 2 && topParentId === 0) ||
+      (institutionChainType === 2 && topParentId === medicalInstitutionId) ||
       institutionChainType === 3
     )
   },

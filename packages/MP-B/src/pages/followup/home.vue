@@ -376,7 +376,8 @@ export default {
 
           this.institutionIndex = {
             index: insIndex,
-            type: topParentId === 0 ? 0 : institutionChainType,
+            type:
+              topParentId === medicalInstitutionId ? 0 : institutionChainType,
           }
           this.loginInstitutionIndex = this.institutionIndex
         })
