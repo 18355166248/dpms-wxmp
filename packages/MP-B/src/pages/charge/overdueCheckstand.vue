@@ -553,7 +553,7 @@ export default {
           item.paymentAmount = 0
         })
       }
-      if (type === 'submit') {
+      if (type === 'free' || type === 'submit') {
         billAPI
           .payDebt(_data)
           .then((res) => {
