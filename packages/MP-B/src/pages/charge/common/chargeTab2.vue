@@ -44,6 +44,14 @@ export default {
         })
         .then((res) => {
           if (res.code === 0 && res?.data?.length > 0) {
+            res.data.forEach((item) => {
+              item.deductSign = false // 是否划扣
+              item.allBillDiscount = true // 是否整单折扣
+              item.isSingleDiscount = true // 是否单项折扣
+              item.singleDiscountLimit = 0 // 折扣下限
+              item.parentItemCode = 0
+              item.singleDiscount = 100 // 单项折扣 默认 100
+            })
             const concatList = this.merchandiseList.concat(
               this.handleMerchandiseList(res.data),
             )

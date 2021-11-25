@@ -296,7 +296,17 @@ export default {
       }
     },
     gotoChargeDetail(order) {
-      if (order.billType === 1) {
+      /**
+       * 与pc逻辑保持一致，pc端上当billType为1,2,6,7时去掉check接口，具体逻辑请阅读pc端
+        1: '普通收费',
+        2: '普通收费',
+        3: '储值卡交易',
+        4: '卡券交易',
+        5: '专享卡交易',
+        6: '普通收费',
+        7: '普通收费',
+      */
+      if ([1, 2, 6, 7].includes(order.billType)) {
         billAPI
           .checkPayDebtStatus({
             customerId: this.patientDetail?.customerId,
