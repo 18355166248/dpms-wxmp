@@ -241,7 +241,6 @@ export default {
     if (option.billOrderId) {
       // 待处理账单页面跳转携带的参数进行回显
       this.pendingBill(option, () => {
-        this.form.receivableAmount = this.overdueAmount
         this.paidAmount = this.overdueAmount
         this.loadListData(option.billOrderId)
       })
@@ -287,11 +286,13 @@ export default {
           billDebtId: option.billOrderId,
         })
         .then((res) => {
-          this.setOverdueAmount(res.data?.billOrderVOList[0]?.debtAmount)
-          this.setOverdueList(res.data?.billOrderVOList)
-          this.form.payChannelList = res.data?.payChannelList
-          this.form.memo = res.data?.memo
-          this.form.debtDiscount = res.data.debtDiscount
+          const data = res.data
+          this.setOverdueAmount(data?.billOrderVOList[0]?.debtAmount)
+          this.setOverdueList(data?.billOrderVOList)
+          this.form.payChannelList = data?.payChannelList
+          this.form.memo = data?.memo
+          this.form.debtDiscount = data.debtDiscount
+          this.form.receivableAmount = data.receivableAmount
           callback && callback()
         })
     },
@@ -558,6 +559,7 @@ export default {
         billAPI
           .payDebt(_data)
           .then((res) => {
+            this.submitLock = false
             if (res.code === 0 && res.data) {
               this.$refs.payResultRef.open(res.data)
             } else if ([1000373, 1000377].includes(code)) {
@@ -580,6 +582,7 @@ export default {
             }
           })
           .catch((err) => {
+            this.submitLock = false
             console.log(err.message)
           })
       }
@@ -587,6 +590,7 @@ export default {
         billAPI
           .saveOrUpdateOverdue(_data)
           .then((res) => {
+            this.submitLock = false
             if (res.code === 0) {
               uni.reLaunch({
                 url: `/pages/charge/chargeForm?tab=1&patientId=${this.patientDetail.patientId}`,
@@ -607,6 +611,7 @@ export default {
             }
           })
           .catch((err) => {
+            this.submitLock = false
             console.log(err.message)
           })
       }
