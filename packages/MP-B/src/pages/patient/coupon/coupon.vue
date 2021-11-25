@@ -136,6 +136,8 @@ export default {
       grantManageId: '',
       env: '',
       isqywx: '',
+      // 当前点击优惠券对应的渠道
+      channelId: null,
     }
   },
   computed: {
@@ -193,7 +195,7 @@ export default {
         const res = await patientAPI.getCouponTemplateListByName({
           current: this.current,
           size: this.size,
-          channelName: 'PC收银台发券',
+          channelId: 1,
           couponName: this.couponName,
           customerId: this.customerId,
           couponType: this.couponType,
@@ -221,6 +223,7 @@ export default {
     onClickCoupon(counpon) {
       this.couponDefinitionId = counpon.couponDefinitionId
       this.grantManageId = counpon.grantManageId
+      this.channelId = counpon.channelId
     },
     async onSubmit() {
       if (!this.couponDefinitionId) {
@@ -238,7 +241,7 @@ export default {
         this.disabled = true
         const resData = await patientAPI.createPromotion({
           couponType: this.couponType,
-          channelName: 'PC收银台发券',
+          channelId: this.channelId,
           customerId: this.customerId,
           couponDefinitionId: this.couponDefinitionId,
           receiveWay: 1,
