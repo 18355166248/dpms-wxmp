@@ -291,6 +291,7 @@ export default {
           this.setOverdueList(res.data?.billOrderVOList)
           this.form.payChannelList = res.data?.payChannelList
           this.form.memo = res.data?.memo
+          this.form.debtDiscount = res.data.debtDiscount
           callback && callback()
         })
     },
