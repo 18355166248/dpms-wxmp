@@ -315,7 +315,8 @@ export default {
     },
     isHeadquartersAndRegion() {
       return (
-        (this.medicalInstitution.topParentId === 0 &&
+        (this.medicalInstitution.topParentId ===
+          this.medicalInstitution.medicalInstitutionId &&
           this.medicalInstitution.institutionChainType === 2) ||
         this.medicalInstitution.institutionChainType === 3
       )

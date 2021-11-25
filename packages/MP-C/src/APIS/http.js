@@ -95,10 +95,7 @@ httper.interceptors.request.use((request) => {
         _tenantId: medicalInstitution?.tenantId,
 
         // 连锁机构总部 Id
-        _cmtId:
-          medicalInstitution?.medicalInstitutionDTO?.topParentId === 0
-            ? medicalInstitution?.medicalInstitutionId
-            : medicalInstitution?.medicalInstitutionDTO?.topParentId,
+        _cmtId: medicalInstitution?.topParentId,
 
         // 连锁机构类型
         _cmtType:

@@ -248,10 +248,14 @@ export function getFormValueFromResourceMap(formKey, resourceMap) {
 
 // 判断是否是总部/大区
 export function checkIsHeaderOrLargeArea(institution) {
-  const { institutionChainType, topParentId } = institution
+  const {
+    institutionChainType,
+    topParentId,
+    medicalInstitutionId,
+  } = institution
 
   return (
-    (institutionChainType === 2 && topParentId === 0) ||
+    (institutionChainType === 2 && topParentId === medicalInstitutionId) ||
     institutionChainType === 3
   )
 }
