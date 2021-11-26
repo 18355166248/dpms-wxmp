@@ -67,7 +67,7 @@ export default {
         },
         {
           label: '当日收款',
-          key: 'receivableAmount',
+          key: 'paymentAmount',
         },
         {
           label: '当日退款',
