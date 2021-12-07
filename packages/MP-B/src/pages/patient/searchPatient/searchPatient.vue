@@ -72,6 +72,7 @@ import loadMore from '@/components/load-more/load-more.vue'
 import FilterArea from './modules/FilterArea.vue'
 import { globalEventKeys } from 'config/global.eventKeys.js'
 import empty from '@/components/empty/empty.vue'
+import { setStorage_MI, getStorage_MI } from '@/utils/storage'
 
 export default {
   data() {
@@ -111,7 +112,7 @@ export default {
   },
   onLoad(option) {
     this.paramsObj = option
-    this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
+    this.searchRecords = getStorage_MI('searchPatientHistory') || []
     if (this.paramsObj.type === '3') {
       this.filterParamsObj.time.dateType = this.paramsObj.type
       this.filterParamsObj.time.registerBeginMilliSecond = new Date().setHours(
@@ -219,7 +220,7 @@ export default {
       ].filter((v, index) => index < 10)
 
       this.searchRecords = searchList
-      uni.setStorageSync('searchPatientHistory', searchList)
+      setStorage_MI('searchPatientHistory', searchList)
 
       console.log('----搜索后 历史值----', this.searchRecords)
 
@@ -244,13 +245,13 @@ export default {
       //更新搜索历史顺序
       this.searchRecords.unshift(...this.searchRecords.splice(index, 1))
       //this.searchRecords.map((a, b) => a)
-      uni.setStorageSync('searchPatientHistory', this.searchRecords)
+      setStorage_MI('searchPatientHistory', this.searchRecords)
 
       this.getPatients()
     },
     clearHistorySearch() {
       this.searchRecords = []
-      uni.setStorageSync('searchPatientHistory', [])
+      setStorage_MI('searchPatientHistory', [])
     },
     // 点击患者卡片
     clickPatientCard({ patientId, patientName }) {

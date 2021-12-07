@@ -34,3 +34,18 @@ export function getStorage(key) {
 export function removeStorage(key) {
   uni.removeStorageSync(key)
 }
+
+// 通过机构区分缓存信息
+export function setStorage_MI(key, value) {
+  const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+  key = key + '_' + (medicalInstitution?.medicalInstitutionId || '')
+  console.log('setStorage_MI', key)
+  return setStorage(key, value)
+}
+
+export function getStorage_MI(key) {
+  const medicalInstitution = getStorage(STORAGE_KEY.MEDICALINSTITUTION)
+  key = key + '_' + (medicalInstitution?.medicalInstitutionId || '')
+  console.log('getStorage_MI', key)
+  return getStorage(key)
+}

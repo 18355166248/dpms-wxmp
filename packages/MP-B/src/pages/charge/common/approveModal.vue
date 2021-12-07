@@ -52,5 +52,6 @@ export default {
 .slot-content {
   padding: 48rpx;
   border-bottom: 1rpx solid #e5e5e5;
+  // word-break: break-all;
 }
 </style>
