@@ -91,7 +91,7 @@ export default {
         },
         {
           label: '普通收费收入',
-          key: 'paymentAmount',
+          key: 'generalRevenueAmount',
         },
         {
           label: '划扣收入',
@@ -107,6 +107,7 @@ export default {
         'revenueAmount',
         'paymentAmount',
         'plannedRevenueAmount',
+        'generalRevenueAmount',
       ],
       contents: [],
       total: 0,
@@ -269,6 +270,9 @@ export default {
         )
         element.paymentAmount = this.$dpmsUtils.formatPrice(
           element.paymentAmount,
+        )
+        element.generalRevenueAmount = this.$dpmsUtils.formatPrice(
+          element.generalRevenueAmount,
         )
         element.plannedRevenueAmount = this.$dpmsUtils.formatPrice(
           element.plannedRevenueAmount,

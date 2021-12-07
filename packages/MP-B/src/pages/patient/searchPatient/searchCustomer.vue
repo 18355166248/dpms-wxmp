@@ -14,7 +14,11 @@
       </div>
     </div>
     <div class="searchCustomer-wrap">
-      <scroll-view class="searchCustomer" :scroll-y="true" @scrolltolower="onScrollToLower">
+      <scroll-view
+        class="searchCustomer"
+        :scroll-y="true"
+        @scrolltolower="onScrollToLower"
+      >
         <!-- 搜索提示、结果文字 -->
         <div
           class="search-tip-text pt-28 pl-24 pr-24"
@@ -32,9 +36,13 @@
                 <div class="name">
                   {{ customer.customerName }}
                 </div>
-                <tag :text="customer.genderText" :circle="false" type="error"></tag>
+                <tag
+                  :text="customer.genderText"
+                  :circle="false"
+                  type="error"
+                ></tag>
               </div>
-              <div class="moble">手机号：{{ customer.mobile||'-' }}</div>
+              <div class="moble">手机号：{{ customer.mobile || '-' }}</div>
             </div>
           </div>
           <load-more :status="dataSourceStatus.status" />
@@ -48,6 +56,7 @@
 import patientAPI from '@/APIS/patient/patient.api'
 import tag from '@/components/tag/tag.vue'
 import loadMore from '@/components/load-more/load-more.vue'
+import { getStorage_MI } from '@/utils/storage'
 
 export default {
   data() {
@@ -74,15 +83,12 @@ export default {
   },
   onLoad(option) {
     this.paramsObj = option
-    this.searchRecords = uni.getStorageSync('searchPatientHistory') || []
+    this.searchRecords = getStorage_MI('searchPatientHistory') || []
     this.init()
-
   },
-  onReachBottom() {
-
-  },
+  onReachBottom() {},
   methods: {
-    onScrollToLower(){
+    onScrollToLower() {
       if (this.customerList.length < this.total) {
         this.current += 1
         this.getCustomers()
@@ -113,7 +119,7 @@ export default {
         regularParam: this.searchValue,
         current: this.current,
         size: this.size,
-        keywords:this.searchValue
+        keywords: this.searchValue,
       })
 
       this.isSearchedValue = this.searchValue
@@ -164,16 +170,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.page-wrap{
+.page-wrap {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  .searchCustomer-wrap{
+  .searchCustomer-wrap {
     display: flex;
     flex-flow: 2;
     overflow-y: auto;
   }
-  .searchCustomer{
+  .searchCustomer {
     height: 100%;
   }
 }
