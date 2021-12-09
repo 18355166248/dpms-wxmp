@@ -647,7 +647,8 @@ export default {
 
       // 复诊不传：现病史、既往史
       if (clonedForm.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
-        delete clonedForm.presentIllnessHistory
+        // 复诊现在又需要支持现病史的填写了。。。
+        // delete clonedForm.presentIllnessHistory
         delete clonedForm.pastIllnessHistory
       }
       await diagnosisAPI[
