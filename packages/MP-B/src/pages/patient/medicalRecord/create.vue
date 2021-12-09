@@ -67,11 +67,7 @@
           {{ form.mainComplaint || '' }}
         </div>
       </dpmsCell>
-      <dpmsCell
-        title="现病史"
-        wrap
-        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
-      >
+      <dpmsCell title="现病史" wrap>
         <div
           class="text"
           data-placeholder="请输入现病史"

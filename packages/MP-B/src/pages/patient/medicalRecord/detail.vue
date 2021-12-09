@@ -38,7 +38,7 @@
         <div class="label">主诉：</div>
         {{ detail.mainComplaint || '' }}
       </div>
-      <div class="row" v-if="detail.visType !== 2">
+      <div class="row">
         <div class="label">现病史：</div>
         {{ detail.presentIllnessHistory || '' }}
       </div>
