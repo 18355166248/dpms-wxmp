@@ -169,6 +169,7 @@ httper.interceptors.request.use((request) => {
 
 httper.interceptors.response.use(
   function (response) {
+    console.log(172, response)
     if ([1000373, 1000377, 0].includes(response?.data?.code)) {
       return response.data
     }
@@ -217,8 +218,15 @@ httper.interceptors.response.use(
     uni.showToast({
       icon: 'none',
       title: err?.data?.msg || err?.data?.message || '数据请求失败',
+      complete: () => {
+        if (err.status === 401) {
+          // 未登录
+          uni.redirectTo({
+            url: '/pages/login/login',
+          })
+        }
+      },
     })
-
     return Promise.reject(err)
   },
 )
