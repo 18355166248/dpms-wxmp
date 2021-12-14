@@ -651,7 +651,7 @@ export default {
         // delete clonedForm.presentIllnessHistory
         delete clonedForm.pastIllnessHistory
       }
-      await diagnosisAPI[
+      const res = await diagnosisAPI[
         this.medicalRecordId ? 'updateMedicalRecord' : 'createMedicalRecord'
       ]({
         medicalRecordVOJson: JSON.stringify({
@@ -668,6 +668,14 @@ export default {
           },
         }),
       })
+      if (res.code !== 0) {
+        uni.showToast({
+          icon: 'none',
+          title: res.message,
+        })
+        this.pending = false
+        return
+      }
       this.$dpmsUtils.clearLoading()
       this.$dpmsUtils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {
         icon: 'success',
