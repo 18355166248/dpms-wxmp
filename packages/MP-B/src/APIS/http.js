@@ -169,8 +169,7 @@ httper.interceptors.request.use((request) => {
 
 httper.interceptors.response.use(
   function (response) {
-    console.log(172, response)
-    if ([1000373, 1000377, 0].includes(response?.data?.code)) {
+    if ([1000373, 1000377, 1001223, 0].includes(response?.data?.code)) {
       return response.data
     }
     // 这里针对收欠费拦截做特殊处理

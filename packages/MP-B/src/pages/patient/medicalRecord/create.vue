@@ -67,11 +67,7 @@
           {{ form.mainComplaint || '' }}
         </div>
       </dpmsCell>
-      <dpmsCell
-        title="现病史"
-        wrap
-        v-if="VIS_TYPE_ENUM.REVISIT.value !== form.visType"
-      >
+      <dpmsCell title="现病史" wrap>
         <div
           class="text"
           data-placeholder="请输入现病史"
@@ -651,10 +647,11 @@ export default {
 
       // 复诊不传：现病史、既往史
       if (clonedForm.visType === this.VIS_TYPE_ENUM.REVISIT.value) {
-        delete clonedForm.presentIllnessHistory
+        // 复诊现在又需要支持现病史的填写了。。。
+        // delete clonedForm.presentIllnessHistory
         delete clonedForm.pastIllnessHistory
       }
-      await diagnosisAPI[
+      const res = await diagnosisAPI[
         this.medicalRecordId ? 'updateMedicalRecord' : 'createMedicalRecord'
       ]({
         medicalRecordVOJson: JSON.stringify({
@@ -671,6 +668,14 @@ export default {
           },
         }),
       })
+      if (res.code !== 0) {
+        uni.showToast({
+          icon: 'none',
+          title: res.message,
+        })
+        this.pending = false
+        return
+      }
       this.$dpmsUtils.clearLoading()
       this.$dpmsUtils.show(`${this.medicalRecordId ? '编辑' : '新建'}成功`, {
         icon: 'success',
