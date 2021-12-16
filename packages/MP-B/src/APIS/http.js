@@ -217,8 +217,15 @@ httper.interceptors.response.use(
     uni.showToast({
       icon: 'none',
       title: err?.data?.msg || err?.data?.message || '数据请求失败',
+      complete: () => {
+        if (err.status === 401) {
+          // 未登录
+          uni.redirectTo({
+            url: '/pages/login/login',
+          })
+        }
+      },
     })
-
     return Promise.reject(err)
   },
 )
